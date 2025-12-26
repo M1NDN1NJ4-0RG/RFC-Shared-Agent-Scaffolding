@@ -33,6 +33,10 @@ if (@a >= 2 && $a[0] eq 'api') {
   while ($i < @a && $a[$i] eq '-H') {
     $i += 2;  # Skip -H and its value
   }
+  if ($i >= @a) {
+    print "unexpected gh args: @a\n";
+    exit 2;
+  }
   my $endpoint = $a[$i];
   if ($endpoint =~ m{^repos/([^/]+/[^/]+)/rulesets$}) {
     print qq([{"id": 123, "name": "Main - PR Only + Green CI"}]\n);
