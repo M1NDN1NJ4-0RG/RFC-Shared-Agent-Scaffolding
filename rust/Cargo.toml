@@ -19,6 +19,7 @@ regex = "1.0"
 assert_cmd = "2.0"
 predicates = "3.0"
 tempfile = "3.10"
+once_cell = "1.19"
 
 [[bin]]
 name = "safe-run"

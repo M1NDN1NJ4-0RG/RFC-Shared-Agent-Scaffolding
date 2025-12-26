@@ -163,10 +163,19 @@ pub fn load_vectors() -> Result<ConformanceVectors, Box<dyn std::error::Error>> 
 /// Get the path to the safe-run binary (debug or release build)
 pub fn get_safe_run_binary() -> PathBuf {
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
-    let debug_bin = Path::new(manifest_dir).join("target/debug/safe-run");
-    let release_bin = Path::new(manifest_dir).join("target/release/safe-run");
 
-    // Prefer release build if it exists and is newer
+    // Platform-specific binary name
+    #[cfg(windows)]
+    let bin_name = "safe-run.exe";
+    #[cfg(not(windows))]
+    let bin_name = "safe-run";
+
+    let debug_bin = Path::new(manifest_dir).join("target/debug").join(bin_name);
+    let release_bin = Path::new(manifest_dir)
+        .join("target/release")
+        .join(bin_name);
+
+    // Prefer release build if it exists
     if release_bin.exists() {
         release_bin
     } else if debug_bin.exists() {

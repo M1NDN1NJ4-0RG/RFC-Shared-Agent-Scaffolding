@@ -33,15 +33,12 @@ mod safe_run_tests {
         );
         fs::write(&script_path, script_content).expect("Failed to write test script");
 
-        #[cfg(unix)]
-        {
-            use std::os::unix::fs::PermissionsExt;
-            let mut perms = fs::metadata(&script_path)
-                .expect("Failed to get metadata")
-                .permissions();
-            perms.set_mode(0o755);
-            fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
-        }
+        use std::os::unix::fs::PermissionsExt;
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
 
         script_path.to_string_lossy().to_string()
     }

@@ -5,8 +5,14 @@
 
 #![allow(dead_code)] // Functions will be used in PR3
 
+use once_cell::sync::Lazy;
+use regex::Regex;
 use std::fs;
 use std::path::{Path, PathBuf};
+
+// Compile regexes once at module initialization
+static PID_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"pid\d+").unwrap());
+static TIMESTAMP_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d{8}T\d{6}Z").unwrap());
 
 /// Get the snapshots directory path
 pub fn snapshots_dir() -> PathBuf {
@@ -73,8 +79,7 @@ impl NormalizePid for str {
     fn replace_pid_with_placeholder(&self) -> String {
         // Replace patterns like "pid12345" or "PID=12345" with placeholder
         // This is a simple implementation; may need refinement based on actual output format
-        let re = regex::Regex::new(r"pid\d+").unwrap();
-        re.replace_all(self, "pid{PID}").to_string()
+        PID_REGEX.replace_all(self, "pid{PID}").to_string()
     }
 }
 
@@ -86,8 +91,7 @@ trait NormalizeTimestamp {
 impl NormalizeTimestamp for str {
     fn replace_timestamp_with_placeholder(&self) -> String {
         // Replace ISO8601 timestamps (20241226T205701Z) with placeholder
-        let re = regex::Regex::new(r"\d{8}T\d{6}Z").unwrap();
-        re.replace_all(self, "{TIMESTAMP}").to_string()
+        TIMESTAMP_REGEX.replace_all(self, "{TIMESTAMP}").to_string()
     }
 }
 
