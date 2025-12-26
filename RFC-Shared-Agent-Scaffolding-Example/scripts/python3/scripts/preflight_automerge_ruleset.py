@@ -52,7 +52,8 @@ def http_get(url: str, api_version: str) -> tuple[int, str]:
         raise RuntimeError("No auth available: set TOKEN/GITHUB_TOKEN or authenticate with gh")
     req = Request(url)
     req.add_header("Accept", "application/vnd.github+json")
-    req.add_header("Authorization", f"token {token}")
+    # M0-P2-I1: Use Bearer token format
+    req.add_header("Authorization", f"Bearer {token}")
     req.add_header("X-GitHub-Api-Version", api_version)
     req.add_header("User-Agent", "agent-ops-preflight")
     try:
