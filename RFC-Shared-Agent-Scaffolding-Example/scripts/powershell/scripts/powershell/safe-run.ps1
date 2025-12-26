@@ -93,6 +93,41 @@ function Add-TailLine {
   $Queue.Enqueue($Line)
 }
 
+# Helper function to format log content with event ledger and optional merged view
+function Format-LogContent {
+  param(
+    [string]$StdoutPath,
+    [string]$StderrPath
+  )
+  
+  $stdout_content = (Get-Content -LiteralPath $StdoutPath -Raw -ErrorAction SilentlyContinue) ?? ""
+  $stderr_content = (Get-Content -LiteralPath $StderrPath -Raw -ErrorAction SilentlyContinue) ?? ""
+  
+  $sb = New-Object System.Text.StringBuilder
+  [void]$sb.Append("=== STDOUT ===$([Environment]::NewLine)")
+  [void]$sb.Append($stdout_content)
+  [void]$sb.Append("=== STDERR ===$([Environment]::NewLine)")
+  [void]$sb.Append($stderr_content)
+  
+  # Event ledger
+  [void]$sb.Append("$([Environment]::NewLine)--- BEGIN EVENTS ---$([Environment]::NewLine)")
+  foreach ($evt in $script:EventLedger) {
+    [void]$sb.Append("[SEQ=$($evt.Seq)][$($evt.Stream)] $($evt.Text)$([Environment]::NewLine)")
+  }
+  [void]$sb.Append("--- END EVENTS ---$([Environment]::NewLine)")
+  
+  # Optional merged view
+  if ($viewMode -eq 'merged') {
+    [void]$sb.Append("$([Environment]::NewLine)--- BEGIN MERGED (OBSERVED ORDER) ---$([Environment]::NewLine)")
+    foreach ($evt in $script:EventLedger) {
+      [void]$sb.Append("[#$($evt.Seq)][$($evt.Stream)] $($evt.Text)$([Environment]::NewLine)")
+    }
+    [void]$sb.Append("--- END MERGED ---$([Environment]::NewLine)")
+  }
+  
+  return $sb.ToString()
+}
+
 try {
   # Emit start event
   Emit-Event 'META' "safe-run start: cmd=`"$cmdStr`""
@@ -206,32 +241,8 @@ try {
   $outPath = Join-Path $logDir "${ts}-pid${processId}-${status}.log"
   
   # Write M0-P1-I1 format: split streams with markers + event ledger + optional merged view
-  $stdout_content = (Get-Content -LiteralPath $tmpStdout -Raw -ErrorAction SilentlyContinue) ?? ""
-  $stderr_content = (Get-Content -LiteralPath $tmpStderr -Raw -ErrorAction SilentlyContinue) ?? ""
-  
-  $sb = New-Object System.Text.StringBuilder
-  [void]$sb.Append("=== STDOUT ===$([Environment]::NewLine)")
-  [void]$sb.Append($stdout_content)
-  [void]$sb.Append("=== STDERR ===$([Environment]::NewLine)")
-  [void]$sb.Append($stderr_content)
-  
-  # Event ledger
-  [void]$sb.Append("$([Environment]::NewLine)--- BEGIN EVENTS ---$([Environment]::NewLine)")
-  foreach ($evt in $script:EventLedger) {
-    [void]$sb.Append("[SEQ=$($evt.Seq)][$($evt.Stream)] $($evt.Text)$([Environment]::NewLine)")
-  }
-  [void]$sb.Append("--- END EVENTS ---$([Environment]::NewLine)")
-  
-  # Optional merged view
-  if ($viewMode -eq 'merged') {
-    [void]$sb.Append("$([Environment]::NewLine)--- BEGIN MERGED (OBSERVED ORDER) ---$([Environment]::NewLine)")
-    foreach ($evt in $script:EventLedger) {
-      [void]$sb.Append("[#$($evt.Seq)][$($evt.Stream)] $($evt.Text)$([Environment]::NewLine)")
-    }
-    [void]$sb.Append("--- END MERGED ---$([Environment]::NewLine)")
-  }
-  
-  [System.IO.File]::WriteAllText($outPath, $sb.ToString(), [System.Text.Encoding]::UTF8)
+  $logContent = Format-LogContent -StdoutPath $tmpStdout -StderrPath $tmpStderr
+  [System.IO.File]::WriteAllText($outPath, $logContent, [System.Text.Encoding]::UTF8)
 
   Write-Err ""
   if ($script:WasAborted) {
@@ -283,32 +294,8 @@ catch {
   $outPath = Join-Path $logDir "${ts}-pid${processId}-${status}.log"
 
   # Write M0-P1-I1 format: split streams with markers + event ledger + optional merged view
-  $stdout_content = (Get-Content -LiteralPath $tmpStdout -Raw -ErrorAction SilentlyContinue) ?? ""
-  $stderr_content = (Get-Content -LiteralPath $tmpStderr -Raw -ErrorAction SilentlyContinue) ?? ""
-  
-  $sb = New-Object System.Text.StringBuilder
-  [void]$sb.Append("=== STDOUT ===$([Environment]::NewLine)")
-  [void]$sb.Append($stdout_content)
-  [void]$sb.Append("=== STDERR ===$([Environment]::NewLine)")
-  [void]$sb.Append($stderr_content)
-  
-  # Event ledger
-  [void]$sb.Append("$([Environment]::NewLine)--- BEGIN EVENTS ---$([Environment]::NewLine)")
-  foreach ($evt in $script:EventLedger) {
-    [void]$sb.Append("[SEQ=$($evt.Seq)][$($evt.Stream)] $($evt.Text)$([Environment]::NewLine)")
-  }
-  [void]$sb.Append("--- END EVENTS ---$([Environment]::NewLine)")
-  
-  # Optional merged view
-  if ($viewMode -eq 'merged') {
-    [void]$sb.Append("$([Environment]::NewLine)--- BEGIN MERGED (OBSERVED ORDER) ---$([Environment]::NewLine)")
-    foreach ($evt in $script:EventLedger) {
-      [void]$sb.Append("[#$($evt.Seq)][$($evt.Stream)] $($evt.Text)$([Environment]::NewLine)")
-    }
-    [void]$sb.Append("--- END MERGED ---$([Environment]::NewLine)")
-  }
-  
-  try { [System.IO.File]::WriteAllText($outPath, $sb.ToString(), [System.Text.Encoding]::UTF8) } catch { }
+  $logContent = Format-LogContent -StdoutPath $tmpStdout -StderrPath $tmpStderr
+  try { [System.IO.File]::WriteAllText($outPath, $logContent, [System.Text.Encoding]::UTF8) } catch { }
 
   Write-Err ""
   if ($script:WasAborted) {

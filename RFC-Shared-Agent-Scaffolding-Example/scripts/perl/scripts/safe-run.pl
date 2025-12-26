@@ -147,9 +147,9 @@ sub _emit_lines {
   my @lines = split(/\n/, $$buf_ref, -1);
   
   if ($final) {
-    # Process all lines
+    # Process all lines (including empty lines for consistency)
     for my $line (@lines) {
-      emit_event($stream, $line) if length($line) > 0;
+      emit_event($stream, $line);
     }
     $$buf_ref = '';
   } else {
