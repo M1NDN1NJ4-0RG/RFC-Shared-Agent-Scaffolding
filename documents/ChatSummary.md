@@ -244,7 +244,6 @@ You requested portability and created script sets in:
 
 - Bash
 - Perl
-- Python 2
 - Python 3
 - PowerShell
 
