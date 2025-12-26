@@ -36,7 +36,7 @@ jobs:
           sanitize_body() {
             awk '
               BEGIN { drop=0 }
-              /^Original prompt[[:space:]]*$/ { drop=1 }
+              /Original prompt[[:space:]]*$/ { drop=1 }
               { if (!drop) print }
             '
           }
