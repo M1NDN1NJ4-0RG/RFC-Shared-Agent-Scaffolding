@@ -9,6 +9,10 @@ use IO::Select;
 use IPC::Open3;
 use Symbol qw(gensym);
 
+# Enable autoflush on STDOUT/STDERR so output appears immediately
+$| = 1;
+select(STDERR); $| = 1; select(STDOUT);
+
 # -----------------------------------------------------------------------------
 # safe-run.pl
 #
@@ -99,7 +103,7 @@ sub _push_tail {
 }
 
 # Read loop
-while ($sel->count) {
+while ($sel->count && !$aborted) {
   my @ready = $sel->can_read(0.25);
   for my $fh (@ready) {
     my $buf;
@@ -132,8 +136,6 @@ while ($sel->count) {
       }
     }
   }
-
-  last if $aborted && !$sel->count; # let the loop drain
 }
 
 close $tmp_stdout_fh;

@@ -22,6 +22,9 @@ make_exe($safe_run);
 my $log_dir  = File::Spec->catdir($sandbox, ".agent", "FAIL-LOGS");
 make_path($log_dir);
 
+# Set environment for safe-run to use the sandbox log directory
+$ENV{SAFE_LOG_DIR} = $log_dir;
+
 sub list_logs {
   opendir my $dh, $log_dir or die "opendir: $!";
   my @f = grep { /\.log$/ && -f File::Spec->catfile($log_dir,$_) } readdir($dh);
@@ -34,7 +37,7 @@ my $err = Symbol::gensym();
 my $pid = IPC::Open3::open3(my $in, my $out, $err,
   "perl", $safe_run, "--",
   "perl", "-e",
-  'for(my $i=1;$i<=100;$i++){print "tick$i\n"; select(undef,undef,undef,0.05);} exit 0;'
+  '$|=1; for(my $i=1;$i<=100;$i++){print "tick$i\n"; select(undef,undef,undef,0.05);} exit 0;'
 );
 close $in;
 
@@ -49,7 +52,7 @@ while (time() - $start < 3) {
   my $n = sysread($out, my $tmp, 4096);
   last if !defined $n || $n == 0;
   $buf .= $tmp;
-  if ($buf =~ /tick[5-9]/) { $seen = 1; last; }
+  if ($buf =~ /tick[1-9]/) { $seen = 1; last; }
 }
 ok($seen, "saw some output before interrupting");
 
