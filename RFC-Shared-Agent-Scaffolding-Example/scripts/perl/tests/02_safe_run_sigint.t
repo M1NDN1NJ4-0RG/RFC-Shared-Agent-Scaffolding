@@ -24,7 +24,7 @@ make_path($log_dir);
 
 sub list_logs {
   opendir my $dh, $log_dir or die "opendir: $!";
-  my @f = grep { /\.txt$/ && -f File::Spec->catfile($log_dir,$_) } readdir($dh);
+  my @f = grep { /\.log$/ && -f File::Spec->catfile($log_dir,$_) } readdir($dh);
   closedir $dh;
   return sort @f;
 }

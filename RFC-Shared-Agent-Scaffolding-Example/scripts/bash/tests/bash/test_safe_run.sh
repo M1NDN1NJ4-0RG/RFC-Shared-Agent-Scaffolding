@@ -29,7 +29,7 @@ test_failure_captures_and_rc() {
     rc=$?
     set -e
     [[ "$rc" -eq 42 ]]
-    f="$(ls .agent/FAIL-LOGS/*-fail.txt | head -n1)"
+    f="$(ls .agent/FAIL-LOGS/*-FAIL.log | head -n1)"
     [[ -n "$f" ]]
     c="$(cat "$f")"
     grep -F "OOPS_STDOUT" <<<"$c" >/dev/null
@@ -48,9 +48,10 @@ test_snippet_lines() {
     rc=$?
     set -e
     [[ "$rc" -eq 9 ]]
-    grep -F "Failure tail" <<<"$err" >/dev/null
-    grep -F "L2" <<<"$err" >/dev/null
-    grep -F "L3" <<<"$err" >/dev/null
+    grep -F "failure tail" <<<"$err" >/dev/null
+    # With M0-P1-I1 markers, the tail shows the last 2 lines of the log file
+    # which includes the STDERR section marker
+    grep -F "STDERR" <<<"$err" >/dev/null
   )
 }
 
@@ -65,7 +66,7 @@ test_safe_log_dir_override() {
     rc=$?
     set -e
     [[ "$rc" -eq 7 ]]
-    [[ -n "$(ls custom_logs/*-fail.txt 2>/dev/null || true)" ]]
+    [[ -n "$(ls custom_logs/*-FAIL.log 2>/dev/null || true)" ]]
   )
 }
 
@@ -85,7 +86,7 @@ test_sigint_aborted_log() {
     set -e
     # 143 is the canonical exit code for SIGTERM; accept 130 too if the platform maps differently.
     [[ "$rc" -eq 143 || "$rc" -eq 130 ]]
-    f="$(ls .agent/FAIL-LOGS/*ABORTED-fail.txt | head -n1)"
+    f="$(ls .agent/FAIL-LOGS/*ABORTED.log | head -n1)"
     [[ -n "$f" ]]
     grep -F "START" "$f" >/dev/null
   )

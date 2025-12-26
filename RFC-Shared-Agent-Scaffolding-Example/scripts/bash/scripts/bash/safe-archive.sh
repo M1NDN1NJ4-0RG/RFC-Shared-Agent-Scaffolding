@@ -59,7 +59,8 @@ compress_one() {
 
 # macOS Bash 3.2 compatible: no mapfile/readarray.
 # Use find -print0 + read -d '' to safely handle spaces.
-find "$SAFE_FAIL_DIR" -type f -name '*-fail.txt' -print0 2>/dev/null | \
+# M0-P1-I2: Match new log naming format *-{STATUS}.log
+find "$SAFE_FAIL_DIR" -type f \( -name '*-FAIL.log' -o -name '*-ABORTED.log' -o -name '*-ERROR.log' \) -print0 2>/dev/null | \
 while IFS= read -r -d '' SRC; do
   BN="$(basename "$SRC")"
   DST="$SAFE_ARCHIVE_DIR/$BN"

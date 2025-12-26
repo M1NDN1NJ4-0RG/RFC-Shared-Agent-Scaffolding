@@ -82,10 +82,18 @@ sub archive_one {
   my $base = basename($src);
   my $dest = "$archive_dir/$base";
 
+  # M0-P1-I3: Auto-suffix if destination exists
   if (-e $dest) {
-    print STDERR "SKIP: destination exists (no-clobber): $dest\n";
-    return;
+    my $suffix = 1;
+    my ($name, $ext) = $base =~ /^(.+?)(\.[^.]+)?$/;
+    $ext //= '';
+    while (-e "$archive_dir/$name.$suffix$ext") {
+      $suffix++;
+    }
+    $dest = "$archive_dir/$name.$suffix$ext";
+    print STDERR "INFO: destination exists, using suffix: $dest\n";
   }
+  
   move($src, $dest) or die_msg("Failed to move $src -> $dest: $!");
   print STDERR "ARCHIVED: $src -> $dest\n";
   compress_file($compress, $dest);

@@ -12,15 +12,15 @@ test_default_archives_one() {
   (
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS .agent/FAIL-ARCHIVE
-    printf "a\n" > ".agent/FAIL-LOGS/one fail-fail.txt"
-    printf "b\n" > ".agent/FAIL-LOGS/two-fail.txt"
+    printf "a\n" > ".agent/FAIL-LOGS/one fail-FAIL.log"
+    printf "b\n" > ".agent/FAIL-LOGS/two-FAIL.log"
     bash "$ARCH" >/dev/null 2>&1
     # By default, it moves ONE file then exits (either one of the two)
     local n
-    n="$(ls -1 .agent/FAIL-ARCHIVE/*-fail.txt 2>/dev/null | wc -l | tr -d " ")"
+    n="$(ls -1 .agent/FAIL-ARCHIVE/*-FAIL.log 2>/dev/null | wc -l | tr -d " ")"
     [[ "$n" -eq 1 ]]
     # And one file remains in FAIL-LOGS
-    n="$(ls -1 .agent/FAIL-LOGS/*-fail.txt 2>/dev/null | wc -l | tr -d " ")"
+    n="$(ls -1 .agent/FAIL-LOGS/*-FAIL.log 2>/dev/null | wc -l | tr -d " ")"
     [[ "$n" -eq 1 ]]
   )
 }
@@ -31,13 +31,13 @@ test_moves_all_with_spaces() {
   (
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS .agent/FAIL-ARCHIVE
-    printf "a\n" > ".agent/FAIL-LOGS/one fail-fail.txt"
-    printf "b\n" > ".agent/FAIL-LOGS/two-fail.txt"
+    printf "a\n" > ".agent/FAIL-LOGS/one fail-FAIL.log"
+    printf "b\n" > ".agent/FAIL-LOGS/two-FAIL.log"
     bash "$ARCH" --all >/dev/null 2>&1
-    [[ ! -e ".agent/FAIL-LOGS/one fail-fail.txt" ]]
-    [[ ! -e ".agent/FAIL-LOGS/two-fail.txt" ]]
-    [[ -f ".agent/FAIL-ARCHIVE/one fail-fail.txt" ]]
-    [[ -f ".agent/FAIL-ARCHIVE/two-fail.txt" ]]
+    [[ ! -e ".agent/FAIL-LOGS/one fail-FAIL.log" ]]
+    [[ ! -e ".agent/FAIL-LOGS/two-FAIL.log" ]]
+    [[ -f ".agent/FAIL-ARCHIVE/one fail-FAIL.log" ]]
+    [[ -f ".agent/FAIL-ARCHIVE/two-FAIL.log" ]]
   )
 }
 
@@ -47,12 +47,12 @@ test_no_clobber() {
   (
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS .agent/FAIL-ARCHIVE
-    printf "OLD\n" > ".agent/FAIL-ARCHIVE/x-fail.txt"
-    printf "NEW\n" > ".agent/FAIL-LOGS/x-fail.txt"
+    printf "OLD\n" > ".agent/FAIL-ARCHIVE/x-FAIL.log"
+    printf "NEW\n" > ".agent/FAIL-LOGS/x-FAIL.log"
     bash "$ARCH" --all >/dev/null 2>&1
     # should skip (exists) and leave original in FAIL-LOGS
-    [[ "$(cat .agent/FAIL-ARCHIVE/x-fail.txt)" == "OLD" ]]
-    [[ -f ".agent/FAIL-LOGS/x-fail.txt" ]]
+    [[ "$(cat .agent/FAIL-ARCHIVE/x-FAIL.log)" == "OLD" ]]
+    [[ -f ".agent/FAIL-LOGS/x-FAIL.log" ]]
   )
 }
 
@@ -63,10 +63,10 @@ test_gzip_compression() {
   (
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS .agent/FAIL-ARCHIVE
-    printf "Z\n" > ".agent/FAIL-LOGS/z-fail.txt"
+    printf "Z\n" > ".agent/FAIL-LOGS/z-FAIL.log"
     SAFE_ARCHIVE_COMPRESS=gzip bash "$ARCH" --all >/dev/null 2>&1
-    [[ -f ".agent/FAIL-ARCHIVE/z-fail.txt.gz" ]]
-    gzip -cd ".agent/FAIL-ARCHIVE/z-fail.txt.gz" | grep -F "Z" >/dev/null
+    [[ -f ".agent/FAIL-ARCHIVE/z-FAIL.log.gz" ]]
+    gzip -cd ".agent/FAIL-ARCHIVE/z-FAIL.log.gz" | grep -F "Z" >/dev/null
   )
 }
 
