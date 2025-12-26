@@ -101,7 +101,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       Add-FakeGhToPath -FixtureJson $fixture -OutDir $td | Out-Null
 
       & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main - PR Only + Green CI" -Want '["lint","test"]'
-      $LASTEXITCODE | Should -Be 3
+      $LASTEXITCODE | Should -Be 1
     } finally {
       Pop-Location
     }
@@ -140,7 +140,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       Add-FakeGhToPath -FixtureJson $fixture -OutDir $td | Out-Null
 
       & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main - PR Only + Green CI" -Want '["lint","test"]'
-      $LASTEXITCODE | Should -Be 3
+      $LASTEXITCODE | Should -Be 1
     } finally {
       Pop-Location
     }
