@@ -36,14 +36,14 @@ cleanup_tmp() {
 
 save_abort_log() {
   # If we have any buffered output, preserve it.
-  local out="$SAFE_LOG_DIR/${BASE}-ABORTED-fail.txt"
+  local out="$SAFE_LOG_DIR/${BASE}-ABORTED.log"
   if [ -f "$TMP" ]; then
     # no-clobber safety: if name exists, append counter.
     local n=0
     local cand="$out"
     while [ -e "$cand" ]; do
       n=$((n+1))
-      cand="$SAFE_LOG_DIR/${BASE}-ABORTED-fail-$n.txt"
+      cand="$SAFE_LOG_DIR/${BASE}-ABORTED-$n.log"
     done
     mv "$TMP" "$cand" 2>/dev/null || cp "$TMP" "$cand" || true
   fi
@@ -79,13 +79,13 @@ if [ "$CMD_RC" -eq 0 ]; then
 fi
 
 # Failure: move temp into FAIL-LOGS.
-OUT="$SAFE_LOG_DIR/${BASE}-fail.txt"
+OUT="$SAFE_LOG_DIR/${BASE}-FAIL.log"
 # no-clobber
 n=0
 cand="$OUT"
 while [ -e "$cand" ]; do
   n=$((n+1))
-  cand="$SAFE_LOG_DIR/${BASE}-fail-$n.txt"
+  cand="$SAFE_LOG_DIR/${BASE}-FAIL-$n.log"
 done
 mv "$TMP" "$cand" 2>/dev/null || cp "$TMP" "$cand" || true
 

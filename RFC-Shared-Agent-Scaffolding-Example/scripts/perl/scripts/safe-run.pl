@@ -68,7 +68,11 @@ eval {
   print STDERR "safe-run.pl: failed to start command: $e\n";
   # Treat as failure; write whatever we have (likely nothing).
   make_path($safe_log_dir) unless -d $safe_log_dir;
-  my $fail_path = File::Spec->catfile($safe_log_dir, 'safe-run-start-fail.txt');
+  # M0-P1-I2: ISO8601 timestamp format
+  my ($sec,$min,$hour,$mday,$mon,$year) = gmtime();
+  my $ts = sprintf("%04d%02d%02dT%02d%02d%02dZ", $year+1900, $mon+1, $mday, $hour, $min, $sec);
+  my $pid = $$;
+  my $fail_path = File::Spec->catfile($safe_log_dir, "${ts}-pid${pid}-ERROR.log");
   open my $fh, '>', $fail_path or die "cannot write $fail_path: $!";
   print $fh "FAILED TO START: $e\n";
   close $fh;
@@ -152,8 +156,11 @@ if ($status == -1) {
 # If we were interrupted, treat as aborted regardless of child status.
 if ($aborted) {
   make_path($safe_log_dir) unless -d $safe_log_dir;
-  my $stamp = time();
-  my $fail_path = File::Spec->catfile($safe_log_dir, "safe-run-$stamp-ABORTED-fail.txt");
+  # M0-P1-I2: ISO8601 timestamp format
+  my ($sec,$min,$hour,$mday,$mon,$year) = gmtime();
+  my $ts = sprintf("%04d%02d%02dT%02d%02d%02dZ", $year+1900, $mon+1, $mday, $hour, $min, $sec);
+  my $pid = $$;
+  my $fail_path = File::Spec->catfile($safe_log_dir, "${ts}-pid${pid}-ABORTED.log");
   rename($tmp_path, $fail_path) or do {
     # fallback copy
     open my $in,  '<', $tmp_path  or die "cannot read $tmp_path: $!";
@@ -176,8 +183,11 @@ if ($exit_code == 0) {
 
 # Failure: move temp file to FAIL-LOGS
 make_path($safe_log_dir) unless -d $safe_log_dir;
-my $stamp = time();
-my $fail_path = File::Spec->catfile($safe_log_dir, "safe-run-$stamp-fail.txt");
+# M0-P1-I2: ISO8601 timestamp format
+my ($sec,$min,$hour,$mday,$mon,$year) = gmtime();
+my $ts = sprintf("%04d%02d%02dT%02d%02d%02dZ", $year+1900, $mon+1, $mday, $hour, $min, $sec);
+my $pid = $$;
+my $fail_path = File::Spec->catfile($safe_log_dir, "${ts}-pid${pid}-FAIL.log");
 rename($tmp_path, $fail_path) or do {
   # fallback copy
   open my $in,  '<', $tmp_path  or die "cannot read $tmp_path: $!";
