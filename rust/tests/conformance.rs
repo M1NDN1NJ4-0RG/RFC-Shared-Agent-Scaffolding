@@ -44,7 +44,6 @@ mod safe_run_tests {
     }
 
     #[test]
-    #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_run_001_success_no_artifacts() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
@@ -80,7 +79,6 @@ mod safe_run_tests {
     }
 
     #[test]
-    #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_run_002_failure_creates_log() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
@@ -180,7 +178,6 @@ mod safe_run_tests {
     }
 
     #[test]
-    #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_run_004_custom_log_dir() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
@@ -235,7 +232,6 @@ mod safe_run_tests {
     }
 
     #[test]
-    #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_run_005_snippet_output() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
