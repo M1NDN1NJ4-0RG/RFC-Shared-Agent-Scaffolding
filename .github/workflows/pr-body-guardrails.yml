@@ -20,7 +20,7 @@ jobs:
             const pr = context.payload.pull_request;
             const body = pr.body || "";
 
-            // Fetch issue metadata to check if title contains "EPIC" (case-insensitive)
+            // Fetch issue metadata to check if title contains "EPIC" (case-insensitive) as a whole word
             async function isEpicIssue(owner, repo, issueNum) {
               try {
                 const { data: issue } = await github.rest.issues.get({
@@ -28,7 +28,9 @@ jobs:
                   repo,
                   issue_number: issueNum,
                 });
-                return (issue.title || "").toUpperCase().includes("EPIC");
+                // Use word boundary regex to match "EPIC" as a whole word only
+                const title = issue.title || "";
+                return /\bEPIC\b/i.test(title);
               } catch (error) {
                 core.warning(`Failed to fetch issue #${issueNum}: ${error.message}`);
                 return false;
@@ -159,7 +161,7 @@ jobs:
           set -euo pipefail
           fail() { echo "::error::$1"; exit 1; }
 
-          # Function to check if an issue has "EPIC" in the title (case-insensitive)
+          # Function to check if an issue has "EPIC" in the title (case-insensitive) as a whole word
           has_epic_in_title() {
             local issue_num="$1"
             local issue_owner="${2:-$OWNER}"
@@ -173,9 +175,10 @@ jobs:
               return 1
             fi
             
-            # Check if title contains "EPIC" (case-insensitive)
+            # Check if title contains "EPIC" as a whole word (case-insensitive)
+            # Using word boundaries \< \> or \b to match whole word only
             local title=$(echo "$issue_json" | jq -r '.title // ""')
-            echo "$title" | grep -iq "EPIC"
+            echo "$title" | grep -iw "EPIC"
           }
 
           # Function to extract issue numbers and check if they have "EPIC" in title
