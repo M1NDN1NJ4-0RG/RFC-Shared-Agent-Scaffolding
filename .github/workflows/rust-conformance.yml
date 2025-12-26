@@ -52,7 +52,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: rust/target
-          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('rust/Cargo.lock') }}-${{ hashFiles('rust/src/**/*.rs', 'rust/Cargo.toml', 'rust/tests/**/*.rs') }}
 
       - name: Check Rust version
         working-directory: rust
@@ -74,16 +74,25 @@ jobs:
         working-directory: rust
         run: cargo build --release --verbose
 
-      - name: Verify binary exists
+      - name: Verify binary exists and print metadata
         working-directory: rust
         shell: bash
         run: |
           if [ -f target/release/safe-run ] || [ -f target/release/safe-run.exe ]; then
             echo "✓ Binary built successfully"
             if [ -f target/release/safe-run ]; then
+              echo "Binary: target/release/safe-run"
+              ls -lh target/release/safe-run
               ./target/release/safe-run --version
             else
+              echo "Binary: target/release/safe-run.exe"
+              ls -lh target/release/safe-run.exe
               ./target/release/safe-run.exe --version
+              # Windows-specific: verify binary freshness
+              if command -v sha256sum &> /dev/null; then
+                echo "Binary SHA256:"
+                sha256sum target/release/safe-run.exe | cut -d' ' -f1
+              fi
             fi
           else
             echo "✗ Binary not found"
