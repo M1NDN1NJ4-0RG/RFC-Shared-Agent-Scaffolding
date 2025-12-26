@@ -4,7 +4,7 @@ cd "$(dirname "$0")"
 source "./lib.sh"
 
 ROOT="$(cd .. && pwd)"
-PREF="${ROOT}/scripts/preflight_automerge_ruleset.sh"
+PREF="${ROOT}/scripts/preflight-automerge-ruleset.sh"
 
 make_mock_gh() {
   local dir="$1"

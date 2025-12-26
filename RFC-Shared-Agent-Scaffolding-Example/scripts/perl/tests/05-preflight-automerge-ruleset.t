@@ -11,7 +11,7 @@ my $scripts_dir = File::Spec->catdir($sandbox, "scripts", "perl");
 make_path($scripts_dir);
 
 my $src = $ENV{SRC_PREFLIGHT} || die "SRC_PREFLIGHT not set";
-my $preflight = File::Spec->catfile($scripts_dir, "preflight_automerge_ruleset.pl");
+my $preflight = File::Spec->catfile($scripts_dir, "preflight-automerge-ruleset.pl");
 write_file($preflight, slurp($src));
 make_exe($preflight);
 

@@ -5,7 +5,7 @@ ROOT="$(cd "$(dirname "$0")" && pwd)"
 export SRC_SAFE_RUN="${SRC_SAFE_RUN:-$ROOT/scripts/safe-run.pl}"
 export SRC_SAFE_ARCHIVE="${SRC_SAFE_ARCHIVE:-$ROOT/scripts/safe-archive.pl}"
 export SRC_SAFE_CHECK="${SRC_SAFE_CHECK:-$ROOT/scripts/safe-check.pl}"
-export SRC_PREFLIGHT="${SRC_PREFLIGHT:-$ROOT/scripts/preflight_automerge_ruleset.pl}"
+export SRC_PREFLIGHT="${SRC_PREFLIGHT:-$ROOT/scripts/preflight-automerge-ruleset.pl}"
 
 cd "$ROOT"
 

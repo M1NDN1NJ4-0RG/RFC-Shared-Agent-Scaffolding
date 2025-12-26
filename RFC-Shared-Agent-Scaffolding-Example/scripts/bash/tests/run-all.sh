@@ -6,7 +6,7 @@ source "./lib.sh"
 
 # Run each test file in a fresh bash to avoid state leakage.
 status=0
-for tf in ./test_*.sh; do
+for tf in ./test-*.sh; do
   [[ -f "$tf" ]] || continue
   echo "==> Running $tf" >&2
   if ! bash "$tf"; then

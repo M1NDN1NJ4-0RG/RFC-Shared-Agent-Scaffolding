@@ -21,7 +21,7 @@ RFC-Shared-Agent-Scaffolding-Example/scripts/<language>/
   │   ├── safe-run.*
   │   ├── safe-check.*
   │   ├── safe-archive.*
-  │   └── preflight_automerge_ruleset.*
+  │   └── preflight-automerge-ruleset.*
   ├── tests/            # Test files
   │   └── ...
   ├── run-tests.*       # Test runner (executable)
@@ -36,15 +36,16 @@ Each language uses its conventional file extension:
 |-------------|-----------|--------------------------|
 | Bash        | `.sh`     | `safe-run.sh`            |
 | Perl        | `.pl`     | `safe-run.pl`            |
-| Python 3    | `.py`     | `safe_run.py`            |
+| Python 3    | `.py`     | `safe-run.py`            |
 | PowerShell  | `.ps1`    | `safe-run.ps1`           |
 
 ### Naming Conventions
 
-- **Bash/Perl/PowerShell**: Use hyphens (kebab-case) for script names, except for `preflight_automerge_ruleset`, which intentionally uses underscores across all languages
-  - Example: `safe-run.sh`, `preflight_automerge_ruleset.pl`
-- **Python 3**: Use underscores (snake_case) for script names
-  - Example: `safe_run.py`, `preflight_automerge_ruleset.py`
+- **All languages**: Use hyphens (kebab-case) for all script names for consistency
+  - Bash example: `safe-run.sh`, `preflight-automerge-ruleset.sh`
+  - Perl example: `safe-run.pl`, `preflight-automerge-ruleset.pl`
+  - Python 3 example: `safe-run.py`, `preflight-automerge-ruleset.py`
+  - PowerShell example: `safe-run.ps1`, `preflight-automerge-ruleset.ps1`
 
 ## What Changed (Migration from Old Structure)
 
@@ -121,7 +122,7 @@ All implementation files:
 - `safe-run.*` - Safe command execution wrapper
 - `safe-check.*` - Contract verification script
 - `safe-archive.*` - Failure log archiving utility
-- `preflight_automerge_ruleset.*` - GitHub ruleset preflight check
+- `preflight-automerge-ruleset.*` - GitHub ruleset preflight check
 
 ### Tests Directory (`tests/`)
 All test files and test utilities.
@@ -131,7 +132,7 @@ An executable script that runs the full test suite for that language.
 
 **Naming:**
 - Bash/Perl: `run-tests.sh`
-- Python 3: `run_tests.sh` or invoke via `python -m unittest discover`
+- Python 3: `run-tests.sh` or invoke via `python -m unittest discover`
 - PowerShell: `run-tests.ps1`
 
 ## Prohibited Patterns

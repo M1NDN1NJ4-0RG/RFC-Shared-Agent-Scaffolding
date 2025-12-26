@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# preflight_automerge_ruleset.pl (Perl)
+# preflight-automerge-ruleset.pl (Perl)
 # Verifies a GitHub Ruleset enforces required status checks on ~DEFAULT_BRANCH.
 # Exit codes: 0 ok, 1 precheck fail, 2 auth/permission issue, 3 usage error.
 # Security: never prints token values.
@@ -20,7 +20,7 @@ $api_version = "2022-11-28";
 sub usage {
   print STDERR <<"USAGE";
 Usage:
-  scripts/perl/preflight_automerge_ruleset.pl --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want '["lint","test"]'
+  scripts/perl/preflight-automerge-ruleset.pl --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want '["lint","test"]'
 
 Auth:
   Prefers gh api if available. Otherwise uses TOKEN or GITHUB_TOKEN env vars.

@@ -8,7 +8,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SCRIPTS = ROOT / 'scripts'
-SAFE_CHECK = SCRIPTS / 'safe_check.py'
+SAFE_CHECK = SCRIPTS / 'safe-check.py'
 
 
 def run_safe_check(workdir: Path, env=None, timeout=60):
@@ -34,11 +34,11 @@ class TestSafeCheck(unittest.TestCase):
             # Provide the scripts in cwd, since safe_check expects relative paths.
             scripts_dir = wd / 'scripts' / 'python3'
             scripts_dir.mkdir(parents=True)
-            for name in ['safe_run.py', 'safe_archive.py', 'safe_check.py', 'preflight_automerge_ruleset.py']:
+            for name in ['safe-run.py', 'safe-archive.py', 'safe-check.py', 'preflight-automerge-ruleset.py']:
                 (SCRIPTS / name).replace(scripts_dir / name) if False else (scripts_dir / name).write_bytes((SCRIPTS / name).read_bytes())
 
             proc = subprocess.run(
-                [sys.executable, str(scripts_dir / 'safe_check.py')],
+                [sys.executable, str(scripts_dir / 'safe-check.py')],
                 cwd=str(wd),
                 env=os.environ.copy(),
                 text=True,

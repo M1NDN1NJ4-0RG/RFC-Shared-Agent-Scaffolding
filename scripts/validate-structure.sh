@@ -30,7 +30,7 @@ expected_scripts=(
   "safe-run"
   "safe-check"
   "safe-archive"
-  "preflight_automerge_ruleset"
+  "preflight-automerge-ruleset"
 )
 
 for lang in "${languages[@]}"; do
@@ -72,13 +72,8 @@ for lang in "${languages[@]}"; do
   esac
   
   for script in "${expected_scripts[@]}"; do
-    # Convert underscores to hyphens or underscores based on language convention
-    # Bash/Perl/PowerShell use hyphens, Python uses underscores
-    if [ "$lang" = "python3" ]; then
-      script_name="${script//-/_}"
-    else
-      script_name="$script"
-    fi
+    # All languages now use kebab-case (hyphens)
+    script_name="$script"
     
     script_path="$bundle_dir/scripts/${script_name}${ext}"
     if [ ! -f "$script_path" ]; then
@@ -95,7 +90,7 @@ for lang in "${languages[@]}"; do
       test_runner="run-tests.sh"
       ;;
     python3)
-      test_runner="run_tests.sh"
+      test_runner="run-tests.sh"
       ;;
     powershell)
       test_runner="run-tests.ps1"

@@ -10,7 +10,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 # Make scripts executable
-chmod +x scripts/*.sh tests/*.sh tests/run_all.sh
+chmod +x scripts/*.sh tests/*.sh tests/run-all.sh
 
 # Run the test suite
-exec tests/run_all.sh
+exec tests/run-all.sh
