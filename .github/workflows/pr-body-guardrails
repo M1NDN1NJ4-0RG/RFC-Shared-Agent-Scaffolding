@@ -1,0 +1,88 @@
+name: pr-body-guardrails
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  pull-requests: write   # normalize needs this
+  contents: read         # scan job reads commits
+  pull-requests: read    # scan job reads PR metadata
+
+jobs:
+  normalize:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Rewrite auto-close keywords in PR body
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || "";
+
+            const rewritten = body.replace(
+              /(\b)(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(\s+)([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)?#(\d+)\b/gi,
+              (m, p1, kw, sp, repoPrefix, num) => `${p1}Refs${sp}${repoPrefix || ""}#${num}`
+            );
+
+            if (rewritten !== body) {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pr.number,
+                body: rewritten,
+              });
+              core.notice("PR body updated to remove auto-close keywords.");
+            } else {
+              core.notice("No auto-close keywords found in PR body.");
+            }
+
+  check:
+    name: no-autoclose-keywords
+    runs-on: ubuntu-latest
+    needs: normalize
+    steps:
+      - name: Scan PR title/body and commits for auto-close keywords
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          PATTERN='\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)[[:space:]]+([[:alnum:]_.-]+\/[[:alnum:]_.-]+)?#([0-9]+)\b'
+          fail() { echo "::error::$1"; exit 1; }
+
+          sanitize_body() {
+            awk 'BEGIN{drop=0} /Original prompt[[:space:]]*$/{drop=1} {if(!drop) print}'
+          }
+
+          title="$PR_TITLE"
+          body="$(printf '%s' "$PR_BODY" | sanitize_body)"
+
+          printf '%s' "$title" | grep -Eiq "$PATTERN" && fail "Auto-close keyword found in PR TITLE. Use Refs/Related/Tracks instead."
+          printf '%s' "$body"  | grep -Eiq "$PATTERN" && fail "Auto-close keyword found in PR BODY (excluding 'Original prompt' block). Use Refs/Related/Tracks instead."
+
+          base_commits_api="https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/commits"
+          page=1
+          while :; do
+            commits_api="${base_commits_api}?per_page=100&page=${page}"
+            commits_json="$(curl -sSf \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "$commits_api")"
+
+            commit_messages="$(echo "$commits_json" | jq -r '.[].commit.message')"
+            [ -z "$commit_messages" ] && break
+
+            printf '%s\n' "$commit_messages" | grep -Eiq "$PATTERN" \
+              && fail "Auto-close keyword found in a COMMIT message in this PR. Amend/reword commit(s) to use Refs/Related/Tracks."
+
+            page_count="$(echo "$commits_json" | jq 'length')"
+            [ "$page_count" -lt 100 ] && break
+            page=$((page + 1))
+          done
+
+          echo "OK: No auto-close keywords detected (title/body/commits)."
