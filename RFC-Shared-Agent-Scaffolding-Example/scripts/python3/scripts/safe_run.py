@@ -1,14 +1,12 @@
 #!/usr/bin/env python3
 # safe_run.py (Python 3)
 #
-# Safe Execution Contract (M0-P1-I1, M0-P1-I2):
+# Safe Execution Contract (M0-P1-I1, M0-P1-I2 + Event Ledger):
 # - Executes the command verbatim.
 # - On success: creates NO artifacts.
-# - On failure: writes split stdout/stderr with section markers to SAFE_LOG_DIR (default: .agent/FAIL-LOGS)
-#   and preserves the original exit code.
+# - On failure: writes split stdout/stderr with section markers + event ledger to SAFE_LOG_DIR
 # - Log format: {ISO8601_TIMESTAMP}-pid{PID}-{STATUS}.log
-# - On abort (SIGINT Ctrl+C, SIGTERM): still writes partial output to SAFE_LOG_DIR
-#   using an "ABORTED" status for forensics.
+# - On abort (SIGINT/SIGTERM): still writes partial output with "ABORTED" status
 
 import os
 import re
@@ -17,6 +15,7 @@ import time
 import signal
 import tempfile
 import subprocess
+import threading
 from collections import deque
 from typing import Deque, List, Optional, Tuple
 
@@ -31,6 +30,7 @@ def usage() -> int:
     eprint("Environment:")
     eprint("  SAFE_LOG_DIR        Failure log directory (default: .agent/FAIL-LOGS)")
     eprint("  SAFE_SNIPPET_LINES  On failure/abort, print last N lines of output to stderr (default: 0)")
+    eprint("  SAFE_RUN_VIEW       If 'merged', emit optional merged view")
     return 2
 
 
@@ -48,26 +48,41 @@ class _AbortState:
         self.exit_code: Optional[int] = None
 
 
+class EventLedger:
+    """Thread-safe event ledger for tracking observed-order events."""
+    
+    def __init__(self) -> None:
+        self.events: List[Tuple[int, str, str]] = []  # (seq, stream, text)
+        self.seq: int = 0
+        self.lock = threading.Lock()
+    
+    def emit(self, stream: str, text: str) -> None:
+        """Emit an event with the next sequence number."""
+        with self.lock:
+            self.seq += 1
+            self.events.append((self.seq, stream, text))
+    
+    def write_to_file(self, f: object) -> None:
+        """Write all events to a file object."""
+        with self.lock:
+            for seq, stream, text in self.events:
+                f.write(f"[SEQ={seq}][{stream}] {text}\n".encode())
+
+
 def _install_signal_handlers(state: _AbortState) -> Tuple[object, object]:
-    """
-    Install SIGINT/SIGTERM handlers that:
-      - mark the run as aborted (so we can persist partial logs)
-      - unwind any blocking reads via KeyboardInterrupt
-    """
+    """Install SIGINT/SIGTERM handlers."""
     old_int = signal.getsignal(signal.SIGINT)
     old_term = signal.getsignal(signal.SIGTERM)
 
     def on_sigint(signum: int, frame: object) -> None:  # noqa: ARG001
         state.aborted = True
         state.signal_name = "SIGINT"
-        # 128 + SIGINT(2) = 130 (common shell convention)
         state.exit_code = 130
         raise KeyboardInterrupt
 
     def on_sigterm(signum: int, frame: object) -> None:  # noqa: ARG001
         state.aborted = True
         state.signal_name = "SIGTERM"
-        # 128 + SIGTERM(15) = 143
         state.exit_code = 143
         raise KeyboardInterrupt
 
@@ -91,6 +106,8 @@ def main(argv: List[str]) -> int:
 
     log_dir = os.environ.get("SAFE_LOG_DIR", ".agent/FAIL-LOGS")
     snippet_lines_raw = os.environ.get("SAFE_SNIPPET_LINES", "0")
+    view_mode = os.environ.get("SAFE_RUN_VIEW", "")
+    
     if not re.fullmatch(r"\d+", snippet_lines_raw):
         eprint("ERROR: SAFE_SNIPPET_LINES must be a non-negative integer")
         return 1
@@ -98,14 +115,18 @@ def main(argv: List[str]) -> int:
 
     ts = iso8601_timestamp()
     pid = os.getpid()
+    cmd_str = " ".join(argv)
 
-    # Temporary files for stdout and stderr streams
+    # Temporary files for stdout, stderr, and event ledger
     tmp_stdout_path: Optional[str] = None
     tmp_stderr_path: Optional[str] = None
     tmp_stdout_fh: Optional[object] = None
     tmp_stderr_fh: Optional[object] = None
 
-    # Tail snippets (separate for stdout/stderr)
+    # Event ledger
+    ledger = EventLedger()
+    
+    # Tail snippets
     tail_stdout: Deque[bytes] = deque(maxlen=snippet_lines if snippet_lines > 0 else 1)
     tail_stderr: Deque[bytes] = deque(maxlen=snippet_lines if snippet_lines > 0 else 1)
 
@@ -124,12 +145,13 @@ def main(argv: List[str]) -> int:
         tmp_stderr_fh = tmp_stderr_fh_obj
         tmp_stderr_path = tmp_stderr_fh_obj.name
 
+        # Emit start event
+        ledger.emit("META", f'safe-run start: cmd="{cmd_str}"')
+
         proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         assert proc.stdout is not None
         assert proc.stderr is not None
 
-        import threading
-        
         stdout_done = threading.Event()
         stderr_done = threading.Event()
         
@@ -138,10 +160,15 @@ def main(argv: List[str]) -> int:
                 for raw in iter(proc.stdout.readline, b""):
                     if raw == b"":
                         break
+                    # Remove trailing newline for ledger (add back for file/console)
+                    line_text = raw.decode("utf-8", "replace").rstrip("\n\r")
+                    
                     sys.stdout.buffer.write(raw)
                     sys.stdout.flush()
                     tmp_stdout_fh_obj.write(raw)
                     tmp_stdout_fh_obj.flush()
+                    ledger.emit("STDOUT", line_text)
+                    
                     if snippet_lines > 0:
                         tail_stdout.append(raw)
             except Exception:
@@ -154,10 +181,15 @@ def main(argv: List[str]) -> int:
                 for raw in iter(proc.stderr.readline, b""):
                     if raw == b"":
                         break
+                    # Remove trailing newline for ledger (add back for file/console)
+                    line_text = raw.decode("utf-8", "replace").rstrip("\n\r")
+                    
                     sys.stderr.buffer.write(raw)
                     sys.stderr.flush()
                     tmp_stderr_fh_obj.write(raw)
                     tmp_stderr_fh_obj.flush()
+                    ledger.emit("STDERR", line_text)
+                    
                     if snippet_lines > 0:
                         tail_stderr.append(raw)
             except Exception:
@@ -172,19 +204,16 @@ def main(argv: List[str]) -> int:
         stderr_thread.start()
 
         try:
-            # Wait for process completion and stream readers
             rc = proc.wait()
             stdout_done.wait(timeout=5)
             stderr_done.wait(timeout=5)
         except KeyboardInterrupt:
-            # Marked aborted by signal handlers above.
             state.aborted = True
             if state.signal_name is None:
                 state.signal_name = "SIGINT"
             if state.exit_code is None:
                 state.exit_code = 130
 
-            # Try graceful termination of the child, then hard kill.
             try:
                 proc.terminate()
             except Exception:
@@ -208,10 +237,13 @@ def main(argv: List[str]) -> int:
             except Exception:
                 pass
 
+        # Emit exit event
+        ledger.emit("META", f"safe-run exit: code={rc}")
+
     finally:
         _restore_signal_handlers(old_int, old_term)
 
-    # Success path: remove temp files and return 0 (no artifacts).
+    # Success path: remove temp files and return 0
     if not state.aborted and rc == 0:
         try:
             if tmp_stdout_fh is not None:
@@ -226,10 +258,9 @@ def main(argv: List[str]) -> int:
             pass
         return 0
 
-    # Failure/abort: combine temp files into final log artifact in SAFE_LOG_DIR with M0 format.
+    # Failure/abort: create log artifact
     os.makedirs(log_dir, exist_ok=True)
 
-    # M0-P1-I2: {ISO8601_TIMESTAMP}-pid{PID}-{STATUS}.log
     status = "ABORTED" if state.aborted else "FAIL"
     out_path = os.path.join(log_dir, f"{ts}-pid{pid}-{status}.log")
 
@@ -241,9 +272,10 @@ def main(argv: List[str]) -> int:
     except Exception:
         pass
 
-    # M0-P1-I1: Split stdout/stderr with section markers
+    # Write log with M0 split sections + event ledger
     try:
         with open(out_path, "wb") as dst:
+            # M0-P1-I1: Split stdout/stderr
             dst.write(b"=== STDOUT ===\n")
             if tmp_stdout_path and os.path.exists(tmp_stdout_path):
                 with open(tmp_stdout_path, "rb") as src:
@@ -261,6 +293,19 @@ def main(argv: List[str]) -> int:
                         if not chunk:
                             break
                         dst.write(chunk)
+            
+            # Event ledger
+            dst.write(b"\n--- BEGIN EVENTS ---\n")
+            ledger.write_to_file(dst)
+            dst.write(b"--- END EVENTS ---\n")
+            
+            # Optional merged view
+            if view_mode == "merged":
+                dst.write(b"\n--- BEGIN MERGED (OBSERVED ORDER) ---\n")
+                with ledger.lock:
+                    for seq, stream, text in ledger.events:
+                        dst.write(f"[#{seq}][{stream}] {text}\n".encode())
+                dst.write(b"--- END MERGED ---\n")
         
         # Clean up temp files
         if tmp_stdout_path and os.path.exists(tmp_stdout_path):
