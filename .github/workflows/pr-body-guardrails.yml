@@ -245,7 +245,8 @@ jobs:
               fi
               
               # Match issue references: optional repo prefix + # + number
-              refs=$(echo "$line" | grep -Eo '([[:alnum:]_.-]+/[[:alnum:]_.-]+)?#[0-9]+' || true)
+              # Use Perl regex with negative lookbehind to match JS behavior
+              refs=$(echo "$line" | grep -Po '(?<![[:alnum:]_.-])([[:alnum:]_.-]+/[[:alnum:]_.-]+)?#[0-9]+' || true)
               if [[ -z "$refs" ]]; then
                 continue
               fi
