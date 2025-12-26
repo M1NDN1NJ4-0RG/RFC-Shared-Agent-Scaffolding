@@ -77,8 +77,8 @@ POLL_INTERVAL_SECONDS = 10
 
 **Problem:** Without a single constant, implementations drift:
 - Bash uses 300 seconds
-- Python uses 600 seconds
-- PowerShell uses 900 seconds
+- Python uses 900 seconds
+- PowerShell uses 450 seconds
 - Agents get confused by inconsistent behavior
 
 **Solution:** One constant, defined here, referenced everywhere.
