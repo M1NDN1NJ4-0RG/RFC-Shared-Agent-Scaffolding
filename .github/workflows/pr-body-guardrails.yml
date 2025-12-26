@@ -102,8 +102,16 @@ jobs:
             # Remove auto-generated "Original prompt" section more robustly
             # Look for the pattern: a separator line (----) followed by "Original prompt"
             # This matches GitHub's auto-appended format more precisely
+            # Also remove code fences to avoid false positives from code examples
             awk '
-              BEGIN { drop=0 }
+              BEGIN { drop=0; in_fence=0 }
+              # Track code fences
+              /^```|^~~~/ {
+                in_fence = !in_fence
+                next
+              }
+              # Skip content inside code fences
+              in_fence { next }
               # Match separator followed by "Original prompt" (with optional whitespace)
               /^----[[:space:]]*$/ {
                 # Peek ahead - if next line is "Original prompt", start dropping
