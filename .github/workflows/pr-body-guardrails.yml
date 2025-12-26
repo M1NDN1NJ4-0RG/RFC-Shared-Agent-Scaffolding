@@ -5,12 +5,12 @@ on:
     types: [opened, edited, synchronize, reopened, ready_for_review]
 
 permissions:
-  pull-requests: write   # normalize needs this
+  pull-requests: write   # needed for PR body update
   contents: read         # scan job reads commits
-  pull-requests: read    # scan job reads PR metadata
 
 jobs:
   normalize:
+    if: github.event.pull_request.head.repo.fork == false
     runs-on: ubuntu-latest
     steps:
       - name: Rewrite auto-close keywords in PR body
