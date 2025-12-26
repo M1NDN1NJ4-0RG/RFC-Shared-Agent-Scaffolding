@@ -22,6 +22,48 @@ v8 also introduces:
 
 ---
 
+## 0.1. Canonical Implementation (v0.1.1 Update)
+
+**Status:** Active (as of 2024)  
+**Implementation:** Rust Canonical Tool
+
+As of v0.1.1, the contract behaviors defined in this RFC are **canonically implemented in Rust**. The Rust canonical tool (`rust/src/`) is the single source of truth for:
+
+- Event ledger format and emission
+- Merged view mode
+- Exit code forwarding and signal handling
+- Artifact generation and no-clobber semantics
+- Command execution behaviors (safe-run, safe-check, safe-archive)
+
+**Language-specific wrappers** (Bash, Perl, Python3, PowerShell) are now **thin invokers** that discover and execute the Rust binary. They:
+
+1. Locate the Rust binary via deterministic discovery rules (see `docs/wrapper-discovery.md`)
+2. Pass through all arguments without modification
+3. Forward exit codes from the Rust tool
+4. Provide actionable error messages if the Rust binary is not available
+
+**Rationale:**
+
+Maintaining four independent implementations led to:
+- Drift risk across regex dialects, buffering, exit codes
+- N×maintenance burden for behavior changes
+- Complex cross-platform conformance testing
+- YAML/Bash/JavaScript escaping issues in CI
+
+The Rust canonical tool provides:
+- ✅ One implementation = one source of truth
+- ✅ Cross-platform consistency via Rust stdlib
+- ✅ Type safety and compile-time guarantees
+- ✅ Thin wrappers = reduced maintenance surface
+
+**Documentation:**
+
+- [Rust Canonical Tool](./docs/rust-canonical-tool.md)
+- [Wrapper Discovery Rules](./docs/wrapper-discovery.md)
+- [Conformance Contract](./docs/conformance-contract.md)
+
+---
+
 ## 1. Problem Statement
 
 LLM-based coding agents can perform multi-day refactors and CI-gated workflows, but without an operational model, their work is fragile:
