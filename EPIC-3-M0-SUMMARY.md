@@ -27,8 +27,8 @@ All M0 (Contract Clarity) decision gates have been resolved and documented. The 
 | Stable ID | Item | Status | Notes |
 |-----------|------|--------|-------|
 | **M1-P1-I1** | jq Error Noise Suppression | ✅ COMPLETED | PR #4 |
-| **M1-P2-I1** | Test vs Implementation Drift (Python 3) | 🔄 IN PROGRESS | Safe_run complete, preflight pending |
-| **M1-P3-I1** | Python 2 Support Policy | ⬜ NOT STARTED | Decision required |
+| **M1-P2-I1** | Test vs Implementation Drift (Python 3) | ✅ COMPLETED | PR #8 |
+| **M1-P3-I1** | Python 2 Support Policy | ✅ DECIDED | Option A: Dropped (PR #9) |
 | **M1-P4-I1** | Test Runner Path Correction (Perl) | ✅ COMPLETED | PR #4 |
 | **M1-P5-I1** | CI-Ready PowerShell Validation | ⬜ NOT STARTED | - |
 
