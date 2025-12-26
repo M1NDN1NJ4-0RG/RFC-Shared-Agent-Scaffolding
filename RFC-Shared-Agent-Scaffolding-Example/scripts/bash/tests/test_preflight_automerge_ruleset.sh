@@ -3,8 +3,8 @@ set -euo pipefail
 cd "$(dirname "$0")"
 source "./lib.sh"
 
-ROOT="$(cd ../.. && pwd)"
-PREF="${ROOT}/scripts/bash/preflight_automerge_ruleset.sh"
+ROOT="$(cd .. && pwd)"
+PREF="${ROOT}/scripts/preflight_automerge_ruleset.sh"
 
 make_mock_gh() {
   local dir="$1"

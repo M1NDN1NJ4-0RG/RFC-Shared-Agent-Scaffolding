@@ -3,8 +3,8 @@ set -euo pipefail
 cd "$(dirname "$0")"
 source "./lib.sh"
 
-ROOT="$(cd ../.. && pwd)"
-SAFE_RUN="${ROOT}/scripts/bash/safe-run.sh"
+ROOT="$(cd .. && pwd)"
+SAFE_RUN="${ROOT}/scripts/safe-run.sh"
 
 test_success_no_artifacts() {
   local tmp out
