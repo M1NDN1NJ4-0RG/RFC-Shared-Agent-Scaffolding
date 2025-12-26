@@ -107,7 +107,7 @@ jobs:
               BEGIN { drop=0; in_fence=0 }
               # Track code fences
               /^```|^~~~/ {
-                in_fence = !in_fence
+                in_fence = (in_fence ? 0 : 1)
                 next
               }
               # Skip content inside code fences
