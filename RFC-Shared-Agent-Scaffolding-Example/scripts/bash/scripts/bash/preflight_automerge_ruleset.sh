@@ -157,7 +157,7 @@ main() {
   fi
 
   # If the API returned an error JSON, classify.
-  if jq -e 'has("message") and has("status")' >/dev/null <<<"$rulesets_json"; then
+  if jq -e 'type=="object" and has("message") and has("status")' >/dev/null 2>&1 <<<"$rulesets_json"; then
     if classify_auth_error <<<"$rulesets_json"; then
       warn "Auth/permission error while fetching rulesets (repo=$REPO)"
       exit 2
@@ -180,7 +180,7 @@ main() {
     exit 2
   fi
 
-  if jq -e 'has("message") and has("status")' >/dev/null <<<"$rs_json"; then
+  if jq -e 'type=="object" and has("message") and has("status")' >/dev/null 2>&1 <<<"$rs_json"; then
     if classify_auth_error <<<"$rs_json"; then
       warn "Auth/permission error while fetching ruleset (id=$RULESET_ID repo=$REPO)"
       exit 2

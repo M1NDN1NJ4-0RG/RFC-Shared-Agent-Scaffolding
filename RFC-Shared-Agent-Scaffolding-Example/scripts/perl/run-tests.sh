@@ -10,9 +10,9 @@ export SRC_PREFLIGHT="${SRC_PREFLIGHT:-$ROOT/scripts/preflight_automerge_ruleset
 cd "$ROOT"
 
 if command -v prove >/dev/null 2>&1; then
-  prove -v -I t/lib t/*.t
+  prove -v -I tests/lib tests/*.t
 else
-  for f in t/*.t; do
-    perl -I t/lib "$f"
+  for f in tests/*.t; do
+    perl -I tests/lib "$f"
   done
 fi
