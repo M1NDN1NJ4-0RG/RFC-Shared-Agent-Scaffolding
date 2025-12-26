@@ -20,34 +20,52 @@ The canonical tool supports two output modes, controlled by the `SAFE_RUN_VIEW` 
 
 **Format:**
 
+The log file contains both split sections and an event ledger, as defined in RFC section 7.1.1:
+
 ```
-{"seq":1,"event":"META","data":"START","timestamp":"2024-01-15T10:30:00.123Z"}
-{"seq":2,"event":"STDOUT","data":"Hello, world!"}
-{"seq":3,"event":"STDERR","data":"Warning: deprecated API"}
-{"seq":4,"event":"META","data":"END","timestamp":"2024-01-15T10:30:00.456Z"}
-{"seq":5,"event":"META","data":"EXIT","exit_code":0}
+=== STDOUT ===
+Hello, world!
+
+=== STDERR ===
+Warning: deprecated API
+
+--- BEGIN EVENTS ---
+[SEQ=1][META] safe-run start: cmd="echo 'Hello, world!' >&2 echo 'Warning: deprecated API'"
+[SEQ=2][STDOUT] Hello, world!
+[SEQ=3][STDERR] Warning: deprecated API
+[SEQ=4][META] safe-run exit: code=0
+--- END EVENTS ---
 ```
 
 **Requirements:**
 
-1. **Monotonic Sequence Numbers:** `seq` starts at 1 and increments by 1 for each event
-2. **Event Types:**
-   - `META` with `data="START"` - marks command start
+1. **Split Sections** (M0 backward compatibility):
+   - `=== STDOUT ===` section with stdout content
+   - `=== STDERR ===` section with stderr content
+   - Per-stream ordering preserved
+
+2. **Event Ledger Section:**
+   - Enclosed in `--- BEGIN EVENTS ---` and `--- END EVENTS ---` markers
+   - Event format: `[SEQ=<seq>][<stream>] <text>`
+   - `<seq>`: Monotonically increasing integer starting at 1
+   - `<stream>`: One of `STDOUT`, `STDERR`, `META`
+   - `<text>`: Exact text payload for that event
+
+3. **Event Types:**
+   - `META` with `safe-run start: cmd="<command>"` - marks command start (seq=1)
    - `STDOUT` - child process stdout line
    - `STDERR` - child process stderr line
-   - `META` with `data="END"` - marks command end
-   - `META` with `data="EXIT"` - final event with exit code
-3. **Timestamps:** ISO 8601 format with millisecond precision for META events
-4. **Per-Line Emission:** Each output line is a separate event
-5. **JSON Format:** Each event is a single-line JSON object
+   - `META` with `safe-run exit: code=<N>` - final event with exit code
+
+4. **Per-Line Emission:** Each output line is a separate STDOUT/STDERR event
 
 **Edge Cases:**
 
-- Empty output: Only META events (START, END, EXIT)
-- No stdout: Only STDERR and META events
-- No stderr: Only STDOUT and META events
-- Non-zero exit: EXIT event includes `exit_code` field
-- Signal termination: EXIT event includes `signal` field and translated exit code
+- Empty output: Only META events (start, exit)
+- No stdout: STDOUT section empty, only STDERR events
+- No stderr: STDERR section empty, only STDOUT events
+- Non-zero exit: EXIT meta event includes non-zero code
+- Signal termination: EXIT code reflects signal (128 + signal number)
 
 ### 2. Merged View Mode
 
@@ -111,14 +129,16 @@ Example: `safe-run-20240115-103000-a3f9b2.log`
 
 ### Custom Log Directory
 
-- Default: Current working directory
-- Override via `SAFE_RUN_LOG_DIR` environment variable
+- Default: `.agent/FAIL-LOGS/` (for failures)
+- Override via `SAFE_LOG_DIR` environment variable
 - Tool MUST create directory if it doesn't exist
 
 ### Log Content
 
-Event ledger mode:
-- Log file contains JSON event stream (same format as stdout)
+Event ledger mode (default):
+- Log file contains split sections (`=== STDOUT ===`, `=== STDERR ===`)
+- Log file contains event ledger between `--- BEGIN EVENTS ---` and `--- END EVENTS ---` markers
+- Event format: `[SEQ=N][STREAM] text`
 
 Merged view mode:
 - Log file contains merged stdout/stderr output
@@ -128,32 +148,34 @@ Merged view mode:
 
 ### Test Fixtures
 
-Test vectors are defined in `conformance/vectors.json`:
+Test vectors are defined in `conformance/vectors.json` using the established M0 format:
 
 ```json
 {
   "version": "1.0",
-  "contract_version": "M0-v0.1.0",
-  "vectors": [
-    {
-      "id": "safe_run_basic_stdout",
-      "command": "safe-run",
-      "args": ["echo", "hello"],
-      "env": {},
-      "expected": {
-        "exit_code": 0,
-        "stdout_pattern": ".*STDOUT.*hello.*",
-        "events": [
-          {"event": "META", "data": "START"},
-          {"event": "STDOUT", "data": "hello"},
-          {"event": "META", "data": "END"},
-          {"event": "META", "data": "EXIT", "exit_code": 0}
-        ]
+  "m0_contract_version": "v0.1.0",
+  "vectors": {
+    "safe_run": [
+      {
+        "id": "safe-run-001",
+        "name": "Success produces no artifacts",
+        "m0_spec": [],
+        "command": {
+          "args": ["echo", "ok"],
+          "env": {}
+        },
+        "expected": {
+          "exit_code": 0,
+          "stdout_contains": ["ok"],
+          "artifacts_created": false
+        }
       }
-    }
-  ]
+    ]
+  }
 }
 ```
+
+See `conformance/vectors.json` for the complete set of test vectors covering M0 spec items.
 
 ### Conformance Harness
 
@@ -222,17 +244,17 @@ conformance/
 
 - Unix/Linux: LF (`\n`)
 - Windows: CRLF (`\r\n`)
-- Contract allows either, tools normalize internally to LF for JSON
+- Contract allows either, tools normalize internally to LF for text processing
 
 ### Encoding
 
 - UTF-8 required for all text
-- Binary output: Base64-encoded in JSON
+- Binary output: Base64-encoded if needed in event ledger text field
 
 ### Whitespace
 
 - Trailing whitespace on data lines is preserved
-- Empty lines produce events with `data=""`
+- Empty lines produce STDOUT/STDERR events with empty text field
 
 ## Versioning & Compatibility
 
