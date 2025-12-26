@@ -1,0 +1,45 @@
+name: Structure Validation
+
+on:
+  pull_request:
+    paths:
+      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/**'
+      - 'scripts/validate-structure.sh'
+      - '.github/workflows/structure-validation.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/**'
+      - 'scripts/validate-structure.sh'
+      - '.github/workflows/structure-validation.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-structure:
+    name: Validate Canonical Directory Structure
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Run structure validation
+        run: |
+          chmod +x scripts/validate-structure.sh
+          ./scripts/validate-structure.sh
+      
+      - name: Report success
+        if: success()
+        run: |
+          echo "✅ All language bundles follow the canonical directory structure"
+          echo ""
+          echo "Expected structure for each language:"
+          echo "  scripts/<language>/"
+          echo "    ├── scripts/          # Implementation files"
+          echo "    ├── tests/            # Test files"
+          echo "    ├── run-tests.*       # Test runner"
+          echo "    └── README_TESTS.md   # Optional"
