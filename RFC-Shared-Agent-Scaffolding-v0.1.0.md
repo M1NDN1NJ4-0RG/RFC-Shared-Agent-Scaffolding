@@ -163,6 +163,126 @@ Wrappers MUST be used for critical commands. They must:
 - Preserve both streams in their entirety in failure logs
 - Preserve exit codes regardless of output format
 
+#### 7.1.1 Hybrid Logging Fidelity Contract (Enhanced)
+
+**Status:** EPIC Follow-up - Logging Fidelity Extension
+
+This section extends M0-P1-I1 with deterministic cross-stream ordering guarantees and human-friendly merged views.
+
+**Motivation:** While split stdout/stderr sections (M0-P1-I1) preserve per-stream ordering, they do not guarantee temporal interleaving across streams due to OS scheduling and buffering differences. This enhancement provides:
+1. A contractually guaranteed **observed-order event ledger** with global sequence numbers
+2. An optional **merged view** for human readability
+3. Cross-language conformance on event ordering semantics
+
+**Stream Terminology:**
+- **stdout stream**: Bytes emitted by the child process on stdout
+- **stderr stream**: Bytes emitted by the child process on stderr  
+- **meta stream**: Wrapper-generated informational lines (start/end markers, exit code, etc.)
+
+**Observed Order Definition:**
+The order in which the wrapper receives bytes/lines/chunks from stdout/stderr pipes. This is subject to OS scheduling and buffering, so it is not "ground truth emission-time order," but it is the only order we can contractually guarantee without merging streams in the child process.
+
+**Requirements:**
+
+**A) Split Sections (M0-P1-I1 - Unchanged)**
+
+All implementations MUST continue to emit:
+
+1. A `STDOUT` section with markers:
+   ```
+   --- BEGIN STDOUT ---
+   ...stdout content...
+   --- END STDOUT ---
+   ```
+
+2. A `STDERR` section with markers:
+   ```
+   --- BEGIN STDERR ---
+   ...stderr content...
+   --- END STDERR ---
+   ```
+
+Per-stream ordering MUST be preserved. Content MUST NOT be lost. No stdout content may appear in the STDERR section and vice versa.
+
+**B) Event Ledger (NEW - Required)**
+
+All implementations MUST also emit an **Event Ledger** section:
+
+```
+--- BEGIN EVENTS ---
+[SEQ=1][META] safe-run start: cmd="<command>"
+[SEQ=2][STDOUT] <line1>
+[SEQ=3][STDERR] <line1>
+[SEQ=4][STDOUT] <line2>
+[SEQ=5][META] safe-run exit: code=<N>
+--- END EVENTS ---
+```
+
+**Event Record Format:**
+```
+[SEQ=<seq>][<stream>] <text>
+```
+
+Where:
+- `<seq>`: Monotonically increasing integer starting at 1
+- `<stream>`: One of `STDOUT`, `STDERR`, `META`
+- `<text>`: The exact text payload for that event (single line, no trailing newline in the format)
+
+**Event Ledger Rules:**
+- `seq` MUST be strictly increasing by 1 across all events
+- `seq` MUST reflect the wrapper's observed order across ALL streams (stdout/stderr/meta)
+- Every line/chunk emitted into the split STDOUT/STDERR sections MUST correspond to one or more `STDOUT`/`STDERR` events in the ledger
+- Wrapper-generated markers and exit summary MUST appear as `META` events in the ledger
+
+**Standardized META Lines:**
+
+To ensure cross-language conformance, the following META event text MUST match exactly:
+
+1. **Start event** (MUST be seq=1 unless there are earlier meta events):
+   ```
+   safe-run start: cmd="<command>"
+   ```
+   Where `<command>` is the full command being executed (escaped appropriately for the ledger format).
+
+2. **Exit event** (MUST be the final META event):
+   ```
+   safe-run exit: code=<exit_code>
+   ```
+   Where `<exit_code>` is the integer exit code.
+
+**C) Optional Merged View (NEW - Optional)**
+
+Implementations MAY support an optional mode that emits a merged transcript in `seq` order, derived from the Event Ledger.
+
+**Activation:** Via CLI flag (e.g., `--merged` or `--view merged`) OR environment variable (e.g., `SAFE_RUN_VIEW=merged`)
+
+When enabled, implementations MUST emit:
+
+```
+--- BEGIN MERGED (OBSERVED ORDER) ---
+[#1][META] safe-run start: cmd="<command>"
+[#2][STDOUT] <line1>
+[#3][STDERR] <line1>
+[#4][STDOUT] <line2>
+[#5][META] safe-run exit: code=<N>
+--- END MERGED ---
+```
+
+**Merged View Format:**
+```
+[#<seq>][<stream>] <text>
+```
+
+**Notes:**
+- This merged view represents **observed-order**, not guaranteed emission-time interleaving
+- The merged view MUST be identical across languages given the same observed event ordering
+- Default behavior MUST include split sections + event ledger; merged view is optional
+- If an implementation supports output control (split-only / merged-only / both), it MUST be documented and tested
+
+**Non-Goals:**
+- We do NOT attempt to reconstruct the child process's true emission-time ordering across stdout/stderr
+- We do NOT require identical timestamps across platforms (timestamps are informational only if present)
+
 ### 7.2 Failure Log Naming (M0-P1-I2)
 
 **Decision:** Deterministic, non-overwriting naming
