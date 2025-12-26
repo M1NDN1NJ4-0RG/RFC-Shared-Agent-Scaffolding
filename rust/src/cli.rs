@@ -8,7 +8,9 @@ const CONTRACT_VERSION: &str = "M0-v0.1.0";
 #[command(name = "safe-run")]
 #[command(version = VERSION)]
 #[command(about = "Execute commands with structured logging and artifact generation")]
-#[command(long_about = "Canonical Rust implementation of the RFC-Shared-Agent-Scaffolding contract")]
+#[command(
+    long_about = "Canonical Rust implementation of the RFC-Shared-Agent-Scaffolding contract"
+)]
 pub struct Cli {
     #[command(subcommand)]
     command: Option<Commands>,
@@ -39,15 +41,9 @@ enum Commands {
 impl Cli {
     pub fn run(&self) -> Result<i32, String> {
         match &self.command {
-            Some(Commands::Run { command }) => {
-                self.run_command(command)
-            }
-            Some(Commands::Check { command }) => {
-                self.check_command(command)
-            }
-            Some(Commands::Archive { command }) => {
-                self.archive_command(command)
-            }
+            Some(Commands::Run { command }) => self.run_command(command),
+            Some(Commands::Check { command }) => self.check_command(command),
+            Some(Commands::Archive { command }) => self.archive_command(command),
             None => {
                 // No subcommand provided, show help
                 println!("safe-run {} (contract: {})", VERSION, CONTRACT_VERSION);
