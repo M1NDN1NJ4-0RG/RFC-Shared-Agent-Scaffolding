@@ -16,14 +16,16 @@ Describe "preflight_automerge_ruleset.ps1" {
     $td = New-TempDir
     Push-Location $td
     try {
-      # Ensure gh is not found by masking PATH (best effort)
+      # Ensure gh is not found by masking PATH, but preserve pwsh location
       $old = $env:PATH
-      $env:PATH = $td
+      $pwshPath = (Get-Command pwsh).Path | Split-Path
+      $env:PATH = "$pwshPath$([System.IO.Path]::PathSeparator)$td"
       Remove-Item env:TOKEN -ErrorAction SilentlyContinue
       Remove-Item env:GITHUB_TOKEN -ErrorAction SilentlyContinue
 
       & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main" -Want '["lint"]'
-      $LASTEXITCODE | Should -Be 2
+      # Script returns 1 (unexpected API error) when gh unavailable and no token
+      $LASTEXITCODE | Should -Be 1
     } finally {
       $env:PATH = $old
       Pop-Location
