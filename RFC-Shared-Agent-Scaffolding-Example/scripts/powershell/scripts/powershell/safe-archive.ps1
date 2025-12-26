@@ -63,12 +63,27 @@ function Compress-File([string]$method, [string]$path) {
 
 function Archive-One([string]$src, [string]$archiveDir, [string]$compress) {
   if (-not (Test-Path $src)) { throw "File not found: $src" }
+  
+  # Validate compression method before moving file
+  if ($compress -notin @("none", "gzip", "xz", "zstd")) {
+    throw "Invalid SAFE_ARCHIVE_COMPRESS value: $compress (expected none|gzip|xz|zstd)"
+  }
+  
   $base = Split-Path -Leaf $src
   $dest = Join-Path $archiveDir $base
+  
+  # Auto-suffix on collision (no-clobber default behavior per M0-P1-I3)
   if (Test-Path $dest) {
-    Write-Err "SKIP: destination exists (no-clobber): $dest"
-    return
+    $nameOnly = [System.IO.Path]::GetFileNameWithoutExtension($base)
+    $ext = [System.IO.Path]::GetExtension($base)
+    $counter = 1
+    do {
+      $suffixedName = "${nameOnly}-${counter}${ext}"
+      $dest = Join-Path $archiveDir $suffixedName
+      $counter++
+    } while (Test-Path $dest)
   }
+  
   Move-Item -Path $src -Destination $dest
   Write-Err "ARCHIVED: $src -> $dest"
   Compress-File $compress $dest
@@ -89,12 +104,18 @@ if ([string]::IsNullOrWhiteSpace($compress)) { $compress = "none" }
 New-Item -ItemType Directory -Force -Path $failDir | Out-Null
 New-Item -ItemType Directory -Force -Path $archiveDir | Out-Null
 
-if ($ArgsRest[0] -eq '--all') {
-  $files = @(Get-ChildItem -Path $failDir -File | Sort-Object Name)
-  if ($files.Count -eq 0) { Write-Err "No files to archive in $failDir"; exit 0 }
-  foreach ($f in $files) { Archive-One $f.FullName $archiveDir $compress }
+try {
+  if ($ArgsRest[0] -eq '--all') {
+    $files = @(Get-ChildItem -Path $failDir -File | Sort-Object Name)
+    if ($files.Count -eq 0) { Write-Err "No files to archive in $failDir"; exit 0 }
+    foreach ($f in $files) { Archive-One $f.FullName $archiveDir $compress }
+    exit 0
+  }
+
+  foreach ($f in $ArgsRest) { Archive-One $f $archiveDir $compress }
   exit 0
 }
-
-foreach ($f in $ArgsRest) { Archive-One $f $archiveDir $compress }
-exit 0
+catch {
+  Write-Err "ERROR: $($_.Exception.Message)"
+  exit 2
+}

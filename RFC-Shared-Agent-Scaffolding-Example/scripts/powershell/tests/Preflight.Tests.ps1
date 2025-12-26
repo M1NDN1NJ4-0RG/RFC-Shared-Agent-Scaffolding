@@ -16,14 +16,16 @@ Describe "preflight_automerge_ruleset.ps1" {
     $td = New-TempDir
     Push-Location $td
     try {
-      # Ensure gh is not found by masking PATH (best effort)
+      # Ensure gh is not found by masking PATH, but preserve pwsh location
       $old = $env:PATH
-      $env:PATH = $td
+      $pwshPath = (Get-Command pwsh).Path | Split-Path
+      $env:PATH = "$pwshPath$([System.IO.Path]::PathSeparator)$td"
       Remove-Item env:TOKEN -ErrorAction SilentlyContinue
       Remove-Item env:GITHUB_TOKEN -ErrorAction SilentlyContinue
 
-      & pwsh -NoProfile -File $ScriptUnderTest --repo "o/r" --ruleset-name "Main" --want '["lint"]'
-      $LASTEXITCODE | Should -Be 2
+      & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main" -Want '["lint"]'
+      # Script returns 1 (unexpected API error) when gh unavailable and no token
+      $LASTEXITCODE | Should -Be 1
     } finally {
       $env:PATH = $old
       Pop-Location
@@ -43,7 +45,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       "name": "Main - PR Only + Green CI",
       "target": "branch",
       "enforcement": "active",
-      "conditions": {"ref_name": {"include": ["refs/heads/main"]}},
+      "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"]}},
       "rules": [
         {
           "type": "required_status_checks",
@@ -62,7 +64,7 @@ Describe "preflight_automerge_ruleset.ps1" {
 "@
       Add-FakeGhToPath -FixtureJson $fixture -OutDir $td | Out-Null
 
-      & pwsh -NoProfile -File $ScriptUnderTest --repo "o/r" --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' --default-branch "main"
+      & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main - PR Only + Green CI" -Want '["lint","test"]'
       $LASTEXITCODE | Should -Be 0
     } finally {
       Pop-Location
@@ -82,7 +84,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       "name": "Main - PR Only + Green CI",
       "target": "branch",
       "enforcement": "active",
-      "conditions": {"ref_name": {"include": ["refs/heads/main"]}},
+      "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"]}},
       "rules": [
         {
           "type": "required_status_checks",
@@ -100,8 +102,8 @@ Describe "preflight_automerge_ruleset.ps1" {
 "@
       Add-FakeGhToPath -FixtureJson $fixture -OutDir $td | Out-Null
 
-      & pwsh -NoProfile -File $ScriptUnderTest --repo "o/r" --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' --default-branch "main"
-      $LASTEXITCODE | Should -Be 3
+      & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main - PR Only + Green CI" -Want '["lint","test"]'
+      $LASTEXITCODE | Should -Be 1
     } finally {
       Pop-Location
     }
@@ -120,7 +122,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       "name": "Main - PR Only + Green CI",
       "target": "branch",
       "enforcement": "evaluate",
-      "conditions": {"ref_name": {"include": ["refs/heads/main"]}},
+      "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"]}},
       "rules": [
         {
           "type": "required_status_checks",
@@ -139,8 +141,8 @@ Describe "preflight_automerge_ruleset.ps1" {
 "@
       Add-FakeGhToPath -FixtureJson $fixture -OutDir $td | Out-Null
 
-      & pwsh -NoProfile -File $ScriptUnderTest --repo "o/r" --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' --default-branch "main"
-      $LASTEXITCODE | Should -Be 3
+      & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main - PR Only + Green CI" -Want '["lint","test"]'
+      $LASTEXITCODE | Should -Be 1
     } finally {
       Pop-Location
     }

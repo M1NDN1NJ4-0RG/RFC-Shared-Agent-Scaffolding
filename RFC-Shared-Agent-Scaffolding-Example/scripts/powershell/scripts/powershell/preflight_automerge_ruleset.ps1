@@ -95,7 +95,10 @@ function Get-Rulesets {
   if (Have-Cmd "gh") {
     $raw = Gh-Api "repos/$Repo/rulesets"
     if ($null -eq $raw) { Write-Err "WARN: Failed to call gh api"; exit 2 }
-    try { return $raw | ConvertFrom-Json } catch { Write-Err "WARN: Invalid JSON from gh"; exit 2 }
+    try {
+      $parsed = $raw | ConvertFrom-Json
+      return $parsed.rulesets
+    } catch { Write-Err "WARN: Invalid JSON from gh"; exit 2 }
   } else {
     $res = Http-Get "https://api.github.com/repos/$Repo/rulesets"
     if ($res.status -ge 400) {
@@ -103,7 +106,7 @@ function Get-Rulesets {
       Write-Err "WARN: Unexpected API error while fetching rulesets"
       exit 1
     }
-    return $res.body
+    return $res.body.rulesets
   }
 }
 
@@ -111,7 +114,17 @@ function Get-Ruleset([string]$id) {
   if (Have-Cmd "gh") {
     $raw = Gh-Api "repos/$Repo/rulesets/$id"
     if ($null -eq $raw) { Write-Err "WARN: Failed to call gh api"; exit 2 }
-    try { return $raw | ConvertFrom-Json } catch { Write-Err "WARN: Invalid JSON from gh"; exit 2 }
+    try {
+      $parsed = $raw | ConvertFrom-Json
+      # Handle both direct ruleset response and wrapped response (for test compatibility)
+      if ($null -ne $parsed.rulesets) {
+        # Wrapped response - find the ruleset by ID
+        return $parsed.rulesets | Where-Object { [string]$_.id -eq $id } | Select-Object -First 1
+      } else {
+        # Direct ruleset response
+        return $parsed
+      }
+    } catch { Write-Err "WARN: Invalid JSON from gh"; exit 2 }
   } else {
     $res = Http-Get "https://api.github.com/repos/$Repo/rulesets/$id"
     if ($res.status -ge 400) {

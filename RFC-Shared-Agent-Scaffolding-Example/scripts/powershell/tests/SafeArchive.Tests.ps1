@@ -50,10 +50,11 @@ Describe "safe-archive.ps1" {
       Test-Path -LiteralPath $a | Should -BeFalse
       Test-Path -LiteralPath $b | Should -BeFalse
 
-      (Get-ChildItem -LiteralPath $arch -Filter "b-fail.txt").Count | Should -Be 1
-      (Get-ChildItem -LiteralPath $arch -Filter "a-fail.txt").Count | Should -Be 1
-      (Get-ChildItem -LiteralPath $arch -Filter "a-fail-*.txt").Count | Should -BeGreaterThan 0
+      @(Get-ChildItem -LiteralPath $arch -Filter "b-fail.txt").Count | Should -Be 1
+      @(Get-ChildItem -LiteralPath $arch -Filter "a-fail.txt").Count | Should -Be 1
+      @(Get-ChildItem -LiteralPath $arch -Filter "a-fail-*.txt").Count | Should -BeGreaterThan 0
     } finally {
+      Remove-Item env:SAFE_FAIL_DIR, env:SAFE_ARCHIVE_DIR, env:SAFE_ARCHIVE_COMPRESS -ErrorAction SilentlyContinue
       Pop-Location
     }
   }
@@ -76,8 +77,9 @@ Describe "safe-archive.ps1" {
       $LASTEXITCODE | Should -Be 0
 
       Test-Path -LiteralPath $a | Should -BeFalse
-      (Get-ChildItem -LiteralPath $arch -Filter "x-fail.txt.gz").Count | Should -Be 1
+      @(Get-ChildItem -LiteralPath $arch -Filter "x-fail.txt.gz").Count | Should -Be 1
     } finally {
+      Remove-Item env:SAFE_FAIL_DIR, env:SAFE_ARCHIVE_DIR, env:SAFE_ARCHIVE_COMPRESS -ErrorAction SilentlyContinue
       Pop-Location
     }
   }
@@ -100,6 +102,7 @@ Describe "safe-archive.ps1" {
       $LASTEXITCODE | Should -Be 2
       Test-Path -LiteralPath $a | Should -BeTrue
     } finally {
+      Remove-Item env:SAFE_ARCHIVE_COMPRESS -ErrorAction SilentlyContinue
       Pop-Location
     }
   }
