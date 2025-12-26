@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   check:
@@ -17,26 +18,43 @@ jobs:
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
-          COMMITS_URL: ${{ github.event.pull_request.commits_url }}
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
 
-          # Case-insensitive patterns that trigger issue auto-close
-          # Includes "Fixes #123" and "Fixes owner/repo#123"
-          PATTERN='(^|[^a-z])((close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved))[[:space:]]+([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)?#([0-9]+)\b'
+          # Match GitHub autoclose keywords (case-insensitive), with optional ":".
+          # Examples: "Fixes #123", "fixes: owner/repo#123", "Closes #9"
+          PATTERN='(^|[^[:alnum:]_])(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)([[:space:]]*:[[:space:]]*|[[:space:]]+)([[:alnum:]_.-]+\/[[:alnum:]_.-]+)?#([0-9]+)\b'
 
-          fail() {
-            echo "::error::$1"
-            exit 1
+          fail() { echo "::error::$1"; exit 1; }
+
+          # Some systems append an "Original prompt" blob that may contain forbidden text
+          # and is not user-editable. Ignore everything from that heading down.
+          sanitize_body() {
+            awk '
+              BEGIN { drop=0 }
+              /^Original prompt[[:space:]]*$/ { drop=1 }
+              { if (!drop) print }
+            '
           }
 
-          echo "$PR_TITLE" | grep -Eiq "$PATTERN" && fail "Auto-close keyword found in PR TITLE. Use Refs/Related/Tracks instead."
-          echo "$PR_BODY"  | grep -Eiq "$PATTERN" && fail "Auto-close keyword found in PR BODY. Use Refs/Related/Tracks instead."
+          title="$PR_TITLE"
+          body="$(printf '%s' "$PR_BODY" | sanitize_body)"
 
-          # Scan commit messages in the PR (subject + body)
-          commits_json="$(curl -sSf -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$COMMITS_URL")"
+          printf '%s' "$title" | grep -Eiq "$PATTERN" && fail "Auto-close keyword found in PR TITLE. Use Refs/Related/Tracks instead."
+          printf '%s' "$body"  | grep -Eiq "$PATTERN" && fail "Auto-close keyword found in PR BODY (excluding 'Original prompt' block). Use Refs/Related/Tracks instead."
+
+          # Scan commit messages (subject + body) for the PR via the pulls/{pull_number}/commits endpoint.
+          commits_api="https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/commits?per_page=100"
+          commits_json="$(curl -sSf \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "$commits_api")"
+
           echo "$commits_json" | jq -r '.[].commit.message' | grep -Eiq "$PATTERN" \
             && fail "Auto-close keyword found in a COMMIT message in this PR. Amend/reword commit(s) to use Refs/Related/Tracks."
 
-          echo "OK: No auto-close keywords detected."
+          echo "OK: No auto-close keywords detected (title/body/commits)."
