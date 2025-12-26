@@ -45,9 +45,9 @@ cleanup_tmp() {
   [ -f "${TMP_EVENTS}.seq" ] && rm -f "${TMP_EVENTS}.seq" 2>/dev/null || true
   [ -f "${TMP_EVENTS}.lock" ] && rm -f "${TMP_EVENTS}.lock" 2>/dev/null || true
   [ -d "${TMP_EVENTS}.lock" ] && rmdir "${TMP_EVENTS}.lock" 2>/dev/null || true
-  # Clean up FIFOs if they exist
-  [ -n "${FIFO_STDOUT:-}" ] && [ -p "$FIFO_STDOUT" ] && rm -f "$FIFO_STDOUT" 2>/dev/null || true
-  [ -n "${FIFO_STDERR:-}" ] && [ -p "$FIFO_STDERR" ] && rm -f "$FIFO_STDERR" 2>/dev/null || true
+  # Clean up FIFOs if they exist (or any file at those paths)
+  [ -n "${FIFO_STDOUT:-}" ] && [ -e "$FIFO_STDOUT" ] && rm -f "$FIFO_STDOUT" 2>/dev/null || true
+  [ -n "${FIFO_STDERR:-}" ] && [ -e "$FIFO_STDERR" ] && rm -f "$FIFO_STDERR" 2>/dev/null || true
 }
 
 # Emit event to ledger file (with locking for concurrent access)
