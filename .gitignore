@@ -1,0 +1,17 @@
+# Agent scaffolding test artifacts
+.agent/
+*.log
+
+# Language-specific
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+node_modules/
+*.swp
+*.swo
+*~
+
+# OS-specific
+.DS_Store
+Thumbs.db
