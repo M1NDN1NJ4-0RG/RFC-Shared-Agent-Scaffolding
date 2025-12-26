@@ -49,7 +49,7 @@ All prerequisite PRs completed successfully:
 
 ## Implementation Details
 
-### New File: `rust/src/safe_run.rs` (334 lines)
+### New File: `rust/src/safe_run.rs` (330 lines)
 
 Complete implementation of the M0 safe-run contract:
 

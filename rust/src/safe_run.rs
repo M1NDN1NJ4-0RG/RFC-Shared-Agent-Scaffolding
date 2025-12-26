@@ -65,8 +65,13 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
             // Print to console
             println!("{}", line);
             // Store in buffer
-            if let Ok(mut buf) = stdout_buf.lock() {
-                buf.push(line.clone());
+            match stdout_buf.lock() {
+                Ok(mut buf) => {
+                    buf.push(line.clone());
+                }
+                Err(e) => {
+                    eprintln!("safe-run: failed to store stdout line: {}", e);
+                }
             }
             // Emit event
             emit_event(&stdout_seq, &stdout_events, "STDOUT", &line);
@@ -85,8 +90,13 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
             // Print to console
             eprintln!("{}", line);
             // Store in buffer
-            if let Ok(mut buf) = stderr_buf.lock() {
-                buf.push(line.clone());
+            match stderr_buf.lock() {
+                Ok(mut buf) => {
+                    buf.push(line.clone());
+                }
+                Err(e) => {
+                    eprintln!("safe-run: failed to store stderr line: {}", e);
+                }
             }
             // Emit event
             emit_event(&stderr_seq, &stderr_events, "STDERR", &line);
@@ -96,9 +106,13 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
     // Wait for the command to complete
     let exit_status = child.wait().map_err(|e| format!("Failed to wait: {}", e))?;
 
-    // Wait for output capture to complete
-    stdout_handle.join().ok();
-    stderr_handle.join().ok();
+    // Wait for output capture to complete (propagate panics if they occurred)
+    stdout_handle
+        .join()
+        .map_err(|_| "stdout capture thread panicked".to_string())?;
+    stderr_handle
+        .join()
+        .map_err(|_| "stderr capture thread panicked".to_string())?;
 
     // Get exit code
     let exit_code = exit_status.code().unwrap_or(1);
@@ -126,16 +140,16 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
         &view_mode,
     )?;
 
-    // Print snippet if requested
-    if snippet_lines > 0 {
-        print_snippet_from_buffers(&stdout_buffer, &stderr_buffer, snippet_lines);
-    }
-
     eprintln!(
         "safe-run: command failed (rc={}). log: {}",
         exit_code,
         log_path.display()
     );
+
+    // Print snippet if requested
+    if snippet_lines > 0 {
+        print_snippet_from_buffers(&stdout_buffer, &stderr_buffer, snippet_lines);
+    }
 
     Ok(exit_code)
 }
@@ -150,8 +164,16 @@ fn emit_event(
     let seq = seq_counter.fetch_add(1, Ordering::SeqCst) + 1;
     let event = format!("[SEQ={}][{}] {}", seq, stream, text);
 
-    if let Ok(mut events_vec) = events.lock() {
-        events_vec.push(event);
+    match events.lock() {
+        Ok(mut events_vec) => {
+            events_vec.push(event);
+        }
+        Err(e) => {
+            eprintln!(
+                "safe-run: failed to record event for stream '{}': {}",
+                stream, e
+            );
+        }
     }
 }
 
@@ -180,49 +202,59 @@ fn save_log(
         log_path = PathBuf::from(log_dir).join(format!("{}-{}.log", base_name, n));
     }
 
-    // Write log file
+    // Write log file with error tracking
     let mut file =
         File::create(&log_path).map_err(|e| format!("Failed to create log file: {}", e))?;
+    
+    let mut write_error_logged = false;
+    let mut log_write = |result: std::io::Result<()>| {
+        if let Err(e) = result {
+            if !write_error_logged {
+                eprintln!("safe-run: failed writing to log file: {}", e);
+                write_error_logged = true;
+            }
+        }
+    };
 
     // Write stdout section
-    writeln!(file, "=== STDOUT ===").ok();
+    log_write(writeln!(file, "=== STDOUT ==="));
     if let Ok(stdout) = stdout_buffer.lock() {
         for line in stdout.iter() {
-            writeln!(file, "{}", line).ok();
+            log_write(writeln!(file, "{}", line));
         }
     }
-    writeln!(file).ok();
+    log_write(writeln!(file));
 
     // Write stderr section
-    writeln!(file, "=== STDERR ===").ok();
+    log_write(writeln!(file, "=== STDERR ==="));
     if let Ok(stderr) = stderr_buffer.lock() {
         for line in stderr.iter() {
-            writeln!(file, "{}", line).ok();
+            log_write(writeln!(file, "{}", line));
         }
     }
-    writeln!(file).ok();
+    log_write(writeln!(file));
 
     // Write events section
-    writeln!(file, "--- BEGIN EVENTS ---").ok();
+    log_write(writeln!(file, "--- BEGIN EVENTS ---"));
     if let Ok(events_vec) = events.lock() {
         for event in events_vec.iter() {
-            writeln!(file, "{}", event).ok();
+            log_write(writeln!(file, "{}", event));
         }
     }
-    writeln!(file, "--- END EVENTS ---").ok();
+    log_write(writeln!(file, "--- END EVENTS ---"));
 
     // Optional merged view
     if view_mode == "merged" {
-        writeln!(file).ok();
-        writeln!(file, "--- BEGIN MERGED (OBSERVED ORDER) ---").ok();
+        log_write(writeln!(file));
+        log_write(writeln!(file, "--- BEGIN MERGED (OBSERVED ORDER) ---"));
         if let Ok(events_vec) = events.lock() {
             for event in events_vec.iter() {
                 // Convert [SEQ=N] to [#N]
                 let merged_line = event.replace("[SEQ=", "[#");
-                writeln!(file, "{}", merged_line).ok();
+                log_write(writeln!(file, "{}", merged_line));
             }
         }
-        writeln!(file, "--- END MERGED ---").ok();
+        log_write(writeln!(file, "--- END MERGED ---"));
     }
 
     Ok(log_path)
@@ -285,7 +317,12 @@ fn print_snippet(log_path: &Path, lines: usize) {
     eprintln!("--- end tail ---");
 }
 
-/// Escape command for shell representation
+/// Escape command for shell representation in META events.
+///
+/// NOTE: This is for display/logging purposes only, not for safe shell execution.
+/// The actual command execution uses Command::new() which does not involve shell
+/// interpretation. This function provides a readable representation of the command
+/// in log files, but should NOT be used to construct shell commands for execution.
 fn shell_escape_command(command: &[String]) -> String {
     command
         .iter()
