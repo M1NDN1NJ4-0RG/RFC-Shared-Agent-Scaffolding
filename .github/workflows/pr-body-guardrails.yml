@@ -39,7 +39,7 @@ jobs:
 
             // Extract all issue references from text to check which have "EPIC" in title
             async function getEpicIssueNumbers(text, owner, repo) {
-              const issuePattern = /(?:^|[^A-Za-z0-9_.-])(?:([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+))?#(\d+)\b/g;
+              const issuePattern = /(?<![A-Za-z0-9_.-])(?:([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+))?#(\d+)\b/g;
               const epicIssues = new Set();
               let match;
               
@@ -83,6 +83,19 @@ jobs:
               let inCodeFence = false;
               const result = [];
 
+              // Build a combined regex pattern for all epic issues to avoid O(n*m) complexity
+              let combinedPattern = null;
+              if (epicIssues.size > 0) {
+                const escapedRefs = Array.from(epicIssues).map(ref => 
+                  ref.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+                );
+                const refsAlternation = escapedRefs.join('|');
+                combinedPattern = new RegExp(
+                  `(\\b)(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(:?\\s*)(${refsAlternation})\\b`,
+                  'gi'
+                );
+              }
+
               for (let line of lines) {
                 // Check for code fence markers (``` or ~~~), allowing up to 3 spaces of indentation
                 if (/^\s{0,3}(```|~~~)/.test(line)) {
@@ -94,28 +107,16 @@ jobs:
                 if (inCodeFence) {
                   // Inside code fence - preserve as-is
                   result.push(line);
-                } else {
+                } else if (combinedPattern) {
                   // Outside code fence - apply normalization for issues with "EPIC" in title
-                  let normalized = line;
-                  
-                  // For each issue with "EPIC" in title, rewrite auto-close keywords
-                  for (const epicRef of epicIssues) {
-                    // Escape special regex characters in the issue reference
-                    const escapedRef = epicRef.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    // Match: keyword + optional colon + optional space + the issue reference with "EPIC" in title
-                    const pattern = new RegExp(
-                      `(\\b)(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(:?\\s*)(${escapedRef})\\b`,
-                      'gi'
-                    );
-                    
-                    normalized = normalized.replace(pattern, (m, p1, kw, punctSpace, ref) => {
-                      // Preserve spacing style: keep colon when no whitespace, otherwise use space
-                      const space = punctSpace === ':' ? ':' : (/\s/.test(punctSpace) ? ' ' : punctSpace.replace(':', '') || ' ');
-                      return `${p1}Refs${space}${ref}`;
-                    });
-                  }
-                  
+                  const normalized = line.replace(combinedPattern, (m, p1, kw, punctSpace, ref) => {
+                    // Preserve spacing style: keep colon when no whitespace, otherwise use space
+                    const space = punctSpace === ':' ? ':' : (/\s/.test(punctSpace) ? ' ' : punctSpace.replace(':', '') || ' ');
+                    return `${p1}Refs${space}${ref}`;
+                  });
                   result.push(normalized);
+                } else {
+                  result.push(line);
                 }
               }
 
@@ -162,6 +163,7 @@ jobs:
           fail() { echo "::error::$1"; exit 1; }
 
           # Function to check if an issue has "EPIC" in the title (case-insensitive) as a whole word
+          # Returns: 0 if EPIC found, 1 if not found, 2 if API error
           has_epic_in_title() {
             local issue_num="$1"
             local issue_owner="${2:-$OWNER}"
@@ -172,45 +174,75 @@ jobs:
               -H "Accept: application/vnd.github+json" \
               "https://api.github.com/repos/$issue_owner/$issue_repo/issues/$issue_num" 2>&1); then
               echo "::warning::Failed to fetch issue #$issue_num: $issue_json" >&2
-              return 1
+              return 2  # API error
             fi
             
             # Check if title contains "EPIC" as a whole word (case-insensitive)
             # Using word boundaries \< \> or \b to match whole word only
             local title=$(echo "$issue_json" | jq -r '.title // ""')
-            echo "$title" | grep -iw "EPIC"
+            if echo "$title" | grep -iw "EPIC" > /dev/null 2>&1; then
+              return 0  # EPIC found
+            else
+              return 1  # Not an EPIC issue
+            fi
           }
 
           # Function to extract issue numbers and check if they have "EPIC" in title
           get_epic_issue_refs() {
             local text="$1"
-            local epic_refs=""
+            local in_code_block=0
             
             # Extract all issue references (#number or owner/repo#number)
             while read -r line; do
-              # Match issue references: optional repo prefix + # + number
-              if echo "$line" | grep -Eo '([[:alnum:]_.-]+/[[:alnum:]_.-]+)?#[0-9]+' > /dev/null 2>&1; then
-                echo "$line" | grep -Eo '([[:alnum:]_.-]+/[[:alnum:]_.-]+)?#[0-9]+' | while read -r ref; do
-                  # Parse the reference
-                  if [[ "$ref" =~ ^([[:alnum:]_.-]+)/([[:alnum:]_.-]+)\#([0-9]+)$ ]]; then
-                    # Cross-repo reference
-                    local ref_owner="${BASH_REMATCH[1]}"
-                    local ref_repo="${BASH_REMATCH[2]}"
-                    local ref_num="${BASH_REMATCH[3]}"
-                    
-                    if has_epic_in_title "$ref_num" "$ref_owner" "$ref_repo"; then
-                      echo "$ref"
-                    fi
-                  elif [[ "$ref" =~ ^\#([0-9]+)$ ]]; then
-                    # Same-repo reference
-                    local ref_num="${BASH_REMATCH[1]}"
-                    
-                    if has_epic_in_title "$ref_num" "$OWNER" "$REPO"; then
-                      echo "$ref"
-                    fi
-                  fi
-                done
+              # Skip fenced code blocks (e.g., ``` ... ```)
+              if [[ "$line" =~ ^\`\`\` ]]; then
+                if [[ "$in_code_block" -eq 0 ]]; then
+                  in_code_block=1
+                else
+                  in_code_block=0
+                fi
+                continue
               fi
+              
+              # If inside a fenced code block, skip this line
+              if [[ "$in_code_block" -eq 1 ]]; then
+                continue
+              fi
+              
+              # Match issue references: optional repo prefix + # + number
+              refs=$(echo "$line" | grep -Eo '([[:alnum:]_.-]+/[[:alnum:]_.-]+)?#[0-9]+' || true)
+              if [[ -z "$refs" ]]; then
+                continue
+              fi
+              
+              echo "$refs" | while read -r ref; do
+                # Parse the reference
+                if [[ "$ref" =~ ^([[:alnum:]_.-]+)/([[:alnum:]_.-]+)\#([0-9]+)$ ]]; then
+                  # Cross-repo reference
+                  local ref_owner="${BASH_REMATCH[1]}"
+                  local ref_repo="${BASH_REMATCH[2]}"
+                  local ref_num="${BASH_REMATCH[3]}"
+                  
+                  if has_epic_in_title "$ref_num" "$ref_owner" "$ref_repo"; then
+                    local ret=$?
+                    if [[ $ret -eq 0 ]]; then
+                      echo "$ref"
+                    fi
+                    # ret=1 means not epic, ret=2 means API error (already warned)
+                  fi
+                elif [[ "$ref" =~ ^\#([0-9]+)$ ]]; then
+                  # Same-repo reference
+                  local ref_num="${BASH_REMATCH[1]}"
+                  
+                  if has_epic_in_title "$ref_num" "$OWNER" "$REPO"; then
+                    local ret=$?
+                    if [[ $ret -eq 0 ]]; then
+                      echo "$ref"
+                    fi
+                    # ret=1 means not epic, ret=2 means API error (already warned)
+                  fi
+                fi
+              done
             done <<< "$text"
           }
 
@@ -226,8 +258,8 @@ jobs:
             # Build alternation pattern for all epic issue references
             local pattern_parts=""
             while IFS= read -r ref; do
-              # Escape special regex characters
-              local escaped_ref=$(echo "$ref" | sed 's/[.[\*^$()+?{|]/\\&/g')
+              # Escape special regex characters (including ], \, ., ^, $, *, +, ?, {, }, (, ), and |)
+              local escaped_ref=$(echo "$ref" | sed 's/[][\\.^$*+?{}()|]/\\&/g')
               if [ -n "$pattern_parts" ]; then
                 pattern_parts="${pattern_parts}|${escaped_ref}"
               else
@@ -290,13 +322,17 @@ jobs:
             
             if [ -n "$EPIC_PATTERN" ]; then
               # Check PR title
-              if printf '%s' "$PR_TITLE" | grep -Eiq "$EPIC_PATTERN"; then
-                fail "Auto-close keyword found in PR TITLE for an issue with 'EPIC' in title. Use Refs/Related/Tracks instead."
+              if matched_line=$(printf '%s' "$PR_TITLE" | grep -Ei "$EPIC_PATTERN"); then
+                # Extract which issue was matched
+                matched_issue=$(echo "$matched_line" | grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
+                fail "Auto-close keyword found in PR TITLE for EPIC issue $matched_issue. Use Refs/Related/Tracks instead. Matched text: $matched_line"
               fi
               
               # Check PR body
-              if printf '%s' "$body" | grep -Eiq "$EPIC_PATTERN"; then
-                fail "Auto-close keyword found in PR BODY for an issue with 'EPIC' in title (excluding 'Original prompt' block). Use Refs/Related/Tracks instead."
+              if matched_line=$(printf '%s' "$body" | grep -Ei "$EPIC_PATTERN" | head -1); then
+                # Extract which issue was matched
+                matched_issue=$(echo "$matched_line" | grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
+                fail "Auto-close keyword found in PR BODY for EPIC issue $matched_issue (excluding 'Original prompt' block). Use Refs/Related/Tracks instead. Matched line: $matched_line"
               fi
               
               # Check commit messages
@@ -312,8 +348,12 @@ jobs:
                 commit_messages="$(echo "$commits_json" | jq -r '.[].commit.message')"
                 [ -z "$commit_messages" ] && break
 
-                if printf '%s\n' "$commit_messages" | grep -Eiq "$EPIC_PATTERN"; then
-                  fail "Auto-close keyword found in a COMMIT message for an issue with 'EPIC' in title. Amend/reword commit(s) to use Refs/Related/Tracks."
+                if matched_line=$(printf '%s\n' "$commit_messages" | grep -Ei "$EPIC_PATTERN" | head -1); then
+                  # Extract which issue was matched
+                  matched_issue=$(echo "$matched_line" | grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
+                  # Try to find which commit contains this
+                  matched_commit=$(echo "$commits_json" | jq -r --arg msg "$matched_line" '.[] | select(.commit.message | contains($msg)) | .sha[:7]' | head -1)
+                  fail "Auto-close keyword found in COMMIT $matched_commit for EPIC issue $matched_issue. Amend/reword commit(s) to use Refs/Related/Tracks instead. Matched line: $matched_line"
                 fi
 
                 page_count="$(echo "$commits_json" | jq 'length')"
