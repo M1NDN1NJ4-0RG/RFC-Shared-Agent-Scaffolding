@@ -143,13 +143,84 @@ Logging is fail-only.
 
 ---
 
-## 7. Safe Wrapper Execution Contract (Recap)
+## 7. Safe Wrapper Execution Contract (Normative)
 
-Wrappers SHOULD be used for critical commands. They must:
+**Status:** Finalized (see `M0-DECISIONS.md` for authoritative M0 decision gates)
+
+Wrappers MUST be used for critical commands. They must:
 - run commands verbatim,
 - preserve exit codes,
 - produce artifacts on failure,
 - and have no success-path side effects.
+
+### 7.1 Logging Semantics (M0-P1-I1)
+
+**Decision:** Split stdout and stderr
+
+`safe-run` MUST:
+- Capture stdout and stderr separately
+- Include clear section markers in log files (`=== STDOUT ===`, `=== STDERR ===`)
+- Preserve both streams in their entirety in failure logs
+- Preserve exit codes regardless of output format
+
+### 7.2 Failure Log Naming (M0-P1-I2)
+
+**Decision:** Deterministic, non-overwriting naming
+
+Log files MUST follow this format: `{ISO8601_TIMESTAMP}-pid{PID}-{STATUS}.log`
+
+Example: `20251226T020707Z-pid4821-FAIL.log`
+
+Requirements:
+- Timestamp in ISO 8601 format with timezone (UTC recommended)
+- PID included for correlation
+- Status one of: `FAIL`, `ABORTED`, `ERROR`
+- Directory: `.agent/FAIL-LOGS/`
+- No random suffixes
+
+### 7.3 Archive No-Clobber Semantics (M0-P1-I3)
+
+**Decision:** Hybrid approach
+
+**Default:** Auto-suffix behavior
+- If destination exists, append numeric suffix (e.g., `.2`, `.3`)
+- Continue incrementing until unique filename found
+
+**Opt-in:** Strict no-clobber (fail fast)
+- Flag: `--no-clobber` or `SAFE_ARCHIVE_NO_CLOBBER=1`
+- Exit with error if destination exists
+
+### 7.4 Authentication & Headers (M0-P2-I1)
+
+**Decision:** Precedence A with Bearer token format
+
+**Auth precedence (highest to lowest):**
+1. Explicit CLI arguments
+2. Environment variables (`GITHUB_TOKEN`, `TOKEN`)
+3. Configuration files
+4. `gh auth` token
+
+**Header format:** `Authorization: Bearer <token>`
+
+Token values MUST never be logged. If no auth available, exit with code 2.
+
+### 7.5 Exit Code Taxonomy (M0-P2-I2)
+
+**Decision:** Stable exit code ranges
+
+| Code | Meaning |
+|------|---------|
+| 0 | Success |
+| 1 | General failure |
+| 2 | Auth/permission error |
+| 3 | Usage/validation error |
+| 10-19 | Dependency errors |
+| 20-29 | Network errors |
+| 30-39 | Parse errors |
+| 40-49 | File system errors |
+| 50-59 | Ruleset/policy errors |
+
+See `M0-DECISIONS.md` for complete specification.
 
 Wrapper failure fallback remains mandatory.
 
