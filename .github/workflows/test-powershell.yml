@@ -1,0 +1,38 @@
+name: Test PowerShell Bundle
+
+on:
+  pull_request:
+    paths:
+      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
+      - '.github/workflows/test-powershell.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
+      - '.github/workflows/test-powershell.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: PowerShell Bundle Tests
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Install-Module -Name Pester -Scope CurrentUser -Force -SkipPublisherCheck -MinimumVersion 5.0
+          Write-Host "Pester version: $((Get-Module Pester -ListAvailable).Version)"
+      
+      - name: Run PowerShell tests
+        shell: pwsh
+        working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell
+        run: |
+          pwsh -NoProfile -File ./run-tests.ps1
