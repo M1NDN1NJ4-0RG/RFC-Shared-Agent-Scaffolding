@@ -42,7 +42,7 @@ jobs:
           perl --version
       
       - name: Install Perl dependencies
-        uses: shogo82148/actions-setup-perl@v1
+        uses: shogo82148/actions-setup-perl@3e011cd23aec3d977e118dfe36ba1318b28b63ef # v1
         with:
           perl-version: '5.38'
       
