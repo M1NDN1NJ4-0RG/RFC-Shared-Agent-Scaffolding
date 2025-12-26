@@ -186,23 +186,24 @@ The order in which the wrapper receives bytes/lines/chunks from stdout/stderr pi
 
 **A) Split Sections (M0-P1-I1 - Unchanged)**
 
-All implementations MUST continue to emit:
+All implementations MUST continue to emit the M0-compliant split sections with existing markers:
 
-1. A `STDOUT` section with markers:
+1. A `STDOUT` section:
    ```
-   --- BEGIN STDOUT ---
+   === STDOUT ===
    ...stdout content...
-   --- END STDOUT ---
+   
    ```
 
-2. A `STDERR` section with markers:
+2. A `STDERR` section:
    ```
-   --- BEGIN STDERR ---
+   === STDERR ===
    ...stderr content...
-   --- END STDERR ---
    ```
 
 Per-stream ordering MUST be preserved. Content MUST NOT be lost. No stdout content may appear in the STDERR section and vice versa.
+
+**Note:** The M0 format uses `=== STDOUT ===` and `=== STDERR ===` markers. These MUST be preserved for backward compatibility.
 
 **B) Event Ledger (NEW - Required)**
 
