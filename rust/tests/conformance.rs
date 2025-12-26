@@ -79,6 +79,7 @@ mod safe_run_tests {
     }
 
     #[test]
+    #[cfg(unix)] // Uses create_test_script helper which is Unix-only
     fn test_safe_run_002_failure_creates_log() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
@@ -178,6 +179,7 @@ mod safe_run_tests {
     }
 
     #[test]
+    #[cfg(unix)] // Uses create_test_script helper which is Unix-only
     fn test_safe_run_004_custom_log_dir() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
@@ -232,6 +234,7 @@ mod safe_run_tests {
     }
 
     #[test]
+    #[cfg(unix)] // Uses Unix-specific script creation
     fn test_safe_run_005_snippet_output() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
