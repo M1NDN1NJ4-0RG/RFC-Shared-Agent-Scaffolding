@@ -3,7 +3,7 @@ $ErrorActionPreference = 'Stop'
 
 # Run from repo root of this bundle.
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$root = Resolve-Path (Join-Path $here "..")
+$root = $here  # The powershell directory is the bundle root
 
 Write-Host "Agent Ops PowerShell test runner"
 Write-Host "Root: $root"

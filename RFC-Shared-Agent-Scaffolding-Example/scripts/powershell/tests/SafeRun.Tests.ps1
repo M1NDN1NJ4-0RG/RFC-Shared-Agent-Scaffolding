@@ -1,11 +1,11 @@
 #requires -Version 5.1
 Set-StrictMode -Version Latest
 
-. "$PSScriptRoot/TestHelpers.ps1"
-
-$ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\powershell\safe-run.ps1"
-
 Describe "safe-run.ps1" {
+  BeforeAll {
+    . "$PSScriptRoot/TestHelpers.ps1"
+    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\powershell\safe-run.ps1"
+  }
 
   It "succeeds without creating artifacts" {
     $td = New-TempDir
@@ -35,10 +35,17 @@ Describe "safe-run.ps1" {
       & pwsh -NoProfile -File $ScriptUnderTest -- pwsh -NoProfile -Command "Write-Output 'out'; Write-Error 'err'; exit 7"
       $LASTEXITCODE | Should -Be 7
 
-      $files = Get-ChildItem -LiteralPath $env:SAFE_LOG_DIR -Filter "*-fail.txt"
+      # M0-P1-I2: Filename should be ISO8601-pidPID-FAIL.log
+      $files = @(Get-ChildItem -LiteralPath $env:SAFE_LOG_DIR -Filter "*-FAIL.log")
       $files.Count | Should -Be 1
+      
+      # M0-P1-I2: Validate filename format
+      $files[0].Name | Should -Match '^\d{8}T\d{6}Z-pid\d+-FAIL\.log$'
 
+      # M0-P1-I1: Validate split stdout/stderr with markers
       $txt = Get-Content -LiteralPath $files[0].FullName -Raw
+      $txt | Should -Match "=== STDOUT ==="
+      $txt | Should -Match "=== STDERR ==="
       $txt | Should -Match "out"
       # PowerShell's Write-Error becomes a formatted error record; we just assert some signal survived.
       $txt | Should -Match "err"
@@ -87,9 +94,11 @@ Describe "safe-run.ps1" {
       & pwsh -NoProfile -File $ScriptUnderTest -- pwsh -NoProfile -Command "1..200000 | ForEach-Object { 'X' }; exit 3"
       $LASTEXITCODE | Should -Be 3
 
-      $files = Get-ChildItem -LiteralPath $env:SAFE_LOG_DIR -Filter "*-fail.txt"
+      # M0-P1-I2: Filename should be ISO8601-pidPID-FAIL.log
+      $files = @(Get-ChildItem -LiteralPath $env:SAFE_LOG_DIR -Filter "*-FAIL.log")
       $files.Count | Should -Be 1
-      ($files[0].Length -gt 1000000) | Should -BeTrue
+      # M0-P1-I1: With split stdout/stderr format, expect ~400KB for 200K lines of "X"
+      ($files[0].Length -gt 300000) | Should -BeTrue
     } finally {
       Pop-Location
     }
