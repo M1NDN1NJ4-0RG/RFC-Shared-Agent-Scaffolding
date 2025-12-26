@@ -41,7 +41,7 @@ Each language uses its conventional file extension:
 
 ### Naming Conventions
 
-- **Bash/Perl/PowerShell**: Use hyphens (kebab-case) for script names
+- **Bash/Perl/PowerShell**: Use hyphens (kebab-case) for script names, except for `preflight_automerge_ruleset`, which intentionally uses underscores across all languages
   - Example: `safe-run.sh`, `preflight_automerge_ruleset.pl`
 - **Python 3**: Use underscores (snake_case) for script names
   - Example: `safe_run.py`, `preflight_automerge_ruleset.py`

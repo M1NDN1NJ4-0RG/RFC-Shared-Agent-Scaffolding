@@ -104,9 +104,9 @@ for lang in "${languages[@]}"; do
   
   runner_path="$bundle_dir/$test_runner"
   if [ ! -f "$runner_path" ]; then
-    echo -e "  ${YELLOW}⚠${NC} Warning: Test runner not found: $test_runner"
+    echo -e "  ${YELLOW}⚠${NC} Info: Optional test runner not found (this is not an error): $test_runner"
   else
-    echo -e "  ${GREEN}✓${NC} Test runner exists: $test_runner"
+    echo -e "  ${GREEN}✓${NC} Optional test runner exists: $test_runner"
   fi
   
   # Check that there are NO nested language directories (the old structure)
