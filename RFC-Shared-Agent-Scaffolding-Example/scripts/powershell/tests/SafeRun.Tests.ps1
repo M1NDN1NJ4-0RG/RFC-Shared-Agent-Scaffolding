@@ -65,7 +65,8 @@ Describe "safe-run.ps1" {
       # Capture stderr from wrapper invocation itself.
       $psi = New-Object System.Diagnostics.ProcessStartInfo
       $psi.FileName = "pwsh"
-      $psi.Arguments = "-NoProfile -File `"$ScriptUnderTest`" -- pwsh -NoProfile -Command `"1..10 | ForEach-Object { Write-Output ('L' + $_) }; exit 2`""
+      # Use proper escaping for nested PowerShell command - escape $ to prevent variable expansion
+      $psi.Arguments = "-NoProfile -File `"$ScriptUnderTest`" -- pwsh -NoProfile -Command `"1..10 | ForEach-Object { Write-Output ('L' + `$_) }; exit 2`""
       $psi.RedirectStandardError = $true
       $psi.RedirectStandardOutput = $true
       $psi.UseShellExecute = $false
@@ -75,7 +76,7 @@ Describe "safe-run.ps1" {
       $p.WaitForExit()
 
       $p.ExitCode | Should -Be 2
-      $stderr | Should -Match "Tail of captured output"
+      $stderr | Should -Match "SAFE-RUN:.*last.*lines"
       $stderr | Should -Match "L10"
     } finally {
       Pop-Location

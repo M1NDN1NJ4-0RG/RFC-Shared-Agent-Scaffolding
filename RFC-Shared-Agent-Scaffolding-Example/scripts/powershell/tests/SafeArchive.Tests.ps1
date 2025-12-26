@@ -76,7 +76,7 @@ Describe "safe-archive.ps1" {
       $LASTEXITCODE | Should -Be 0
 
       Test-Path -LiteralPath $a | Should -BeFalse
-      (Get-ChildItem -LiteralPath $arch -Filter "x-fail.txt.gz").Count | Should -Be 1
+      @(Get-ChildItem -LiteralPath $arch -Filter "x-fail.txt.gz").Count | Should -Be 1
     } finally {
       Pop-Location
     }

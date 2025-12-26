@@ -22,7 +22,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       Remove-Item env:TOKEN -ErrorAction SilentlyContinue
       Remove-Item env:GITHUB_TOKEN -ErrorAction SilentlyContinue
 
-      & pwsh -NoProfile -File $ScriptUnderTest --repo "o/r" --ruleset-name "Main" --want '["lint"]'
+      & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main" -Want '["lint"]'
       $LASTEXITCODE | Should -Be 2
     } finally {
       $env:PATH = $old
@@ -62,7 +62,7 @@ Describe "preflight_automerge_ruleset.ps1" {
 "@
       Add-FakeGhToPath -FixtureJson $fixture -OutDir $td | Out-Null
 
-      & pwsh -NoProfile -File $ScriptUnderTest --repo "o/r" --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' --default-branch "main"
+      & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main - PR Only + Green CI" -Want '["lint","test"]'
       $LASTEXITCODE | Should -Be 0
     } finally {
       Pop-Location
@@ -100,7 +100,7 @@ Describe "preflight_automerge_ruleset.ps1" {
 "@
       Add-FakeGhToPath -FixtureJson $fixture -OutDir $td | Out-Null
 
-      & pwsh -NoProfile -File $ScriptUnderTest --repo "o/r" --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' --default-branch "main"
+      & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main - PR Only + Green CI" -Want '["lint","test"]'
       $LASTEXITCODE | Should -Be 3
     } finally {
       Pop-Location
@@ -139,7 +139,7 @@ Describe "preflight_automerge_ruleset.ps1" {
 "@
       Add-FakeGhToPath -FixtureJson $fixture -OutDir $td | Out-Null
 
-      & pwsh -NoProfile -File $ScriptUnderTest --repo "o/r" --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' --default-branch "main"
+      & pwsh -NoProfile -File $ScriptUnderTest -Repo "o/r" -RulesetName "Main - PR Only + Green CI" -Want '["lint","test"]'
       $LASTEXITCODE | Should -Be 3
     } finally {
       Pop-Location
