@@ -43,7 +43,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       "name": "Main - PR Only + Green CI",
       "target": "branch",
       "enforcement": "active",
-      "conditions": {"ref_name": {"include": ["refs/heads/main"]}},
+      "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"]}},
       "rules": [
         {
           "type": "required_status_checks",
@@ -82,7 +82,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       "name": "Main - PR Only + Green CI",
       "target": "branch",
       "enforcement": "active",
-      "conditions": {"ref_name": {"include": ["refs/heads/main"]}},
+      "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"]}},
       "rules": [
         {
           "type": "required_status_checks",
@@ -120,7 +120,7 @@ Describe "preflight_automerge_ruleset.ps1" {
       "name": "Main - PR Only + Green CI",
       "target": "branch",
       "enforcement": "evaluate",
-      "conditions": {"ref_name": {"include": ["refs/heads/main"]}},
+      "conditions": {"ref_name": {"include": ["~DEFAULT_BRANCH"]}},
       "rules": [
         {
           "type": "required_status_checks",
