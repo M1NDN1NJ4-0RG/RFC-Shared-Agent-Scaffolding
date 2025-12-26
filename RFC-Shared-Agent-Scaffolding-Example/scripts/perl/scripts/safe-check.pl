@@ -48,5 +48,5 @@ my $safe_run = File::Spec->catfile('scripts','perl','safe-run.pl');
   scalar(@after) == scalar(@before) + 1 or die_bad('failure should create exactly one fail log');
 }
 
-print "safe-check.pl: OK\n";
+print "safe-check.pl: OK:\n";
 exit 0;

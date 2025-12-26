@@ -9,6 +9,10 @@ use IO::Select;
 use IPC::Open3;
 use Symbol qw(gensym);
 
+# Enable autoflush on STDOUT/STDERR so output appears immediately
+$| = 1;
+select(STDERR); $| = 1; select(STDOUT);
+
 # -----------------------------------------------------------------------------
 # safe-run.pl
 #
@@ -35,9 +39,11 @@ if (!@argv) { usage(); }
 my $safe_log_dir = $ENV{SAFE_LOG_DIR} // File::Spec->catdir('.agent', 'FAIL-LOGS');
 my $snippet_lines = $ENV{SAFE_SNIPPET_LINES} // 0;
 
-# Temp file buffering (prevents OOM for huge output)
-my ($tmp_fh, $tmp_path) = tempfile('safe-run-XXXXXX', TMPDIR => 1, UNLINK => 0);
-binmode($tmp_fh);
+# M0-P1-I1: Separate temp files for stdout and stderr
+my ($tmp_stdout_fh, $tmp_stdout_path) = tempfile('safe-run-stdout-XXXXXX', TMPDIR => 1, UNLINK => 0);
+my ($tmp_stderr_fh, $tmp_stderr_path) = tempfile('safe-run-stderr-XXXXXX', TMPDIR => 1, UNLINK => 0);
+binmode($tmp_stdout_fh);
+binmode($tmp_stderr_fh);
 
 my $aborted = 0;
 my $got_signal;
@@ -68,7 +74,11 @@ eval {
   print STDERR "safe-run.pl: failed to start command: $e\n";
   # Treat as failure; write whatever we have (likely nothing).
   make_path($safe_log_dir) unless -d $safe_log_dir;
-  my $fail_path = File::Spec->catfile($safe_log_dir, 'safe-run-start-fail.txt');
+  # M0-P1-I2: ISO8601 timestamp format
+  my ($sec,$min,$hour,$mday,$mon,$year) = gmtime();
+  my $ts = sprintf("%04d%02d%02dT%02d%02d%02dZ", $year+1900, $mon+1, $mday, $hour, $min, $sec);
+  my $pid = $$;
+  my $fail_path = File::Spec->catfile($safe_log_dir, "${ts}-pid${pid}-ERROR.log");
   open my $fh, '>', $fail_path or die "cannot write $fail_path: $!";
   print $fh "FAILED TO START: $e\n";
   close $fh;
@@ -93,7 +103,7 @@ sub _push_tail {
 }
 
 # Read loop
-while ($sel->count) {
+while ($sel->count && !$aborted) {
   my @ready = $sel->can_read(0.25);
   for my $fh (@ready) {
     my $buf;
@@ -109,13 +119,12 @@ while ($sel->count) {
       next;
     }
 
-    # Tee to temp file
-    print {$tmp_fh} $buf;
-
-    # Echo to console: preserve destination (stdout/stderr)
+    # M0-P1-I1: Tee to separate temp files based on stream
     if ($fh == $out) {
+      print {$tmp_stdout_fh} $buf;
       print STDOUT $buf;
     } else {
+      print {$tmp_stderr_fh} $buf;
       print STDERR $buf;
     }
 
@@ -127,11 +136,10 @@ while ($sel->count) {
       }
     }
   }
-
-  last if $aborted && !$sel->count; # let the loop drain
 }
 
-close $tmp_fh;
+close $tmp_stdout_fh;
+close $tmp_stderr_fh;
 
 # Wait for child
 my $wait_pid = waitpid($child_pid, 0);
@@ -152,42 +160,78 @@ if ($status == -1) {
 # If we were interrupted, treat as aborted regardless of child status.
 if ($aborted) {
   make_path($safe_log_dir) unless -d $safe_log_dir;
-  my $stamp = time();
-  my $fail_path = File::Spec->catfile($safe_log_dir, "safe-run-$stamp-ABORTED-fail.txt");
-  rename($tmp_path, $fail_path) or do {
-    # fallback copy
-    open my $in,  '<', $tmp_path  or die "cannot read $tmp_path: $!";
-    open my $outf,'>', $fail_path or die "cannot write $fail_path: $!";
-    binmode($in); binmode($outf);
-    my $b;
-    while (read($in, $b, 8192)) { print {$outf} $b; }
-    close $in; close $outf;
-    unlink $tmp_path;
-  };
+  # M0-P1-I2: ISO8601 timestamp format
+  my ($sec,$min,$hour,$mday,$mon,$year) = gmtime();
+  my $ts = sprintf("%04d%02d%02dT%02d%02d%02dZ", $year+1900, $mon+1, $mday, $hour, $min, $sec);
+  my $pid = $$;
+  my $fail_path = File::Spec->catfile($safe_log_dir, "${ts}-pid${pid}-ABORTED.log");
+  
+  # M0-P1-I1: Combine with section markers
+  open my $outf, '>', $fail_path or die "cannot write $fail_path: $!";
+  binmode($outf);
+  print {$outf} "=== STDOUT ===\n";
+  if (-f $tmp_stdout_path) {
+    open my $in, '<', $tmp_stdout_path or die "cannot read $tmp_stdout_path: $!";
+    binmode($in);
+    my $buf;
+    while (read($in, $buf, 8192)) { print {$outf} $buf; }
+    close $in;
+  }
+  print {$outf} "\n=== STDERR ===\n";
+  if (-f $tmp_stderr_path) {
+    open my $in, '<', $tmp_stderr_path or die "cannot read $tmp_stderr_path: $!";
+    binmode($in);
+    my $buf;
+    while (read($in, $buf, 8192)) { print {$outf} $buf; }
+    close $in;
+  }
+  close $outf;
+  
+  unlink $tmp_stdout_path;
+  unlink $tmp_stderr_path;
+  
   print STDERR "\n[safe-run] ABORTED ($got_signal). Partial log saved to: $fail_path\n";
   exit($exit_code || 130);
 }
 
-# Success: remove temp file, no artifacts.
+# Success: remove temp files, no artifacts.
 if ($exit_code == 0) {
-  unlink $tmp_path;
+  unlink $tmp_stdout_path;
+  unlink $tmp_stderr_path;
   exit 0;
 }
 
-# Failure: move temp file to FAIL-LOGS
+# Failure: create log with M0-P1-I1 section markers
 make_path($safe_log_dir) unless -d $safe_log_dir;
-my $stamp = time();
-my $fail_path = File::Spec->catfile($safe_log_dir, "safe-run-$stamp-fail.txt");
-rename($tmp_path, $fail_path) or do {
-  # fallback copy
-  open my $in,  '<', $tmp_path  or die "cannot read $tmp_path: $!";
-  open my $outf,'>', $fail_path or die "cannot write $fail_path: $!";
-  binmode($in); binmode($outf);
-  my $b;
-  while (read($in, $b, 8192)) { print {$outf} $b; }
-  close $in; close $outf;
-  unlink $tmp_path;
-};
+# M0-P1-I2: ISO8601 timestamp format
+my ($sec,$min,$hour,$mday,$mon,$year) = gmtime();
+my $ts = sprintf("%04d%02d%02dT%02d%02d%02dZ", $year+1900, $mon+1, $mday, $hour, $min, $sec);
+my $pid = $$;
+my $fail_path = File::Spec->catfile($safe_log_dir, "${ts}-pid${pid}-FAIL.log");
+
+# M0-P1-I1: Combine with section markers
+open my $outf, '>', $fail_path or die "cannot write $fail_path: $!";
+binmode($outf);
+print {$outf} "=== STDOUT ===\n";
+if (-f $tmp_stdout_path) {
+  open my $in, '<', $tmp_stdout_path or die "cannot read $tmp_stdout_path: $!";
+  binmode($in);
+  my $buf;
+  while (read($in, $buf, 8192)) { print {$outf} $buf; }
+  close $in;
+}
+print {$outf} "\n=== STDERR ===\n";
+if (-f $tmp_stderr_path) {
+  open my $in, '<', $tmp_stderr_path or die "cannot read $tmp_stderr_path: $!";
+  binmode($in);
+  my $buf;
+  while (read($in, $buf, 8192)) { print {$outf} $buf; }
+  close $in;
+}
+close $outf;
+
+unlink $tmp_stdout_path;
+unlink $tmp_stderr_path;
 
 print STDERR "\n[safe-run] Command failed (exit $exit_code). Log saved to: $fail_path\n";
 
