@@ -26,7 +26,7 @@ function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
 function Usage {
   Write-Err "Usage:"
-  Write-Err "  scripts/powershell/preflight_automerge_ruleset.ps1 -Repo OWNER/REPO (-RulesetId ID | -RulesetName NAME) -Want '[\"lint\",\"test\"]'"
+  Write-Err "  scripts/preflight_automerge_ruleset.ps1 -Repo OWNER/REPO (-RulesetId ID | -RulesetName NAME) -Want '[\"lint\",\"test\"]'"
   exit 3
 }
 

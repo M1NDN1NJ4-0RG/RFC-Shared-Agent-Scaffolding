@@ -2,10 +2,10 @@
 
 This folder contains **Pester** tests for the PowerShell implementations:
 
-- `scripts/powershell/safe-run.ps1`
-- `scripts/powershell/safe-archive.ps1`
-- `scripts/powershell/safe-check.ps1`
-- `scripts/powershell/preflight_automerge_ruleset.ps1`
+- `scripts/safe-run.ps1`
+- `scripts/safe-archive.ps1`
+- `scripts/safe-check.ps1`
+- `scripts/preflight_automerge_ruleset.ps1`
 
 ## Requirements
 

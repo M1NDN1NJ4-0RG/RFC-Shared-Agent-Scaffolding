@@ -4,7 +4,7 @@ Set-StrictMode -Version Latest
 Describe "safe-run.ps1" {
   BeforeAll {
     . "$PSScriptRoot/TestHelpers.ps1"
-    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\powershell\safe-run.ps1"
+    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\safe-run.ps1"
   }
 
   It "succeeds without creating artifacts" {

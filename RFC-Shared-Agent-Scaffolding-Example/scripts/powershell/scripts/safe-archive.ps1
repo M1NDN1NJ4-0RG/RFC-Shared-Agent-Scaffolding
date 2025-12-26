@@ -90,7 +90,7 @@ function Archive-One([string]$src, [string]$archiveDir, [string]$compress) {
 }
 
 if ($null -eq $ArgsRest -or $ArgsRest.Count -eq 0 -or $ArgsRest[0] -in @('-h','--help')) {
-  Write-Err "Usage: scripts/powershell/safe-archive.ps1 [--all | <file> ...]"
+  Write-Err "Usage: scripts/safe-archive.ps1 [--all | <file> ...]"
   exit 2
 }
 
