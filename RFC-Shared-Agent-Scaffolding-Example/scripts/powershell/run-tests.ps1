@@ -30,6 +30,17 @@ $cfg = New-PesterConfiguration
 $cfg.Run.Path = $tests
 $cfg.Run.PassThru = $true
 $cfg.Output.Verbosity = 'Detailed'
+# Use kebab-case test file pattern instead of default *.Tests.ps1
+$cfg.Filter.Tag = $null
+$cfg.Filter.ExcludeTag = $null
+# Pester 5 auto-discovers *-tests.ps1 files when Path is a directory
+# We need to explicitly set the test files since we use kebab-case
+$testFiles = Get-ChildItem -Path $tests -Filter "*-tests.ps1" -File
+if ($testFiles.Count -eq 0) {
+  Write-Error "No test files found matching *-tests.ps1 in $tests"
+  exit 2
+}
+$cfg.Run.Path = $testFiles.FullName
 
 $res = Invoke-Pester -Configuration $cfg
 if ($res.FailedCount -gt 0) { exit 1 }

@@ -405,6 +405,36 @@ See `M0-DECISIONS.md` for complete specification.
 
 Wrapper failure fallback remains mandatory.
 
+### 7.6 Script Naming Conventions
+
+**Decision:** Kebab-case required for all script surfaces
+
+All script files in this repository MUST use kebab-case naming (lowercase letters and digits separated by hyphens only).
+
+**Scope:**
+- Script surfaces in `RFC-Shared-Agent-Scaffolding-Example/scripts/*`
+- Wrapper scripts in `wrappers/*`
+- Applies to files with these extensions: `.sh`, `.bash`, `.zsh`, `.pl`, `.py`, `.ps1`
+
+**Format:**
+- Filename stem (excluding extension) MUST match: `^[a-z0-9]+(?:-[a-z0-9]+)*$`
+- ✅ Valid: `safe-run.sh`, `test-helpers.ps1`, `preflight-automerge-ruleset.pl`
+- ❌ Invalid: `safe_run.sh`, `SafeRun.ps1`, `testHelpers.py`
+
+**Rationale:**
+- Consistent naming prevents path drift across language implementations
+- Reduces cognitive load when navigating between Bash/Perl/Python3/PowerShell bundles
+- Simplifies CI automation (single pattern to validate)
+- Aligns with web/URL conventions (portable across filesystems)
+
+**Enforcement:**
+- CI workflow (`naming-kebab-case.yml`) MUST enforce this rule
+- PRs with non-conforming filenames MUST fail CI
+
+**Exceptions:**
+- Language-mandated files (e.g., `__init__.py`, `Cargo.toml`) are exempt
+- Files outside script surfaces are not subject to this requirement
+
 ---
 
 ## 8. New: Token Budget / Runway Check (Normative for Constrained Agents)
