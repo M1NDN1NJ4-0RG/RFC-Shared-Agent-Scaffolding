@@ -2,6 +2,10 @@
 .agent/
 *.log
 
+# Rust build artifacts
+rust/target/
+rust/Cargo.lock
+
 # Language-specific
 __pycache__/
 *.pyc

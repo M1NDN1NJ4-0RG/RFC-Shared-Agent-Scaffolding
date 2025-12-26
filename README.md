@@ -1,2 +1,63 @@
 # RFC-Shared-Agent-Scaffolding
-RFC-Shared-Agent-Scaffolding
+
+A restartable, failure-resilient operating model for AI coding agents.
+
+## Overview
+
+This repository implements the RFC-Shared-Agent-Scaffolding contract (v0.1.0), which defines structured command execution, event logging, and artifact generation for AI agent workflows.
+
+## Implementations
+
+### Rust Canonical Tool (Primary)
+
+The **Rust canonical tool** is the single source of truth for the contract behavior. It provides:
+
+- ✅ Cross-platform consistency (Linux, macOS, Windows)
+- ✅ Type-safe implementation
+- ✅ Event ledger and merged view modes
+- ✅ Exit code forwarding and signal handling
+- ✅ Artifact generation with no-clobber semantics
+
+**Build and run:**
+
+```bash
+cd rust/
+cargo build --release
+./target/release/safe-run --help
+```
+
+**Documentation:**
+
+- [Rust Canonical Tool](./docs/rust-canonical-tool.md)
+- [Wrapper Discovery](./docs/wrapper-discovery.md)
+- [Conformance Contract](./docs/conformance-contract.md)
+
+### Language-Specific Wrappers (Compatibility)
+
+Thin wrapper scripts that discover and invoke the Rust canonical tool:
+
+- **Bash:** `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh`
+- **Perl:** `RFC-Shared-Agent-Scaffolding-Example/scripts/perl/scripts/safe-run.pl`
+- **Python3:** `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/scripts/safe-run.py`
+- **PowerShell:** `RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/safe-run.ps1`
+
+Wrappers act as **invokers**, not independent implementations. They:
+
+1. Discover the Rust binary (environment override, dev mode, CI artifacts, PATH)
+2. Pass through all arguments
+3. Forward exit codes
+4. Provide actionable error messages if Rust binary is missing
+
+## Documentation
+
+- [RFC v0.1.0](./RFC-Shared-Agent-Scaffolding-v0.1.0.md) - Contract specification
+- [Canonical Structure](./documents/CANONICAL-STRUCTURE.md) - Directory layout
+- [Pre-flight Validation](./PR0-PREFLIGHT-COMPLETE.md) - Baseline conformance report
+
+## Contributing
+
+See [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) for the implementation roadmap.
+
+## License
+
+[Unlicense](./LICENSE)
