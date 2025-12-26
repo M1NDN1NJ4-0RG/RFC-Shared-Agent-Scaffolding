@@ -71,7 +71,7 @@ jobs:
           # Test Bash
           echo "Testing Bash implementation..."
           bash_exit=0
-          bash "$GITHUB_WORKSPACE/RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/bash/safe-run.sh" echo "ok" > /tmp/bash-out.txt 2>&1 || bash_exit=$?
+          bash "$GITHUB_WORKSPACE/RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh" echo "ok" > /tmp/bash-out.txt 2>&1 || bash_exit=$?
           bash_artifacts=$(ls .agent/FAIL-LOGS/ 2>/dev/null | wc -l || echo 0)
           rm -rf .agent
           
@@ -129,7 +129,7 @@ jobs:
           # Test Bash
           echo "Testing Bash implementation..."
           bash_exit=0
-          bash "$GITHUB_WORKSPACE/RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/bash/safe-run.sh" bash -c 'echo OUT; echo ERR >&2; exit 7' > /tmp/bash-out2.txt 2>&1 || bash_exit=$?
+          bash "$GITHUB_WORKSPACE/RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh" bash -c 'echo OUT; echo ERR >&2; exit 7' > /tmp/bash-out2.txt 2>&1 || bash_exit=$?
           bash_log=$(ls .agent/FAIL-LOGS/*.log 2>/dev/null | head -1 || echo "")
           bash_has_stdout=$(grep -c "=== STDOUT ===" "$bash_log" 2>/dev/null || echo 0)
           bash_has_stderr=$(grep -c "=== STDERR ===" "$bash_log" 2>/dev/null || echo 0)
