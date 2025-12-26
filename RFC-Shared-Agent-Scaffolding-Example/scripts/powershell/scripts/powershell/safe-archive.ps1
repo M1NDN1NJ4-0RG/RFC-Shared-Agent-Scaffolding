@@ -74,7 +74,7 @@ function Archive-One([string]$src, [string]$archiveDir, [string]$compress) {
   Compress-File $compress $dest
 }
 
-if ($ArgsRest.Count -eq 0 -or $ArgsRest[0] -in @('-h','--help')) {
+if ($null -eq $ArgsRest -or $ArgsRest.Count -eq 0 -or $ArgsRest[0] -in @('-h','--help')) {
   Write-Err "Usage: scripts/powershell/safe-archive.ps1 [--all | <file> ...]"
   exit 2
 }
@@ -90,7 +90,7 @@ New-Item -ItemType Directory -Force -Path $failDir | Out-Null
 New-Item -ItemType Directory -Force -Path $archiveDir | Out-Null
 
 if ($ArgsRest[0] -eq '--all') {
-  $files = Get-ChildItem -Path $failDir -File | Sort-Object Name
+  $files = @(Get-ChildItem -Path $failDir -File | Sort-Object Name)
   if ($files.Count -eq 0) { Write-Err "No files to archive in $failDir"; exit 0 }
   foreach ($f in $files) { Archive-One $f.FullName $archiveDir $compress }
   exit 0
