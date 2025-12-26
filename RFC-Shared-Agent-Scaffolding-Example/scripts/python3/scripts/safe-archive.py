@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# safe_archive.py (Python 3)
+# safe-archive.py (Python 3)
 # Non-destructively archive failure logs from .agent/FAIL-LOGS to .agent/FAIL-ARCHIVE using no-clobber semantics.
 import os
 import sys
@@ -12,7 +12,7 @@ def eprint(*args: object) -> None:
     print(*args, file=sys.stderr)
 
 def usage() -> int:
-    eprint("Usage: scripts/python3/safe_archive.py [--no-clobber] [--all | <file> ...]")
+    eprint("Usage: scripts/python3/safe-archive.py [--no-clobber] [--all | <file> ...]")
     eprint("")
     eprint("Options:")
     eprint("  --no-clobber            Fail if destination exists (default: auto-suffix)")

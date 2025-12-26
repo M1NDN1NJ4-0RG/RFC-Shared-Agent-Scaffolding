@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# safe_check.py (Python 3)
+# safe-check.py (Python 3)
 # Contract verification for Python3 scripts.
 import os
 import sys
@@ -16,7 +16,7 @@ def die(msg: str, rc: int = 1) -> None:
     raise SystemExit(rc)
 
 def usage() -> None:
-    eprint("Usage: scripts/python3/safe_check.py")
+    eprint("Usage: scripts/python3/safe-check.py")
     raise SystemExit(2)
 
 def count_files(d: str) -> int:
@@ -30,15 +30,15 @@ def main(argv: List[str]) -> int:
     os.makedirs(log_dir, exist_ok=True)
     os.makedirs(".agent/FAIL-ARCHIVE", exist_ok=True)
 
-    if not Path("scripts/python3/safe_run.py").is_file():
-        die("Missing scripts/python3/safe_run.py")
-    if not Path("scripts/python3/safe_archive.py").is_file():
-        die("Missing scripts/python3/safe_archive.py")
+    if not Path("scripts/python3/safe-run.py").is_file():
+        die("Missing scripts/python3/safe-run.py")
+    if not Path("scripts/python3/safe-archive.py").is_file():
+        die("Missing scripts/python3/safe-archive.py")
 
     before = count_files(log_dir)
 
     # failure path
-    rc = subprocess.call([sys.executable, "scripts/python3/safe_run.py", "--",
+    rc = subprocess.call([sys.executable, "scripts/python3/safe-run.py", "--",
                           sys.executable, "-c", 'import sys; print("hello"); print("boom", file=sys.stderr); raise SystemExit(42)'],
                          stdout=subprocess.DEVNULL)
     if rc != 42:
@@ -50,7 +50,7 @@ def main(argv: List[str]) -> int:
 
     # success path
     before = after
-    rc = subprocess.call([sys.executable, "scripts/python3/safe_run.py", "--",
+    rc = subprocess.call([sys.executable, "scripts/python3/safe-run.py", "--",
                           sys.executable, "-c", 'print("ok"); raise SystemExit(0)'],
                          stdout=subprocess.DEVNULL)
     if rc != 0:
@@ -69,7 +69,7 @@ def main(argv: List[str]) -> int:
     base = os.path.basename(newest)
     dest = os.path.join(".agent/FAIL-ARCHIVE", base)
 
-    rc = subprocess.call([sys.executable, "scripts/python3/safe_archive.py", newest],
+    rc = subprocess.call([sys.executable, "scripts/python3/safe-archive.py", newest],
                          stdout=subprocess.DEVNULL)
     if rc != 0:
         die(f"safe_archive failed ({rc})")
@@ -83,7 +83,7 @@ def main(argv: List[str]) -> int:
     dummy = os.path.join(log_dir, base)
     with open(dummy, "w", encoding="utf-8") as fh:
         fh.write("dummy\n")
-    rc = subprocess.call([sys.executable, "scripts/python3/safe_archive.py", dummy],
+    rc = subprocess.call([sys.executable, "scripts/python3/safe-archive.py", dummy],
                          stdout=subprocess.DEVNULL)
     if rc != 0:
         die(f"safe_archive no-clobber failed ({rc})")

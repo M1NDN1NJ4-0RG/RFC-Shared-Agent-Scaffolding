@@ -11,11 +11,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SCRIPTS = ROOT / 'scripts'
-SAFE_RUN = SCRIPTS / 'safe_run.py'
+SAFE_RUN = SCRIPTS / 'safe-run.py'
 
 
 def run_safe_run(cmd_args, workdir: Path, env=None, timeout=25):
-    """Run safe_run.py as a subprocess.
+    """Run safe-run.py as a subprocess.
 
     cmd_args is the command to run *through* safe_run (list[str]).
     Returns subprocess.CompletedProcess.

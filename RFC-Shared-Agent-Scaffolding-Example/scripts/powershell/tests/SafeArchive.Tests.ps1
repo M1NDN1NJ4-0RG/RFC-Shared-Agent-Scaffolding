@@ -4,7 +4,7 @@ Set-StrictMode -Version Latest
 Describe "safe-archive.ps1" {
   BeforeAll {
     . "$PSScriptRoot/TestHelpers.ps1"
-    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\powershell\safe-archive.ps1"
+    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\safe-archive.ps1"
   }
 
   It "does nothing and exits 0 when FAIL-LOGS does not exist" {

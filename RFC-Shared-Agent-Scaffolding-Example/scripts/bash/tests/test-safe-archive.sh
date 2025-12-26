@@ -3,8 +3,8 @@ set -euo pipefail
 cd "$(dirname "$0")"
 source "./lib.sh"
 
-ROOT="$(cd ../.. && pwd)"
-ARCH="${ROOT}/scripts/bash/safe-archive.sh"
+ROOT="$(cd .. && pwd)"
+ARCH="${ROOT}/scripts/safe-archive.sh"
 
 test_default_archives_one() {
   local tmp

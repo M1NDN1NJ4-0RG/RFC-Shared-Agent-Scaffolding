@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# safe_run.py (Python 3)
+# safe-run.py (Python 3)
 #
 # Safe Execution Contract (M0-P1-I1, M0-P1-I2 + Event Ledger):
 # - Executes the command verbatim.
@@ -26,7 +26,7 @@ def eprint(*args: object) -> None:
 
 
 def usage() -> int:
-    eprint("Usage: scripts/python3/safe_run.py [--] <command> [args...]")
+    eprint("Usage: scripts/python3/safe-run.py [--] <command> [args...]")
     eprint("")
     eprint("Environment:")
     eprint("  SAFE_LOG_DIR        Failure log directory (default: .agent/FAIL-LOGS)")

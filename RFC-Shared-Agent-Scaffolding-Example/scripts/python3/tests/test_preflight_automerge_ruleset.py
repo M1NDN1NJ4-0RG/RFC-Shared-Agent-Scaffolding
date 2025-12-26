@@ -8,7 +8,7 @@ import importlib.util
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SCRIPTS = ROOT / 'scripts'
-MODULE_PATH = SCRIPTS / 'preflight_automerge_ruleset.py'
+MODULE_PATH = SCRIPTS / 'preflight-automerge-ruleset.py'
 
 
 def load_module():

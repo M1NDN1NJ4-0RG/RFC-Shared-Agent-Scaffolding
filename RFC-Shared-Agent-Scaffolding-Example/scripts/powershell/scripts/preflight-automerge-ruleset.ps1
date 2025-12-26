@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  preflight_automerge_ruleset.ps1 - Verify GitHub ruleset required CI contexts on default branch.
+  preflight-automerge-ruleset.ps1 - Verify GitHub ruleset required CI contexts on default branch.
 .DESCRIPTION
   Exit codes:
     0  OK
@@ -26,7 +26,7 @@ function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
 function Usage {
   Write-Err "Usage:"
-  Write-Err "  scripts/powershell/preflight_automerge_ruleset.ps1 -Repo OWNER/REPO (-RulesetId ID | -RulesetName NAME) -Want '[\"lint\",\"test\"]'"
+  Write-Err "  scripts/preflight-automerge-ruleset.ps1 -Repo OWNER/REPO (-RulesetId ID | -RulesetName NAME) -Want '[\"lint\",\"test\"]'"
   exit 3
 }
 

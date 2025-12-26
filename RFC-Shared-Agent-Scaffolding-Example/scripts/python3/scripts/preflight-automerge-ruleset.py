@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# preflight_automerge_ruleset.py (Python 3)
+# preflight-automerge-ruleset.py (Python 3)
 # Verifies a GitHub Ruleset enforces required status checks on ~DEFAULT_BRANCH.
 # Exit codes: 0 ok, 1 precheck fail, 2 auth/permission issue, 3 usage error.
 # Security: never prints token values.
@@ -19,7 +19,7 @@ def eprint(*args: object) -> None:
 
 def usage() -> int:
     eprint("Usage:")
-    eprint("  scripts/python3/preflight_automerge_ruleset.py --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want '[\"lint\",\"test\"]'")
+    eprint("  scripts/python3/preflight-automerge-ruleset.py --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want '[\"lint\",\"test\"]'")
     return 3
 
 def have_cmd(cmd: str) -> bool:

@@ -18,7 +18,7 @@ $ErrorActionPreference = 'Stop'
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
 if ($args.Count -eq 0 -or $args[0] -in @('-h','--help')) {
-  Write-Err "Usage: scripts/powershell/safe-run.ps1 [--] <command> [args...]"
+  Write-Err "Usage: scripts/safe-run.ps1 [--] <command> [args...]"
   exit 2
 }
 

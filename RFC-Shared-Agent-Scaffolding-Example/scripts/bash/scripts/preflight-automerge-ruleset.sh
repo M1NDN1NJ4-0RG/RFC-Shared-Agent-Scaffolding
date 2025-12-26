@@ -1,6 +1,6 @@
 \
 #!/usr/bin/env bash
-# preflight_automerge_ruleset.sh
+# preflight-automerge-ruleset.sh
 # Verify a GitHub Ruleset enforces required status checks on the default branch.
 # Designed to be used before enabling auto-merge (Git Mode B).
 #
@@ -17,7 +17,7 @@ info() { printf 'INFO: %s\n' "$*" >&2; }
 usage() {
   cat <<'USAGE'
 Usage:
-  scripts/preflight_automerge_ruleset.sh --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want CONTEXTS_JSON
+  scripts/preflight-automerge-ruleset.sh --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want CONTEXTS_JSON
 
 Required:
   --repo OWNER/REPO            Repository slug (e.g., octocat/Hello-World)
@@ -44,7 +44,7 @@ Exit codes:
   3  Usage/validation error
 
 Examples:
-  scripts/preflight_automerge_ruleset.sh --repo m1ndn1nj4-0rg/Acronym-Wiki \
+  scripts/preflight-automerge-ruleset.sh --repo m1ndn1nj4-0rg/Acronym-Wiki \
     --ruleset-name "Main - PR Only + Green CI" \
     --want '["lint","typecheck","test"]'
 USAGE

@@ -9,7 +9,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SCRIPTS = ROOT / 'scripts'
-SAFE_ARCHIVE = SCRIPTS / 'safe_archive.py'
+SAFE_ARCHIVE = SCRIPTS / 'safe-archive.py'
 
 
 def _py():
