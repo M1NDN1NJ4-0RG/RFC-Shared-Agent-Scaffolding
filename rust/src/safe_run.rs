@@ -205,7 +205,7 @@ fn save_log(
     // Write log file with error tracking
     let mut file =
         File::create(&log_path).map_err(|e| format!("Failed to create log file: {}", e))?;
-    
+
     let mut write_error_logged = false;
     let mut log_write = |result: std::io::Result<()>| {
         if let Err(e) = result {
