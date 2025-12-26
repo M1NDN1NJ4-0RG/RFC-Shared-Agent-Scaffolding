@@ -214,7 +214,8 @@ jobs:
             fi
             
             # Check if title contains "EPIC" as a whole word (case-insensitive)
-            local title=$(echo "$issue_json" | jq -r '.title // ""')
+            local title
+            title=$(echo "$issue_json" | jq -r '.title // ""') || return 2
             if echo "$title" | grep -iw "EPIC" > /dev/null 2>&1; then
               EPIC_CACHE[$cache_key]="true"
               return 0  # EPIC found
@@ -296,7 +297,8 @@ jobs:
             local pattern_parts=""
             while IFS= read -r ref; do
               # Escape special regex characters
-              local escaped_ref=$(echo "$ref" | sed 's/[][\\.^$*+?{}()|]/\\&/g')
+              local escaped_ref
+              escaped_ref=$(echo "$ref" | sed 's/[][\\.^$*+?{}()|]/\\&/g') || escaped_ref="$ref"
               if [ -n "$pattern_parts" ]; then
                 pattern_parts="${pattern_parts}|${escaped_ref}"
               else
@@ -331,8 +333,8 @@ jobs:
               fail "Failed to fetch PR body from GitHub API: $PR_BODY_JSON"
             fi
             
-            PR_BODY=$(echo "$PR_BODY_JSON" | jq -r '.body // ""')
-            PR_TITLE=$(echo "$PR_BODY_JSON" | jq -r '.title // ""')
+            PR_BODY=$(echo "$PR_BODY_JSON" | jq -r '.body // ""') || PR_BODY=""
+            PR_TITLE=$(echo "$PR_BODY_JSON" | jq -r '.title // ""') || PR_TITLE=""
 
             # Give GitHub a brief moment to propagate the updated body between attempts.
             if [ "$attempt" -lt 3 ]; then
@@ -344,7 +346,7 @@ jobs:
 
           # Get all issue references with "EPIC" in title from PR body
           echo "Checking for issues with 'EPIC' in title in PR body..."
-          epic_issue_refs=$(get_epic_issue_refs "$body")
+          epic_issue_refs=$(get_epic_issue_refs "$body") || epic_issue_refs=""
 
           if [ -z "$epic_issue_refs" ]; then
             echo "No issues with 'EPIC' in title found in PR body."
@@ -353,7 +355,7 @@ jobs:
             echo "$epic_issue_refs"
             
             # Build pattern for epic issues
-            EPIC_PATTERN=$(build_epic_pattern "$epic_issue_refs")
+            EPIC_PATTERN=$(build_epic_pattern "$epic_issue_refs") || EPIC_PATTERN=""
             
             if [ -n "$EPIC_PATTERN" ]; then
               # Check PR title
@@ -375,12 +377,14 @@ jobs:
               page=1
               while :; do
                 commits_api="${base_commits_api}?per_page=100&page=${page}"
-                commits_json="$(curl -sSf \
+                if ! commits_json="$(curl -sSf \
                   -H "Authorization: Bearer $GH_TOKEN" \
                   -H "Accept: application/vnd.github+json" \
-                  "$commits_api")"
+                  "$commits_api" 2>&1)"; then
+                  fail "Failed to fetch commits from GitHub API: $commits_json"
+                fi
 
-                commit_messages="$(echo "$commits_json" | jq -r '.[].commit.message')"
+                commit_messages="$(echo "$commits_json" | jq -r '.[].commit.message')" || commit_messages=""
                 [ -z "$commit_messages" ] && break
 
                 if matched_line=$(printf '%s\n' "$commit_messages" | grep -Ei "$EPIC_PATTERN" | head -1); then
