@@ -8,6 +8,7 @@ import sys
 import json
 import subprocess
 import re
+from typing import List, Optional, Tuple
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
@@ -34,7 +35,7 @@ def classify_auth(obj: object) -> bool:
     msg = str(obj.get("message", "") or "")
     return re.search(r"(Bad credentials|Requires authentication|Resource not accessible|Forbidden|Must have admin rights|Not Found)", msg, re.I) is not None
 
-def gh_api(endpoint: str, api_version: str) -> str | None:
+def gh_api(endpoint: str, api_version: str) -> Optional[str]:
     try:
         out = subprocess.check_output([
             "gh", "api",
@@ -46,7 +47,7 @@ def gh_api(endpoint: str, api_version: str) -> str | None:
     except Exception:
         return None
 
-def http_get(url: str, api_version: str) -> tuple[int, str]:
+def http_get(url: str, api_version: str) -> Tuple[int, str]:
     token = os.environ.get("TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
     if not token:
         raise RuntimeError("No auth available: set TOKEN/GITHUB_TOKEN or authenticate with gh")
@@ -64,7 +65,7 @@ def http_get(url: str, api_version: str) -> tuple[int, str]:
         body = e.read().decode("utf-8", "replace")
         return e.code, body
 
-def parse_args(argv: list[str]) -> tuple[str, str | None, str | None, str, str] | None:
+def parse_args(argv: List[str]) -> Optional[Tuple[str, Optional[str], Optional[str], str, str]]:
     repo = None
     ruleset_id = None
     ruleset_name = None
@@ -90,7 +91,7 @@ def parse_args(argv: list[str]) -> tuple[str, str | None, str | None, str, str] 
         raise ValueError("Missing required arguments")
     return repo, ruleset_id, ruleset_name, want, api_version
 
-def main(argv: list[str]) -> int:
+def main(argv: List[str]) -> int:
     try:
         parsed = parse_args(argv)
     except Exception as e:

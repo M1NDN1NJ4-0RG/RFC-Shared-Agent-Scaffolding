@@ -49,9 +49,8 @@ test_snippet_lines() {
     set -e
     [[ "$rc" -eq 9 ]]
     grep -F "failure tail" <<<"$err" >/dev/null
-    # With M0-P1-I1 markers, the tail shows the last 2 lines of the log file
-    # which includes the STDERR section marker
-    grep -F "STDERR" <<<"$err" >/dev/null
+    # With the new event ledger, the tail should show the last lines which include events
+    grep -F "EVENTS" <<<"$err" >/dev/null
   )
 }
 
@@ -92,10 +91,62 @@ test_sigint_aborted_log() {
   )
 }
 
+test_event_ledger() {
+  local tmp rc f c
+  tmp="$(mktemp_dir)"
+  (
+    cd "$tmp"
+    mkdir -p .agent/FAIL-LOGS
+    set +e
+    bash "$SAFE_RUN" bash -c 'echo "out1"; echo "err1" 1>&2; echo "out2"; exit 5'
+    rc=$?
+    set -e
+    [[ "$rc" -eq 5 ]]
+    f="$(ls .agent/FAIL-LOGS/*-FAIL.log | head -n1)"
+    [[ -n "$f" ]]
+    c="$(cat "$f")"
+    # Check for event ledger markers
+    grep -F "BEGIN EVENTS" <<<"$c" >/dev/null
+    grep -F "END EVENTS" <<<"$c" >/dev/null
+    # Check for standardized META events
+    grep -F '[SEQ=1][META] safe-run start: cmd=' <<<"$c" >/dev/null
+    grep -F '[META] safe-run exit: code=5' <<<"$c" >/dev/null
+    # Check for stdout/stderr events
+    grep -F '[STDOUT] out1' <<<"$c" >/dev/null
+    grep -F '[STDOUT] out2' <<<"$c" >/dev/null
+    grep -F '[STDERR] err1' <<<"$c" >/dev/null
+  )
+}
+
+test_merged_view() {
+  local tmp rc f c
+  tmp="$(mktemp_dir)"
+  (
+    cd "$tmp"
+    mkdir -p .agent/FAIL-LOGS
+    set +e
+    SAFE_RUN_VIEW=merged bash "$SAFE_RUN" bash -c 'echo "line1"; exit 3'
+    rc=$?
+    set -e
+    [[ "$rc" -eq 3 ]]
+    f="$(ls .agent/FAIL-LOGS/*-FAIL.log | head -n1)"
+    [[ -n "$f" ]]
+    c="$(cat "$f")"
+    # Check for merged view markers
+    grep -F "BEGIN MERGED" <<<"$c" >/dev/null
+    grep -F "END MERGED" <<<"$c" >/dev/null
+    # Check for merged view format with [#seq] instead of [SEQ=seq]
+    grep -F '[#1][META]' <<<"$c" >/dev/null
+    grep -F '[#2][STDOUT] line1' <<<"$c" >/dev/null
+  )
+}
+
 t "safe-run: success produces no artifacts" test_success_no_artifacts
 t "safe-run: failure captures stderr+stdout, preserves exit code" test_failure_captures_and_rc
 t "safe-run: SAFE_SNIPPET_LINES prints tail snippet to stderr on failure" test_snippet_lines
 t "safe-run: respects SAFE_LOG_DIR override" test_safe_log_dir_override
 t "safe-run: SIGTERM produces ABORTED log and preserves forensic output" test_sigint_aborted_log
+t "safe-run: event ledger with sequence numbers" test_event_ledger
+t "safe-run: merged view when SAFE_RUN_VIEW=merged" test_merged_view
 
 summary

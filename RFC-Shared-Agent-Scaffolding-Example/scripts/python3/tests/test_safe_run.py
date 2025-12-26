@@ -158,6 +158,61 @@ class TestSafeRun(unittest.TestCase):
             content = logs[0].read_text(encoding='utf-8', errors='replace')
             self.assertIn('START', content)
 
+    def test_event_ledger(self):
+        """Test that event ledger is generated with sequence numbers"""
+        with tempfile.TemporaryDirectory() as td:
+            wd = Path(td)
+            log_dir = wd / '.agent' / 'FAIL-LOGS'
+            proc = run_safe_run([
+                _py(),
+                '-c',
+                'print("out1"); import sys; print("err1", file=sys.stderr); print("out2"); raise SystemExit(5)'
+            ], workdir=wd)
+
+            self.assertEqual(proc.returncode, 5)
+            self.assertTrue(log_dir.exists())
+            logs = list_fail_logs(log_dir)
+            self.assertEqual(len(logs), 1)
+            content = logs[0].read_text(encoding='utf-8', errors='replace')
+            
+            # Check for event ledger markers
+            self.assertIn('--- BEGIN EVENTS ---', content)
+            self.assertIn('--- END EVENTS ---', content)
+            
+            # Check for standardized META events
+            self.assertIn('[SEQ=1][META] safe-run start: cmd=', content)
+            self.assertIn('[META] safe-run exit: code=5', content)
+            
+            # Check for stdout/stderr events
+            self.assertIn('[STDOUT] out1', content)
+            self.assertIn('[STDOUT] out2', content)
+            self.assertIn('[STDERR] err1', content)
+
+    def test_merged_view(self):
+        """Test optional merged view output"""
+        with tempfile.TemporaryDirectory() as td:
+            wd = Path(td)
+            log_dir = wd / '.agent' / 'FAIL-LOGS'
+            proc = run_safe_run([
+                _py(),
+                '-c',
+                'print("line1"); raise SystemExit(3)'
+            ], workdir=wd, env={'SAFE_RUN_VIEW': 'merged'})
+
+            self.assertEqual(proc.returncode, 3)
+            self.assertTrue(log_dir.exists())
+            logs = list_fail_logs(log_dir)
+            self.assertEqual(len(logs), 1)
+            content = logs[0].read_text(encoding='utf-8', errors='replace')
+            
+            # Check for merged view markers
+            self.assertIn('--- BEGIN MERGED (OBSERVED ORDER) ---', content)
+            self.assertIn('--- END MERGED ---', content)
+            
+            # Check for merged view format with [#seq]
+            self.assertIn('[#1][META]', content)
+            self.assertIn('[#2][STDOUT] line1', content)
+
 
 if __name__ == '__main__':
     unittest.main()

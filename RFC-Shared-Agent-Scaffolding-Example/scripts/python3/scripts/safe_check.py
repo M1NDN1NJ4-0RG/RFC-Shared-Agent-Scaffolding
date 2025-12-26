@@ -6,6 +6,7 @@ import sys
 import glob
 import subprocess
 from pathlib import Path
+from typing import List
 
 def eprint(*args: object) -> None:
     print(*args, file=sys.stderr)
@@ -21,7 +22,7 @@ def usage() -> None:
 def count_files(d: str) -> int:
     return len([p for p in glob.glob(os.path.join(d, "*")) if os.path.isfile(p)])
 
-def main(argv: list[str]) -> int:
+def main(argv: List[str]) -> int:
     if argv:
         usage()
 
