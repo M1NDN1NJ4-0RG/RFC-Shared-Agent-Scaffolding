@@ -1,0 +1,307 @@
+{
+  "version": "1.0",
+  "m0_contract_version": "v0.1.0",
+  "description": "Canonical conformance test vectors for RFC Shared Agent Scaffolding. All language implementations MUST pass these tests.",
+  "vectors": {
+    "safe_run": [
+      {
+        "id": "safe-run-001",
+        "name": "Success produces no artifacts",
+        "m0_spec": [],
+        "description": "Successful command execution should not create any log files or artifacts",
+        "command": {
+          "args": ["echo", "ok"],
+          "env": {}
+        },
+        "expected": {
+          "exit_code": 0,
+          "stdout_contains": ["ok"],
+          "artifacts_created": false,
+          "file_not_exists": [".agent/FAIL-LOGS"]
+        }
+      },
+      {
+        "id": "safe-run-002",
+        "name": "Failure creates log with split stdout/stderr and preserves exit code",
+        "m0_spec": ["M0-P1-I1", "M0-P1-I2"],
+        "description": "Failed command should create log file with split streams and correct naming format",
+        "command": {
+          "args_template": "print_and_exit",
+          "print_stdout": "OUT_TEXT",
+          "print_stderr": "ERR_TEXT",
+          "exit_code": 7,
+          "env": {}
+        },
+        "expected": {
+          "exit_code": 7,
+          "artifacts_created": true,
+          "file_exists": [".agent/FAIL-LOGS"],
+          "log_file_pattern": "^\\d{8}T\\d{6}Z-pid\\d+-FAIL\\.log$",
+          "log_content_markers": ["=== STDOUT ===", "OUT_TEXT", "=== STDERR ===", "ERR_TEXT"]
+        }
+      },
+      {
+        "id": "safe-run-003",
+        "name": "SIGTERM/SIGINT creates ABORTED log",
+        "m0_spec": ["M0-P1-I2"],
+        "description": "Interrupted command should create log file with ABORTED status",
+        "command": {
+          "args_template": "long_running",
+          "interrupt_signal": "TERM",
+          "env": {}
+        },
+        "expected": {
+          "exit_code_oneOf": [130, 143],
+          "artifacts_created": true,
+          "log_file_pattern": "^\\d{8}T\\d{6}Z-pid\\d+-ABORTED\\.log$",
+          "log_content_markers": ["=== STDOUT ===", "=== STDERR ==="]
+        }
+      },
+      {
+        "id": "safe-run-004",
+        "name": "Custom log directory via SAFE_LOG_DIR",
+        "m0_spec": [],
+        "description": "SAFE_LOG_DIR environment variable should override default log location",
+        "command": {
+          "args_template": "simple_fail",
+          "exit_code": 3,
+          "env": {
+            "SAFE_LOG_DIR": "custom_logs"
+          }
+        },
+        "expected": {
+          "exit_code": 3,
+          "artifacts_created": true,
+          "file_exists": ["custom_logs"],
+          "file_not_exists": [".agent/FAIL-LOGS"],
+          "log_file_in_dir": "custom_logs"
+        }
+      },
+      {
+        "id": "safe-run-005",
+        "name": "Snippet lines printed to stderr on failure",
+        "m0_spec": ["M0-P1-I1"],
+        "description": "On failure, last N lines should be printed to stderr for quick diagnostics",
+        "command": {
+          "args_template": "multiline_output",
+          "output_lines": ["L1", "L2", "L3"],
+          "exit_code": 9,
+          "env": {
+            "SAFE_SNIPPET_LINES": "2"
+          }
+        },
+        "expected": {
+          "exit_code": 9,
+          "stderr_contains": ["L2", "L3"],
+          "artifacts_created": true
+        }
+      }
+    ],
+    "safe_archive": [
+      {
+        "id": "safe-archive-001",
+        "name": "Success creates archive from source directory",
+        "m0_spec": [],
+        "description": "Basic archive creation from directory should succeed",
+        "setup": {
+          "create_files": ["source/file1.txt", "source/file2.txt"]
+        },
+        "command": {
+          "args": ["source", "output.tar.gz"],
+          "env": {}
+        },
+        "expected": {
+          "exit_code": 0,
+          "file_exists": ["output.tar.gz"],
+          "archive_contains": ["file1.txt", "file2.txt"]
+        }
+      },
+      {
+        "id": "safe-archive-002",
+        "name": "Supports compression formats",
+        "m0_spec": [],
+        "description": "Archive should support .tar.gz, .tar.bz2, .zip formats",
+        "setup": {
+          "create_files": ["source/test.txt"]
+        },
+        "command_variants": [
+          {"args": ["source", "output.tar.gz"], "expected_file": "output.tar.gz"},
+          {"args": ["source", "output.tar.bz2"], "expected_file": "output.tar.bz2"},
+          {"args": ["source", "output.zip"], "expected_file": "output.zip"}
+        ],
+        "expected": {
+          "exit_code": 0
+        }
+      },
+      {
+        "id": "safe-archive-003",
+        "name": "No-clobber default: auto-suffix on collision",
+        "m0_spec": ["M0-P1-I3"],
+        "description": "When destination exists, create archive with numeric suffix",
+        "setup": {
+          "create_files": ["source/test.txt", "output.tar.gz"]
+        },
+        "command": {
+          "args": ["source", "output.tar.gz"],
+          "env": {}
+        },
+        "expected": {
+          "exit_code": 0,
+          "file_exists": ["output.tar.gz", "output.1.tar.gz"],
+          "original_file_unchanged": "output.tar.gz"
+        }
+      },
+      {
+        "id": "safe-archive-004",
+        "name": "No-clobber strict mode: fail on collision",
+        "m0_spec": ["M0-P1-I3"],
+        "description": "With --no-clobber flag, exit with error if destination exists",
+        "setup": {
+          "create_files": ["source/test.txt", "output.tar.gz"]
+        },
+        "command": {
+          "args": ["--no-clobber", "source", "output.tar.gz"],
+          "env": {}
+        },
+        "expected": {
+          "exit_code_range": [40, 49],
+          "stderr_contains": ["exists", "collision"],
+          "artifacts_created": false,
+          "file_count_unchanged": true
+        }
+      }
+    ],
+    "preflight_automerge_ruleset": [
+      {
+        "id": "preflight-001",
+        "name": "Success when required contexts match",
+        "m0_spec": ["M0-P2-I1", "M0-P2-I2"],
+        "description": "Should succeed when all required status checks are present in ruleset",
+        "mock_responses": {
+          "rulesets_list": [
+            {"id": 111, "name": "Main - PR Only + Green CI"},
+            {"id": 222, "name": "Other Ruleset"}
+          ],
+          "ruleset_detail": {
+            "id": 111,
+            "name": "Main - PR Only + Green CI",
+            "enforcement": "active",
+            "conditions": {
+              "ref_name": {
+                "include": ["~DEFAULT_BRANCH"],
+                "exclude": []
+              }
+            },
+            "rules": [
+              {
+                "type": "required_status_checks",
+                "parameters": {
+                  "strict_required_status_checks_policy": false,
+                  "required_status_checks": [
+                    {"context": "lint"},
+                    {"context": "test"}
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "command": {
+          "args": ["--repo", "owner/repo", "--ruleset-name", "Main - PR Only + Green CI", "--want", "[\"lint\", \"test\"]"],
+          "env": {
+            "GITHUB_TOKEN": "dummy_token"
+          }
+        },
+        "expected": {
+          "exit_code": 0,
+          "auth_header_format": "Bearer dummy_token"
+        }
+      },
+      {
+        "id": "preflight-002",
+        "name": "Auth failure returns exit code 2",
+        "m0_spec": ["M0-P2-I1", "M0-P2-I2"],
+        "description": "Should return exit code 2 for authentication/authorization failures",
+        "mock_responses": {
+          "rulesets_list": {
+            "status": 401,
+            "body": {"message": "Bad credentials"}
+          }
+        },
+        "command": {
+          "args": ["--repo", "owner/repo", "--ruleset-name", "x", "--want", "[]"],
+          "env": {
+            "GITHUB_TOKEN": "invalid_token"
+          }
+        },
+        "expected": {
+          "exit_code": 2,
+          "stderr_contains": ["auth", "credential"]
+        }
+      },
+      {
+        "id": "preflight-003",
+        "name": "Ruleset not found returns exit code 3",
+        "m0_spec": ["M0-P2-I2"],
+        "description": "Should return exit code 3 (usage error) when ruleset name not found",
+        "mock_responses": {
+          "rulesets_list": [
+            {"id": 999, "name": "Different Ruleset"}
+          ]
+        },
+        "command": {
+          "args": ["--repo", "owner/repo", "--ruleset-name", "Nonexistent", "--want", "[]"],
+          "env": {
+            "GITHUB_TOKEN": "dummy_token"
+          }
+        },
+        "expected": {
+          "exit_code": 3,
+          "stderr_contains": ["not found", "ruleset"]
+        }
+      },
+      {
+        "id": "preflight-004",
+        "name": "Missing required context fails",
+        "m0_spec": ["M0-P2-I2"],
+        "description": "Should fail when required status check is missing from ruleset",
+        "mock_responses": {
+          "rulesets_list": [
+            {"id": 111, "name": "Main - PR Only + Green CI"}
+          ],
+          "ruleset_detail": {
+            "id": 111,
+            "name": "Main - PR Only + Green CI",
+            "rules": [
+              {
+                "type": "required_status_checks",
+                "parameters": {
+                  "required_status_checks": [
+                    {"context": "lint"}
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "command": {
+          "args": ["--repo", "owner/repo", "--ruleset-name", "Main - PR Only + Green CI", "--want", "[\"lint\", \"test\"]"],
+          "env": {
+            "GITHUB_TOKEN": "dummy_token"
+          }
+        },
+        "expected": {
+          "exit_code_range": [50, 59],
+          "stderr_contains": ["missing", "test"]
+        }
+      }
+    ]
+  },
+  "templates": {
+    "description": "Command templates for easier vector definition. Implementations should provide these test helpers.",
+    "print_and_exit": "Print specified text to stdout/stderr and exit with given code",
+    "simple_fail": "Exit with specified code immediately",
+    "long_running": "Sleep/wait for interrupt (for SIGTERM/SIGINT testing)",
+    "multiline_output": "Print multiple lines to stdout/stderr"
+  }
+}
