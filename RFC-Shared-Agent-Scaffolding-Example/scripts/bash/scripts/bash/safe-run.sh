@@ -21,8 +21,9 @@ fi
 
 mkdir -p "$SAFE_LOG_DIR" 2>/dev/null || true
 
-# Build command string for META event
-CMD_STR="$*"
+# Build command string for META event (properly escaped)
+# Simple escaping: replace double quotes with escaped quotes
+CMD_STR=$(printf '%s' "$*" | sed 's/"/\\"/g')
 
 # Temp files for split streams and event ledger
 TMP_STDOUT="$(mktemp -t safe-run-stdout.XXXXXX)" || exit 1
@@ -44,6 +45,9 @@ cleanup_tmp() {
   [ -f "${TMP_EVENTS}.seq" ] && rm -f "${TMP_EVENTS}.seq" 2>/dev/null || true
   [ -f "${TMP_EVENTS}.lock" ] && rm -f "${TMP_EVENTS}.lock" 2>/dev/null || true
   [ -d "${TMP_EVENTS}.lock" ] && rmdir "${TMP_EVENTS}.lock" 2>/dev/null || true
+  # Clean up FIFOs if they exist
+  [ -n "${FIFO_STDOUT:-}" ] && [ -p "$FIFO_STDOUT" ] && rm -f "$FIFO_STDOUT" 2>/dev/null || true
+  [ -n "${FIFO_STDERR:-}" ] && [ -p "$FIFO_STDERR" ] && rm -f "$FIFO_STDERR" 2>/dev/null || true
 }
 
 # Emit event to ledger file (with locking for concurrent access)
@@ -70,7 +74,7 @@ emit_event() {
     # Fallback for systems without flock (macOS, etc.)
     # Use a simple lock file approach (less atomic but works)
     while ! mkdir "${TMP_EVENTS}.lock" 2>/dev/null; do
-      sleep 0.001
+      sleep 0.01  # 10ms to reduce busy-waiting
     done
     local seq
     if [ -f "${TMP_EVENTS}.seq" ]; then
@@ -148,9 +152,11 @@ emit_event "META" "safe-run start: cmd=\"$CMD_STR\""
 
 # Run command capturing stdout/stderr separately while tracking events
 # We use named pipes (FIFOs) to capture output in order
-FIFO_STDOUT="$(mktemp -u -t safe-run-fifo-out.XXXXXX)"
-FIFO_STDERR="$(mktemp -u -t safe-run-fifo-err.XXXXXX)"
-mkfifo "$FIFO_STDOUT" "$FIFO_STDERR" || { cleanup_tmp; exit 1; }
+# Create FIFOs in a temp directory to reduce race conditions
+FIFO_DIR="$(mktemp -d -t safe-run-fifos.XXXXXX)" || { cleanup_tmp; exit 1; }
+FIFO_STDOUT="$FIFO_DIR/stdout"
+FIFO_STDERR="$FIFO_DIR/stderr"
+mkfifo "$FIFO_STDOUT" "$FIFO_STDERR" || { rm -rf "$FIFO_DIR"; cleanup_tmp; exit 1; }
 
 # Background readers that capture to files, emit events, and stream to console
 (
@@ -179,8 +185,10 @@ CMD_RC=$?
 wait "$READER_OUT_PID" 2>/dev/null || true
 wait "$READER_ERR_PID" 2>/dev/null || true
 
-# Clean up FIFOs
-rm -f "$FIFO_STDOUT" "$FIFO_STDERR" 2>/dev/null || true
+# Clean up FIFOs only (not the event ledger files yet)
+[ -n "${FIFO_STDOUT:-}" ] && [ -p "$FIFO_STDOUT" ] && rm -f "$FIFO_STDOUT" 2>/dev/null || true
+[ -n "${FIFO_STDERR:-}" ] && [ -p "$FIFO_STDERR" ] && rm -f "$FIFO_STDERR" 2>/dev/null || true
+[ -n "${FIFO_DIR:-}" ] && [ -d "$FIFO_DIR" ] && rmdir "$FIFO_DIR" 2>/dev/null || true
 
 # Emit exit event
 emit_event "META" "safe-run exit: code=$CMD_RC"

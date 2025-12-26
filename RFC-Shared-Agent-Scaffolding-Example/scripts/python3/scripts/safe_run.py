@@ -12,12 +12,13 @@ import os
 import re
 import sys
 import time
+import shlex
 import signal
 import tempfile
 import subprocess
 import threading
 from collections import deque
-from typing import Deque, List, Optional, Tuple
+from typing import Deque, List, Optional, Tuple, BinaryIO
 
 
 def eprint(*args: object) -> None:
@@ -62,7 +63,7 @@ class EventLedger:
             self.seq += 1
             self.events.append((self.seq, stream, text))
     
-    def write_to_file(self, f: object) -> None:
+    def write_to_file(self, f: BinaryIO) -> None:
         """Write all events to a file object."""
         with self.lock:
             for seq, stream, text in self.events:
@@ -115,7 +116,8 @@ def main(argv: List[str]) -> int:
 
     ts = iso8601_timestamp()
     pid = os.getpid()
-    cmd_str = " ".join(argv)
+    # Properly escape command for META event (use shell quoting)
+    cmd_str = " ".join(shlex.quote(arg) for arg in argv)
 
     # Temporary files for stdout, stderr, and event ledger
     tmp_stdout_path: Optional[str] = None
