@@ -1,15 +1,15 @@
 #requires -Version 5.1
 Set-StrictMode -Version Latest
 
-. "$PSScriptRoot/TestHelpers.ps1"
-
-$ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\powershell\preflight_automerge_ruleset.ps1"
-
 Describe "preflight_automerge_ruleset.ps1" {
+  BeforeAll {
+    . "$PSScriptRoot/TestHelpers.ps1"
+    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\powershell\preflight_automerge_ruleset.ps1"
+  }
 
   It "fails when no --repo is provided" {
     & pwsh -NoProfile -File $ScriptUnderTest
-    $LASTEXITCODE | Should -Be 2
+    $LASTEXITCODE | Should -Be 3  # M0-P2-I2: Usage/validation error
   }
 
   It "fails when gh is not available and no token is provided" {
