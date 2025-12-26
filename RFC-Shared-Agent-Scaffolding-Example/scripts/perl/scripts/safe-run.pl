@@ -38,12 +38,23 @@ if (!@argv) { usage(); }
 
 my $safe_log_dir = $ENV{SAFE_LOG_DIR} // File::Spec->catdir('.agent', 'FAIL-LOGS');
 my $snippet_lines = $ENV{SAFE_SNIPPET_LINES} // 0;
+my $view_mode = $ENV{SAFE_RUN_VIEW} // '';
 
 # M0-P1-I1: Separate temp files for stdout and stderr
 my ($tmp_stdout_fh, $tmp_stdout_path) = tempfile('safe-run-stdout-XXXXXX', TMPDIR => 1, UNLINK => 0);
 my ($tmp_stderr_fh, $tmp_stderr_path) = tempfile('safe-run-stderr-XXXXXX', TMPDIR => 1, UNLINK => 0);
 binmode($tmp_stdout_fh);
 binmode($tmp_stderr_fh);
+
+# Event ledger: track observed-order events with sequence numbers
+my @event_ledger;
+my $seq = 0;
+
+sub emit_event {
+  my ($stream, $text) = @_;
+  $seq++;
+  push @event_ledger, {seq => $seq, stream => $stream, text => $text};
+}
 
 my $aborted = 0;
 my $got_signal;
@@ -61,6 +72,31 @@ sub _forward_signal {
 
 $SIG{INT}  = sub { _forward_signal('INT'); };
 $SIG{TERM} = sub { _forward_signal('TERM'); };
+
+# Build properly quoted command string for META event (POSIX shell-style quoting)
+# Use String::ShellQuote if available, otherwise simple quoting
+my $cmd_str;
+eval {
+  require String::ShellQuote;
+  $cmd_str = String::ShellQuote::shell_quote(@argv);
+  1;
+} or do {
+  # Fallback: simple quoting (good enough for most cases)
+  my @quoted;
+  for my $arg (@argv) {
+    if ($arg =~ /^[a-zA-Z0-9_\-\.\/=]+$/) {
+      push @quoted, $arg;
+    } else {
+      my $q = $arg;
+      $q =~ s/'/'\\''/g;
+      push @quoted, "'$q'";
+    }
+  }
+  $cmd_str = join(' ', @quoted);
+};
+
+# Emit start event
+emit_event('META', "safe-run start: cmd=\"$cmd_str\"");
 
 # Spawn child and stream stdout/stderr live while teeing to temp file.
 my $err = gensym;
@@ -102,6 +138,29 @@ sub _push_tail {
   shift @tail while @tail > $snippet_lines;
 }
 
+# Line buffers for event ledger (accumulate partial lines)
+my $stdout_buf = '';
+my $stderr_buf = '';
+
+sub _emit_lines {
+  my ($buf_ref, $stream, $final) = @_;
+  my @lines = split(/\n/, $$buf_ref, -1);
+  
+  if ($final) {
+    # Process all lines
+    for my $line (@lines) {
+      emit_event($stream, $line) if length($line) > 0;
+    }
+    $$buf_ref = '';
+  } else {
+    # Keep last partial line in buffer
+    $$buf_ref = pop @lines;
+    for my $line (@lines) {
+      emit_event($stream, $line);
+    }
+  }
+}
+
 # Read loop
 while ($sel->count && !$aborted) {
   my @ready = $sel->can_read(0.25);
@@ -115,6 +174,12 @@ while ($sel->count && !$aborted) {
     }
 
     if ($bytes == 0) {
+      # EOF: emit any remaining buffered lines
+      if ($fh == $out) {
+        _emit_lines(\$stdout_buf, 'STDOUT', 1);
+      } else {
+        _emit_lines(\$stderr_buf, 'STDERR', 1);
+      }
       $sel->remove($fh);
       next;
     }
@@ -123,9 +188,15 @@ while ($sel->count && !$aborted) {
     if ($fh == $out) {
       print {$tmp_stdout_fh} $buf;
       print STDOUT $buf;
+      # Emit events for complete lines
+      $stdout_buf .= $buf;
+      _emit_lines(\$stdout_buf, 'STDOUT', 0);
     } else {
       print {$tmp_stderr_fh} $buf;
       print STDERR $buf;
+      # Emit events for complete lines
+      $stderr_buf .= $buf;
+      _emit_lines(\$stderr_buf, 'STDERR', 0);
     }
 
     # Tail buffering line-ish: best effort split
@@ -157,6 +228,9 @@ if ($status == -1) {
   $exit_code = ($status >> 8);
 }
 
+# Emit exit event
+emit_event('META', "safe-run exit: code=$exit_code");
+
 # If we were interrupted, treat as aborted regardless of child status.
 if ($aborted) {
   make_path($safe_log_dir) unless -d $safe_log_dir;
@@ -166,7 +240,7 @@ if ($aborted) {
   my $pid = $$;
   my $fail_path = File::Spec->catfile($safe_log_dir, "${ts}-pid${pid}-ABORTED.log");
   
-  # M0-P1-I1: Combine with section markers
+  # M0-P1-I1: Combine with section markers + event ledger
   open my $outf, '>', $fail_path or die "cannot write $fail_path: $!";
   binmode($outf);
   print {$outf} "=== STDOUT ===\n";
@@ -185,6 +259,23 @@ if ($aborted) {
     while (read($in, $buf, 8192)) { print {$outf} $buf; }
     close $in;
   }
+  
+  # Event ledger
+  print {$outf} "\n--- BEGIN EVENTS ---\n";
+  for my $evt (@event_ledger) {
+    printf {$outf} "[SEQ=%d][%s] %s\n", $evt->{seq}, $evt->{stream}, $evt->{text};
+  }
+  print {$outf} "--- END EVENTS ---\n";
+  
+  # Optional merged view
+  if ($view_mode eq 'merged') {
+    print {$outf} "\n--- BEGIN MERGED (OBSERVED ORDER) ---\n";
+    for my $evt (@event_ledger) {
+      printf {$outf} "[#%d][%s] %s\n", $evt->{seq}, $evt->{stream}, $evt->{text};
+    }
+    print {$outf} "--- END MERGED ---\n";
+  }
+  
   close $outf;
   
   unlink $tmp_stdout_path;
@@ -201,7 +292,7 @@ if ($exit_code == 0) {
   exit 0;
 }
 
-# Failure: create log with M0-P1-I1 section markers
+# Failure: create log with M0-P1-I1 section markers + event ledger
 make_path($safe_log_dir) unless -d $safe_log_dir;
 # M0-P1-I2: ISO8601 timestamp format
 my ($sec,$min,$hour,$mday,$mon,$year) = gmtime();
@@ -209,7 +300,7 @@ my $ts = sprintf("%04d%02d%02dT%02d%02d%02dZ", $year+1900, $mon+1, $mday, $hour,
 my $pid = $$;
 my $fail_path = File::Spec->catfile($safe_log_dir, "${ts}-pid${pid}-FAIL.log");
 
-# M0-P1-I1: Combine with section markers
+# M0-P1-I1: Combine with section markers + event ledger
 open my $outf, '>', $fail_path or die "cannot write $fail_path: $!";
 binmode($outf);
 print {$outf} "=== STDOUT ===\n";
@@ -228,6 +319,23 @@ if (-f $tmp_stderr_path) {
   while (read($in, $buf, 8192)) { print {$outf} $buf; }
   close $in;
 }
+
+# Event ledger
+print {$outf} "\n--- BEGIN EVENTS ---\n";
+for my $evt (@event_ledger) {
+  printf {$outf} "[SEQ=%d][%s] %s\n", $evt->{seq}, $evt->{stream}, $evt->{text};
+}
+print {$outf} "--- END EVENTS ---\n";
+
+# Optional merged view
+if ($view_mode eq 'merged') {
+  print {$outf} "\n--- BEGIN MERGED (OBSERVED ORDER) ---\n";
+  for my $evt (@event_ledger) {
+    printf {$outf} "[#%d][%s] %s\n", $evt->{seq}, $evt->{stream}, $evt->{text};
+  }
+  print {$outf} "--- END MERGED ---\n";
+}
+
 close $outf;
 
 unlink $tmp_stdout_path;
