@@ -28,7 +28,12 @@ my @a = @ARGV;
 # Minimal fake `gh api <endpoint>`
 # We intentionally ignore headers and --method, just look for endpoint.
 if (@a >= 2 && $a[0] eq 'api') {
-  my $endpoint = $a[1];
+  # Skip over -H header arguments to find the actual endpoint
+  my $i = 1;
+  while ($i < @a && $a[$i] eq '-H') {
+    $i += 2;  # Skip -H and its value
+  }
+  my $endpoint = $a[$i];
   if ($endpoint =~ m{^repos/([^/]+/[^/]+)/rulesets$}) {
     print qq([{"id": 123, "name": "Main - PR Only + Green CI"}]\n);
     exit 0;
@@ -38,6 +43,8 @@ if (@a >= 2 && $a[0] eq 'api') {
     print qq({
       "id":123,
       "name":"Main - PR Only + Green CI",
+      "enforcement":"active",
+      "conditions":{"ref_name":{"include":["~DEFAULT_BRANCH"]}},
       "rules":[
         {"type":"required_status_checks","parameters":{"required_status_checks":[{"context":"lint"},{"context":"test"}]}}
       ]
@@ -59,7 +66,7 @@ make_exe($gh);
     env=>{ PATH => "$bindir:$ENV{PATH}" }
   );
   is($r->{exit}, 0, "preflight succeeds when checks match");
-  like($r->{stdout}, qr/OK:/, "prints OK");
+  like($r->{stderr}, qr/OK:/, "prints OK");
 }
 
 # 2) Failure case: want includes missing check
@@ -69,8 +76,8 @@ make_exe($gh);
     cwd=>$sandbox,
     env=>{ PATH => "$bindir:$ENV{PATH}" }
   );
-  is($r->{exit}, 3, "preflight exits 3 when missing required check");
-  like($r->{stderr}, qr/Missing required checks/, "stderr explains missing checks");
+  is($r->{exit}, 1, "preflight exits 1 when missing required check");
+  like($r->{stderr}, qr/missing required status check/, "stderr explains missing checks");
 }
 
 # 3) Token secrecy: ensure token not echoed
