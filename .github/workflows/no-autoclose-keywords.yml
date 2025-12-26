@@ -25,9 +25,9 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Match GitHub autoclose keywords (case-insensitive), with optional ":".
-          # Examples: "Fixes #123", "fixes: owner/repo#123", "Closes #9"
-          PATTERN='(^|[^[:alnum:]_])(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)([[:space:]]*:[[:space:]]*|[[:space:]]+)([[:alnum:]_.-]+\/[[:alnum:]_.-]+)?#([0-9]+)\b'
+          # Match GitHub autoclose keywords (case-insensitive).
+          # Examples: "Fixes #123", "fixes owner/repo#123", "Closes #9"
+          PATTERN='\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)[[:space:]]+([[:alnum:]_.-]+\/[[:alnum:]_.-]+)?#([0-9]+)\b'
 
           fail() { echo "::error::$1"; exit 1; }
 
