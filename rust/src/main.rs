@@ -1,4 +1,5 @@
 mod cli;
+mod safe_run;
 
 use clap::Parser;
 use std::process;

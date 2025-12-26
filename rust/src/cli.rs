@@ -21,7 +21,7 @@ enum Commands {
     /// Execute a command with safe-run semantics
     Run {
         /// Command to execute
-        #[arg(required = true)]
+        #[arg(required = true, trailing_var_arg = true, allow_hyphen_values = true)]
         command: Vec<String>,
     },
     /// Check repository state and command availability
@@ -54,11 +54,8 @@ impl Cli {
         }
     }
 
-    fn run_command(&self, _command: &[String]) -> Result<i32, String> {
-        // TODO: Implement safe-run logic
-        println!("safe-run: Command execution not yet implemented");
-        println!("This is a scaffolding PR - implementation comes in PR3+");
-        Ok(0)
+    fn run_command(&self, command: &[String]) -> Result<i32, String> {
+        crate::safe_run::execute(command)
     }
 
     fn check_command(&self, _command: &[String]) -> Result<i32, String> {
