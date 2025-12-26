@@ -16,15 +16,6 @@ $ErrorActionPreference = 'Stop'
 
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
-function Slugify([string]$s) {
-  $s = ($s ?? "").ToLowerInvariant()
-  $s = [Regex]::Replace($s, '[^a-z0-9._-]+', '-')
-  $s = [Regex]::Replace($s, '^-+|-+$', '')
-  $s = [Regex]::Replace($s, '-{2,}', '-')
-  if ([string]::IsNullOrWhiteSpace($s)) { return "command" }
-  return $s
-}
-
 if ($args.Count -eq 0 -or $args[0] -in @('-h','--help')) {
   Write-Err "Usage: scripts/powershell/safe-run.ps1 [--] <command> [args...]"
   exit 2
@@ -43,14 +34,15 @@ if ([string]::IsNullOrWhiteSpace($snippetRaw)) { $snippetRaw = "0" }
 if (-not ($snippetRaw -match '^\d+$')) { Write-Err "ERROR: SAFE_SNIPPET_LINES must be a non-negative integer"; exit 1 }
 $snippetLines = [int]$snippetRaw
 
-# Run command, capturing combined output.
+# Run command, capturing stdout and stderr separately (M0-P1-I1).
 $cmd = $argv[0]
 $cmdArgs = @()
 if ($argv.Count -gt 1) { $cmdArgs = $argv[1..($argv.Count-1)] }
 
 $cmdStr = ($argv -join ' ')
-# Use a temp file to capture and tee.
-$tmp = [System.IO.Path]::GetTempFileName()
+# Use temp files to capture stdout and stderr separately.
+$tmpStdout = [System.IO.Path]::GetTempFileName()
+$tmpStderr = [System.IO.Path]::GetTempFileName()
 
 # Track aborts (Ctrl+C / termination) so we can still persist partial logs.
 $script:WasAborted = $false
@@ -79,9 +71,11 @@ try {
   $p.StartInfo = $psi
   [void]$p.Start()
 
-  # Stream combined output to a temp file to avoid unbounded memory usage.
-  $writer = New-Object System.IO.StreamWriter($tmp, $false, [System.Text.Encoding]::UTF8)
-  $writer.AutoFlush = $true
+  # Stream stdout and stderr separately to temp files (M0-P1-I1).
+  $writerStdout = New-Object System.IO.StreamWriter($tmpStdout, $false, [System.Text.Encoding]::UTF8)
+  $writerStdout.AutoFlush = $true
+  $writerStderr = New-Object System.IO.StreamWriter($tmpStderr, $false, [System.Text.Encoding]::UTF8)
+  $writerStderr.AutoFlush = $true
   $tail = New-Object System.Collections.Generic.Queue[string]
 
   # Handle Ctrl+C so we can stop the child process and still write an ABORTED log.
@@ -97,7 +91,8 @@ try {
       }
     } catch { }
   }
-  [Console]::CancelKeyPress += $cancelHandler
+  # Register cancel handler (may not be available in all environments)
+  try { [Console]::CancelKeyPress += $cancelHandler } catch { }
 
   while (-not $p.HasExited) {
     Start-Sleep -Milliseconds 10
@@ -105,15 +100,15 @@ try {
       $line = $p.StandardOutput.ReadLine()
       if ($null -ne $line) {
         Write-Output $line
-        $writer.WriteLine($line)
+        $writerStdout.WriteLine($line)
         Add-TailLine -Queue $tail -Max $snippetLines -Line $line
       }
     }
     while (-not $p.StandardError.EndOfStream) {
       $line = $p.StandardError.ReadLine()
       if ($null -ne $line) {
-        Write-Output $line
-        $writer.WriteLine($line)
+        [Console]::Error.WriteLine($line)
+        $writerStderr.WriteLine($line)
         Add-TailLine -Queue $tail -Max $snippetLines -Line $line
       }
     }
@@ -124,25 +119,28 @@ try {
     $line = $p.StandardOutput.ReadLine()
     if ($null -ne $line) {
       Write-Output $line
-      $writer.WriteLine($line)
+      $writerStdout.WriteLine($line)
       Add-TailLine -Queue $tail -Max $snippetLines -Line $line
     }
   }
   while (-not $p.StandardError.EndOfStream)  {
     $line = $p.StandardError.ReadLine()
     if ($null -ne $line) {
-      Write-Output $line
-      $writer.WriteLine($line)
+      [Console]::Error.WriteLine($line)
+      $writerStderr.WriteLine($line)
       Add-TailLine -Queue $tail -Max $snippetLines -Line $line
     }
   }
 
   $rc = $p.ExitCode
 
-  # Close writer before we copy the file anywhere.
-  $writer.Flush()
-  $writer.Close()
-  [Console]::CancelKeyPress -= $cancelHandler
+  # Close writers before we copy files.
+  $writerStdout.Flush()
+  $writerStdout.Close()
+  $writerStderr.Flush()
+  $writerStderr.Close()
+  # Unregister cancel handler (may not be available in all environments)
+  try { [Console]::CancelKeyPress -= $cancelHandler } catch { }
 
   # If we aborted, normalize the exit code to 130 (conventional for SIGINT).
   if ($script:WasAborted) {
@@ -151,17 +149,25 @@ try {
 
   if ($rc -eq 0) { exit 0 }
 
+  # On failure, create log file with M0-P1-I1 format (split stdout/stderr with markers).
   New-Item -ItemType Directory -Force -Path $logDir | Out-Null
-  $ts = Get-Date -Format "yyyyMMdd-HHmmss"
-  $slug = Slugify $cmdStr
+  
+  # M0-P1-I2: Use ISO8601-pidPID-STATUS.log format
+  $ts = Get-Date -AsUtc -Format "yyyyMMdd\THHmmss\Z"
+  $processId = $PID
   if ($script:WasAborted) {
-    $outPath = Join-Path $logDir "$ts-$slug-ABORTED-fail.txt"
+    $status = "ABORTED"
   } else {
-    $outPath = Join-Path $logDir "$ts-$slug-fail.txt"
+    $status = "FAIL"
   }
-  if (Test-Path $outPath) { $outPath = Join-Path $logDir "$ts-$slug-fail-$PID.txt" }
-
-  Copy-Item -Force -Path $tmp -Destination $outPath
+  $outPath = Join-Path $logDir "${ts}-pid${processId}-${status}.log"
+  
+  # Write M0-P1-I1 format: split streams with markers
+  $stdout_content = (Get-Content -LiteralPath $tmpStdout -Raw -ErrorAction SilentlyContinue) ?? ""
+  $stderr_content = (Get-Content -LiteralPath $tmpStderr -Raw -ErrorAction SilentlyContinue) ?? ""
+  $logContent = "=== STDOUT ===$([Environment]::NewLine)${stdout_content}=== STDERR ===$([Environment]::NewLine)${stderr_content}"
+  
+  [System.IO.File]::WriteAllText($outPath, $logContent, [System.Text.Encoding]::UTF8)
 
   Write-Err ""
   if ($script:WasAborted) {
@@ -187,29 +193,37 @@ catch {
   $script:AbortReason = $script:AbortReason
 
   # Best-effort cleanup of open resources.
-  try { if ($null -ne $writer) { $writer.Flush(); $writer.Close() } } catch { }
+  try { if ($null -ne $writerStdout) { $writerStdout.Flush(); $writerStdout.Close() } } catch { }
+  try { if ($null -ne $writerStderr) { $writerStderr.Flush(); $writerStderr.Close() } } catch { }
   try { if ($null -ne $cancelHandler) { [Console]::CancelKeyPress -= $cancelHandler } } catch { }
 
   $rc = 1
   if ($script:WasAborted) { $rc = 130 }
 
   try {
-    # Write the exception to the temp file so it appears in the saved log.
+    # Write the exception to the stderr temp file so it appears in the saved log.
     $msg = $_.Exception.ToString()
-    [System.IO.File]::WriteAllText($tmp, $msg + [Environment]::NewLine, [System.Text.Encoding]::UTF8)
+    [System.IO.File]::WriteAllText($tmpStderr, $msg + [Environment]::NewLine, [System.Text.Encoding]::UTF8)
   } catch { }
 
   New-Item -ItemType Directory -Force -Path $logDir | Out-Null
-  $ts = Get-Date -Format "yyyyMMdd-HHmmss"
-  $slug = Slugify $cmdStr
+  
+  # M0-P1-I2: Use ISO8601-pidPID-STATUS.log format
+  $ts = Get-Date -AsUtc -Format "yyyyMMdd\THHmmss\Z"
+  $processId = $PID
   if ($script:WasAborted) {
-    $outPath = Join-Path $logDir "$ts-$slug-ABORTED-fail.txt"
+    $status = "ABORTED"
   } else {
-    $outPath = Join-Path $logDir "$ts-$slug-fail.txt"
+    $status = "ERROR"
   }
-  if (Test-Path $outPath) { $outPath = Join-Path $logDir "$ts-$slug-fail-$PID.txt" }
+  $outPath = Join-Path $logDir "${ts}-pid${processId}-${status}.log"
 
-  try { Copy-Item -Force -Path $tmp -Destination $outPath } catch { }
+  # Write M0-P1-I1 format: split streams with markers
+  $stdout_content = (Get-Content -LiteralPath $tmpStdout -Raw -ErrorAction SilentlyContinue) ?? ""
+  $stderr_content = (Get-Content -LiteralPath $tmpStderr -Raw -ErrorAction SilentlyContinue) ?? ""
+  $logContent = "=== STDOUT ===$([Environment]::NewLine)${stdout_content}=== STDERR ===$([Environment]::NewLine)${stderr_content}"
+  
+  try { [System.IO.File]::WriteAllText($outPath, $logContent, [System.Text.Encoding]::UTF8) } catch { }
 
   Write-Err ""
   if ($script:WasAborted) {
@@ -223,5 +237,6 @@ catch {
   exit $rc
 }
 finally {
-  if (Test-Path $tmp) { Remove-Item -Force $tmp -ErrorAction SilentlyContinue }
+  if (Test-Path $tmpStdout) { Remove-Item -Force $tmpStdout -ErrorAction SilentlyContinue }
+  if (Test-Path $tmpStderr) { Remove-Item -Force $tmpStderr -ErrorAction SilentlyContinue }
 }
