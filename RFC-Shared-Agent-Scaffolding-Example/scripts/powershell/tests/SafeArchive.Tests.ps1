@@ -50,9 +50,9 @@ Describe "safe-archive.ps1" {
       Test-Path -LiteralPath $a | Should -BeFalse
       Test-Path -LiteralPath $b | Should -BeFalse
 
-      (Get-ChildItem -LiteralPath $arch -Filter "b-fail.txt").Count | Should -Be 1
-      (Get-ChildItem -LiteralPath $arch -Filter "a-fail.txt").Count | Should -Be 1
-      (Get-ChildItem -LiteralPath $arch -Filter "a-fail-*.txt").Count | Should -BeGreaterThan 0
+      @(Get-ChildItem -LiteralPath $arch -Filter "b-fail.txt").Count | Should -Be 1
+      @(Get-ChildItem -LiteralPath $arch -Filter "a-fail.txt").Count | Should -Be 1
+      @(Get-ChildItem -LiteralPath $arch -Filter "a-fail-*.txt").Count | Should -BeGreaterThan 0
     } finally {
       Pop-Location
     }

@@ -95,7 +95,10 @@ function Get-Rulesets {
   if (Have-Cmd "gh") {
     $raw = Gh-Api "repos/$Repo/rulesets"
     if ($null -eq $raw) { Write-Err "WARN: Failed to call gh api"; exit 2 }
-    try { return $raw | ConvertFrom-Json } catch { Write-Err "WARN: Invalid JSON from gh"; exit 2 }
+    try {
+      $parsed = $raw | ConvertFrom-Json
+      return $parsed.rulesets
+    } catch { Write-Err "WARN: Invalid JSON from gh"; exit 2 }
   } else {
     $res = Http-Get "https://api.github.com/repos/$Repo/rulesets"
     if ($res.status -ge 400) {
@@ -103,7 +106,7 @@ function Get-Rulesets {
       Write-Err "WARN: Unexpected API error while fetching rulesets"
       exit 1
     }
-    return $res.body
+    return $res.body.rulesets
   }
 }
 
