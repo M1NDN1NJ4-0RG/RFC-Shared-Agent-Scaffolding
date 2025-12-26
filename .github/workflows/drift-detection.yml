@@ -65,6 +65,9 @@ jobs:
           mkdir -p /tmp/drift-test
           cd /tmp/drift-test
           
+          # Note: Script paths include 'scripts' subdirectory in each bundle
+          # Structure: RFC-Shared-Agent-Scaffolding-Example/scripts/<lang>/scripts/<script>
+          
           # Test Bash
           echo "Testing Bash implementation..."
           bash_exit=0
