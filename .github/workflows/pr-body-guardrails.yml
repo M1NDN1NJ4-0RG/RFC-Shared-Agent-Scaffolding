@@ -39,9 +39,9 @@ jobs:
                   result.push(line);
                 } else {
                   // Outside code fence - apply normalization
-                  // Match: keyword + optional colon + optional space + repo? + #number
+                  // Match: keyword + optional colon + optional space + repo? + #3 specifically
                   const normalized = line.replace(
-                    /(\b)(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(:?\s*)([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)?#(\d+)\b/gi,
+                    /(\b)(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(:?\s*)([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)?#(3)\b/gi,
                     (m, p1, kw, punctSpace, repoPrefix, num) => {
                       // Preserve spacing style (use space if there was any whitespace)
                       const space = /\s/.test(punctSpace) ? ' ' : punctSpace.replace(':', '') || ' ';
@@ -94,8 +94,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          # Match keyword + optional colon + optional space + repo? + #number
-          PATTERN='\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved):?[[:space:]]*([[:alnum:]_.-]+\/[[:alnum:]_.-]+)?#([0-9]+)\b'
+          # Match keyword + optional colon + optional space + repo? + #3 specifically
+          PATTERN='\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved):?[[:space:]]*([[:alnum:]_.-]+\/[[:alnum:]_.-]+)?#(3)\b'
           fail() { echo "::error::$1"; exit 1; }
 
           sanitize_body() {
