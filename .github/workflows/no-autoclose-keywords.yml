@@ -1,0 +1,42 @@
+name: no-autoclose-keywords
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: no-autoclose-keywords
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Scan PR title/body and commits for auto-close keywords
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          COMMITS_URL: ${{ github.event.pull_request.commits_url }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+
+          # Case-insensitive patterns that trigger issue auto-close
+          # Includes "Fixes #123" and "Fixes owner/repo#123"
+          PATTERN='(^|[^a-z])((close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved))[[:space:]]+([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)?#([0-9]+)\b'
+
+          fail() {
+            echo "::error::$1"
+            exit 1
+          }
+
+          echo "$PR_TITLE" | grep -Eiq "$PATTERN" && fail "Auto-close keyword found in PR TITLE. Use Refs/Related/Tracks instead."
+          echo "$PR_BODY"  | grep -Eiq "$PATTERN" && fail "Auto-close keyword found in PR BODY. Use Refs/Related/Tracks instead."
+
+          # Scan commit messages in the PR (subject + body)
+          commits_json="$(curl -sSf -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" "$COMMITS_URL")"
+          echo "$commits_json" | jq -r '.[].commit.message' | grep -Eiq "$PATTERN" \
+            && fail "Auto-close keyword found in a COMMIT message in this PR. Amend/reword commit(s) to use Refs/Related/Tracks."
+
+          echo "OK: No auto-close keywords detected."
