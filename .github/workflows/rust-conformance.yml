@@ -64,7 +64,7 @@ jobs:
 
       - name: Run unit tests
         working-directory: rust
-        run: cargo test --lib --verbose
+        run: cargo test --bin safe-run --verbose
 
       - name: Run conformance tests (non-ignored only)
         working-directory: rust
