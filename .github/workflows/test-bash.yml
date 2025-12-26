@@ -1,0 +1,48 @@
+name: Test Bash Bundle
+
+on:
+  pull_request:
+    paths:
+      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/bash/**'
+      - 'conformance/**'
+      - '.github/workflows/test-bash.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/bash/**'
+      - 'conformance/**'
+      - '.github/workflows/test-bash.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Bash Bundle Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Install jq
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
+          jq --version
+      
+      - name: Run Bash tests
+        working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/bash
+        run: |
+          chmod +x run-tests.sh
+          ./run-tests.sh
+      
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bash-test-failures
+          path: RFC-Shared-Agent-Scaffolding-Example/scripts/bash/.agent/FAIL-LOGS/
+          if-no-files-found: ignore

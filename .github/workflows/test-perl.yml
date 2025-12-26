@@ -1,0 +1,54 @@
+name: Test Perl Bundle
+
+on:
+  pull_request:
+    paths:
+      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/perl/**'
+      - 'conformance/**'
+      - '.github/workflows/test-perl.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/perl/**'
+      - 'conformance/**'
+      - '.github/workflows/test-perl.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Perl Bundle Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@3e011cd23aec3d977e118dfe36ba1318b28b63ef # v1
+        with:
+          perl-version: '5.38'
+      
+      - name: Display Perl version
+        run: perl --version
+      
+      - name: Install JSON::PP (if needed)
+        run: |
+          perl -MJSON::PP -e 1 2>/dev/null || cpanm --notest JSON::PP
+      
+      - name: Run Perl tests
+        working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/perl
+        run: |
+          chmod +x run-tests.sh
+          ./run-tests.sh
+      
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perl-test-failures
+          path: RFC-Shared-Agent-Scaffolding-Example/scripts/perl/.agent/FAIL-LOGS/
+          if-no-files-found: ignore
