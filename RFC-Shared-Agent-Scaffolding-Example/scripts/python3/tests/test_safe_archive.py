@@ -35,13 +35,41 @@ class TestSafeArchive(unittest.TestCase):
             arc.mkdir(parents=True)
 
             (fail / 'a fail.txt').write_text('A', encoding='utf-8')
-            # Create a destination with same name -> should fail no-clobber
+            # Create a destination with same name -> should fail with strict no-clobber
             (arc / 'a fail.txt').write_text('EXISTS', encoding='utf-8')
 
-            r = run_archive(['--all'], wd)
+            # M0-P1-I3: Enable strict no-clobber mode via env var
+            r = run_archive(['--all'], wd, env={'SAFE_ARCHIVE_NO_CLOBBER': '1'})
             self.assertEqual(r.returncode, 2)
             self.assertIn('Destination exists', r.stderr)
             self.assertTrue((fail / 'a fail.txt').exists())
+
+    def test_auto_suffix_default(self):
+        """Test M0-P1-I3: Default auto-suffix behavior when destination exists"""
+        with tempfile.TemporaryDirectory() as td:
+            wd = Path(td)
+            fail = wd / '.agent' / 'FAIL-LOGS'
+            arc = wd / '.agent' / 'FAIL-ARCHIVE'
+            fail.mkdir(parents=True)
+            arc.mkdir(parents=True)
+
+            (fail / 'test.log').write_text('NEW', encoding='utf-8')
+            # Create a destination with same name
+            (arc / 'test.log').write_text('OLD', encoding='utf-8')
+
+            # Default behavior: should auto-suffix
+            r = run_archive(['--all'], wd)
+            self.assertEqual(r.returncode, 0, msg=r.stderr)
+            
+            # Source should be moved
+            self.assertFalse((fail / 'test.log').exists())
+            
+            # Original destination should be unchanged
+            self.assertEqual((arc / 'test.log').read_text(encoding='utf-8'), 'OLD')
+            
+            # New file should have .2 suffix
+            self.assertTrue((arc / 'test.log.2').exists())
+            self.assertEqual((arc / 'test.log.2').read_text(encoding='utf-8'), 'NEW')
 
     def test_moves_and_gzip(self):
         with tempfile.TemporaryDirectory() as td:
