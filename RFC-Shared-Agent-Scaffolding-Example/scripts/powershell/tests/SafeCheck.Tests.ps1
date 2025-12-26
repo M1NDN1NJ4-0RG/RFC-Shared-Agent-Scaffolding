@@ -11,7 +11,7 @@ Describe "safe-check.ps1" {
     Push-Location $td
     try {
       # Clean up any environment pollution from previous tests
-      Remove-Item env:SAFE_FAIL_DIR, env:SAFE_ARCHIVE_DIR, env:SAFE_ARCHIVE_COMPRESS, env:SAFE_LOG_DIR, env:SAFE_SNIPPET_LINES -ErrorAction SilentlyContinue
+      Remove-Item env:SAFE_FAIL_DIR, env:SAFE_ARCHIVE_DIR, env:SAFE_ARCHIVE_COMPRESS, env:SAFE_LOG_DIR, env:SAFE_SNIPPET_LINES, env:SAFE_RUN_VIEW -ErrorAction SilentlyContinue
       
       # Set up directory structure and copy scripts (like bash test does)
       $scriptsDir = Join-Path $td "scripts\powershell"

@@ -22,6 +22,11 @@ select(STDERR); $| = 1; select(STDOUT);
 # - On FAILURE: captures combined stdout+stderr to SAFE_LOG_DIR (default .agent/FAIL-LOGS)
 #   and preserves the exit code.
 # - On ABORT (SIGINT/SIGTERM): saves partial output to ...-ABORTED-fail.txt.
+#
+# Environment Variables:
+# - SAFE_LOG_DIR: Failure log directory (default: .agent/FAIL-LOGS)
+# - SAFE_SNIPPET_LINES: On failure, print last N lines to stderr (default: 0)
+# - SAFE_RUN_VIEW: Set to "merged" to enable optional merged view output
 # -----------------------------------------------------------------------------
 
 sub usage {
@@ -147,8 +152,10 @@ sub _emit_lines {
   my @lines = split(/\n/, $$buf_ref, -1);
   
   if ($final) {
-    # Process all lines (including empty lines for consistency)
+    # Process all lines, but skip trailing empty line if buffer is empty
+    # (avoids spurious empty event when output ends with newline)
     for my $line (@lines) {
+      next if $line eq '' && $$buf_ref eq '';
       emit_event($stream, $line);
     }
     $$buf_ref = '';

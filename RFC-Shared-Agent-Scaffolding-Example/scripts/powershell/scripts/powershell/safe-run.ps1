@@ -6,6 +6,7 @@
 .ENVIRONMENT
   SAFE_LOG_DIR        Failure log directory (default: .agent/FAIL-LOGS)
   SAFE_SNIPPET_LINES  On failure, print last N lines of output to stderr (default: 0)
+  SAFE_RUN_VIEW       Set to "merged" to enable optional merged view output
 
 .NOTES
   On success, produces no artifacts.

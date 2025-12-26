@@ -177,6 +177,7 @@ Describe "safe-run.ps1" {
       $txt | Should -Match "\[#1\]\[META\]"
       $txt | Should -Match "\[#2\]\[STDOUT\] line1"
     } finally {
+      Remove-Item Env:SAFE_RUN_VIEW -ErrorAction Ignore
       Pop-Location
     }
   }
