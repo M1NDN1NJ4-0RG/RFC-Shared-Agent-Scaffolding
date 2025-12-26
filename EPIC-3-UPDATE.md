@@ -75,8 +75,8 @@ Replace the existing table with:
 | M0-P2-I1 | Auth Method &amp; Header Semantics | ✅ DECIDED | See M0-DECISIONS.md |
 | M0-P2-I2 | Exit Code Taxonomy | ✅ DECIDED | See M0-DECISIONS.md |
 | M1-P1-I1 | jq Error Noise Suppression | ✅ COMPLETED | PR #4 |
-| M1-P2-I1 | Test vs Implementation Drift | 🔄 IN PROGRESS | TBA |
-| M1-P3-I1 | Python 2 Support Policy | ⬜ Not started | TBA |
+| M1-P2-I1 | Test vs Implementation Drift | ✅ COMPLETED | PR #8 |
+| M1-P3-I1 | Python 2 Support Policy | ✅ DECIDED | See M1-P3-I1-DECISION.md |
 | M1-P4-I1 | Test Runner Path Correction | ✅ COMPLETED | PR #4 |
 | M1-P5-I1 | CI-Ready PowerShell Validation | ⬜ Not started | TBA |
 | M2-P1-I1 | `conformance/vectors.json` | ⬜ Not started | TBA |
