@@ -103,40 +103,20 @@ jobs:
             # Look for the pattern: a separator line (----) followed by "Original prompt"
             # This matches GitHub's auto-appended format more precisely
             # Also remove code fences to avoid false positives from code examples
-            awk '
-              BEGIN { drop=0; in_fence=0 }
-              # Track code fences
-              /^```|^~~~/ {
-                in_fence = (in_fence ? 0 : 1)
-                next
-              }
-              # Skip content inside code fences
+            awk 'BEGIN { drop=0; in_fence=0 }
+              /^```|^~~~/ { in_fence = (in_fence ? 0 : 1); next }
               in_fence { next }
-              # Match separator followed by "Original prompt" (with optional whitespace)
               /^----[[:space:]]*$/ {
-                # Peek ahead - if next line is "Original prompt", start dropping
                 getline nextline
                 if (nextline ~ /^Original prompt[[:space:]]*$/) {
                   drop=1
                 } else {
-                  # False alarm - print both lines
-                  if (!drop) {
-                    print
-                    print nextline
-                  }
+                  if (!drop) { print; print nextline }
                 }
                 next
               }
-              # Also catch "Original prompt" without separator for backward compat
-              # but only if it appears to be at the end (no content after)
-              /^Original prompt[[:space:]]*$/ {
-                # Check if this looks like an auto-generated delimiter
-                # by seeing if we're near the end of content
-                drop=1
-                next
-              }
-              { if (!drop) print }
-            '
+              /^Original prompt[[:space:]]*$/ { drop=1; next }
+              { if (!drop) print }'
           }
 
           title="$PR_TITLE"
