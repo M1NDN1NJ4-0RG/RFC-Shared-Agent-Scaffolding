@@ -78,7 +78,7 @@ def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bo
             while os.path.exists(dest + "." + str(n)):
                 n += 1
             dest = dest + "." + str(n)
-            eprint("WARN: destination exists, using auto-suffix: %s" % dest)
+            eprint("WARNING: destination exists, using auto-suffix: %s" % dest)
     
     shutil.move(src, dest)
     eprint("ARCHIVED: %s -> %s" % (src, dest))

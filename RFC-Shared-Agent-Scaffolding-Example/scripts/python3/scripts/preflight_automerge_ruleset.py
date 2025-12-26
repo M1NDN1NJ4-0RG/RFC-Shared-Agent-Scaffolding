@@ -8,7 +8,7 @@ import sys
 import json
 import subprocess
 import re
-from typing import List, Optional, Tuple, Union
+from typing import List, Optional, Tuple
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 

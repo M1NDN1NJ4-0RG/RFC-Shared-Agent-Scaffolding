@@ -129,8 +129,8 @@ def main(argv: List[str]) -> int:
     ledger = EventLedger()
     
     # Tail snippets
-    tail_stdout: Deque[bytes] = deque(maxlen=snippet_lines if snippet_lines > 0 else 1)
-    tail_stderr: Deque[bytes] = deque(maxlen=snippet_lines if snippet_lines > 0 else 1)
+    tail_stdout: Deque[bytes] = deque(maxlen=snippet_lines or None)
+    tail_stderr: Deque[bytes] = deque(maxlen=snippet_lines or None)
 
     state = _AbortState()
     old_int, old_term = _install_signal_handlers(state)

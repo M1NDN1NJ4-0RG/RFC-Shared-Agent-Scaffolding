@@ -22,8 +22,15 @@ fi
 mkdir -p "$SAFE_LOG_DIR" 2>/dev/null || true
 
 # Build command string for META event (properly escaped)
-# Simple escaping: replace double quotes with escaped quotes
-CMD_STR=$(printf '%s' "$*" | sed 's/"/\\"/g')
+# Use bash printf '%q' to escape each argument safely for shell representation
+CMD_STR=""
+for arg in "$@"; do
+  if [ -z "$CMD_STR" ]; then
+    CMD_STR=$(printf '%q' "$arg")
+  else
+    CMD_STR="$CMD_STR $(printf '%q' "$arg")"
+  fi
+done
 
 # Temp files for split streams and event ledger
 TMP_STDOUT="$(mktemp -t safe-run-stdout.XXXXXX)" || exit 1
@@ -72,9 +79,14 @@ emit_event() {
     ) 200>"${TMP_EVENTS}.lock"
   else
     # Fallback for systems without flock (macOS, etc.)
-    # Use a simple lock file approach (less atomic but works)
+    # Use exponential backoff to reduce CPU usage under contention
+    local attempt=0
+    local max_sleep_ms=1000  # cap at 1 second
     while ! mkdir "${TMP_EVENTS}.lock" 2>/dev/null; do
-      sleep 0.01  # 10ms to reduce busy-waiting
+      local sleep_ms=$((10 * (2 ** attempt)))  # 10ms, 20ms, 40ms, 80ms, ...
+      [ $sleep_ms -gt $max_sleep_ms ] && sleep_ms=$max_sleep_ms
+      sleep $(printf '0.%03d' $sleep_ms) 2>/dev/null || sleep 0.01
+      attempt=$((attempt + 1))
     done
     local seq
     if [ -f "${TMP_EVENTS}.seq" ]; then
@@ -85,7 +97,9 @@ emit_event() {
     seq=$((seq + 1))
     printf '%d' "$seq" > "${TMP_EVENTS}.seq"
     printf '[SEQ=%d][%s] %s\n' "$seq" "$stream" "$text" >> "$TMP_EVENTS"
-    rmdir "${TMP_EVENTS}.lock" 2>/dev/null || true
+    if ! rmdir "${TMP_EVENTS}.lock" 2>/dev/null; then
+      echo "warning: failed to remove lock directory: ${TMP_EVENTS}.lock" >&2 || true
+    fi
   fi
 }
 

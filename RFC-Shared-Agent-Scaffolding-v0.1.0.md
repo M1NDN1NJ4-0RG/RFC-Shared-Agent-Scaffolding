@@ -243,7 +243,25 @@ To ensure cross-language conformance, the following META event text MUST match e
    ```
    safe-run start: cmd="<command>"
    ```
-   Where `<command>` is the full command being executed (escaped appropriately for the ledger format).
+   
+   Where `<command>` is the full command being executed, encoded using a **standardized POSIX shell-style quoting scheme**:
+   
+   - Implementations MUST produce the same `<command>` text for the same logical command line.
+   - The command line is represented as a single string where arguments are joined by a single space character (`U+0020`).
+   - Each argument is quoted using the same rules as POSIX shell single-quoting and Python's `shlex.quote()`:
+     - Arguments containing only alphanumeric characters, underscores, hyphens, periods, slashes, or equals signs MAY be left unquoted.
+     - All other arguments MUST be enclosed in single quotes (`'`).
+     - A single quote (`'`) within an argument MUST be encoded as `'\''` (close quote, escaped quote, open quote).
+   - Bash implementations SHOULD use `printf '%q'` for each argument.
+   - Python implementations SHOULD use `shlex.quote()` for each argument.
+   
+   **Examples (normative):**
+   - Command: `echo hi`
+     - `<command>`: `echo hi`
+   - Command: `bash -c "echo 'hello world'"`
+     - `<command>`: `bash -c 'echo '"'"'hello world'"'"''`
+   - Command: `python script.py --flag "value with spaces"`
+     - `<command>`: `python script.py --flag 'value with spaces'`
 
 2. **Exit event** (MUST be the final META event):
    ```
