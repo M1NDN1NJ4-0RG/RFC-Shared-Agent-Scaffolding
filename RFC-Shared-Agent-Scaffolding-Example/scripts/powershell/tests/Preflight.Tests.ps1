@@ -1,11 +1,11 @@
 #requires -Version 5.1
 Set-StrictMode -Version Latest
 
-. "$PSScriptRoot/TestHelpers.ps1"
-
-$ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\powershell\preflight_automerge_ruleset.ps1"
-
 Describe "preflight_automerge_ruleset.ps1" {
+  BeforeAll {
+    . "$PSScriptRoot/TestHelpers.ps1"
+    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\powershell\preflight_automerge_ruleset.ps1"
+  }
 
   It "fails when no --repo is provided" {
     & pwsh -NoProfile -File $ScriptUnderTest

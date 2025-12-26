@@ -13,6 +13,11 @@
   - gzip uses built-in compression; xz/zstd require external commands.
 #>
 
+param(
+  [Parameter(ValueFromRemainingArguments=$true)]
+  [string[]]$ArgsRest
+)
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
@@ -68,11 +73,6 @@ function Archive-One([string]$src, [string]$archiveDir, [string]$compress) {
   Write-Err "ARCHIVED: $src -> $dest"
   Compress-File $compress $dest
 }
-
-param(
-  [Parameter(ValueFromRemainingArguments=$true)]
-  [string[]]$ArgsRest
-)
 
 if ($ArgsRest.Count -eq 0 -or $ArgsRest[0] -in @('-h','--help')) {
   Write-Err "Usage: scripts/powershell/safe-archive.ps1 [--all | <file> ...]"

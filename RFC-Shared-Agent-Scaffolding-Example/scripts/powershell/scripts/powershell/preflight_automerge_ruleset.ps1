@@ -12,10 +12,6 @@
   Never prints token values.
 #>
 
-Set-StrictMode -Version Latest
-$ErrorActionPreference = 'Stop'
-function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
-
 param(
   [Parameter(Mandatory=$false)][string]$Repo,
   [Parameter(Mandatory=$false)][string]$RulesetId,
@@ -23,6 +19,10 @@ param(
   [Parameter(Mandatory=$false)][string]$Want,
   [Parameter(Mandatory=$false)][string]$ApiVersion = "2022-11-28"
 )
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = 'Stop'
+function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
 function Usage {
   Write-Err "Usage:"
