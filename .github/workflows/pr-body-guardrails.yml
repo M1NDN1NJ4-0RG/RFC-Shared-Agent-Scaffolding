@@ -260,24 +260,22 @@ jobs:
                   local ref_repo="${BASH_REMATCH[2]}"
                   local ref_num="${BASH_REMATCH[3]}"
                   
-                  if has_epic_in_title "$ref_num" "$ref_owner" "$ref_repo"; then
-                    local ret=$?
-                    if [[ $ret -eq 0 ]]; then
-                      echo "$ref"
-                    fi
-                    # ret=1 means not epic, ret=2 means API error (already warned)
+                  has_epic_in_title "$ref_num" "$ref_owner" "$ref_repo"
+                  local ret=$?
+                  if [[ $ret -eq 0 ]]; then
+                    echo "$ref"
                   fi
+                  # ret=1 means not epic, ret=2 means API error (already warned)
                 elif [[ "$ref" =~ ^\#([0-9]+)$ ]]; then
                   # Same-repo reference
                   local ref_num="${BASH_REMATCH[1]}"
                   
-                  if has_epic_in_title "$ref_num" "$OWNER" "$REPO"; then
-                    local ret=$?
-                    if [[ $ret -eq 0 ]]; then
-                      echo "$ref"
-                    fi
-                    # ret=1 means not epic, ret=2 means API error (already warned)
+                  has_epic_in_title "$ref_num" "$OWNER" "$REPO"
+                  local ret=$?
+                  if [[ $ret -eq 0 ]]; then
+                    echo "$ref"
                   fi
+                  # ret=1 means not epic, ret=2 means API error (already warned)
                 fi
               done
             done <<< "$text"
