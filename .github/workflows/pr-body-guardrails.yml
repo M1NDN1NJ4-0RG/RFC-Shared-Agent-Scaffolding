@@ -20,10 +20,43 @@ jobs:
             const pr = context.payload.pull_request;
             const body = pr.body || "";
 
-            const rewritten = body.replace(
-              /(\b)(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(\s+)([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)?#(\d+)\b/gi,
-              (m, p1, kw, sp, repoPrefix, num) => `${p1}Refs${sp}${repoPrefix || ""}#${num}`
-            );
+            // Split body into segments, tracking code fences
+            function normalizeOutsideCodeFences(text) {
+              const lines = text.split('\n');
+              let inCodeFence = false;
+              const result = [];
+
+              for (let line of lines) {
+                // Check for code fence markers (``` or ~~~), allowing up to 3 spaces of indentation
+                if (/^\s{0,3}(```|~~~)/.test(line)) {
+                  inCodeFence = !inCodeFence;
+                  result.push(line);
+                  continue;
+                }
+
+                if (inCodeFence) {
+                  // Inside code fence - preserve as-is
+                  result.push(line);
+                } else {
+                  // Outside code fence - apply normalization
+                  // Match: keyword + optional colon + optional space + optional repo + issue #3 only;
+                  // the trailing `\b` ensures we do NOT match #30, #300, etc.
+                  const normalized = line.replace(
+                    /(\b)(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(:?\s*)([A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+)?#(3)\b/gi,
+                    (m, p1, kw, punctSpace, repoPrefix, num) => {
+                      // Preserve spacing style: keep colon when no whitespace, otherwise use space
+                      const space = punctSpace === ':' ? ':' : (/\s/.test(punctSpace) ? ' ' : punctSpace.replace(':', '') || ' ');
+                      return `${p1}Refs${space}${repoPrefix || ""}#${num}`;
+                    }
+                  );
+                  result.push(normalized);
+                }
+              }
+
+              return result.join('\n');
+            }
+
+            const rewritten = normalizeOutsideCodeFences(body);
 
             if (rewritten !== body) {
               await github.rest.pulls.update({
@@ -42,22 +75,61 @@ jobs:
     runs-on: ubuntu-latest
     needs: normalize
     steps:
+      - name: Install dependencies
+        run: |
+          if ! command -v jq &> /dev/null; then
+            echo "Installing jq..."
+            sudo apt-get update -qq
+            sudo apt-get install -y jq
+          else
+            echo "jq is already installed"
+          fi
+
       - name: Scan PR title/body and commits for auto-close keywords
         env:
           PR_TITLE: ${{ github.event.pull_request.title }}
-          PR_BODY: ${{ github.event.pull_request.body }}
           OWNER: ${{ github.repository_owner }}
           REPO: ${{ github.event.repository.name }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          PATTERN='\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)[[:space:]]+([[:alnum:]_.-]+\/[[:alnum:]_.-]+)?#([0-9]+)\b'
+          # Match keyword + optional colon + optional space + repo? + #3 specifically
+          PATTERN='\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved):?[[:space:]]*([[:alnum:]_.-]+\/[[:alnum:]_.-]+)?#(3)\b'
           fail() { echo "::error::$1"; exit 1; }
 
           sanitize_body() {
-            awk 'BEGIN{drop=0} /Original prompt[[:space:]]*$/{drop=1} {if(!drop) print}'
+            # Remove auto-generated "Original prompt" section more robustly
+            # The "Original prompt" text appears on its own line before the ---- separator
+            # We look for the standalone "Original prompt" line and drop everything after it
+            # Also remove code fences to avoid false positives from code examples
+            awk 'BEGIN { drop=0; in_fence=0 }
+              /^Original prompt[[:space:]]*$/ { drop=1; in_fence=0; next }
+              drop { next }
+              /^[[:space:]]{0,3}(```|~~~)/ { in_fence = (in_fence ? 0 : 1); next }
+              in_fence { next }
+              { print }'
           }
+
+          # Fetch the UPDATED PR body from the API (after normalization job has run).
+          # Use a short retry loop to reduce the chance of seeing a stale body due to
+          # eventual consistency in the GitHub API under load.
+          PR_BODY=""
+          for attempt in 1 2 3; do
+            if ! PR_BODY_JSON=$(curl -sSf \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER" 2>&1); then
+              fail "Failed to fetch PR body from GitHub API: $PR_BODY_JSON"
+            fi
+            
+            PR_BODY=$(echo "$PR_BODY_JSON" | jq -r '.body // ""')
+
+            # Give GitHub a brief moment to propagate the updated body between attempts.
+            if [ "$attempt" -lt 3 ]; then
+              sleep 2
+            fi
+          done
 
           title="$PR_TITLE"
           body="$(printf '%s' "$PR_BODY" | sanitize_body)"
