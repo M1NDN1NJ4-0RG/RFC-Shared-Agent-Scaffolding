@@ -260,8 +260,9 @@ jobs:
                   local ref_repo="${BASH_REMATCH[2]}"
                   local ref_num="${BASH_REMATCH[3]}"
                   
-                  has_epic_in_title "$ref_num" "$ref_owner" "$ref_repo"
-                  local ret=$?
+                  # Capture return code without triggering set -e
+                  local ret=0
+                  has_epic_in_title "$ref_num" "$ref_owner" "$ref_repo" || ret=$?
                   if [[ $ret -eq 0 ]]; then
                     echo "$ref"
                   fi
@@ -270,8 +271,9 @@ jobs:
                   # Same-repo reference
                   local ref_num="${BASH_REMATCH[1]}"
                   
-                  has_epic_in_title "$ref_num" "$OWNER" "$REPO"
-                  local ret=$?
+                  # Capture return code without triggering set -e
+                  local ret=0
+                  has_epic_in_title "$ref_num" "$OWNER" "$REPO" || ret=$?
                   if [[ $ret -eq 0 ]]; then
                     echo "$ref"
                   fi
