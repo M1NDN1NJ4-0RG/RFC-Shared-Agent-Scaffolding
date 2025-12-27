@@ -1,8 +1,34 @@
 #!/usr/bin/env bash
+#
+# test-safe-check.sh - Tests for safe-check.sh contract verification script
+#
+# DESCRIPTION:
+#   Validates that safe-check.sh correctly verifies the safe-run contract.
+#   The safe-check script is a smoke test that validates success/failure
+#   artifact creation and archiving behavior.
+#
+# TEST COVERAGE:
+#   - safe-check.sh exits 0 when all contract checks pass
+#   - Tests run in isolated temp directory
+#   - Verifies Rust binary discovery works
+#
+# USAGE:
+#   ./test-safe-check.sh
+#
+# CONTRACT REFERENCES:
+#   - safe-check.sh tests: success artifacts, failure artifacts, archiving
+#   - Related: safe-run.sh, safe-archive.sh
+#
+# SEE ALSO:
+#   - lib.sh: Test framework
+#   - ../scripts/safe-check.sh: Script being tested
+#
+
 set -euo pipefail
 cd "$(dirname "$0")"
 source "./lib.sh"
 
+# Discover paths
 ROOT="$(cd .. && pwd)"
 CHECK="${ROOT}/scripts/safe-check.sh"
 
@@ -19,6 +45,8 @@ else
   exit 127
 fi
 
+# test_safe_check_ok - Verify safe-check passes in healthy environment
+# Creates temp dir, copies scripts, runs safe-check with binary override
 test_safe_check_ok() {
   local tmp
   tmp="$(mktemp_dir)"

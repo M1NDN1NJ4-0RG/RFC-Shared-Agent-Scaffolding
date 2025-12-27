@@ -1,11 +1,39 @@
 #!/usr/bin/env bash
+#
+# test-safe-archive.sh - Tests for safe-archive.sh log archiving script
+#
+# DESCRIPTION:
+#   Validates safe-archive.sh correctly moves failure logs from FAIL-LOGS
+#   to FAIL-ARCHIVE with no-clobber safety and optional compression.
+#
+# TEST COVERAGE:
+#   - Default behavior: archives one file
+#   - --all flag: archives all files
+#   - Handles filenames with spaces
+#   - No-clobber: doesn't overwrite existing archives
+#   - Compression: gzip compression when available
+#
+# USAGE:
+#   ./test-safe-archive.sh
+#
+# CONTRACT REFERENCES:
+#   - M0-P1-I2: Log lifecycle and naming
+#   - No-clobber guarantee for archive safety
+#
+# SEE ALSO:
+#   - lib.sh: Test framework
+#   - ../scripts/safe-archive.sh: Script being tested
+#
+
 set -euo pipefail
 cd "$(dirname "$0")"
 source "./lib.sh"
 
+# Discover paths
 ROOT="$(cd .. && pwd)"
 ARCH="${ROOT}/scripts/safe-archive.sh"
 
+# test_default_archives_one - Verify default (no --all) archives only one file
 test_default_archives_one() {
   local tmp
   tmp="$(mktemp_dir)"
@@ -25,6 +53,8 @@ test_default_archives_one() {
   )
 }
 
+# test_moves_all_with_spaces - Verify --all flag and space handling
+# Tests that filenames with spaces are handled correctly (no word splitting)
 test_moves_all_with_spaces() {
   local tmp
   tmp="$(mktemp_dir)"
@@ -41,6 +71,7 @@ test_moves_all_with_spaces() {
   )
 }
 
+# test_no_clobber - Verify existing archive files are not overwritten
 test_no_clobber() {
   local tmp
   tmp="$(mktemp_dir)"
@@ -56,6 +87,8 @@ test_no_clobber() {
   )
 }
 
+# test_gzip_compression - Verify gzip compression works when gzip available
+# Skips gracefully if gzip not installed (returns 0)
 test_gzip_compression() {
   command -v gzip >/dev/null 2>&1 || return 0
   local tmp
