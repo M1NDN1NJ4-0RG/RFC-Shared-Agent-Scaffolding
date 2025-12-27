@@ -127,7 +127,7 @@ test_failure_captures_and_rc() {
 }
 
 # test_snippet_lines - Verify safe-run-005: SAFE_SNIPPET_LINES controls stderr tail
-# Default is 10 lines, test with 2 lines to verify last 2 lines appear
+# Default is 0 (disabled), test with 2 lines to verify last 2 lines appear
 test_snippet_lines() {
   local tmp rc err
   tmp="$(mktemp_dir)"
