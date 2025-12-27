@@ -204,24 +204,6 @@
 
 ---
 
-## 🎯 Next Steps
-
-### Immediate Action (Next PR)
-
-**Start P5: Convert Perl wrapper to thin invoker**
-
-**Steps:**
-1. Create new branch: `copilot/p5-perl-wrapper-conversion`
-2. Convert `safe-run.pl` to thin invoker (~150 lines)
-3. Run Perl test suite (verify 46 tests pass)
-4. Manual testing (success, failure, snippet, custom log dir)
-5. Code review via `code_review` tool
-6. Commit and push via `report_progress`
-
-**After P5:** Proceed to P6 (Python3), then P7 (PowerShell)
-
----
-
 ## 🚫 Blockers
 
 **NONE.** All P0-P4 work is complete and correct. Ready to proceed with P5-P7.
