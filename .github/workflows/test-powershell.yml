@@ -34,6 +34,14 @@ jobs:
         working-directory: rust
         run: cargo build --release
       
+      - name: Stage Rust binary for wrapper discovery
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path dist/windows/x86_64
+          Copy-Item rust/target/release/safe-run.exe dist/windows/x86_64/safe-run.exe
+          Write-Host "Rust binary staged at: dist/windows/x86_64/safe-run.exe"
+          Get-Item dist/windows/x86_64/safe-run.exe | Format-List
+      
       - name: Install Pester
         shell: pwsh
         run: |
