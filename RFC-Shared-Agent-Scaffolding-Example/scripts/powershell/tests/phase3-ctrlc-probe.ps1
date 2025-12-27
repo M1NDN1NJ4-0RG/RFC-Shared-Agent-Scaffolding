@@ -103,7 +103,7 @@ function Invoke-CtrlCProbe {
     Write-ProbeLog "Rust binary: $rustBinary"
     
     # Locate safe-run.ps1 wrapper
-    $wrapperScript = Join-Path $PSScriptRoot "..\safe-run.ps1"
+    $wrapperScript = Join-Path $PSScriptRoot "..\scripts\safe-run.ps1"
     
     if (-not (Test-Path $wrapperScript)) {
         Write-ProbeLog "ERROR: Wrapper script not found at: $wrapperScript"
