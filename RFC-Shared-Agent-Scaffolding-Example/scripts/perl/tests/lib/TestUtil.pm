@@ -265,9 +265,9 @@ If the command doesn't complete within C<timeout_sec>, the function:
 
 =item 2. Returns partial stdout/stderr captured before timeout
 
-=item 3. Returns non-zero exit code (typically 137 for SIGKILL)
+=item 3. Sets C<exit> to the process exit status (typically 0 when terminated by a signal)
 
-=item 4. Sets C<sig> to signal number (9 for SIGKILL)
+=item 4. Sets C<sig> to the terminating signal number (9 for SIGKILL); callers should check C<sig> to detect timeouts or signal-based termination
 
 =back
 
