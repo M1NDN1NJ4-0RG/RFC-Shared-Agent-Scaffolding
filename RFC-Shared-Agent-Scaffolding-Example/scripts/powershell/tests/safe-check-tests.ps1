@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 
 Describe "safe-check.ps1" {
   BeforeAll {
-    . "$PSScriptRoot/TestHelpers.ps1"
+    . "$PSScriptRoot/test-helpers.ps1"
     $script:ScriptRoot = Join-Path $PSScriptRoot "..\scripts"
   }
   It "runs its own contract checks successfully in a clean temp workspace" {

@@ -1,0 +1,60 @@
+name: naming-kebab-case
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  kebab_case:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce kebab-case for script files
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re, subprocess, sys
+          from pathlib import PurePosixPath
+
+          ROOTS = [
+            "RFC-Shared-Agent-Scaffolding-Example/scripts",
+            "wrappers",
+          ]
+
+          # Script surface extensions only (executable entrypoints)
+          # Explicitly excludes .rs (Rust uses snake_case per ecosystem conventions)
+          EXTS = {".sh", ".bash", ".zsh", ".py", ".pl", ".ps1"}
+
+          kebab = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+
+          out = subprocess.check_output(["git", "ls-files", "-z"])
+          files = [f.decode("utf-8") for f in out.split(b"\0") if f]
+
+          def in_roots(path: str) -> bool:
+            p = PurePosixPath(path)
+            s = str(p)
+            return any(s == root.rstrip("/") or s.startswith(root.rstrip("/") + "/") for root in ROOTS)
+
+          bad = []
+          for path in files:
+            if not in_roots(path):
+              continue
+            p = PurePosixPath(path)
+            suffix = p.suffix.lower()
+            if suffix not in EXTS:
+              continue
+            stem = p.name[: -len(suffix)]
+            if not kebab.match(stem):
+              bad.append(path)
+
+          if bad:
+            print("❌ Non–kebab-case script filenames detected:\n")
+            for f in sorted(bad):
+              print(f" - {f}")
+            print("\nExpected: lowercase letters/digits with hyphens only (e.g., safe-run.sh)")
+            sys.exit(1)
+
+          print("✅ Kebab-case filename check passed.")
+          PY

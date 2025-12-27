@@ -3,7 +3,7 @@ Set-StrictMode -Version Latest
 
 Describe "safe-run.ps1" {
   BeforeAll {
-    . "$PSScriptRoot/TestHelpers.ps1"
+    . "$PSScriptRoot/test-helpers.ps1"
     $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\safe-run.ps1"
   }
 

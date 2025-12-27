@@ -405,6 +405,47 @@ See `M0-DECISIONS.md` for complete specification.
 
 Wrapper failure fallback remains mandatory.
 
+### 7.6 Script Naming Conventions
+
+**Decision:** Kebab-case required for script surfaces only
+
+Script files in this repository MUST use kebab-case naming (lowercase letters and digits separated by hyphens only). This rule applies **only to script surfaces** (executable entrypoints), not to language-specific source files.
+
+**Scope — Script Surfaces (kebab-case REQUIRED):**
+- Script surfaces in `RFC-Shared-Agent-Scaffolding-Example/scripts/*`
+- Wrapper scripts in `wrappers/*`
+- Applies to executable/script file extensions: `.sh`, `.bash`, `.zsh`, `.pl`, `.py`, `.ps1`
+
+**Scope — Language Sources (language-specific conventions REQUIRED):**
+- Rust source files (`.rs`) MUST use **snake_case** per Rust ecosystem conventions
+- Other language sources follow their respective ecosystem conventions
+- These are **explicitly excluded** from kebab-case enforcement
+
+**Format (script surfaces only):**
+- Filename stem (excluding extension) MUST match: `^[a-z0-9]+(?:-[a-z0-9]+)*$`
+- ✅ Valid: `safe-run.sh`, `test-helpers.ps1`, `preflight-automerge-ruleset.pl`
+- ❌ Invalid: `safe_run.sh`, `SafeRun.ps1`, `testHelpers.py`
+
+**Format (Rust sources):**
+- Filename stem MUST use snake_case per Rust conventions
+- ✅ Valid: `safe_run.rs`, `mod.rs`, `cli.rs`
+- ❌ Invalid: `safe-run.rs`, `SafeRun.rs`
+
+**Rationale:**
+- **Script surfaces:** Consistent naming prevents path drift across language implementations, reduces cognitive load, simplifies CI automation, aligns with cross-OS/cross-language portability
+- **Rust sources:** Follow Rust ecosystem conventions (Cargo/module expectations, standard style guidelines)
+- **Goal:** Clarity and correctness, not aesthetic purity
+
+**Enforcement:**
+- CI workflow (`naming-kebab-case.yml`) MUST enforce kebab-case for script surfaces only
+- PRs with non-conforming script filenames MUST fail CI
+- Rust (`.rs`) files are explicitly excluded from kebab-case checks
+
+**Exceptions:**
+- Language-mandated files (e.g., `__init__.py`, `Cargo.toml`) are exempt
+- Files outside script surfaces are not subject to kebab-case requirement
+- All language source files follow their respective ecosystem conventions
+
 ---
 
 ## 8. New: Token Budget / Runway Check (Normative for Constrained Agents)
