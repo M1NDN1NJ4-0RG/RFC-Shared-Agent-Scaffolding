@@ -414,7 +414,7 @@ Script files in this repository MUST use kebab-case naming (lowercase letters an
 **Scope — Script Surfaces (kebab-case REQUIRED):**
 - Script surfaces in `RFC-Shared-Agent-Scaffolding-Example/scripts/*`
 - Wrapper scripts in `wrappers/*`
-- Applies to executable/script file extensions: `.sh`, `.bash`, `.zsh`, `.pl`, `.py`, `.ps1`, `.js`, `.ts`, `.rb`, `.c`
+- Applies to executable/script file extensions: `.sh`, `.bash`, `.zsh`, `.pl`, `.py`, `.ps1`
 
 **Scope — Language Sources (language-specific conventions REQUIRED):**
 - Rust source files (`.rs`) MUST use **snake_case** per Rust ecosystem conventions

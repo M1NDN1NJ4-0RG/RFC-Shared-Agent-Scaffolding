@@ -9,7 +9,9 @@ cd "$ROOT_DIR"
 echo "Python: $(python3 -V 2>&1 || true)"
 
 echo "Running unit tests..."
-# Python unittest can't discover files with hyphens, so we load them explicitly
+# Python module imports require valid identifiers (no hyphens allowed)
+# Standard unittest discovery can find test-*.py files, but cannot import them as modules
+# Use custom importlib loader to work around this constraint
 python3 - <<'PYEOF'
 import sys
 import unittest
@@ -31,7 +33,8 @@ for test_file in sorted(test_dir.glob("test-*.py")):
 
 runner = unittest.TextTestRunner(verbosity=2)
 result = runner.run(suite)
-sys.exit(0 if result.wasSuccessful() else 1)
+if not result.wasSuccessful():
+    sys.exit(1)
 PYEOF
 
 
