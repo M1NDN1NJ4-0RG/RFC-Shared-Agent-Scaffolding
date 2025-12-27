@@ -1,4 +1,63 @@
 #requires -Version 5.1
+<#
+.SYNOPSIS
+  safe-archive-tests.ps1 - Pester test suite for safe-archive.ps1
+
+.DESCRIPTION
+  Comprehensive Pester test suite validating the PowerShell safe-archive wrapper
+  implementation against contract specifications (M0-P1-I3).
+
+  Test Coverage:
+    - Empty directory handling: Graceful exit when no logs exist
+    - No-clobber semantics: Automatic suffix on destination collision
+    - Move semantics: Source file removed after successful archive
+    - Compression support: gzip validation (built-in .NET)
+    - Compression validation: Rejection of unsupported methods
+    - --all mode: Bulk archival of all logs in FAIL-LOGS
+
+  Each test runs in an isolated temporary directory with controlled
+  environment variables to ensure repeatable results.
+
+.NOTES
+  Platform Compatibility:
+    - Windows PowerShell 5.1: Supported
+    - PowerShell 7+ (pwsh): Supported on Windows, Linux, macOS
+    - gzip compression tests use .NET built-in (cross-platform)
+    - xz/zstd tests skipped if commands not available
+
+  Prerequisites:
+    - Pester module (v5.0+)
+    - safe-archive.ps1 script in ../scripts/
+    - test-helpers.ps1 in same directory (provides Write-RandomTextFile, New-TempDir)
+
+  Test Isolation:
+    - Each test creates unique temporary directory
+    - Environment variables set per-test (SAFE_FAIL_DIR, SAFE_ARCHIVE_DIR, SAFE_ARCHIVE_COMPRESS)
+    - Environment cleaned up after test (Remove-Item env:...)
+    - Temporary directory cleaned automatically (Pop-Location)
+
+  Contract References:
+    - M0-P1-I3: safe-archive no-clobber semantics and move behavior
+
+  Test Details:
+    1. Empty directory test: Verifies --all exits 0 when no logs exist
+    2. No-clobber test: Pre-creates collision file, verifies suffix behavior
+    3. Move semantics test: Verifies source file removed, destination created
+    4. gzip compression test: Verifies .gz file created, uncompressed file removed
+    5. Invalid compression test: Verifies error exit and source preservation
+
+  Design Notes:
+    - Uses Write-RandomTextFile helper for controlled test data
+    - Validates file counts to ensure no unexpected side effects
+    - Tests both individual file and --all modes
+    - Compression tests validate both success and failure paths
+
+.LINK
+  https://pester.dev/
+
+.LINK
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/blob/main/RFC-Shared-Agent-Scaffolding-v0.1.0.md
+#>
 Set-StrictMode -Version Latest
 
 Describe "safe-archive.ps1" {
