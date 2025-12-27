@@ -1,3 +1,43 @@
+"""Unit tests for safe-archive.py archival tool.
+
+This test module validates the safe-archive.py implementation, focusing
+on M0-P1-I3 no-clobber semantics (both strict and auto-suffix modes),
+compression functionality, and move operations.
+
+Test Coverage
+-------------
+- Strict no-clobber mode: Fails when destination exists (M0-P1-I3)
+- Auto-suffix mode (default): Creates .2, .3, etc. when destination exists (M0-P1-I3)
+- Multiple collision handling: Correctly increments suffix (.2, .3, .4, ...)
+- Gzip compression: Archives with gzip compression (Python built-in)
+- Specific file archival: Archives individual files by path
+- Move semantics: Source file removed after archival (not copied)
+
+Contract Validation (M0-P1-I3)
+------------------------------
+- **Strict no-clobber**: SAFE_ARCHIVE_NO_CLOBBER=1 or --no-clobber flag
+  - If destination exists: RuntimeError, exit code 2
+  - Source file unchanged
+  - Destination file unchanged
+  
+- **Auto-suffix (default)**: No --no-clobber flag
+  - If destination exists: Append .2, .3, etc. until unique
+  - Source file moved to suffixed destination
+  - Original destination unchanged
+  - Warning printed to stderr
+
+Test Dependencies
+-----------------
+Requires safe-archive.py in the expected relative path.
+All tests use temporary directories for isolation.
+
+Platform Notes
+--------------
+- Uses tempfile.TemporaryDirectory for isolated test execution
+- gzip compression tested (Python built-in, always available)
+- xz and zstd compression not tested (requires external tools)
+- All tests are platform-independent (Linux, macOS, Windows compatible)
+"""
 import gzip
 import os
 import subprocess
@@ -13,10 +53,29 @@ SAFE_ARCHIVE = SCRIPTS / 'safe-archive.py'
 
 
 def _py():
+    """Get path to current Python interpreter.
+    
+    :returns: sys.executable path
+    
+    Used to ensure safe-archive.py uses the same Python interpreter
+    as the test runner, avoiding version mismatches.
+    """
     return sys.executable
 
 
 def run_archive(args, workdir: Path, env=None, timeout=25):
+    """Run safe-archive.py as a subprocess with specified arguments.
+    
+    :param args: Arguments to pass to safe-archive.py (list[str])
+    :param workdir: Working directory for subprocess execution
+    :param env: Optional environment variable overrides (dict)
+    :param timeout: Timeout in seconds (default: 25)
+    :returns: subprocess.CompletedProcess instance with returncode, stdout, stderr
+    
+    This helper function invokes safe-archive.py with the specified arguments,
+    capturing stdout and stderr for verification. The working directory is set
+    to workdir to isolate test artifacts.
+    """
     e = os.environ.copy()
     if env:
         e.update(env)

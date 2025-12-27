@@ -1,15 +1,101 @@
 #!/usr/bin/env python3
-# safe-run.py - Thin invoker for Rust canonical safe-run tool
-#
-# This wrapper discovers and invokes the Rust canonical implementation.
-# It does NOT reimplement any contract logic.
-#
-# Binary Discovery Order (per docs/wrapper-discovery.md):
-#   1. SAFE_RUN_BIN env var (if set)
-#   2. ./rust/target/release/safe-run (dev mode, relative to repo root)
-#   3. ./dist/<os>/<arch>/safe-run (CI artifacts)
-#   4. PATH lookup (system installation)
-#   5. Error with actionable instructions (exit 127)
+"""Python wrapper for the Rust canonical safe-run tool.
+
+This module provides a thin invoker that discovers and executes the Rust
+canonical implementation of safe-run. It does NOT reimplement any contract
+logic or business rules - all functionality is delegated to the Rust binary.
+
+Purpose
+-------
+Acts as a language-specific entry point for Python users while maintaining
+contract conformance through the canonical Rust implementation. The wrapper
+handles binary discovery, platform detection, and transparent argument forwarding.
+
+Binary Discovery Order
+----------------------
+Per docs/wrapper-discovery.md, the wrapper searches for the Rust binary in
+this deterministic order:
+
+1. **SAFE_RUN_BIN** environment variable (if set, used without validation)
+2. **./rust/target/release/safe-run** (dev mode, relative to repo root)
+3. **./dist/<os>/<arch>/safe-run** (CI artifacts, platform-specific)
+4. **PATH lookup** (system-wide installation via which/shutil.which)
+5. **Error with instructions** (exit 127 if not found)
+
+Environment Variables
+---------------------
+SAFE_RUN_BIN : str, optional
+    Override binary path. If set, this path is used without validation.
+    The wrapper will attempt to execute it and report errors if it fails.
+
+All other environment variables are passed through to the Rust canonical tool:
+
+SAFE_LOG_DIR : str, optional
+    Directory for failure logs (default: .agent/FAIL-LOGS)
+SAFE_SNIPPET_LINES : int, optional
+    Number of tail lines to print on failure (default: 20)
+SAFE_RUN_VIEW : str, optional
+    Output view format: 'split' (default) or 'merged'
+
+CLI Interface
+-------------
+The wrapper accepts the same arguments as the Rust canonical tool:
+
+    python3 safe-run.py [--] <command> [args...]
+
+The optional "--" separator is stripped before forwarding to Rust, which
+expects the structure: safe-run run <command> [args...]
+
+Examples
+--------
+Basic usage with argument forwarding::
+
+    python3 safe-run.py python3 -c "print('hello')"
+    python3 safe-run.py -- bash -c "exit 42"
+
+Using environment override::
+
+    export SAFE_RUN_BIN=/custom/path/to/safe-run
+    python3 safe-run.py echo "uses custom binary"
+
+Exit Codes
+----------
+0
+    Command succeeded (proxied from Rust tool)
+1-125
+    Command failed with specific exit code (proxied from Rust tool)
+126
+    Permission denied executing the binary
+127
+    Binary not found (exhausted all discovery locations)
+130
+    SIGINT/Ctrl+C (proxied from Rust tool)
+
+Platform Notes
+--------------
+- **Linux**: Expects x86_64 or aarch64 architecture
+- **macOS**: Supports both Intel (x86_64) and Apple Silicon (aarch64/arm64)
+- **Windows**: Expects x86_64 (future support, requires .exe extension)
+- **Other**: Falls back to PATH lookup only
+
+Contract References
+-------------------
+This wrapper implements the discovery contract defined in:
+- docs/wrapper-discovery.md: Binary discovery cascade
+- docs/rust-canonical-tool.md: Canonical tool architecture
+
+The Rust binary implements the conformance contracts:
+- safe-run-001: Exit code preservation
+- safe-run-002: Stdout/stderr capture and logging
+- safe-run-003: Failure artifact generation
+- safe-run-004: Signal handling (SIGINT -> exit 130)
+- safe-run-005: Tail snippet output
+
+See Also
+--------
+- Repository: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+- Releases: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases
+"""
 
 import os
 import sys
@@ -19,7 +105,31 @@ from pathlib import Path
 from typing import Optional
 
 def find_repo_root() -> Optional[Path]:
-    """Walk up from script location to find repository root."""
+    """Walk up from script location to find repository root.
+    
+    Searches for repository markers (RFC specification file or .git directory)
+    by traversing parent directories from the script's location.
+    
+    :returns: Path to repository root if found, None otherwise
+    :raises: None - returns None on failure instead of raising
+    
+    Detection Logic
+    ---------------
+    Searches for either:
+    - RFC-Shared-Agent-Scaffolding-v0.1.0.md (repository specification file)
+    - .git/ directory (Git repository marker)
+    
+    The search starts at the script's parent directory and walks upward
+    until a marker is found or the filesystem root is reached.
+    
+    Examples
+    --------
+    >>> root = find_repo_root()
+    >>> if root:
+    ...     print(f"Repository root: {root}")
+    ... else:
+    ...     print("Not in a repository")
+    """
     script_path = Path(__file__).resolve()
     current = script_path.parent
     
@@ -32,7 +142,36 @@ def find_repo_root() -> Optional[Path]:
     return None
 
 def detect_platform() -> str:
-    """Detect OS and architecture for CI artifact path."""
+    """Detect OS and architecture for CI artifact path resolution.
+    
+    :returns: Platform string in format "<os>/<arch>" for dist/ path construction
+    
+    Supported Platforms
+    -------------------
+    Operating Systems:
+    - Linux -> "linux"
+    - macOS (Darwin) -> "macos"
+    - Windows -> "windows"
+    - Other -> "unknown"
+    
+    Architectures:
+    - x86_64, AMD64 -> "x86_64"
+    - aarch64, arm64 -> "aarch64"
+    - Other -> "unknown"
+    
+    Examples
+    --------
+    >>> detect_platform()
+    'linux/x86_64'  # On Linux x86_64
+    >>> detect_platform()
+    'macos/aarch64'  # On Apple Silicon Mac
+    
+    Notes
+    -----
+    - Uses platform.system() for OS detection
+    - Uses platform.machine() for architecture detection
+    - Returns "unknown/unknown" for unsupported platforms (caller handles gracefully)
+    """
     # Detect OS
     system = platform.system()
     if system == "Linux":
@@ -56,7 +195,56 @@ def detect_platform() -> str:
     return f"{os_name}/{arch}"
 
 def find_safe_run_binary() -> Optional[str]:
-    """Binary discovery cascade per docs/wrapper-discovery.md."""
+    """Binary discovery cascade per docs/wrapper-discovery.md.
+    
+    Implements the deterministic binary discovery rules that all language
+    wrappers must follow to locate the Rust canonical tool.
+    
+    :returns: Absolute path to safe-run binary if found, None otherwise
+    
+    Discovery Order
+    ---------------
+    1. **SAFE_RUN_BIN environment variable**
+       - If set, return the path immediately without validation
+       - Let exec fail with a clear error if the path is invalid
+       - Use case: Testing, CI overrides, custom installations
+    
+    2. **Dev mode: ./rust/target/release/safe-run**
+       - Relative to repository root
+       - Must be executable
+       - Use case: Local development, testing Rust changes
+    
+    3. **CI artifact: ./dist/<os>/<arch>/safe-run**
+       - Platform-specific path based on detect_platform()
+       - Must be executable
+       - Use case: CI workflows with pre-built binaries
+    
+    4. **PATH lookup via shutil.which**
+       - Search system PATH for 'safe-run'
+       - Use case: System-wide installation, published releases
+    
+    5. **Not found**
+       - Return None (caller handles error message and exit 127)
+    
+    Side Effects
+    ------------
+    - Calls find_repo_root() to determine repository location
+    - Calls detect_platform() for CI artifact path construction
+    
+    Examples
+    --------
+    >>> binary = find_safe_run_binary()
+    >>> if binary:
+    ...     print(f"Found: {binary}")
+    ... else:
+    ...     print("Not found - will exit with error")
+    
+    Notes
+    -----
+    - Per spec, SAFE_RUN_BIN is returned without validation
+    - File existence and execute permissions are checked for dev/CI paths
+    - The function does not raise exceptions; returns None on failure
+    """
     # 1. Environment override (use without validation per spec)
     safe_run_bin = os.environ.get("SAFE_RUN_BIN")
     if safe_run_bin:
@@ -89,7 +277,57 @@ def find_safe_run_binary() -> Optional[str]:
     return None
 
 def main() -> int:
-    """Main execution."""
+    """Main execution: discover binary and exec with argument forwarding.
+    
+    :returns: Exit code (127 if binary not found, otherwise does not return)
+    :raises SystemExit: Via os.execvp() on successful binary execution
+    
+    Behavior
+    --------
+    1. Discover binary using find_safe_run_binary()
+    2. If not found: print actionable error to stderr, return 127
+    3. If found: parse arguments and exec the Rust binary
+    
+    Argument Handling
+    -----------------
+    - Accepts optional "--" separator as first argument (stripped before forwarding)
+    - All arguments after "--" (or all if no "--") are passed to Rust binary
+    - The wrapper prepends "run" subcommand required by Rust CLI structure
+    - Final command structure: <binary> run <user_args...>
+    
+    Error Handling
+    --------------
+    - Binary not found: Prints detailed error with installation instructions, exit 127
+    - FileNotFoundError: Binary path exists but file is missing/not executable, exit 127
+    - PermissionError: Binary exists but lacks execute permission, exit 126
+    - OSError: Other execution failures, exit 127
+    
+    Exit Codes
+    ----------
+    126
+        Permission denied (binary not executable)
+    127
+        Command not found (binary discovery failed or exec failed)
+    Does not return
+        On successful exec, the Rust binary replaces this process
+    
+    Side Effects
+    ------------
+    - Prints error messages to stderr on failure
+    - Calls os.execvp() which replaces the current process on success
+    - Does not return if binary execution succeeds
+    
+    Examples
+    --------
+    Typical usage (does not return)::
+    
+        sys.exit(main())  # Discovers and execs Rust binary
+    
+    Error case (returns 127)::
+    
+        # If binary not found, prints error and returns 127
+        code = main()  # Returns instead of exec'ing
+    """
     binary = find_safe_run_binary()
     
     if not binary:

@@ -1,3 +1,48 @@
+"""Unit tests for preflight-automerge-ruleset.py GitHub Ruleset verification tool.
+
+This test module validates the preflight-automerge-ruleset.py implementation,
+focusing on M0-P2-I1 Bearer token authentication, error classification, and
+GitHub Ruleset verification logic.
+
+Test Coverage
+-------------
+- Authentication error detection via classify_auth()
+- Malformed --want argument rejection (non-JSON, non-array)
+- Success path: Ruleset active, targets default branch, has all required checks
+- Missing required check detection: Reports missing contexts
+- Ruleset not found by name: Returns exit code 3
+- Auth failure handling: Returns exit code 2 for 401/403 errors
+- M0-P2-I1 Bearer token format validation in source code
+
+Contract Validation (M0-P2-I1)
+------------------------------
+The http_get() function uses the modern Bearer token format:
+    Authorization: Bearer <token>
+
+This replaces the deprecated "token <token>" format. The test validates
+this by inspecting the source code of http_get() to ensure it contains
+the correct authentication header format.
+
+Test Dependencies
+-----------------
+Uses unittest.mock.patch to mock GitHub API calls:
+- have_cmd() mocked to return False (force HTTP path)
+- http_get() mocked to return fixture responses
+- gh_api() not used (have_cmd returns False)
+
+All tests run fully offline with no actual GitHub API calls.
+
+Test Fixtures
+-------------
+- _rulesets_list(): Mock response for GET /repos/{repo}/rulesets
+- _ruleset_detail(contexts): Mock response for GET /repos/{repo}/rulesets/{id}
+
+Platform Notes
+--------------
+- All tests are platform-independent (Linux, macOS, Windows compatible)
+- No network access required (all API calls mocked)
+- Uses importlib to dynamically load the module under test
+"""
 import json
 import os
 import unittest
@@ -12,6 +57,14 @@ MODULE_PATH = SCRIPTS / 'preflight-automerge-ruleset.py'
 
 
 def load_module():
+    """Dynamically load preflight-automerge-ruleset.py as a Python module.
+    
+    :returns: Loaded module object
+    
+    Uses importlib to load the script even though it has hyphens in the
+    filename (which aren't valid in Python module names). This allows
+    tests to import and inspect functions from the script.
+    """
     spec = importlib.util.spec_from_file_location('preflight_automerge_ruleset', str(MODULE_PATH))
     mod = importlib.util.module_from_spec(spec)
     assert spec and spec.loader
