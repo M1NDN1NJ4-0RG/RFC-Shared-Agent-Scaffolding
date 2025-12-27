@@ -21,9 +21,11 @@ $ErrorActionPreference = 'Stop'
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
 function Find-RepoRoot {
-    # Walk up from script location to find repository root
-    $scriptPath = $PSCommandPath
-    $current = Split-Path -Parent $scriptPath
+    # Walk up from current working directory to find repository root
+    # This allows the script to work even when copied to a temp directory
+    # as long as it's invoked from within the repo
+    
+    $current = (Get-Location).Path
     
     while ($current) {
         $rfcFile = Join-Path $current "RFC-Shared-Agent-Scaffolding-v0.1.0.md"
@@ -66,20 +68,23 @@ function Find-SafeRunBinary {
     
     $repoRoot = Find-RepoRoot
     
-    # 2. Dev mode: ./rust/target/release/safe-run
+    # Determine binary name with platform-specific extension
+    $binaryName = if ($IsWindows) { "safe-run.exe" } else { "safe-run" }
+    
+    # 2. Dev mode: ./rust/target/release/safe-run[.exe]
     if ($repoRoot) {
-        $devBin = Join-Path $repoRoot "rust" "target" "release" "safe-run"
+        $devBin = Join-Path $repoRoot "rust" "target" "release" $binaryName
         if (Test-Path $devBin) {
             return $devBin
         }
     }
     
-    # 3. CI artifact: ./dist/<os>/<arch>/safe-run
+    # 3. CI artifact: ./dist/<os>/<arch>/safe-run[.exe]
     if ($repoRoot) {
         $platform = Detect-Platform
         if ($platform -ne "unknown/unknown") {
             $parts = $platform -split '/'
-            $ciBin = Join-Path $repoRoot "dist" $parts[0] $parts[1] "safe-run"
+            $ciBin = Join-Path $repoRoot "dist" $parts[0] $parts[1] $binaryName
             if (Test-Path $ciBin) {
                 return $ciBin
             }
@@ -105,8 +110,8 @@ ERROR: Rust canonical tool not found.
 
 Searched locations:
   1. SAFE_RUN_BIN env var (not set or invalid)
-  2. ./rust/target/release/safe-run (not found)
-  3. ./dist/<os>/<arch>/safe-run (not found)
+  2. ./rust/target/release/safe-run[.exe] (not found)
+  3. ./dist/<os>/<arch>/safe-run[.exe] (not found)
   4. PATH lookup (not found)
 
 To install:
@@ -133,15 +138,20 @@ if ($invokeArgs.Count -gt 0 -and $invokeArgs[0] -eq '--') {
 # The 'run' subcommand is required by the Rust CLI structure
 try {
     & $binary run @invokeArgs
-    exit $LASTEXITCODE
+    $exitCode = $LASTEXITCODE
+    if ($null -eq $exitCode) {
+        # If LASTEXITCODE is null, the command may have failed to execute
+        exit 1
+    }
+    exit $exitCode
 } catch {
     Write-Err "ERROR: Failed to execute binary: $binary"
     Write-Err "Error: $_"
     Write-Err ""
     Write-Err "Searched locations:"
     Write-Err "  1. SAFE_RUN_BIN env var"
-    Write-Err "  2. ./rust/target/release/safe-run"
-    Write-Err "  3. ./dist/<os>/<arch>/safe-run"
+    Write-Err "  2. ./rust/target/release/safe-run[.exe]"
+    Write-Err "  3. ./dist/<os>/<arch>/safe-run[.exe]"
     Write-Err "  4. PATH lookup"
     exit 127
 }

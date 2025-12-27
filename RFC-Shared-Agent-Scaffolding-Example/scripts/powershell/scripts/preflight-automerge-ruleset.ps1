@@ -86,6 +86,8 @@ $wantArr = $null
 try {
   $wantArr = $Want | ConvertFrom-Json
   if ($wantArr -isnot [System.Collections.IEnumerable]) { throw "want not array" }
+  # Ensure it's an array (ConvertFrom-Json may return a single string if input has one element)
+  $wantArr = @($wantArr)
 } catch {
   Write-Err "ERROR: -Want must be a JSON array of strings"
   exit 3
@@ -165,7 +167,9 @@ foreach ($w in $wantArr) { if (-not $got.Contains([string]$w)) { $missing += [st
 if ($missing.Count -gt 0) {
   Write-Err "WARN: Ruleset missing required status check contexts"
   Write-Err ("INFO: want: {0}" -f ($wantArr | ConvertTo-Json -Compress))
-  Write-Err ("INFO: got : {0}" -f (($got.ToArray() | Sort-Object) | ConvertTo-Json -Compress))
+  # Convert HashSet to array for sorting and JSON serialization
+  $gotArray = @($got)
+  Write-Err ("INFO: got : {0}" -f (($gotArray | Sort-Object) | ConvertTo-Json -Compress))
   exit 1
 }
 

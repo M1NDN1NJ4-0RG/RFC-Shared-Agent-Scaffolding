@@ -34,6 +34,14 @@ jobs:
         working-directory: rust
         run: cargo build --release
       
+      - name: Stage Rust binary for wrapper discovery
+        run: |
+          mkdir -p dist/linux/x86_64
+          cp rust/target/release/safe-run dist/linux/x86_64/safe-run
+          chmod +x dist/linux/x86_64/safe-run
+          echo "Rust binary staged at: dist/linux/x86_64/safe-run"
+          ls -lh dist/linux/x86_64/safe-run
+      
       - name: Set up Perl
         uses: shogo82148/actions-setup-perl@3e011cd23aec3d977e118dfe36ba1318b28b63ef # v1
         with:

@@ -111,10 +111,10 @@ class TestSafeRun(unittest.TestCase):
             ], workdir=wd, env={'SAFE_SNIPPET_LINES': '1'})
 
             self.assertEqual(proc.returncode, 9)
-            # Should include the tail snippet indicator and at least the last line of each stream.
-            self.assertIn('STDOUT tail', proc.stderr)
+            # Should include the tail snippet with at least the last line of each stream.
+            # Per conformance spec safe-run-005, we only require the actual lines,
+            # not specific header text.
             self.assertIn('line2', proc.stderr)
-            self.assertIn('STDERR tail', proc.stderr)
             self.assertIn('line4', proc.stderr)
 
     def test_sigint_creates_aborted_log(self):
