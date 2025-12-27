@@ -123,14 +123,14 @@ The `safe-run archive` subcommand exists in the CLI structure but has no impleme
 The preflight automerge ruleset checker validates GitHub repository configurations before automated operations. Implementation requires GitHub API integration and mocking infrastructure for testing. All 4 preflight conformance tests are currently ignored.
 
 **Source:**
-- `rust/tests/conformance.rs:810-938` (placeholder tests with TODO comments)
+- `rust/tests/conformance.rs:838-922` (placeholder tests with TODO comments)
 - `rust/tests/README.md:66` (Vector preflight-004 not yet implemented)
 - `rust/tests/CONFORMANCE_INFRASTRUCTURE.md:62` (preflight-004 status)
 
 **Ignored tests:**
-- `test_preflight_001_success` (lines 836-853)
-- `test_preflight_002_auth_failure` (lines 871-888)
-- `test_preflight_003_ruleset_missing` (lines 905-922)
+- `test_preflight_001_success` (lines 838-853)
+- `test_preflight_002_auth_failure` (lines 873-888)
+- `test_preflight_003_ruleset_not_found` (lines 907-922)
 - Additional preflight tests
 
 **Suggested next steps:**
