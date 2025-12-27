@@ -21,44 +21,11 @@ $ErrorActionPreference = 'Stop'
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
 function Find-RepoRoot {
-    # Walk up from script location to find repository root
-    # Handle all invocation methods: -File, & pwsh script.ps1, dot-sourcing, etc.
+    # Walk up from current working directory to find repository root
+    # This allows the script to work even when copied to a temp directory
+    # as long as it's invoked from within the repo
     
-    # Try to get script location in order of reliability
-    $scriptPath = $null
-    
-    if ($PSScriptRoot) {
-        # Best case: PSScriptRoot is set (works with -File and modern invocations)
-        $scriptPath = $PSScriptRoot
-    } elseif ($MyInvocation.MyCommand.Path) {
-        # Fallback: MyInvocation.MyCommand.Path may be relative
-        $rawPath = $MyInvocation.MyCommand.Path
-        # Convert to absolute path if relative
-        if ([System.IO.Path]::IsPathRooted($rawPath)) {
-            $scriptPath = Split-Path -Parent $rawPath
-        } else {
-            # Relative path - convert to absolute using GetFullPath
-            # This works even if the file doesn't exist at the current location
-            $absolutePath = [System.IO.Path]::GetFullPath($rawPath)
-            $scriptPath = Split-Path -Parent $absolutePath
-        }
-    } elseif ($PSCommandPath) {
-        # Another fallback for older PowerShell
-        if ([System.IO.Path]::IsPathRooted($PSCommandPath)) {
-            $scriptPath = Split-Path -Parent $PSCommandPath
-        } else {
-            $absolutePath = [System.IO.Path]::GetFullPath($PSCommandPath)
-            $scriptPath = Split-Path -Parent $absolutePath
-        }
-    }
-    
-    # If we still don't have a path, use current location as last resort
-    if (-not $scriptPath) {
-        $scriptPath = Get-Location | Select-Object -ExpandProperty Path
-    }
-    
-    # Now walk up from scriptPath to find the repo root
-    $current = $scriptPath
+    $current = (Get-Location).Path
     
     while ($current) {
         $rfcFile = Join-Path $current "RFC-Shared-Agent-Scaffolding-v0.1.0.md"
