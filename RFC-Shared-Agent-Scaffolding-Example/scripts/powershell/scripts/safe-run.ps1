@@ -136,7 +136,12 @@ if ($invokeArgs.Count -gt 0 -and $invokeArgs[0] -eq '--') {
 # The 'run' subcommand is required by the Rust CLI structure
 try {
     & $binary run @invokeArgs
-    exit $LASTEXITCODE
+    $exitCode = $LASTEXITCODE
+    if ($null -eq $exitCode) {
+        # If LASTEXITCODE is null, the command may have failed to execute
+        exit 1
+    }
+    exit $exitCode
 } catch {
     Write-Err "ERROR: Failed to execute binary: $binary"
     Write-Err "Error: $_"
