@@ -148,8 +148,8 @@ function Invoke-CtrlCProbe {
             return $false
         }
         
-        $pid = $process.Id
-        Write-ProbeLog "Process started: PID $pid"
+        $targetPid = $process.Id
+        Write-ProbeLog "Process started: PID $targetPid"
         
         # Wait a bit for the child command to actually start
         Start-Sleep -Seconds 2
@@ -193,9 +193,9 @@ public class ConsoleHelper {
                 #       fail due to console group restrictions.
                 $result = [ConsoleHelper]::GenerateConsoleCtrlEvent(
                     [ConsoleHelper]::CTRL_C_EVENT,
-                    [uint32]$pid
+                    [uint32]$targetPid
                 )
-                Write-ProbeLog "GenerateConsoleCtrlEvent(CTRL_C_EVENT, $pid) result: $result"
+                Write-ProbeLog "GenerateConsoleCtrlEvent(CTRL_C_EVENT, $targetPid) result: $result"
                 
                 # Wait for exit
                 Start-Sleep -Seconds 2
@@ -203,12 +203,12 @@ public class ConsoleHelper {
                 # If still running, try Stop-Process
                 if (-not $process.HasExited) {
                     Write-ProbeLog "Process still running, using Stop-Process..."
-                    Stop-Process -Id $pid -Force
+                    Stop-Process -Id $targetPid -Force
                 }
             } catch {
                 Write-ProbeLog "Signal attempt failed: $($_.Exception.Message)"
                 Write-ProbeLog "Trying Stop-Process instead..."
-                Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+                Stop-Process -Id $targetPid -Force -ErrorAction SilentlyContinue
             }
             
             # Wait for process to exit
@@ -332,18 +332,44 @@ try {
     Write-Host ""
     Write-Host "Summary written to: $summaryPath"
     
-    # Exit with success code (don't fail the workflow, we want to see the results)
+    if (-not $success) {
+        Write-Host ""
+        Write-Host "RESULT: INCONCLUSIVE - Probe encountered errors during execution"
+        Write-Host "Review probe-summary.txt for details"
+        # Exit 0 to allow artifact upload and review
+        exit 0
+    }
+    
+    # Exit with success code to allow artifact review
     exit 0
     
 } catch {
-    Write-Host "FATAL ERROR: $($_.Exception.Message)"
+    Write-Host ""
+    Write-Host "================================================================"
+    Write-Host "RESULT: INCONCLUSIVE - FATAL ERROR"
+    Write-Host "================================================================"
+    Write-Host "ERROR: $($_.Exception.Message)"
     Write-Host "Stack trace: $($_.ScriptStackTrace)"
+    Write-Host ""
+    Write-Host "The probe script threw an unhandled exception."
+    Write-Host "This prevents signal behavior validation."
+    Write-Host ""
     
     # Still write partial summary
     $summaryPath = Join-Path $PWD "probe-summary.txt"
     $script:summaryLines += ""
+    $script:summaryLines += "================================================================"
+    $script:summaryLines += "RESULT: INCONCLUSIVE - FATAL ERROR"
+    $script:summaryLines += "================================================================"
     $script:summaryLines += "FATAL ERROR: $($_.Exception.Message)"
+    $script:summaryLines += "Stack trace: $($_.ScriptStackTrace)"
+    $script:summaryLines += ""
+    $script:summaryLines += "The probe script threw an unhandled exception."
+    $script:summaryLines += "This prevents signal behavior validation."
     $script:summaryLines | Out-File -FilePath $summaryPath -Encoding UTF8
     
-    exit 0  # Don't fail workflow, capture partial results
+    Write-Host "Partial summary written to: $summaryPath"
+    
+    # Exit 0 to allow artifact upload, but make it clear this is inconclusive
+    exit 0
 }
