@@ -387,13 +387,6 @@ EOF
     exit 127;
 }
 
-# Check if binary exists but is not executable (exit 126 per Unix convention)
-if (-e $binary && !-x $binary) {
-    print STDERR "ERROR: Found $binary but it is not executable (permission denied).\n";
-    print STDERR "Try: chmod +x $binary\n";
-    exit 126;
-}
-
 # Parse arguments: handle optional "--" separator
 my @args = @ARGV;
 if (@args > 0 && $args[0] eq '--') {
