@@ -29,8 +29,9 @@ permissions:
 
 jobs:
   # Job: Validate All Bundles
-  # Ensures all language bundles and conformance infrastructure files exist
-  # with the expected structure and content. Does not execute tests.
+  # Verifies required conformance files and language bundle directories exist
+  # and that conformance/vectors.json is valid JSON. Does not execute tests
+  # or perform deep structure/content validation.
   validate-all-bundles:
     name: All Bundles Conformance Check
     # Runner: Ubuntu latest (sufficient for file existence checks)
