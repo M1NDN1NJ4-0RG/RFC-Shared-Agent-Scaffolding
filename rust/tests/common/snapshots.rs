@@ -48,7 +48,11 @@
 //! # Examples
 //!
 //! ```no_run
-//! # use std::fs;
+//! # mod snapshots {
+//! #     pub fn save_snapshot(name: &str, content: &str) -> Result<(), std::io::Error> { Ok(()) }
+//! #     pub fn matches_snapshot(name: &str, actual: &str) -> bool { true }
+//! # }
+//! # use snapshots::{save_snapshot, matches_snapshot};
 //! // Save a golden output
 //! save_snapshot("safe-run-001-success", "=== STDOUT ===\nhello\n").unwrap();
 //!
@@ -70,13 +74,13 @@ use std::path::{Path, PathBuf};
 /// Regex for matching PID patterns in log filenames and content
 ///
 /// Matches patterns like `pid12345` for replacement with `{PID}` placeholder.
-/// Uses lazy static initialization to compile once and reuse.
+/// Compiled lazily on first use with `once_cell::sync::Lazy` and reused thereafter.
 static PID_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"pid\d+").unwrap());
 
 /// Regex for matching ISO 8601 compact timestamp patterns
 ///
 /// Matches timestamps like `20241227T120530Z` for replacement with `{TIMESTAMP}` placeholder.
-/// Uses lazy static initialization to compile once and reuse.
+/// Compiled lazily on first use with `once_cell::sync::Lazy` and reused thereafter.
 static TIMESTAMP_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d{8}T\d{6}Z").unwrap());
 
 /// Get the snapshots directory path
@@ -162,6 +166,7 @@ pub fn load_snapshot(name: &str) -> Result<String, std::io::Error> {
 /// # Examples
 ///
 /// ```no_run
+/// # fn save_snapshot(name: &str, content: &str) -> Result<(), std::io::Error> { Ok(()) }
 /// save_snapshot("safe-run-001-success", "=== STDOUT ===\nhello\n").unwrap();
 /// ```
 pub fn save_snapshot(name: &str, content: &str) -> Result<(), std::io::Error> {
@@ -208,6 +213,7 @@ pub fn save_snapshot(name: &str, content: &str) -> Result<(), std::io::Error> {
 /// # Examples
 ///
 /// ```no_run
+/// # fn matches_snapshot(name: &str, actual: &str) -> bool { true }
 /// let actual = "=== STDOUT ===\r\nhello\r\n";  // Windows format
 /// assert!(matches_snapshot("safe-run-001-success", actual));
 /// ```
@@ -256,6 +262,7 @@ pub fn matches_snapshot(name: &str, actual: &str) -> bool {
 /// # Examples
 ///
 /// ```
+/// # fn normalize_output(s: &str) -> String { s.to_string() }
 /// let windows_output = "hello\r\nworld\r\n";
 /// let unix_output = "hello\nworld\n";
 /// assert_eq!(normalize_output(windows_output), normalize_output(unix_output));

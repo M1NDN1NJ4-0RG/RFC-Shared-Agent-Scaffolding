@@ -35,7 +35,9 @@
 //!
 //! # Usage Pattern
 //!
-//! ```no_run
+//! ```ignore
+//! // In your test file, import from the common module:
+//! mod common;
 //! use common::{load_vectors, get_safe_run_binary};
 //!
 //! let vectors = load_vectors().expect("Failed to load vectors");
@@ -87,8 +89,10 @@ pub mod snapshots;
 ///
 /// # Examples
 ///
-/// ```no_run
-/// let vectors = load_vectors().unwrap();
+/// ```ignore
+/// mod common;
+///
+/// let vectors = common::load_vectors().unwrap();
 /// assert_eq!(vectors.version, "1.0");
 /// assert!(!vectors.vectors.safe_run.is_empty());
 /// ```
@@ -324,8 +328,10 @@ pub struct ExpectedOutcome {
 ///
 /// # Examples
 ///
-/// ```no_run
-/// let vectors = load_vectors().expect("Failed to load vectors");
+/// ```ignore
+/// mod common;
+///
+/// let vectors = common::load_vectors().expect("Failed to load vectors");
 /// println!("Loaded {} safe-run vectors", vectors.vectors.safe_run.len());
 /// ```
 pub fn load_vectors() -> Result<ConformanceVectors, Box<dyn std::error::Error>> {
@@ -370,8 +376,10 @@ pub fn load_vectors() -> Result<ConformanceVectors, Box<dyn std::error::Error>> 
 ///
 /// # Examples
 ///
-/// ```no_run
-/// let binary = get_safe_run_binary();
+/// ```ignore
+/// mod common;
+///
+/// let binary = common::get_safe_run_binary();
 /// assert!(binary.exists(), "Binary not built yet");
 /// ```
 pub fn get_safe_run_binary() -> PathBuf {

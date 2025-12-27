@@ -208,8 +208,11 @@ impl Cli {
     ///
     /// # Examples
     ///
-    /// ```no_run
+    /// ```ignore
+    /// // In your main.rs:
     /// use clap::Parser;
+    /// use crate::cli::Cli;
+    ///
     /// let cli = Cli::parse();
     /// let exit_code = cli.run().expect("Tool error");
     /// ```

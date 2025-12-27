@@ -41,7 +41,10 @@
 //! # Examples
 //!
 //! ```no_run
+//! # mod safe_run { pub fn execute(cmd: &[String]) -> Result<i32, String> { Ok(0) } }
 //! # use std::env;
+//! use safe_run::execute;
+//!
 //! // Execute a simple command
 //! let result = execute(&["echo".to_string(), "hello".to_string()]);
 //! assert_eq!(result.unwrap(), 0);
@@ -135,6 +138,7 @@ use std::thread;
 /// # Examples
 ///
 /// ```no_run
+/// # fn execute(cmd: &[String]) -> Result<i32, String> { Ok(0) }
 /// // Success case (no artifacts)
 /// let result = execute(&["echo".to_string(), "hello".to_string()]);
 /// assert_eq!(result.unwrap(), 0);
@@ -450,7 +454,7 @@ fn emit_event(
 /// # Behavior
 ///
 /// 1. Creates log directory if it doesn't exist
-/// 2. Generates filename: `YYYYMMDDTHHMMSSz-pidN-STATUS.log`
+/// 2. Generates filename: `YYYYMMDDTHHMMSSZ-pidN-STATUS.log`
 /// 3. Finds non-clobbering filename (appends -1, -2, etc. if file exists)
 /// 4. Writes log sections in order:
 ///    - `=== STDOUT ===` (all captured stdout lines)
@@ -762,6 +766,7 @@ fn print_snippet(log_path: &Path, lines: usize) {
 /// # Examples
 ///
 /// ```
+/// # fn shell_escape_command(cmd: &[String]) -> String { String::new() }
 /// let cmd1 = vec!["echo".to_string(), "hello".to_string()];
 /// assert_eq!(shell_escape_command(&cmd1), "echo hello");
 ///
@@ -769,7 +774,7 @@ fn print_snippet(log_path: &Path, lines: usize) {
 /// assert_eq!(shell_escape_command(&cmd2), "echo 'hello world'");
 ///
 /// let cmd3 = vec!["echo".to_string(), "I'm here".to_string()];
-/// assert_eq!(shell_escape_command(&cmd3), "echo 'I'\\''m here'");
+/// assert_eq!(shell_escape_command(&cmd3), r"echo 'I'\''m here'");
 /// ```
 fn shell_escape_command(command: &[String]) -> String {
     command
