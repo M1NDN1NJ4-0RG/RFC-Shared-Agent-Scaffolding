@@ -204,25 +204,6 @@
 
 ---
 
-## 📋 EPIC Completion Checklist
-
-### Acceptance Criteria (from EPIC #33)
-
-- [x] RFC updated: Rust canonical tool declared as source of truth
-- [x] Pre-flight validation complete and enforced
-- [x] Rust tool exists and implements required contract behavior(s)
-- [x] Conformance suite exists and runs in CI across OS matrix
-- [ ] **Bash/Perl/Python3/PowerShell wrappers are thin invokers** ← **P5-P7 NEEDED**
-- [ ] **Wrapper outputs match Rust outputs across test cases** ← **P5-P7 NEEDED**
-- [x] CI gates enforce conformance; PRs cannot merge with drift
-- [x] Release/installation guidance documented
-
-**Current Progress:** 75% (6/8 criteria met)
-
-**Remaining:** P5-P7 wrapper conversions
-
----
-
 ## 🎯 Next Steps
 
 ### Immediate Action (Next PR)
