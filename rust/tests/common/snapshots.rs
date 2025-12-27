@@ -122,7 +122,7 @@ pub fn snapshots_dir() -> PathBuf {
 ///
 /// # Examples
 ///
-/// ```no_run
+/// ```text
 /// let content = load_snapshot("safe-run-001-success").unwrap();
 /// assert!(content.contains("STDOUT"));
 /// ```
