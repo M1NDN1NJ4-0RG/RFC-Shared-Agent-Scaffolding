@@ -154,6 +154,131 @@ test_merged_view() {
   )
 }
 
+# Conformance test: repo root detection from script location
+test_repo_root_from_script_location() {
+  local tmp wrapper rc output
+  tmp="$(mktemp_dir)"
+  wrapper="$tmp/safe-run-relocated.sh"
+  
+  # Copy wrapper to temp location outside repo
+  cp "$SAFE_RUN" "$wrapper"
+  
+  (
+    cd "$tmp"  # Change to directory OUTSIDE repo
+    # With SAFE_RUN_BIN set, wrapper should work regardless of location
+    set +e
+    output=$(SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$wrapper" echo "relocated test" 2>&1)
+    rc=$?
+    set -e
+    
+    [[ "$rc" -eq 0 ]]
+    [[ "$output" == "relocated test" ]]
+  )
+  
+  rm -rf "$tmp"
+}
+
+# Conformance test: argument quoting - empty string
+test_arg_quoting_empty_string() {
+  local tmp output
+  tmp="$(mktemp_dir)"
+  
+  (
+    cd "$tmp"
+    mkdir -p .agent/FAIL-LOGS
+    output=$(SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" echo "" "after" 2>&1)
+    # Should contain "after" (empty arg preserved)
+    grep -q "after" <<<"$output"
+  )
+  
+  rm -rf "$tmp"
+}
+
+# Conformance test: argument quoting - spaces
+test_arg_quoting_spaces() {
+  local tmp output
+  tmp="$(mktemp_dir)"
+  
+  (
+    cd "$tmp"
+    mkdir -p .agent/FAIL-LOGS
+    output=$(SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" echo "hello world" 2>&1)
+    [[ "$output" == "hello world" ]]
+  )
+  
+  rm -rf "$tmp"
+}
+
+# Conformance test: argument quoting - metacharacters not interpreted
+test_arg_quoting_metacharacters() {
+  local tmp output
+  tmp="$(mktemp_dir)"
+  
+  (
+    cd "$tmp"
+    mkdir -p .agent/FAIL-LOGS
+    output=$(SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" echo "test;echo hacked" 2>&1)
+    [[ "$output" == "test;echo hacked" ]]
+    # Should NOT contain "hacked" on separate line
+    ! grep -q "^hacked$" <<<"$output"
+  )
+  
+  rm -rf "$tmp"
+}
+
+# Conformance test: exit code propagation for multiple codes
+test_exit_code_propagation_comprehensive() {
+  local tmp codes code rc
+  tmp="$(mktemp_dir)"
+  codes=(0 1 7 42 127 255)
+  
+  (
+    cd "$tmp"
+    mkdir -p .agent/FAIL-LOGS
+    
+    for code in "${codes[@]}"; do
+      set +e
+      SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c "exit $code" >/dev/null 2>&1
+      rc=$?
+      set -e
+      
+      if [[ "$rc" -ne "$code" ]]; then
+        echo "Exit code mismatch: expected $code, got $rc" >&2
+        exit 1
+      fi
+    done
+  )
+  
+  rm -rf "$tmp"
+}
+
+# Conformance test: binary not found error handling
+test_binary_not_found_error() {
+  local tmp wrapper err rc
+  tmp="$(mktemp_dir)"
+  wrapper="$tmp/safe-run-nobin.sh"
+  
+  # Copy wrapper to temp location
+  cp "$SAFE_RUN" "$wrapper"
+  
+  (
+    cd "$tmp"
+    unset SAFE_RUN_BIN || true
+    
+    set +e
+    err=$(bash "$wrapper" echo "test" 2>&1)
+    rc=$?
+    set -e
+    
+    # Should exit with 127 (command not found)
+    [[ "$rc" -eq 127 ]]
+    # Should have error message
+    grep -q "Rust canonical tool not found" <<<"$err"
+  )
+  
+  rm -rf "$tmp"
+}
+
 t "safe-run: success produces no artifacts" test_success_no_artifacts
 t "safe-run: failure captures stderr+stdout, preserves exit code" test_failure_captures_and_rc
 t "safe-run: SAFE_SNIPPET_LINES prints tail snippet to stderr on failure" test_snippet_lines
@@ -161,5 +286,13 @@ t "safe-run: respects SAFE_LOG_DIR override" test_safe_log_dir_override
 t "safe-run: SIGTERM produces ABORTED log and preserves forensic output" test_sigint_aborted_log
 t "safe-run: event ledger with sequence numbers" test_event_ledger
 t "safe-run: merged view when SAFE_RUN_VIEW=merged" test_merged_view
+
+# Conformance tests (contract hardening)
+t "conformance: repo root detection from script location" test_repo_root_from_script_location
+t "conformance: argument quoting - empty string" test_arg_quoting_empty_string
+t "conformance: argument quoting - spaces preserved" test_arg_quoting_spaces
+t "conformance: argument quoting - metacharacters not interpreted" test_arg_quoting_metacharacters
+t "conformance: exit code propagation (0,1,7,42,127,255)" test_exit_code_propagation_comprehensive
+t "conformance: binary not found exits with 127" test_binary_not_found_error
 
 summary
