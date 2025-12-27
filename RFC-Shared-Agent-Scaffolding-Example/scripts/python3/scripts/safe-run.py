@@ -1,350 +1,130 @@
 #!/usr/bin/env python3
-# safe-run.py (Python 3)
+# safe-run.py - Thin invoker for Rust canonical safe-run tool
 #
-# Safe Execution Contract (M0-P1-I1, M0-P1-I2 + Event Ledger):
-# - Executes the command verbatim.
-# - On success: creates NO artifacts.
-# - On failure: writes split stdout/stderr with section markers + event ledger to SAFE_LOG_DIR
-# - Log format: {ISO8601_TIMESTAMP}-pid{PID}-{STATUS}.log
-# - On abort (SIGINT/SIGTERM): still writes partial output with "ABORTED" status
+# This wrapper discovers and invokes the Rust canonical implementation.
+# It does NOT reimplement any contract logic.
+#
+# Binary Discovery Order (per docs/wrapper-discovery.md):
+#   1. SAFE_RUN_BIN env var (if set)
+#   2. ./rust/target/release/safe-run (dev mode, relative to repo root)
+#   3. ./dist/<os>/<arch>/safe-run (CI artifacts)
+#   4. PATH lookup (system installation)
+#   5. Error with actionable instructions (exit 127)
 
 import os
-import re
 import sys
-import time
-import shlex
-import signal
-import tempfile
-import subprocess
-import threading
-from collections import deque
-from typing import Deque, List, Optional, Tuple, BinaryIO
+import platform
+import shutil
+from pathlib import Path
 
-
-def eprint(*args: object) -> None:
-    print(*args, file=sys.stderr)
-
-
-def usage() -> int:
-    eprint("Usage: scripts/python3/safe-run.py [--] <command> [args...]")
-    eprint("")
-    eprint("Environment:")
-    eprint("  SAFE_LOG_DIR        Failure log directory (default: .agent/FAIL-LOGS)")
-    eprint("  SAFE_SNIPPET_LINES  On failure/abort, print last N lines of output to stderr (default: 0)")
-    eprint("  SAFE_RUN_VIEW       If 'merged', emit optional merged view")
-    return 2
-
-
-def iso8601_timestamp() -> str:
-    """Return current time in ISO8601 format (UTC): YYYYMMDDTHHMMSSZ"""
-    return time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
-
-
-class _AbortState:
-    """Small shared state mutated by signal handlers."""
-
-    def __init__(self) -> None:
-        self.aborted: bool = False
-        self.signal_name: Optional[str] = None
-        self.exit_code: Optional[int] = None
-
-
-class EventLedger:
-    """Thread-safe event ledger for tracking observed-order events."""
+def find_repo_root() -> Path | None:
+    """Walk up from script location to find repository root."""
+    script_path = Path(__file__).resolve()
+    current = script_path.parent
     
-    def __init__(self) -> None:
-        self.events: List[Tuple[int, str, str]] = []  # (seq, stream, text)
-        self.seq: int = 0
-        self.lock = threading.Lock()
+    while current != current.parent:
+        if (current / "RFC-Shared-Agent-Scaffolding-v0.1.0.md").exists() or \
+           (current / ".git").is_dir():
+            return current
+        current = current.parent
     
-    def emit(self, stream: str, text: str) -> None:
-        """Emit an event with the next sequence number."""
-        with self.lock:
-            self.seq += 1
-            self.events.append((self.seq, stream, text))
-    
-    def write_to_file(self, f: BinaryIO) -> None:
-        """Write all events to a file object."""
-        with self.lock:
-            for seq, stream, text in self.events:
-                f.write(f"[SEQ={seq}][{stream}] {text}\n".encode())
+    return None
 
-
-def _install_signal_handlers(state: _AbortState) -> Tuple[object, object]:
-    """Install SIGINT/SIGTERM handlers."""
-    old_int = signal.getsignal(signal.SIGINT)
-    old_term = signal.getsignal(signal.SIGTERM)
-
-    def on_sigint(signum: int, frame: object) -> None:  # noqa: ARG001
-        state.aborted = True
-        state.signal_name = "SIGINT"
-        state.exit_code = 130
-        raise KeyboardInterrupt
-
-    def on_sigterm(signum: int, frame: object) -> None:  # noqa: ARG001
-        state.aborted = True
-        state.signal_name = "SIGTERM"
-        state.exit_code = 143
-        raise KeyboardInterrupt
-
-    signal.signal(signal.SIGINT, on_sigint)
-    signal.signal(signal.SIGTERM, on_sigterm)
-    return old_int, old_term
-
-
-def _restore_signal_handlers(old_int: object, old_term: object) -> None:
-    signal.signal(signal.SIGINT, old_int)   # type: ignore[arg-type]
-    signal.signal(signal.SIGTERM, old_term) # type: ignore[arg-type]
-
-
-def main(argv: List[str]) -> int:
-    if not argv or argv[0] in ("-h", "--help"):
-        return usage()
-    if argv[0] == "--":
-        argv = argv[1:]
-    if not argv:
-        return usage()
-
-    log_dir = os.environ.get("SAFE_LOG_DIR", ".agent/FAIL-LOGS")
-    snippet_lines_raw = os.environ.get("SAFE_SNIPPET_LINES", "0")
-    view_mode = os.environ.get("SAFE_RUN_VIEW", "")
-    
-    if not re.fullmatch(r"\d+", snippet_lines_raw):
-        eprint("ERROR: SAFE_SNIPPET_LINES must be a non-negative integer")
-        return 1
-    snippet_lines = int(snippet_lines_raw)
-
-    ts = iso8601_timestamp()
-    pid = os.getpid()
-    # Properly escape command for META event (use shell quoting)
-    cmd_str = " ".join(shlex.quote(arg) for arg in argv)
-
-    # Temporary files for stdout, stderr, and event ledger
-    tmp_stdout_path: Optional[str] = None
-    tmp_stderr_path: Optional[str] = None
-    tmp_stdout_fh: Optional[object] = None
-    tmp_stderr_fh: Optional[object] = None
-
-    # Event ledger
-    ledger = EventLedger()
-    
-    # Tail snippets
-    tail_stdout: Deque[bytes] = deque(maxlen=snippet_lines or None)
-    tail_stderr: Deque[bytes] = deque(maxlen=snippet_lines or None)
-
-    state = _AbortState()
-    old_int, old_term = _install_signal_handlers(state)
-
-    proc: Optional[subprocess.Popen] = None
-    rc: int = 1
-
-    try:
-        tmp_stdout_fh_obj = tempfile.NamedTemporaryFile(prefix="safe-run-stdout-", suffix=".tmp", delete=False)
-        tmp_stdout_fh = tmp_stdout_fh_obj
-        tmp_stdout_path = tmp_stdout_fh_obj.name
-
-        tmp_stderr_fh_obj = tempfile.NamedTemporaryFile(prefix="safe-run-stderr-", suffix=".tmp", delete=False)
-        tmp_stderr_fh = tmp_stderr_fh_obj
-        tmp_stderr_path = tmp_stderr_fh_obj.name
-
-        # Emit start event
-        ledger.emit("META", f'safe-run start: cmd="{cmd_str}"')
-
-        proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        assert proc.stdout is not None
-        assert proc.stderr is not None
-
-        stdout_done = threading.Event()
-        stderr_done = threading.Event()
-        
-        def _read_stdout() -> None:
-            try:
-                for raw in iter(proc.stdout.readline, b""):
-                    if raw == b"":
-                        break
-                    # Remove trailing newline for ledger (add back for file/console)
-                    line_text = raw.decode("utf-8", "replace").rstrip("\n\r")
-                    
-                    sys.stdout.buffer.write(raw)
-                    sys.stdout.flush()
-                    tmp_stdout_fh_obj.write(raw)
-                    tmp_stdout_fh_obj.flush()
-                    ledger.emit("STDOUT", line_text)
-                    
-                    if snippet_lines > 0:
-                        tail_stdout.append(raw)
-            except Exception:
-                pass
-            finally:
-                stdout_done.set()
-        
-        def _read_stderr() -> None:
-            try:
-                for raw in iter(proc.stderr.readline, b""):
-                    if raw == b"":
-                        break
-                    # Remove trailing newline for ledger (add back for file/console)
-                    line_text = raw.decode("utf-8", "replace").rstrip("\n\r")
-                    
-                    sys.stderr.buffer.write(raw)
-                    sys.stderr.flush()
-                    tmp_stderr_fh_obj.write(raw)
-                    tmp_stderr_fh_obj.flush()
-                    ledger.emit("STDERR", line_text)
-                    
-                    if snippet_lines > 0:
-                        tail_stderr.append(raw)
-            except Exception:
-                pass
-            finally:
-                stderr_done.set()
-        
-        stdout_thread = threading.Thread(target=_read_stdout, daemon=True)
-        stderr_thread = threading.Thread(target=_read_stderr, daemon=True)
-        
-        stdout_thread.start()
-        stderr_thread.start()
-
-        try:
-            rc = proc.wait()
-            stdout_done.wait(timeout=5)
-            stderr_done.wait(timeout=5)
-        except KeyboardInterrupt:
-            state.aborted = True
-            if state.signal_name is None:
-                state.signal_name = "SIGINT"
-            if state.exit_code is None:
-                state.exit_code = 130
-
-            try:
-                proc.terminate()
-            except Exception:
-                pass
-
-            try:
-                rc = proc.wait(timeout=2)
-            except Exception:
-                try:
-                    proc.kill()
-                except Exception:
-                    pass
-                rc = state.exit_code or 130
-        finally:
-            try:
-                proc.stdout.close()
-            except Exception:
-                pass
-            try:
-                proc.stderr.close()
-            except Exception:
-                pass
-
-        # Emit exit event
-        ledger.emit("META", f"safe-run exit: code={rc}")
-
-    finally:
-        _restore_signal_handlers(old_int, old_term)
-
-    # Success path: remove temp files and return 0
-    if not state.aborted and rc == 0:
-        try:
-            if tmp_stdout_fh is not None:
-                tmp_stdout_fh.close()
-            if tmp_stderr_fh is not None:
-                tmp_stderr_fh.close()
-            if tmp_stdout_path and os.path.exists(tmp_stdout_path):
-                os.remove(tmp_stdout_path)
-            if tmp_stderr_path and os.path.exists(tmp_stderr_path):
-                os.remove(tmp_stderr_path)
-        except Exception:
-            pass
-        return 0
-
-    # Failure/abort: create log artifact
-    os.makedirs(log_dir, exist_ok=True)
-
-    status = "ABORTED" if state.aborted else "FAIL"
-    out_path = os.path.join(log_dir, f"{ts}-pid{pid}-{status}.log")
-
-    try:
-        if tmp_stdout_fh is not None:
-            tmp_stdout_fh.close()
-        if tmp_stderr_fh is not None:
-            tmp_stderr_fh.close()
-    except Exception:
-        pass
-
-    # Write log with M0 split sections + event ledger
-    try:
-        with open(out_path, "wb") as dst:
-            # M0-P1-I1: Split stdout/stderr
-            dst.write(b"=== STDOUT ===\n")
-            if tmp_stdout_path and os.path.exists(tmp_stdout_path):
-                with open(tmp_stdout_path, "rb") as src:
-                    while True:
-                        chunk = src.read(1024 * 1024)
-                        if not chunk:
-                            break
-                        dst.write(chunk)
-            
-            dst.write(b"\n=== STDERR ===\n")
-            if tmp_stderr_path and os.path.exists(tmp_stderr_path):
-                with open(tmp_stderr_path, "rb") as src:
-                    while True:
-                        chunk = src.read(1024 * 1024)
-                        if not chunk:
-                            break
-                        dst.write(chunk)
-            
-            # Event ledger
-            dst.write(b"\n--- BEGIN EVENTS ---\n")
-            ledger.write_to_file(dst)
-            dst.write(b"--- END EVENTS ---\n")
-            
-            # Optional merged view
-            if view_mode == "merged":
-                dst.write(b"\n--- BEGIN MERGED (OBSERVED ORDER) ---\n")
-                with ledger.lock:
-                    for seq, stream, text in ledger.events:
-                        dst.write(f"[#{seq}][{stream}] {text}\n".encode())
-                dst.write(b"--- END MERGED ---\n")
-        
-        # Clean up temp files
-        if tmp_stdout_path and os.path.exists(tmp_stdout_path):
-            try:
-                os.remove(tmp_stdout_path)
-            except Exception:
-                pass
-        if tmp_stderr_path and os.path.exists(tmp_stderr_path):
-            try:
-                os.remove(tmp_stderr_path)
-            except Exception:
-                pass
-    except Exception as e:
-        eprint(f"ERROR: Failed to write log file: {e}")
-        return 1
-
-    final_rc = state.exit_code if state.aborted and state.exit_code is not None else rc
-
-    eprint("")
-    if state.aborted:
-        eprint(f"SAFE-RUN: aborted ({state.signal_name or 'signal'})")
+def detect_platform() -> str:
+    """Detect OS and architecture for CI artifact path."""
+    # Detect OS
+    system = platform.system()
+    if system == "Linux":
+        os_name = "linux"
+    elif system == "Darwin":
+        os_name = "macos"
+    elif system == "Windows":
+        os_name = "windows"
     else:
-        eprint(f"SAFE-RUN: command failed (exit={rc})")
-    eprint(f"SAFE-RUN: log saved to: {out_path}")
+        os_name = "unknown"
+    
+    # Detect architecture
+    machine = platform.machine()
+    if machine in ("x86_64", "AMD64"):
+        arch = "x86_64"
+    elif machine in ("aarch64", "arm64"):
+        arch = "aarch64"
+    else:
+        arch = "unknown"
+    
+    return f"{os_name}/{arch}"
 
-    if snippet_lines > 0:
-        eprint("")
-        eprint(f"SAFE-RUN: STDOUT tail (last {snippet_lines} lines):")
-        for b in list(tail_stdout)[-snippet_lines:]:
-            eprint(b.decode("utf-8", "replace").rstrip("\n"))
-        eprint("")
-        eprint(f"SAFE-RUN: STDERR tail (last {snippet_lines} lines):")
-        for b in list(tail_stderr)[-snippet_lines:]:
-            eprint(b.decode("utf-8", "replace").rstrip("\n"))
+def find_safe_run_binary() -> str | None:
+    """Binary discovery cascade per docs/wrapper-discovery.md."""
+    # 1. Environment override
+    safe_run_bin = os.environ.get("SAFE_RUN_BIN")
+    if safe_run_bin:
+        return safe_run_bin
+    
+    repo_root = find_repo_root()
+    
+    # 2. Dev mode: ./rust/target/release/safe-run
+    if repo_root:
+        dev_bin = repo_root / "rust" / "target" / "release" / "safe-run"
+        if dev_bin.is_file() and os.access(dev_bin, os.X_OK):
+            return str(dev_bin)
+    
+    # 3. CI artifact: ./dist/<os>/<arch>/safe-run
+    if repo_root:
+        platform_str = detect_platform()
+        if platform_str != "unknown/unknown":
+            parts = platform_str.split("/")
+            ci_bin = repo_root / "dist" / parts[0] / parts[1] / "safe-run"
+            if ci_bin.is_file() and os.access(ci_bin, os.X_OK):
+                return str(ci_bin)
+    
+    # 4. PATH lookup
+    which_result = shutil.which("safe-run")
+    if which_result:
+        return which_result
+    
+    # 5. Not found
+    return None
 
-    return int(final_rc)
+def main() -> int:
+    """Main execution."""
+    binary = find_safe_run_binary()
+    
+    if not binary:
+        print("""\
+ERROR: Rust canonical tool not found.
 
+Searched locations:
+  1. SAFE_RUN_BIN env var (not set or invalid)
+  2. ./rust/target/release/safe-run (not found)
+  3. ./dist/<os>/<arch>/safe-run (not found)
+  4. PATH lookup (not found)
+
+To install:
+  1. Clone the repository
+  2. cd rust/
+  3. cargo build --release
+
+Or download a pre-built binary from:
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases
+
+For more information, see:
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/blob/main/docs/rust-canonical-tool.md
+""", file=sys.stderr)
+        return 127
+    
+    # Parse arguments: handle optional "--" separator
+    args = sys.argv[1:]
+    if args and args[0] == "--":
+        args = args[1:]
+    
+    # Invoke the Rust canonical tool with all arguments passed through
+    # The 'run' subcommand is required by the Rust CLI structure
+    os.execvp(binary, [binary, "run"] + args)
+    
+    # If exec fails, we'll reach here
+    print(f"ERROR: Failed to execute {binary}", file=sys.stderr)
+    return 127
 
 if __name__ == "__main__":
-    raise SystemExit(main(sys.argv[1:]))
+    sys.exit(main())
