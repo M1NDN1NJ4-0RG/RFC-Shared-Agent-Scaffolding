@@ -311,25 +311,41 @@ my $PLATFORM = detect_platform();
 
 # Binary discovery cascade
 sub find_safe_run_binary {
+    my $is_windows = ($^O =~ /^(MSWin|cygwin|msys)/i);
+    
     # 1. Environment override
     if (defined $ENV{SAFE_RUN_BIN} && $ENV{SAFE_RUN_BIN} ne '') {
         return $ENV{SAFE_RUN_BIN};
     }
     
     # 2. Dev mode: ./rust/target/release/safe-run (relative to repo root)
+    # On Windows, check for both safe-run and safe-run.exe
     if (defined $REPO_ROOT) {
         my $dev_bin = File::Spec->catfile($REPO_ROOT, 'rust', 'target', 'release', 'safe-run');
         if (-x $dev_bin) {
             return $dev_bin;
         }
+        if ($is_windows) {
+            my $dev_bin_exe = File::Spec->catfile($REPO_ROOT, 'rust', 'target', 'release', 'safe-run.exe');
+            if (-x $dev_bin_exe) {
+                return $dev_bin_exe;
+            }
+        }
     }
     
     # 3. CI artifact: ./dist/<os>/<arch>/safe-run
+    # On Windows, check for both safe-run and safe-run.exe
     if (defined $REPO_ROOT && $PLATFORM ne 'unknown/unknown') {
         my @parts = split('/', $PLATFORM);
         my $ci_bin = File::Spec->catfile($REPO_ROOT, 'dist', @parts, 'safe-run');
         if (-x $ci_bin) {
             return $ci_bin;
+        }
+        if ($is_windows) {
+            my $ci_bin_exe = File::Spec->catfile($REPO_ROOT, 'dist', @parts, 'safe-run.exe');
+            if (-x $ci_bin_exe) {
+                return $ci_bin_exe;
+            }
         }
     }
     
@@ -371,6 +387,13 @@ EOF
     exit 127;
 }
 
+# Check if binary exists but is not executable (exit 126 per Unix convention)
+if (-e $binary && !-x $binary) {
+    print STDERR "ERROR: Found $binary but it is not executable (permission denied).\n";
+    print STDERR "Try: chmod +x $binary\n";
+    exit 126;
+}
+
 # Parse arguments: handle optional "--" separator
 my @args = @ARGV;
 if (@args > 0 && $args[0] eq '--') {
@@ -380,6 +403,12 @@ if (@args > 0 && $args[0] eq '--') {
 # Invoke the Rust canonical tool with all arguments passed through
 # The 'run' subcommand is required by the Rust CLI structure
 exec($binary, 'run', @args) or do {
-    print STDERR "ERROR: Failed to execute $binary: $!\n";
-    exit 127;
+    # If exec fails, check if it's a permission issue vs not found
+    if ($! =~ /permission denied/i) {
+        print STDERR "ERROR: Permission denied executing $binary: $!\n";
+        exit 126;
+    } else {
+        print STDERR "ERROR: Failed to execute $binary: $!\n";
+        exit 127;
+    }
 };
