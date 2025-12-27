@@ -433,64 +433,6 @@ mod safe_run_tests {
         }
     }
 
-    #[test]
-    #[cfg(unix)] // Uses Unix-specific script creation
-    fn test_safe_run_005_snippet_output() {
-        let vectors = load_vectors().expect("Failed to load vectors");
-        let vector = vectors
-            .vectors
-            .safe_run
-            .iter()
-            .find(|v| v.id == "safe-run-005")
-            .expect("Vector safe-run-005 not found");
-
-        let temp = TempDir::new().expect("Failed to create temp dir");
-
-        // Create a script that outputs multiple lines
-        #[cfg(unix)]
-        let script_path = temp.path().join("multiline.sh");
-        #[cfg(unix)]
-        {
-            let lines = vector.command.output_lines.join("\necho ");
-            let script_content = format!(
-                "#!/bin/bash\necho {}\nexit {}",
-                lines,
-                vector.command.exit_code.unwrap_or(9)
-            );
-            fs::write(&script_path, script_content).expect("Failed to write script");
-
-            use std::os::unix::fs::PermissionsExt;
-            let mut perms = fs::metadata(&script_path)
-                .expect("Failed to get metadata")
-                .permissions();
-            perms.set_mode(0o755);
-            fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
-        }
-
-        let mut cmd = Command::new(get_safe_run_binary());
-        cmd.current_dir(temp.path());
-        cmd.arg("run");
-
-        // Set snippet lines env var
-        if let Some(snippet_lines) = vector.command.env.get("SAFE_SNIPPET_LINES") {
-            cmd.env("SAFE_SNIPPET_LINES", snippet_lines);
-        }
-
-        #[cfg(unix)]
-        cmd.arg(script_path);
-
-        let mut assert = cmd.assert();
-
-        if let Some(exit_code) = vector.expected.exit_code {
-            assert = assert.code(exit_code);
-        }
-
-        // Verify snippet lines appear in stderr
-        for text in &vector.expected.stderr_contains {
-            assert = assert.stderr(predicate::str::contains(text));
-        }
-    }
-
     /// Test vector safe-run-005: Snippet output via SAFE_SNIPPET_LINES
     ///
     /// # Purpose
