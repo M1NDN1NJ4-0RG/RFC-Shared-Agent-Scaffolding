@@ -1,12 +1,80 @@
 #!/usr/bin/env bash
+#
+# test-safe-run.sh - Comprehensive test suite for safe-run.sh wrapper
+#
+# DESCRIPTION:
+#   Tests the Bash wrapper for safe-run, verifying it correctly invokes the
+#   Rust canonical tool and satisfies contract requirements. Covers success/failure
+#   scenarios, environment variable handling, and conformance vectors.
+#
+# TEST COVERAGE:
+#   Basic Behavior:
+#     - Success runs create no artifacts (safe-run-001)
+#     - Failure runs create FAIL-LOG artifacts (safe-run-002)
+#     - Exit codes are preserved (safe-run-003)
+#     - FAIL-LOGS contain stdout and stderr
+#
+#   Environment Variables:
+#     - SAFE_SNIPPET_LINES controls stderr tail output (safe-run-005)
+#     - SAFE_LOG_DIR overrides log directory
+#     - SAFE_RUN_VIEW=merged produces merged output
+#
+#   Signal Handling:
+#     - SIGTERM/SIGINT produce ABORTED.log files
+#     - Exit code 143 for SIGTERM (or 130 on some platforms)
+#
+#   Event Ledger:
+#     - Sequence numbers (SEQ=1, SEQ=2, ...)
+#     - BEGIN/END EVENTS markers
+#     - META events for start/exit
+#
+#   Conformance Vectors:
+#     - Repo root detection from script location
+#     - Argument quoting (empty strings, spaces, metacharacters)
+#     - Exit code propagation (0, 1, 7, 42, 127, 255)
+#     - Binary not found error (exit 127)
+#
+# USAGE:
+#   ./test-safe-run.sh
+#
+# REQUIREMENTS:
+#   - Rust binary must exist at:
+#     - $REPO_ROOT/dist/linux/x86_64/safe-run OR
+#     - $REPO_ROOT/rust/target/release/safe-run
+#   - Test framework: lib.sh in same directory
+#
+# OUTPUTS:
+#   Exit: 0 if all tests pass, 1 if any fail
+#   Stderr: Test results (PASS/FAIL per test, summary)
+#
+# PLATFORM COMPATIBILITY:
+#   - Linux: Primary test platform
+#   - macOS: Compatible (adjusts for SIGTERM exit code differences)
+#   - Windows: Git Bash, WSL
+#
+# CONTRACT REFERENCES:
+#   - safe-run-001: Success produces no artifacts
+#   - safe-run-002: Failure creates artifact with stdout/stderr
+#   - safe-run-003: Exit code propagation
+#   - safe-run-005: SAFE_SNIPPET_LINES controls tail output
+#   - Wrapper discovery: docs/wrapper-discovery.md
+#
+# SEE ALSO:
+#   - lib.sh: Test framework
+#   - ../scripts/safe-run.sh: Script being tested
+#   - conformance/vectors.json: Contract test vectors
+#
+
 set -euo pipefail
 cd "$(dirname "$0")"
 source "./lib.sh"
 
+# Discover paths
 ROOT="$(cd .. && pwd)"
 SAFE_RUN="${ROOT}/scripts/safe-run.sh"
 
 # Compute repo root and find Rust binary for wrapper discovery
+# This mirrors the wrapper's own discovery logic for testing
 REPO_ROOT="$(cd "$ROOT/../../.." && pwd)"
 if [ -x "$REPO_ROOT/dist/linux/x86_64/safe-run" ]; then
   SAFE_RUN_BIN_PATH="$REPO_ROOT/dist/linux/x86_64/safe-run"
@@ -19,6 +87,12 @@ else
   exit 127
 fi
 
+#
+# TEST FUNCTIONS
+# Each function tests a specific aspect of safe-run contract compliance
+#
+
+# test_success_no_artifacts - Verify safe-run-001: success creates no FAIL-LOGs
 test_success_no_artifacts() {
   local tmp out
   tmp="$(mktemp_dir)"
@@ -31,6 +105,8 @@ test_success_no_artifacts() {
   )
 }
 
+# test_failure_captures_and_rc - Verify safe-run-002: failure creates log with stdout/stderr
+# Also validates safe-run-003: exit code preservation
 test_failure_captures_and_rc() {
   local tmp rc f c
   tmp="$(mktemp_dir)"
@@ -50,6 +126,8 @@ test_failure_captures_and_rc() {
   )
 }
 
+# test_snippet_lines - Verify safe-run-005: SAFE_SNIPPET_LINES controls stderr tail
+# Default is 10 lines, test with 2 lines to verify last 2 lines appear
 test_snippet_lines() {
   local tmp rc err
   tmp="$(mktemp_dir)"
@@ -67,6 +145,7 @@ test_snippet_lines() {
   )
 }
 
+# test_safe_log_dir_override - Verify SAFE_LOG_DIR environment variable works
 test_safe_log_dir_override() {
   local tmp rc
   tmp="$(mktemp_dir)"
@@ -82,6 +161,8 @@ test_safe_log_dir_override() {
   )
 }
 
+# test_sigint_aborted_log - Verify signal termination creates ABORTED.log
+# Tests that SIGTERM produces exit code 143 (or 130) and ABORTED log file
 test_sigint_aborted_log() {
   local tmp rc f pid
   tmp="$(mktemp_dir)"
@@ -104,6 +185,8 @@ test_sigint_aborted_log() {
   )
 }
 
+# test_event_ledger - Verify event ledger format with sequence numbers
+# Checks for BEGIN/END EVENTS markers, SEQ numbers, and META events
 test_event_ledger() {
   local tmp rc f c
   tmp="$(mktemp_dir)"
@@ -131,6 +214,8 @@ test_event_ledger() {
   )
 }
 
+# test_merged_view - Verify SAFE_RUN_VIEW=merged produces merged output
+# Tests that merged view uses [#seq] format instead of [SEQ=seq]
 test_merged_view() {
   local tmp rc f c
   tmp="$(mktemp_dir)"
@@ -153,6 +238,11 @@ test_merged_view() {
     grep -F '[#2][STDOUT] line1' <<<"$c" >/dev/null
   )
 }
+
+#
+# CONFORMANCE TESTS
+# These tests validate contract hardening beyond basic functionality
+#
 
 # Conformance test: repo root detection from script location
 test_repo_root_from_script_location() {
@@ -179,6 +269,7 @@ test_repo_root_from_script_location() {
 }
 
 # Conformance test: argument quoting - empty string
+# Verifies empty string arguments are preserved (not dropped)
 test_arg_quoting_empty_string() {
   local tmp output
   tmp="$(mktemp_dir)"
@@ -195,6 +286,7 @@ test_arg_quoting_empty_string() {
 }
 
 # Conformance test: argument quoting - spaces
+# Verifies arguments with spaces are passed as single argument (not split)
 test_arg_quoting_spaces() {
   local tmp output
   tmp="$(mktemp_dir)"
@@ -210,6 +302,7 @@ test_arg_quoting_spaces() {
 }
 
 # Conformance test: argument quoting - metacharacters not interpreted
+# Verifies shell metacharacters (;, |, etc.) are NOT executed
 test_arg_quoting_metacharacters() {
   local tmp output
   tmp="$(mktemp_dir)"
@@ -227,6 +320,7 @@ test_arg_quoting_metacharacters() {
 }
 
 # Conformance test: exit code propagation for multiple codes
+# Verifies all exit codes are preserved exactly (safe-run-003)
 test_exit_code_propagation_comprehensive() {
   local tmp codes code rc
   tmp="$(mktemp_dir)"
@@ -253,6 +347,7 @@ test_exit_code_propagation_comprehensive() {
 }
 
 # Conformance test: binary not found error handling
+# Verifies exit code 127 and helpful error message when binary missing
 test_binary_not_found_error() {
   local tmp wrapper err rc
   tmp="$(mktemp_dir)"
@@ -279,6 +374,12 @@ test_binary_not_found_error() {
   rm -rf "$tmp"
 }
 
+#
+# TEST EXECUTION
+# Run all tests using lib.sh test framework
+#
+
+# Basic behavior tests
 t "safe-run: success produces no artifacts" test_success_no_artifacts
 t "safe-run: failure captures stderr+stdout, preserves exit code" test_failure_captures_and_rc
 t "safe-run: SAFE_SNIPPET_LINES prints tail snippet to stderr on failure" test_snippet_lines

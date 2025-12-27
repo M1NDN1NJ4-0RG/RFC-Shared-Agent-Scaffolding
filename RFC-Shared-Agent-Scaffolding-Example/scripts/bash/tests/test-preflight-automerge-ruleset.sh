@@ -1,11 +1,42 @@
 #!/usr/bin/env bash
+#
+# test-preflight-automerge-ruleset.sh - Tests for preflight-automerge-ruleset.sh
+#
+# DESCRIPTION:
+#   Tests the GitHub Ruleset verification script using a mock gh API.
+#   Validates exit codes for success, failure, and auth error scenarios.
+#
+# TEST COVERAGE:
+#   - Precheck OK (exit 0): Ruleset active, targets default, has contexts
+#   - Missing contexts (exit 1): Required contexts not in ruleset
+#   - Enforcement inactive (exit 1): Ruleset not active
+#   - No default branch (exit 1): Ruleset doesn't target ~DEFAULT_BRANCH
+#   - Auth error (exit 2): GitHub API auth/permission failure
+#
+# USAGE:
+#   ./test-preflight-automerge-ruleset.sh
+#
+# TEST STRATEGY:
+#   - Creates mock gh command that returns canned JSON responses
+#   - Uses GH_SCENARIO env var to control mock behavior
+#   - Tests all exit code paths (0, 1, 2)
+#
+# SEE ALSO:
+#   - lib.sh: Test framework
+#   - ../scripts/preflight-automerge-ruleset.sh: Script being tested
+#
+
 set -euo pipefail
 cd "$(dirname "$0")"
 source "./lib.sh"
 
+# Discover paths
 ROOT="$(cd .. && pwd)"
 PREF="${ROOT}/scripts/preflight-automerge-ruleset.sh"
 
+# make_mock_gh - Create mock gh command for testing
+# Args: $1 = directory to place mock binary
+# Creates executable script that responds based on GH_SCENARIO env var
 make_mock_gh() {
   local dir="$1"
   cat > "${dir}/gh" <<'GH'
@@ -43,6 +74,7 @@ GH
   chmod +x "${dir}/gh"
 }
 
+# test_preflight_ok - Verify exit 0 when ruleset is properly configured
 test_preflight_ok() {
   local tmp mockbin
   tmp="$(mktemp_dir)"
@@ -54,6 +86,7 @@ test_preflight_ok() {
   )
 }
 
+# test_preflight_missing_ctx - Verify exit 1 when required contexts missing
 test_preflight_missing_ctx() {
   local tmp mockbin rc
   tmp="$(mktemp_dir)"
