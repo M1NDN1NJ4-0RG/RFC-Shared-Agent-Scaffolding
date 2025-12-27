@@ -25,7 +25,7 @@ function Find-RepoRoot {
     $scriptPath = $PSCommandPath
     $current = Split-Path -Parent $scriptPath
     
-    while ($current -and $current -ne '/') {
+    while ($current) {
         $rfcFile = Join-Path $current "RFC-Shared-Agent-Scaffolding-v0.1.0.md"
         $gitDir = Join-Path $current ".git"
         
@@ -34,7 +34,7 @@ function Find-RepoRoot {
         }
         
         $parent = Split-Path -Parent $current
-        if ($parent -eq $current) { break }
+        if (-not $parent -or $parent -eq $current) { break }
         $current = $parent
     }
     

@@ -21,13 +21,16 @@ use Cwd qw(abs_path);
 sub find_repo_root {
     my $script_dir = dirname(abs_path(__FILE__));
     my $dir = $script_dir;
+    my $rootdir = File::Spec->rootdir();
     
-    while ($dir ne '/') {
+    while ($dir ne $rootdir) {
         if (-f File::Spec->catfile($dir, 'RFC-Shared-Agent-Scaffolding-v0.1.0.md') || 
             -d File::Spec->catdir($dir, '.git')) {
             return $dir;
         }
-        $dir = dirname($dir);
+        my $parent = dirname($dir);
+        last if $parent eq $dir;  # Reached filesystem root
+        $dir = $parent;
     }
     
     return undef;

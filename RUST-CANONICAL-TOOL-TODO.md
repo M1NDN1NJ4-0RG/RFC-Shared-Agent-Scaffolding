@@ -183,50 +183,6 @@
 
 ---
 
-## ✅ Completed (P0-P4)
-
-### P0: Pre-flight Baseline Validation
-- [x] Example directory structure normalized across all 4 languages
-- [x] Conformance pack exists (fixtures + goldens + harness)
-- [x] All four wrappers pass conformance tests on CI OS matrix
-- [x] Test suite audited and hardened
-- [x] CI gate enforced as required status check
-- **Status:** ✅ COMPLETE (100 tests passing)
-
-### P1: Docs & Rust Scaffolding
-- [x] RFC updated with Rust canonical architecture
-- [x] Documentation created (3 files, 659 lines)
-- [x] Rust crate scaffolded with CLI
-- [x] Binary builds and responds to `--version` / `--help`
-- **Status:** ✅ COMPLETE
-
-### P2: Conformance Harness + Fixtures
-- [x] Test infrastructure complete (`common/mod.rs`, `snapshots.rs`)
-- [x] All 13 conformance tests written (5 safe-run, 4 safe-archive, 4 preflight)
-- [x] Snapshot testing framework in place
-- [x] CI workflow configured and passing
-- **Status:** ✅ COMPLETE
-
-### P3: safe-run Implementation
-- [x] Canonical Rust `safe-run` command implemented
-- [x] Event ledger with monotonic sequence tracking
-- [x] Log file generation only on failure
-- [x] No-clobber semantics
-- [x] Environment variable support (SAFE_LOG_DIR, SAFE_SNIPPET_LINES, SAFE_RUN_VIEW)
-- [x] Exit code preservation
-- [x] 4/5 conformance tests passing
-- **Status:** ✅ COMPLETE (signal handling intentionally deferred)
-
-### P4: Bash Wrapper Conversion
-- [x] Converted from 227-line implementation to 113-line thin invoker
-- [x] Binary discovery cascade (5-step algorithm per docs/wrapper-discovery.md)
-- [x] Argument pass-through via `exec`
-- [x] Exit code preservation
-- [x] 15/17 tests passing (88%)
-- **Status:** ✅ COMPLETE
-
----
-
 ## 🔧 Known Non-Blocking Issues
 
 ### 1. Signal Handling Test (safe-run-003) - DEFERRED
