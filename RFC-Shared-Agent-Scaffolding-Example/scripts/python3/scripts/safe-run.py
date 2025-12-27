@@ -124,12 +124,14 @@ For more information, see:
     try:
         os.execvp(binary, [binary, "run"] + args)
     except FileNotFoundError:
+        # Binary path was found during discovery but doesn't exist or isn't executable
         print(f"ERROR: Binary not found or not executable: {binary}", file=sys.stderr)
-        print("\nSearched locations:", file=sys.stderr)
-        print("  1. SAFE_RUN_BIN env var", file=sys.stderr)
-        print("  2. ./rust/target/release/safe-run", file=sys.stderr)
-        print("  3. ./dist/<os>/<arch>/safe-run", file=sys.stderr)
-        print("  4. PATH lookup", file=sys.stderr)
+        print("\nTo install the Rust canonical tool:", file=sys.stderr)
+        print("  1. Clone the repository", file=sys.stderr)
+        print("  2. cd rust/", file=sys.stderr)
+        print("  3. cargo build --release", file=sys.stderr)
+        print("\nOr download a pre-built binary from:", file=sys.stderr)
+        print("  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases", file=sys.stderr)
         return 127
     except PermissionError:
         print(f"ERROR: Permission denied executing: {binary}", file=sys.stderr)

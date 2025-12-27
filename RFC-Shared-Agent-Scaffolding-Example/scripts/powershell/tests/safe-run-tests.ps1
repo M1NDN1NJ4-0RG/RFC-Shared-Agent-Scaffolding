@@ -76,7 +76,8 @@ Describe "safe-run.ps1" {
       $p.WaitForExit()
 
       $p.ExitCode | Should -Be 2
-      $stderr | Should -Match "SAFE-RUN:.*last.*lines"
+      # Per conformance spec safe-run-005, only require the actual tail lines in stderr,
+      # not a specific header format
       $stderr | Should -Match "L10"
     } finally {
       Pop-Location

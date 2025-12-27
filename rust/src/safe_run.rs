@@ -40,13 +40,15 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
     let stdout_buffer = Arc::new(Mutex::new(Vec::new()));
     let stderr_buffer = Arc::new(Mutex::new(Vec::new()));
 
-    // Signal handling: track if we received SIGTERM/SIGINT
-    let interrupted = Arc::new(AtomicBool::new(false));
+    // Signal handling: track which signal we received
+    // Use separate flags so we can differentiate SIGINT (130) from SIGTERM (143)
+    let sigint_received = Arc::new(AtomicBool::new(false));
+    let sigterm_received = Arc::new(AtomicBool::new(false));
 
     // Register signal handlers for both SIGTERM and SIGINT
-    flag::register(SIGTERM, Arc::clone(&interrupted))
+    flag::register(SIGTERM, Arc::clone(&sigterm_received))
         .map_err(|e| format!("Failed to register SIGTERM handler: {}", e))?;
-    flag::register(SIGINT, Arc::clone(&interrupted))
+    flag::register(SIGINT, Arc::clone(&sigint_received))
         .map_err(|e| format!("Failed to register SIGINT handler: {}", e))?;
 
     // Emit start event
@@ -117,8 +119,11 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
 
     // Wait for the command to complete, checking for signals
     let exit_status = loop {
-        // Check if we received a signal
-        if interrupted.load(Ordering::SeqCst) {
+        // Check if we received a signal - check SIGINT first (more specific)
+        let got_sigint = sigint_received.load(Ordering::SeqCst);
+        let got_sigterm = sigterm_received.load(Ordering::SeqCst);
+        
+        if got_sigint || got_sigterm {
             // Kill the child process
             let _ = child.kill();
 
@@ -150,10 +155,14 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
             );
 
             // Exit with conventional signal exit code (128 + signal number).
-            // With the current signal-hook flag-based approach, SIGINT and SIGTERM
-            // are both mapped to the same AtomicBool, so we can't tell which one
-            // actually fired here. Use the SIGTERM convention (128 + 15 = 143).
-            return Ok(143);
+            // SIGINT (2) → 130, SIGTERM (15) → 143
+            // Check SIGINT first since it's more specific (user Ctrl-C)
+            let exit_code = if got_sigint {
+                130 // 128 + SIGINT (2)
+            } else {
+                143 // 128 + SIGTERM (15)
+            };
+            return Ok(exit_code);
         }
 
         // Try to get exit status without blocking forever
