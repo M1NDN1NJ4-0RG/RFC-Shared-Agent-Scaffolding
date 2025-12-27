@@ -265,7 +265,9 @@ public class Win32Process {
     
     # Create the process with CREATE_NEW_PROCESS_GROUP flag
     # Remove CREATE_NO_WINDOW for now to ensure console control events can be delivered
-    $cmdLineBuilder = New-Object System.Text.StringBuilder($commandLine)
+    # StringBuilder needs extra capacity for null terminator (CreateProcessW modifies the buffer)
+    $cmdLineBuilder = New-Object System.Text.StringBuilder($commandLine.Length + 100)
+    $cmdLineBuilder.Append($commandLine) | Out-Null
     $creationFlags = [Win32Process]::CREATE_NEW_PROCESS_GROUP
     
     Write-ProbeLog ""
