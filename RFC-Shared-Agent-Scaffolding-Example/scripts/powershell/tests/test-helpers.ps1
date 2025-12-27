@@ -81,7 +81,7 @@ function Add-FakeGhToPath {
     Creates a minimal fake 'gh' CLI that returns predefined JSON fixtures.
     Useful for testing scripts that depend on GitHub CLI without making real API calls.
 
-    The fake gh supports only the subset used by preflight_automerge_ruleset:
+    The fake gh supports only the subset used by preflight-automerge-ruleset:
       gh api <endpoint> ...
 
     It ignores endpoint arguments and always returns FixtureJson to stdout.
