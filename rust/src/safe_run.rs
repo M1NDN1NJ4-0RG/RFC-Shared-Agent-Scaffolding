@@ -122,7 +122,7 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
         // Check if we received a signal - check SIGINT first (more specific)
         let got_sigint = sigint_received.load(Ordering::SeqCst);
         let got_sigterm = sigterm_received.load(Ordering::SeqCst);
-        
+
         if got_sigint || got_sigterm {
             // Kill the child process
             let _ = child.kill();
