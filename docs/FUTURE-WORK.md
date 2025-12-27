@@ -1,0 +1,315 @@
+# Future Work / Deferred Ideas Tracker
+
+**Last Updated:** 2025-12-27
+
+This document tracks **explicitly-marked future work** found in the repository. All items are sourced from in-repo TODO comments, deferred work notes, ignored tests, or documented future enhancement sections.
+
+**Rules:**
+- ✅ Only includes work explicitly marked in code/docs as TODO, deferred, or future work
+- ❌ Does NOT include speculative ideas or undocumented improvements
+- 🔄 Update this doc when adding new TODOs or completing deferred work
+
+---
+
+## Active Items Summary
+
+| ID | Severity | Area | Title |
+|----|----------|------|-------|
+| [FW-001](#fw-001-signal-handling-for-safe-run) | High | Rust CLI | Signal handling for safe-run (SIGTERM/SIGINT) |
+| [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation |
+| [FW-003](#fw-003-safe-archive-subcommand-implementation) | Medium | Rust CLI | safe-archive subcommand implementation |
+| [FW-004](#fw-004-preflight-automerge-ruleset-checker) | Medium | Rust CLI | Preflight automerge ruleset checker |
+| [FW-005](#fw-005-programmatic-vector-to-test-mapping-check) | Low | Conformance | Programmatic vector-to-test mapping check |
+| [FW-006](#fw-006-conformance-infrastructure-enhancements) | Low | Conformance | Conformance infrastructure enhancements |
+| [FW-007](#fw-007-rust-tool-performance-and-feature-enhancements) | Low | Rust CLI | Rust tool performance and feature enhancements |
+| [FW-008](#fw-008-powershell-ctrl-c-signal-behavior) | Low | Wrappers | PowerShell Ctrl-C / signal behavior validation |
+
+---
+
+## Detailed Items
+
+### FW-001: Signal handling for safe-run
+
+**Severity:** High  
+**Area:** Rust CLI  
+**Status:** Intentionally deferred from P3 (safe-run implementation)
+
+**Why it exists:**
+
+Signal handling (SIGTERM/SIGINT) was intentionally deferred during the P3 safe-run implementation phase. The test `safe-run-003` validates that interrupting a command with signals creates an ABORTED log file and returns appropriate exit codes (130 for SIGINT, 143 for SIGTERM). Currently, the OS handles signal exit codes naturally, but no ABORTED log is created.
+
+**Source:**
+- `rust/tests/conformance.rs:313-322` (test marked as ignored)
+- `rust/tests/conformance.rs:347` (TODO comment)
+- `RUST-CANONICAL-TOOL-TODO.md:93-106` (deferred status documented)
+- `EPIC-33-FINAL-COMPLETION-SUMMARY.md:92-106` (deferred rationale)
+- `PR3-SAFE-RUN-IMPLEMENTATION-COMPLETE.md:297-334` (deferred decision)
+
+**Suggested next steps:**
+- Implement signal handlers (SIGTERM, SIGINT) in `rust/src/safe_run.rs`
+- Create ABORTED log file on signal interruption with event ledger
+- Set appropriate exit codes (130 for SIGINT, 143 for SIGTERM)
+- Remove `#[ignore]` from `test_safe_run_003_sigterm_aborted` test
+- Validate on Unix platforms (test is Unix-only due to Windows signal differences)
+
+---
+
+### FW-002: safe-check subcommand implementation
+
+**Severity:** Medium  
+**Area:** Rust CLI  
+**Status:** Scaffolding only - not yet implemented
+
+**Why it exists:**
+
+The `safe-run check` subcommand exists in the CLI structure but has no implementation. It currently prints an error message and exits with code 1. Future implementation should verify command availability, repository state, and dependencies without executing commands.
+
+**Source:**
+- `rust/src/cli.rs:139-164` (WARNING: NOT YET IMPLEMENTED)
+- `rust/src/cli.rs:270-303` (scaffolding implementation)
+- `EPIC-59-NEXT-STEPS.md:111-143` (scaffolding clarity improvements)
+
+**Suggested next steps:**
+- Implement command existence check (PATH lookup)
+- Add executable permission validation
+- Implement repository state validation logic
+- Add dependency availability checks
+- Update exit codes: 0 for success, 2 for command not found
+- Remove error message and scaffolding warnings
+- Add conformance tests for check functionality
+
+---
+
+### FW-003: safe-archive subcommand implementation
+
+**Severity:** Medium  
+**Area:** Rust CLI  
+**Status:** Scaffolding only - not yet implemented
+
+**Why it exists:**
+
+The `safe-run archive` subcommand exists in the CLI structure but has no implementation. It currently prints an error message and exits with code 1. Future implementation should execute commands and create archives regardless of exit status, useful for artifact collection in CI/CD pipelines.
+
+**Source:**
+- `rust/src/cli.rs:166-188` (WARNING: NOT YET IMPLEMENTED)
+- `rust/src/cli.rs:305-335` (scaffolding implementation)
+- `rust/tests/conformance.rs:535-790` (4 placeholder/ignored tests)
+- `EPIC-59-NEXT-STEPS.md:111-143` (scaffolding clarity improvements)
+
+**Ignored tests:**
+- `test_safe_archive_001_basic` (lines 561-598)
+- `test_safe_archive_002_compression_formats` (lines 618-660)
+- `test_safe_archive_003_no_clobber_auto_suffix` (lines 687-724)
+- `test_safe_archive_004_no_clobber_strict` (lines 750-790)
+
+**Suggested next steps:**
+- Implement full output capture (stdout + stderr)
+- Create archive files with metadata (timestamp, command, exit code)
+- Support artifact collection patterns
+- Preserve command exit codes
+- Remove `#[ignore]` from all 4 safe-archive tests
+- Add documentation for archive format and use cases
+
+---
+
+### FW-004: Preflight automerge ruleset checker
+
+**Severity:** Medium  
+**Area:** Rust CLI  
+**Status:** Not yet implemented - requires GitHub API mocking
+
+**Why it exists:**
+
+The preflight automerge ruleset checker validates GitHub repository configurations before automated operations. Implementation requires GitHub API integration and mocking infrastructure for testing. All 4 preflight conformance tests are currently ignored.
+
+**Source:**
+- `rust/tests/conformance.rs:810-922` (placeholder tests with TODO comments)
+- `rust/tests/README.md:66` (Vector preflight-004 not yet implemented)
+- `rust/tests/CONFORMANCE_INFRASTRUCTURE.md:62` (preflight-004 status)
+
+**Ignored tests:**
+- `test_preflight_001_success` (lines 838-853)
+- `test_preflight_002_auth_failure` (lines 873-888)
+- `test_preflight_003_ruleset_not_found` (lines 907-922)
+
+**Suggested next steps:**
+- Add GitHub API client library (e.g., `octocrab` or `github-rs`)
+- Implement API mocking infrastructure for tests (e.g., `wiremock` or `mockito`)
+- Implement ruleset validation logic
+- Add authentication handling with appropriate error codes
+- Remove `#[ignore]` from all preflight tests
+- Document preflight usage and required permissions
+
+---
+
+### FW-005: Programmatic vector-to-test mapping check
+
+**Severity:** Low  
+**Area:** Conformance  
+**Status:** TODO - needs build-time or runtime check
+
+**Why it exists:**
+
+Currently, there's no automated verification that every conformance vector in `conformance/vectors.json` has a corresponding test function. This could lead to gaps in test coverage when new vectors are added. A programmatic check would ensure 1:1 mapping between vectors and tests.
+
+**Source:**
+- `rust/tests/conformance.rs:939-965` (TODO comments and test stub)
+
+**Suggested next steps:**
+- Implement reflection-based or build-time check for vector coverage
+- Use macro or build script to verify 1:1 mapping
+- Fail the build/test if vectors exist without corresponding tests
+- Consider using test generation macros to auto-create test stubs
+- Document the pattern for adding new vector tests
+
+---
+
+### FW-006: Conformance infrastructure enhancements
+
+**Severity:** Low  
+**Area:** Conformance  
+**Status:** Future enhancements documented
+
+**Why it exists:**
+
+The conformance infrastructure is functional but has room for quality-of-life improvements that would enhance developer experience and test reliability.
+
+**Source:**
+- `rust/tests/CONFORMANCE_INFRASTRUCTURE.md:239-245` (Future Enhancements section)
+
+**Proposed enhancements:**
+- Add snapshot update mode (environment variable to regenerate snapshots)
+- Add test coverage reporting for conformance tests
+- Add benchmark tests for performance validation
+- Add fuzzing for edge cases (malformed input, extreme values)
+- Add integration tests with wrapper scripts (end-to-end validation)
+
+**Suggested next steps:**
+- Prioritize snapshot update mode (highest developer value)
+- Add `SNAPSHOT_UPDATE=1` environment variable support
+- Integrate coverage tools (e.g., `cargo-tarpaulin`)
+- Evaluate fuzzing frameworks (e.g., `cargo-fuzz`)
+- Create cross-language integration test suite
+
+---
+
+### FW-007: Rust tool performance and feature enhancements
+
+**Severity:** Low  
+**Area:** Rust CLI  
+**Status:** Future enhancements documented
+
+**Why it exists:**
+
+The Rust canonical tool works correctly but has opportunities for optimization and feature expansion beyond the current contract requirements.
+
+**Source:**
+- `docs/rust-canonical-tool.md:165-171` (Future Enhancements section)
+
+**Proposed enhancements:**
+- **Performance:** Optimize buffering and I/O for high-throughput logs
+- **Binary size:** Strip debug symbols, optimize for size with `strip = true`
+- **Additional commands:** Extend beyond safe-run/safe-check/safe-archive
+- **Plugin architecture:** Allow custom event handlers for extensibility
+- **Telemetry:** Optional structured logging for debugging (e.g., tracing crate)
+
+**Suggested next steps:**
+- Profile memory usage with large output volumes
+- Implement streaming-to-file mode to reduce peak memory (see EPIC 59 Phase 5)
+- Evaluate binary size optimizations (LTO, opt-level, panic=abort)
+- Design plugin/hook system for custom event processing
+- Add opt-in telemetry with structured logging
+
+---
+
+### FW-008: PowerShell Ctrl-C / signal behavior
+
+**Severity:** Low  
+**Area:** Wrappers  
+**Status:** Deferred - requires Windows-specific testing
+
+**Why it exists:**
+
+PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Windows platforms. Testing requires native Windows environment (not WSL/Git Bash). This was Phase 3 of EPIC 59 but was deferred due to lack of Windows testing infrastructure.
+
+**Source:**
+- `EPIC-59-NEXT-STEPS.md:75-102` (Phase 3 deferred)
+- `EPIC-59-NEXT-STEPS.md:199-249` (follow-up instructions)
+
+**Why deferred:**
+- Requires Windows-specific testing infrastructure not available in current CI
+- Testing Ctrl-C with PowerShell's `Start-Process` vs direct invocation needs native Windows
+- Current implementation uses direct invocation (`& $binary`) which should propagate signals
+- This is a polish item, not a critical issue
+
+**Suggested next steps:**
+- Set up Windows testing environment (native Windows 10/11, not WSL)
+- Test both direct invocation and `Start-Process` approaches
+- Verify ABORTED log creation on Ctrl-C interruption
+- Verify exit codes (130 or 143) match Unix behavior
+- If limitation found, document in `safe-run.ps1` and `docs/rust-canonical-tool.md`
+- If behavior is acceptable, document validation results
+
+---
+
+## Grep Keywords for Future Updates
+
+Use this command to scan for new future work items:
+
+```bash
+# Search for common future work markers
+grep -rn \
+  -e "TODO" \
+  -e "FIXME" \
+  -e "deferred" \
+  -e "not yet implemented" \
+  -e "scaffolding only" \
+  -e "future PR" \
+  -e "future implementation" \
+  -e "placeholder" \
+  -e "Future Enhancements" \
+  -e "Future Work" \
+  --include="*.rs" \
+  --include="*.md" \
+  --include="*.toml" \
+  --include="*.sh" \
+  --include="*.py" \
+  --include="*.pl" \
+  --include="*.ps1" \
+  --exclude-dir=".git" \
+  --exclude-dir="target" \
+  --exclude-dir="dist" \
+  --exclude-dir="node_modules" \
+  .
+```
+
+**Note:** This grep command is portable and works on Unix-like systems. For cross-platform compatibility, consider using `ripgrep`:
+
+```bash
+rg -n "TODO|FIXME|deferred|not yet implemented|scaffolding only|future (PR|implementation)|placeholder|Future (Enhancements|Work)" \
+  -g "*.{rs,md,toml,sh,py,pl,ps1}" \
+  --iglob "!target/*" \
+  --iglob "!dist/*" \
+  --iglob "!node_modules/*"
+```
+
+---
+
+## Completion Criteria
+
+**Item is complete when:**
+1. Implementation is finished and tested
+2. All related `#[ignore]` attributes are removed from tests
+3. All related TODO comments are removed from code
+4. Documentation is updated to reflect new functionality
+5. This tracker is updated to remove or mark the item as complete
+
+**When completing items:**
+- Remove the item from this document (or move to a "Completed" section if tracking history is desired)
+- Update all source files to remove TODO/deferred markers
+- Ensure conformance tests pass
+- Update relevant documentation (README, docs/, RFC, etc.)
+
+---
+
+**End of Future Work Tracker**
