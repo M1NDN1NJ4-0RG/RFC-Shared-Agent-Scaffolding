@@ -212,14 +212,16 @@ def find_safe_run_binary() -> Optional[str]:
        - Let exec fail with a clear error if the path is invalid
        - Use case: Testing, CI overrides, custom installations
     
-    2. **Dev mode: ./rust/target/release/safe-run**
+    2. **Dev mode: ./rust/target/release/safe-run[.exe]**
        - Relative to repository root
        - Must be executable
+       - On Windows, checks for .exe extension
        - Use case: Local development, testing Rust changes
     
-    3. **CI artifact: ./dist/<os>/<arch>/safe-run**
+    3. **CI artifact: ./dist/<os>/<arch>/safe-run[.exe]**
        - Platform-specific path based on detect_platform()
        - Must be executable
+       - On Windows, checks for .exe extension
        - Use case: CI workflows with pre-built binaries
     
     4. **PATH lookup via shutil.which**
@@ -255,14 +257,20 @@ def find_safe_run_binary() -> Optional[str]:
         return safe_run_bin
     
     repo_root = find_repo_root()
+    is_windows = platform.system() == "Windows"
     
-    # 2. Dev mode: ./rust/target/release/safe-run
+    # 2. Dev mode: ./rust/target/release/safe-run (or .exe on Windows)
     if repo_root:
         dev_bin = repo_root / "rust" / "target" / "release" / "safe-run"
         if dev_bin.is_file() and os.access(dev_bin, os.X_OK):
             return str(dev_bin)
+        # On Windows, also try .exe extension
+        if is_windows:
+            dev_bin_exe = repo_root / "rust" / "target" / "release" / "safe-run.exe"
+            if dev_bin_exe.is_file() and os.access(dev_bin_exe, os.X_OK):
+                return str(dev_bin_exe)
     
-    # 3. CI artifact: ./dist/<os>/<arch>/safe-run
+    # 3. CI artifact: ./dist/<os>/<arch>/safe-run (or .exe on Windows)
     if repo_root:
         platform_str = detect_platform()
         if platform_str != "unknown/unknown":
@@ -270,6 +278,11 @@ def find_safe_run_binary() -> Optional[str]:
             ci_bin = repo_root / "dist" / parts[0] / parts[1] / "safe-run"
             if ci_bin.is_file() and os.access(ci_bin, os.X_OK):
                 return str(ci_bin)
+            # On Windows, also try .exe extension
+            if is_windows:
+                ci_bin_exe = repo_root / "dist" / parts[0] / parts[1] / "safe-run.exe"
+                if ci_bin_exe.is_file() and os.access(ci_bin_exe, os.X_OK):
+                    return str(ci_bin_exe)
     
     # 4. PATH lookup
     which_result = shutil.which("safe-run")

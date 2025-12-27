@@ -113,12 +113,13 @@ REPO_ROOT="$(find_repo_root)" || REPO_ROOT=""
 # detect_platform - Determine OS and architecture for CI artifact paths
 # Returns: String in format "os/arch" (e.g., "linux/x86_64", "macos/aarch64")
 # Used for step 3 of binary discovery (./dist/<os>/<arch>/safe-run)
+# Also sets IS_WINDOWS=1 for binary name determination (.exe suffix)
 detect_platform() {
   local os arch
   case "$(uname -s)" in
     Linux*)  os="linux" ;;
     Darwin*) os="macos" ;;
-    CYGWIN*|MINGW*|MSYS*) os="windows" ;;
+    CYGWIN*|MINGW*|MSYS*) os="windows"; IS_WINDOWS=1 ;;
     *) os="unknown" ;;
   esac
   
@@ -131,6 +132,7 @@ detect_platform() {
   echo "${os}/${arch}"
 }
 
+IS_WINDOWS=0
 PLATFORM="$(detect_platform)"
 
 # find_safe_run_binary - Execute binary discovery cascade
@@ -146,17 +148,32 @@ find_safe_run_binary() {
   fi
   
   # 2. Dev mode: ./rust/target/release/safe-run (relative to repo root)
-  if [ -n "$REPO_ROOT" ] && [ -x "$REPO_ROOT/rust/target/release/safe-run" ]; then
-    echo "$REPO_ROOT/rust/target/release/safe-run"
-    return 0
+  # On Windows, check for both safe-run and safe-run.exe
+  if [ -n "$REPO_ROOT" ]; then
+    if [ -x "$REPO_ROOT/rust/target/release/safe-run" ]; then
+      echo "$REPO_ROOT/rust/target/release/safe-run"
+      return 0
+    fi
+    if [ "$IS_WINDOWS" -eq 1 ] && [ -x "$REPO_ROOT/rust/target/release/safe-run.exe" ]; then
+      echo "$REPO_ROOT/rust/target/release/safe-run.exe"
+      return 0
+    fi
   fi
   
   # 3. CI artifact: ./dist/<os>/<arch>/safe-run (platform-specific)
+  # On Windows, check for both safe-run and safe-run.exe
   if [ -n "$REPO_ROOT" ] && [ "$PLATFORM" != "unknown/unknown" ]; then
     local ci_bin="$REPO_ROOT/dist/$PLATFORM/safe-run"
     if [ -x "$ci_bin" ]; then
       echo "$ci_bin"
       return 0
+    fi
+    if [ "$IS_WINDOWS" -eq 1 ]; then
+      local ci_bin_exe="$REPO_ROOT/dist/$PLATFORM/safe-run.exe"
+      if [ -x "$ci_bin_exe" ]; then
+        echo "$ci_bin_exe"
+        return 0
+      fi
     fi
   fi
   
