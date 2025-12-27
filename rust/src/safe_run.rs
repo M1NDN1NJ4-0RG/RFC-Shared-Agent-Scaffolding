@@ -1,9 +1,11 @@
+use signal_hook::consts::{SIGINT, SIGTERM};
+use signal_hook::flag;
 use std::env;
 use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::thread;
 
@@ -13,6 +15,7 @@ use std::thread;
 /// - Captures stdout/stderr separately with event ledger
 /// - Creates log file only on failure (FAIL) or abort (ABORTED)
 /// - Preserves exit codes
+/// - Handles SIGTERM/SIGINT to create ABORTED logs
 /// - Supports SAFE_LOG_DIR, SAFE_SNIPPET_LINES, SAFE_RUN_VIEW environment variables
 pub fn execute(command: &[String]) -> Result<i32, String> {
     if command.is_empty() {
@@ -36,6 +39,15 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
     let events = Arc::new(Mutex::new(Vec::new()));
     let stdout_buffer = Arc::new(Mutex::new(Vec::new()));
     let stderr_buffer = Arc::new(Mutex::new(Vec::new()));
+
+    // Signal handling: track if we received SIGTERM/SIGINT
+    let interrupted = Arc::new(AtomicBool::new(false));
+
+    // Register signal handlers for both SIGTERM and SIGINT
+    flag::register(SIGTERM, Arc::clone(&interrupted))
+        .map_err(|e| format!("Failed to register SIGTERM handler: {}", e))?;
+    flag::register(SIGINT, Arc::clone(&interrupted))
+        .map_err(|e| format!("Failed to register SIGINT handler: {}", e))?;
 
     // Emit start event
     emit_event(
@@ -103,8 +115,57 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
         }
     });
 
-    // Wait for the command to complete
-    let exit_status = child.wait().map_err(|e| format!("Failed to wait: {}", e))?;
+    // Wait for the command to complete, checking for signals
+    let exit_status = loop {
+        // Check if we received a signal
+        if interrupted.load(Ordering::SeqCst) {
+            // Kill the child process
+            let _ = child.kill();
+
+            // Wait for threads to finish capturing output
+            let _ = stdout_handle.join();
+            let _ = stderr_handle.join();
+
+            // Emit exit event for interruption
+            emit_event(
+                &seq_counter,
+                &events,
+                "META",
+                "safe-run interrupted by signal",
+            );
+
+            // Create ABORTED log
+            let log_path = save_log(
+                &log_dir,
+                "ABORTED",
+                &stdout_buffer,
+                &stderr_buffer,
+                &events,
+                &view_mode,
+            )?;
+
+            eprintln!(
+                "safe-run: command aborted by signal. log: {}",
+                log_path.display()
+            );
+
+            // Exit with conventional signal exit code (128 + signal number).
+            // With the current signal-hook flag-based approach, SIGINT and SIGTERM
+            // are both mapped to the same AtomicBool, so we can't tell which one
+            // actually fired here. Use the SIGTERM convention (128 + 15 = 143).
+            return Ok(143);
+        }
+
+        // Try to get exit status without blocking forever
+        match child.try_wait() {
+            Ok(Some(status)) => break status,
+            Ok(None) => {
+                // Child still running, sleep briefly and check again
+                std::thread::sleep(std::time::Duration::from_millis(100));
+            }
+            Err(e) => return Err(format!("Failed to wait for child: {}", e)),
+        }
+    };
 
     // Wait for output capture to complete (propagate panics if they occurred)
     stdout_handle

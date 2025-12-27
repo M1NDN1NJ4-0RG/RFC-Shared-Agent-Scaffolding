@@ -6,13 +6,26 @@ source "./lib.sh"
 ROOT="$(cd .. && pwd)"
 SAFE_RUN="${ROOT}/scripts/safe-run.sh"
 
+# Compute repo root and find Rust binary for wrapper discovery
+REPO_ROOT="$(cd "$ROOT/../../.." && pwd)"
+if [ -x "$REPO_ROOT/dist/linux/x86_64/safe-run" ]; then
+  SAFE_RUN_BIN_PATH="$REPO_ROOT/dist/linux/x86_64/safe-run"
+elif [ -x "$REPO_ROOT/rust/target/release/safe-run" ]; then
+  SAFE_RUN_BIN_PATH="$REPO_ROOT/rust/target/release/safe-run"
+else
+  echo "ERROR: Rust binary not found for tests" >&2
+  echo "  Searched: $REPO_ROOT/dist/linux/x86_64/safe-run" >&2
+  echo "  Searched: $REPO_ROOT/rust/target/release/safe-run" >&2
+  exit 127
+fi
+
 test_success_no_artifacts() {
   local tmp out
   tmp="$(mktemp_dir)"
   ( 
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS
-    out="$(bash "$SAFE_RUN" echo hello 2>&1)"
+    out="$(SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" echo hello 2>&1)"
     [[ "$out" == "hello" ]]
     [[ -z "$(ls -A .agent/FAIL-LOGS 2>/dev/null || true)" ]]
   )
@@ -25,7 +38,7 @@ test_failure_captures_and_rc() {
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS
     set +e
-    bash "$SAFE_RUN" bash -c 'echo OOPS_STDOUT; echo OOPS_STDERR 1>&2; exit 42'
+    SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c 'echo OOPS_STDOUT; echo OOPS_STDERR 1>&2; exit 42'
     rc=$?
     set -e
     [[ "$rc" -eq 42 ]]
@@ -44,13 +57,13 @@ test_snippet_lines() {
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS
     set +e
-    err="$((SAFE_SNIPPET_LINES=2 bash "$SAFE_RUN" bash -c 'printf "L1\nL2\nL3\n"; exit 9') 2>&1 1>/dev/null)"
+    err="$((SAFE_SNIPPET_LINES=2 SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c 'printf "L1\nL2\nL3\n"; exit 9') 2>&1 1>/dev/null)"
     rc=$?
     set -e
     [[ "$rc" -eq 9 ]]
-    grep -F "failure tail" <<<"$err" >/dev/null
-    # With the new event ledger, the tail should show the last lines which include events
-    grep -F "EVENTS" <<<"$err" >/dev/null
+    # Conformance spec (safe-run-005) requires L2 and L3 in stderr
+    grep -F "L2" <<<"$err" >/dev/null
+    grep -F "L3" <<<"$err" >/dev/null
   )
 }
 
@@ -61,7 +74,7 @@ test_safe_log_dir_override() {
     cd "$tmp"
     mkdir -p custom_logs
     set +e
-    SAFE_LOG_DIR="custom_logs" bash "$SAFE_RUN" bash -c 'echo nope; exit 7'
+    SAFE_LOG_DIR="custom_logs" SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c 'echo nope; exit 7'
     rc=$?
     set -e
     [[ "$rc" -eq 7 ]]
@@ -76,7 +89,7 @@ test_sigint_aborted_log() {
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS
     set +e
-    bash "$SAFE_RUN" bash -c 'echo START; sleep 10; echo END' >/dev/null 2>&1 &
+    SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c 'echo START; sleep 10; echo END' >/dev/null 2>&1 &
     pid=$!
     sleep 0.5
     kill -TERM "$pid" >/dev/null 2>&1 || true
@@ -98,7 +111,7 @@ test_event_ledger() {
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS
     set +e
-    bash "$SAFE_RUN" bash -c 'echo "out1"; echo "err1" 1>&2; echo "out2"; exit 5'
+    SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c 'echo "out1"; echo "err1" 1>&2; echo "out2"; exit 5'
     rc=$?
     set -e
     [[ "$rc" -eq 5 ]]
@@ -125,7 +138,7 @@ test_merged_view() {
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS
     set +e
-    SAFE_RUN_VIEW=merged bash "$SAFE_RUN" bash -c 'echo "line1"; exit 3'
+    SAFE_RUN_VIEW=merged SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c 'echo "line1"; exit 3'
     rc=$?
     set -e
     [[ "$rc" -eq 3 ]]

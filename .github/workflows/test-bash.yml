@@ -27,6 +27,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Build Rust canonical tool
+        run: |
+          cd rust
+          cargo build --release
+          cd ..
+      
+      - name: Stage Rust binary for wrapper discovery
+        run: |
+          mkdir -p dist/linux/x86_64
+          cp rust/target/release/safe-run dist/linux/x86_64/safe-run
+          chmod +x dist/linux/x86_64/safe-run
+          echo "Rust binary staged at: dist/linux/x86_64/safe-run"
+          ls -lh dist/linux/x86_64/safe-run
+      
       - name: Install jq
         run: |
           sudo apt-get update

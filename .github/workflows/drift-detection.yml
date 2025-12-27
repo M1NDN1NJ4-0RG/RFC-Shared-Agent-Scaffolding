@@ -26,6 +26,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Build Rust canonical tool
+        run: |
+          cd rust
+          cargo build --release
+          cd ..
+      
+      - name: Stage Rust binary for wrapper discovery
+        run: |
+          mkdir -p dist/linux/x86_64
+          cp rust/target/release/safe-run dist/linux/x86_64/safe-run
+          chmod +x dist/linux/x86_64/safe-run
+          echo "Rust binary staged at: dist/linux/x86_64/safe-run"
+          ls -lh dist/linux/x86_64/safe-run
+      
       - name: Set up test environments
         run: |
           # Install jq for Bash
@@ -64,6 +81,9 @@ jobs:
           
           mkdir -p /tmp/drift-test
           cd /tmp/drift-test
+          
+          # Set SAFE_RUN_BIN for wrapper discovery (scripts run from outside repo)
+          export SAFE_RUN_BIN="${GITHUB_WORKSPACE}/dist/linux/x86_64/safe-run"
           
           # Note: Script paths include 'scripts' subdirectory in each bundle
           # Structure: RFC-Shared-Agent-Scaffolding-Example/scripts/<lang>/scripts/<script>
@@ -125,6 +145,9 @@ jobs:
           
           mkdir -p /tmp/drift-test-2
           cd /tmp/drift-test-2
+          
+          # Set SAFE_RUN_BIN for wrapper discovery (scripts run from outside repo)
+          export SAFE_RUN_BIN="${GITHUB_WORKSPACE}/dist/linux/x86_64/safe-run"
           
           # Test Bash
           echo "Testing Bash implementation..."
