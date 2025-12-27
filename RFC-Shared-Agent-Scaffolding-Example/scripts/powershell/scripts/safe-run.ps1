@@ -47,6 +47,9 @@
     Passed through to the Rust tool. Number of tail lines to print to stderr on failure.
     Default: 0 (no snippet)
     Set to positive integer (e.g., 10) to enable tail output on stderr.
+    The snippet is printed after "command failed ... log:" line for quick diagnosis.
+    Full output is always in the log file.
+    Note: Extremely large values may produce noisy stderr.
     Contract: M0-P1-I2
 
   SAFE_RUN_VIEW
