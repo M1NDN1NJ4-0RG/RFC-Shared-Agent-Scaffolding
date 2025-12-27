@@ -300,13 +300,26 @@ try {
     }
     exit $exitCode
 } catch {
-    Write-Err "ERROR: Failed to execute binary: $binary"
-    Write-Err "Error: $_"
-    Write-Err ""
-    Write-Err "This may be a permissions issue or the binary is corrupted."
-    Write-Err "Try:"
-    Write-Err "  1. Verify the binary is executable"
-    Write-Err "  2. Check file permissions"
-    Write-Err "  3. Rebuild: cd rust/ && cargo build --release"
-    exit 127
+    $errorMessage = $_.Exception.Message
+    
+    # Check if the error is due to access denied / permission issues
+    if ($errorMessage -match "Access.*denied|UnauthorizedAccess|permission") {
+        Write-Err "ERROR: Permission denied executing binary: $binary"
+        Write-Err "Error: $errorMessage"
+        Write-Err ""
+        Write-Err "Try:"
+        Write-Err "  1. Check file permissions"
+        Write-Err "  2. Run PowerShell as Administrator (if needed)"
+        Write-Err "  3. Verify antivirus isn't blocking execution"
+        exit 126
+    } else {
+        Write-Err "ERROR: Failed to execute binary: $binary"
+        Write-Err "Error: $errorMessage"
+        Write-Err ""
+        Write-Err "This may indicate the binary is corrupted or incompatible."
+        Write-Err "Try:"
+        Write-Err "  1. Verify the binary is executable"
+        Write-Err "  2. Rebuild: cd rust/ && cargo build --release"
+        exit 127
+    }
 }
