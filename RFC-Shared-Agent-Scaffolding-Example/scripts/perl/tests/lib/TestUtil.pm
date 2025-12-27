@@ -443,6 +443,7 @@ This module follows these testing principles:
 
 =item * L<POSIX> - Signal constants and time functions
 
+=item * L<Symbol> - Anonymous glob generation (C<Symbol::gensym>)
 =back
 
 All dependencies are core Perl modules (included with Perl 5.10+).
