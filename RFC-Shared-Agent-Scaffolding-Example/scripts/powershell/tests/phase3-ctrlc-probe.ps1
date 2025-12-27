@@ -144,7 +144,8 @@ function Invoke-CtrlCProbe {
     # Start the process in a new process group (required for GenerateConsoleCtrlEvent)
     $psi = New-Object System.Diagnostics.ProcessStartInfo
     $psi.FileName = "pwsh"
-    $psi.Arguments = $arguments -join " "
+    # Build argument list properly to handle spaces and special characters
+    $psi.Arguments = "-NoProfile -File `"$wrapperScript`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
     $psi.UseShellExecute = $false
     $psi.RedirectStandardOutput = $true
     $psi.RedirectStandardError = $true
@@ -197,8 +198,10 @@ public class ConsoleHelper {
 "@
                 
                 # Try to send Ctrl-C (might fail due to console group restrictions)
-                $result = [ConsoleHelper]::GenerateConsoleCtrlEvent(0, $pid)
-                Write-ProbeLog "GenerateConsoleCtrlEvent result: $result"
+                # Note: Using 0 for process group ID to target the current process group
+                # Since we cannot easily get the process group ID of the child, this may fail
+                $result = [ConsoleHelper]::GenerateConsoleCtrlEvent(0, 0)
+                Write-ProbeLog "GenerateConsoleCtrlEvent(CTRL_C, 0) result: $result"
                 
                 # Wait for exit
                 Start-Sleep -Seconds 2
@@ -278,7 +281,7 @@ public class ConsoleHelper {
         } elseif ($exitCode -eq 127) {
             Write-ProbeLog "✗ Exit code 127: Wrapper error (binary not found or execution failed)"
         } else {
-            Write-ProbeLog "? Exit code $exitCode`: Unexpected (investigate further)"
+            Write-ProbeLog "? Exit code $exitCode: Unexpected (investigate further)"
         }
         
         if ($logs.Count -gt 0) {
