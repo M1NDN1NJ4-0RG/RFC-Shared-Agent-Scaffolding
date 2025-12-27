@@ -66,20 +66,23 @@ function Find-SafeRunBinary {
     
     $repoRoot = Find-RepoRoot
     
-    # 2. Dev mode: ./rust/target/release/safe-run
+    # Determine binary name with platform-specific extension
+    $binaryName = if ($IsWindows) { "safe-run.exe" } else { "safe-run" }
+    
+    # 2. Dev mode: ./rust/target/release/safe-run[.exe]
     if ($repoRoot) {
-        $devBin = Join-Path $repoRoot "rust" "target" "release" "safe-run"
+        $devBin = Join-Path $repoRoot "rust" "target" "release" $binaryName
         if (Test-Path $devBin) {
             return $devBin
         }
     }
     
-    # 3. CI artifact: ./dist/<os>/<arch>/safe-run
+    # 3. CI artifact: ./dist/<os>/<arch>/safe-run[.exe]
     if ($repoRoot) {
         $platform = Detect-Platform
         if ($platform -ne "unknown/unknown") {
             $parts = $platform -split '/'
-            $ciBin = Join-Path $repoRoot "dist" $parts[0] $parts[1] "safe-run"
+            $ciBin = Join-Path $repoRoot "dist" $parts[0] $parts[1] $binaryName
             if (Test-Path $ciBin) {
                 return $ciBin
             }
@@ -105,8 +108,8 @@ ERROR: Rust canonical tool not found.
 
 Searched locations:
   1. SAFE_RUN_BIN env var (not set or invalid)
-  2. ./rust/target/release/safe-run (not found)
-  3. ./dist/<os>/<arch>/safe-run (not found)
+  2. ./rust/target/release/safe-run[.exe] (not found)
+  3. ./dist/<os>/<arch>/safe-run[.exe] (not found)
   4. PATH lookup (not found)
 
 To install:
@@ -140,8 +143,8 @@ try {
     Write-Err ""
     Write-Err "Searched locations:"
     Write-Err "  1. SAFE_RUN_BIN env var"
-    Write-Err "  2. ./rust/target/release/safe-run"
-    Write-Err "  3. ./dist/<os>/<arch>/safe-run"
+    Write-Err "  2. ./rust/target/release/safe-run[.exe]"
+    Write-Err "  3. ./dist/<os>/<arch>/safe-run[.exe]"
     Write-Err "  4. PATH lookup"
     exit 127
 }

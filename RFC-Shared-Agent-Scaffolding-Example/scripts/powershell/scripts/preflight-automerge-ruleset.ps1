@@ -86,6 +86,8 @@ $wantArr = $null
 try {
   $wantArr = $Want | ConvertFrom-Json
   if ($wantArr -isnot [System.Collections.IEnumerable]) { throw "want not array" }
+  # Ensure it's an array (ConvertFrom-Json may return a single string if input has one element)
+  $wantArr = @($wantArr)
 } catch {
   Write-Err "ERROR: -Want must be a JSON array of strings"
   exit 3
