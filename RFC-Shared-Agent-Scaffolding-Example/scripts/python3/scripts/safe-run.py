@@ -133,7 +133,7 @@ For more information, see:
         return 127
     except PermissionError:
         print(f"ERROR: Permission denied executing: {binary}", file=sys.stderr)
-        print("Try: chmod +x {binary}", file=sys.stderr)
+        print(f"Try: chmod +x {binary}", file=sys.stderr)
         return 126
     except OSError as e:
         print(f"ERROR: Failed to execute {binary}: {e}", file=sys.stderr)
