@@ -92,7 +92,7 @@ static TIMESTAMP_REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"\d{8}T\d{6}Z").u
 ///
 /// # Examples
 ///
-/// ```no_run
+/// ```text
 /// let dir = snapshots_dir();
 /// assert!(dir.ends_with("tests/snapshots"));
 /// ```
