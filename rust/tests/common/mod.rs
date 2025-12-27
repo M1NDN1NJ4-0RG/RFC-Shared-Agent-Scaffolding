@@ -1,3 +1,57 @@
+//! # Common Test Utilities and Conformance Vector Loading
+//!
+//! This module provides shared infrastructure for conformance testing of the
+//! Rust canonical tool against the RFC contract specification.
+//!
+//! # Purpose
+//!
+//! - Loads and parses conformance vectors from `conformance/vectors.json`
+//! - Defines type-safe structures for test case specifications
+//! - Provides helper functions for locating the safe-run binary
+//! - Enables consistent test execution across all conformance test suites
+//!
+//! # Architecture
+//!
+//! ## Vector Categories
+//!
+//! Conformance vectors are organized by command type:
+//! - **safe_run**: Command execution with logging (vectors safe-run-001 through safe-run-010)
+//! - **safe_archive**: Command execution with archiving
+//! - **preflight_automerge_ruleset**: GitHub preflight checks
+//!
+//! ## Data Structures
+//!
+//! - `ConformanceVectors`: Top-level container with version and vector categories
+//! - `SafeRunVector`, `SafeArchiveVector`, `PreflightVector`: Type-specific test cases
+//! - `CommandSpec`: Command invocation details
+//! - `ExpectedOutcome`: Assertions for test validation
+//!
+//! # Contract Compliance
+//!
+//! This module enforces the contract specification by:
+//! - Loading vectors from the canonical `conformance/vectors.json` file
+//! - Validating vector structure via strongly-typed deserialization
+//! - Providing M0 spec references for each test case
+//!
+//! # Usage Pattern
+//!
+//! ```no_run
+//! use common::{load_vectors, get_safe_run_binary};
+//!
+//! let vectors = load_vectors().expect("Failed to load vectors");
+//! let binary = get_safe_run_binary();
+//!
+//! for vector in &vectors.vectors.safe_run {
+//!     // Execute test case using vector.command and validate vector.expected
+//! }
+//! ```
+//!
+//! # Contract References
+//!
+//! - Conformance vectors specification: `conformance/vectors.json`
+//! - M0 contract: `RFC-Shared-Agent-Scaffolding-v0.1.0.md`
+//! - Vector format documentation: `conformance/README.md`
+
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::fs;
@@ -6,6 +60,38 @@ use std::path::{Path, PathBuf};
 pub mod snapshots;
 
 /// Conformance test vectors loaded from conformance/vectors.json
+///
+/// # Purpose
+///
+/// Top-level container for all conformance test vectors. Provides version
+/// tracking and categorized test cases.
+///
+/// # Fields
+///
+/// - `version`: Conformance vector format version (currently "1.0")
+/// - `m0_contract_version`: M0 contract specification version
+/// - `description`: Human-readable description of the vector set
+/// - `vectors`: Categorized test cases by command type
+///
+/// # File Format
+///
+/// Loaded from JSON file with structure:
+/// ```json
+/// {
+///   "version": "1.0",
+///   "m0_contract_version": "M0-v0.1.0",
+///   "description": "...",
+///   "vectors": { "safe_run": [...], "safe_archive": [...], ... }
+/// }
+/// ```
+///
+/// # Examples
+///
+/// ```no_run
+/// let vectors = load_vectors().unwrap();
+/// assert_eq!(vectors.version, "1.0");
+/// assert!(!vectors.vectors.safe_run.is_empty());
+/// ```
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ConformanceVectors {
     pub version: String,
