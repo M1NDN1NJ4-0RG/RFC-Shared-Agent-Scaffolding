@@ -132,6 +132,7 @@ detect_platform() {
   echo "${os}/${arch}"
 }
 
+# Initialize IS_WINDOWS before calling detect_platform (function may override to 1)
 IS_WINDOWS=0
 PLATFORM="$(detect_platform)"
 
