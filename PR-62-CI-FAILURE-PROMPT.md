@@ -1,6 +1,6 @@
 # Problem observed (from latest CI logs)
 
-The probe starts `safe-run.ps1` successfully and calls `GenerateConsoleCtrlEvent(CTRL_C_EVENT, <PID>)` which returns `True`, but the target process continues running and the probe then force‑kills it. This likely happens because `GenerateConsoleCtrlEvent`’s second parameter is a **process group ID**, not a PID. We are currently passing a PID (e.g., `7468`), so the call can "succeed" while delivering no useful control event.
+The probe starts `safe-run.ps1` successfully and calls `GenerateConsoleCtrlEvent(CTRL_C_EVENT, <PID>)` which returns `True`, but the target process continues running and the probe then force-kills it. This likely happens because `GenerateConsoleCtrlEvent`’s second parameter is a **process group ID**, not a PID. We are currently passing a PID (e.g., `7468`), so the call can "succeed" while delivering no useful control event.
 
 # Goal
 
@@ -20,12 +20,12 @@ Update `RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/phase3-ctr
 
 - Launch the target using Win32 `CreateProcess` with `CREATE_NEW_PROCESS_GROUP`.
 - Capture the process group ID (for `CreateProcess`, the group ID is typically the PID of the group leader process).
-- Call `GenerateConsoleCtrlEvent(CTRL_C_EVENT, <groupId>)` (or `CTRL_BREAK_EVENT` if Ctrl‑C still doesn’t work).
-- Ensure the probe ignores Ctrl‑C itself:
+- Call `GenerateConsoleCtrlEvent(CTRL_C_EVENT, <groupId>)` (or `CTRL_BREAK_EVENT` if Ctrl-C still doesn’t work).
+- Ensure the probe ignores Ctrl-C itself:
   - Call `SetConsoleCtrlHandler(NULL, TRUE)` before sending
   - Call `SetConsoleCtrlHandler(NULL, FALSE)` after sending
 
-You can implement `CreateProcess` via Add‑Type C# P/Invoke. You’ll need:
+You can implement `CreateProcess` via Add-Type C# P/Invoke. You’ll need:
 
 - `CreateProcessW`
 - `STARTUPINFO`
@@ -46,5 +46,5 @@ Try option A first. Fall back to option B if needed.
 
 In the probe logic:
 
-- Attempt Ctrl‑C first.
-- If that fails, attempt Ctrl‑Break.
+- Attempt Ctrl-C first.
+- If that fails, attempt Ctrl-Break.
