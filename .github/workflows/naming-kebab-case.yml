@@ -2,8 +2,8 @@
 #
 # Purpose: Enforces kebab-case naming convention for script filenames in
 # specific directories. Validates that executable entrypoint files (.sh, .bash,
-# .zsh, .py, .pl, .ps1) follow the pattern: lowercase letters/digits with
-# hyphens only (e.g., safe-run.sh, run-tests.py).
+# .zsh, .py, .pl, .ps1) follow the pattern: lowercase letters/digits, hyphens
+# allowed only as separators between segments (e.g., safe-run.sh, run-tests.py).
 #
 # Scope:
 # - RFC-Shared-Agent-Scaffolding-Example/scripts/**
