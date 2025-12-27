@@ -694,12 +694,12 @@ fn print_snippet_from_buffers(
 /// - More reliable (doesn't depend on successful file write)
 /// - Available even if log file creation fails
 ///
-/// # Examples
+/// # Usage Notes
 ///
-/// ```no_run
-/// use std::path::Path;
-/// print_snippet(Path::new(".agent/FAIL-LOGS/20241227T120530Z-pid12345-FAIL.log"), 5);
-/// ```
+/// This helper is intentionally kept private and is not part of the public API.
+/// It exists as an alternative implementation that operates on log files directly.
+/// Callers should prefer `print_snippet_from_buffers`, which avoids file I/O.
+///
 #[allow(dead_code)]
 fn print_snippet(log_path: &Path, lines: usize) {
     eprintln!("--- safe-run failure tail ({} lines) ---", lines);
