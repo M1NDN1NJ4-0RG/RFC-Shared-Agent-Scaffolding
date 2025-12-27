@@ -153,7 +153,7 @@ enum Commands {
     ///
     /// - 1: Not implemented (current behavior)
     /// - (Future) 0: Success (command exists and is executable)
-    /// - (Future) 1: Command not found or not executable
+    /// - (Future) 2: Command not found or not executable
     Check {
         /// Command to check
         ///
@@ -180,7 +180,7 @@ enum Commands {
     ///
     /// - 1: Not implemented (current behavior)
     /// - (Future) 0: Archival succeeded (command may have failed)
-    /// - (Future) 1: Archival failed
+    /// - (Future) 2: Archival failed (e.g., I/O error)
     /// - (Future) Other: Preserved from command
     Archive {
         /// Command to execute and archive
