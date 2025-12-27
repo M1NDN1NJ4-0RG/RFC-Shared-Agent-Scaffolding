@@ -149,9 +149,10 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
                 log_path.display()
             );
 
-            // Exit with conventional signal exit code (128 + signal number)
-            // SIGTERM is 15, so 143; SIGINT is 2, so 130
-            // We can't distinguish which signal we got with ctrlc, so use SIGTERM code
+            // Exit with conventional signal exit code (128 + signal number).
+            // With the current signal-hook flag-based approach, SIGINT and SIGTERM
+            // are both mapped to the same AtomicBool, so we can't tell which one
+            // actually fired here. Use the SIGTERM convention (128 + 15 = 143).
             return Ok(143);
         }
 
