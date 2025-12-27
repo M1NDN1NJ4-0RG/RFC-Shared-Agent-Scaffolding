@@ -93,14 +93,14 @@ The `safe-run archive` subcommand exists in the CLI structure but has no impleme
 **Source:**
 - `rust/src/cli.rs:166-188` (WARNING: NOT YET IMPLEMENTED)
 - `rust/src/cli.rs:305-335` (scaffolding implementation)
-- `rust/tests/conformance.rs:535-750` (4 placeholder/ignored tests)
+- `rust/tests/conformance.rs:535-790` (4 placeholder/ignored tests)
 - `EPIC-59-NEXT-STEPS.md:111-143` (scaffolding clarity improvements)
 
 **Ignored tests:**
-- `test_safe_archive_001_basic` (lines 561-570)
-- `test_safe_archive_002_failed_command` (lines 616-625)
-- `test_safe_archive_003_output_capture` (lines 685-694)
-- `test_safe_archive_004_no_clobber` (lines 749-758)
+- `test_safe_archive_001_basic` (lines 561-598)
+- `test_safe_archive_002_compression_formats` (lines 618-660)
+- `test_safe_archive_003_no_clobber_auto_suffix` (lines 687-724)
+- `test_safe_archive_004_no_clobber_strict` (lines 750-790)
 
 **Suggested next steps:**
 - Implement full output capture (stdout + stderr)
