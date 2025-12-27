@@ -204,24 +204,6 @@
 
 ---
 
-### 2. Bash Test Over-Specification - TEST ISSUE
-
-**Status:** Test needs update, not wrapper
-
-**Failing Tests:**
-- `test_safe_run.sh::test_snippet_lines` - Checks for "EVENTS" string in snippet, but conformance spec (safe-run-005) only requires last N lines ("L2", "L3")
-- `test_safe-check.sh::test_safe_check_ok` - Test copies scripts to temp directory without Rust binary, breaking wrapper discovery
-
-**Root Cause:**
-- Test 1: Over-specified assertion (expects "EVENTS" keyword not in spec)
-- Test 2: Test design assumes self-contained scripts, but wrapper model requires repository context
-
-**Impact:** 2/17 Bash tests fail, but wrapper behavior is correct per conformance spec
-
-**Recommendation:** Update tests to match spec, OR document as known acceptable differences
-
----
-
 ## 📋 EPIC Completion Checklist
 
 ### Acceptance Criteria (from EPIC #33)
