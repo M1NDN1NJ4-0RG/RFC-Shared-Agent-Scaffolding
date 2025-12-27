@@ -74,6 +74,53 @@ jobs:
       # - Send Ctrl-C signal programmatically
       # - Record exit code and check for ABORTED log
       # - Write summary to probe-summary.txt
+      - name: Debug - Show environment
+        shell: pwsh
+        run: |
+          Write-Host "=== Environment Debug Information ==="
+          Write-Host "Current directory: $(Get-Location)"
+          Write-Host "PowerShell version: $($PSVersionTable.PSVersion)"
+          Write-Host ""
+          
+      - name: Debug - Verify repository structure
+        shell: pwsh
+        run: |
+          Write-Host "=== Repository Structure ==="
+          Write-Host "Checking for probe script..."
+          $probePath = "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/phase3-ctrlc-probe.ps1"
+          Write-Host "Probe script exists: $(Test-Path $probePath)"
+          
+          Write-Host ""
+          Write-Host "Checking for wrapper script..."
+          $wrapperPath = "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/safe-run.ps1"
+          Write-Host "Wrapper script exists: $(Test-Path $wrapperPath)"
+          
+          Write-Host ""
+          Write-Host "Directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/"
+          Get-ChildItem "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/" | ForEach-Object {
+            Write-Host "  $($_.Name) $(if ($_.PSIsContainer) { '[DIR]' } else { '' })"
+          }
+          
+          Write-Host ""
+          Write-Host "Directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/"
+          if (Test-Path "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/") {
+            Get-ChildItem "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/" | ForEach-Object {
+              Write-Host "  $($_.Name)"
+            }
+          } else {
+            Write-Host "  [Directory not found]"
+          }
+          
+          Write-Host ""
+          Write-Host "Directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/"
+          if (Test-Path "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/") {
+            Get-ChildItem "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/" | ForEach-Object {
+              Write-Host "  $($_.Name)"
+            }
+          } else {
+            Write-Host "  [Directory not found]"
+          }
+          
       - name: Run Ctrl-C probe
         shell: pwsh
         run: |

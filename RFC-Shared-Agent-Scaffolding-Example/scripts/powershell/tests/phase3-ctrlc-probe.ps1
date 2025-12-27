@@ -102,15 +102,38 @@ function Invoke-CtrlCProbe {
     
     Write-ProbeLog "Rust binary: $rustBinary"
     
-    # Locate safe-run.ps1 wrapper
-    $wrapperScript = Join-Path $PSScriptRoot "..\scripts\safe-run.ps1"
+    # Locate safe-run.ps1 wrapper with detailed debugging
+    Write-ProbeLog "=== Path Resolution Debug ==="
+    Write-ProbeLog "Current location: $(Get-Location)"
+    Write-ProbeLog "`$PSScriptRoot: $PSScriptRoot"
     
+    $wrapperScript = Join-Path $PSScriptRoot "..\scripts\safe-run.ps1"
+    Write-ProbeLog "Wrapper script (relative): $wrapperScript"
+    
+    # Test if the path exists before resolving
     if (-not (Test-Path $wrapperScript)) {
         Write-ProbeLog "ERROR: Wrapper script not found at: $wrapperScript"
+        Write-ProbeLog ""
+        Write-ProbeLog "Directory listing of parent: $PSScriptRoot\.."
+        Get-ChildItem "$PSScriptRoot\.." | ForEach-Object {
+            Write-ProbeLog "  - $($_.Name)"
+        }
+        Write-ProbeLog ""
+        Write-ProbeLog "Looking for 'scripts' subdirectory..."
+        $scriptsDir = Join-Path $PSScriptRoot "..\scripts"
+        if (Test-Path $scriptsDir) {
+            Write-ProbeLog "Found scripts directory at: $scriptsDir"
+            Write-ProbeLog "Contents:"
+            Get-ChildItem $scriptsDir | ForEach-Object {
+                Write-ProbeLog "  - $($_.Name)"
+            }
+        } else {
+            Write-ProbeLog "Scripts directory not found at: $scriptsDir"
+        }
         return $false
     }
     
-    Write-ProbeLog "Wrapper script: $wrapperScript"
+    Write-ProbeLog "Wrapper script found: $wrapperScript"
     Write-ProbeLog ""
     
     # Set environment variables for the test
@@ -206,17 +229,32 @@ public class Win32Process {
     }
     
     # Resolve full path to pwsh.exe to avoid PATH lookup issues
+    Write-ProbeLog "=== Executable Resolution Debug ==="
     $pwshPath = (Get-Command pwsh).Source
     Write-ProbeLog "Resolved pwsh path: $pwshPath"
+    Write-ProbeLog "pwsh exists: $(Test-Path $pwshPath)"
     
     # Resolve and normalize the wrapper script path to avoid relative path issues
-    $wrapperScriptResolved = Resolve-Path -LiteralPath $wrapperScript | Select-Object -ExpandProperty Path
-    Write-ProbeLog "Resolved wrapper script path: $wrapperScriptResolved"
+    Write-ProbeLog ""
+    Write-ProbeLog "=== Wrapper Script Resolution Debug ==="
+    try {
+        $wrapperScriptResolved = Resolve-Path -LiteralPath $wrapperScript -ErrorAction Stop | Select-Object -ExpandProperty Path
+        Write-ProbeLog "Resolved wrapper script path: $wrapperScriptResolved"
+        Write-ProbeLog "Resolved wrapper exists: $(Test-Path $wrapperScriptResolved)"
+    } catch {
+        Write-ProbeLog "ERROR: Failed to resolve wrapper script path"
+        Write-ProbeLog "Exception: $($_.Exception.Message)"
+        return $false
+    }
     
     # Build the command line for the target process
     # Note: When lpApplicationName is set, lpCommandLine should start with the application name
     $commandLine = "`"$pwshPath`" -NoProfile -File `"$wrapperScriptResolved`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
+    Write-ProbeLog ""
+    Write-ProbeLog "=== CreateProcessW Debug ==="
     Write-ProbeLog "Command line: $commandLine"
+    Write-ProbeLog "Command line length: $($commandLine.Length) characters"
+    Write-ProbeLog "Application path: $pwshPath"
     
     # Create STARTUPINFO structure
     $si = New-Object Win32Process+STARTUPINFO
@@ -230,9 +268,10 @@ public class Win32Process {
     $cmdLineBuilder = New-Object System.Text.StringBuilder($commandLine)
     $creationFlags = [Win32Process]::CREATE_NEW_PROCESS_GROUP
     
-    Write-ProbeLog "Creating process with CREATE_NEW_PROCESS_GROUP flag (no CREATE_NO_WINDOW)..."
-    Write-ProbeLog "Application: $pwshPath"
-    Write-ProbeLog "Command line length: $($commandLine.Length) characters"
+    Write-ProbeLog ""
+    Write-ProbeLog "Creating process with CREATE_NEW_PROCESS_GROUP flag (0x$($creationFlags.ToString('X8')))..."
+    Write-ProbeLog "StringBuilder capacity: $($cmdLineBuilder.Capacity)"
+    Write-ProbeLog "StringBuilder length: $($cmdLineBuilder.Length)"
     
     $success = [Win32Process]::CreateProcessW(
         $pwshPath,               # lpApplicationName - full path to pwsh.exe
@@ -249,7 +288,19 @@ public class Win32Process {
     
     if (-not $success) {
         $lastError = [System.Runtime.InteropServices.Marshal]::GetLastWin32Error()
-        Write-ProbeLog "ERROR: CreateProcessW failed with error code: $lastError"
+        Write-ProbeLog ""
+        Write-ProbeLog "=== CreateProcessW FAILED ==="
+        Write-ProbeLog "Error code: $lastError (0x$($lastError.ToString('X8')))"
+        Write-ProbeLog "Error description: $([System.ComponentModel.Win32Exception]::new($lastError).Message)"
+        Write-ProbeLog ""
+        Write-ProbeLog "Parameters used:"
+        Write-ProbeLog "  lpApplicationName: $pwshPath"
+        Write-ProbeLog "  lpCommandLine: $($cmdLineBuilder.ToString())"
+        Write-ProbeLog "  dwCreationFlags: 0x$($creationFlags.ToString('X8'))"
+        Write-ProbeLog ""
+        Write-ProbeLog "File system checks:"
+        Write-ProbeLog "  Application exists: $(Test-Path $pwshPath)"
+        Write-ProbeLog "  Wrapper exists: $(Test-Path $wrapperScriptResolved)"
         return $false
     }
     
