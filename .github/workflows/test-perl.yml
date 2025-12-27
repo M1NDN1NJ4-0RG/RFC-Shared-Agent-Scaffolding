@@ -79,7 +79,7 @@ jobs:
       - name: Display Perl version
         run: perl --version
       
-      # Step 7: Install JSON::PP module if not already present
+      # Step 7: Check if JSON::PP is available; install if missing
       # JSON::PP is required for parsing conformance/vectors.json
       # cpanm --notest: Install without running module's own tests (faster)
       - name: Install JSON::PP (if needed)
