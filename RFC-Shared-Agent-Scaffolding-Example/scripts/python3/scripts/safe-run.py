@@ -33,7 +33,10 @@ All other environment variables are passed through to the Rust canonical tool:
 SAFE_LOG_DIR : str, optional
     Directory for failure logs (default: .agent/FAIL-LOGS)
 SAFE_SNIPPET_LINES : int, optional
-    Number of tail lines to print on failure (default: 20)
+    Number of tail lines to print on failure (default: 0)
+    The snippet is printed after "command failed ... log:" line for quick
+    diagnosis. Full output is always in the log file. Set to 0 to disable.
+    Note: Extremely large values may produce noisy stderr.
 SAFE_RUN_VIEW : str, optional
     Output view format: 'split' (default) or 'merged'
 

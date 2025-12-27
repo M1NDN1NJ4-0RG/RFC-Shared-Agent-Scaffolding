@@ -97,7 +97,11 @@ The tool creates this directory if it doesn't exist.
 =item B<SAFE_SNIPPET_LINES>
 
 Number of tail lines to emit to stderr on failure for quick diagnosis.
-Default: 20
+Default: 0 (disabled)
+
+The snippet is printed after "command failed ... log:" line for convenience.
+Full output is always in the log file. Set to 0 to disable snippet output.
+Note: Extremely large values may produce noisy stderr.
 
 Example:
 

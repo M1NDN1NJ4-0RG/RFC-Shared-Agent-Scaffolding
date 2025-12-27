@@ -23,7 +23,10 @@
 #   Environment Variables:
 #     SAFE_RUN_BIN       Override binary location (highest priority)
 #     SAFE_LOG_DIR       Directory for failure logs (default: .agent/FAIL-LOGS)
-#     SAFE_SNIPPET_LINES Number of tail lines to show on stderr (default: 10)
+#     SAFE_SNIPPET_LINES Number of tail lines to show on stderr (default: 0)
+#                        The snippet is printed after "command failed ... log:" line
+#                        for quick diagnosis. Full output is always in the log file.
+#                        Note: Extremely large values may produce noisy stderr.
 #     SAFE_RUN_VIEW      Output format: "ledger" (default) or "merged"
 #     SAFE_ARCHIVE_DIR   Archive directory (used by safe-archive.sh)
 #
