@@ -5,6 +5,15 @@ $ErrorActionPreference = 'Stop'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 $root = $here  # The powershell directory is the bundle root
 
+# For thin wrapper tests: point to Rust canonical binary
+$repoRoot = Resolve-Path (Join-Path $root "..\..\..") -ErrorAction SilentlyContinue
+if ($repoRoot) {
+    $rustBinary = Join-Path $repoRoot "rust" "target" "release" "safe-run"
+    if (Test-Path $rustBinary) {
+        $env:SAFE_RUN_BIN = $rustBinary
+    }
+}
+
 Write-Host "Agent Ops PowerShell test runner"
 Write-Host "Root: $root"
 
