@@ -31,6 +31,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Build Rust canonical tool
+        working-directory: rust
+        run: cargo build --release
+      
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:

@@ -27,6 +27,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Build Rust canonical tool
+        working-directory: rust
+        run: cargo build --release
+      
       - name: Set up Perl
         uses: shogo82148/actions-setup-perl@3e011cd23aec3d977e118dfe36ba1318b28b63ef # v1
         with:
