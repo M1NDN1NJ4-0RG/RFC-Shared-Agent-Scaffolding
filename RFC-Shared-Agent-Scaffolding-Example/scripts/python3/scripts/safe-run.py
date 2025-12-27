@@ -56,9 +56,10 @@ def detect_platform() -> str:
 
 def find_safe_run_binary() -> str | None:
     """Binary discovery cascade per docs/wrapper-discovery.md."""
-    # 1. Environment override
+    # 1. Environment override (use without validation per spec)
     safe_run_bin = os.environ.get("SAFE_RUN_BIN")
     if safe_run_bin:
+        # Return the path even if it doesn't exist - let exec fail with clear error
         return safe_run_bin
     
     repo_root = find_repo_root()
@@ -120,11 +121,23 @@ For more information, see:
     
     # Invoke the Rust canonical tool with all arguments passed through
     # The 'run' subcommand is required by the Rust CLI structure
-    os.execvp(binary, [binary, "run"] + args)
-    
-    # If exec fails, we'll reach here
-    print(f"ERROR: Failed to execute {binary}", file=sys.stderr)
-    return 127
+    try:
+        os.execvp(binary, [binary, "run"] + args)
+    except FileNotFoundError:
+        print(f"ERROR: Binary not found or not executable: {binary}", file=sys.stderr)
+        print("\nSearched locations:", file=sys.stderr)
+        print("  1. SAFE_RUN_BIN env var", file=sys.stderr)
+        print("  2. ./rust/target/release/safe-run", file=sys.stderr)
+        print("  3. ./dist/<os>/<arch>/safe-run", file=sys.stderr)
+        print("  4. PATH lookup", file=sys.stderr)
+        return 127
+    except PermissionError:
+        print(f"ERROR: Permission denied executing: {binary}", file=sys.stderr)
+        print("Try: chmod +x {binary}", file=sys.stderr)
+        return 126
+    except OSError as e:
+        print(f"ERROR: Failed to execute {binary}: {e}", file=sys.stderr)
+        return 127
 
 if __name__ == "__main__":
     sys.exit(main())

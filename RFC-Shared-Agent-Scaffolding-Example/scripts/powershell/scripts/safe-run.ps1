@@ -131,5 +131,17 @@ if ($invokeArgs.Count -gt 0 -and $invokeArgs[0] -eq '--') {
 
 # Invoke the Rust canonical tool with all arguments passed through
 # The 'run' subcommand is required by the Rust CLI structure
-& $binary run @invokeArgs
-exit $LASTEXITCODE
+try {
+    & $binary run @invokeArgs
+    exit $LASTEXITCODE
+} catch {
+    Write-Err "ERROR: Failed to execute binary: $binary"
+    Write-Err "Error: $_"
+    Write-Err ""
+    Write-Err "Searched locations:"
+    Write-Err "  1. SAFE_RUN_BIN env var"
+    Write-Err "  2. ./rust/target/release/safe-run"
+    Write-Err "  3. ./dist/<os>/<arch>/safe-run"
+    Write-Err "  4. PATH lookup"
+    exit 127
+}
