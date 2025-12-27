@@ -1,3 +1,19 @@
+# Workflow: Drift Detection Gate
+#
+# Purpose: Detects behavioral drift between language-specific implementations
+# (bash, python3, perl) of the safe-run wrapper. Ensures all implementations
+# exhibit identical behavior for the same inputs, validating:
+# - Exit codes match across implementations
+# - Artifact creation (FAIL-LOGS) is consistent
+# - Log file format follows M0-P1-I1 and M0-P1-I2 standards
+#
+# Triggers:
+# - Pull requests modifying language bundles, conformance data, or this workflow
+# - Pushes to main branch affecting the same paths
+# - Manual workflow dispatch
+#
+# Note: This runs on Linux (ubuntu-latest) and tests bash/python3/perl.
+# PowerShell tests run separately on Windows runner (test-powershell.yml).
 name: Drift Detection Gate
 
 on:
@@ -14,27 +30,39 @@ on:
       - 'conformance/**'
   workflow_dispatch:
 
+# Permissions: Read-only access to repository contents
 permissions:
   contents: read
 
 jobs:
+  # Job: Cross-Language Drift Detection
+  # Runs identical test vectors against bash, python3, and perl implementations
+  # to verify behavioral parity. Drift indicates a bug or unintended divergence.
   detect-drift:
     name: Cross-Language Drift Detection
+    # Runner: Ubuntu latest (provides bash, python3, perl, and Rust toolchain)
     runs-on: ubuntu-latest
     
     steps:
+      # Step 1: Checkout repository to access all language implementations
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      # Step 2: Install Rust stable toolchain for building the canonical safe-run binary
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
       
+      # Step 3: Build the Rust canonical tool in release mode
+      # This is the reference implementation that wrappers delegate to
       - name: Build Rust canonical tool
         run: |
           cd rust
           cargo build --release
           cd ..
       
+      # Step 4: Stage the Rust binary at dist/linux/x86_64/safe-run
+      # This is the standard location where wrappers discover the canonical binary
+      # via the SAFE_RUN_BIN environment variable
       - name: Stage Rust binary for wrapper discovery
         run: |
           mkdir -p dist/linux/x86_64
@@ -43,6 +71,10 @@ jobs:
           echo "Rust binary staged at: dist/linux/x86_64/safe-run"
           ls -lh dist/linux/x86_64/safe-run
       
+      # Step 5: Install test environment dependencies
+      # - jq: Required by Bash wrapper for conformance vector parsing
+      # - python3: Already available on ubuntu-latest
+      # - perl: Already available on ubuntu-latest
       - name: Set up test environments
         run: |
           # Install jq for Bash
@@ -58,11 +90,15 @@ jobs:
           # Perl (already available on ubuntu-latest)
           perl --version
       
+      # Step 6: Install Perl environment and dependencies
+      # Uses shogo82148/actions-setup-perl for consistent Perl 5.38 setup
       - name: Install Perl dependencies
         uses: shogo82148/actions-setup-perl@3e011cd23aec3d977e118dfe36ba1318b28b63ef # v1
         with:
           perl-version: '5.38'
       
+      # Step 7: Validate conformance/vectors.json is valid JSON
+      # This file contains the canonical test vectors shared across all implementations
       - name: Validate conformance vectors
         run: |
           echo "Validating conformance/vectors.json..."
@@ -72,6 +108,9 @@ jobs:
           fi
           echo "✅ Conformance vectors valid"
       
+      # Step 8: Run drift detection for safe-run-001 test vector
+      # Test case: Success scenario (exit 0, no artifacts created)
+      # Validates: Exit codes all 0, no FAIL-LOGS directory created
       - name: Run drift detection - safe-run-001 (success case)
         id: drift-safe-run-001
         run: |
@@ -136,6 +175,10 @@ jobs:
             exit 1
           fi
       
+      # Step 9: Run drift detection for safe-run-002 test vector
+      # Test case: Failure scenario (exit 7, creates M0-format log)
+      # Validates: Exit codes all 7, FAIL-LOGS created with correct markers
+      # and naming pattern (YYYYMMDDTHHMMSSZ-pidPID-FAIL.log per M0-P1-I2)
       - name: Run drift detection - safe-run-002 (failure log format)
         id: drift-safe-run-002
         run: |
@@ -237,6 +280,9 @@ jobs:
             exit 1
           fi
       
+      # Step 10: Print drift detection summary
+      # Always runs (even if previous steps fail) to provide full diagnostic output
+      # Conditional logic checks outcome of both test vectors
       - name: Drift detection summary
         if: always()
         run: |

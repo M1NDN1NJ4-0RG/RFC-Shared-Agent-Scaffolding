@@ -1,3 +1,17 @@
+# Workflow: Structure Validation
+#
+# Purpose: Validates that all language bundles follow the canonical directory
+# structure defined in the RFC. Ensures each language bundle contains the
+# required directories and files:
+# - scripts/       (implementation files)
+# - tests/         (test files)
+# - run-tests.*    (test runner script)
+# - README_TESTS.md (optional documentation)
+#
+# Triggers:
+# - Pull requests modifying language bundles, validation script, or this workflow
+# - Pushes to main branch affecting the same paths
+# - Manual workflow dispatch
 name: Structure Validation
 
 on:
@@ -15,23 +29,32 @@ on:
       - '.github/workflows/structure-validation.yml'
   workflow_dispatch:
 
+# Permissions: Read-only access to repository contents
 permissions:
   contents: read
 
 jobs:
+  # Job: Validate Canonical Directory Structure
+  # Runs scripts/validate-structure.sh to check all language bundles
   validate-structure:
     name: Validate Canonical Directory Structure
+    # Runner: Ubuntu latest (provides bash for validation script)
     runs-on: ubuntu-latest
     
     steps:
+      # Step 1: Checkout repository to access language bundles and validation script
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      # Step 2: Run structure validation script
+      # Makes script executable and executes it; script exits non-zero on validation failure
       - name: Run structure validation
         run: |
           chmod +x scripts/validate-structure.sh
           ./scripts/validate-structure.sh
       
+      # Step 3: Report success with expected structure documentation
+      # Only runs if validation script succeeds (exit 0)
       - name: Report success
         if: success()
         run: |

@@ -1,3 +1,21 @@
+# Workflow: Test Python 3 Bundle
+#
+# Purpose: Runs conformance tests for the Python 3 implementation of safe-run
+# wrapper across multiple Python versions (3.8, 3.11, 3.12). Validates that the
+# Python wrapper correctly delegates to the Rust canonical binary and follows
+# M0 contract specifications.
+#
+# Dependencies:
+# - Rust canonical binary (built and staged at dist/linux/x86_64/safe-run)
+# - Python 3.x (via actions/setup-python)
+# - Python test suite (run-tests.sh)
+#
+# Matrix Strategy: Tests across Python 3.8, 3.11, 3.12 to ensure compatibility
+#
+# Triggers:
+# - Pull requests modifying Python 3 bundle, conformance data, or this workflow
+# - Pushes to main branch affecting the same paths
+# - Manual workflow dispatch
 name: Test Python 3 Bundle
 
 on:
@@ -15,29 +33,42 @@ on:
       - '.github/workflows/test-python3.yml'
   workflow_dispatch:
 
+# Permissions: Read-only access to repository contents
 permissions:
   contents: read
 
 jobs:
+  # Job: Python 3 Bundle Tests
+  # Builds Rust canonical tool, stages it, sets up Python environment, runs tests
+  # Uses matrix strategy to test across multiple Python versions
   test:
     name: Python 3 Bundle Tests
+    # Runner: Ubuntu latest (provides Rust toolchain, Python setup via action)
     runs-on: ubuntu-latest
     
+    # Matrix strategy: Test across Python 3.8, 3.11, 3.12
+    # Ensures wrapper works with older (3.8) and newer (3.12) Python versions
     strategy:
       matrix:
         python-version: ['3.8', '3.11', '3.12']  # Test across multiple Python versions
     
     steps:
+      # Step 1: Checkout repository to access Python 3 bundle and Rust source
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      # Step 2: Install Rust stable toolchain for building canonical binary
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
       
+      # Step 3: Build Rust canonical tool in release mode
+      # This is the reference implementation that the Python wrapper delegates to
       - name: Build Rust canonical tool
         working-directory: rust
         run: cargo build --release
       
+      # Step 4: Stage Rust binary at standard discovery location
+      # Python wrapper uses SAFE_RUN_BIN environment variable to locate this binary
       - name: Stage Rust binary for wrapper discovery
         run: |
           mkdir -p dist/linux/x86_64
@@ -46,19 +77,30 @@ jobs:
           echo "Rust binary staged at: dist/linux/x86_64/safe-run"
           ls -lh dist/linux/x86_64/safe-run
       
+      # Step 5: Set up Python environment with matrix-specified version
+      # actions/setup-python provides fast, cached Python installations
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       
+      # Step 6: Display Python version for diagnostics
       - name: Display Python version
         run: python --version
       
+      # Step 7: Run Python 3 test suite
+      # Executes run-tests.sh which runs all tests in tests/ directory
+      # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
+      # Python's json module (stdlib) is used for conformance vector parsing
       - name: Run Python 3 tests
         working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/python3
         run: |
           ./run-tests.sh
       
+      # Step 8: Upload failure logs as artifacts (only on test failure)
+      # Preserves .agent/FAIL-LOGS/ directory for debugging
+      # Artifact name includes Python version to distinguish matrix runs
+      # if-no-files-found: ignore prevents failure if no logs exist
       - name: Upload test artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4

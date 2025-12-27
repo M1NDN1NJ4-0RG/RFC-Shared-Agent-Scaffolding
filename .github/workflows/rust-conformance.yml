@@ -1,5 +1,20 @@
+# Workflow: Rust Conformance Tests
+#
+# Purpose: Builds, tests, lints, and validates the Rust implementation of safe-run
+# (the canonical/reference implementation). Runs on multiple operating systems
+# (Linux, macOS, Windows) to ensure cross-platform compatibility.
+#
+# Jobs:
+# 1. test: Build and run unit/conformance tests on all platforms
+# 2. lint: Run Clippy (Rust linter) with warnings-as-errors
+# 3. format: Verify code formatting with rustfmt
+#
+# Triggers:
+# - Pushes to main, copilot/**, work/** branches affecting Rust or conformance files
+# - Pull requests to main affecting the same paths
 name: Rust Conformance Tests
 
+# Permissions: Read-only access to repository contents
 permissions:
   contents: read
 
@@ -18,9 +33,14 @@ on:
       - '.github/workflows/rust-conformance.yml'
 
 jobs:
+  # Job: Test on Multiple Platforms
+  # Builds and tests the Rust safe-run binary on Linux, macOS, and Windows
+  # Uses matrix strategy to parallelize across OS and Rust version
   test:
     name: Test on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
+    # Matrix strategy: Test across 3 operating systems with stable Rust
+    # fail-fast: false ensures all OS tests run even if one fails
     strategy:
       fail-fast: false
       matrix:
@@ -28,52 +48,70 @@ jobs:
         rust: [stable]
     
     steps:
+      # Step 1: Checkout repository to access Rust source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Install Rust toolchain (dtolnay/rust-toolchain provides fast, cached setup)
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.rust }}
 
+      # Step 3: Cache cargo registry to speed up dependency downloads
+      # Key includes OS and Cargo.lock hash for cache invalidation on dependency changes
       - name: Cache cargo registry
         uses: actions/cache@v4
         with:
           path: ~/.cargo/registry
           key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
 
+      # Step 4: Cache cargo git index to speed up dependency resolution
       - name: Cache cargo index
         uses: actions/cache@v4
         with:
           path: ~/.cargo/git
           key: ${{ runner.os }}-cargo-git-${{ hashFiles('**/Cargo.lock') }}
 
+      # Step 5: Cache cargo build artifacts to speed up recompilation
+      # Key includes source file hashes to invalidate cache when code changes
       - name: Cache cargo build
         uses: actions/cache@v4
         with:
           path: rust/target
           key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('rust/Cargo.lock') }}-${{ hashFiles('rust/src/**/*.rs', 'rust/Cargo.toml', 'rust/tests/**/*.rs') }}
 
+      # Step 6: Display Rust version for diagnostics
       - name: Check Rust version
         working-directory: rust
         run: rustc --version
 
+      # Step 7: Build Rust project in debug mode with verbose output
       - name: Build Rust project
         working-directory: rust
         run: cargo build --verbose
 
+      # Step 8: Run unit tests for the safe-run binary
+      # --bin safe-run targets only the binary's unit tests (not integration tests)
       - name: Run unit tests
         working-directory: rust
         run: cargo test --bin safe-run --verbose
 
+      # Step 9: Run conformance integration tests (non-ignored only)
+      # --test conformance targets the tests/conformance.rs integration test suite
+      # Ignored tests (e.g., #[ignore]) are skipped (can be run manually with --ignored)
       - name: Run conformance tests (non-ignored only)
         working-directory: rust
         run: cargo test --test conformance --verbose
 
+      # Step 10: Build release binary (optimized, no debug symbols)
       - name: Build release binary
         working-directory: rust
         run: cargo build --release --verbose
 
+      # Step 11: Verify release binary exists and display metadata
+      # Handles both Unix (safe-run) and Windows (safe-run.exe) binary names
+      # Displays file size, runs --version, and computes SHA256 on Windows
       - name: Verify binary exists and print metadata
         working-directory: rust
         shell: bash
@@ -99,6 +137,9 @@ jobs:
             exit 1
           fi
 
+      # Step 12: Upload test artifacts on failure
+      # Preserves debug and release build artifacts for 7 days to aid troubleshooting
+      # Only runs if any previous step fails
       - name: Upload test results on failure
         if: failure()
         uses: actions/upload-artifact@v4
@@ -109,36 +150,53 @@ jobs:
             rust/target/release/
           retention-days: 7
 
+  # Job: Lint with Clippy
+  # Runs Rust's Clippy linter with warnings-as-errors to enforce code quality
   lint:
     name: Lint (Clippy)
+    # Runner: Ubuntu latest (sufficient for linting, no need for multi-OS)
     runs-on: ubuntu-latest
     
     steps:
+      # Step 1: Checkout repository to access Rust source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Install Rust toolchain with clippy component
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
 
+      # Step 3: Run Clippy on all targets and features
+      # -D warnings: Treat warnings as errors (enforces strict linting)
+      # --all-targets: Check bin, lib, tests, examples, benches
+      # --all-features: Enable all feature flags
       - name: Run Clippy
         working-directory: rust
         run: cargo clippy --all-targets --all-features -- -D warnings
 
+  # Job: Format Check
+  # Verifies that all Rust code is formatted according to rustfmt rules
   format:
     name: Format Check
+    # Runner: Ubuntu latest (sufficient for formatting check)
     runs-on: ubuntu-latest
     
     steps:
+      # Step 1: Checkout repository to access Rust source code
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # Step 2: Install Rust toolchain with rustfmt component
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
 
+      # Step 3: Check code formatting (--check mode does not modify files)
+      # --all: Format all packages in the workspace
+      # Fails if any file is not properly formatted
       - name: Check formatting
         working-directory: rust
         run: cargo fmt --all -- --check
