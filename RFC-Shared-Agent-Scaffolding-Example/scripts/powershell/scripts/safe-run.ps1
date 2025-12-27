@@ -22,26 +22,39 @@ function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
 function Find-RepoRoot {
     # Walk up from script location to find repository root
-    # Use PSScriptRoot (modern, reliable) or fall back to MyInvocation for compatibility
-    $scriptPath = if ($PSScriptRoot) { 
-        $PSScriptRoot 
+    # Handle all invocation methods: -File, & pwsh script.ps1, dot-sourcing, etc.
+    
+    # Try to get script location in order of reliability
+    $scriptPath = $null
+    
+    if ($PSScriptRoot) {
+        # Best case: PSScriptRoot is set (works with -File and modern invocations)
+        $scriptPath = $PSScriptRoot
     } elseif ($MyInvocation.MyCommand.Path) {
-        Split-Path -Parent $MyInvocation.MyCommand.Path
-    } else {
-        $PSCommandPath
+        # Fallback: MyInvocation.MyCommand.Path may be relative
+        $rawPath = $MyInvocation.MyCommand.Path
+        # Convert to absolute path if relative
+        if ([System.IO.Path]::IsPathRooted($rawPath)) {
+            $scriptPath = Split-Path -Parent $rawPath
+        } else {
+            # Relative path - resolve against current location
+            $absolutePath = Join-Path (Get-Location) $rawPath | Resolve-Path -ErrorAction SilentlyContinue
+            if ($absolutePath) {
+                $scriptPath = Split-Path -Parent $absolutePath
+            }
+        }
+    } elseif ($PSCommandPath) {
+        # Another fallback for older PowerShell
+        $scriptPath = Split-Path -Parent $PSCommandPath
     }
     
-    $current = if ($scriptPath) { 
-        # If we got a file path, get its directory
-        if (Test-Path -LiteralPath $scriptPath -PathType Leaf) {
-            Split-Path -Parent $scriptPath
-        } else {
-            $scriptPath
-        }
-    } else {
-        # Last resort: use current location
-        Get-Location | Select-Object -ExpandProperty Path
+    # If we still don't have a path, use current location as last resort
+    if (-not $scriptPath) {
+        $scriptPath = Get-Location | Select-Object -ExpandProperty Path
     }
+    
+    # Now walk up from scriptPath to find the repo root
+    $current = $scriptPath
     
     while ($current) {
         $rfcFile = Join-Path $current "RFC-Shared-Agent-Scaffolding-v0.1.0.md"
