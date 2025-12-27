@@ -282,7 +282,7 @@ jobs:
       
       # Step 10: Print drift detection summary
       # Always runs (even if previous steps fail) to provide full diagnostic output
-      # Conditional logic checks outcome of both test vectors
+      # Uses if: always() so this summary step runs regardless of prior success/failure,
       - name: Drift detection summary
         if: always()
         run: |
