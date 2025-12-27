@@ -281,7 +281,7 @@ public class ConsoleHelper {
         } elseif ($exitCode -eq 127) {
             Write-ProbeLog "✗ Exit code 127: Wrapper error (binary not found or execution failed)"
         } else {
-            Write-ProbeLog "? Exit code $exitCode: Unexpected (investigate further)"
+            Write-ProbeLog ("? Exit code {0}: Unexpected (investigate further)" -f $exitCode)
         }
         
         if ($logs.Count -gt 0) {
