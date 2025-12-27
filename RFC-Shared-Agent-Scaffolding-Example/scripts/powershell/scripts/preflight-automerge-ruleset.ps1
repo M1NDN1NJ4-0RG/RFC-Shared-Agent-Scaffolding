@@ -165,7 +165,13 @@ foreach ($w in $wantArr) { if (-not $got.Contains([string]$w)) { $missing += [st
 if ($missing.Count -gt 0) {
   Write-Err "WARN: Ruleset missing required status check contexts"
   Write-Err ("INFO: want: {0}" -f ($wantArr | ConvertTo-Json -Compress))
-  Write-Err ("INFO: got : {0}" -f (($got.ToArray() | Sort-Object) | ConvertTo-Json -Compress))
+  # Convert HashSet to array for sorting and JSON serialization
+  $gotArray = if ($got -is [System.Collections.Generic.HashSet[string]]) { 
+    @($got) 
+  } else { 
+    @($got) 
+  }
+  Write-Err ("INFO: got : {0}" -f (($gotArray | Sort-Object) | ConvertTo-Json -Compress))
   exit 1
 }
 

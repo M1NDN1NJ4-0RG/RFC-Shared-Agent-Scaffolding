@@ -16,8 +16,9 @@ import sys
 import platform
 import shutil
 from pathlib import Path
+from typing import Optional
 
-def find_repo_root() -> Path | None:
+def find_repo_root() -> Optional[Path]:
     """Walk up from script location to find repository root."""
     script_path = Path(__file__).resolve()
     current = script_path.parent
@@ -54,7 +55,7 @@ def detect_platform() -> str:
     
     return f"{os_name}/{arch}"
 
-def find_safe_run_binary() -> str | None:
+def find_safe_run_binary() -> Optional[str]:
     """Binary discovery cascade per docs/wrapper-discovery.md."""
     # 1. Environment override (use without validation per spec)
     safe_run_bin = os.environ.get("SAFE_RUN_BIN")
