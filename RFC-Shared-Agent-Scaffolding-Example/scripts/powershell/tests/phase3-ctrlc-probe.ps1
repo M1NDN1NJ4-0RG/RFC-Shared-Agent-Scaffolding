@@ -248,13 +248,15 @@ public class Win32Process {
     }
     
     # Build the command line for the target process
-    # Note: When lpApplicationName is set, lpCommandLine should start with the application name
+    # IMPORTANT: When lpApplicationName is NULL, lpCommandLine must contain the full command with executable
+    # We pass NULL to lpApplicationName and let Windows parse the command line
+    # This avoids quoting issues and filename syntax errors
     $commandLine = "`"$pwshPath`" -NoProfile -File `"$wrapperScriptResolved`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
     Write-ProbeLog ""
     Write-ProbeLog "=== CreateProcessW Debug ==="
     Write-ProbeLog "Command line: $commandLine"
     Write-ProbeLog "Command line length: $($commandLine.Length) characters"
-    Write-ProbeLog "Application path: $pwshPath"
+    Write-ProbeLog "lpApplicationName: NULL (Windows will parse from command line)"
     
     # Create STARTUPINFO structure
     $si = New-Object Win32Process+STARTUPINFO
@@ -276,7 +278,7 @@ public class Win32Process {
     Write-ProbeLog "StringBuilder length: $($cmdLineBuilder.Length)"
     
     $success = [Win32Process]::CreateProcessW(
-        $pwshPath,               # lpApplicationName - full path to pwsh.exe
+        $null,                   # lpApplicationName - NULL to parse from command line
         $cmdLineBuilder,          # lpCommandLine
         [IntPtr]::Zero,          # lpProcessAttributes
         [IntPtr]::Zero,          # lpThreadAttributes
@@ -296,12 +298,12 @@ public class Win32Process {
         Write-ProbeLog "Error description: $([System.ComponentModel.Win32Exception]::new($lastError).Message)"
         Write-ProbeLog ""
         Write-ProbeLog "Parameters used:"
-        Write-ProbeLog "  lpApplicationName: $pwshPath"
+        Write-ProbeLog "  lpApplicationName: NULL (parsed from command line)"
         Write-ProbeLog "  lpCommandLine: $($cmdLineBuilder.ToString())"
         Write-ProbeLog "  dwCreationFlags: 0x$($creationFlags.ToString('X8'))"
         Write-ProbeLog ""
         Write-ProbeLog "File system checks:"
-        Write-ProbeLog "  Application exists: $(Test-Path $pwshPath)"
+        Write-ProbeLog "  pwsh.exe exists: $(Test-Path $pwshPath)"
         Write-ProbeLog "  Wrapper exists: $(Test-Path $wrapperScriptResolved)"
         return $false
     }
