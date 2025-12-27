@@ -22,8 +22,26 @@ function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
 function Find-RepoRoot {
     # Walk up from script location to find repository root
-    $scriptPath = $PSCommandPath
-    $current = Split-Path -Parent $scriptPath
+    # Use PSScriptRoot (modern, reliable) or fall back to MyInvocation for compatibility
+    $scriptPath = if ($PSScriptRoot) { 
+        $PSScriptRoot 
+    } elseif ($MyInvocation.MyCommand.Path) {
+        Split-Path -Parent $MyInvocation.MyCommand.Path
+    } else {
+        $PSCommandPath
+    }
+    
+    $current = if ($scriptPath) { 
+        # If we got a file path, get its directory
+        if (Test-Path -LiteralPath $scriptPath -PathType Leaf) {
+            Split-Path -Parent $scriptPath
+        } else {
+            $scriptPath
+        }
+    } else {
+        # Last resort: use current location
+        Get-Location | Select-Object -ExpandProperty Path
+    }
     
     while ($current) {
         $rfcFile = Join-Path $current "RFC-Shared-Agent-Scaffolding-v0.1.0.md"
