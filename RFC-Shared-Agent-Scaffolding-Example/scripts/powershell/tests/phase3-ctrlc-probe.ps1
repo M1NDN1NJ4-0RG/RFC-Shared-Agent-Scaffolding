@@ -127,112 +127,220 @@ function Invoke-CtrlCProbe {
     # Then send Ctrl-C and observe the behavior
     Write-ProbeLog "Launching safe-run.ps1 with long-running command..."
     
-    # Start the process; note: ProcessStartInfo does not create a new process group.
-    $psi = New-Object System.Diagnostics.ProcessStartInfo
-    $psi.FileName = "pwsh"
-    # Build argument list properly to handle spaces and special characters
-    $psi.Arguments = "-NoProfile -File `"$wrapperScript`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
-    $psi.UseShellExecute = $false
-    $psi.RedirectStandardOutput = $true
-    $psi.RedirectStandardError = $true
-    $psi.RedirectStandardInput = $false
-    $psi.CreateNoWindow = $true
+    # Define Win32 API structures and functions for process creation with process group
+    # This allows us to create a new process group and properly send console control events
+    if (-not ([System.Management.Automation.PSTypeName]'Win32Process').Type) {
+        Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+using System.Text;
+
+public class Win32Process {
+    [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+    public static extern bool CreateProcessW(
+        string lpApplicationName,
+        StringBuilder lpCommandLine,
+        IntPtr lpProcessAttributes,
+        IntPtr lpThreadAttributes,
+        bool bInheritHandles,
+        uint dwCreationFlags,
+        IntPtr lpEnvironment,
+        string lpCurrentDirectory,
+        ref STARTUPINFO lpStartupInfo,
+        out PROCESS_INFORMATION lpProcessInformation);
     
-    $process = New-Object System.Diagnostics.Process
-    $process.StartInfo = $psi
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
+    
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool SetConsoleCtrlHandler(IntPtr HandlerRoutine, bool Add);
+    
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern uint WaitForSingleObject(IntPtr hHandle, uint dwMilliseconds);
+    
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool GetExitCodeProcess(IntPtr hProcess, out uint lpExitCode);
+    
+    [DllImport("kernel32.dll", SetLastError = true)]
+    public static extern bool CloseHandle(IntPtr hObject);
+    
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    public struct STARTUPINFO {
+        public uint cb;
+        public string lpReserved;
+        public string lpDesktop;
+        public string lpTitle;
+        public uint dwX;
+        public uint dwY;
+        public uint dwXSize;
+        public uint dwYSize;
+        public uint dwXCountChars;
+        public uint dwYCountChars;
+        public uint dwFillAttribute;
+        public uint dwFlags;
+        public ushort wShowWindow;
+        public ushort cbReserved2;
+        public IntPtr lpReserved2;
+        public IntPtr hStdInput;
+        public IntPtr hStdOutput;
+        public IntPtr hStdError;
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PROCESS_INFORMATION {
+        public IntPtr hProcess;
+        public IntPtr hThread;
+        public uint dwProcessId;
+        public uint dwThreadId;
+    }
+    
+    public const uint CREATE_NEW_PROCESS_GROUP = 0x00000200;
+    public const uint CREATE_NO_WINDOW = 0x08000000;
+    public const uint CTRL_C_EVENT = 0;
+    public const uint CTRL_BREAK_EVENT = 1;
+    public const uint WAIT_TIMEOUT = 0x00000102;
+    public const uint WAIT_OBJECT_0 = 0x00000000;
+    public const uint STILL_ACTIVE = 259;
+}
+"@
+    }
+    
+    # Build the command line for the target process
+    $commandLine = "pwsh -NoProfile -File `"$wrapperScript`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
+    Write-ProbeLog "Command line: $commandLine"
+    
+    # Create STARTUPINFO structure
+    $si = New-Object Win32Process+STARTUPINFO
+    $si.cb = [System.Runtime.InteropServices.Marshal]::SizeOf($si)
+    
+    # Create PROCESS_INFORMATION structure
+    $pi = New-Object Win32Process+PROCESS_INFORMATION
+    
+    # Create the process with CREATE_NEW_PROCESS_GROUP flag
+    $cmdLineBuilder = New-Object System.Text.StringBuilder($commandLine)
+    $creationFlags = [Win32Process]::CREATE_NEW_PROCESS_GROUP -bor [Win32Process]::CREATE_NO_WINDOW
+    
+    Write-ProbeLog "Creating process with CREATE_NEW_PROCESS_GROUP flag..."
+    $success = [Win32Process]::CreateProcessW(
+        $null,                    # lpApplicationName
+        $cmdLineBuilder,          # lpCommandLine
+        [IntPtr]::Zero,          # lpProcessAttributes
+        [IntPtr]::Zero,          # lpThreadAttributes
+        $false,                  # bInheritHandles
+        $creationFlags,          # dwCreationFlags
+        [IntPtr]::Zero,          # lpEnvironment
+        $null,                   # lpCurrentDirectory
+        [ref]$si,                # lpStartupInfo
+        [ref]$pi                 # lpProcessInformation
+    )
+    
+    if (-not $success) {
+        $lastError = [System.Runtime.InteropServices.Marshal]::GetLastWin32Error()
+        Write-ProbeLog "ERROR: CreateProcessW failed with error code: $lastError"
+        return $false
+    }
     
     try {
-        $started = $process.Start()
-        if (-not $started) {
-            Write-ProbeLog "ERROR: Failed to start process"
-            return $false
-        }
-        
-        $targetPid = $process.Id
-        Write-ProbeLog "Process started: PID $targetPid"
+        $targetPid = $pi.dwProcessId
+        $processGroupId = $pi.dwProcessId  # For CREATE_NEW_PROCESS_GROUP, the PID is the group ID
+        Write-ProbeLog "Process started: PID $targetPid (Process Group ID: $processGroupId)"
         
         # Wait a bit for the child command to actually start
         Start-Sleep -Seconds 2
         
         # Check if process is still running
-        if ($process.HasExited) {
-            Write-ProbeLog "WARNING: Process exited immediately (exit code: $($process.ExitCode))"
+        $exitCode = 0
+        $stillRunning = [Win32Process]::GetExitCodeProcess($pi.hProcess, [ref]$exitCode)
+        
+        if ($stillRunning -and $exitCode -ne [Win32Process]::STILL_ACTIVE) {
+            Write-ProbeLog "WARNING: Process exited immediately (exit code: $exitCode)"
             Write-ProbeLog "This suggests the wrapper or command failed to start properly"
         } else {
-            Write-ProbeLog "Process is running, sending Ctrl-C signal..."
+            Write-ProbeLog "Process is running, sending console control events..."
             
-            # Send Ctrl-C signal using Windows console control event
-            # Note: GenerateConsoleCtrlEvent requires processes to be in the same console group
-            # Since we're running in a different console, we'll try to kill the process
-            # and look for the ABORTED log that should be created
-            
-            # Alternative approach: Use Stop-Process which should trigger signal handling
             try {
-                # First try: Send CTRL_C_EVENT (this might not work cross-console)
-                # We'll use a .NET interop to call GenerateConsoleCtrlEvent
-                # Only define the type if it doesn't already exist
-                if (-not ([System.Management.Automation.PSTypeName]'ConsoleHelper').Type) {
-                    Add-Type @"
-using System;
-using System.Runtime.InteropServices;
-
-public class ConsoleHelper {
-    [DllImport("kernel32.dll", SetLastError = true)]
-    public static extern bool GenerateConsoleCtrlEvent(uint dwCtrlEvent, uint dwProcessGroupId);
-    
-    public const uint CTRL_C_EVENT = 0;
-    public const uint CTRL_BREAK_EVENT = 1;
-}
-"@
-                }
+                # Ignore Ctrl-C in this process so we don't kill ourselves
+                Write-ProbeLog "Setting console control handler to ignore signals in probe process..."
+                [Win32Process]::SetConsoleCtrlHandler([IntPtr]::Zero, $true) | Out-Null
                 
-                # Try to send Ctrl-C to the child process group (using the child PID as group leader)
-                # Note: Passing 0 as the process group ID sends the event to all processes
-                #       attached to the calling process's console (per Windows API docs).
-                #       We use the PID to target the specific process, though this may still
-                #       fail due to console group restrictions.
-                $result = [ConsoleHelper]::GenerateConsoleCtrlEvent(
-                    [ConsoleHelper]::CTRL_C_EVENT,
-                    [uint32]$targetPid
+                # First attempt: Send CTRL_C_EVENT
+                Write-ProbeLog "Attempting CTRL_C_EVENT to process group $processGroupId..."
+                $resultCtrlC = [Win32Process]::GenerateConsoleCtrlEvent(
+                    [Win32Process]::CTRL_C_EVENT,
+                    $processGroupId
                 )
-                Write-ProbeLog "GenerateConsoleCtrlEvent(CTRL_C_EVENT, $targetPid) result: $result"
+                Write-ProbeLog "GenerateConsoleCtrlEvent(CTRL_C_EVENT, $processGroupId) result: $resultCtrlC"
                 
-                # Wait for exit
+                # Wait to see if the signal was delivered
                 Start-Sleep -Seconds 2
                 
-                # If still running, try Stop-Process
-                if (-not $process.HasExited) {
-                    Write-ProbeLog "Process still running, using Stop-Process..."
-                    Stop-Process -Id $targetPid -Force
+                # Check if process exited
+                $exitCodeAfterCtrlC = 0
+                $stillRunningAfterCtrlC = [Win32Process]::GetExitCodeProcess($pi.hProcess, [ref]$exitCodeAfterCtrlC)
+                
+                if ($stillRunningAfterCtrlC -and $exitCodeAfterCtrlC -eq [Win32Process]::STILL_ACTIVE) {
+                    Write-ProbeLog "Process still running after CTRL_C_EVENT, trying CTRL_BREAK_EVENT..."
+                    
+                    # Second attempt: Send CTRL_BREAK_EVENT
+                    $resultCtrlBreak = [Win32Process]::GenerateConsoleCtrlEvent(
+                        [Win32Process]::CTRL_BREAK_EVENT,
+                        $processGroupId
+                    )
+                    Write-ProbeLog "GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, $processGroupId) result: $resultCtrlBreak"
+                    
+                    # Wait again
+                    Start-Sleep -Seconds 2
+                    
+                    # Check if process exited
+                    $exitCodeAfterBreak = 0
+                    $stillRunningAfterBreak = [Win32Process]::GetExitCodeProcess($pi.hProcess, [ref]$exitCodeAfterBreak)
+                    
+                    if ($stillRunningAfterBreak -and $exitCodeAfterBreak -eq [Win32Process]::STILL_ACTIVE) {
+                        Write-ProbeLog "Process still running after CTRL_BREAK_EVENT, using TerminateProcess as fallback..."
+                        # Force kill as last resort - note we're using Stop-Process since we have the PID
+                        Stop-Process -Id $targetPid -Force -ErrorAction SilentlyContinue
+                    } else {
+                        Write-ProbeLog "Process exited after CTRL_BREAK_EVENT"
+                    }
+                } else {
+                    Write-ProbeLog "Process exited after CTRL_C_EVENT"
                 }
+                
+                # Restore normal Ctrl-C handling in this process
+                [Win32Process]::SetConsoleCtrlHandler([IntPtr]::Zero, $false) | Out-Null
+                
             } catch {
                 Write-ProbeLog "Signal attempt failed: $($_.Exception.Message)"
                 Write-ProbeLog "Trying Stop-Process instead..."
                 Stop-Process -Id $targetPid -Force -ErrorAction SilentlyContinue
+                
+                # Restore normal Ctrl-C handling
+                try {
+                    [Win32Process]::SetConsoleCtrlHandler([IntPtr]::Zero, $false) | Out-Null
+                } catch {
+                    # Ignore errors restoring handler
+                }
             }
             
-            # Wait for process to exit
-            $timeout = 5
-            $waited = $process.WaitForExit($timeout * 1000)
+            # Wait for process to exit with timeout
+            $timeout = 5000  # 5 seconds in milliseconds
+            Write-ProbeLog "Waiting up to 5 seconds for process to exit..."
+            $waitResult = [Win32Process]::WaitForSingleObject($pi.hProcess, $timeout)
             
-            if (-not $waited) {
-                Write-ProbeLog "WARNING: Process did not exit within $timeout seconds"
-                try {
-                    $process.Kill()
-                    Write-ProbeLog "Force-killed the process"
-                } catch {
-                    Write-ProbeLog "Could not kill process: $($_.Exception.Message)"
-                }
+            if ($waitResult -eq [Win32Process]::WAIT_TIMEOUT) {
+                Write-ProbeLog "WARNING: Process did not exit within timeout, force killing..."
+                Stop-Process -Id $targetPid -Force -ErrorAction SilentlyContinue
+                Start-Sleep -Seconds 1
             }
         }
         
-        # Get exit code
-        $process.WaitForExit()
-        $exitCode = $process.ExitCode
+        # Get final exit code
+        $finalExitCode = 0
+        [Win32Process]::GetExitCodeProcess($pi.hProcess, [ref]$finalExitCode) | Out-Null
         
         Write-ProbeLog ""
         Write-ProbeLog "=== RESULTS ==="
-        Write-ProbeLog "Exit code: $exitCode"
+        Write-ProbeLog "Exit code: $finalExitCode"
         
         # Check for ABORTED log
         $logs = @(Get-ChildItem -LiteralPath $probeTempDir -Filter "*-ABORTED.log" -ErrorAction SilentlyContinue)
@@ -266,16 +374,16 @@ public class ConsoleHelper {
         Write-ProbeLog "=== INTERPRETATION ==="
         
         # Interpret results
-        if ($exitCode -eq 130) {
+        if ($finalExitCode -eq 130) {
             Write-ProbeLog "✓ Exit code 130: Correct (SIGINT/Ctrl-C)"
-        } elseif ($exitCode -eq 143) {
+        } elseif ($finalExitCode -eq 143) {
             Write-ProbeLog "✓ Exit code 143: Correct (SIGTERM)"
-        } elseif ($exitCode -eq 1) {
+        } elseif ($finalExitCode -eq 1) {
             Write-ProbeLog "⚠ Exit code 1: Process was killed (expected for Stop-Process)"
-        } elseif ($exitCode -eq 127) {
+        } elseif ($finalExitCode -eq 127) {
             Write-ProbeLog "✗ Exit code 127: Wrapper error (binary not found or execution failed)"
         } else {
-            Write-ProbeLog ("? Exit code {0}: Unexpected (investigate further)" -f $exitCode)
+            Write-ProbeLog ("? Exit code {0}: Unexpected (investigate further)" -f $finalExitCode)
         }
         
         if ($logs.Count -gt 0) {
@@ -287,11 +395,11 @@ public class ConsoleHelper {
         Write-ProbeLog ""
         Write-ProbeLog "=== CONCLUSION ==="
         
-        if (($exitCode -eq 130 -or $exitCode -eq 143) -and $logs.Count -gt 0) {
+        if (($finalExitCode -eq 130 -or $finalExitCode -eq 143) -and $logs.Count -gt 0) {
             Write-ProbeLog "SUCCESS: Ctrl-C behavior matches contract expectations"
             Write-ProbeLog "- Exit code indicates signal handling (130/143)"
             Write-ProbeLog "- ABORTED log was created as specified"
-        } elseif ($exitCode -eq 1 -and $logs.Count -gt 0) {
+        } elseif ($finalExitCode -eq 1 -and $logs.Count -gt 0) {
             Write-ProbeLog "PARTIAL: Process killed, but ABORTED log created"
             Write-ProbeLog "- Stop-Process was used (not a true Ctrl-C)"
             Write-ProbeLog "- But signal handling still created ABORTED log"
@@ -314,9 +422,12 @@ public class ConsoleHelper {
         Write-ProbeLog "Stack trace: $($_.ScriptStackTrace)"
         return $false
     } finally {
-        # Cleanup: dispose process object
-        if ($process) {
-            $process.Dispose()
+        # Cleanup: close Win32 handles
+        if ($pi.hProcess -ne [IntPtr]::Zero) {
+            [Win32Process]::CloseHandle($pi.hProcess) | Out-Null
+        }
+        if ($pi.hThread -ne [IntPtr]::Zero) {
+            [Win32Process]::CloseHandle($pi.hThread) | Out-Null
         }
     }
 }
