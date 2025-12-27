@@ -32,7 +32,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@7b1c307e0dcbda6122208f10795a1f0907fc94f7 # master with stable toolchain
+        uses: dtolnay/rust-toolchain@stable
         with:
           toolchain: ${{ matrix.rust }}
 
@@ -118,7 +118,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@7b1c307e0dcbda6122208f10795a1f0907fc94f7 # stable
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
 
@@ -135,7 +135,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@7b1c307e0dcbda6122208f10795a1f0907fc94f7 # stable
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
 
