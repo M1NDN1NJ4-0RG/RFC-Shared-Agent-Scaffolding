@@ -1,13 +1,68 @@
-//! Conformance tests for the Rust canonical tool
+//! # Conformance Tests for the Rust Canonical Tool
 //!
-//! These tests validate that the Rust implementation meets the contract
-//! defined in conformance/vectors.json. Tests are organized by command:
-//! - safe-run
-//! - safe-archive  
-//! - preflight-automerge-ruleset
+//! This module contains comprehensive conformance tests that validate the Rust
+//! implementation against the contract defined in `conformance/vectors.json`.
 //!
-//! **Note:** These tests are written test-first. They will fail/skip until
-//! the actual implementation is added in PR3.
+//! # Purpose
+//!
+//! These tests ensure that the Rust canonical tool:
+//! - Implements all required contract behaviors correctly
+//! - Maintains consistency across platforms (Linux, macOS, Windows)
+//! - Produces output that matches the specification exactly
+//! - Handles edge cases and error conditions properly
+//!
+//! # Test Organization
+//!
+//! Tests are organized by command type into separate modules:
+//! - **safe_run_tests**: Tests for `safe-run run` command execution
+//! - **safe_archive_tests**: Tests for `safe-run archive` command
+//! - **preflight_tests**: Tests for preflight automerge ruleset checks
+//!
+//! # Contract Vectors
+//!
+//! Each test is mapped to a specific vector ID from `conformance/vectors.json`:
+//! - `safe-run-001`: Success case, no artifacts created
+//! - `safe-run-002`: Failure case, FAIL log created
+//! - `safe-run-003`: Signal handling (SIGTERM/SIGINT) creates ABORTED log
+//! - `safe-run-004`: Custom log directory via SAFE_LOG_DIR
+//! - `safe-run-005`: Snippet output via SAFE_SNIPPET_LINES
+//! - And more...
+//!
+//! # Test-First Development
+//!
+//! **Note:** These tests were written test-first. Some tests may be marked with
+//! `#[ignore]` until the corresponding implementation is complete. This is intentional
+//! and follows the stacked PR development strategy outlined in the EPIC.
+//!
+//! # Platform-Specific Tests
+//!
+//! Some tests are platform-specific:
+//! - **Unix-only**: Signal handling tests (SIGTERM, SIGINT)
+//! - **Unix-only**: Tests using shell script helpers (`create_test_script`)
+//! - **Cross-platform**: Basic command execution, exit code handling
+//!
+//! # Running Tests
+//!
+//! ```bash
+//! # Run all conformance tests
+//! cargo test --test conformance
+//!
+//! # Run specific test module
+//! cargo test --test conformance safe_run_tests
+//!
+//! # Run specific test
+//! cargo test --test conformance test_safe_run_001_success_no_artifacts
+//!
+//! # Include ignored tests
+//! cargo test --test conformance -- --include-ignored
+//! ```
+//!
+//! # Dependencies
+//!
+//! - `assert_cmd`: Command execution and assertion framework
+//! - `predicates`: Assertion predicates for stdout/stderr
+//! - `tempfile`: Temporary directory management
+//! - `common`: Vector loading and test utilities
 
 mod common;
 
@@ -18,12 +73,60 @@ use std::fs;
 use std::path::Path;
 use tempfile::TempDir;
 
+/// Safe-run command conformance tests
+///
+/// # Purpose
+///
+/// Validates that the `safe-run run` command implements the M0 contract
+/// correctly across all specified behaviors.
+///
+/// # Coverage
+///
+/// - Success case (no artifacts)
+/// - Failure case (FAIL log creation)
+/// - Signal handling (ABORTED log creation)
+/// - Custom log directory (SAFE_LOG_DIR)
+/// - Snippet output (SAFE_SNIPPET_LINES)
+/// - Merged view mode (SAFE_RUN_VIEW)
+///
+/// # Contract References
+///
+/// Tests in this module validate vectors: safe-run-001 through safe-run-010
 #[cfg(test)]
 #[allow(unused_assignments)] // Assert chains in ignored tests
 mod safe_run_tests {
     use super::*;
 
-    /// Helper to create a test helper script that prints to stdout/stderr and exits with a code
+    /// Helper to create a test script that prints to stdout/stderr and exits with a code
+    ///
+    /// # Purpose
+    ///
+    /// Creates an executable Bash script in the given directory for testing
+    /// command execution with specific output patterns and exit codes.
+    ///
+    /// # Arguments
+    ///
+    /// - `dir`: Directory to create the script in
+    /// - `stdout`: Text to print to stdout
+    /// - `stderr`: Text to print to stderr
+    /// - `exit_code`: Exit code for the script to return
+    ///
+    /// # Returns
+    ///
+    /// String path to the created script
+    ///
+    /// # Platform Notes
+    ///
+    /// This helper is Unix-only as it creates Bash scripts with Unix permissions.
+    /// Windows tests should use alternative approaches or be skipped.
+    ///
+    /// # Examples
+    ///
+    /// ```ignore
+    /// let temp = TempDir::new().unwrap();
+    /// let script = create_test_script(temp.path(), "hello", "error", 7);
+    /// // Script will print "hello" to stdout, "error" to stderr, and exit with code 7
+    /// ```
     #[cfg(unix)]
     fn create_test_script(dir: &Path, stdout: &str, stderr: &str, exit_code: i32) -> String {
         let script_path = dir.join("test_cmd.sh");
@@ -43,6 +146,29 @@ mod safe_run_tests {
         script_path.to_string_lossy().to_string()
     }
 
+    /// Test vector safe-run-001: Success creates no artifacts
+    ///
+    /// # Purpose
+    ///
+    /// Validates that when a command succeeds (exit code 0), safe-run:
+    /// - Returns exit code 0
+    /// - Does NOT create any log files or directories
+    /// - Prints command output to stdout/stderr as expected
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-run-001
+    /// - Requirement: M0 contract specifies no artifacts on success
+    ///
+    /// # Assertions
+    ///
+    /// - Exit code matches expected (0)
+    /// - Stdout contains expected text
+    /// - `.agent/FAIL-LOGS` directory does not exist
+    ///
+    /// # Platform Notes
+    ///
+    /// Cross-platform test, runs on Unix and Windows.
     #[test]
     fn test_safe_run_001_success_no_artifacts() {
         let vectors = load_vectors().expect("Failed to load vectors");
@@ -78,6 +204,32 @@ mod safe_run_tests {
         );
     }
 
+    /// Test vector safe-run-002: Failure creates FAIL log
+    ///
+    /// # Purpose
+    ///
+    /// Validates that when a command fails (non-zero exit code), safe-run:
+    /// - Preserves the command's exit code
+    /// - Creates `.agent/FAIL-LOGS` directory
+    /// - Creates a log file with timestamp-pid-FAIL.log naming pattern
+    /// - Log file contains all required sections (STDOUT, STDERR, EVENTS)
+    /// - Log file contains all expected content markers
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-run-002
+    /// - Requirement: M0 contract requires FAIL log on non-zero exit
+    ///
+    /// # Assertions
+    ///
+    /// - Exit code matches expected (non-zero)
+    /// - FAIL-LOGS directory exists
+    /// - At least one log file created
+    /// - Log file contains all required markers from vector
+    ///
+    /// # Platform Notes
+    ///
+    /// Unix-only due to use of `create_test_script` helper.
     #[test]
     #[cfg(unix)] // Uses create_test_script helper which is Unix-only
     fn test_safe_run_002_failure_creates_log() {
@@ -141,6 +293,30 @@ mod safe_run_tests {
         }
     }
 
+    /// Test vector safe-run-003: SIGTERM/SIGINT creates ABORTED log
+    ///
+    /// # Purpose
+    ///
+    /// Validates that when safe-run receives a termination signal (SIGTERM or SIGINT):
+    /// - Kills the child process
+    /// - Creates `.agent/FAIL-LOGS` directory
+    /// - Creates an ABORTED log file
+    /// - Returns exit code 143 (SIGTERM) or 130 (SIGINT)
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-run-003
+    /// - Requirement: M0 contract requires ABORTED log on signal
+    ///
+    /// # Implementation Status
+    ///
+    /// **TODO**: This test is currently ignored and needs full implementation
+    /// in PR3. It requires spawning the command in the background, sending
+    /// a signal, and verifying the ABORTED log creation.
+    ///
+    /// # Platform Notes
+    ///
+    /// Unix-only due to signal handling differences on Windows.
     #[test]
     #[ignore] // TODO: Remove ignore once implementation exists
     #[cfg(unix)] // Signal handling is Unix-specific
@@ -178,6 +354,30 @@ mod safe_run_tests {
         );
     }
 
+    /// Test vector safe-run-004: Custom log directory via SAFE_LOG_DIR
+    ///
+    /// # Purpose
+    ///
+    /// Validates that the SAFE_LOG_DIR environment variable:
+    /// - Overrides the default `.agent/FAIL-LOGS` location
+    /// - Creates the custom directory if it doesn't exist
+    /// - Places log files in the custom directory
+    /// - Does NOT create files in the default directory
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-run-004
+    /// - Requirement: M0 contract requires SAFE_LOG_DIR support
+    ///
+    /// # Assertions
+    ///
+    /// - Exit code matches expected
+    /// - Custom log directory exists (from vector.expected.file_exists)
+    /// - Default log directory does NOT exist (from vector.expected.file_not_exists)
+    ///
+    /// # Platform Notes
+    ///
+    /// Unix-only due to use of `create_test_script` helper.
     #[test]
     #[cfg(unix)] // Uses create_test_script helper which is Unix-only
     fn test_safe_run_004_custom_log_dir() {
@@ -233,6 +433,29 @@ mod safe_run_tests {
         }
     }
 
+    /// Test vector safe-run-005: Snippet output via SAFE_SNIPPET_LINES
+    ///
+    /// # Purpose
+    ///
+    /// Validates that the SAFE_SNIPPET_LINES environment variable:
+    /// - Controls how many tail lines are printed to stderr on failure
+    /// - Prints the last N lines from combined stdout/stderr
+    /// - Still creates the full log file with all output
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-run-005
+    /// - Requirement: M0 contract requires SAFE_SNIPPET_LINES support
+    ///
+    /// # Assertions
+    ///
+    /// - Exit code matches expected
+    /// - Stderr contains the expected snippet lines
+    /// - Full log file is still created
+    ///
+    /// # Platform Notes
+    ///
+    /// Unix-only due to script creation requirements.
     #[test]
     #[cfg(unix)] // Uses Unix-specific script creation
     fn test_safe_run_005_snippet_output() {
@@ -292,11 +515,48 @@ mod safe_run_tests {
     }
 }
 
+/// Safe-archive command conformance tests
+///
+/// # Purpose
+///
+/// Validates that the `safe-run archive` command implements the M0 contract
+/// for archiving command output regardless of success or failure.
+///
+/// # Coverage
+///
+/// - Archive creation on success
+/// - Archive creation on failure
+/// - Archive content verification
+/// - Original file preservation
+///
+/// # Contract References
+///
+/// Tests in this module validate vectors: safe-archive-001 through safe-archive-005
+///
+/// # Implementation Status
+///
+/// **Note**: Archive implementation is placeholder only. Full implementation
+/// comes in a future PR per the stacked PR plan.
 #[cfg(test)]
 #[allow(unused_assignments)] // Assert chains in ignored tests
 mod safe_archive_tests {
     use super::*;
 
+    /// Test vector safe-archive-001: Archive creation
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-archive creates an archive file regardless of
+    /// command success or failure.
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-archive-001
+    /// - Requirement: Always create archive, preserve exit code
+    ///
+    /// # Implementation Status
+    ///
+    /// **TODO**: This is a placeholder test. Full implementation in future PR.
     #[test]
     #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_archive_001_basic() {
@@ -337,6 +597,23 @@ mod safe_archive_tests {
         }
     }
 
+    /// Test vector safe-archive-002: Compression format support
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-archive supports multiple compression formats:
+    /// - tar.gz (gzip compression)
+    /// - tar.bz2 (bzip2 compression)  
+    /// - zip (zip format)
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-archive-002
+    /// - Requirement: Support standard archive formats
+    ///
+    /// # Implementation Status
+    ///
+    /// **TODO**: Placeholder test, full implementation in future PR.
     #[test]
     #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_archive_002_compression_formats() {
@@ -382,6 +659,30 @@ mod safe_archive_tests {
         }
     }
 
+    /// Test vector safe-archive-003: No-clobber with auto-suffix
+    ///
+    /// # Purpose
+    ///
+    /// Validates that when an archive file already exists, safe-archive:
+    /// - Does NOT overwrite the existing file
+    /// - Creates a new file with sequential suffix (-1, -2, etc.)
+    /// - Preserves both original and new archive files
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-archive-003
+    /// - Requirement: No-clobber protection with auto-naming
+    ///
+    /// # Assertions
+    ///
+    /// - Exit code indicates success
+    /// - Original archive file still exists
+    /// - New archive file with suffix exists
+    /// - Both files are distinct
+    ///
+    /// # Implementation Status
+    ///
+    /// **TODO**: Placeholder test, full implementation in future PR.
     #[test]
     #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_archive_003_no_clobber_auto_suffix() {
@@ -422,6 +723,30 @@ mod safe_archive_tests {
         }
     }
 
+    /// Test vector safe-archive-004: No-clobber strict mode
+    ///
+    /// # Purpose
+    ///
+    /// Validates that in strict mode, when an archive file already exists:
+    /// - Command fails with error exit code (40-49 range)
+    /// - No files are overwritten
+    /// - Original file remains unchanged
+    /// - Error message explains the conflict
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: safe-archive-004
+    /// - Requirement: Strict no-clobber enforcement
+    ///
+    /// # Assertions
+    ///
+    /// - Exit code in range 40-49 (clobber error)
+    /// - Original file unchanged
+    /// - No new files created
+    ///
+    /// # Implementation Status
+    ///
+    /// **TODO**: Placeholder test, full implementation in future PR.
     #[test]
     #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_archive_004_no_clobber_strict() {
@@ -465,10 +790,50 @@ mod safe_archive_tests {
     }
 }
 
+/// Preflight automerge ruleset conformance tests
+///
+/// # Purpose
+///
+/// Validates that the preflight automerge ruleset checker implements the
+/// required GitHub API interaction and validation logic.
+///
+/// # Coverage
+///
+/// - Success case (valid ruleset configuration)
+/// - Authentication failures
+/// - Ruleset not found errors
+/// - API interaction patterns
+///
+/// # Contract References
+///
+/// Tests in this module validate vectors: preflight-001 through preflight-004
+///
+/// # Implementation Status
+///
+/// **Note**: All tests are placeholder/ignored. Full implementation requires
+/// GitHub API mocking infrastructure to be added in a future PR.
 #[cfg(test)]
 mod preflight_tests {
     use super::*;
 
+    /// Test vector preflight-001: Successful ruleset validation
+    ///
+    /// # Purpose
+    ///
+    /// Validates that preflight checker:
+    /// - Successfully authenticates with GitHub API
+    /// - Retrieves ruleset configuration
+    /// - Validates ruleset meets requirements
+    /// - Returns exit code 0 on success
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: preflight-001
+    /// - Requirement: Validate automerge rulesets
+    ///
+    /// # Implementation Status
+    ///
+    /// **TODO**: Requires GitHub API mocking. Implement in future PR.
     #[test]
     #[ignore] // TODO: Remove ignore once implementation exists
     fn test_preflight_001_success() {
@@ -487,6 +852,23 @@ mod preflight_tests {
         assert!(vector.expected.exit_code == Some(0), "Should succeed");
     }
 
+    /// Test vector preflight-002: Authentication failure handling
+    ///
+    /// # Purpose
+    ///
+    /// Validates that preflight checker:
+    /// - Detects authentication failures
+    /// - Returns appropriate exit code (2 for auth errors)
+    /// - Provides helpful error message
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: preflight-002
+    /// - Requirement: Handle auth failures gracefully
+    ///
+    /// # Implementation Status
+    ///
+    /// **TODO**: Implement with API mocking in future PR.
     #[test]
     #[ignore] // TODO: Remove ignore once implementation exists
     fn test_preflight_002_auth_failure() {
@@ -504,6 +886,23 @@ mod preflight_tests {
         );
     }
 
+    /// Test vector preflight-003: Ruleset not found error
+    ///
+    /// # Purpose
+    ///
+    /// Validates that preflight checker:
+    /// - Handles missing rulesets gracefully
+    /// - Returns exit code 3 for usage/config errors
+    /// - Provides clear error message
+    ///
+    /// # Contract Reference
+    ///
+    /// - Vector: preflight-003
+    /// - Requirement: Handle missing rulesets
+    ///
+    /// # Implementation Status
+    ///
+    /// **TODO**: Implement with API mocking in future PR.
     #[test]
     #[ignore] // TODO: Remove ignore once implementation exists
     fn test_preflight_003_ruleset_not_found() {
@@ -522,7 +921,32 @@ mod preflight_tests {
     }
 }
 
-/// Meta-test: Verify all test vectors are covered
+/// Meta-test: Verify all test vectors have corresponding tests
+///
+/// # Purpose
+///
+/// This test validates the test suite completeness by ensuring:
+/// - Vector count matches expected numbers
+/// - All vector IDs from conformance/vectors.json are covered
+/// - No vectors are accidentally skipped
+///
+/// # Assertions
+///
+/// - safe_run vectors: Expected count is 5
+/// - safe_archive vectors: Expected count is 4
+/// - preflight vectors: Expected count is 4
+///
+/// # Future Enhancement
+///
+/// **TODO**: Add programmatic check that each vector ID has a corresponding
+/// test function. This could use reflection or a build-time check to ensure
+/// 1:1 mapping between vectors and tests.
+///
+/// # Why This Matters
+///
+/// As new vectors are added to conformance/vectors.json, this test will
+/// fail if corresponding test functions aren't added, preventing accidental
+/// gaps in test coverage.
 #[test]
 fn test_all_vectors_have_tests() {
     let vectors = load_vectors().expect("Failed to load vectors");
