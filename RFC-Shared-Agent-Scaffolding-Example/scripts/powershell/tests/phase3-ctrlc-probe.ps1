@@ -205,8 +205,17 @@ public class Win32Process {
 "@
     }
     
+    # Resolve full path to pwsh.exe to avoid PATH lookup issues
+    $pwshPath = (Get-Command pwsh).Source
+    Write-ProbeLog "Resolved pwsh path: $pwshPath"
+    
+    # Resolve and normalize the wrapper script path to avoid relative path issues
+    $wrapperScriptResolved = Resolve-Path -LiteralPath $wrapperScript | Select-Object -ExpandProperty Path
+    Write-ProbeLog "Resolved wrapper script path: $wrapperScriptResolved"
+    
     # Build the command line for the target process
-    $commandLine = "pwsh -NoProfile -File `"$wrapperScript`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
+    # Note: When lpApplicationName is set, lpCommandLine should start with the application name
+    $commandLine = "`"$pwshPath`" -NoProfile -File `"$wrapperScriptResolved`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
     Write-ProbeLog "Command line: $commandLine"
     
     # Create STARTUPINFO structure
@@ -217,12 +226,16 @@ public class Win32Process {
     $pi = New-Object Win32Process+PROCESS_INFORMATION
     
     # Create the process with CREATE_NEW_PROCESS_GROUP flag
+    # Remove CREATE_NO_WINDOW for now to ensure console control events can be delivered
     $cmdLineBuilder = New-Object System.Text.StringBuilder($commandLine)
-    $creationFlags = [Win32Process]::CREATE_NEW_PROCESS_GROUP -bor [Win32Process]::CREATE_NO_WINDOW
+    $creationFlags = [Win32Process]::CREATE_NEW_PROCESS_GROUP
     
-    Write-ProbeLog "Creating process with CREATE_NEW_PROCESS_GROUP flag..."
+    Write-ProbeLog "Creating process with CREATE_NEW_PROCESS_GROUP flag (no CREATE_NO_WINDOW)..."
+    Write-ProbeLog "Application: $pwshPath"
+    Write-ProbeLog "Command line length: $($commandLine.Length) characters"
+    
     $success = [Win32Process]::CreateProcessW(
-        $null,                    # lpApplicationName
+        $pwshPath,               # lpApplicationName - full path to pwsh.exe
         $cmdLineBuilder,          # lpCommandLine
         [IntPtr]::Zero,          # lpProcessAttributes
         [IntPtr]::Zero,          # lpThreadAttributes
@@ -447,11 +460,13 @@ try {
         Write-Host ""
         Write-Host "RESULT: INCONCLUSIVE - Probe encountered errors during execution"
         Write-Host "Review probe-summary.txt for details"
-        # Exit 0 to allow artifact upload and review
-        exit 0
+        Write-Host ""
+        Write-Host "Exiting with error status to fail the workflow"
+        # Exit 1 to fail the workflow when probe is inconclusive
+        exit 1
     }
     
-    # Exit with success code to allow artifact review
+    # Exit with success code when probe completes successfully
     exit 0
     
 } catch {
@@ -480,7 +495,9 @@ try {
     $script:summaryLines | Out-File -FilePath $summaryPath -Encoding UTF8
     
     Write-Host "Partial summary written to: $summaryPath"
+    Write-Host ""
+    Write-Host "Exiting with error status to fail the workflow"
     
-    # Exit 0 to allow artifact upload, but make it clear this is inconclusive
-    exit 0
+    # Exit 1 to fail the workflow when fatal error occurs
+    exit 1
 }
