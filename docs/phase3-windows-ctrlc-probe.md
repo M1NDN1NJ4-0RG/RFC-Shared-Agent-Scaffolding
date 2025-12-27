@@ -79,16 +79,44 @@ The probe script provides detailed interpretation in `probe-summary.txt`:
 
 ### Signal Delivery Approach
 
-The probe attempts multiple signal delivery methods:
+The probe uses Win32 APIs to properly create a process group and deliver console control events:
 
-1. **Primary**: `GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid)`
-   - Native Windows API for sending Ctrl-C to a console control handler
-   - Uses the target process ID as the process group ID
-   - May fail due to console group restrictions
+1. **Process Creation**: `CreateProcessW` with `CREATE_NEW_PROCESS_GROUP` flag
+   - Creates the target process in its own process group
+   - The process leader's PID becomes the process group ID
+   - Ensures proper signal isolation and delivery
 
-2. **Fallback**: `Stop-Process -Id $pid -Force`
-   - PowerShell cmdlet for process termination
-   - More reliable but less representative of actual Ctrl-C
+2. **Signal Protection**: `SetConsoleCtrlHandler(NULL, TRUE)`
+   - Prevents the probe process from terminating itself
+   - Must be called before sending console control events
+
+3. **Primary Signal**: `GenerateConsoleCtrlEvent(CTRL_C_EVENT, processGroupId)`
+   - Sends Ctrl-C to the target process group
+   - Uses process group ID (not PID) as required by Windows API
+   - Waits 2 seconds to check if process exited
+
+4. **Secondary Signal**: `GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT, processGroupId)`
+   - If CTRL_C_EVENT fails, attempts Ctrl-Break
+   - Some applications handle Ctrl-Break differently than Ctrl-C
+   - Waits 2 seconds to check if process exited
+
+5. **Signal Restoration**: `SetConsoleCtrlHandler(NULL, FALSE)`
+   - Restores normal Ctrl-C handling in probe process
+   - Called after signal attempts complete
+
+6. **Fallback**: `Stop-Process` (TerminateProcess)
+   - If both console control events fail, forcefully terminates the process
+   - Used as last resort to ensure probe completes
+   - Less representative of actual Ctrl-C behavior
+
+### Win32 APIs Used
+
+- `CreateProcessW`: Process creation with process group control
+- `GenerateConsoleCtrlEvent`: Console control event delivery
+- `SetConsoleCtrlHandler`: Signal handler management
+- `WaitForSingleObject`: Process synchronization
+- `GetExitCodeProcess`: Exit code retrieval
+- `CloseHandle`: Resource cleanup
 
 ### Environment Setup
 
@@ -100,8 +128,13 @@ $env:SAFE_SNIPPET_LINES = "0"
 
 ### Process Launch
 
-```powershell
-pwsh -NoProfile -File safe-run.ps1 -- pwsh -NoProfile -Command "Start-Sleep -Seconds 60"
+```
+CreateProcessW(
+    applicationName: NULL,
+    commandLine: "pwsh -NoProfile -File safe-run.ps1 -- pwsh -NoProfile -Command Start-Sleep -Seconds 60",
+    creationFlags: CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW,
+    ...
+)
 ```
 
 ## Next Steps
