@@ -98,7 +98,7 @@ jobs:
         with:
           name: phase3-ctrlc-probe-results
           path: |
-            ${{ runner.temp }}/phase3-ctrlc-*/**
+            ${{ runner.temp }}\phase3-ctrlc-*
             probe-summary.txt
           if-no-files-found: warn
       

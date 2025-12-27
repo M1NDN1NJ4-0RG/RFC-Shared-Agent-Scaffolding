@@ -81,9 +81,9 @@ The probe script provides detailed interpretation in `probe-summary.txt`:
 
 The probe attempts multiple signal delivery methods:
 
-1. **Primary**: `GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0)`
-   - Native Windows API for sending Ctrl-C to process group
-   - Uses process group ID 0 (current process group)
+1. **Primary**: `GenerateConsoleCtrlEvent(CTRL_C_EVENT, pid)`
+   - Native Windows API for sending Ctrl-C to a console control handler
+   - Uses the target process ID as the process group ID
    - May fail due to console group restrictions
 
 2. **Fallback**: `Stop-Process -Id $pid -Force`

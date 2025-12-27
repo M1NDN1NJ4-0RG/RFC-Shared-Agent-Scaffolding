@@ -91,7 +91,7 @@ function Invoke-CtrlCProbe {
     Write-ProbeLog "Temp directory: $probeTempDir"
     
     # Locate Rust canonical binary
-    $repoRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
+    $repoRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
     $rustBinary = Join-Path $repoRoot "rust" "target" "release" "safe-run.exe"
     
     if (-not (Test-Path $rustBinary)) {
@@ -127,21 +127,7 @@ function Invoke-CtrlCProbe {
     # Then send Ctrl-C and observe the behavior
     Write-ProbeLog "Launching safe-run.ps1 with long-running command..."
     
-    # Use pwsh to run the wrapper with a sleep command
-    # We'll use Start-Process to get a process object we can signal
-    $childCommand = "pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
-    $arguments = @(
-        "-NoProfile"
-        "-File"
-        $wrapperScript
-        "--"
-        "pwsh"
-        "-NoProfile"
-        "-Command"
-        "Start-Sleep -Seconds 60"
-    )
-    
-    # Start the process in a new process group (required for GenerateConsoleCtrlEvent)
+    # Start the process; note: ProcessStartInfo does not create a new process group.
     $psi = New-Object System.Diagnostics.ProcessStartInfo
     $psi.FileName = "pwsh"
     # Build argument list properly to handle spaces and special characters
@@ -184,7 +170,9 @@ function Invoke-CtrlCProbe {
             try {
                 # First try: Send CTRL_C_EVENT (this might not work cross-console)
                 # We'll use a .NET interop to call GenerateConsoleCtrlEvent
-                Add-Type @"
+                # Only define the type if it doesn't already exist
+                if (-not ([System.Management.Automation.PSTypeName]'ConsoleHelper').Type) {
+                    Add-Type @"
 using System;
 using System.Runtime.InteropServices;
 
@@ -196,12 +184,18 @@ public class ConsoleHelper {
     public const uint CTRL_BREAK_EVENT = 1;
 }
 "@
+                }
                 
-                # Try to send Ctrl-C (might fail due to console group restrictions)
-                # Note: Using 0 for process group ID to target the current process group
-                # Since we cannot easily get the process group ID of the child, this may fail
-                $result = [ConsoleHelper]::GenerateConsoleCtrlEvent(0, 0)
-                Write-ProbeLog "GenerateConsoleCtrlEvent(CTRL_C, 0) result: $result"
+                # Try to send Ctrl-C to the child process group (using the child PID as group leader)
+                # Note: Passing 0 as the process group ID sends the event to all processes
+                #       attached to the calling process's console (per Windows API docs).
+                #       We use the PID to target the specific process, though this may still
+                #       fail due to console group restrictions.
+                $result = [ConsoleHelper]::GenerateConsoleCtrlEvent(
+                    [ConsoleHelper]::CTRL_C_EVENT,
+                    [uint32]$pid
+                )
+                Write-ProbeLog "GenerateConsoleCtrlEvent(CTRL_C_EVENT, $pid) result: $result"
                 
                 # Wait for exit
                 Start-Sleep -Seconds 2
