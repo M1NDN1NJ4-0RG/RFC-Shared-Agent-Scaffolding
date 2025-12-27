@@ -1,15 +1,160 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  preflight-automerge-ruleset.ps1 - Verify GitHub ruleset required CI contexts on default branch.
+  preflight-automerge-ruleset.ps1 - Verify GitHub branch protection ruleset CI requirements
+
 .DESCRIPTION
+  Pre-merge validation script that verifies GitHub repository rulesets enforce required
+  CI status checks on the default branch before allowing merge. Prevents automerge
+  configurations that bypass quality gates.
+
+  Purpose:
+    - Query GitHub API for repository branch protection rulesets
+    - Verify ruleset targets the default branch (~DEFAULT_BRANCH)
+    - Verify ruleset enforcement is "active" (not "evaluate" or "disabled")
+    - Validate that all required CI status check contexts are configured
+    - Exit with specific codes to guide automation and human intervention
+
+  This script prevents dangerous automerge configurations by ensuring that required
+  CI checks (lint, test, build, etc.) are enforced before merge is allowed.
+
+  Authentication Methods (tried in order):
+    1. gh CLI (if available): Uses authenticated session
+    2. TOKEN environment variable: GitHub Personal Access Token
+    3. GITHUB_TOKEN environment variable: GitHub Actions token or PAT
+
+  The script requires read:org scope for ruleset access.
+
+.PARAMETER Repo
+  GitHub repository in OWNER/REPO format.
+  Example: "M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding"
+  Required.
+
+.PARAMETER RulesetId
+  Numeric ID of the ruleset to verify.
+  Either RulesetId or RulesetName must be provided.
+  If RulesetName is provided, it will be resolved to an ID first.
+
+.PARAMETER RulesetName
+  Human-readable name of the ruleset.
+  Example: "Main - PR Only + Green CI"
+  Either RulesetId or RulesetName must be provided.
+
+.PARAMETER Want
+  JSON array of required status check context names.
+  Must be valid JSON array of strings.
+  Example: '["lint","test","build"]'
+  Required.
+
+.PARAMETER ApiVersion
+  GitHub API version header value.
+  Default: "2022-11-28"
+  Optional. Override only for API compatibility testing.
+
+.OUTPUTS
   Exit codes:
-    0  OK
-    1  Precheck failed
-    2  Auth/permission error (stop and ask human to fix)
-    3  Usage/validation error
-.SECURITY
-  Never prints token values.
+    0   Success: Ruleset enforces all required CI contexts on default branch
+    1   Precheck failed: Missing contexts, inactive enforcement, or wrong branch target
+    2   Auth/permission error: Invalid credentials or insufficient permissions (requires human action)
+    3   Usage/validation error: Missing parameters or invalid JSON
+
+  All diagnostic output is written to stderr.
+  Output format:
+    INFO: <informational message>
+    WARN: <warning or failure explanation>
+    ERROR: <error that requires immediate attention>
+
+.EXAMPLE
+  # Verify ruleset by name with gh CLI authentication
+  PS> .\preflight-automerge-ruleset.ps1 `
+        -Repo "owner/repo" `
+        -RulesetName "Main - PR Only + Green CI" `
+        -Want '["lint","test"]'
+  INFO: PRECHECK_OK: ruleset enforces required CI contexts on default branch; auto-merge flow is safe.
+  PS> $LASTEXITCODE
+  0
+
+.EXAMPLE
+  # Verify ruleset by ID with explicit token
+  PS> $env:TOKEN = "ghp_xxxxxxxxxxxx"
+  PS> .\preflight-automerge-ruleset.ps1 `
+        -Repo "owner/repo" `
+        -RulesetId "12345" `
+        -Want '["lint","test","build"]'
+
+.EXAMPLE
+  # Detect missing required context
+  PS> .\preflight-automerge-ruleset.ps1 `
+        -Repo "owner/repo" `
+        -RulesetName "Main" `
+        -Want '["lint","test","security"]'
+  WARN: Ruleset missing required status check contexts
+  INFO: want: ["lint","test","security"]
+  INFO: got : ["lint","test"]
+  PS> $LASTEXITCODE
+  1
+
+.EXAMPLE
+  # Detect inactive enforcement
+  PS> .\preflight-automerge-ruleset.ps1 `
+        -Repo "owner/repo" `
+        -RulesetName "Main" `
+        -Want '["lint"]'
+  WARN: Ruleset enforcement is not active (enforcement=evaluate)
+  PS> $LASTEXITCODE
+  1
+
+.NOTES
+  Platform Compatibility:
+    - Windows PowerShell 5.1: Supported
+    - PowerShell 7+ (pwsh): Supported on Windows, Linux, macOS
+    - Cross-platform HTTP client (Invoke-RestMethod)
+
+  Security:
+    - Never prints token values in output or logs
+    - Tokens are only used in Authorization headers
+    - Auth failures are classified separately from other errors (exit code 2)
+
+  Contract References:
+    - M0-P2-I2: Preflight automerge ruleset verification protocol
+
+  Side Effects:
+    - None. Read-only GitHub API queries only.
+    - No file system modifications
+    - No state changes
+
+  API Details:
+    - Uses GitHub REST API v3
+    - Endpoints:
+      - GET /repos/{owner}/{repo}/rulesets (list rulesets)
+      - GET /repos/{owner}/{repo}/rulesets/{id} (get specific ruleset)
+    - Requires 'read:org' scope for private repository rulesets
+    - Rate limited per GitHub API rate limit policies
+
+  Error Classification:
+    - Exit 0: All checks passed, safe to proceed with automerge
+    - Exit 1: Precheck failed, automerge should NOT be enabled (fixable)
+    - Exit 2: Auth/permission error, requires human intervention (blocked)
+    - Exit 3: Usage error, fix command-line arguments (developer error)
+
+  Validation Logic:
+    1. Resolve ruleset by ID or name
+    2. Check enforcement == "active"
+    3. Check conditions.ref_name.include contains "~DEFAULT_BRANCH"
+    4. Extract all required_status_checks contexts
+    5. Verify all wanted contexts are present in ruleset
+
+  Design Notes:
+    - Prefer gh CLI if available (handles auth automatically)
+    - Fallback to HTTP client with explicit token
+    - Auth errors are distinguished from API errors for better diagnostics
+    - JSON validation happens before API calls (fail fast)
+
+.LINK
+  https://docs.github.com/en/rest/repos/rules
+
+.LINK
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/blob/main/RFC-Shared-Agent-Scaffolding-v0.1.0.md
 #>
 
 param(

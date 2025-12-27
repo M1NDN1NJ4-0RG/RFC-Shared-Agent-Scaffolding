@@ -1,4 +1,60 @@
 #requires -Version 5.1
+<#
+.SYNOPSIS
+  safe-run-tests.ps1 - Pester test suite for safe-run.ps1 wrapper
+
+.DESCRIPTION
+  Comprehensive Pester test suite validating the PowerShell safe-run wrapper
+  implementation against contract specifications (M0-P1-I1, M0-P1-I2).
+
+  Test Coverage:
+    - Success path: No artifacts created, exit code 0
+    - Failure path: Artifact creation, exit code preservation
+    - Output capture: Split stdout/stderr format validation
+    - Event ledger: Sequence numbering and metadata validation
+    - Snippet output: SAFE_SNIPPET_LINES tail behavior
+    - View modes: Split (default) and merged output formats
+    - Large output handling: Memory efficiency with 200K+ lines
+    - Error handling: Clean errors when invoked without command
+    - Filename format: ISO8601-pidNNN-FAIL.log validation
+
+  Each test runs in an isolated temporary directory to prevent interference
+  and ensure repeatable results.
+
+.NOTES
+  Platform Compatibility:
+    - Windows PowerShell 5.1: Supported
+    - PowerShell 7+ (pwsh): Supported on Windows, Linux, macOS
+    - Tests use pwsh explicitly for subprocess invocations
+
+  Prerequisites:
+    - Pester module (v5.0+)
+    - safe-run.ps1 script in ../scripts/
+    - test-helpers.ps1 in same directory
+    - Rust canonical safe-run binary must be discoverable
+
+  Test Isolation:
+    - Each test creates a unique temporary directory
+    - Working directory is changed to temp dir for test execution
+    - Environment variables are set per-test
+    - Directory is cleaned up after test (Pop-Location)
+
+  Contract References:
+    - M0-P1-I1: safe-run split stdout/stderr format with event ledger
+    - M0-P1-I2: Failure artifact naming (YYYYMMDDTHHMMSSZ-pidNNN-FAIL.log)
+
+  Design Notes:
+    - Uses ProcessStartInfo for precise stderr capture in snippet test
+    - Large output test validates streaming behavior (no memory bloat)
+    - Filename format validated with regex matching
+    - Event ledger validated with content markers and sequence patterns
+
+.LINK
+  https://pester.dev/
+
+.LINK
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/blob/main/RFC-Shared-Agent-Scaffolding-v0.1.0.md
+#>
 Set-StrictMode -Version Latest
 
 Describe "safe-run.ps1" {

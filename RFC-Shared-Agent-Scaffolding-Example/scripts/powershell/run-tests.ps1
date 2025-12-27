@@ -1,3 +1,91 @@
+<#
+.SYNOPSIS
+  run-tests.ps1 - PowerShell test runner for safe-run/safe-archive/preflight wrappers
+
+.DESCRIPTION
+  Executes all Pester test files in the tests/ directory using Pester v5+
+  configuration. Discovers and runs test files matching *-tests.ps1 pattern.
+
+  Purpose:
+    - Provide consistent test execution environment
+    - Configure Pester for kebab-case test file naming convention
+    - Set SAFE_RUN_BIN for wrapper tests (points to Rust canonical binary)
+    - Report test results with detailed verbosity
+    - Exit with non-zero code on test failures (CI/CD compatible)
+
+  Test Discovery:
+    Pester's default discovery pattern is *.Tests.ps1 (PascalCase).
+    This runner explicitly discovers *-tests.ps1 (kebab-case) files
+    and passes them to Pester.
+
+  Environment Setup:
+    - Detects repository root (3 levels up from PowerShell directory)
+    - Searches for Rust safe-run binary in standard locations:
+      - rust/target/release/safe-run[.exe] (dev mode)
+      - dist/<os>/<arch>/safe-run[.exe] (CI artifacts)
+    - Sets SAFE_RUN_BIN if binary found (enables wrapper tests)
+
+.OUTPUTS
+  Exit codes:
+    0   All tests passed
+    1   One or more tests failed
+    2   Prerequisites not met (pwsh or Pester not found, no test files)
+
+  Test results are printed to stdout with Pester's 'Detailed' verbosity.
+
+.EXAMPLE
+  # Run all tests
+  PS> .\run-tests.ps1
+  Agent Ops PowerShell test runner
+  Root: /path/to/powershell
+  # Pester output follows...
+
+.EXAMPLE
+  # Run from CI/CD
+  PS> pwsh -NoProfile -File run-tests.ps1
+  # Exit code signals pass/fail
+
+.NOTES
+  Platform Compatibility:
+    - Windows PowerShell 5.1: Supported (limited to Windows)
+    - PowerShell 7+ (pwsh): Required for cross-platform execution
+
+  Prerequisites:
+    - pwsh (PowerShell 7+) must be in PATH
+    - Pester module must be installed (any discoverable version, v5+ recommended)
+    - Rust canonical safe-run binary should be built (tests will fail without it)
+
+  Installation:
+    If Pester is not installed, the script prints installation instructions:
+      pwsh -NoProfile -Command "Install-Module Pester -Scope CurrentUser"
+
+  Test File Discovery:
+    - Searches tests/ directory for *-tests.ps1 files
+    - Explicitly passes file list to Pester (overrides default discovery)
+    - Exits with error if no test files found
+
+  Pester Configuration:
+    - Run.PassThru = true (return test results for exit code determination)
+    - Output.Verbosity = 'Detailed' (show test names and results)
+    - Run.Path = explicit file list (override default *.Tests.ps1 pattern)
+
+  Side Effects:
+    - Sets SAFE_RUN_BIN environment variable (if Rust binary found)
+    - Modifies working directory context (Push-Location/Pop-Location in tests)
+    - Creates temporary test directories (cleaned up by tests)
+
+  Design Notes:
+    - Fails fast if prerequisites missing (pwsh, Pester)
+    - Provides clear error messages with actionable remediation
+    - No silent fallbacks (offline-safe, won't auto-install Pester)
+    - Exit code strictly follows convention (0=pass, 1=fail, 2=error)
+
+.LINK
+  https://pester.dev/
+
+.LINK
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+#>
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 

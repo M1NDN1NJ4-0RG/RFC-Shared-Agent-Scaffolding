@@ -1,4 +1,58 @@
 #requires -Version 5.1
+<#
+.SYNOPSIS
+  safe-check-tests.ps1 - Pester test suite for safe-check.ps1 contract verifier
+
+.DESCRIPTION
+  Pester test suite that validates the safe-check.ps1 contract verification script.
+  
+  The safe-check.ps1 script is itself a test, so this meta-test ensures that the
+  contract verifier runs successfully in a clean, isolated environment.
+
+  Test Coverage:
+    - Runs safe-check.ps1 in temporary workspace
+    - Validates successful execution (exit code 0)
+    - Ensures contract checks for safe-run and safe-archive pass
+    - Verifies proper environment isolation (no pollution from host)
+
+  The test copies all PowerShell scripts to a temp directory and runs safe-check.ps1
+  there, mimicking the environment it would encounter in CI/CD.
+
+.NOTES
+  Platform Compatibility:
+    - Windows PowerShell 5.1: Supported
+    - PowerShell 7+ (pwsh): Supported on Windows, Linux, macOS
+
+  Prerequisites:
+    - Pester module (v5.0+)
+    - safe-check.ps1 script in ../scripts/
+    - safe-run.ps1 script in ../scripts/
+    - safe-archive.ps1 script in ../scripts/
+    - test-helpers.ps1 in same directory
+    - Rust canonical safe-run binary must be discoverable
+
+  Test Isolation:
+    - Creates unique temporary workspace for each test
+    - Cleans environment variables before execution
+    - Sets SAFE_RUN_BIN to ensure Rust binary is found
+    - Copies all scripts to temp location (no shared state)
+
+  Contract References:
+    - M0-P1-I1: safe-run contract (tested by safe-check.ps1)
+    - M0-P1-I2: Failure artifact contract (tested by safe-check.ps1)
+    - M0-P1-I3: safe-archive no-clobber contract (tested by safe-check.ps1)
+
+  Design Notes:
+    - Single test ensures safe-check.ps1 works end-to-end
+    - Mimics Bash test approach (copies scripts, sets SAFE_RUN_BIN)
+    - Validates entire contract verification workflow in one go
+
+.LINK
+  https://pester.dev/
+
+.LINK
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/blob/main/RFC-Shared-Agent-Scaffolding-v0.1.0.md
+#>
 Set-StrictMode -Version Latest
 
 Describe "safe-check.ps1" {
