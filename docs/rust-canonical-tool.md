@@ -132,6 +132,36 @@ cargo run -- --version
 
 See [conformance-contract.md](./conformance-contract.md) for test specifications.
 
+## Performance and Memory Characteristics
+
+### Memory Usage on Failure
+
+When a command fails, `safe-run` captures and stores all stdout/stderr output in memory
+before writing the failure log. This design ensures complete output capture but has
+implications for commands that produce very large output volumes:
+
+- **Normal usage**: Memory overhead is minimal for typical command output (< 10MB)
+- **Large output**: Commands producing hundreds of MB or more of output will temporarily
+  consume that memory until the failure log is written
+- **Mitigation**: For extremely high-throughput scenarios, consider:
+  - Using `SAFE_SNIPPET_LINES` sparingly (higher values print more to stderr)
+  - Monitoring memory usage in resource-constrained environments
+  - Redirecting bulk output to files before piping to `safe-run`
+
+### Future Improvements
+
+The following enhancements are under consideration for future releases:
+
+- **Streaming-to-file mode**: Write output directly to log files instead of buffering
+  entirely in memory, reducing peak memory usage for high-volume commands
+- **Bounded buffering**: Implement a ring buffer with configurable size limits to cap
+  memory usage while preserving recent output
+- **Snippet size limits**: Add warnings or automatic capping of `SAFE_SNIPPET_LINES`
+  values to prevent accidentally printing extremely large outputs to stderr
+
+These improvements are tracked as future work and will be evaluated based on real-world
+usage patterns and community feedback.
+
 ## Future Enhancements
 
 - **Performance:** Optimize buffering and I/O for high-throughput logs

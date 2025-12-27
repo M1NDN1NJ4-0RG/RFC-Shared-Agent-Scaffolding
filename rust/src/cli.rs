@@ -138,20 +138,22 @@ enum Commands {
 
     /// Check repository state and command availability
     ///
+    /// **WARNING: NOT YET IMPLEMENTED - This subcommand is scaffolding only.**
+    ///
     /// # Behavior
     ///
-    /// Verifies that a command exists and can be executed without actually running it.
-    /// This is useful for pre-flight checks and dependency validation.
+    /// (Future) Verifies that a command exists and can be executed without actually running it.
+    /// This will be useful for pre-flight checks and dependency validation.
     ///
-    /// # Implementation Status
+    /// # Current Behavior
     ///
-    /// **Note**: This subcommand is scaffolding only. Full implementation will be
-    /// added in a future PR per the stacked PR plan.
+    /// Prints an error message and exits with code 1 to avoid silent no-ops.
     ///
     /// # Exit Codes
     ///
-    /// - 0: Success (command exists and is executable)
-    /// - 1: Command not found or not executable
+    /// - 1: Not implemented (current behavior)
+    /// - (Future) 0: Success (command exists and is executable)
+    /// - (Future) 1: Command not found or not executable
     Check {
         /// Command to check
         ///
@@ -163,21 +165,23 @@ enum Commands {
 
     /// Archive command output and artifacts
     ///
+    /// **WARNING: NOT YET IMPLEMENTED - This subcommand is scaffolding only.**
+    ///
     /// # Behavior
     ///
-    /// Executes a command and creates an archive of its output regardless of
-    /// exit status. Unlike `run`, this always creates artifacts even on success.
+    /// (Future) Executes a command and creates an archive of its output regardless of
+    /// exit status. Unlike `run`, this will always create artifacts even on success.
     ///
-    /// # Implementation Status
+    /// # Current Behavior
     ///
-    /// **Note**: This subcommand is scaffolding only. Full implementation will be
-    /// added in a future PR per the stacked PR plan.
+    /// Prints an error message and exits with code 1 to avoid silent no-ops.
     ///
     /// # Exit Codes
     ///
-    /// - 0: Archival succeeded (command may have failed)
-    /// - 1: Archival failed
-    /// - Other: Preserved from command
+    /// - 1: Not implemented (current behavior)
+    /// - (Future) 0: Archival succeeded (command may have failed)
+    /// - (Future) 1: Archival failed
+    /// - (Future) Other: Preserved from command
     Archive {
         /// Command to execute and archive
         ///
@@ -271,13 +275,13 @@ impl Cli {
     ///
     /// # Implementation Status
     ///
-    /// This is scaffolding implementation only. The full safe-check contract
-    /// will be implemented in a future PR as part of the stacked PR plan.
+    /// **SCAFFOLDING ONLY**: This subcommand is not yet implemented.
+    /// It exists for CLI structure but does not perform real work.
     ///
     /// # Current Behavior
     ///
-    /// Prints a message indicating the feature is not yet implemented and
-    /// returns success (exit code 0).
+    /// Prints an error message indicating the feature is not implemented
+    /// and exits with code 1 to prevent silent no-ops.
     ///
     /// # Future Implementation
     ///
@@ -287,10 +291,15 @@ impl Cli {
     /// - Repository state is valid
     /// - Dependencies are available
     fn check_command(&self, _command: &[String]) -> Result<i32, String> {
-        // TODO: Implement safe-check logic
-        println!("safe-check: Command checking not yet implemented");
-        println!("This is a scaffolding PR - implementation comes in PR3+");
-        Ok(0)
+        eprintln!("ERROR: 'safe-run check' is not yet implemented.");
+        eprintln!();
+        eprintln!("This subcommand is scaffolding only and does not perform any checks.");
+        eprintln!("Use the 'run' subcommand for safe command execution:");
+        eprintln!("  safe-run run <command> [args...]");
+        eprintln!();
+        eprintln!("For more information, see:");
+        eprintln!("  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding");
+        Ok(1)
     }
 
     /// Archive command output (scaffolding only)
@@ -301,13 +310,13 @@ impl Cli {
     ///
     /// # Implementation Status
     ///
-    /// This is scaffolding implementation only. The full safe-archive contract
-    /// will be implemented in a future PR as part of the stacked PR plan.
+    /// **SCAFFOLDING ONLY**: This subcommand is not yet implemented.
+    /// It exists for CLI structure but does not perform real work.
     ///
     /// # Current Behavior
     ///
-    /// Prints a message indicating the feature is not yet implemented and
-    /// returns success (exit code 0).
+    /// Prints an error message indicating the feature is not implemented
+    /// and exits with code 1 to prevent silent no-ops.
     ///
     /// # Future Implementation
     ///
@@ -317,10 +326,15 @@ impl Cli {
     /// - Include metadata (timestamp, command, exit code)
     /// - Support artifact collection
     fn archive_command(&self, _command: &[String]) -> Result<i32, String> {
-        // TODO: Implement safe-archive logic
-        println!("safe-archive: Command archiving not yet implemented");
-        println!("This is a scaffolding PR - implementation comes in PR3+");
-        Ok(0)
+        eprintln!("ERROR: 'safe-run archive' is not yet implemented.");
+        eprintln!();
+        eprintln!("This subcommand is scaffolding only and does not archive output.");
+        eprintln!("Use the 'run' subcommand for safe command execution:");
+        eprintln!("  safe-run run <command> [args...]");
+        eprintln!();
+        eprintln!("For more information, see:");
+        eprintln!("  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding");
+        Ok(1)
     }
 }
 
