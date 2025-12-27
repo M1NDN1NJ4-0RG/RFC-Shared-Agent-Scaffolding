@@ -37,15 +37,28 @@ function Find-RepoRoot {
         if ([System.IO.Path]::IsPathRooted($rawPath)) {
             $scriptPath = Split-Path -Parent $rawPath
         } else {
-            # Relative path - resolve against current location
-            $absolutePath = Join-Path (Get-Location) $rawPath | Resolve-Path -ErrorAction SilentlyContinue
-            if ($absolutePath) {
+            # Relative path - resolve using Resolve-Path which handles relative paths correctly
+            try {
+                $absolutePath = Resolve-Path -Path $rawPath -ErrorAction Stop
                 $scriptPath = Split-Path -Parent $absolutePath
+            } catch {
+                # If Resolve-Path fails, the script file doesn't exist at the relative path
+                # This shouldn't happen in normal usage, but fall through to next option
+                $scriptPath = $null
             }
         }
     } elseif ($PSCommandPath) {
         # Another fallback for older PowerShell
-        $scriptPath = Split-Path -Parent $PSCommandPath
+        if ([System.IO.Path]::IsPathRooted($PSCommandPath)) {
+            $scriptPath = Split-Path -Parent $PSCommandPath
+        } else {
+            try {
+                $absolutePath = Resolve-Path -Path $PSCommandPath -ErrorAction Stop
+                $scriptPath = Split-Path -Parent $absolutePath
+            } catch {
+                $scriptPath = $null
+            }
+        }
     }
     
     # If we still don't have a path, use current location as last resort
