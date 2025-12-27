@@ -1,3 +1,41 @@
+"""Unit tests for safe-run.py Python wrapper.
+
+This test module validates the Python wrapper's behavior for the safe-run tool,
+including success/failure paths, environment variable handling, signal handling,
+and event ledger generation.
+
+Test Coverage
+-------------
+- Success path: Command exits 0, no artifacts created
+- Failure path: Command exits non-zero, artifact created, exit code preserved
+- Custom log directory via SAFE_LOG_DIR environment variable
+- Tail snippet output via SAFE_SNIPPET_LINES environment variable
+- SIGINT handling: Creates ABORTED log with exit code 130
+- Event ledger: Sequence numbers and standardized META events
+- Merged view: Optional SAFE_RUN_VIEW=merged format
+
+Contract Validation
+-------------------
+- safe-run-001: Exit code preservation (test_failure_creates_log_and_preserves_exit_code)
+- safe-run-002: Stdout/stderr capture on failure (test_failure_creates_log_and_preserves_exit_code)
+- safe-run-003: Failure artifact generation (test_failure_creates_log_and_preserves_exit_code)
+- safe-run-004: Signal handling SIGINT -> exit 130 (test_sigint_creates_aborted_log)
+- safe-run-005: Tail snippet output (test_snippet_lines_printed_to_stderr)
+
+Test Dependencies
+-----------------
+The tests invoke the actual safe-run.py wrapper, which requires:
+- SAFE_RUN_BIN environment variable pointing to Rust canonical tool
+- Or the Rust binary available in one of the discovery locations
+
+The run-tests.sh script sets SAFE_RUN_BIN appropriately for CI/local testing.
+
+Platform Notes
+--------------
+- Uses tempfile.TemporaryDirectory for isolated test execution
+- SIGINT test uses subprocess.Popen with signal.SIGINT
+- All tests are platform-independent (Linux, macOS, Windows compatible)
+"""
 import os
 import re
 import signal
@@ -15,10 +53,20 @@ SAFE_RUN = SCRIPTS / 'safe-run.py'
 
 
 def run_safe_run(cmd_args, workdir: Path, env=None, timeout=25):
-    """Run safe-run.py as a subprocess.
+    """Run safe-run.py as a subprocess with specified command.
 
-    cmd_args is the command to run *through* safe_run (list[str]).
-    Returns subprocess.CompletedProcess.
+    :param cmd_args: Command to run through safe_run (list[str])
+    :param workdir: Working directory for subprocess execution
+    :param env: Optional environment variable overrides (dict)
+    :param timeout: Timeout in seconds (default: 25)
+    :returns: subprocess.CompletedProcess instance with returncode, stdout, stderr
+    
+    This helper function invokes safe-run.py with the specified command,
+    capturing stdout and stderr for verification. The working directory
+    is set to workdir to isolate test artifacts.
+    
+    Environment variables from os.environ are copied and merged with
+    any overrides provided in the env parameter.
     """
     e = os.environ.copy()
     if env:
@@ -38,10 +86,25 @@ def run_safe_run(cmd_args, workdir: Path, env=None, timeout=25):
 
 
 def _py():
+    """Get path to current Python interpreter.
+    
+    :returns: sys.executable path
+    
+    Used to ensure wrapped commands use the same Python interpreter
+    as the test runner, avoiding version mismatches.
+    """
     return sys.executable
 
 
 def list_fail_logs(log_dir: Path):
+    """List all regular files in the fail log directory.
+    
+    :param log_dir: Path to .agent/FAIL-LOGS directory
+    :returns: Sorted list of Path objects for regular files
+    
+    Used to count failure artifacts and verify safe-run behavior.
+    Returns empty list if directory doesn't exist.
+    """
     if not log_dir.exists():
         return []
     return sorted(p for p in log_dir.iterdir() if p.is_file())
