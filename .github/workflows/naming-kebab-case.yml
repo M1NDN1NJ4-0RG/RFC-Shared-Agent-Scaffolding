@@ -1,3 +1,21 @@
+# Workflow: Kebab-Case Naming Enforcement
+#
+# Purpose: Enforces kebab-case naming convention for script filenames in
+# specific directories. Validates that executable entrypoint files (.sh, .bash,
+# .zsh, .py, .pl, .ps1) follow the pattern: lowercase letters/digits, hyphens
+# allowed only as separators between segments (e.g., safe-run.sh, run-tests.py).
+#
+# Scope:
+# - RFC-Shared-Agent-Scaffolding-Example/scripts/**
+# - wrappers/**
+#
+# Exclusions:
+# - .rs files (Rust uses snake_case per ecosystem conventions)
+# - Non-script files (documentation, data files, etc.)
+#
+# Triggers:
+# - Pull requests (all paths)
+# - Pushes to main branch
 name: naming-kebab-case
 
 on:
@@ -6,11 +24,18 @@ on:
     branches: [main]
 
 jobs:
+  # Job: Kebab-Case Filename Validation
+  # Uses embedded Python script to check filename patterns against regex
   kebab_case:
+    # Runner: Ubuntu latest (provides Python 3 for validation script)
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout repository to access all tracked files
       - uses: actions/checkout@v4
 
+      # Step 2: Run kebab-case validation script
+      # Inline Python script checks all script files in scope directories
+      # Expected pattern: ^[a-z0-9]+(?:-[a-z0-9]+)*$ (stem only, without extension)
       - name: Enforce kebab-case for script files
         shell: bash
         run: |

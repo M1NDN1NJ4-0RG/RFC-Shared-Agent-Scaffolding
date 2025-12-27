@@ -1,3 +1,15 @@
+# Workflow: Multi-Language Conformance Validation
+#
+# Purpose: Validates that the conformance testing infrastructure is complete
+# and all language bundles (bash, python3, perl, powershell) exist with their
+# required structure. This workflow checks for the presence of conformance
+# vectors, language bundle directories, agent shard templates, and journal
+# templates, but does NOT run the actual language tests (those run separately).
+#
+# Triggers:
+# - Pull requests that modify language bundles, conformance data, or this workflow
+# - Pushes to main branch
+# - Manual workflow dispatch
 name: Multi-Language Conformance Validation
 
 on:
@@ -11,19 +23,27 @@ on:
       - main
   workflow_dispatch:
 
+# Permissions: Read-only access to repository contents
 permissions:
   contents: read
 
 jobs:
-  # This job ensures all language bundles pass their tests
+  # Job: Validate All Bundles
+  # Verifies required conformance files and language bundle directories exist
+  # and that conformance/vectors.json is valid JSON. Does not execute tests
+  # or perform deep structure/content validation.
   validate-all-bundles:
     name: All Bundles Conformance Check
+    # Runner: Ubuntu latest (sufficient for file existence checks)
     runs-on: ubuntu-latest
     
     steps:
+      # Step 1: Checkout repository to access conformance infrastructure
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      # Step 2: Validate conformance/vectors.json exists and is valid JSON
+      # This file defines the canonical test vectors used across all language implementations
       - name: Validate conformance vectors exist
         run: |
           if [ ! -f "conformance/vectors.json" ]; then
@@ -39,6 +59,8 @@ jobs:
           fi
           echo "✅ Conformance vectors JSON is valid"
       
+      # Step 3: Verify conformance/README.md exists
+      # Provides documentation for the conformance testing system
       - name: Check conformance README
         run: |
           if [ ! -f "conformance/README.md" ]; then
@@ -47,6 +69,9 @@ jobs:
           fi
           echo "✅ Conformance README found"
       
+      # Step 4: Verify all 4 language bundle directories exist
+      # Expected bundles: bash, python3, perl, powershell
+      # Each bundle should contain scripts/, tests/, run-tests.*, and optional README_TESTS.md
       - name: Verify all language bundles exist
         run: |
           bundles=("bash" "python3" "perl" "powershell")
@@ -66,6 +91,9 @@ jobs:
             exit 1
           fi
       
+      # Step 5: Validate agent shard template files exist
+      # These 8 shard files provide modular documentation for GitHub Copilot agents
+      # covering core rules, git workflow, testing standards, build verification, etc.
       - name: Validate agent shard templates exist
         run: |
           shards=(
@@ -94,6 +122,8 @@ jobs:
             exit 1
           fi
       
+      # Step 6: Validate journal template files exist
+      # These 3 files provide templates for tracking work progress in .docs/journal/
       - name: Validate journal templates exist
         run: |
           templates=("CURRENT.md" "TEMPLATE.md" "PR-LOG/README.md")
@@ -113,6 +143,9 @@ jobs:
             exit 1
           fi
       
+      # Step 7: Print summary of validation results
+      # Confirms all infrastructure is in place; individual language tests
+      # run in separate workflow files (test-bash.yml, test-python3.yml, etc.)
       - name: Summary
         run: |
           echo "========================================="

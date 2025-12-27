@@ -1,3 +1,17 @@
+# Workflow: PR Body Guardrails for EPIC Issues
+#
+# Purpose: Prevents accidental auto-closure of EPIC issues (parent/epic tracking
+# issues with "EPIC" in title) when PRs are merged. EPICs track large bodies of
+# work and should not be auto-closed by individual PRs. This workflow:
+# 1. Normalizes PR body: Rewrites "closes/fixes/resolves" to "Refs" for EPIC issues
+# 2. Validates: Scans PR title, body, and commits to ensure no auto-close keywords
+#    remain for EPIC issues after normalization
+#
+# Auto-close keywords: close, closes, closed, fix, fixes, fixed, resolve, resolves, resolved
+# Acceptable keywords: Refs, Related, Tracks (do not auto-close)
+#
+# Triggers:
+# - Pull requests: opened, edited, synchronize, reopened, ready_for_review
 name: pr-body-guardrails
 
 on:
@@ -5,13 +19,24 @@ on:
     types: [opened, edited, synchronize, reopened, ready_for_review]
 
 jobs:
+  # Job: Normalize and Check PR Body
+  # Two-phase approach: normalize (rewrite auto-close keywords) then validate
   check:
     name: normalize-and-check
+    # Runner: Ubuntu latest (sufficient for GitHub API calls and shell scripting)
     runs-on: ubuntu-latest
+    # Permissions:
+    # - pull-requests: write - Required to update PR body in normalization step
+    # - contents: read - Required for API reads (fetch issue metadata, PR details)
     permissions:
       pull-requests: write   # needed for PR body update in normalize step
       contents: read         # needed for API reads
     steps:
+      # Step 1: Normalize PR body (non-fork PRs only)
+      # Rewrites auto-close keywords to "Refs" for issues with "EPIC" in title
+      # Uses GitHub Actions script context with in-memory caching to reduce API calls
+      # Skips fenced code blocks (```/~~~) to avoid breaking code examples
+      # Fork PRs are skipped because they lack write permissions
       - name: Normalize PR body (non-fork only)
         if: github.event.pull_request.head.repo.fork == false
         uses: actions/github-script@v7
@@ -168,6 +193,8 @@ jobs:
               core.notice("No auto-close keywords found for issues with 'EPIC' in title in PR body.");
             }
 
+      # Step 2: Install jq dependency
+      # Required for JSON parsing in bash validation script
       - name: Install dependencies
         run: |
           if ! command -v jq &> /dev/null; then
@@ -178,6 +205,12 @@ jobs:
             echo "jq is already installed"
           fi
 
+      # Step 3: Scan PR title, body, and commits for auto-close keywords
+      # Validates that the normalization step successfully removed all auto-close
+      # keywords for EPIC issues. Fails the workflow if any are found.
+      # Uses bash script with associative array caching for issue title lookups.
+      # Sanitizes PR body by removing "Original prompt" section and code fences.
+      # Environment variables: OWNER, REPO, PR_NUMBER (from GitHub context)
       - name: Scan PR title/body and commits for auto-close keywords
         env:
           OWNER: ${{ github.repository_owner }}

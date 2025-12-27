@@ -1,3 +1,19 @@
+# Workflow: Test Perl Bundle
+#
+# Purpose: Runs conformance tests for the Perl implementation of safe-run wrapper.
+# Validates that the Perl wrapper correctly delegates to the Rust canonical binary
+# and follows M0 contract specifications.
+#
+# Dependencies:
+# - Rust canonical binary (built and staged at dist/linux/x86_64/safe-run)
+# - Perl 5.38 (via shogo82148/actions-setup-perl)
+# - JSON::PP module (for conformance vector parsing)
+# - Perl test suite (run-tests.sh)
+#
+# Triggers:
+# - Pull requests modifying Perl bundle, conformance data, or this workflow
+# - Pushes to main branch affecting the same paths
+# - Manual workflow dispatch
 name: Test Perl Bundle
 
 on:
@@ -15,25 +31,35 @@ on:
       - '.github/workflows/test-perl.yml'
   workflow_dispatch:
 
+# Permissions: Read-only access to repository contents
 permissions:
   contents: read
 
 jobs:
+  # Job: Perl Bundle Tests
+  # Builds Rust canonical tool, stages it, sets up Perl environment, runs tests
   test:
     name: Perl Bundle Tests
+    # Runner: Ubuntu latest (provides Rust toolchain, Perl setup via action)
     runs-on: ubuntu-latest
     
     steps:
+      # Step 1: Checkout repository to access Perl bundle and Rust source
       - name: Checkout repository
         uses: actions/checkout@v4
       
+      # Step 2: Install Rust stable toolchain for building canonical binary
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
       
+      # Step 3: Build Rust canonical tool in release mode
+      # This is the reference implementation that the Perl wrapper delegates to
       - name: Build Rust canonical tool
         working-directory: rust
         run: cargo build --release
       
+      # Step 4: Stage Rust binary at standard discovery location
+      # Perl wrapper uses SAFE_RUN_BIN environment variable to locate this binary
       - name: Stage Rust binary for wrapper discovery
         run: |
           mkdir -p dist/linux/x86_64
@@ -42,24 +68,36 @@ jobs:
           echo "Rust binary staged at: dist/linux/x86_64/safe-run"
           ls -lh dist/linux/x86_64/safe-run
       
+      # Step 5: Set up Perl 5.38 environment
+      # Uses pinned commit hash (3e011cd...) for reproducibility
       - name: Set up Perl
         uses: shogo82148/actions-setup-perl@3e011cd23aec3d977e118dfe36ba1318b28b63ef # v1
         with:
           perl-version: '5.38'
       
+      # Step 6: Display Perl version for diagnostics
       - name: Display Perl version
         run: perl --version
       
+      # Step 7: Check if JSON::PP is available; install if missing
+      # JSON::PP is required for parsing conformance/vectors.json
+      # cpanm --notest: Install without running module's own tests (faster)
       - name: Install JSON::PP (if needed)
         run: |
           perl -MJSON::PP -e 1 2>/dev/null || cpanm --notest JSON::PP
       
+      # Step 8: Run Perl test suite
+      # Executes run-tests.sh which runs all tests in tests/ directory
+      # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
       - name: Run Perl tests
         working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/perl
         run: |
           chmod +x run-tests.sh
           ./run-tests.sh
       
+      # Step 9: Upload failure logs as artifacts (only on test failure)
+      # Preserves .agent/FAIL-LOGS/ directory for debugging
+      # if-no-files-found: ignore prevents failure if no logs exist
       - name: Upload test artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4
