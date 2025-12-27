@@ -204,21 +204,6 @@
 
 ---
 
-## 📚 References
-
-- **EPIC Issue:** [#33 - Rust Canonical Tool + Thin Compatibility Wrappers](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)
-- **Completion Documents:**
-  - [PR0-PREFLIGHT-COMPLETE.md](./PR0-PREFLIGHT-COMPLETE.md)
-  - [PR1-RUST-SCAFFOLDING-COMPLETE.md](./PR1-RUST-SCAFFOLDING-COMPLETE.md)
-  - [PR2-CONFORMANCE-HARNESS-COMPLETE.md](./PR2-CONFORMANCE-HARNESS-COMPLETE.md)
-  - [PR3-SAFE-RUN-IMPLEMENTATION-COMPLETE.md](./PR3-SAFE-RUN-IMPLEMENTATION-COMPLETE.md)
-  - [P4-BASH-WRAPPER-CONVERSION-COMPLETE.md](./P4-BASH-WRAPPER-CONVERSION-COMPLETE.md)
-- **Verification Report:** [P0-P3.5-VERIFICATION-REPORT.md](./P0-P3.5-VERIFICATION-REPORT.md)
-- **Documentation:**
-  - [docs/rust-canonical-tool.md](./docs/rust-canonical-tool.md)
-  - [docs/wrapper-discovery.md](./docs/wrapper-discovery.md)
-  - [docs/conformance-contract.md](./docs/conformance-contract.md)
-
 ---
 
 **End of TODO Document**
