@@ -1,5 +1,5 @@
 name: Multi-Phase Feature Implementation
-description: Track progress across multi-PR phased work for an RFC/FW item
+description: Track progress across multi-PR phased work for a Future Work (FW) item from docs/FUTURE-WORK.md
 title: "EPIC: Multi-Phase Implementation for FW-XXX"
 labels: ["epic", "tracking"]
 assignees:
@@ -10,7 +10,7 @@ body:
     attributes:
       label: FW Reference
       placeholder: e.g. FW-002
-      description: Reference from `FUTURE-WORK.md`
+      description: Future Work ID from `docs/FUTURE-WORK.md` (format FW-XXX)
     validations:
       required: true
 
