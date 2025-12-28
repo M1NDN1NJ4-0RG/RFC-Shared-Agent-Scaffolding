@@ -44,6 +44,7 @@
 //! ```
 
 mod cli;
+mod safe_archive;
 mod safe_run;
 
 use clap::Parser;
