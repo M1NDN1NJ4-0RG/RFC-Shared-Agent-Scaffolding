@@ -30,14 +30,14 @@ name: Structure Validation
 on:
   pull_request:
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/**'
+      - 'wrappers/scripts/**'
       - 'scripts/validate-structure.sh'
       - '.github/workflows/structure-validation.yml'
   push:
     branches:
       - main
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/**'
+      - 'wrappers/scripts/**'
       - 'scripts/validate-structure.sh'
       - '.github/workflows/structure-validation.yml'
   workflow_dispatch:

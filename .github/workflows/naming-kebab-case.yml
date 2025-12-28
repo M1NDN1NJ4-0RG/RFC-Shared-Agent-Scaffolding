@@ -6,8 +6,8 @@
 # allowed only as separators between segments (e.g., safe-run.sh, run-tests.py).
 #
 # Scope:
-# - RFC-Shared-Agent-Scaffolding-Example/scripts/**
 # - wrappers/**
+# - scripts/**
 #
 # Exclusions:
 # - .rs files (Rust uses snake_case per ecosystem conventions)
@@ -57,8 +57,8 @@ jobs:
           from pathlib import PurePosixPath
 
           ROOTS = [
-            "RFC-Shared-Agent-Scaffolding-Example/scripts",
-            "wrappers",
+            "wrappers/scripts",
+            "scripts",
           ]
 
           # Script surface extensions only (executable entrypoints)

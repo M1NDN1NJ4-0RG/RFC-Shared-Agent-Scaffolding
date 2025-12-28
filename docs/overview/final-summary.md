@@ -165,7 +165,7 @@ Complete test execution evidence:
 ### 4. Test Additions/Updates ✅
 
 **Files Modified:**
-- `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/tests/test-safe-run.sh`
+- `wrappers/scripts/bash/tests/test-safe-run.sh`
   - Added 6 new conformance tests
   - All 13 tests passing
 
@@ -178,7 +178,7 @@ Complete test execution evidence:
 ### 5. Wrapper Changes ✅
 
 **Files Modified:**
-- `RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/safe-run.ps1`
+- `wrappers/scripts/powershell/scripts/safe-run.ps1`
   - Fixed repo root detection (line 23-57)
   - Added PS 5.1 compatibility (line 59-82)
   - Improved exit code handling (line 154-197)
@@ -277,12 +277,12 @@ Complete test execution evidence:
 
 ### Code Modified
 
-1. `RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/safe-run.ps1`
+1. `wrappers/scripts/powershell/scripts/safe-run.ps1`
    - Fixed repo root detection (34 lines changed)
    - Added PS 5.1 compatibility (24 lines changed)
    - Improved exit code handling (43 lines changed)
 
-2. `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/tests/test-safe-run.sh`
+2. `wrappers/scripts/bash/tests/test-safe-run.sh`
    - Added 6 conformance tests (125 lines added)
    - All tests passing (13/13)
 

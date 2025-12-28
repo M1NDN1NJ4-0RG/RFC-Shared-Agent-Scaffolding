@@ -1,6 +1,6 @@
 # Canonical Directory Structure
 
-This document defines the required directory structure for all language bundles in the `RFC-Shared-Agent-Scaffolding-Example` repository.
+This document defines the required directory structure for all language bundles in the `wrappers` repository.
 
 ## Purpose
 
@@ -10,13 +10,13 @@ To ensure consistency, maintainability, and prevent path drift across language i
 
 All language bundles are located under:
 ```
-RFC-Shared-Agent-Scaffolding-Example/scripts/<language>/
+wrappers/scripts/<language>/
 ```
 
 Each language bundle **MUST** have the following structure:
 
 ```
-RFC-Shared-Agent-Scaffolding-Example/scripts/<language>/
+wrappers/scripts/<language>/
   ├── scripts/          # Actual implementation scripts
   │   ├── safe-run.*
   │   ├── safe-check.*
@@ -107,7 +107,7 @@ To run locally:
 ### CI Enforcement
 
 The workflow `.github/workflows/structure-validation.yml` runs on every PR that modifies:
-- `RFC-Shared-Agent-Scaffolding-Example/scripts/**`
+- `wrappers/scripts/**`
 - `scripts/validate-structure.sh`
 - The workflow file itself
 

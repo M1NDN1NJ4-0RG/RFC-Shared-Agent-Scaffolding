@@ -45,7 +45,7 @@
 set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-EXAMPLE_DIR="$REPO_ROOT/RFC-Shared-Agent-Scaffolding-Example/scripts"
+EXAMPLE_DIR="$REPO_ROOT/wrappers/scripts"
 
 # ANSI color codes
 RED='\033[0;31m'

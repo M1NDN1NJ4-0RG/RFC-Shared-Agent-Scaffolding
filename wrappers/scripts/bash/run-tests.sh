@@ -32,7 +32,7 @@
 #
 # CI INTEGRATION:
 #   Called by: .github/workflows/test-bash.yml
-#   Working directory: RFC-Shared-Agent-Scaffolding-Example/scripts/bash
+#   Working directory: wrappers/scripts/bash
 #   Environment: GitHub Actions Ubuntu runner
 #
 # EXAMPLES:
@@ -41,7 +41,7 @@
 #
 #   # CI usage (GitHub Actions)
 #   - name: Run Bash tests
-#     working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/bash
+#     working-directory: wrappers/scripts/bash
 #     run: ./run-tests.sh
 #
 # SEE ALSO:

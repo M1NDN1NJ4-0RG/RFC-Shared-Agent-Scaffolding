@@ -60,7 +60,7 @@ bash ./safe-run-test.sh echo "test"
 ```bash
 cd /path/to/repo
 unset SAFE_RUN_BIN
-bash ./RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh echo "test from repo"
+bash ./wrappers/scripts/bash/scripts/safe-run.sh echo "test from repo"
 ```
 
 **Result:** ✅ PASS

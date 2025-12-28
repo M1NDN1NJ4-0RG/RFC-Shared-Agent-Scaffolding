@@ -483,7 +483,7 @@ if args and args[0] == "--":
 # .github/workflows/test-powershell.yml:53-55
 - name: Run PowerShell tests
   shell: pwsh
-  working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell
+  working-directory: wrappers/scripts/powershell
 ```
 
 **✅ CI already sets working directory correctly**

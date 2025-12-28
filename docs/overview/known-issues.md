@@ -83,8 +83,8 @@ This matches the Bash wrapper's permissive check and aligns with cross-platform 
 
 - Contract: `docs/conformance-contract.md` (SIGINT/SIGTERM exit codes)
 - Allowed drift: `ALLOWED_DRIFT.md` (hypothetical "Signal Exit Codes" example)
-- Bash test: `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/tests/test-safe-run.sh:180-181`
-- Python test: `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/tests/test-safe-run.py:216`
+- Bash test: `wrappers/scripts/bash/tests/test-safe-run.sh:180-181`
+- Python test: `wrappers/scripts/python3/tests/test-safe-run.py:216`
 
 ---
 
