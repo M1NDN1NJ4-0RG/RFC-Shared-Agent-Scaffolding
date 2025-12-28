@@ -120,6 +120,9 @@ pub struct VectorCategories {
     /// Preflight automerge ruleset test vectors
     #[serde(default)]
     pub preflight_automerge_ruleset: Vec<PreflightVector>,
+    /// Safe-check command test vectors
+    #[serde(default)]
+    pub safe_check: Vec<SafeCheckVector>,
 }
 
 /// Test vector for safe-run command execution
@@ -187,6 +190,26 @@ pub struct PreflightVector {
     /// Mock GitHub API responses
     #[serde(default)]
     pub mock_responses: MockResponses,
+    /// Command specification
+    pub command: CommandSpec,
+    /// Expected outcome
+    pub expected: ExpectedOutcome,
+}
+
+/// Test vector for safe-check command validation
+///
+/// Specifies what command to check and expected validation results.
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct SafeCheckVector {
+    /// Unique vector ID (e.g., "safe-check-001")
+    pub id: String,
+    /// Human-readable test name
+    pub name: String,
+    /// M0 specification requirement IDs
+    #[serde(default)]
+    pub m0_spec: Vec<String>,
+    /// Detailed description
+    pub description: String,
     /// Command specification
     pub command: CommandSpec,
     /// Expected outcome
