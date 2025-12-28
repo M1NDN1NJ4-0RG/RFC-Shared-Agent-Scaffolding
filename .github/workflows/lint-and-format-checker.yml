@@ -1,3 +1,29 @@
+# Workflow: Lint and Format Check
+#
+# Purpose: Runs linting and formatting checks for all languages in the repository.
+# Only runs checks for languages that have files present in the repository.
+#
+# Jobs:
+# 1. lint-python: Runs Black, Flake8, and Pylint on Python files
+# 2. lint-bash: Runs ShellCheck and shfmt on shell scripts
+# 3. lint-powershell: Runs PSScriptAnalyzer on PowerShell scripts
+# 4. lint-perl: Runs Perl::Critic on Perl files
+# 5. lint-rust: Runs rustfmt and clippy on Rust code
+#
+# Triggers:
+# - Pushes to main branch
+# - Pull requests to main branch
+#
+# Dependencies:
+# - Language-specific linters and formatters (installed in each job)
+#
+# Outputs:
+# - Status checks for each language
+# - Fails if any linting/formatting issues are found
+#
+# Notes:
+# - Each language runs as a separate job for parallel execution
+# - Jobs only run if relevant files exist in the repository
 name: Lint and Format Check
 
 on:
@@ -6,136 +32,177 @@ on:
   pull_request:
     branches: [ main ]
 
-jobs:
-  lint:
-    runs-on: ubuntu-latest
+permissions:
+  contents: read
 
+jobs:
+  lint-python:
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ---------- Python ----------
+      - name: Check for Python files
+        id: check-python
+        run: |
+          if [ -n "$(git ls-files '*.py')" ]; then
+            echo "has_files=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_files=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Set up Python
+        if: steps.check-python.outputs.has_files == 'true'
         uses: actions/setup-python@v4
         with:
           python-version: "3.x"
 
       - name: Install Python linters/formatters
+        if: steps.check-python.outputs.has_files == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install black flake8 pylint
 
       - name: Run black (check mode)
+        if: steps.check-python.outputs.has_files == 'true'
         run: |
           black --check .
 
       - name: Run flake8
+        if: steps.check-python.outputs.has_files == 'true'
         run: |
           flake8 .
 
       - name: Run pylint
+        if: steps.check-python.outputs.has_files == 'true'
         run: |
           pylint $(git ls-files '*.py')
 
-      # ---------- Bash ----------
-      - name: Install ShellCheck and shfmt
+  lint-bash:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for Bash files
+        id: check-bash
+        run: |
+          if [ -n "$(git ls-files '*.sh')" ]; then
+            echo "has_files=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_files=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install ShellCheck
+        if: steps.check-bash.outputs.has_files == 'true'
         run: |
           sudo apt-get update
-          sudo apt-get install -y shellcheck shfmt
+          sudo apt-get install -y shellcheck
+
+      - name: Install shfmt
+        if: steps.check-bash.outputs.has_files == 'true'
+        run: |
+          SHFMT_VERSION=3.7.0
+          SHFMT_CHECKSUM=333f2b621a631e85ba72b2f8c8e73c82ba0c25ea85f3a45e98b5a5cedf0d7bb4
+          wget -O /tmp/shfmt https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64
+          echo "${SHFMT_CHECKSUM}  /tmp/shfmt" | sha256sum -c -
+          chmod +x /tmp/shfmt
+          sudo mv /tmp/shfmt /usr/local/bin/shfmt
 
       - name: Run ShellCheck
+        if: steps.check-bash.outputs.has_files == 'true'
         run: |
           shellcheck $(git ls-files '*.sh')
 
       - name: Run shfmt (check)
+        if: steps.check-bash.outputs.has_files == 'true'
         run: |
           shfmt -d -i 2 -ci $(git ls-files '*.sh')
 
-      # ---------- PowerShell ----------
+  lint-powershell:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for PowerShell files
+        id: check-powershell
+        run: |
+          if [ -n "$(git ls-files '*.ps1')" ]; then
+            echo "has_files=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_files=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Install PSScriptAnalyzer
+        if: steps.check-powershell.outputs.has_files == 'true'
         shell: pwsh
         run: |
-          Install-Module -Name PSScriptAnalyzer -Force
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
 
       - name: Run PSScriptAnalyzer
+        if: steps.check-powershell.outputs.has_files == 'true'
         shell: pwsh
         run: |
-          Invoke-ScriptAnalyzer -Path (Get-ChildItem -Recurse -Filter '*.ps1').FullName -EnableExit
+          $files = Get-ChildItem -Recurse -Filter '*.ps1' | Select-Object -ExpandProperty FullName
+          if ($files) {
+            Invoke-ScriptAnalyzer -Path $files -EnableExit
+          }
 
-      # ---------- Perl ----------
-      - name: Install Perl::Critic
+  lint-perl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for Perl files
+        id: check-perl
         run: |
-          sudo cpanm Perl::Critic
+          if [ -n "$(git ls-files '*.pl' '*.pm')" ]; then
+            echo "has_files=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_files=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Install Perl::Critic
+        if: steps.check-perl.outputs.has_files == 'true'
+        run: |
+          sudo cpanm --notest Perl::Critic
 
       - name: Run Perl::Critic
+        if: steps.check-perl.outputs.has_files == 'true'
         run: |
           perlcritic --severity 5 $(git ls-files '*.pl' '*.pm')
 
-      # ---------- Rust ----------
-      - name: Set up Rust
-        uses: actions/setup-rust@v1
+  lint-rust:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for Rust files
+        id: check-rust
+        run: |
+          if [ -f "rust/Cargo.toml" ]; then
+            echo "has_files=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_files=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Rust toolchain
+        if: steps.check-rust.outputs.has_files == 'true'
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
-          rustup-components: rustfmt, clippy
+          components: rustfmt, clippy
 
       - name: Run rustfmt (check)
+        if: steps.check-rust.outputs.has_files == 'true'
         run: |
-          cargo fmt --all -- --check
+          cd rust && cargo fmt --all -- --check
 
       - name: Run clippy
+        if: steps.check-rust.outputs.has_files == 'true'
         run: |
-          cargo clippy --all-targets --all-features -- -D warnings
-
-      # ---------- C/C++ ----------
-      - name: Install clang-format and clang-tidy
-        run: |
-          sudo apt-get install -y clang-format clang-tidy
-
-      - name: Run clang-format (check)
-        run: |
-          clang-format --dry-run --Werror $(git ls-files '*.[ch]' '*.[ch]pp')
-
-      - name: Run clang-tidy
-        run: |
-          clang-tidy $(git ls-files '*.[ch]pp' '*.[ch]') --warnings-as-errors='*' --quiet || true
-
-      # ---------- C# ----------
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
-
-      - name: Run dotnet-format (check)
-        run: |
-          dotnet tool update -g dotnet-format
-          dotnet format --verify-no-changes
-
-      # ---------- Ruby ----------
-      - name: Install Ruby and rubocop
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.2'
-
-      - name: Run rubocop
-        run: |
-          gem install rubocop
-          rubocop --parallel
-
-      # ---------- TypeScript/JavaScript ----------
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install ESLint and Prettier
-        run: |
-          npm install --no-save eslint prettier
-
-      - name: Run Prettier (check)
-        run: |
-          npx prettier --check "**/*.{js,ts,jsx,tsx,json,md,yml}"
-
-      - name: Run ESLint
-        run: |
-          npx eslint "**/*.{js,ts,jsx,tsx}"
+          cd rust && cargo clippy --all-targets --all-features -- -D warnings
 
