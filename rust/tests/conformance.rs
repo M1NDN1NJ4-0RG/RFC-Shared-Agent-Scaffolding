@@ -546,19 +546,13 @@ mod safe_archive_tests {
     ///
     /// # Purpose
     ///
-    /// Validates that safe-archive creates an archive file regardless of
-    /// command success or failure.
+    /// Validates that safe-archive creates an archive file from a source directory.
     ///
     /// # Contract Reference
     ///
     /// - Vector: safe-archive-001
-    /// - Requirement: Always create archive, preserve exit code
-    ///
-    /// # Implementation Status
-    ///
-    /// **TODO**: This is a placeholder test. Full implementation in future PR.
+    /// - Requirement: Create archive from directory, exit code 0
     #[test]
-    #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_archive_001_basic() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
@@ -610,12 +604,7 @@ mod safe_archive_tests {
     ///
     /// - Vector: safe-archive-002
     /// - Requirement: Support standard archive formats
-    ///
-    /// # Implementation Status
-    ///
-    /// **TODO**: Placeholder test, full implementation in future PR.
     #[test]
-    #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_archive_002_compression_formats() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
@@ -663,9 +652,11 @@ mod safe_archive_tests {
     ///
     /// # Purpose
     ///
+    /// # Purpose
+    ///
     /// Validates that when an archive file already exists, safe-archive:
     /// - Does NOT overwrite the existing file
-    /// - Creates a new file with sequential suffix (-1, -2, etc.)
+    /// - Creates a new file with sequential suffix (.1, .2, etc.)
     /// - Preserves both original and new archive files
     ///
     /// # Contract Reference
@@ -679,12 +670,7 @@ mod safe_archive_tests {
     /// - Original archive file still exists
     /// - New archive file with suffix exists
     /// - Both files are distinct
-    ///
-    /// # Implementation Status
-    ///
-    /// **TODO**: Placeholder test, full implementation in future PR.
     #[test]
-    #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_archive_003_no_clobber_auto_suffix() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors
@@ -726,6 +712,7 @@ mod safe_archive_tests {
     /// Test vector safe-archive-004: No-clobber strict mode
     ///
     /// # Purpose
+    /// # Purpose
     ///
     /// Validates that in strict mode, when an archive file already exists:
     /// - Command fails with error exit code (40-49 range)
@@ -743,12 +730,7 @@ mod safe_archive_tests {
     /// - Exit code in range 40-49 (clobber error)
     /// - Original file unchanged
     /// - No new files created
-    ///
-    /// # Implementation Status
-    ///
-    /// **TODO**: Placeholder test, full implementation in future PR.
     #[test]
-    #[ignore] // TODO: Remove ignore once implementation exists
     fn test_safe_archive_004_no_clobber_strict() {
         let vectors = load_vectors().expect("Failed to load vectors");
         let vector = vectors

@@ -172,30 +172,31 @@ enum Commands {
         command: Vec<String>,
     },
 
-    /// Archive command output and artifacts
-    ///
-    /// **WARNING: NOT YET IMPLEMENTED - This subcommand is scaffolding only.**
+    /// Archive directory to compressed file
     ///
     /// # Behavior
     ///
-    /// (Future) Executes a command and creates an archive of its output regardless of
-    /// exit status. Unlike `run`, this will always create artifacts even on success.
-    ///
-    /// # Current Behavior
-    ///
-    /// Prints an error message and exits with code 1 to avoid silent no-ops.
+    /// Creates a compressed archive (tar.gz, tar.bz2, or zip) from a source directory.
+    /// Supports multiple compression formats and no-clobber semantics.
     ///
     /// # Exit Codes
     ///
-    /// - 1: Not implemented (current behavior)
-    /// - (Future) 0: Archival succeeded (command may have failed)
-    /// - (Future) 2: Archival failed (e.g., I/O error)
-    /// - (Future) Other: Preserved from command
+    /// - 0: Archive created successfully
+    /// - 2: Invalid arguments or source not found
+    /// - 40: No-clobber collision (strict mode)
+    /// - 50: Archive creation failed (I/O error)
     Archive {
-        /// Command to execute and archive
+        /// Enable strict no-clobber mode (fail if destination exists)
         ///
-        /// All output from this command will be captured and stored in an archive
-        /// file regardless of the command's exit status.
+        /// By default, if the destination file exists, a numeric suffix is added
+        /// (e.g., output.1.tar.gz). With --no-clobber, the command fails instead.
+        #[arg(long)]
+        no_clobber: bool,
+
+        /// Source directory and destination archive path
+        ///
+        /// First argument: source directory path
+        /// Second argument: destination archive path (.tar.gz, .tar.bz2, or .zip)
         #[arg(required = true)]
         command: Vec<String>,
     },
@@ -233,7 +234,10 @@ impl Cli {
         match &self.command {
             Some(Commands::Run { command }) => self.run_command(command),
             Some(Commands::Check { command }) => self.check_command(command),
-            Some(Commands::Archive { command }) => self.archive_command(command),
+            Some(Commands::Archive {
+                no_clobber,
+                command,
+            }) => self.archive_command(command, *no_clobber),
             None => {
                 // No subcommand provided, show help
                 println!("safe-run {} (contract: {})", VERSION, CONTRACT_VERSION);
@@ -571,16 +575,32 @@ impl Cli {
     /// - Create archive regardless of command exit status
     /// - Include metadata (timestamp, command, exit code)
     /// - Support artifact collection
-    fn archive_command(&self, _command: &[String]) -> Result<i32, String> {
-        eprintln!("ERROR: 'safe-run archive' is not yet implemented.");
-        eprintln!();
-        eprintln!("This subcommand is scaffolding only and does not archive output.");
-        eprintln!("Use the 'run' subcommand for safe command execution:");
-        eprintln!("  safe-run run <command> [args...]");
-        eprintln!();
-        eprintln!("For more information, see:");
-        eprintln!("  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding");
-        Ok(1)
+    /// Create an archive from a source directory
+    ///
+    /// # Arguments
+    ///
+    /// - `command`: Command arguments (source and destination paths)
+    /// - `no_clobber`: If true, fail when destination exists; if false, auto-suffix
+    ///
+    /// # Implementation
+    ///
+    /// Delegates to `crate::safe_archive::execute()` which implements:
+    /// - Archive creation from source directories
+    /// - Support for .tar.gz, .tar.bz2, and .zip formats
+    /// - No-clobber semantics (auto-suffix or strict mode)
+    ///
+    /// # Returns
+    ///
+    /// Exit code from the archive operation (0 for success, non-zero for failure)
+    ///
+    /// # Contract References
+    ///
+    /// - safe-archive-001: Basic archive creation
+    /// - safe-archive-002: Multiple compression formats
+    /// - safe-archive-003: No-clobber with auto-suffix
+    /// - safe-archive-004: No-clobber strict mode
+    fn archive_command(&self, command: &[String], no_clobber: bool) -> Result<i32, String> {
+        crate::safe_archive::execute(command, no_clobber)
     }
 }
 
