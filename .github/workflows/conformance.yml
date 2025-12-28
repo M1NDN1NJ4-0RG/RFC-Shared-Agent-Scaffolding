@@ -107,59 +107,11 @@ jobs:
             exit 1
           fi
       
-      # Step 5: Validate agent shard template files exist
-      # These 8 shard files provide modular documentation for GitHub Copilot agents
-      # covering core rules, git workflow, testing standards, build verification, etc.
-      - name: Validate agent shard templates exist
-        run: |
-          shards=(
-            "00_INDEX.md"
-            "10_CORE_RULES.md"
-            "20_GIT_WORKFLOW.md"
-            "21_AUTO_MERGE_WAITING.md"
-            "22_AUTOMERGE_PREFLIGHT.md"
-            "30_TESTING_STANDARDS.md"
-            "40_BUILD_AND_VERIFICATION.md"
-            "50_DEPENDENCIES.md"
-          )
-          missing=0
-          
-          for shard in "${shards[@]}"; do
-            path="wrappers/.docs/agent/$shard"
-            if [ ! -f "$path" ]; then
-              echo "ERROR: Shard not found: $shard"
-              missing=1
-            else
-              echo "✅ Shard found: $shard"
-            fi
-          done
-          
-          if [ $missing -eq 1 ]; then
-            exit 1
-          fi
+      # Note: Agent shard and journal templates were moved to docs/history/ai-agent-guidelines/
+      # as part of M2 restructure. These files are now archived and no longer validated
+      # as part of the wrapper conformance structure.
       
-      # Step 6: Validate journal template files exist
-      # These 3 files provide templates for tracking work progress in .docs/journal/
-      - name: Validate journal templates exist
-        run: |
-          templates=("CURRENT.md" "TEMPLATE.md" "PR-LOG/README.md")
-          missing=0
-          
-          for template in "${templates[@]}"; do
-            path="wrappers/.docs/journal/$template"
-            if [ ! -f "$path" ]; then
-              echo "ERROR: Journal template not found: $template"
-              missing=1
-            else
-              echo "✅ Journal template found: $template"
-            fi
-          done
-          
-          if [ $missing -eq 1 ]; then
-            exit 1
-          fi
-      
-      # Step 7: Print summary of validation results
+      # Step 5: Print summary of validation results
       # Confirms all infrastructure is in place; individual language tests
       # run in separate workflow files (test-bash.yml, test-python3.yml, etc.)
       - name: Summary
@@ -171,8 +123,9 @@ jobs:
           echo "Validated:"
           echo "  - Conformance vectors (JSON schema)"
           echo "  - All 4 language bundles present"
-          echo "  - Agent shard templates (8 files)"
-          echo "  - Journal templates (3 files)"
+          echo ""
+          echo "Note: Agent shard and journal templates moved to docs/history/"
+          echo "as part of M2 restructure (archived, no longer in wrapper tree)"
           echo ""
           echo "Individual language tests run in separate jobs:"
           echo "  - test-bash.yml"

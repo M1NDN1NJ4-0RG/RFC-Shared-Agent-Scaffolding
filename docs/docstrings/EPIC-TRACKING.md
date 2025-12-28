@@ -100,7 +100,7 @@ The current docstring contracts in `/docs/docstrings/` are a powerful mechanism 
 4. **Extension Guide** - Step-by-step guide for adding new languages
 5. **AI Prompting Guide** - Best practices for using GitHub Copilot with contracts
 6. **Harmonized Contracts** - All 6 language contracts (bash, perl, powershell, python, rust, yaml) updated
-7. **Unit Tests** - test_validate_docstrings.py with coverage for each language
+7. **Unit Tests** - test-validate-docstrings.py with coverage for each language
 8. **Version History** - Contract suite now versioned (v1.1)
 9. **Platform Compatibility** - Recommended as optional section across all contracts
 10. **Future Planning** - FUTURE_VALIDATION.md outlines next-generation validation
