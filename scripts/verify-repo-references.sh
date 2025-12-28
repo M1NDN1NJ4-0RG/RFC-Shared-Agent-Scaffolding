@@ -71,7 +71,7 @@ search_pattern() {
     # Search for the pattern, excluding .git and binary files
     # Use git grep if available (respects .gitignore), fallback to regular grep
     local results=""
-    if command -v git &> /dev/null && git rev-parse --git-dir &> /dev/null 2>&1; then
+    if command -v git &> /dev/null && git rev-parse --git-dir &> /dev/null; then
         results=$(git grep -n "${pattern}" -- '*.md' '*.yml' '*.yaml' '*.sh' '*.py' '*.pl' '*.ps1' '*.rs' '*.toml' 2>/dev/null || true)
     else
         results=$(grep -rn --include='*.md' --include='*.yml' --include='*.yaml' --include='*.sh' --include='*.py' --include='*.pl' --include='*.ps1' --include='*.rs' --include='*.toml' "${pattern}" . 2>/dev/null || true)
