@@ -49,7 +49,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Tuple, Dict, Optional
+from typing import List, Optional
 
 
 # In-scope directory patterns for validation

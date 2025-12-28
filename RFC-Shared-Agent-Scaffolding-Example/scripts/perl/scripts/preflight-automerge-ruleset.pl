@@ -178,26 +178,6 @@ Usage error - Invalid arguments, missing required options, or help requested.
 
 =back
 
-=head1 EXAMPLES
-
-=head2 Basic Usage with Ruleset ID
-
-  preflight-automerge-ruleset.pl --repo owner/repo --ruleset-id 12345 \
-    --context "build" --context "test"
-
-=head2 Using Ruleset Name
-
-  preflight-automerge-ruleset.pl --repo owner/repo --ruleset-name "Main Protection" \
-    --context "CI / test-bash" --context "CI / test-python"
-
-=head2 With GitHub Token
-
-  export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
-  preflight-automerge-ruleset.pl --repo owner/repo --ruleset-id 12345 \
-    --context "required-check"
-
-=back
-
 =head1 VALIDATION LOGIC
 
 The script performs the following checks in order:
