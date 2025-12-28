@@ -8,6 +8,8 @@
 
 This report verifies the current implementation status of all items documented in `docs/FUTURE-WORK.md`. Each future work item has been reviewed against the actual repository state to determine accuracy and completeness.
 
+**Note on Line Numbers:** This report includes specific line number references for verification purposes. These references are accurate as of commit `48f731c` but may become stale if code is refactored. When in doubt, use file search or grep to locate the referenced code sections.
+
 **Key Findings:**
 - **FW-001**: ✅ **IMPLEMENTED** - Signal handling exists but test remains incomplete
 - **FW-002**: ✅ **ACCURATE** - safe-check is scaffolding only

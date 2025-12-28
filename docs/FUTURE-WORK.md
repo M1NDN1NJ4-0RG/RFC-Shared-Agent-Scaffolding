@@ -39,24 +39,24 @@ This document tracks **explicitly-marked future work** found in the repository. 
 **Implementation Status:**
 
 Signal handling for SIGTERM and SIGINT is **fully implemented** in `rust/src/safe_run.rs`:
-- Signal handlers registered for both SIGTERM and SIGINT (`rust/src/safe_run.rs:184-187`)
-- ABORTED log file created on signal interruption with full event ledger (`rust/src/safe_run.rs:268-300`)
-- Correct exit codes: 130 for SIGINT, 143 for SIGTERM (`rust/src/safe_run.rs:295-299`)
+- Signal handlers registered for both SIGTERM and SIGINT using `signal_hook::flag::register()`
+- ABORTED log file created on signal interruption with full event ledger via `save_log()` function
+- Correct exit codes: 130 for SIGINT, 143 for SIGTERM
 - Child process properly terminated and output captured on signal
 - Merged view mode supported in ABORTED logs
 
 **Test Status:**
 
-The conformance test `test_safe_run_003_sigterm_aborted` (marked `#[ignore]` at `rust/tests/conformance.rs:321`) is a placeholder that only validates the vector structure, not actual signal behavior. The test requires implementation of:
+The conformance test `test_safe_run_003_sigterm_aborted` (marked `#[ignore]` in `rust/tests/conformance.rs`) is a placeholder that only validates the vector structure, not actual signal behavior. The test requires implementation of:
 - Spawning safe-run with a long-running child command in a subprocess
 - Sending SIGTERM or SIGINT to the safe-run process
 - Verifying ABORTED log file creation and content
 - Validating correct exit code (130 or 143)
 
 **Source:**
-- `rust/src/safe_run.rs:58-67, 180-187, 256-300` (implementation)
-- `rust/tests/conformance.rs:313-355` (incomplete test)
-- `conformance/vectors.json:43-58` (vector safe-run-003 definition)
+- `rust/src/safe_run.rs` (signal handler registration and ABORTED log creation in `execute()` function)
+- `rust/tests/conformance.rs` (incomplete test `test_safe_run_003_sigterm_aborted`)
+- `conformance/vectors.json` (vector safe-run-003 definition)
 
 **Remaining Work:**
 - Implement complete signal handling test with actual signal delivery
