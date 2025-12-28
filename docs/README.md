@@ -38,7 +38,7 @@ Test plans, evidence, and validation procedures:
 Guidelines for contributing to the project:
 - [Contributing Guide](./contributing/contributing-guide.md) - How to contribute (naming conventions, required checks, PR process)
 - [Allowed Drift](./contributing/allowed-drift.md) - Behavioral difference policy
-- [Docstring Contracts](./docstrings/README.md) - Documentation standards for all languages
+- [Docstring Contracts](./contributing/docstring-contracts/README.md) - Documentation standards for all languages
 
 ### History
 Historical documents, decision logs, and progress tracking:
