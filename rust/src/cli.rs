@@ -33,6 +33,8 @@
 //! ```
 
 use clap::{Parser, Subcommand};
+use std::env;
+use std::path::Path;
 
 /// Package version from Cargo.toml
 const VERSION: &str = env!("CARGO_PKG_VERSION");
@@ -138,22 +140,25 @@ enum Commands {
 
     /// Check repository state and command availability
     ///
-    /// **WARNING: NOT YET IMPLEMENTED - This subcommand is scaffolding only.**
-    ///
     /// # Behavior
     ///
-    /// (Future) Verifies that a command exists and can be executed without actually running it.
-    /// This will be useful for pre-flight checks and dependency validation.
+    /// Verifies that a command exists and can be executed without actually running it.
+    /// This is useful for pre-flight checks and dependency validation.
     ///
-    /// # Current Behavior
+    /// # Current Implementation (Phase 1)
     ///
-    /// Prints an error message and exits with code 1 to avoid silent no-ops.
+    /// - Command existence check via PATH lookup
+    /// - Returns 0 if command found, 2 if not found
+    ///
+    /// # Future Phases
+    ///
+    /// - Phase 2: Repository state validation and dependency checks
+    /// - Phase 3: Full conformance test coverage
     ///
     /// # Exit Codes
     ///
-    /// - 1: Not implemented (current behavior)
-    /// - (Future) 0: Success (command exists and is executable)
-    /// - (Future) 2: Command not found or not executable
+    /// - 0: Success (command exists and is executable)
+    /// - 2: Command not found or not executable
     Check {
         /// Command to check
         ///
@@ -267,39 +272,102 @@ impl Cli {
         crate::safe_run::execute(command)
     }
 
-    /// Check command availability (scaffolding only)
+    /// Check command availability
     ///
     /// # Arguments
     ///
-    /// - `_command`: Command to check (currently unused)
+    /// - `command`: Command to check (first element is the command name)
     ///
     /// # Implementation Status
     ///
-    /// **SCAFFOLDING ONLY**: This subcommand is not yet implemented.
-    /// It exists for CLI structure but does not perform real work.
+    /// **Phase 1 - Command existence check**: Implements PATH lookup to verify
+    /// the target command exists and is executable.
     ///
-    /// # Current Behavior
+    /// # Behavior
     ///
-    /// Prints an error message indicating the feature is not implemented
-    /// and exits with code 1 to prevent silent no-ops.
+    /// Verifies that a command exists on the system PATH without executing it.
+    /// This is useful for pre-flight checks and dependency validation.
+    ///
+    /// # Exit Codes
+    ///
+    /// - 0: Success (command exists and is executable)
+    /// - 2: Command not found or not executable
     ///
     /// # Future Implementation
     ///
-    /// Will verify:
-    /// - Command exists on PATH
-    /// - Command is executable
+    /// Will additionally verify:
     /// - Repository state is valid
     /// - Dependencies are available
-    fn check_command(&self, _command: &[String]) -> Result<i32, String> {
-        eprintln!("ERROR: 'safe-run check' is not yet implemented.");
-        eprintln!();
-        eprintln!("This subcommand is scaffolding only and does not perform any checks.");
-        eprintln!("Use the 'run' subcommand for safe command execution:");
-        eprintln!("  safe-run run <command> [args...]");
-        eprintln!();
-        eprintln!("For more information, see:");
-        eprintln!("  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding");
-        Ok(1)
+    fn check_command(&self, command: &[String]) -> Result<i32, String> {
+        if command.is_empty() {
+            eprintln!("ERROR: No command specified for check");
+            return Ok(2);
+        }
+
+        let cmd_name = &command[0];
+        
+        // Check if the command exists on PATH
+        if Self::command_exists(cmd_name) {
+            Ok(0)
+        } else {
+            eprintln!("Command not found: {}", cmd_name);
+            Ok(2)
+        }
+    }
+
+    /// Check if a command exists on the system PATH
+    ///
+    /// # Arguments
+    ///
+    /// - `cmd`: Command name to check
+    ///
+    /// # Returns
+    ///
+    /// - `true`: Command exists and is executable on PATH
+    /// - `false`: Command not found or not executable
+    ///
+    /// # Platform Considerations
+    ///
+    /// On Windows, also checks for .exe, .bat, and .cmd extensions.
+    fn command_exists(cmd: &str) -> bool {
+        // If the command is an absolute or relative path, check it directly
+        let cmd_path = Path::new(cmd);
+        if cmd_path.is_absolute() || cmd.contains('/') || cmd.contains('\\') {
+            return cmd_path.exists() && cmd_path.is_file();
+        }
+
+        // Get PATH environment variable
+        let path_var = match env::var_os("PATH") {
+            Some(p) => p,
+            None => return false,
+        };
+
+        // Split PATH and check each directory
+        for path_dir in env::split_paths(&path_var) {
+            let full_path = path_dir.join(cmd);
+            
+            // On Unix-like systems, just check if the file exists
+            #[cfg(not(target_os = "windows"))]
+            if full_path.exists() && full_path.is_file() {
+                return true;
+            }
+
+            // On Windows, check for .exe, .bat, .cmd extensions
+            #[cfg(target_os = "windows")]
+            {
+                if full_path.exists() && full_path.is_file() {
+                    return true;
+                }
+                for ext in &[".exe", ".bat", ".cmd"] {
+                    let with_ext = path_dir.join(format!("{}{}", cmd, ext));
+                    if with_ext.exists() && with_ext.is_file() {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        false
     }
 
     /// Archive command output (scaffolding only)

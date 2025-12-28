@@ -790,6 +790,216 @@ mod safe_archive_tests {
     }
 }
 
+/// Safe-check command conformance tests
+///
+/// # Purpose
+///
+/// Validates that the `safe-run check` command implements command existence
+/// checking and other pre-flight validation requirements.
+///
+/// # Coverage (Phase 1)
+///
+/// - Command existence check (PATH lookup)
+/// - Exit code 0 when command found
+/// - Exit code 2 when command not found
+/// - Relative and absolute path handling
+///
+/// # Contract References
+///
+/// Tests validate FW-002 (safe-check subcommand implementation)
+///
+/// # Future Coverage (Phase 2+)
+///
+/// - Repository state validation
+/// - Dependency availability checks
+#[cfg(test)]
+mod safe_check_tests {
+    use super::*;
+
+    /// Test that check returns 0 when command exists on PATH
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check successfully finds commands that exist
+    /// on the system PATH and returns exit code 0.
+    ///
+    /// # Test Approach
+    ///
+    /// Tests with common commands that should exist on any Unix-like system:
+    /// - ls (standard on all Unix-like systems)
+    /// - sh (POSIX shell, universally available)
+    #[test]
+    fn test_check_command_exists_on_path() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        
+        // Test with 'ls' which should exist on Unix-like systems
+        #[cfg(not(target_os = "windows"))]
+        {
+            Command::cargo_bin("safe-run")
+                .expect("Failed to find binary")
+                .arg("check")
+                .arg("ls")
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+
+        // Test with 'cmd' which should exist on Windows
+        #[cfg(target_os = "windows")]
+        {
+            Command::cargo_bin("safe-run")
+                .expect("Failed to find binary")
+                .arg("check")
+                .arg("cmd")
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+    }
+
+    /// Test that check returns 2 when command does not exist
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check correctly identifies non-existent commands
+    /// and returns exit code 2.
+    ///
+    /// # Test Approach
+    ///
+    /// Uses a command name that is extremely unlikely to exist on any system.
+    #[test]
+    fn test_check_command_not_found() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        
+        Command::cargo_bin("safe-run")
+            .expect("Failed to find binary")
+            .arg("check")
+            .arg("nonexistent_command_xyz123_never_exists")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2)
+            .stderr(predicate::str::contains("Command not found"));
+    }
+
+    /// Test that check works with absolute paths
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check can verify commands specified with
+    /// absolute paths, not just commands on PATH.
+    ///
+    /// # Test Approach
+    ///
+    /// Creates a temporary executable file and checks it with its absolute path.
+    #[test]
+    #[cfg(not(target_os = "windows"))] // Unix-specific test
+    fn test_check_absolute_path() {
+        use std::fs;
+        use std::os::unix::fs::PermissionsExt;
+        
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let script_path = temp_dir.path().join("test_script.sh");
+        
+        // Create a simple executable script
+        fs::write(&script_path, "#!/bin/sh\necho test\n")
+            .expect("Failed to write script");
+        
+        // Make it executable
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_path, perms)
+            .expect("Failed to set permissions");
+        
+        // Check the script by absolute path
+        Command::cargo_bin("safe-run")
+            .expect("Failed to find binary")
+            .arg("check")
+            .arg(script_path.to_str().unwrap())
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test that check returns 2 for non-existent absolute path
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check returns exit code 2 when given an
+    /// absolute path that doesn't exist.
+    #[test]
+    fn test_check_absolute_path_not_found() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let nonexistent_path = temp_dir.path().join("nonexistent_file");
+        
+        Command::cargo_bin("safe-run")
+            .expect("Failed to find binary")
+            .arg("check")
+            .arg(nonexistent_path.to_str().unwrap())
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2);
+    }
+
+    /// Test that check requires a command argument
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check returns an error when no command
+    /// is specified.
+    #[test]
+    fn test_check_no_command() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        
+        Command::cargo_bin("safe-run")
+            .expect("Failed to find binary")
+            .arg("check")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure();
+        // Note: clap will handle this with its own error, not our custom error
+    }
+
+    /// Test that check works with common system utilities
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check can find various common system utilities
+    /// to ensure cross-platform compatibility.
+    ///
+    /// # Test Approach
+    ///
+    /// Tests multiple common utilities that should exist on the system.
+    #[test]
+    fn test_check_multiple_common_commands() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        
+        // Commands to test (platform-specific)
+        #[cfg(not(target_os = "windows"))]
+        let commands = vec!["sh", "echo", "cat"];
+        
+        #[cfg(target_os = "windows")]
+        let commands = vec!["cmd", "powershell"];
+        
+        for cmd in commands {
+            Command::cargo_bin("safe-run")
+                .expect("Failed to find binary")
+                .arg("check")
+                .arg(cmd)
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+    }
+}
+
 /// Preflight automerge ruleset conformance tests
 ///
 /// # Purpose
