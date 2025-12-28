@@ -311,7 +311,7 @@ impl Cli {
         }
 
         let cmd_name = &command[0];
-        
+
         // Check if the command exists on PATH
         if Self::command_exists(cmd_name) {
             Ok(0)

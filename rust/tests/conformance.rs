@@ -831,12 +831,11 @@ mod safe_check_tests {
     #[test]
     fn test_check_command_exists_on_path() {
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
-        
+
         // Test with 'ls' which should exist on Unix-like systems
         #[cfg(not(target_os = "windows"))]
         {
-            Command::cargo_bin("safe-run")
-                .expect("Failed to find binary")
+            Command::new(get_safe_run_binary())
                 .arg("check")
                 .arg("ls")
                 .current_dir(temp_dir.path())
@@ -848,8 +847,7 @@ mod safe_check_tests {
         // Test with 'cmd' which should exist on Windows
         #[cfg(target_os = "windows")]
         {
-            Command::cargo_bin("safe-run")
-                .expect("Failed to find binary")
+            Command::new(get_safe_run_binary())
                 .arg("check")
                 .arg("cmd")
                 .current_dir(temp_dir.path())
@@ -872,9 +870,8 @@ mod safe_check_tests {
     #[test]
     fn test_check_command_not_found() {
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
-        
-        Command::cargo_bin("safe-run")
-            .expect("Failed to find binary")
+
+        Command::new(get_safe_run_binary())
             .arg("check")
             .arg("nonexistent_command_xyz123_never_exists")
             .current_dir(temp_dir.path())
@@ -898,25 +895,22 @@ mod safe_check_tests {
     #[cfg(not(target_os = "windows"))] // Unix-specific test
     fn test_check_absolute_path() {
         use std::os::unix::fs::PermissionsExt;
-        
+
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
         let script_path = temp_dir.path().join("test_script.sh");
-        
+
         // Create a simple executable script
-        fs::write(&script_path, "#!/bin/sh\necho test\n")
-            .expect("Failed to write script");
-        
+        fs::write(&script_path, "#!/bin/sh\necho test\n").expect("Failed to write script");
+
         // Make it executable
         let mut perms = fs::metadata(&script_path)
             .expect("Failed to get metadata")
             .permissions();
         perms.set_mode(0o755);
-        fs::set_permissions(&script_path, perms)
-            .expect("Failed to set permissions");
-        
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
         // Check the script by absolute path
-        Command::cargo_bin("safe-run")
-            .expect("Failed to find binary")
+        Command::new(get_safe_run_binary())
             .arg("check")
             .arg(script_path.to_str().unwrap())
             .current_dir(temp_dir.path())
@@ -935,9 +929,8 @@ mod safe_check_tests {
     fn test_check_absolute_path_not_found() {
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
         let nonexistent_path = temp_dir.path().join("nonexistent_file");
-        
-        Command::cargo_bin("safe-run")
-            .expect("Failed to find binary")
+
+        Command::new(get_safe_run_binary())
             .arg("check")
             .arg(nonexistent_path.to_str().unwrap())
             .current_dir(temp_dir.path())
@@ -955,9 +948,8 @@ mod safe_check_tests {
     #[test]
     fn test_check_no_command() {
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
-        
-        Command::cargo_bin("safe-run")
-            .expect("Failed to find binary")
+
+        Command::new(get_safe_run_binary())
             .arg("check")
             .current_dir(temp_dir.path())
             .assert()
@@ -978,17 +970,16 @@ mod safe_check_tests {
     #[test]
     fn test_check_multiple_common_commands() {
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
-        
+
         // Commands to test (platform-specific)
         #[cfg(not(target_os = "windows"))]
         let commands = vec!["sh", "echo", "cat"];
-        
+
         #[cfg(target_os = "windows")]
         let commands = vec!["cmd", "powershell"];
-        
+
         for cmd in commands {
-            Command::cargo_bin("safe-run")
-                .expect("Failed to find binary")
+            Command::new(get_safe_run_binary())
                 .arg("check")
                 .arg(cmd)
                 .current_dir(temp_dir.path())
@@ -1013,46 +1004,40 @@ mod safe_check_tests {
     #[cfg(not(target_os = "windows"))] // Unix-specific test
     fn test_check_relative_path() {
         use std::os::unix::fs::PermissionsExt;
-        
+
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
-        
+
         // Create a script in the current directory with ./ prefix
         let script_current = temp_dir.path().join("script_here.sh");
-        fs::write(&script_current, "#!/bin/sh\necho test\n")
-            .expect("Failed to write script");
+        fs::write(&script_current, "#!/bin/sh\necho test\n").expect("Failed to write script");
         let mut perms = fs::metadata(&script_current)
             .expect("Failed to get metadata")
             .permissions();
         perms.set_mode(0o755);
-        fs::set_permissions(&script_current, perms)
-            .expect("Failed to set permissions");
-        
+        fs::set_permissions(&script_current, perms).expect("Failed to set permissions");
+
         // Create a subdirectory with a script
         let subdir = temp_dir.path().join("subdir");
         fs::create_dir(&subdir).expect("Failed to create subdir");
         let script_sub = subdir.join("script_sub.sh");
-        fs::write(&script_sub, "#!/bin/sh\necho test\n")
-            .expect("Failed to write script");
+        fs::write(&script_sub, "#!/bin/sh\necho test\n").expect("Failed to write script");
         let mut perms = fs::metadata(&script_sub)
             .expect("Failed to get metadata")
             .permissions();
         perms.set_mode(0o755);
-        fs::set_permissions(&script_sub, perms)
-            .expect("Failed to set permissions");
-        
+        fs::set_permissions(&script_sub, perms).expect("Failed to set permissions");
+
         // Test with ./ prefix
-        Command::cargo_bin("safe-run")
-            .expect("Failed to find binary")
+        Command::new(get_safe_run_binary())
             .arg("check")
             .arg("./script_here.sh")
             .current_dir(temp_dir.path())
             .assert()
             .success()
             .code(0);
-        
+
         // Test with subdirectory path
-        Command::cargo_bin("safe-run")
-            .expect("Failed to find binary")
+        Command::new(get_safe_run_binary())
             .arg("check")
             .arg("subdir/script_sub.sh")
             .current_dir(temp_dir.path())
@@ -1070,18 +1055,16 @@ mod safe_check_tests {
     #[test]
     fn test_check_relative_path_not_found() {
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
-        
-        Command::cargo_bin("safe-run")
-            .expect("Failed to find binary")
+
+        Command::new(get_safe_run_binary())
             .arg("check")
             .arg("./nonexistent_script")
             .current_dir(temp_dir.path())
             .assert()
             .failure()
             .code(2);
-        
-        Command::cargo_bin("safe-run")
-            .expect("Failed to find binary")
+
+        Command::new(get_safe_run_binary())
             .arg("check")
             .arg("subdir/nonexistent")
             .current_dir(temp_dir.path())
