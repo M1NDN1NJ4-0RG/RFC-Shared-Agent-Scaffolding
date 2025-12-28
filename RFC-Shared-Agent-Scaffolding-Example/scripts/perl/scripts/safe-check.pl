@@ -50,6 +50,22 @@ The script creates a temporary test environment:
 
 =back
 
+=head1 ENVIRONMENT VARIABLES
+
+=over 4
+
+=item B<SAFE_RUN_BIN>
+
+Optional override for safe-run binary location. If not set, the safe-run.pl
+wrapper will discover the binary using its standard search order.
+
+=item B<TMPDIR>
+
+Temporary directory location (system default if not set). Used for creating
+test environments.
+
+=back
+
 =head1 EXIT CODES
 
 =over 4

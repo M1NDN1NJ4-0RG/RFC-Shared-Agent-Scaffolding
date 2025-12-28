@@ -137,6 +137,22 @@ Example:
 B<Required Permissions:> The token must have C<repo> or C<read:org> scope
 to read repository rulesets.
 
+=head1 ENVIRONMENT VARIABLES
+
+=over 4
+
+=item B<TOKEN>
+
+GitHub personal access token for API authentication. Used if C<gh> command
+is not available. First priority for token authentication.
+
+=item B<GITHUB_TOKEN>
+
+GitHub personal access token (alternative to TOKEN). Used if C<gh> command
+is not available and TOKEN is not set. Second priority for token authentication.
+
+=back
+
 =head1 EXIT CODES
 
 =over 4
@@ -159,6 +175,26 @@ insufficient permissions, or network error. Check token/gh auth and permissions.
 =item B<3>
 
 Usage error - Invalid arguments, missing required options, or help requested.
+
+=back
+
+=head1 EXAMPLES
+
+=head2 Basic Usage with Ruleset ID
+
+  preflight-automerge-ruleset.pl --repo owner/repo --ruleset-id 12345 \
+    --context "build" --context "test"
+
+=head2 Using Ruleset Name
+
+  preflight-automerge-ruleset.pl --repo owner/repo --ruleset-name "Main Protection" \
+    --context "CI / test-bash" --context "CI / test-python"
+
+=head2 With GitHub Token
+
+  export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
+  preflight-automerge-ruleset.pl --repo owner/repo --ruleset-id 12345 \
+    --context "required-check"
 
 =back
 

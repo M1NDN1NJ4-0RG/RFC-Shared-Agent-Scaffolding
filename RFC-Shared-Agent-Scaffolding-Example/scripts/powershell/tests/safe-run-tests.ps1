@@ -49,6 +49,16 @@
     - Filename format validated with regex matching
     - Event ledger validated with content markers and sequence patterns
 
+.ENVIRONMENT
+  None. Tests run in isolated environments with per-test environment variables.
+
+.EXAMPLE
+  # Run all safe-run tests with Pester
+  PS> Invoke-Pester -Path .\safe-run-tests.ps1
+
+  # Run tests with detailed output
+  PS> Invoke-Pester -Path .\safe-run-tests.ps1 -Output Detailed
+
 .LINK
   https://pester.dev/
 

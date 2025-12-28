@@ -47,6 +47,13 @@
     - Mimics Bash test approach (copies scripts, sets SAFE_RUN_BIN)
     - Validates entire contract verification workflow in one go
 
+.ENVIRONMENT
+  None. Tests run in isolated environments.
+
+.EXAMPLE
+  # Run safe-check tests with Pester
+  PS> Invoke-Pester -Path .\safe-check-tests.ps1
+
 .LINK
   https://pester.dev/
 

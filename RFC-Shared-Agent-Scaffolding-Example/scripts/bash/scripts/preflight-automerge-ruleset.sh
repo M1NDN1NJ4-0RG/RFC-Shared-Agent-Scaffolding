@@ -1,4 +1,3 @@
-\
 #!/usr/bin/env bash
 #
 # preflight-automerge-ruleset.sh - Verify GitHub Ruleset enforces required CI checks

@@ -16,6 +16,25 @@
 # USAGE:
 #   ./test-preflight-automerge-ruleset.sh
 #
+# INPUTS:
+#   Arguments:
+#     None (test script runs all tests)
+#
+#   Environment Variables:
+#     GH_SCENARIO (internal) Used by mock gh to return specific JSON responses
+#
+# OUTPUTS:
+#   Exit Codes:
+#     0  All tests passed
+#     1  One or more tests failed
+#
+#   Stderr:
+#     Test results (PASS/FAIL per test, summary)
+#
+# EXAMPLES:
+#   # Run all preflight tests
+#   ./test-preflight-automerge-ruleset.sh
+#
 # TEST STRATEGY:
 #   - Creates mock gh command that returns canned JSON responses
 #   - Uses GH_SCENARIO env var to control mock behavior
