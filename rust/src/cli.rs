@@ -384,10 +384,7 @@ impl Cli {
         }
 
         // Get PATH environment variable
-        let path_var = match env::var_os("PATH") {
-            Some(p) => p,
-            None => return None,
-        };
+        let path_var = env::var_os("PATH")?;
 
         #[cfg(target_os = "windows")]
         let extensions = Self::get_windows_executable_extensions();
