@@ -41,5 +41,5 @@ body:
       label: PR Chain (fill or update as work progresses)
       placeholder: |
         - [ ] PR1: `copilot/fwxxx-phase1` → main
-        - [ ] PR2: `copilot/fwxxx-phase2` → PR1
-        - [ ] PR3: `copilot/fwxxx-phase3` → PR2
+        - [ ] PR2: `copilot/fwxxx-phase2` → main
+        - [ ] PR3: `copilot/fwxxx-phase3` → main
