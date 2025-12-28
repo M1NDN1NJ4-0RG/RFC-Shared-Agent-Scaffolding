@@ -100,12 +100,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y shellcheck
 
+      - name: Set up Go for shfmt
+        if: steps.check-bash.outputs.has_files == 'true'
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: false
+
       - name: Install shfmt
         if: steps.check-bash.outputs.has_files == 'true'
-        run: |
-          set -e
-          sudo apt-get update
-          sudo apt-get install -y shfmt
+        run: go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0
 
       - name: Run ShellCheck
         if: steps.check-bash.outputs.has_files == 'true'
