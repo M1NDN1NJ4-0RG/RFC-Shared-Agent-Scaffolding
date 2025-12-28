@@ -16,7 +16,7 @@ This document tracks **explicitly-marked future work** found in the repository. 
 | ID | Severity | Area | Title |
 |----|----------|------|-------|
 | [FW-001](#fw-001-signal-handling-for-safe-run) | Low | Rust CLI | Signal handling for safe-run (SIGTERM/SIGINT) - ✅ IMPLEMENTED |
-| [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation |
+| [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation - ✅ Phase 1 Complete |
 | [FW-003](#fw-003-safe-archive-subcommand-implementation) | Medium | Rust CLI | safe-archive subcommand implementation |
 | [FW-004](#fw-004-preflight-automerge-ruleset-checker) | Medium | Rust CLI | Preflight automerge ruleset checker (preflight-004 + GitHub API mocking) |
 | [FW-005](#fw-005-programmatic-vector-to-test-mapping-check) | Low | Conformance | Programmatic vector-to-test mapping check |
@@ -69,27 +69,40 @@ The conformance test `test_safe_run_003_sigterm_aborted` (marked `#[ignore]` in 
 
 **Severity:** Medium  
 **Area:** Rust CLI  
-**Status:** Scaffolding only - not yet implemented
+**Status:** ✅ Phase 1 Complete - Command existence check implemented
 
 **Why it exists:**
 
-The `safe-run check` subcommand exists in the CLI structure but has no implementation. It currently prints an error message and exits with code 1. Future implementation should verify command availability, repository state, and dependencies without executing commands.
+The `safe-run check` subcommand verifies command availability, repository state, and dependencies without executing commands. Implementation is progressing in phases.
 
-> Note: an older tracker variant claimed `check` returned 0; the current tracker reflects the scaffolding behavior as documented here.
+**Implementation Status:**
+
+✅ **Phase 1 Complete** (Command existence check):
+- Command existence check via PATH lookup
+- Exit code 0 when command is found
+- Exit code 2 when command is missing
+- Scaffolding error messages removed
+- Unit tests added for PATH lookup behavior
+- Supports absolute and relative paths
+- Cross-platform support (Unix and Windows)
 
 **Source:**
-- `rust/src/cli.rs:139-164` (WARNING: NOT YET IMPLEMENTED)
-- `rust/src/cli.rs:270-303` (scaffolding implementation)
-- `EPIC-59-NEXT-STEPS.md:111-143` (scaffolding clarity improvements)
+- `rust/src/cli.rs:139-164` (Command definition and docs)
+- `rust/src/cli.rs:270-360` (Implementation with PATH lookup)
+- `rust/tests/conformance.rs` (Unit tests: safe_check_tests module)
 
-**Suggested next steps:**
-- Implement command existence check (PATH lookup)
-- Add executable permission validation
+**Remaining Work:**
+
+**Phase 2** (Repository and dependency validation):
 - Implement repository state validation logic
 - Add dependency availability checks
-- Update exit codes: 0 for success, 2 for command not found
-- Remove error message and scaffolding warnings
-- Add conformance tests for check functionality
+- Provide meaningful error messages for missing requirements
+- Maintain appropriate exit codes (0 for success, non-zero for failures)
+
+**Phase 3** (Integration and conformance):
+- Add conformance vectors to `conformance/vectors.json`
+- Write full conformance tests
+- Update contract documentation if needed
 
 ---
 
