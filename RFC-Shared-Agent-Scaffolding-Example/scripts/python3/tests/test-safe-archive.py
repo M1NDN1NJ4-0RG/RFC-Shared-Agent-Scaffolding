@@ -111,9 +111,7 @@ def run_archive(args, workdir: Path, env=None, timeout=25):
         e.update(env)
     e["PYTHONUTF8"] = "1"
     cmd = [_py(), str(SAFE_ARCHIVE)] + args
-    return subprocess.run(
-        cmd, cwd=str(workdir), env=e, text=True, capture_output=True, timeout=timeout
-    )
+    return subprocess.run(cmd, cwd=str(workdir), env=e, text=True, capture_output=True, timeout=timeout)
 
 
 class TestSafeArchive(unittest.TestCase):

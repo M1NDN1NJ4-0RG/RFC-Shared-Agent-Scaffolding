@@ -143,15 +143,11 @@ def usage() -> int:
     eprint("Usage: scripts/python3/safe-archive.py [--no-clobber] [--all | <file> ...]")
     eprint("")
     eprint("Options:")
-    eprint(
-        "  --no-clobber            Fail if destination exists (default: auto-suffix)"
-    )
+    eprint("  --no-clobber            Fail if destination exists (default: auto-suffix)")
     eprint("")
     eprint("Environment:")
     eprint("  SAFE_FAIL_DIR           Source directory (default: .agent/FAIL-LOGS)")
-    eprint(
-        "  SAFE_ARCHIVE_DIR        Destination directory (default: .agent/FAIL-ARCHIVE)"
-    )
+    eprint("  SAFE_ARCHIVE_DIR        Destination directory (default: .agent/FAIL-ARCHIVE)")
     eprint("  SAFE_ARCHIVE_COMPRESS   Compression: none|gzip|xz|zstd (default: none)")
     eprint("  SAFE_ARCHIVE_NO_CLOBBER Set to 1 to enable strict no-clobber mode")
     return 2
@@ -242,9 +238,7 @@ def compress_file(method: str, path: str) -> None:
     raise RuntimeError("Invalid SAFE_ARCHIVE_COMPRESS value: %s" % method)
 
 
-def archive_one(
-    src: str, archive_dir: str, compress: str, strict_no_clobber: bool = False
-) -> None:
+def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bool = False) -> None:
     """Archive a single file with M0-P1-I3 no-clobber semantics.
 
     Args:

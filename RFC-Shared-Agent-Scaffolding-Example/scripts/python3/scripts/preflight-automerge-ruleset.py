@@ -26,7 +26,7 @@ Environment Variables
 TOKEN : str, optional
     GitHub personal access token (classic or fine-grained)
     Used for authentication if 'gh' CLI is not available
-    
+
 GITHUB_TOKEN : str, optional
     Alternative to TOKEN, same purpose
     Checked as fallback if TOKEN is not set
@@ -169,7 +169,8 @@ def usage() -> int:
     """
     eprint("Usage:")
     eprint(
-        '  scripts/python3/preflight-automerge-ruleset.py --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want \'["lint","test"]\''
+        "  scripts/python3/preflight-automerge-ruleset.py --repo OWNER/REPO "
+        '[--ruleset-id ID | --ruleset-name NAME] --want \'["lint","test"]\''
     )
     return 3
 
@@ -223,7 +224,8 @@ def classify_auth(obj: object) -> bool:
     msg = str(obj.get("message", "") or "")
     return (
         re.search(
-            r"(Bad credentials|Requires authentication|Resource not accessible|Forbidden|Must have admin rights|Not Found)",
+            r"(Bad credentials|Requires authentication|Resource not accessible"
+            r"|Forbidden|Must have admin rights|Not Found)",
             msg,
             re.I,
         )
@@ -316,9 +318,7 @@ def http_get(url: str, api_version: str) -> Tuple[int, str]:
     """
     token = os.environ.get("TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
     if not token:
-        raise RuntimeError(
-            "No auth available: set TOKEN/GITHUB_TOKEN or authenticate with gh"
-        )
+        raise RuntimeError("No auth available: set TOKEN/GITHUB_TOKEN or authenticate with gh")
     req = Request(url)
     req.add_header("Accept", "application/vnd.github+json")
     # M0-P2-I1: Use Bearer token format
@@ -513,9 +513,7 @@ def main(argv: List[str]) -> int:
             return 2
     else:
         try:
-            status, body = http_get(
-                f"https://api.github.com/repos/{repo}/rulesets", api_version
-            )
+            status, body = http_get(f"https://api.github.com/repos/{repo}/rulesets", api_version)
         except Exception:
             eprint("WARN: Failed to fetch rulesets")
             return 2
@@ -578,14 +576,10 @@ def main(argv: List[str]) -> int:
         rs_obj = obj
 
     if rs_obj.get("enforcement") != "active":
-        eprint(
-            f"WARN: Ruleset enforcement is not active (enforcement={rs_obj.get('enforcement')})"
-        )
+        eprint(f"WARN: Ruleset enforcement is not active (enforcement={rs_obj.get('enforcement')})")
         return 1
 
-    includes = ((rs_obj.get("conditions") or {}).get("ref_name") or {}).get(
-        "include"
-    ) or []
+    includes = ((rs_obj.get("conditions") or {}).get("ref_name") or {}).get("include") or []
     if "~DEFAULT_BRANCH" not in includes:
         eprint("WARN: Ruleset does not target ~DEFAULT_BRANCH")
         return 1
@@ -607,9 +601,7 @@ def main(argv: List[str]) -> int:
         eprint("INFO: got : %s" % json.dumps(sorted(got)))
         return 1
 
-    eprint(
-        "INFO: PRECHECK_OK: ruleset enforces required CI contexts on default branch; auto-merge flow is safe."
-    )
+    eprint("INFO: PRECHECK_OK: ruleset enforces required CI contexts on default branch; auto-merge flow is safe.")
     return 0
 
 

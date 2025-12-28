@@ -203,9 +203,7 @@ def main(argv: List[str]) -> int:
         die(f"safe_run did not preserve exit code (expected 42, got {rc})")
     after = count_files(log_dir)
     if after != before + 1:
-        die(
-            f"safe_run failure did not create exactly one artifact (before={before} after={after})"
-        )
+        die(f"safe_run failure did not create exactly one artifact (before={before} after={after})")
     eprint("INFO: safe_run failure-path OK")
 
     # success path

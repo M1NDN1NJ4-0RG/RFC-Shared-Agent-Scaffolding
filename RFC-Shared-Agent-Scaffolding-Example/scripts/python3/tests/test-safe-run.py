@@ -71,7 +71,6 @@ Platform Notes
 """
 
 import os
-import re
 import signal
 import subprocess
 import sys
@@ -154,9 +153,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertEqual(proc.returncode, 0, msg=proc.stderr)
             self.assertIn("ok", proc.stdout)
             # On success, safe-run must create no artifacts.
-            self.assertFalse(
-                log_dir.exists(), "FAIL-LOGS directory should not be created on success"
-            )
+            self.assertFalse(log_dir.exists(), "FAIL-LOGS directory should not be created on success")
 
     def test_failure_creates_log_and_preserves_exit_code(self):
         with tempfile.TemporaryDirectory() as td:
