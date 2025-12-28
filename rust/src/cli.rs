@@ -344,20 +344,24 @@ impl Cli {
 
         // Split PATH and check each directory
         for path_dir in env::split_paths(&path_var) {
-            let full_path = path_dir.join(cmd);
-            
             // On Unix-like systems, just check if the file exists
             #[cfg(not(target_os = "windows"))]
-            if full_path.exists() && full_path.is_file() {
-                return true;
-            }
-
-            // On Windows, check for .exe, .bat, .cmd extensions
-            #[cfg(target_os = "windows")]
             {
+                let full_path = path_dir.join(cmd);
                 if full_path.exists() && full_path.is_file() {
                     return true;
                 }
+            }
+
+            // On Windows, check both without extension and with common extensions
+            #[cfg(target_os = "windows")]
+            {
+                // Check without extension first (in case user specified full name)
+                let base_path = path_dir.join(cmd);
+                if base_path.exists() && base_path.is_file() {
+                    return true;
+                }
+                // Then check with common Windows executable extensions
                 for ext in &[".exe", ".bat", ".cmd"] {
                     let with_ext = path_dir.join(format!("{}{}", cmd, ext));
                     if with_ext.exists() && with_ext.is_file() {
