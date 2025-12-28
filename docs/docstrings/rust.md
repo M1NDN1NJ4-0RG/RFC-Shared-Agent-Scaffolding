@@ -14,9 +14,11 @@ Every Rust module (file) must include module-level documentation with these sect
 1. **Module summary** - First `//!` line: One-line summary (after `//! # Title`)
 2. **# Purpose** - What the module/binary does
 3. **# Architecture** or **# Behavior** - High-level design or behavioral contract
-4. **# Exit Behavior** or **# Exit Codes** - For binaries: exit code meanings
+4. **# Exit Codes** - For binaries (main.rs): exit code meanings (0, 1, 2, 127, etc.)
 5. **# Contract References** - Links to RFCs, specs, or related docs
 6. **# Examples** - Minimum 1 code example (using ` ```rust` or ` ```bash`)
+
+**Note:** Use "# Exit Codes" consistently instead of "# Exit Behavior" for clarity and alignment with other language contracts.
 
 ### Optional Sections
 
@@ -25,6 +27,20 @@ Every Rust module (file) must include module-level documentation with these sect
 - **# Safety** - Unsafe code documentation (if applicable)
 - **# Panics** - Panic conditions (if applicable)
 - **# Errors** - Error handling patterns
+
+### Library vs Binary Documentation
+
+**For `lib.rs` (library crates):**
+- Focus on API documentation
+- Document public modules, structs, functions
+- Exit codes section is optional (libraries don't have exit codes)
+- Emphasize examples showing library usage
+
+**For `main.rs` (binary crates):**
+- Document command-line interface
+- **Must** include "# Exit Codes" section
+- Emphasize examples showing command-line usage
+- Document runtime behavior and architecture
 
 ### Function/Item Documentation
 
@@ -55,7 +71,7 @@ Functions, structs, and other items should use `///` comments with:
 //! - Component 1: Description
 //! - Component 2: Description
 //!
-//! # Exit Behavior
+//! # Exit Codes
 //!
 //! - Exit code 0: Successfully parsed arguments and executed command
 //! - Exit code 1: Error during tool execution
@@ -130,30 +146,47 @@ pub fn function_name(param1: Type1, param2: Type2) -> ReturnType {
 
 ## Templates
 
-### Minimal Module Template
+### Library Module Template (lib.rs)
 
 ```rust
-//! # Module Name
+//! # Library Name
 //!
-//! One-line summary of what this module does.
+//! One-line summary of what this library provides.
 //!
 //! # Purpose
 //!
-//! Detailed purpose description.
+//! This library provides <functionality> for <use case>. It is designed to
+//! be used as a dependency in other Rust projects.
+//!
+//! # Architecture
+//!
+//! - **Public API**: Exported functions and types in this module
+//! - **Internal modules**: Private implementation details
+//! - **Dependencies**: External crates used
 //!
 //! # Examples
 //!
 //! ```rust
+//! use my_library::{function_name, StructName};
+//!
 //! // Example usage
-//! use crate::module;
+//! let result = function_name(arg);
+//! assert_eq!(result, expected);
 //! ```
+//!
+//! # Contract References
+//!
+//! - API documentation: See individual function docs
+//! - Design document: `docs/design.md`
+
+pub mod submodule;
 
 use std::collections::HashMap;
 
-// Module implementation...
+// Public API implementation...
 ```
 
-### Full Binary/Main Module Template
+### Binary Module Template (main.rs)
 
 ```rust
 //! # Rust Binary Name
@@ -171,12 +204,15 @@ use std::collections::HashMap;
 //! - **CLI interface**: The `cli` module defines command-line interface
 //! - **Implementation**: The `core` module implements business logic
 //!
-//! # Exit Behavior
+//! # Exit Codes
 //!
 //! - Exit code 0: Successfully completed operation
 //! - Exit code 1: Error during execution
 //! - Exit code 2: Invalid usage or missing arguments
 //! - Exit codes 3-255: Preserved from executed command (if applicable)
+//!
+//! See [EXIT_CODES_CONTRACT.md](../docs/docstrings/EXIT_CODES_CONTRACT.md) for
+//! canonical exit code meanings.
 //!
 //! # Contract References
 //!
@@ -333,14 +369,14 @@ fn main() {}
 //! Does something useful.
 ```
 
-✅ **Correct:** Document exit behavior
+✅ **Correct:** Document exit codes (use "# Exit Codes" not "# Exit Behavior")
 ```rust
 //! # My Binary
 //!
 //! # Purpose
 //! Does something useful.
 //!
-//! # Exit Behavior
+//! # Exit Codes
 //!
 //! - Exit code 0: Success
 //! - Exit code 1: Failure
@@ -399,7 +435,7 @@ Code following this contract integrates with Rust's documentation tools:
 # Generate HTML documentation
 cargo doc --no-deps
 
-# Generate and open in browser
+# Generate and open in browser (RECOMMENDED for local preview)
 cargo doc --no-deps --open
 
 # Check documentation links
@@ -409,9 +445,14 @@ cargo doc --no-deps 2>&1 | grep warning
 cargo test --doc
 ```
 
+**Best Practice:** Use `cargo doc --open` frequently during development to preview
+how your documentation will look. This helps catch formatting issues, broken links,
+and unclear examples before committing.
+
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
+- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
 - [Rustdoc Book](https://doc.rust-lang.org/rustdoc/) - Official Rustdoc documentation
 - [RFC 1574 – API Documentation Conventions](https://rust-lang.github.io/rfcs/1574-more-api-documentation-conventions.html)
 - [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/documentation.html)

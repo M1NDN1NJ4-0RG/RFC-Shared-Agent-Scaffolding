@@ -217,6 +217,27 @@ use v5.10;
 8. **Code**: Use `C<code>` for inline code
 9. **Escapes**: Use `E<lt>` for `<`, `E<gt>` for `>`
 10. **Indentation**: Two spaces for code examples under sections
+11. **Links**: Use `L<text|url>` for URLs, `L<Module::Name>` for modules, `L<perldoc>` for Perl docs
+12. **File paths**: Use `F<path/to/file>` for file and directory names
+13. **Section naming**: Use "NOTES" (not "CAVEATS") for consistency across contracts
+
+### Intra-Document Links
+
+POD supports linking to other documentation:
+
+```perl
+=head1 SEE ALSO
+
+L<docs/wrapper-discovery.md> - Wrapper discovery rules
+
+L<perlfunc> - Perl built-in functions reference
+
+L<Module::Name> - Link to installed module documentation
+
+L<https://example.com> - External URL
+
+L<Exit Codes|EXIT_CODES_CONTRACT.md> - Link with custom text
+```
 
 ## Templates
 
@@ -628,6 +649,7 @@ podchecker script-name.pl
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
+- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
 - [perlpod – Plain Old Documentation](https://perldoc.perl.org/perlpod)
 - [perlpodstyle – POD Style Guide](https://perldoc.perl.org/perlpodstyle)
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers

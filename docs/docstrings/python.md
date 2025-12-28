@@ -15,7 +15,7 @@ Every Python script must include these sections (as reST-style headers in the mo
 2. **Purpose** - What the script does (paragraph after summary)
 3. **Binary Discovery Order** - For wrapper scripts (optional for others)
 4. **Environment Variables** - Variables used and their defaults
-5. **CLI Interface** or **Usage** - How to invoke the script
+5. **Usage** - How to invoke the script (invocation pattern and arguments)
 6. **Examples** - Minimum 1 concrete usage example
 7. **Exit Codes** - At least: 0 = success, non-zero = failure types
 8. **Notes** - Maintainer notes, constraints, sharp edges (optional but recommended)
@@ -28,6 +28,30 @@ Every Python script must include these sections (as reST-style headers in the mo
 - **References** - Links to related docs
 
 ## Formatting Rules
+
+### Docstring Placement
+
+1. **Shebang first**: `#!/usr/bin/env python3`
+2. **Module docstring immediately after shebang**: No blank lines between shebang and docstring
+3. **Imports after docstring**: Import statements come after the closing `"""`
+
+```python
+#!/usr/bin/env python3
+"""Module summary.
+
+Detailed description...
+"""
+
+import sys
+import os
+# ... rest of code
+```
+
+### Line Length
+
+- **PEP 8 docstring width**: Limit docstring lines to **72 characters** per [PEP 8](https://peps.python.org/pep-0008/#maximum-line-length)
+- Use line breaks and indentation to keep lines readable
+- Code examples can be wider if necessary
 
 ### Structure
 
@@ -59,8 +83,8 @@ VAR_NAME : str, optional
     Default: value
     Example: Override binary path.
 
-CLI Interface
--------------
+Usage
+-----
 The script accepts the same arguments as the underlying tool::
 
     python3 script-name.py [--] <command> [args...]
@@ -134,8 +158,8 @@ Environment Variables
 ENV_VAR : str, optional
     Description (default: value)
 
-CLI Interface
--------------
+Usage
+-----
 The script accepts arguments::
 
     python3 script-name.py <command> [args...]
@@ -217,8 +241,8 @@ VIEW_MODE : str, optional
     Output view format: 'split' (default) or 'merged'
     Passed through to the canonical tool.
 
-CLI Interface
--------------
+Usage
+-----
 The wrapper accepts the same arguments as the canonical tool::
 
     python3 script-name.py [--] <command> [args...]
@@ -333,7 +357,7 @@ This file demonstrates:
 
 This file demonstrates:
 - Description that states what it does NOT do
-- CLI Interface with multiple invocation patterns
+- Usage section with multiple invocation patterns
 - Environment Variables with type annotations
 - Platform Support section
 
@@ -447,6 +471,7 @@ The section structure (reST-style headers) goes beyond PEP 257's minimal require
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
+- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
 - [PEP 257 – Docstring Conventions](https://peps.python.org/pep-0257/)
 - [reStructuredText Primer](https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html)
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers
