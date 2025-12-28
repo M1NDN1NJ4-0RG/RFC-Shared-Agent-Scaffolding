@@ -343,6 +343,8 @@ impl Cli {
     fn command_exists(cmd: &str) -> bool {
         // If the command is an absolute or relative path, check it directly
         let cmd_path = Path::new(cmd);
+        // Check if path has more than one component (e.g., "./foo", "dir/foo", "/usr/bin/foo")
+        // Using nth(1) is more efficient than count() as it stops after finding the second component
         if cmd_path.is_absolute() || cmd_path.components().nth(1).is_some() {
             return cmd_path.exists() && cmd_path.is_file();
         }
