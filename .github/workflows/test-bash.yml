@@ -27,14 +27,14 @@ name: Test Bash Bundle
 on:
   pull_request:
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/bash/**'
+      - 'wrappers/scripts/bash/**'
       - 'conformance/**'
       - '.github/workflows/test-bash.yml'
   push:
     branches:
       - main
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/bash/**'
+      - 'wrappers/scripts/bash/**'
       - 'conformance/**'
       - '.github/workflows/test-bash.yml'
   workflow_dispatch:
@@ -91,7 +91,7 @@ jobs:
       # Executes run-tests.sh which runs all tests in tests/ directory
       # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
       - name: Run Bash tests
-        working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/bash
+        working-directory: wrappers/scripts/bash
         run: |
           chmod +x run-tests.sh
           ./run-tests.sh
@@ -104,5 +104,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bash-test-failures
-          path: RFC-Shared-Agent-Scaffolding-Example/scripts/bash/.agent/FAIL-LOGS/
+          path: wrappers/scripts/bash/.agent/FAIL-LOGS/
           if-no-files-found: ignore

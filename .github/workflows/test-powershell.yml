@@ -30,14 +30,14 @@ name: Test PowerShell Bundle
 on:
   pull_request:
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
+      - 'wrappers/scripts/powershell/**'
       - 'conformance/**'
       - '.github/workflows/test-powershell.yml'
   push:
     branches:
       - main
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
+      - 'wrappers/scripts/powershell/**'
       - 'conformance/**'
       - '.github/workflows/test-powershell.yml'
   workflow_dispatch:
@@ -97,7 +97,7 @@ jobs:
       # Test runner sets $env:SAFE_RUN_BIN to point to staged Rust binary
       - name: Run PowerShell tests
         shell: pwsh
-        working-directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell
+        working-directory: wrappers/scripts/powershell
         run: |
           pwsh -NoProfile -File ./run-tests.ps1
       
@@ -109,5 +109,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: powershell-test-failures
-          path: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/.agent/FAIL-LOGS/
+          path: wrappers/scripts/powershell/.agent/FAIL-LOGS/
           if-no-files-found: ignore

@@ -31,7 +31,7 @@ name: Multi-Language Conformance Validation
 on:
   pull_request:
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/**'
+      - 'wrappers/scripts/**'
       - 'conformance/**'
       - '.github/workflows/conformance.yml'
   push:
@@ -94,7 +94,7 @@ jobs:
           missing=0
           
           for bundle in "${bundles[@]}"; do
-            path="RFC-Shared-Agent-Scaffolding-Example/scripts/$bundle"
+            path="wrappers/scripts/$bundle"
             if [ ! -d "$path" ]; then
               echo "ERROR: Bundle not found: $bundle"
               missing=1
@@ -125,7 +125,7 @@ jobs:
           missing=0
           
           for shard in "${shards[@]}"; do
-            path="RFC-Shared-Agent-Scaffolding-Example/.docs/agent/$shard"
+            path="wrappers/.docs/agent/$shard"
             if [ ! -f "$path" ]; then
               echo "ERROR: Shard not found: $shard"
               missing=1
@@ -146,7 +146,7 @@ jobs:
           missing=0
           
           for template in "${templates[@]}"; do
-            path="RFC-Shared-Agent-Scaffolding-Example/.docs/journal/$template"
+            path="wrappers/.docs/journal/$template"
             if [ ! -f "$path" ]; then
               echo "ERROR: Journal template not found: $template"
               missing=1
