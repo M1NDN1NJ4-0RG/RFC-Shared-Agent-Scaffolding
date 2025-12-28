@@ -1,0 +1,46 @@
+name: Multi-Phase Feature Implementation
+description: Track progress across multi-PR phased work for an RFC/FW item
+title: "EPIC: Multi-Phase Implementation for FW-XXX"
+labels: ["epic", "tracking"]
+assignees:
+  - m1ndn1nj4
+  - copilot
+body:
+  - type: input
+    id: fw-id
+    attributes:
+      label: FW Reference
+      placeholder: e.g. FW-002
+      description: Reference from `docs/FUTURE-WORK.md`
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What this future work item is trying to implement
+      placeholder: Describe the feature across all phases...
+    validations:
+      required: true
+
+  - type: textarea
+    id: phases
+    attributes:
+      label: Phase Breakdown
+      description: Define each phase and its goal (3 is standard)
+      placeholder: |
+        - Phase 1: Command existence check
+        - Phase 2: Repo and dependency validation
+        - Phase 3: Conformance test coverage
+    validations:
+      required: true
+
+  - type: textarea
+    id: pr-chain
+    attributes:
+      label: PR Chain (fill or update as work progresses)
+      placeholder: |
+        - [ ] PR1: `copilot/fwxxx-phase1` → main
+        - [ ] PR2: `copilot/fwxxx-phase2` → PR1
+        - [ ] PR3: `copilot/fwxxx-phase3` → PR2
