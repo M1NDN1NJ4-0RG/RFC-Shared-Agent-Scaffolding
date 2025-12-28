@@ -30,6 +30,11 @@
 #   - SAFE_LOG_DIR contents (ABORTED logs if created)
 #   - probe-summary.txt (exit code, log presence, observations)
 #
+# Notes:
+# - This workflow is currently DISABLED due to CI environment issues
+# - Preserved for future investigation on actual Windows hardware
+# - Not required for merge
+#
 name: Phase 3 Windows Ctrl-C Probe
 
 on:

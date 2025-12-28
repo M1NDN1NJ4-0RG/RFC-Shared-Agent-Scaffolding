@@ -13,6 +13,15 @@
 # - Pull requests modifying Bash bundle, conformance data, or this workflow
 # - Pushes to main branch affecting the same paths
 # - Manual workflow dispatch
+#
+# Outputs:
+# - Status check: "Test Bash Bundle"
+# - Artifacts: None (test logs printed to stdout)
+# - Side effects: Fails if tests fail
+#
+# Notes:
+# - Required for merge
+# - Exit 0 = tests pass, non-zero = tests fail
 name: Test Bash Bundle
 
 on:

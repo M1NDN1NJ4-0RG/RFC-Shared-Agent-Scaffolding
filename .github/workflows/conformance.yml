@@ -10,6 +10,22 @@
 # - Pull requests that modify language bundles, conformance data, or this workflow
 # - Pushes to main branch
 # - Manual workflow dispatch
+#
+# Dependencies:
+# - actions/checkout@v4
+# - jq (for JSON validation)
+# - conformance/vectors.json
+# - Language bundle directories
+#
+# Outputs:
+# - Status check: "All Bundles Conformance Check"
+# - Artifacts: None
+# - Side effects: Fails build if conformance structure is incomplete
+#
+# Notes:
+# - This is a structural validation only - does NOT run tests
+# - Required for merge
+# - Exit 0 = structure complete, non-zero = missing files
 name: Multi-Language Conformance Validation
 
 on:

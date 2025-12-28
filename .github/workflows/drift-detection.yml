@@ -12,8 +12,23 @@
 # - Pushes to main branch affecting the same paths
 # - Manual workflow dispatch
 #
-# Note: This runs on Linux (ubuntu-latest) and tests bash/python3/perl.
-# PowerShell tests run separately on Windows runner (test-powershell.yml).
+# Dependencies:
+# - actions/checkout@v4
+# - actions/setup-rust@v1 (to build Rust canonical tool)
+# - Rust toolchain 1.70+
+# - Bash, Python 3.8+, Perl 5.10+
+# - conformance/vectors.json
+#
+# Outputs:
+# - Status check: "Cross-Language Drift Detection"
+# - Artifacts: drift-report.txt (on failure)
+# - Side effects: Fails if implementations diverge in behavior
+#
+# Notes:
+# - This runs on Linux (ubuntu-latest) and tests bash/python3/perl
+# - PowerShell tests run separately on Windows runner (test-powershell.yml)
+# - Required for merge
+# - Exit 0 = no drift, non-zero = drift detected
 name: Drift Detection Gate
 
 on:

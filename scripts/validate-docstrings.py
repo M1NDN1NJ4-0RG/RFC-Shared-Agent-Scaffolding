@@ -331,8 +331,8 @@ class YAMLValidator:
     @staticmethod
     def validate(file_path: Path, content: str) -> Optional[ValidationError]:
         """Validate YAML file documentation header."""
-        # Check first 30 lines for comment header
-        lines = content.split("\n")[:30]
+        # Check first 50 lines for comment header (workflows can have long headers)
+        lines = content.split("\n")[:50]
         header = "\n".join(lines)
 
         missing = []

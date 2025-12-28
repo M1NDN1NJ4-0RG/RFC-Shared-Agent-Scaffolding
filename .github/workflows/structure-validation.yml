@@ -12,6 +12,19 @@
 # - Pull requests modifying language bundles, validation script, or this workflow
 # - Pushes to main branch affecting the same paths
 # - Manual workflow dispatch
+#
+# Dependencies:
+# - Bash (validate-structure.sh script)
+# - git ls-files
+#
+# Outputs:
+# - Status check: "Structure Validation"
+# - Artifacts: None
+# - Side effects: Fails if structure is incomplete
+#
+# Notes:
+# - Required for merge
+# - Exit 0 = structure valid, non-zero = violations detected
 name: Structure Validation
 
 on:

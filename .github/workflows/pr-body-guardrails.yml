@@ -12,6 +12,19 @@
 #
 # Triggers:
 # - Pull requests: opened, edited, synchronize, reopened, ready_for_review
+#
+# Dependencies:
+# - actions/github-script@v7 (for GitHub API access)
+# - GitHub token (provided by GITHUB_TOKEN)
+#
+# Outputs:
+# - Status check: "normalize-and-check"
+# - Artifacts: None
+# - Side effects: May update PR body to normalize EPIC references
+#
+# Notes:
+# - Required for merge
+# - Exit 0 = no auto-close keywords for EPICs, non-zero = violations detected
 name: pr-body-guardrails
 
 on:
