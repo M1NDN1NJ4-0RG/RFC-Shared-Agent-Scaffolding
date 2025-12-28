@@ -36,7 +36,7 @@ test_repo_root_detection() {
   tmp="$(mktemp -d)"
   wrapper="$tmp/safe-run-test.sh"
   
-  cp "$REPO_ROOT/RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh" "$wrapper"
+  cp "$REPO_ROOT/wrappers/scripts/bash/scripts/safe-run.sh" "$wrapper"
   
   (
     cd "$tmp"  # Outside repo
@@ -324,7 +324,7 @@ test_binary_not_found_error() {
   tmp="$(mktemp -d)"
   wrapper="$tmp/safe-run-test.sh"
   
-  cp "$REPO_ROOT/RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh" "$wrapper"
+  cp "$REPO_ROOT/wrappers/scripts/bash/scripts/safe-run.sh" "$wrapper"
   
   (
     cd "$tmp"
@@ -371,13 +371,13 @@ This test should be run in CI matrix and requires wrapper debug output or inspec
 
 ## Integration with Existing Tests
 
-**Add to Bash test suite:** `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/tests/test-safe-run.sh`
+**Add to Bash test suite:** `wrappers/scripts/bash/tests/test-safe-run.sh`
 
-**Add to Perl test suite:** Create `RFC-Shared-Agent-Scaffolding-Example/scripts/perl/tests/test-safe-run.pl`
+**Add to Perl test suite:** Create `wrappers/scripts/perl/tests/test-safe-run.pl`
 
-**Add to Python3 test suite:** `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/tests/test-safe-run.py`
+**Add to Python3 test suite:** `wrappers/scripts/python3/tests/test-safe-run.py`
 
-**Add to PowerShell test suite:** `RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/safe-run-tests.ps1`
+**Add to PowerShell test suite:** `wrappers/scripts/powershell/tests/safe-run-tests.ps1`
 
 ---
 

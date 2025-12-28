@@ -13,7 +13,7 @@ This implementation adds a GitHub Actions workflow and probe script to investiga
    - Executes the probe script
    - Uploads artifacts (logs + summary)
 
-2. **`RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/phase3-ctrlc-probe.ps1`**
+2. **`wrappers/scripts/powershell/tests/phase3-ctrlc-probe.ps1`**
    - PowerShell probe script that tests Ctrl-C behavior
    - Creates isolated temp directory for logs
    - Sets environment variables (SAFE_RUN_BIN, SAFE_LOG_DIR)
@@ -156,5 +156,5 @@ After running the probe:
 ## Related Files
 
 - `rust/src/safe_run.rs`: Signal handling implementation in canonical tool
-- `RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/safe-run.ps1`: Wrapper being tested
+- `wrappers/scripts/powershell/scripts/safe-run.ps1`: Wrapper being tested
 - `.github/workflows/test-powershell.yml`: Related PowerShell test workflow

@@ -512,7 +512,7 @@ use v5.10;
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
-**File:** `RFC-Shared-Agent-Scaffolding-Example/scripts/perl/scripts/safe-run.pl`
+**File:** `wrappers/scripts/perl/scripts/safe-run.pl`
 
 This file demonstrates:
 - Full POD with all required sections
@@ -522,7 +522,7 @@ This file demonstrates:
 - Proper use of `B<bold>`, `I<italic>`, `C<code>`
 
 ### Example 2: Test Module
-**File:** `RFC-Shared-Agent-Scaffolding-Example/scripts/perl/tests/lib/TestUtil.pm`
+**File:** `wrappers/scripts/perl/tests/lib/TestUtil.pm`
 
 This file demonstrates:
 - Module-level POD (for `.pm` files)
@@ -531,7 +531,7 @@ This file demonstrates:
 - NOTES section for module constraints
 
 ### Example 3: Utility Script
-**File:** `RFC-Shared-Agent-Scaffolding-Example/scripts/perl/scripts/safe-check.pl`
+**File:** `wrappers/scripts/perl/scripts/safe-check.pl`
 
 This file demonstrates:
 - DESCRIPTION that states what it does NOT do

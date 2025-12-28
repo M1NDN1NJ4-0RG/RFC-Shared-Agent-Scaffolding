@@ -333,7 +333,7 @@ if __name__ == "__main__":
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
-**File:** `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/scripts/safe-run.py`
+**File:** `wrappers/scripts/python3/scripts/safe-run.py`
 
 This file demonstrates:
 - Full module docstring with all required sections
@@ -344,7 +344,7 @@ This file demonstrates:
 - "See Also" references
 
 ### Example 2: Test Script
-**File:** `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/tests/test-safe-run.py`
+**File:** `wrappers/scripts/python3/tests/test-safe-run.py`
 
 This file demonstrates:
 - Minimal docstring for test modules
@@ -353,7 +353,7 @@ This file demonstrates:
 - Notes about test dependencies
 
 ### Example 3: Utility Script
-**File:** `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/scripts/safe-check.py`
+**File:** `wrappers/scripts/python3/scripts/safe-check.py`
 
 This file demonstrates:
 - Description that states what it does NOT do

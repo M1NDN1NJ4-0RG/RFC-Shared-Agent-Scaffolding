@@ -422,7 +422,7 @@ on:
 # Workflow: Bash Unit Tests
 #
 # Purpose: Runs unit tests for Bash wrapper scripts in
-# RFC-Shared-Agent-Scaffolding-Example/scripts/bash/tests/.
+# wrappers/scripts/bash/tests/.
 # Does NOT run integration tests or other language tests.
 ```
 
