@@ -57,7 +57,9 @@ Wrappers act as **invokers**, not independent implementations. They:
 
 ### Docstring Contracts
 
-All scripts in this repository **MUST** conform to their language-specific docstring contract. Contracts define required documentation sections (purpose, usage, examples, exit codes, etc.) for:
+**ALL scripts in this repository MUST conform to their language-specific docstring contract**, regardless of location. The validator checks every script file repository-wide to ensure consistent documentation.
+
+Contracts define required documentation sections (purpose, usage, examples, exit codes, etc.) for:
 
 - **Bash** (`.sh`, `.bash`, `.zsh`)
 - **PowerShell** (`.ps1`)
@@ -66,7 +68,7 @@ All scripts in this repository **MUST** conform to their language-specific docst
 - **Rust** (`.rs`)
 - **YAML** (`.yml`, `.yaml` - workflows and configs)
 
-Conformance is enforced by CI via `scripts/validate-docstrings.py`. See [docs/docstrings/README.md](./docs/docstrings/README.md) for details and templates.
+**Any new script added anywhere in the repository** will be validated against its language contract. Conformance is enforced by CI via `scripts/validate-docstrings.py`. See [docs/docstrings/README.md](./docs/docstrings/README.md) for details and templates.
 
 ## Contributing
 

@@ -427,6 +427,37 @@ This module follows these testing principles:
     warn "Stderr: $r->{stderr}\n";
   }
 
+=head1 ENVIRONMENT VARIABLES
+
+=over 4
+
+=item B<TMPDIR>
+
+Temporary directory location (system default if not set). Used by make_sandbox()
+to create test sandboxes.
+
+=back
+
+This module does not require any special environment variables. All functions
+operate using standard Perl core modules.
+
+=head1 EXIT CODES
+
+This is a library module and does not exit directly. Functions return results
+that calling code can use to determine exit behavior:
+
+=over 4
+
+=item B<run_cmd() exit codes>
+
+Returns the exit code from the executed command in C<$result->{exit}>.
+
+=item B<make_sandbox() exit codes>
+
+Dies (throws exception) if sandbox creation fails.
+
+=back
+
 =head1 DEPENDENCIES
 
 =over 4

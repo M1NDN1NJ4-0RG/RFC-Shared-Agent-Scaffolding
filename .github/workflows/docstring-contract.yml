@@ -1,12 +1,13 @@
 # Workflow: Docstring Contract Enforcement
 #
-# Purpose: Validates that all scripts and YAML files conform to their
-# language-specific docstring contracts as defined in docs/docstrings/.
-# Ensures consistent, discoverable documentation across all supported
-# languages (Bash, PowerShell, Python, Perl, Rust, YAML).
+# Purpose: Validates that ALL scripts and YAML files in the repository conform
+# to their language-specific docstring contracts as defined in docs/docstrings/.
+# Ensures consistent, discoverable documentation across all supported languages
+# (Bash, PowerShell, Python, Perl, Rust, YAML). Any new script added anywhere
+# in the repository must conform to its language's docstring contract.
 #
 # Triggers:
-# - Pull requests modifying scripts, docs, or this workflow
+# - Pull requests modifying ANY script, YAML file, docs, or this workflow
 # - Pushes to main branch
 # - Manual workflow dispatch
 #
@@ -22,6 +23,7 @@
 #
 # Notes:
 # - Required for merge
+# - Validates ALL scripts repository-wide (not just specific directories)
 # - Validates presence of required sections, not content quality
 # - Exit 0 = all files conform, non-zero = violations detected
 # - See docs/docstrings/README.md for contract details
@@ -30,10 +32,18 @@ name: Docstring Contract Enforcement
 on:
   pull_request:
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/**'
-      - 'rust/src/**'
-      - '.github/workflows/**/*.yml'
-      - '.github/workflows/**/*.yaml'
+      - '**/*.sh'
+      - '**/*.bash'
+      - '**/*.zsh'
+      - '**/*.ps1'
+      - '**/*.py'
+      - '**/*.pl'
+      - '**/*.pm'
+      - 'rust/src/**/*.rs'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
+      - '.github/ISSUE_TEMPLATE/*.yml'
+      - '.github/ISSUE_TEMPLATE/*.yaml'
       - 'docs/docstrings/**'
       - 'scripts/validate-docstrings.py'
       - '.github/workflows/docstring-contract.yml'
@@ -41,10 +51,18 @@ on:
     branches:
       - main
     paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/**'
-      - 'rust/src/**'
-      - '.github/workflows/**/*.yml'
-      - '.github/workflows/**/*.yaml'
+      - '**/*.sh'
+      - '**/*.bash'
+      - '**/*.zsh'
+      - '**/*.ps1'
+      - '**/*.py'
+      - '**/*.pl'
+      - '**/*.pm'
+      - 'rust/src/**/*.rs'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
+      - '.github/ISSUE_TEMPLATE/*.yml'
+      - '.github/ISSUE_TEMPLATE/*.yaml'
       - 'docs/docstrings/**'
       - 'scripts/validate-docstrings.py'
   workflow_dispatch:

@@ -33,6 +33,11 @@
 
   Test results are printed to stdout with Pester's 'Detailed' verbosity.
 
+.ENVIRONMENT
+  SAFE_RUN_BIN
+    Set automatically by this script if Rust binary is found.
+    Points to the Rust canonical safe-run binary for wrapper tests.
+
 .EXAMPLE
   # Run all tests
   PS> .\run-tests.ps1

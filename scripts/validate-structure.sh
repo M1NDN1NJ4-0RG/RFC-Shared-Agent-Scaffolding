@@ -1,7 +1,46 @@
 #!/usr/bin/env bash
-# validate-structure.sh
-# Validates that all language bundles follow the canonical directory structure
-# Exit code: 0 on success, 1 on failure
+#
+# validate-structure.sh - Validates language bundle directory structure
+#
+# DESCRIPTION:
+#   Validates that all language bundles follow the canonical directory structure
+#   defined in the RFC. Ensures each language bundle contains the required
+#   directories and files: scripts/, tests/, run-tests.*, and expected script files
+#   (safe-run, safe-check, safe-archive, preflight-automerge-ruleset).
+#
+# USAGE:
+#   ./validate-structure.sh
+#
+# INPUTS:
+#   Arguments:
+#     None
+#
+#   Environment Variables:
+#     None (uses auto-detected REPO_ROOT)
+#
+# OUTPUTS:
+#   Exit Codes:
+#     0  All language bundles conform to canonical structure
+#     1  One or more bundles have structural issues
+#
+#   Stdout:
+#     Progress messages with colored status indicators
+#
+#   Stderr:
+#     Error messages for structural violations
+#
+# EXAMPLES:
+#   # Run from repository root
+#   ./scripts/validate-structure.sh
+#
+#   # Run from scripts directory
+#   ./validate-structure.sh
+#
+# NOTES:
+#   - Checks bash, perl, python3, and powershell bundles
+#   - Expected directory structure: <lang>/scripts/, <lang>/tests/
+#   - Expected script files: safe-run, safe-check, safe-archive, preflight-automerge-ruleset
+#   - Uses ANSI color codes for output formatting
 
 set -euo pipefail
 

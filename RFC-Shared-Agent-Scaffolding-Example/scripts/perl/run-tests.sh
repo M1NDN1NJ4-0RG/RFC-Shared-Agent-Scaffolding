@@ -1,4 +1,44 @@
 #!/usr/bin/env bash
+#
+# run-tests.sh - Perl test suite runner
+#
+# DESCRIPTION:
+#   Executes all Perl tests for the safe-run/safe-check/safe-archive wrapper
+#   implementations. Uses prove (if available) or falls back to direct perl
+#   execution of test files.
+#
+# USAGE:
+#   ./run-tests.sh
+#
+# INPUTS:
+#   Arguments:
+#     None
+#
+#   Environment Variables:
+#     SAFE_RUN_BIN  Path to Rust canonical binary (default: auto-detected)
+#     SRC_SAFE_RUN  Path to safe-run.pl (default: scripts/safe-run.pl)
+#
+# OUTPUTS:
+#   Exit Codes:
+#     0  All tests passed
+#     1  One or more tests failed
+#
+#   Stdout:
+#     Test results from prove or perl
+#
+# EXAMPLES:
+#   # Run all Perl tests
+#   ./run-tests.sh
+#
+#   # Run with custom binary path
+#   SAFE_RUN_BIN=/path/to/safe-run ./run-tests.sh
+#
+# NOTES:
+#   - Prefers prove (TAP harness) if available
+#   - Falls back to direct perl execution if prove not found
+#   - Requires Rust canonical binary to be built
+#   - Sets environment variables for test scripts
+
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"

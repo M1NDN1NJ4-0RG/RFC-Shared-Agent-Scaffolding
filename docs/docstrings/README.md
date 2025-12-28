@@ -14,7 +14,9 @@ Docstring contracts ensure:
 
 ## Enforcement
 
-All scripts in this repository **MUST** conform to their language's docstring contract. Conformance is validated by CI via `.github/workflows/docstring-contract.yml`, which runs `scripts/validate-docstrings.py` on every PR.
+**ALL scripts in this repository MUST conform to their language's docstring contract**, regardless of location. Conformance is validated by CI via `.github/workflows/docstring-contract.yml`, which runs `scripts/validate-docstrings.py` on every PR.
+
+The validator scans the entire repository for script files (`.sh`, `.ps1`, `.py`, `.pl`, `.pm`, `.rs`, `.yml`, `.yaml`) and validates each one against its language contract. This ensures that any new script added anywhere in the repository will be checked.
 
 **Violations fail the build** until corrected.
 
@@ -64,15 +66,21 @@ GitHub Actions workflows and other YAML configs must include:
 
 See [yaml.md](./yaml.md) for details.
 
-## In-Scope Directories
+## Scope
 
-The validator enforces contracts in these locations:
+The validator enforces contracts on **ALL scripts repository-wide**:
 
-- `RFC-Shared-Agent-Scaffolding-Example/scripts/**/scripts/*`
-- `RFC-Shared-Agent-Scaffolding-Example/scripts/**/tests/*` (for script-based tests)
-- `rust/src/**/*.rs`
-- `.github/workflows/*.yml`, `.github/workflows/*.yaml`
-- `.github/ISSUE_TEMPLATE/*.yml`, `.github/ISSUE_TEMPLATE/*.yaml`
+- **All Bash scripts**: `**/*.sh`, `**/*.bash`, `**/*.zsh`
+- **All PowerShell scripts**: `**/*.ps1`
+- **All Python scripts**: `**/*.py`
+- **All Perl scripts**: `**/*.pl`, `**/*.pm`
+- **All Rust source files**: `rust/src/**/*.rs`
+- **All YAML workflows**: `.github/workflows/*.yml`, `.github/workflows/*.yaml`
+- **All YAML issue templates**: `.github/ISSUE_TEMPLATE/*.yml`, `.github/ISSUE_TEMPLATE/*.yaml`
+
+**Exclusions**: Build artifacts (`dist/`, `target/`), dependencies (`node_modules/`), and Rust test files (`rust/tests/`) are excluded from validation.
+
+This means **any new script added anywhere in the repository** will be validated against its language's docstring contract.
 
 ## Validator
 

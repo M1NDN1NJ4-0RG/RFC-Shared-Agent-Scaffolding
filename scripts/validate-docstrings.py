@@ -15,6 +15,10 @@ Run from repository root::
 
     python3 scripts/validate-docstrings.py
 
+Environment Variables
+---------------------
+None. This script does not use environment variables.
+
 Exit Codes
 ----------
 0
@@ -22,12 +26,23 @@ Exit Codes
 1
     Validation failures detected (violations printed to stdout)
 
+Examples
+--------
+Run validator from repository root::
+
+    python3 scripts/validate-docstrings.py
+
+Run in CI::
+
+    python3 scripts/validate-docstrings.py || exit 1
+
 Notes
 -----
 - Validation is lightweight: checks presence of sections, not content quality
 - Uses regex-based pattern matching (no heavy parsing)
 - Scans only tracked files (via git ls-files)
 - Provides actionable error messages with file path and missing sections
+- Validates ALL scripts in repository (not just specific directories)
 """
 
 import re
@@ -38,20 +53,43 @@ from typing import List, Tuple, Dict, Optional
 
 
 # In-scope directory patterns for validation
+# Strategy: Include ALL scripts repository-wide, with explicit exclusions
 IN_SCOPE_PATTERNS = [
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/scripts/*.sh",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/scripts/*.bash",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/scripts/*.ps1",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/scripts/*.py",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/scripts/*.pl",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/tests/*.sh",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/tests/*.ps1",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/tests/*.py",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/tests/*.pl",
-    "RFC-Shared-Agent-Scaffolding-Example/scripts/**/tests/*.pm",
+    # All Bash scripts
+    "**/*.sh",
+    "**/*.bash",
+    "**/*.zsh",
+    # All PowerShell scripts
+    "**/*.ps1",
+    # All Python scripts
+    "**/*.py",
+    # All Perl scripts
+    "**/*.pl",
+    "**/*.pm",
+    # All Rust source files
     "rust/src/**/*.rs",
+    # All YAML workflow and config files
     ".github/workflows/*.yml",
     ".github/workflows/*.yaml",
+    ".github/ISSUE_TEMPLATE/*.yml",
+    ".github/ISSUE_TEMPLATE/*.yaml",
+]
+
+# Patterns to exclude from validation
+EXCLUDE_PATTERNS = [
+    # Build artifacts and dependencies
+    "dist/**",
+    "target/**",
+    "node_modules/**",
+    "__pycache__/**",
+    "*.pyc",
+    # Git directory
+    ".git/**",
+    # Rust test files (these are tested via cargo test, not as standalone scripts)
+    "rust/tests/**",
+    # Temporary files
+    "tmp/**",
+    ".tmp/**",
 ]
 
 
@@ -369,6 +407,17 @@ def get_tracked_files() -> List[Path]:
 
     for file_path in all_files:
         p = Path(file_path)
+        
+        # Check if file matches any exclude pattern first
+        excluded = False
+        for exclude_pattern in EXCLUDE_PATTERNS:
+            if p.match(exclude_pattern):
+                excluded = True
+                break
+        
+        if excluded:
+            continue
+        
         # Check if file matches any in-scope pattern
         for pattern in IN_SCOPE_PATTERNS:
             if p.match(pattern):
