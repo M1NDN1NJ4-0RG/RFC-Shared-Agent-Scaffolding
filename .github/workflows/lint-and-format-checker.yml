@@ -45,7 +45,7 @@ jobs:
       - name: Check for Python files
         id: check-python
         run: |
-          if [ -n "$(git ls-files '*.py')" ]; then
+          if [ -n "$(git ls-files '**/*.py')" ]; then
             echo "has_files=true" >> $GITHUB_OUTPUT
           else
             echo "has_files=false" >> $GITHUB_OUTPUT
@@ -53,7 +53,7 @@ jobs:
 
       - name: Set up Python
         if: steps.check-python.outputs.has_files == 'true'
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.x"
 
@@ -76,7 +76,7 @@ jobs:
       - name: Run pylint
         if: steps.check-python.outputs.has_files == 'true'
         run: |
-          pylint $(git ls-files '*.py')
+          pylint $(git ls-files '**/*.py')
 
   lint-bash:
     runs-on: ubuntu-latest
@@ -87,7 +87,7 @@ jobs:
       - name: Check for Bash files
         id: check-bash
         run: |
-          if [ -n "$(git ls-files '*.sh')" ]; then
+          if [ -n "$(git ls-files '**/*.sh')" ]; then
             echo "has_files=true" >> $GITHUB_OUTPUT
           else
             echo "has_files=false" >> $GITHUB_OUTPUT
@@ -96,14 +96,16 @@ jobs:
       - name: Install ShellCheck
         if: steps.check-bash.outputs.has_files == 'true'
         run: |
+          set -e
           sudo apt-get update
           sudo apt-get install -y shellcheck
 
       - name: Install shfmt
         if: steps.check-bash.outputs.has_files == 'true'
         run: |
-          SHFMT_VERSION=3.7.0
-          SHFMT_CHECKSUM=333f2b621a631e85ba72b2f8c8e73c82ba0c25ea85f3a45e98b5a5cedf0d7bb4
+          set -e
+          SHFMT_VERSION=3.9.0
+          SHFMT_CHECKSUM=8c58e31a8dfc2df11ceeb87f6d037b7b3891c062b0eb44d053170b09ac5e5b68
           wget -O /tmp/shfmt https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64
           echo "${SHFMT_CHECKSUM}  /tmp/shfmt" | sha256sum -c -
           chmod +x /tmp/shfmt
@@ -112,12 +114,12 @@ jobs:
       - name: Run ShellCheck
         if: steps.check-bash.outputs.has_files == 'true'
         run: |
-          shellcheck $(git ls-files '*.sh')
+          shellcheck $(git ls-files '**/*.sh')
 
       - name: Run shfmt (check)
         if: steps.check-bash.outputs.has_files == 'true'
         run: |
-          shfmt -d -i 2 -ci $(git ls-files '*.sh')
+          shfmt -d -i 2 -ci $(git ls-files '**/*.sh')
 
   lint-powershell:
     runs-on: ubuntu-latest
@@ -128,7 +130,7 @@ jobs:
       - name: Check for PowerShell files
         id: check-powershell
         run: |
-          if [ -n "$(git ls-files '*.ps1')" ]; then
+          if [ -n "$(git ls-files '**/*.ps1')" ]; then
             echo "has_files=true" >> $GITHUB_OUTPUT
           else
             echo "has_files=false" >> $GITHUB_OUTPUT
@@ -144,7 +146,7 @@ jobs:
         if: steps.check-powershell.outputs.has_files == 'true'
         shell: pwsh
         run: |
-          $files = Get-ChildItem -Recurse -Filter '*.ps1' | Select-Object -ExpandProperty FullName
+          $files = git ls-files '**/*.ps1'
           if ($files) {
             Invoke-ScriptAnalyzer -Path $files -EnableExit
           }
@@ -158,11 +160,18 @@ jobs:
       - name: Check for Perl files
         id: check-perl
         run: |
-          if [ -n "$(git ls-files '*.pl' '*.pm')" ]; then
+          if [ -n "$(git ls-files '**/*.pl' '**/*.pm')" ]; then
             echo "has_files=true" >> $GITHUB_OUTPUT
           else
             echo "has_files=false" >> $GITHUB_OUTPUT
           fi
+
+      - name: Install cpanminus
+        if: steps.check-perl.outputs.has_files == 'true'
+        run: |
+          set -e
+          sudo apt-get update
+          sudo apt-get install -y cpanminus
 
       - name: Install Perl::Critic
         if: steps.check-perl.outputs.has_files == 'true'
@@ -172,6 +181,6 @@ jobs:
       - name: Run Perl::Critic
         if: steps.check-perl.outputs.has_files == 'true'
         run: |
-          perlcritic --severity 5 $(git ls-files '*.pl' '*.pm')
+          perlcritic --severity 5 $(git ls-files '**/*.pl' '**/*.pm')
 
 
