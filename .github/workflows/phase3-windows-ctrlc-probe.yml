@@ -15,6 +15,11 @@
 # - PowerShell (built into Windows)
 # - Probe script: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/phase3-ctrlc-probe.ps1
 #
+# Status: DISABLED
+# - Workflow preserved for future testing on actual Windows machines
+# - Currently experiencing CreateProcessW error 123 in CI that requires local debugging
+# - To re-enable, uncomment the trigger events below
+#
 # Triggers:
 # - Manual workflow dispatch (primary use case for investigation)
 # - Pull requests (optional, for automated validation during development)
@@ -28,17 +33,18 @@
 name: Phase 3 Windows Ctrl-C Probe
 
 on:
-  workflow_dispatch:
-  pull_request:
-    paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
-      - '.github/workflows/phase3-windows-ctrlc-probe.yml'
-  push:
-    branches:
-      - main
-    paths:
-      - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
-      - '.github/workflows/phase3-windows-ctrlc-probe.yml'
+  # DISABLED: Uncomment to re-enable workflow
+  # workflow_dispatch:
+  # pull_request:
+  #   paths:
+  #     - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
+  #     - '.github/workflows/phase3-windows-ctrlc-probe.yml'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
+  #     - '.github/workflows/phase3-windows-ctrlc-probe.yml'
 
 # Permissions: Read-only access to repository contents
 permissions:
