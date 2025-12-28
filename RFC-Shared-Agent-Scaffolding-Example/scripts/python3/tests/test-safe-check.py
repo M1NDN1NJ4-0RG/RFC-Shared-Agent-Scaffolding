@@ -112,11 +112,7 @@ class TestSafeCheck(unittest.TestCase):
                 "safe-check.py",
                 "preflight-automerge-ruleset.py",
             ]:
-                (
-                    (SCRIPTS / name).replace(scripts_dir / name)
-                    if False
-                    else (scripts_dir / name).write_bytes((SCRIPTS / name).read_bytes())
-                )
+                (scripts_dir / name).write_bytes((SCRIPTS / name).read_bytes())
 
             proc = subprocess.run(
                 [sys.executable, str(scripts_dir / "safe-check.py")],
