@@ -29,57 +29,48 @@ Pragma Support
 --------------
 Scripts can use pragma comments to intentionally skip specific section checks::
 
-    # noqa: EXITCODES
-    # noqa: OUTPUTS
-    # docstring-ignore: Exit Codes
+    # noqa: SECTION_NAME
 
-This is useful for generated files, test fixtures, or special cases where
-a section genuinely doesn't apply.
+The validator will skip checking for SECTION_NAME in files containing this pragma.
+
+Examples::
+
+    # noqa: OUTPUTS    - Skip OUTPUTS section check
+    # noqa: EXITCODES  - Skip exit codes content validation
 
 Content Validation
 ------------------
 The validator performs basic content checks on exit code sections:
-- Verifies exit code 0 (success) is documented
-- Verifies exit code 1 (failure) is documented
-
-These checks can be disabled with --no-content-checks or pragma comments.
-
-Environment Variables
----------------------
-None. This script does not use environment variables.
+- Checks for presence of exit codes 0 and 1
+- Lenient pattern matching for exit code documentation
+- Can be disabled with --no-content-checks or pragma comments
 
 Exit Codes
 ----------
 0
-    All files conform to docstring contracts
+    All files conform to contracts
 1
-    Validation failures detected (violations printed to stdout)
-2
-    Invalid usage or file not found
+    One or more files failed validation
+
+Environment Variables
+---------------------
+None. Operates on current repository state.
 
 Examples
 --------
-Run validator from repository root::
+Validate all files::
 
     python3 scripts/validate-docstrings.py
 
-Validate a single file during development::
+Validate specific files::
 
-    python3 scripts/validate-docstrings.py --file scripts/new-script.sh
-
-Run in CI::
-
-    python3 scripts/validate-docstrings.py || exit 1
+    python3 scripts/validate-docstrings.py --file script.sh --file tool.py
 
 Notes
 -----
 - Validation is lightweight: checks presence of sections, not content quality
-- Uses regex-based pattern matching (no heavy parsing)
-- Scans only tracked files (via git ls-files) unless --file specified
-- Provides actionable error messages with file path and missing sections
-- Validates ALL scripts in repository (not just specific directories)
-- Pragma comments allow intentional exceptions to validation rules
-- See docs/docstrings/EXIT_CODES_CONTRACT.md for canonical exit code meanings
+- Pragma ignores should be used sparingly for legitimate exceptions
+- See docs/docstrings/README.md for detailed contract specifications
 """
 
 import argparse
@@ -88,6 +79,9 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import List, Optional
+
+# Module-level flag for content checks (set by command-line arg)
+SKIP_CONTENT_CHECKS = False
 
 
 # In-scope directory patterns for validation
@@ -176,6 +170,10 @@ def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
     Returns:
         Error message if validation fails, None if valid
     """
+    global SKIP_CONTENT_CHECKS
+    if SKIP_CONTENT_CHECKS:
+        return None
+    
     # Look for exit code 0 (success) - be very lenient with patterns
     # Match patterns like: 
     # - "0    Success"
@@ -657,6 +655,10 @@ Examples:
     )
     
     args = parser.parse_args()
+    
+    # Set global flag for content checks
+    global SKIP_CONTENT_CHECKS
+    SKIP_CONTENT_CHECKS = args.no_content_checks
     
     print("🔍 Validating docstring contracts...\n")
 

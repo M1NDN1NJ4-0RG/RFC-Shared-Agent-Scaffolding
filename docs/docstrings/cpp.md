@@ -250,6 +250,12 @@ int main(int argc, char* argv[]) {
 #include <cstdlib>
 #include <stdexcept>
 
+// POSIX headers for fork/execv (Unix/Linux/macOS)
+#ifndef _WIN32
+#include <unistd.h>
+#include <sys/wait.h>
+#endif
+
 namespace fs = std::filesystem;
 
 /**
@@ -282,17 +288,57 @@ fs::path find_binary(const std::string& binary_name) {
  * @return Exit code from executed command
  *
  * @throws std::runtime_error if execution fails
+ *
+ * @note
+ * This implementation uses execv (POSIX) to avoid shell injection vulnerabilities.
+ * On Windows, use CreateProcess or similar APIs instead of system().
  */
 int execute_binary(const fs::path& binary_path, 
                    const std::vector<std::string>& args) {
-    // Build command string
-    std::string command = binary_path.string();
+#ifdef _WIN32
+    // Windows implementation using CreateProcess would go here
+    // This is a simplified example - real code should use CreateProcess
+    // to avoid shell injection vulnerabilities
+    throw std::runtime_error(
+        "execute_binary not implemented for Windows. "
+        "Use CreateProcess API with proper argument escaping."
+    );
+#else
+    // POSIX implementation using fork + execv to avoid shell injection
+    // Build argv-style array: [binary_path, args..., nullptr]
+    std::vector<char*> c_args;
+    std::string binary_str = binary_path.string();
+    c_args.push_back(const_cast<char*>(binary_str.c_str()));
     for (const auto& arg : args) {
-        command += " " + arg;
+        c_args.push_back(const_cast<char*>(arg.c_str()));
     }
-    
-    // Execute
-    return std::system(command.c_str());
+    c_args.push_back(nullptr);
+
+    pid_t pid = fork();
+    if (pid < 0) {
+        throw std::runtime_error("fork() failed");
+    }
+
+    if (pid == 0) {
+        // Child process: replace image with target binary
+        execv(binary_str.c_str(), c_args.data());
+        // If execv returns, an error occurred
+        std::_Exit(127);
+    }
+
+    // Parent process: wait for child
+    int status = 0;
+    if (waitpid(pid, &status, 0) < 0) {
+        throw std::runtime_error("waitpid() failed");
+    }
+
+    if (WIFEXITED(status)) {
+        return WEXITSTATUS(status);
+    }
+
+    // Abnormal termination (signal, etc.)
+    throw std::runtime_error("Process terminated abnormally");
+#endif
 }
 
 /**

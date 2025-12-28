@@ -58,10 +58,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 try:
     from validate_docstrings import (
         BashValidator,
-        PowerShellValidator,
         PythonValidator,
-        PerlValidator,
-        RustValidator,
         YAMLValidator,
     )
 except ImportError:
@@ -73,6 +70,10 @@ except ImportError:
     )
     validate_docstrings = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(validate_docstrings)
+    
+    BashValidator = validate_docstrings.BashValidator
+    PythonValidator = validate_docstrings.PythonValidator
+    YAMLValidator = validate_docstrings.YAMLValidator
     
     BashValidator = validate_docstrings.BashValidator
     PowerShellValidator = validate_docstrings.PowerShellValidator
