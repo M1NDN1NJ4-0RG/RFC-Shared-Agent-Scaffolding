@@ -321,5 +321,5 @@ assert_exit_code 127
 - POSIX Exit Codes: <https://pubs.opengroup.org/onlinepubs/9699919799/utilities/V3_chap02.html#tag_18_08_02>
 - Bash Exit Codes: <https://www.gnu.org/software/bash/manual/html_node/Exit-Status.html>
 - Advanced Bash-Scripting Guide: <https://tldp.org/LDP/abs/html/exitcodes.html>
-- `docs/docstrings/README.md` - Docstring contract overview
-- Individual language contracts in `docs/docstrings/`
+- `docs/contributing/docstring-contracts/README.md` - Docstring contract overview
+- Individual language contracts in `docs/contributing/docstring-contracts/`

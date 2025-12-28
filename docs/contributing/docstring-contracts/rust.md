@@ -211,7 +211,7 @@ use std::collections::HashMap;
 //! - Exit code 2: Invalid usage or missing arguments
 //! - Exit codes 3-255: Preserved from executed command (if applicable)
 //!
-//! See [exit-codes-contract.md](../docs/docstrings/exit-codes-contract.md) for
+//! See [exit-codes-contract.md](../docs/contributing/docstring-contracts/exit-codes-contract.md) for
 //! canonical exit code meanings.
 //!
 //! # Contract References
