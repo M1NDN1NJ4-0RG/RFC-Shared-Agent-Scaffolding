@@ -64,17 +64,17 @@ try:
 except ImportError:
     # Try alternative import path
     import importlib.util
+
     spec = importlib.util.spec_from_file_location(
-        "validate_docstrings",
-        Path(__file__).parent.parent / "validate-docstrings.py"
+        "validate_docstrings", Path(__file__).parent.parent / "validate-docstrings.py"
     )
     validate_docstrings = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(validate_docstrings)
-    
+
     BashValidator = validate_docstrings.BashValidator
     PythonValidator = validate_docstrings.PythonValidator
     YAMLValidator = validate_docstrings.YAMLValidator
-    
+
     BashValidator = validate_docstrings.BashValidator
     PowerShellValidator = validate_docstrings.PowerShellValidator
     PythonValidator = validate_docstrings.PythonValidator
@@ -253,6 +253,7 @@ def run_tests():
     # Try to use pytest if available
     try:
         import pytest
+
         return pytest.main([__file__, "-v"])
     except ImportError:
         # Fall back to unittest

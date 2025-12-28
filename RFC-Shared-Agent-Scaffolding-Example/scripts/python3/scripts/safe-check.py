@@ -92,55 +92,60 @@ import subprocess
 from pathlib import Path
 from typing import List
 
+
 def eprint(*args: object) -> None:
     """Print to stderr for status messages and errors.
-    
+
     :param args: Variable arguments to print (passed to print())
     :returns: None
-    
+
     All output is sent to stderr to avoid interfering with stdout,
     which may be captured or redirected during testing.
     """
     print(*args, file=sys.stderr)
 
+
 def die(msg: str, rc: int = 1) -> None:
     """Print error message to stderr and exit immediately.
-    
+
     :param msg: Error message to print (prefixed with "ERROR: ")
     :param rc: Exit code (default: 1)
     :raises SystemExit: Always raises to terminate the program
-    
+
     This is a convenience function for fatal errors during verification.
     """
     eprint(f"ERROR: {msg}")
     raise SystemExit(rc)
 
+
 def usage() -> None:
     """Print usage message to stderr and exit with code 2.
-    
+
     :raises SystemExit: Always exits with code 2 (usage error)
     """
     eprint("Usage: scripts/python3/safe-check.py")
     raise SystemExit(2)
 
+
 def count_files(d: str) -> int:
     """Count regular files in a directory (non-recursive).
-    
+
     :param d: Directory path to count files in
     :returns: Number of regular files (not directories or symlinks)
-    
+
     Used to verify that safe-run creates exactly one artifact per failure
     and no artifacts on success.
     """
     return len([p for p in glob.glob(os.path.join(d, "*")) if os.path.isfile(p)])
 
+
 def main(argv: List[str]) -> int:
     """Execute contract verification tests.
-    
+
     :param argv: Command-line arguments (expected to be empty)
     :returns: Exit code (0 on success, 1 on verification failure, 2 on usage error)
     :raises SystemExit: Via die() or usage() on fatal errors
-    
+
     Test Sequence
     -------------
     1. Setup: Create .agent/FAIL-LOGS and .agent/FAIL-ARCHIVE directories
@@ -149,7 +154,7 @@ def main(argv: List[str]) -> int:
     4. Test success path: Command exits 0, verify no artifact created
     5. Test archive move: Archive newest log, verify move semantics
     6. Test no-clobber: Archive when destination exists, verify auto-suffix (M0-P1-I3)
-    
+
     Side Effects
     ------------
     - Creates .agent/FAIL-LOGS/ directory in current working directory
@@ -157,7 +162,7 @@ def main(argv: List[str]) -> int:
     - Generates test failure logs during verification
     - Moves test artifacts during archive verification
     - Prints status messages to stderr (INFO/ERROR)
-    
+
     Examples
     --------
     >>> main([])  # No arguments, runs all tests
@@ -183,9 +188,17 @@ def main(argv: List[str]) -> int:
     before = count_files(log_dir)
 
     # failure path
-    rc = subprocess.call([sys.executable, "scripts/python3/safe-run.py", "--",
-                          sys.executable, "-c", 'import sys; print("hello"); print("boom", file=sys.stderr); raise SystemExit(42)'],
-                         stdout=subprocess.DEVNULL)
+    rc = subprocess.call(
+        [
+            sys.executable,
+            "scripts/python3/safe-run.py",
+            "--",
+            sys.executable,
+            "-c",
+            'import sys; print("hello"); print("boom", file=sys.stderr); raise SystemExit(42)',
+        ],
+        stdout=subprocess.DEVNULL,
+    )
     if rc != 42:
         die(f"safe_run did not preserve exit code (expected 42, got {rc})")
     after = count_files(log_dir)
@@ -195,9 +208,17 @@ def main(argv: List[str]) -> int:
 
     # success path
     before = after
-    rc = subprocess.call([sys.executable, "scripts/python3/safe-run.py", "--",
-                          sys.executable, "-c", 'print("ok"); raise SystemExit(0)'],
-                         stdout=subprocess.DEVNULL)
+    rc = subprocess.call(
+        [
+            sys.executable,
+            "scripts/python3/safe-run.py",
+            "--",
+            sys.executable,
+            "-c",
+            'print("ok"); raise SystemExit(0)',
+        ],
+        stdout=subprocess.DEVNULL,
+    )
     if rc != 0:
         die(f"safe_run success returned non-zero ({rc})")
     after = count_files(log_dir)
@@ -206,16 +227,21 @@ def main(argv: List[str]) -> int:
     eprint("INFO: safe_run success-path OK")
 
     # archive newest
-    files = sorted([p for p in glob.glob(os.path.join(log_dir, "*")) if os.path.isfile(p)],
-                   key=lambda p: os.path.getmtime(p), reverse=True)
+    files = sorted(
+        [p for p in glob.glob(os.path.join(log_dir, "*")) if os.path.isfile(p)],
+        key=os.path.getmtime,
+        reverse=True,
+    )
     if not files:
         die("No fail logs found to test archiving")
     newest = files[0]
     base = os.path.basename(newest)
     dest = os.path.join(".agent/FAIL-ARCHIVE", base)
 
-    rc = subprocess.call([sys.executable, "scripts/python3/safe-archive.py", newest],
-                         stdout=subprocess.DEVNULL)
+    rc = subprocess.call(
+        [sys.executable, "scripts/python3/safe-archive.py", newest],
+        stdout=subprocess.DEVNULL,
+    )
     if rc != 0:
         die(f"safe_archive failed ({rc})")
     if not os.path.exists(dest):
@@ -228,8 +254,10 @@ def main(argv: List[str]) -> int:
     dummy = os.path.join(log_dir, base)
     with open(dummy, "w", encoding="utf-8") as fh:
         fh.write("dummy\n")
-    rc = subprocess.call([sys.executable, "scripts/python3/safe-archive.py", dummy],
-                         stdout=subprocess.DEVNULL)
+    rc = subprocess.call(
+        [sys.executable, "scripts/python3/safe-archive.py", dummy],
+        stdout=subprocess.DEVNULL,
+    )
     if rc != 0:
         die(f"safe_archive no-clobber failed ({rc})")
     with open(dest, "r", encoding="utf-8", errors="replace") as fh:
@@ -240,6 +268,7 @@ def main(argv: List[str]) -> int:
 
     eprint("INFO: SAFE-CHECK: contract verification PASSED")
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))

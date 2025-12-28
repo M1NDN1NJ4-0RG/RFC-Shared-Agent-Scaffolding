@@ -127,66 +127,67 @@ EXCLUDE_PATTERNS = [
 
 def check_pragma_ignore(content: str, section: str) -> bool:
     """Check if a section is ignored via pragma comment.
-    
+
     Supports pragmas like:
     - # noqa: EXITCODES
     - # docstring-ignore: EXIT CODES
     - <!-- noqa: OUTPUTS --> (for YAML)
-    
+
     Args:
         content: File content to search
         section: Section name to check (e.g., "EXITCODES", "EXIT CODES")
-    
+
     Returns:
         True if section should be ignored, False otherwise
     """
     # Normalize section name (remove spaces, uppercase)
     normalized_section = section.upper().replace(" ", "").replace(":", "")
-    
+
     # Check for various pragma formats
     pragma_patterns = [
         rf"#\s*noqa:\s*{normalized_section}",
         rf"#\s*docstring-ignore:\s*{section}",
         rf"<!--\s*noqa:\s*{normalized_section}\s*-->",
     ]
-    
+
     for pattern in pragma_patterns:
         if re.search(pattern, content, re.IGNORECASE):
             return True
-    
+
     return False
 
 
 def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
     """Validate that exit codes section contains minimum required codes.
-    
+
     Checks that at least exit codes 0 and 1 are documented.
     This is a soft check - we look for patterns like "0" near "success" etc.
-    
+
     Args:
         content: The exit codes section content
         language: Language name for context
-    
+
     Returns:
         Error message if validation fails, None if valid
     """
-    global SKIP_CONTENT_CHECKS
     if SKIP_CONTENT_CHECKS:
         return None
-    
+
     # Look for exit code 0 (success) - be very lenient with patterns
-    # Match patterns like: 
+    # Match patterns like:
     # - "0    Success"
-    # - "0: Success" 
+    # - "0: Success"
     # - "Exit 0"
     # - "Exit: 0 if success"
     # - "0 if all tests pass"
-    has_exit_0 = bool(re.search(
-        r'(?:exit[:\s]+)?0[\s:\-]+(?:if\s+)?.*?(?:success|ok|pass|complete|all.*pass)', 
-        content, 
-        re.IGNORECASE | re.MULTILINE | re.DOTALL
-    ))
-    
+    has_exit_0 = bool(
+        re.search(
+            r"(?:exit[:\s]+)?0[\s:\-]+(?:if\s+)?.*?(?:success|ok|pass|complete|all.*pass)",
+            content,
+            re.IGNORECASE | re.MULTILINE | re.DOTALL,
+        )
+    )
+
     # Look for exit code 1 (failure)
     # Match patterns like:
     # - "1    Failure"
@@ -194,20 +195,22 @@ def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
     # - "Exit 1"
     # - "Exit: 1 if fail"
     # - "1 if any fail"
-    has_exit_1 = bool(re.search(
-        r'(?:exit[:\s]+)?1[\s:\-]+(?:if\s+)?.*?(?:fail|error|invalid|any.*fail)', 
-        content, 
-        re.IGNORECASE | re.MULTILINE | re.DOTALL
-    ))
-    
+    has_exit_1 = bool(
+        re.search(
+            r"(?:exit[:\s]+)?1[\s:\-]+(?:if\s+)?.*?(?:fail|error|invalid|any.*fail)",
+            content,
+            re.IGNORECASE | re.MULTILINE | re.DOTALL,
+        )
+    )
+
     # If we find reasonable exit code documentation, consider it valid
     # This is intentionally lenient to avoid false positives
     if not has_exit_0 and not has_exit_1:
         # Only fail if there's NO exit code documentation at all
-        has_any_exit_code = bool(re.search(r'\b(?:0|1|2|127)\b', content))
+        has_any_exit_code = bool(re.search(r"\b(?:0|1|2|127)\b", content))
         if not has_any_exit_code:
             return "No exit codes found (expected at least 0 and 1)"
-    
+
     return None
 
 
@@ -248,9 +251,7 @@ class BashValidator:
         header = "\n".join(lines)
 
         # Check shebang
-        if not content.startswith("#!/usr/bin/env bash") and not content.startswith(
-            "#!/bin/bash"
-        ):
+        if not content.startswith("#!/usr/bin/env bash") and not content.startswith("#!/bin/bash"):
             return ValidationError(
                 str(file_path),
                 ["shebang"],
@@ -260,28 +261,22 @@ class BashValidator:
         missing = []
         for i, pattern in enumerate(BashValidator.REQUIRED_SECTIONS):
             section_name = BashValidator.SECTION_NAMES[i]
-            
+
             # Check if section is ignored via pragma
             if check_pragma_ignore(content, section_name):
                 continue
-                
+
             if not re.search(pattern, header, re.IGNORECASE):
                 missing.append(section_name)
 
         # Basic content validation for exit codes (if OUTPUTS present)
         if "OUTPUTS:" not in missing:
             # Extract OUTPUTS section content
-            outputs_match = re.search(
-                r'#\s*OUTPUTS:\s*\n((?:#.*\n)+)', 
-                header, 
-                re.IGNORECASE
-            )
+            outputs_match = re.search(r"#\s*OUTPUTS:\s*\n((?:#.*\n)+)", header, re.IGNORECASE)
             if outputs_match:
                 # Remove leading # from each line for easier pattern matching
-                outputs_lines = outputs_match.group(1).split('\n')
-                outputs_content = '\n'.join(
-                    line.lstrip('#').strip() for line in outputs_lines if line.strip()
-                )
+                outputs_lines = outputs_match.group(1).split("\n")
+                outputs_content = "\n".join(line.lstrip("#").strip() for line in outputs_lines if line.strip())
                 exit_codes_error = validate_exit_codes_content(outputs_content, "Bash")
                 if exit_codes_error and not check_pragma_ignore(content, "EXITCODES"):
                     return ValidationError(
@@ -346,9 +341,7 @@ class PowerShellValidator:
                 missing.append(PowerShellValidator.SECTION_NAMES[i])
 
         if missing:
-            return ValidationError(
-                str(file_path), missing, "Expected PowerShell comment-based help"
-            )
+            return ValidationError(str(file_path), missing, "Expected PowerShell comment-based help")
         return None
 
 
@@ -389,11 +382,11 @@ class PythonValidator:
         missing = []
         for i, pattern in enumerate(PythonValidator.REQUIRED_SECTIONS):
             section_name = PythonValidator.SECTION_NAMES[i]
-            
+
             # Check pragma ignore
             if check_pragma_ignore(content, section_name):
                 continue
-                
+
             if not re.search(pattern, docstring, re.MULTILINE):
                 missing.append(section_name)
 
@@ -402,7 +395,7 @@ class PythonValidator:
             exit_codes_match = re.search(
                 r"^Exit Codes\s*\n-+\n(.+?)(?:\n^[A-Z]|\Z)",
                 docstring,
-                re.MULTILINE | re.DOTALL
+                re.MULTILINE | re.DOTALL,
             )
             if exit_codes_match:
                 exit_codes_content = exit_codes_match.group(1)
@@ -491,7 +484,7 @@ class RustValidator:
 
         # Extract module docs (first 100 lines)
         lines = content.split("\n")[:100]
-        module_docs = "\n".join([l for l in lines if l.strip().startswith("//!")])
+        module_docs = "\n".join([line for line in lines if line.strip().startswith("//!")])
 
         missing = []
         for i, pattern in enumerate(RustValidator.REQUIRED_SECTIONS):
@@ -501,16 +494,13 @@ class RustValidator:
         # For main.rs, check for Exit Behavior/Exit Codes
         if file_path.name == "main.rs":
             has_exit = any(
-                re.search(pattern, module_docs, re.MULTILINE | re.IGNORECASE)
-                for pattern in RustValidator.EXIT_SECTIONS
+                re.search(pattern, module_docs, re.MULTILINE | re.IGNORECASE) for pattern in RustValidator.EXIT_SECTIONS
             )
             if not has_exit:
                 missing.append("# Exit Behavior or # Exit Codes")
 
         if missing:
-            return ValidationError(
-                str(file_path), missing, "Expected Rustdoc sections in module docs"
-            )
+            return ValidationError(str(file_path), missing, "Expected Rustdoc sections in module docs")
         return None
 
 
@@ -576,17 +566,17 @@ def get_tracked_files() -> List[Path]:
 
     for file_path in all_files:
         p = Path(file_path)
-        
+
         # Check if file matches any exclude pattern first
         excluded = False
         for exclude_pattern in EXCLUDE_PATTERNS:
             if p.match(exclude_pattern):
                 excluded = True
                 break
-        
+
         if excluded:
             continue
-        
+
         # Check if file matches any in-scope pattern
         for pattern in IN_SCOPE_PATTERNS:
             if p.match(pattern):
@@ -653,13 +643,13 @@ Examples:
         action="store_true",
         help="Skip content validation (e.g., exit code completeness checks). Only check section presence.",
     )
-    
+
     args = parser.parse_args()
-    
+
     # Set global flag for content checks
     global SKIP_CONTENT_CHECKS
     SKIP_CONTENT_CHECKS = args.no_content_checks
-    
+
     print("🔍 Validating docstring contracts...\n")
 
     # Get files to validate
@@ -689,9 +679,7 @@ Examples:
         print(f"\n❌ Validation FAILED: {len(errors)} file(s) with violations\n")
         for error in errors:
             print(error)
-        print(
-            f"\n💡 Tip: See docs/docstrings/README.md for contract details and templates\n"
-        )
+        print("\n💡 Tip: See docs/docstrings/README.md for contract details and templates\n")
         return 1
     else:
         print(f"✅ All {len(files)} files conform to docstring contracts\n")
