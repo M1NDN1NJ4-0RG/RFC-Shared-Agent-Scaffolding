@@ -346,7 +346,32 @@ impl Cli {
         // Check if path has more than one component (e.g., "./foo", "dir/foo", "/usr/bin/foo")
         // Using nth(1) is more efficient than count() as it stops after finding the second component
         if cmd_path.is_absolute() || cmd_path.components().nth(1).is_some() {
-            return cmd_path.exists() && cmd_path.is_file();
+            // On non-Windows platforms, check the path exactly as given
+            #[cfg(not(target_os = "windows"))]
+            {
+                return cmd_path.exists() && cmd_path.is_file();
+            }
+
+            // On Windows, also try common executable extensions if no extension is present
+            #[cfg(target_os = "windows")]
+            {
+                // First, check the path exactly as given
+                if cmd_path.exists() && cmd_path.is_file() {
+                    return true;
+                }
+
+                // If there is no extension, try with Windows executable extensions
+                if cmd_path.extension().is_none() {
+                    for ext in Self::get_windows_executable_extensions().iter() {
+                        let with_ext = cmd_path.with_extension(ext);
+                        if with_ext.exists() && with_ext.is_file() {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
         }
 
         // Get PATH environment variable
@@ -366,7 +391,7 @@ impl Cli {
                 }
             }
 
-            // On Windows, check both without extension and with common extensions
+            // On Windows, check both without extension and with executable extensions
             #[cfg(target_os = "windows")]
             {
                 // Check without extension first (in case user specified full name)
@@ -374,8 +399,8 @@ impl Cli {
                 if base_path.exists() && base_path.is_file() {
                     return true;
                 }
-                // Then check with common Windows executable extensions
-                for ext in &[".exe", ".bat", ".cmd"] {
+                // Then check with Windows executable extensions from PATHEXT
+                for ext in Self::get_windows_executable_extensions().iter() {
                     let with_ext = path_dir.join(format!("{}{}", cmd, ext));
                     if with_ext.exists() && with_ext.is_file() {
                         return true;
@@ -385,6 +410,42 @@ impl Cli {
         }
 
         false
+    }
+
+    /// Get Windows executable extensions from PATHEXT environment variable
+    ///
+    /// # Returns
+    ///
+    /// A vector of executable extensions to check (e.g., [".exe", ".bat", ".cmd"])
+    ///
+    /// # Behavior
+    ///
+    /// - Reads PATHEXT environment variable on Windows
+    /// - Falls back to common extensions (.exe, .bat, .cmd) if PATHEXT is not set
+    /// - Returns empty list on non-Windows platforms (not used)
+    #[cfg(target_os = "windows")]
+    fn get_windows_executable_extensions() -> Vec<String> {
+        match env::var("PATHEXT") {
+            Ok(pathext) => {
+                // Split PATHEXT by semicolon and filter out empty strings
+                pathext
+                    .split(';')
+                    .filter(|s| !s.is_empty())
+                    .map(|s| s.to_string())
+                    .collect()
+            }
+            Err(_) => {
+                // Fallback to common Windows executable extensions
+                vec![".exe".to_string(), ".bat".to_string(), ".cmd".to_string()]
+            }
+        }
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    #[allow(dead_code)] // Only used in Windows-specific code blocks
+    fn get_windows_executable_extensions() -> Vec<String> {
+        // Not used on non-Windows platforms, but needed for compilation
+        vec![]
     }
 
     /// Archive command output (scaffolding only)

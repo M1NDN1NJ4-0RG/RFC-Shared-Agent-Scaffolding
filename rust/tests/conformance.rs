@@ -997,6 +997,98 @@ mod safe_check_tests {
                 .code(0);
         }
     }
+
+    /// Test that check works with relative paths
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check correctly handles relative paths like
+    /// "./command" and "subdir/command".
+    ///
+    /// # Test Approach
+    ///
+    /// Creates files in subdirectories and current directory, then verifies
+    /// they can be found using relative path notation.
+    #[test]
+    #[cfg(not(target_os = "windows"))] // Unix-specific test
+    fn test_check_relative_path() {
+        use std::os::unix::fs::PermissionsExt;
+        
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        
+        // Create a script in the current directory with ./ prefix
+        let script_current = temp_dir.path().join("script_here.sh");
+        fs::write(&script_current, "#!/bin/sh\necho test\n")
+            .expect("Failed to write script");
+        let mut perms = fs::metadata(&script_current)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_current, perms)
+            .expect("Failed to set permissions");
+        
+        // Create a subdirectory with a script
+        let subdir = temp_dir.path().join("subdir");
+        fs::create_dir(&subdir).expect("Failed to create subdir");
+        let script_sub = subdir.join("script_sub.sh");
+        fs::write(&script_sub, "#!/bin/sh\necho test\n")
+            .expect("Failed to write script");
+        let mut perms = fs::metadata(&script_sub)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_sub, perms)
+            .expect("Failed to set permissions");
+        
+        // Test with ./ prefix
+        Command::cargo_bin("safe-run")
+            .expect("Failed to find binary")
+            .arg("check")
+            .arg("./script_here.sh")
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+        
+        // Test with subdirectory path
+        Command::cargo_bin("safe-run")
+            .expect("Failed to find binary")
+            .arg("check")
+            .arg("subdir/script_sub.sh")
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test that check returns 2 for non-existent relative path
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check returns exit code 2 when given a
+    /// relative path that doesn't exist.
+    #[test]
+    fn test_check_relative_path_not_found() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        
+        Command::cargo_bin("safe-run")
+            .expect("Failed to find binary")
+            .arg("check")
+            .arg("./nonexistent_script")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2);
+        
+        Command::cargo_bin("safe-run")
+            .expect("Failed to find binary")
+            .arg("check")
+            .arg("subdir/nonexistent")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2);
+    }
 }
 
 /// Preflight automerge ruleset conformance tests
