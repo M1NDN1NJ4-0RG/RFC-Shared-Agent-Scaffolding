@@ -305,7 +305,29 @@ Use this command to scan for new future work items:
 
 ```bash
 # Search for common future work markers
-grep -rn   -e "TODO"   -e "FIXME"   -e "deferred"   -e "not yet implemented"   -e "scaffolding only"   -e "future PR"   -e "future implementation"   -e "placeholder"   -e "Future Enhancements"   -e "Future Work"   --include="*.rs"   --include="*.md"   --include="*.toml"   --include="*.sh"   --include="*.py"   --include="*.pl"   --include="*.ps1"   --exclude-dir=".git"   --exclude-dir="target"   --exclude-dir="dist"   --exclude-dir="node_modules"   .
+grep -rn \
+  -e "TODO" \
+  -e "FIXME" \
+  -e "deferred" \
+  -e "not yet implemented" \
+  -e "scaffolding only" \
+  -e "future PR" \
+  -e "future implementation" \
+  -e "placeholder" \
+  -e "Future Enhancements" \
+  -e "Future Work" \
+  --include="*.rs" \
+  --include="*.md" \
+  --include="*.toml" \
+  --include="*.sh" \
+  --include="*.py" \
+  --include="*.pl" \
+  --include="*.ps1" \
+  --exclude-dir=".git" \
+  --exclude-dir="target" \
+  --exclude-dir="dist" \
+  --exclude-dir="node_modules" \
+  .
 ```
 
 **Note:** This grep command is portable and works on Unix-like systems. For cross-platform compatibility, consider using `ripgrep`:
