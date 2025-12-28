@@ -99,7 +99,10 @@ jobs:
       - name: Install shfmt
         if: steps.check-bash.outputs.has_files == 'true'
         run: |
-          wget -O /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.7.0/shfmt_v3.7.0_linux_amd64
+          SHFMT_VERSION=3.7.0
+          SHFMT_CHECKSUM=333f2b621a631e85ba72b2f8c8e73c82ba0c25ea85f3a45e98b5a5cedf0d7bb4
+          wget -O /tmp/shfmt https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64
+          echo "${SHFMT_CHECKSUM}  /tmp/shfmt" | sha256sum -c -
           chmod +x /tmp/shfmt
           sudo mv /tmp/shfmt /usr/local/bin/shfmt
 
@@ -177,7 +180,7 @@ jobs:
       - name: Check for Rust files
         id: check-rust
         run: |
-          if [ -f "rust/Cargo.toml" ] || [ -n "$(git ls-files '*.rs')" ]; then
+          if [ -f "rust/Cargo.toml" ]; then
             echo "has_files=true" >> $GITHUB_OUTPUT
           else
             echo "has_files=false" >> $GITHUB_OUTPUT
@@ -192,13 +195,11 @@ jobs:
 
       - name: Run rustfmt (check)
         if: steps.check-rust.outputs.has_files == 'true'
-        working-directory: rust
         run: |
-          cargo fmt --all -- --check
+          cd rust && cargo fmt --all -- --check
 
       - name: Run clippy
         if: steps.check-rust.outputs.has_files == 'true'
-        working-directory: rust
         run: |
-          cargo clippy --all-targets --all-features -- -D warnings
+          cd rust && cargo clippy --all-targets --all-features -- -D warnings
 
