@@ -26,6 +26,7 @@
 # - PR chain checklist enables progress tracking in issue
 # - See: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
 
+---
 name: Multi-Phase Feature Implementation
 description: Track progress across multi-PR phased work for a Future Work (FW) item from docs/FUTURE-WORK.md
 title: "EPIC: Multi-Phase Implementation for FW-XXX"

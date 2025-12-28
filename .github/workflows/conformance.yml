@@ -26,6 +26,7 @@
 # - This is a structural validation only - does NOT run tests
 # - Required for merge
 # - Exit 0 = structure complete, non-zero = missing files
+---
 name: Multi-Language Conformance Validation
 
 on:
@@ -52,12 +53,12 @@ jobs:
     name: All Bundles Conformance Check
     # Runner: Ubuntu latest (sufficient for file existence checks)
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Checkout repository to access conformance infrastructure
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       # Step 2: Validate conformance/vectors.json exists and is valid JSON
       # This file defines the canonical test vectors used across all language implementations
       - name: Validate conformance vectors exist
@@ -67,14 +68,14 @@ jobs:
             exit 1
           fi
           echo "✅ Conformance vectors found"
-          
+
           # Validate JSON syntax
           if ! jq empty conformance/vectors.json 2>/dev/null; then
             echo "ERROR: conformance/vectors.json is not valid JSON"
             exit 1
           fi
           echo "✅ Conformance vectors JSON is valid"
-      
+
       # Step 3: Verify conformance/README.md exists
       # Provides documentation for the conformance testing system
       - name: Check conformance README
@@ -84,7 +85,7 @@ jobs:
             exit 1
           fi
           echo "✅ Conformance README found"
-      
+
       # Step 4: Verify all 4 language bundle directories exist
       # Expected bundles: bash, python3, perl, powershell
       # Each bundle should contain scripts/, tests/, run-tests.*, and optional README_TESTS.md
@@ -92,7 +93,7 @@ jobs:
         run: |
           bundles=("bash" "python3" "perl" "powershell")
           missing=0
-          
+
           for bundle in "${bundles[@]}"; do
             path="wrappers/scripts/$bundle"
             if [ ! -d "$path" ]; then
@@ -102,15 +103,15 @@ jobs:
               echo "✅ Bundle found: $bundle"
             fi
           done
-          
+
           if [ $missing -eq 1 ]; then
             exit 1
           fi
-      
+
       # Note: Agent shard and journal templates were moved to docs/history/ai-agent-guidelines/
       # as part of M2 restructure. These files are now archived and no longer validated
       # as part of the wrapper conformance structure.
-      
+
       # Step 5: Print summary of validation results
       # Confirms all infrastructure is in place; individual language tests
       # run in separate workflow files (test-bash.yml, test-python3.yml, etc.)

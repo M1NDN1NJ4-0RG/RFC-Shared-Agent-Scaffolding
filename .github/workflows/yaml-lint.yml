@@ -1,0 +1,93 @@
+# Workflow: YAML Linting
+#
+# Purpose: Validates YAML syntax, style, and formatting across the repository.
+# Runs yamllint for general YAML style checking and actionlint for GitHub
+# Actions workflow-specific validation. Enforces consistent YAML formatting
+# including indentation (2 spaces), line length (120 chars max), and proper
+# document structure.
+#
+# Triggers:
+# - Pull requests modifying YAML files
+# - Pushes to main branch affecting YAML files
+# - Manual workflow dispatch
+#
+# Dependencies:
+# - yamllint (installed via pip)
+# - actionlint (downloaded from GitHub releases)
+# - .yamllint configuration file at repository root
+#
+# Outputs:
+# - Status check: "YAML Linting"
+# - Artifacts: None
+# - Side effects: Fails build if YAML files have linting errors
+#
+# Notes:
+# - Line length violations are warnings initially (may be enforced later)
+# - yamllint checks all YAML files repository-wide
+# - actionlint specifically validates GitHub Actions workflow syntax
+# - YAML docstring headers are enforced by separate CI (docstring-contract.yml)
+# - See .yamllint for detailed linting rules
+---
+name: YAML Linting
+
+on:
+  pull_request:
+    paths:
+      - '**.yml'
+      - '**.yaml'
+      - '.yamllint'
+      - '.github/workflows/yaml-lint.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**.yml'
+      - '**.yaml'
+      - '.yamllint'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  yamllint:
+    name: Run yamllint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install yamllint
+        run: |
+          python -m pip install --upgrade pip
+          pip install yamllint==1.35.1
+
+      - name: Run yamllint
+        run: |
+          yamllint .
+
+  actionlint:
+    name: Run actionlint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download actionlint
+        run: |
+          wget -q https://github.com/rhysd/actionlint/releases/download/v1.7.4/actionlint_1.7.4_linux_amd64.tar.gz
+          tar -xzf actionlint_1.7.4_linux_amd64.tar.gz
+          chmod +x actionlint
+          sudo mv actionlint /usr/local/bin/
+          rm actionlint_1.7.4_linux_amd64.tar.gz
+
+      - name: Run actionlint
+        run: |
+          actionlint -shellcheck= .github/workflows/*.yml

@@ -26,6 +26,7 @@
 # - Required for merge
 # - Tests multiple Python versions for compatibility
 # - Exit 0 = tests pass, non-zero = tests fail
+---
 name: Test Python 3 Bundle
 
 on:
@@ -55,28 +56,28 @@ jobs:
     name: Python 3 Bundle Tests
     # Runner: Ubuntu latest (provides Rust toolchain, Python setup via action)
     runs-on: ubuntu-latest
-    
+
     # Matrix strategy: Test across Python 3.8, 3.11, 3.12
     # Ensures wrapper works with older (3.8) and newer (3.12) Python versions
     strategy:
       matrix:
         python-version: ['3.8', '3.11', '3.12']  # Test across multiple Python versions
-    
+
     steps:
       # Step 1: Checkout repository to access Python 3 bundle and Rust source
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       # Step 2: Install Rust stable toolchain for building canonical binary
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-      
+
       # Step 3: Build Rust canonical tool in release mode
       # This is the reference implementation that the Python wrapper delegates to
       - name: Build Rust canonical tool
         working-directory: rust
         run: cargo build --release
-      
+
       # Step 4: Stage Rust binary at standard discovery location
       # Python wrapper uses SAFE_RUN_BIN environment variable to locate this binary
       - name: Stage Rust binary for wrapper discovery
@@ -86,18 +87,18 @@ jobs:
           chmod +x dist/linux/x86_64/safe-run
           echo "Rust binary staged at: dist/linux/x86_64/safe-run"
           ls -lh dist/linux/x86_64/safe-run
-      
+
       # Step 5: Set up Python environment with matrix-specified version
       # actions/setup-python provides fast, cached Python installations
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      
+
       # Step 6: Display Python version for diagnostics
       - name: Display Python version
         run: python --version
-      
+
       # Step 7: Run Python 3 test suite
       # Executes run-tests.sh which runs all tests in tests/ directory
       # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
@@ -106,7 +107,7 @@ jobs:
         working-directory: wrappers/scripts/python3
         run: |
           ./run-tests.sh
-      
+
       # Step 8: Upload failure logs as artifacts (only on test failure)
       # Preserves .agent/FAIL-LOGS/ directory for debugging
       # Artifact name includes Python version to distinguish matrix runs

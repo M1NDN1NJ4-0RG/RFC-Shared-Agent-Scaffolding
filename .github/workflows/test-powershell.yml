@@ -25,6 +25,7 @@
 # Notes:
 # - Required for merge
 # - Exit 0 = tests pass, non-zero = tests fail
+---
 name: Test PowerShell Bundle
 
 on:
@@ -53,22 +54,22 @@ jobs:
     name: PowerShell Bundle Tests
     # Runner: Windows latest (provides PowerShell, Rust toolchain)
     runs-on: windows-latest
-    
+
     steps:
       # Step 1: Checkout repository to access PowerShell bundle and Rust source
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       # Step 2: Install Rust stable toolchain for building canonical binary on Windows
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-      
+
       # Step 3: Build Rust canonical tool in release mode
       # Produces safe-run.exe on Windows (not safe-run)
       - name: Build Rust canonical tool
         working-directory: rust
         run: cargo build --release
-      
+
       # Step 4: Stage Rust binary at standard Windows discovery location
       # PowerShell wrapper uses $env:SAFE_RUN_BIN to locate this binary
       # Uses pwsh shell for PowerShell-native commands
@@ -79,7 +80,7 @@ jobs:
           Copy-Item rust/target/release/safe-run.exe dist/windows/x86_64/safe-run.exe
           Write-Host "Rust binary staged at: dist/windows/x86_64/safe-run.exe"
           Get-Item dist/windows/x86_64/safe-run.exe | Format-List
-      
+
       # Step 5: Install Pester testing framework
       # Pester 5.0+ required for modern PowerShell testing features
       # -SkipPublisherCheck: Bypass publisher validation for faster install
@@ -90,7 +91,7 @@ jobs:
         run: |
           Install-Module -Name Pester -Scope CurrentUser -Force -SkipPublisherCheck -MinimumVersion 5.0
           Write-Host "Pester version: $((Get-Module Pester -ListAvailable).Version)"
-      
+
       # Step 6: Run PowerShell test suite
       # Executes run-tests.ps1 which runs all Pester tests in tests/ directory
       # Uses -NoProfile to avoid loading user profile scripts
@@ -100,7 +101,7 @@ jobs:
         working-directory: wrappers/scripts/powershell
         run: |
           pwsh -NoProfile -File ./run-tests.ps1
-      
+
       # Step 7: Upload failure logs as artifacts (only on test failure)
       # Preserves .agent/FAIL-LOGS/ directory for debugging
       # if-no-files-found: ignore prevents failure if no logs exist

@@ -1,0 +1,75 @@
+---
+# yamllint configuration file
+#
+# Purpose: Defines YAML linting rules for repository-wide YAML style checks.
+# Enforces consistent formatting, syntax, and style across all YAML files
+# including GitHub Actions workflows, issue templates, and configuration files.
+#
+# Usage:
+# - Run locally: yamllint .
+# - Run on specific file: yamllint path/to/file.yml
+# - CI runs this automatically on all YAML files
+#
+# Rules:
+# - Indentation: 2 spaces (no tabs)
+# - Line length: 120 characters (warning initially)
+# - Boolean values: true/false only (allow 'on' for GitHub Actions triggers)
+# - Document start: Require '---' marker
+# - Newline at EOF: Required
+#
+# Notes:
+# - YAML docstring headers are enforced by separate CI script (validate-docstrings.py)
+# - Generated/vendor directories are excluded
+# - See docs/contributing/contributing-guide.md for YAML style guidelines
+
+extends: default
+
+rules:
+  # Indentation: 2 spaces
+  indentation:
+    spaces: 2
+    indent-sequences: true
+    check-multi-line-strings: false
+
+  # Line length: 120 characters (warn initially, will be enforced later)
+  line-length:
+    max: 120
+    level: warning
+
+  # Boolean values: only true/false (allow 'on' for GitHub Actions trigger)
+  truthy:
+    allowed-values: ['true', 'false', 'on']
+    check-keys: false
+
+  # Document start: require '---' marker
+  document-start:
+    present: true
+
+  # Newline at end of file
+  new-line-at-end-of-file: enable
+
+  # Allow comments to start without space (for docstring headers)
+  comments:
+    min-spaces-from-content: 1
+    require-starting-space: false
+
+  # Trailing spaces not allowed
+  trailing-spaces: enable
+
+  # Allow empty values (common in GitHub Actions)
+  empty-values:
+    forbid-in-block-mappings: false
+    forbid-in-flow-mappings: false
+
+  # Allow some empty lines at end of document
+  empty-lines:
+    max: 1
+    max-start: 0
+    max-end: 1
+
+# Ignore patterns
+ignore: |
+  .git/
+  dist/
+  target/
+  node_modules/

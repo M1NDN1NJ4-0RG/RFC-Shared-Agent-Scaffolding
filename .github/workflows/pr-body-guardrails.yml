@@ -25,6 +25,7 @@
 # Notes:
 # - Required for merge
 # - Exit 0 = no auto-close keywords for EPICs, non-zero = violations detected
+---
 name: pr-body-guardrails
 
 on:
@@ -64,11 +65,11 @@ jobs:
             // Fetch issue metadata to check if title contains "EPIC" (case-insensitive) as a whole word
             async function isEpicIssue(owner, repo, issueNum) {
               const cacheKey = `${owner}/${repo}#${issueNum}`;
-              
+
               if (issueCache.has(cacheKey)) {
                 return issueCache.get(cacheKey);
               }
-              
+
               try {
                 const { data: issue } = await github.rest.issues.get({
                   owner,
@@ -94,11 +95,11 @@ jobs:
               const epicIssues = new Set();
               const checks = [];
               let match;
-              
+
               while ((match = issuePattern.exec(text)) !== null) {
                 const repoPrefix = match[1];
                 const issueNum = parseInt(match[2], 10);
-                
+
                 // Determine the target repo
                 let targetOwner = owner;
                 let targetRepo = repo;
@@ -109,7 +110,7 @@ jobs:
                     targetRepo = parts[1];
                   }
                 }
-                
+
                 // Queue the check (will use cache if available)
                 checks.push({
                   ref: `${repoPrefix || ""}#${issueNum}`,
@@ -118,7 +119,7 @@ jobs:
                   num: issueNum
                 });
               }
-              
+
               // Process checks with bounded concurrency (pool size 5)
               const poolSize = 5;
               for (let i = 0; i < checks.length; i += poolSize) {
@@ -132,7 +133,7 @@ jobs:
                   }
                 });
               }
-              
+
               return epicIssues;
             }
 
@@ -155,7 +156,7 @@ jobs:
               // Build a combined regex pattern for all epic issues to avoid O(n*m) complexity
               let combinedPattern = null;
               if (epicIssues.size > 0) {
-                const escapedRefs = Array.from(epicIssues).map(ref => 
+                const escapedRefs = Array.from(epicIssues).map(ref =>
                   ref.replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
                 );
                 const refsAlternation = escapedRefs.join('|');
@@ -244,12 +245,12 @@ jobs:
             local issue_owner="${2:-$OWNER}"
             local issue_repo="${3:-$REPO}"
             local cache_key="${issue_owner}/${issue_repo}#${issue_num}"
-            
+
             # Check cache first
             if [[ -v "EPIC_CACHE[$cache_key]" ]]; then
               [[ "${EPIC_CACHE[$cache_key]}" == "true" ]] && return 0 || return 1
             fi
-            
+
             if ! issue_json=$(curl -sSf \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
@@ -258,7 +259,7 @@ jobs:
               EPIC_CACHE[$cache_key]="false"
               return 2  # API error
             fi
-            
+
             # Check if title contains "EPIC" as a whole word (case-insensitive)
             local title
             title=$(echo "$issue_json" | jq -r '.title // ""') || return 2
@@ -276,7 +277,7 @@ jobs:
             local text="$1"
             local in_code_block=0
             local FENCE_RE='^[[:space:]]{0,3}(```|~~~)'
-            
+
             # Extract all issue references (#number or owner/repo#number)
             while read -r line; do
               # Skip fenced code blocks (``` or ~~~), allowing up to 3 spaces of indentation
@@ -284,19 +285,19 @@ jobs:
                 in_code_block=$((1 - in_code_block))
                 continue
               fi
-              
+
               # If inside a fenced code block, skip this line
               if [[ "$in_code_block" -eq 1 ]]; then
                 continue
               fi
-              
+
               # Match issue references: optional repo prefix + # + number
               # Use Perl regex with negative lookbehind to match JS behavior
               refs=$(echo "$line" | grep -Po '(?<![[:alnum:]_.-])([[:alnum:]_.-]+/[[:alnum:]_.-]+)?#[0-9]+' || true)
               if [[ -z "$refs" ]]; then
                 continue
               fi
-              
+
               echo "$refs" | while read -r ref; do
                 # Parse the reference
                 if [[ "$ref" =~ ^([[:alnum:]_.-]+)/([[:alnum:]_.-]+)\#([0-9]+)$ ]]; then
@@ -304,7 +305,7 @@ jobs:
                   local ref_owner="${BASH_REMATCH[1]}"
                   local ref_repo="${BASH_REMATCH[2]}"
                   local ref_num="${BASH_REMATCH[3]}"
-                  
+
                   # Capture return code without triggering set -e
                   local ret=0
                   has_epic_in_title "$ref_num" "$ref_owner" "$ref_repo" || ret=$?
@@ -315,7 +316,7 @@ jobs:
                 elif [[ "$ref" =~ ^\#([0-9]+)$ ]]; then
                   # Same-repo reference
                   local ref_num="${BASH_REMATCH[1]}"
-                  
+
                   # Capture return code without triggering set -e
                   local ret=0
                   has_epic_in_title "$ref_num" "$OWNER" "$REPO" || ret=$?
@@ -331,12 +332,12 @@ jobs:
           # Function to build pattern for issues with "EPIC" in title
           build_epic_pattern() {
             local epic_refs="$1"
-            
+
             if [ -z "$epic_refs" ]; then
               echo ""
               return
             fi
-            
+
             # Build alternation pattern for all epic issue references
             local pattern_parts=""
             while IFS= read -r ref; do
@@ -349,7 +350,7 @@ jobs:
                 pattern_parts="$escaped_ref"
               fi
             done <<< "$epic_refs"
-            
+
             # Build full pattern: keyword + optional colon + optional space + (epic refs)
             # Match the same format as JS normalization
             echo '\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(:[[:space:]]*|[[:space:]]+)('"$pattern_parts"')\b'
@@ -376,7 +377,7 @@ jobs:
               "https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER" 2>&1); then
               fail "Failed to fetch PR body from GitHub API: $PR_BODY_JSON"
             fi
-            
+
             PR_BODY=$(echo "$PR_BODY_JSON" | jq -r '.body // ""') || PR_BODY=""
             PR_TITLE=$(echo "$PR_BODY_JSON" | jq -r '.title // ""') || PR_TITLE=""
 
@@ -397,10 +398,10 @@ jobs:
           else
             echo "Found issues with 'EPIC' in title:"
             echo "$epic_issue_refs"
-            
+
             # Build pattern for epic issues
             EPIC_PATTERN=$(build_epic_pattern "$epic_issue_refs") || EPIC_PATTERN=""
-            
+
             if [ -n "$EPIC_PATTERN" ]; then
               # Check PR title
               if matched_line=$(printf '%s' "$PR_TITLE" | grep -Ei "$EPIC_PATTERN"); then
@@ -408,14 +409,14 @@ jobs:
                 matched_issue=$(echo "$matched_line" | grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
                 fail "Auto-close keyword found in PR TITLE for EPIC issue $matched_issue. Use Refs/Related/Tracks instead. Matched text: $matched_line"
               fi
-              
+
               # Check PR body
               if matched_line=$(printf '%s' "$body" | grep -Ei "$EPIC_PATTERN" | head -1); then
                 # Extract which issue was matched
                 matched_issue=$(echo "$matched_line" | grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
                 fail "Auto-close keyword found in PR BODY for EPIC issue $matched_issue (excluding 'Original prompt' block). Use Refs/Related/Tracks instead. Matched line: $matched_line"
               fi
-              
+
               # Check commit messages
               base_commits_api="https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/commits"
               page=1

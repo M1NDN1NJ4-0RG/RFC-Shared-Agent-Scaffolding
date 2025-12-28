@@ -145,14 +145,37 @@ python3 scripts/validate-docstrings.py
 
 See [Docstring Contracts](#docstring-contracts) for details.
 
-### 3. Structure Validation
+### 3. YAML Linting
+
+**ALL YAML files MUST pass yamllint and actionlint checks.**
+
+```bash
+# Run YAML linting locally
+make lint-yaml
+
+# Or run individually:
+yamllint .
+actionlint -shellcheck= .github/workflows/*.yml
+```
+
+YAML linting rules (defined in `.yamllint`):
+- **Indentation**: 2 spaces (no tabs)
+- **Line length**: 120 characters max (warning level)
+- **Boolean values**: Use `true`/`false` (allow `on` for GitHub Actions)
+- **Document start**: Require `---` marker
+- **Trailing spaces**: Not allowed
+- **Newline at EOF**: Required
+
+See [YAML Docstring Contract](./docstring-contracts/yaml.md) for documentation requirements.
+
+### 4. Structure Validation
 
 ```bash
 # Validate directory structure
 ./scripts/validate-structure.sh
 ```
 
-### 4. Conformance Tests
+### 5. Conformance Tests
 
 ```bash
 # Run Rust conformance tests
@@ -160,7 +183,7 @@ cd rust/
 cargo test --test conformance
 ```
 
-### 5. Wrapper Tests
+### 6. Wrapper Tests
 
 ```bash
 # Test all wrappers
@@ -177,7 +200,7 @@ cd ../python3/
 ./run-tests.sh
 ```
 
-### 6. Drift Detection
+### 7. Drift Detection
 
 Strict parity is enforced across all implementations. See [allowed-drift.md](./allowed-drift.md) for policy.
 
@@ -308,7 +331,10 @@ See templates in:
 
 1. **Run all checks locally**:
    ```bash
-   # Naming, docstrings, structure
+   # YAML linting
+   make lint-yaml
+   
+   # Docstrings, structure, and references
    python3 scripts/validate-docstrings.py
    ./scripts/validate-structure.sh
    ./scripts/verify-repo-references.sh

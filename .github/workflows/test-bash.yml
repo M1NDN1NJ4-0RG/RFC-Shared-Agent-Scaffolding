@@ -22,6 +22,7 @@
 # Notes:
 # - Required for merge
 # - Exit 0 = tests pass, non-zero = tests fail
+---
 name: Test Bash Bundle
 
 on:
@@ -50,16 +51,16 @@ jobs:
     name: Bash Bundle Tests
     # Runner: Ubuntu latest (provides bash, Rust toolchain)
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Checkout repository to access Bash bundle and Rust source
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       # Step 2: Install Rust stable toolchain for building canonical binary
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
-      
+
       # Step 3: Build Rust canonical tool in release mode
       # This is the reference implementation that the Bash wrapper delegates to
       - name: Build Rust canonical tool
@@ -67,7 +68,7 @@ jobs:
           cd rust
           cargo build --release
           cd ..
-      
+
       # Step 4: Stage Rust binary at standard discovery location
       # Bash wrapper uses SAFE_RUN_BIN environment variable to locate this binary
       # (set by run-tests.sh or test harness)
@@ -78,7 +79,7 @@ jobs:
           chmod +x dist/linux/x86_64/safe-run
           echo "Rust binary staged at: dist/linux/x86_64/safe-run"
           ls -lh dist/linux/x86_64/safe-run
-      
+
       # Step 5: Install jq for JSON parsing in Bash tests
       # Required by Bash wrapper to read conformance/vectors.json
       - name: Install jq
@@ -86,7 +87,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq
           jq --version
-      
+
       # Step 6: Run Bash test suite
       # Executes run-tests.sh which runs all tests in tests/ directory
       # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
@@ -95,7 +96,7 @@ jobs:
         run: |
           chmod +x run-tests.sh
           ./run-tests.sh
-      
+
       # Step 7: Upload failure logs as artifacts (only on test failure)
       # Preserves .agent/FAIL-LOGS/ directory for debugging
       # if-no-files-found: ignore prevents failure if no logs exist
