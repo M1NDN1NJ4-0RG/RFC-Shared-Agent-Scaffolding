@@ -76,7 +76,7 @@ jobs:
       - name: Run pylint
         if: steps.check-python.outputs.has_files == 'true'
         run: |
-          pylint $(git ls-files '**/*.py')
+          git ls-files -z '**/*.py' | xargs -0 pylint
 
   lint-bash:
     runs-on: ubuntu-latest
