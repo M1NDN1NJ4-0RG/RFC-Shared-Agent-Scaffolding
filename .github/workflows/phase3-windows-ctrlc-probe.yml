@@ -1,0 +1,171 @@
+# Workflow: Phase 3 Windows Ctrl-C Probe
+#
+# Purpose: Determines real Ctrl-C behavior of safe-run.ps1 wrapper on native Windows
+# by programmatically sending console control events and capturing exit codes + logs.
+#
+# Context:
+# - safe-run.ps1 wraps the Rust safe-run canonical tool
+# - Contract intent: Ctrl-C should yield ABORTED log and exit code 130 (SIGINT) or 143 (SIGTERM)
+# - Risk: PowerShell may throw PipelineStoppedException and catch {} may convert to exit 127
+#
+# This workflow gathers hard evidence of actual behavior on windows-latest runner.
+#
+# Dependencies:
+# - Rust stable toolchain (for building safe-run.exe)
+# - PowerShell (built into Windows)
+# - Probe script: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/phase3-ctrlc-probe.ps1
+#
+# Status: DISABLED
+# - Workflow preserved for future testing on actual Windows machines
+# - Currently experiencing CreateProcessW error 123 in CI that requires local debugging
+# - To re-enable, uncomment the trigger events below
+#
+# Triggers:
+# - Manual workflow dispatch (primary use case for investigation)
+# - Pull requests (optional, for automated validation during development)
+# - Pushes to main (optional, for regression tracking)
+#
+# Outputs:
+# - Uploaded artifacts containing:
+#   - SAFE_LOG_DIR contents (ABORTED logs if created)
+#   - probe-summary.txt (exit code, log presence, observations)
+#
+name: Phase 3 Windows Ctrl-C Probe
+
+on:
+  # DISABLED: Uncomment to re-enable workflow
+  # workflow_dispatch:
+  # pull_request:
+  #   paths:
+  #     - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
+  #     - '.github/workflows/phase3-windows-ctrlc-probe.yml'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/**'
+  #     - '.github/workflows/phase3-windows-ctrlc-probe.yml'
+
+# Permissions: Read-only access to repository contents
+permissions:
+  contents: read
+
+jobs:
+  # Job: Windows Signal Probe
+  # Builds Rust canonical tool, runs probe script, uploads findings
+  probe:
+    name: Windows Ctrl-C Signal Probe
+    runs-on: windows-latest
+    
+    steps:
+      # Step 1: Checkout repository to access PowerShell scripts and Rust source
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      # Step 2: Install Rust stable toolchain for building canonical binary on Windows
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      # Step 3: Build Rust canonical tool in release mode
+      # Produces safe-run.exe on Windows
+      - name: Build Rust canonical tool
+        working-directory: rust
+        run: cargo build --release
+      
+      # Step 4: Run Phase 3 Ctrl-C probe script
+      # Probe script will:
+      # - Set SAFE_RUN_BIN to built safe-run.exe
+      # - Set SAFE_LOG_DIR to temp directory
+      # - Launch safe-run.ps1 with long-lived child command
+      # - Send Ctrl-C signal programmatically
+      # - Record exit code and check for ABORTED log
+      # - Write summary to probe-summary.txt
+      - name: Debug - Show environment
+        shell: pwsh
+        run: |
+          Write-Host "=== Environment Debug Information ==="
+          Write-Host "Current directory: $(Get-Location)"
+          Write-Host "PowerShell version: $($PSVersionTable.PSVersion)"
+          Write-Host ""
+          
+      - name: Debug - Verify repository structure
+        shell: pwsh
+        run: |
+          Write-Host "=== Repository Structure ==="
+          Write-Host "Checking for probe script..."
+          $probePath = "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/phase3-ctrlc-probe.ps1"
+          Write-Host "Probe script exists: $(Test-Path $probePath)"
+          
+          Write-Host ""
+          Write-Host "Checking for wrapper script..."
+          $wrapperPath = "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/safe-run.ps1"
+          Write-Host "Wrapper script exists: $(Test-Path $wrapperPath)"
+          
+          Write-Host ""
+          Write-Host "Directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/"
+          Get-ChildItem "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/" | ForEach-Object {
+            Write-Host "  $($_.Name) $(if ($_.PSIsContainer) { '[DIR]' } else { '' })"
+          }
+          
+          Write-Host ""
+          Write-Host "Directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/"
+          if (Test-Path "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/") {
+            Get-ChildItem "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/scripts/" | ForEach-Object {
+              Write-Host "  $($_.Name)"
+            }
+          } else {
+            Write-Host "  [Directory not found]"
+          }
+          
+          Write-Host ""
+          Write-Host "Directory: RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/"
+          if (Test-Path "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/") {
+            Get-ChildItem "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/" | ForEach-Object {
+              Write-Host "  $($_.Name)"
+            }
+          } else {
+            Write-Host "  [Directory not found]"
+          }
+          
+      - name: Run Ctrl-C probe
+        shell: pwsh
+        run: |
+          $probeScript = "RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/phase3-ctrlc-probe.ps1"
+          
+          if (-not (Test-Path $probeScript)) {
+            Write-Error "Probe script not found: $probeScript"
+            exit 1
+          }
+          
+          Write-Host "Running Phase 3 Ctrl-C probe..."
+          pwsh -NoProfile -File $probeScript
+          
+          Write-Host "`nProbe execution completed."
+      
+      # Step 5: Upload artifacts (logs + summary)
+      # Always upload artifacts, even if probe fails, to capture partial results
+      # Note: Uses recursive wildcard to capture GUID-based temp directories
+      - name: Upload probe artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase3-ctrlc-probe-results
+          path: |
+            ${{ runner.temp }}\phase3-ctrlc-*
+            probe-summary.txt
+          if-no-files-found: warn
+      
+      # Step 6: Display summary for quick review in workflow log
+      - name: Display probe summary
+        if: always()
+        shell: pwsh
+        run: |
+          $summaryPath = "probe-summary.txt"
+          
+          if (Test-Path $summaryPath) {
+            Write-Host "`n=== PROBE SUMMARY ==="
+            Get-Content $summaryPath | ForEach-Object { Write-Host $_ }
+            Write-Host "=====================`n"
+          } else {
+            Write-Host "WARNING: probe-summary.txt not found"
+          }
