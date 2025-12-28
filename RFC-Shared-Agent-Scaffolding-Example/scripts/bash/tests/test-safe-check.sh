@@ -50,7 +50,7 @@ source "./lib.sh"
 
 # Discover paths
 ROOT="$(cd .. && pwd)"
-CHECK="${ROOT}/scripts/safe-check.sh"
+export CHECK="${ROOT}/scripts/safe-check.sh"
 
 # Compute repo root and find Rust binary for wrapper discovery
 REPO_ROOT="$(cd "$ROOT/../../.." && pwd)"
