@@ -1,13 +1,13 @@
-# EPIC Completion Summary: FUTURE-WORK.md Verification
+# EPIC Completion Summary: future-work.md Verification
 
-**Epic ID:** Review FUTURE-WORK.md and verify status for each item  
+**Epic ID:** Review future-work.md and verify status for each item  
 **Status:** ✅ COMPLETE  
 **Date Completed:** 2025-12-28  
 **Branch:** `copilot/review-future-work-status`
 
 ## Overview
 
-This epic systematically reviewed all 10 items in `docs/FUTURE-WORK.md` against the actual repository state to verify accuracy and completeness. The goal was to ensure the documentation reflects reality and provides clear guidance for future development.
+This epic systematically reviewed all 10 items in `docs/future-work.md` against the actual repository state to verify accuracy and completeness. The goal was to ensure the documentation reflects reality and provides clear guidance for future development.
 
 ## Deliverables
 
@@ -17,7 +17,7 @@ This epic systematically reviewed all 10 items in `docs/FUTURE-WORK.md` against 
 - **Structure:** Organized by phase with evidence, verification results, and recommendations
 - **Format:** Professional markdown report suitable for stakeholder review
 
-### 2. Updated FUTURE-WORK.md
+### 2. Updated future-work.md
 - **Primary Update:** FW-001 (Signal handling) status corrected
 - **Status Change:** From "deferred/not implemented" to "✅ IMPLEMENTED"
 - **Severity Change:** From High to Low (implementation complete, only test incomplete)
@@ -64,12 +64,12 @@ The conformance test `test_safe_run_003_sigterm_aborted` is marked `#[ignore]` a
 
 ### Commits
 1. **Initial plan** - Established phased verification approach
-2. **Update FUTURE-WORK.md with accurate FW-001 status and verification report** - Primary changes
+2. **Update future-work.md with accurate FW-001 status and verification report** - Primary changes
 3. **Refine documentation to use stable references instead of line numbers** - Maintainability improvements
 4. **Update commit reference to latest commit** - Final cleanup
 
 ### Files Modified
-- `docs/FUTURE-WORK.md` - Updated FW-001 status and added preflight-004 note
+- `docs/future-work.md` - Updated FW-001 status and added preflight-004 note
 - `FUTURE-WORK-VERIFICATION-REPORT.md` - Created comprehensive verification report
 
 ### Lines Changed
@@ -117,7 +117,7 @@ Multiple code review iterations completed with all feedback addressed:
 ## Recommendations for Future Work
 
 ### High Priority
-None. All high-severity items in FUTURE-WORK.md are now correctly documented.
+None. All high-severity items in future-work.md are now correctly documented.
 
 ### Medium Priority
 1. **FW-002 (safe-check):** Implement command availability checking
@@ -137,7 +137,7 @@ None. All high-severity items in FUTURE-WORK.md are now correctly documented.
 ### What Went Well
 1. **Systematic Approach:** Phased verification ensured thorough coverage
 2. **Evidence-Based:** Each claim verified against actual code
-3. **Documentation Quality:** FUTURE-WORK.md was already 90% accurate
+3. **Documentation Quality:** future-work.md was already 90% accurate
 
 ### Areas for Improvement
 1. **Earlier Verification:** This epic revealed a 4+ month documentation lag for FW-001
@@ -145,13 +145,13 @@ None. All high-severity items in FUTURE-WORK.md are now correctly documented.
 3. **Test Coverage:** Need better tracking of test implementation vs. feature implementation
 
 ### Process Improvements
-1. **Regular Audits:** Schedule periodic FUTURE-WORK.md verification (quarterly?)
-2. **PR Checklists:** Add "Update FUTURE-WORK.md" to completion checklists
+1. **Regular Audits:** Schedule periodic future-work.md verification (quarterly?)
+2. **PR Checklists:** Add "Update future-work.md" to completion checklists
 3. **Test-First Discipline:** Ensure tests are completed alongside implementation
 
 ## Conclusion
 
-This epic successfully verified all items in FUTURE-WORK.md and corrected the one inaccuracy found (FW-001 signal handling status). The documentation now accurately reflects the repository state, providing a reliable foundation for future development planning.
+This epic successfully verified all items in future-work.md and corrected the one inaccuracy found (FW-001 signal handling status). The documentation now accurately reflects the repository state, providing a reliable foundation for future development planning.
 
 The verification process demonstrated strong documentation discipline overall (90% accuracy before updates) while identifying a specific area where implementation preceded documentation updates. The comprehensive verification report serves as both an audit trail and a reference for stakeholders.
 

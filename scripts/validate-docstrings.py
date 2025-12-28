@@ -2,7 +2,7 @@
 """Docstring contract validator for RFC-Shared-Agent-Scaffolding.
 
 This script validates that all scripts and YAML files conform to their
-language-specific docstring contracts as defined in docs/docstrings/.
+language-specific docstring contracts as defined in docs/contributing/docstring-contracts/.
 
 Purpose
 -------
@@ -70,7 +70,7 @@ Notes
 -----
 - Validation is lightweight: checks presence of sections, not content quality
 - Pragma ignores should be used sparingly for legitimate exceptions
-- See docs/docstrings/README.md for detailed contract specifications
+- See docs/contributing/docstring-contracts/README.md for detailed contract specifications
 """
 
 import argparse
@@ -679,7 +679,7 @@ Examples:
         print(f"\n❌ Validation FAILED: {len(errors)} file(s) with violations\n")
         for error in errors:
             print(error)
-        print("\n💡 Tip: See docs/docstrings/README.md for contract details and templates\n")
+        print("\n💡 Tip: See docs/contributing/docstring-contracts/README.md for contract details and templates\n")
         return 1
     else:
         print(f"✅ All {len(files)} files conform to docstring contracts\n")

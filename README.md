@@ -54,10 +54,10 @@ Wrappers act as **invokers**, not independent implementations. They:
 📚 **[Documentation Index](./docs/README.md)** - Complete documentation guide
 
 Quick links:
-- [RFC v0.1.0](./RFC-Shared-Agent-Scaffolding-v0.1.0.md) - Contract specification
+- [RFC v0.1.0](./rfc-shared-agent-scaffolding-v0.1.0.md) - Contract specification
 - [Canonical Structure](./docs/architecture/canonical-structure.md) - Directory layout
 - [Pre-flight Validation](./docs/history/pr0-preflight-complete.md) - Baseline conformance report
-- [Docstring Contracts](./docs/docstrings/README.md) - Documentation standards for all languages
+- [Docstring Contracts](./docs/contributing/docstring-contracts/README.md) - Documentation standards for all languages
 
 ### Docstring Contracts
 
@@ -72,11 +72,19 @@ Contracts define required documentation sections (purpose, usage, examples, exit
 - **Rust** (`.rs`)
 - **YAML** (`.yml`, `.yaml` - workflows and configs)
 
-**Any new script added anywhere in the repository** will be validated against its language contract. Conformance is enforced by CI via `scripts/validate-docstrings.py`. See [docs/docstrings/README.md](./docs/docstrings/README.md) for details and templates.
+**Any new script added anywhere in the repository** will be validated against its language contract. Conformance is enforced by CI via `scripts/validate-docstrings.py`. See [docs/contributing/docstring-contracts/README.md](./docs/contributing/docstring-contracts/README.md) for details and templates.
 
 ## Contributing
 
-See [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) for the implementation roadmap.
+📝 **[Contributing Guide](./docs/contributing/contributing-guide.md)** - How to contribute to this repository
+
+Quick reference:
+- Follow kebab-case naming conventions for all files
+- All scripts must conform to their language-specific docstring contract
+- Use `git mv` to preserve history when renaming/moving files
+- Run all validation checks before submitting PRs
+
+See also: [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) for the implementation roadmap.
 
 ## License
 

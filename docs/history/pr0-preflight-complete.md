@@ -37,7 +37,7 @@ Pre-flight baseline validation has been completed successfully. All four languag
   - Updated 4 test files to use correct script paths
   - Updated `safe-check.ps1` to reference flat paths
   - Updated usage messages in all scripts
-  - Updated `README_TESTS.md`
+  - Updated `readme-tests.md`
   - ✅ All tests pass (17/17 tests green)
 
 - **Structure Validation:**

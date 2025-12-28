@@ -277,7 +277,7 @@ Per epic checklist:
 
 - **Epic Tracker:** Issue #3
 - **M0 Decisions:** M0-DECISIONS.md
-- **RFC:** RFC-Shared-Agent-Scaffolding-v0.1.0.md sections 7.1, 7.2
+- **RFC:** rfc-shared-agent-scaffolding-v0.1.0.md sections 7.1, 7.2
 - **CI Workflow:** `.github/workflows/test-powershell.yml`
 
 ---

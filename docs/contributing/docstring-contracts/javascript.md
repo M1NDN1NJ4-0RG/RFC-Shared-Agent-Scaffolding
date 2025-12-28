@@ -62,7 +62,7 @@ Every JavaScript script/module should include these sections in JSDoc comments:
  * @platform Node.js 16+
  *
  * @see {@link docs/wrapper-discovery.md}
- * @see {@link EXIT_CODES_CONTRACT.md}
+ * @see {@link exit-codes-contract.md}
  */
 
 const fs = require('fs');
@@ -128,7 +128,7 @@ Document exit codes in the file-level `@description`:
  * - 2: Invalid arguments
  * - 127: Binary not found
  *
- * @see {@link EXIT_CODES_CONTRACT.md}
+ * @see {@link exit-codes-contract.md}
  */
 ```
 
@@ -204,7 +204,7 @@ module.exports = { main };
  * @platform Node.js 16+ (ESM support required)
  *
  * @see {@link docs/wrapper-discovery.md}
- * @see {@link EXIT_CODES_CONTRACT.md}
+ * @see {@link exit-codes-contract.md}
  */
 
 import { spawn } from 'child_process';
@@ -291,7 +291,7 @@ npx eslint script.js --plugin jsdoc
 - [JSDoc Official Documentation](https://jsdoc.app/)
 - [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
 - [TypeScript JSDoc Support](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [README.md](./README.md) - Overview of docstring contracts
 
 ## Status

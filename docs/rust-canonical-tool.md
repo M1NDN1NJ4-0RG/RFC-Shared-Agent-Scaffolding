@@ -172,7 +172,7 @@ usage patterns and community feedback.
 
 ## References
 
-- [RFC-Shared-Agent-Scaffolding-v0.1.0.md](../RFC-Shared-Agent-Scaffolding-v0.1.0.md)
+- [rfc-shared-agent-scaffolding-v0.1.0.md](../rfc-shared-agent-scaffolding-v0.1.0.md)
 - [Wrapper Discovery](./wrapper-discovery.md)
 - [Conformance Contract](./conformance-contract.md)
 - [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)

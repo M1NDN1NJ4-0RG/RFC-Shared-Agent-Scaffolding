@@ -5,7 +5,7 @@
 **Last Updated:** 2025-12-28
 
 ## Why
-The current docstring contracts in `/docs/docstrings/` are a powerful mechanism for enforcing consistency, discoverability, and AI-agent compliance (especially Copilot). However, there are inconsistencies in section naming, required vs. optional elements, template completeness, and validation depth. Harmonizing and tightening these contracts will:
+The current docstring contracts in `/docs/contributing/docstring-contracts/` are a powerful mechanism for enforcing consistency, discoverability, and AI-agent compliance (especially Copilot). However, there are inconsistencies in section naming, required vs. optional elements, template completeness, and validation depth. Harmonizing and tightening these contracts will:
 - Reduce friction when writing new scripts
 - Improve validator accuracy and usefulness
 - Make AI-generated code even more reliably compliant
@@ -14,8 +14,8 @@ The current docstring contracts in `/docs/docstrings/` are a powerful mechanism 
 ## Phased Approach
 
 ### Phase 1: Cross-Cutting Foundations & Consistency
-- [x] Create tracking document `docs/docstrings/EPIC-TRACKING.md`
-- [x] Update `docs/docstrings/README.md`
+- [x] Create tracking document `docs/contributing/docstring-contracts/EPIC-TRACKING.md`
+- [x] Update `docs/contributing/docstring-contracts/README.md`
   - [x] Add mapping table: Required Semantic Section → Language-Specific Keywords
   - [x] Add "How to Extend Contracts" section
   - [x] Add "Prompting Tips for AI Tools" section
@@ -25,7 +25,7 @@ The current docstring contracts in `/docs/docstrings/` are a powerful mechanism 
   - [x] Add optional pragma support (e.g., `# noqa: EXITCODES`)
   - [x] Add basic content checks for EXIT CODES
   - [x] Add single-file mode flag
-- [x] Create `docs/docstrings/EXIT_CODES_CONTRACT.md`
+- [x] Create `docs/contributing/docstring-contracts/exit-codes-contract.md`
 
 ### Phase 2: Language-Specific Harmonization & Completion
 - [x] `bash.md`
@@ -94,7 +94,7 @@ The current docstring contracts in `/docs/docstrings/` are a powerful mechanism 
 **Date Completed:** 2025-12-28
 
 ### Key Deliverables
-1. **EXIT_CODES_CONTRACT.md** - Comprehensive exit code reference for all languages
+1. **exit-codes-contract.md** - Comprehensive exit code reference for all languages
 2. **Enhanced Validator** - Pragma support, content checks, single-file mode
 3. **Semantic Mapping Table** - Maps required sections to language-specific keywords
 4. **Extension Guide** - Step-by-step guide for adding new languages
@@ -117,13 +117,13 @@ The current docstring contracts in `/docs/docstrings/` are a powerful mechanism 
 ### References
 - Commits: 0511095, 5e5c878, 9f756e1, 7384cea, 62a4624, and final Phase 3 commit
 - Main epic issue: TBD
-- Related documentation: All files in docs/docstrings/
+- Related documentation: All files in docs/contributing/docstring-contracts/
 - This epic focuses on making minimal, surgical improvements to existing contracts
 - Each phase can be completed incrementally with separate PRs
 - Focus on consistency and completeness over adding new features
 - All changes should maintain backward compatibility where possible
 
 ## References
-- Original contracts: `docs/docstrings/`
+- Original contracts: `docs/contributing/docstring-contracts/`
 - Validator: `scripts/validate-docstrings.py`
 - Repository instructions: `.github/copilot-instructions.md`

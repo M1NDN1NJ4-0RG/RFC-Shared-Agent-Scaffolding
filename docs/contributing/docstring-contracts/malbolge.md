@@ -91,7 +91,7 @@ Every Malbolge program should theoretically include these sections (good luck):
 //
 // See: 
 //   - docs/malbolge-survival-guide.md (doesn't exist)
-//   - EXIT_CODES_CONTRACT.md (even it can't help you)
+//   - exit-codes-contract.md (even it can't help you)
 //   - Your therapist
 
 (=<`#9]~6ZY32Vx/4Rs+0No-&Jk)"Fh}|Bcy?`=*z]Kw%oG4UUS0/@-ejc(:'8dc
@@ -174,7 +174,7 @@ bP
 //   > [REDACTED FOR YOUR SAFETY]
 //
 // See:
-//   - EXIT_CODES_CONTRACT.md (it won't help but it's there)
+//   - exit-codes-contract.md (it won't help but it's there)
 //   - Your last will and testament
 //   - Local mental health resources
 
@@ -276,7 +276,7 @@ For educational purposes, here are real facts about Malbolge:
 - [esolangs.org/wiki/Malbolge](https://esolangs.org/wiki/Malbolge) - For the truly curious
 - [Malbolge Hello World History](https://www.lscheffer.com/malbolge.shtml) - A saga of determination
 - [Your local support group](https://www.samhsa.gov/) - You'll need it
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Applies in theory
+- [exit-codes-contract.md](./exit-codes-contract.md) - Applies in theory
 - [README.md](./README.md) - Return to sanity
 
 ## Status

@@ -81,7 +81,7 @@ Functions, structs, and other items should use `///` comments with:
 //! # Contract References
 //!
 //! This implementation conforms to:
-//! - RFC-Shared-Agent-Scaffolding-v0.1.0.md (M0 contract)
+//! - rfc-shared-agent-scaffolding-v0.1.0.md (M0 contract)
 //! - Conformance vectors in `conformance/vectors.json`
 //!
 //! # Examples
@@ -211,13 +211,13 @@ use std::collections::HashMap;
 //! - Exit code 2: Invalid usage or missing arguments
 //! - Exit codes 3-255: Preserved from executed command (if applicable)
 //!
-//! See [EXIT_CODES_CONTRACT.md](../docs/docstrings/EXIT_CODES_CONTRACT.md) for
+//! See [exit-codes-contract.md](../docs/contributing/docstring-contracts/exit-codes-contract.md) for
 //! canonical exit code meanings.
 //!
 //! # Contract References
 //!
 //! This implementation conforms to:
-//! - RFC-Shared-Agent-Scaffolding-v0.1.0.md (M0 contract)
+//! - rfc-shared-agent-scaffolding-v0.1.0.md (M0 contract)
 //! - Conformance vectors in `conformance/vectors.json`
 //! - Wrapper discovery rules in `docs/wrapper-discovery.md`
 //!
@@ -452,7 +452,7 @@ and unclear examples before committing.
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [Rustdoc Book](https://doc.rust-lang.org/rustdoc/) - Official Rustdoc documentation
 - [RFC 1574 – API Documentation Conventions](https://rust-lang.github.io/rfcs/1574-more-api-documentation-conventions.html)
 - [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/documentation.html)

@@ -25,7 +25,7 @@ The validator scans the entire repository for script files (`.sh`, `.ps1`, `.py`
 ## Contract Version History
 
 ### Version 1.1 (2025-12-28)
-- Added comprehensive EXIT_CODES_CONTRACT.md shared reference
+- Added comprehensive exit-codes-contract.md shared reference
 - Enhanced validator with pragma support (`# noqa: EXITCODES`)
 - Added basic content validation for exit codes
 - Added single-file validation mode (`--file` flag)
@@ -117,7 +117,7 @@ This table maps the required semantic concepts to their language-specific keywor
 - Usage is sometimes combined with examples (Rust, PowerShell)
 - Environment variables may be grouped with other inputs (Bash) or separate (most languages)
 
-Refer to the [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) for canonical exit code meanings across all languages.
+Refer to the [exit-codes-contract.md](./exit-codes-contract.md) for canonical exit code meanings across all languages.
 
 ## YAML Contract (Special Case)
 
@@ -191,7 +191,7 @@ To add a new language to the docstring contract system:
 
 ### 1. Create the Contract Document
 
-Create a new file `docs/docstrings/<language>.md` with the following structure:
+Create a new file `docs/contributing/docstring-contracts/<language>.md` with the following structure:
 - **Language name and file extensions**
 - **Purpose** - Why this language needs documentation standards
 - **Required Semantic Sections** - Map the 8 core concepts to language-specific keywords
@@ -279,7 +279,7 @@ When using AI coding assistants, use these prompts to ensure contract compliance
 
 ```
 Create a [language] script that [does X].
-Follow the docstring contract in docs/docstrings/[language].md.
+Follow the docstring contract in docs/contributing/docstring-contracts/[language].md.
 Include all required sections: name, description, usage, arguments,
 environment variables, exit codes, examples, and notes.
 ```
@@ -289,7 +289,7 @@ environment variables, exit codes, examples, and notes.
 **For Bash scripts:**
 ```
 Create a Bash script with proper M0 contract docstring.
-Use the template from docs/docstrings/bash.md.
+Use the template from docs/contributing/docstring-contracts/bash.md.
 Include shebang #!/usr/bin/env bash, DESCRIPTION, USAGE, INPUTS,
 OUTPUTS with exit codes, EXAMPLES, and NOTES sections.
 ```
@@ -297,7 +297,7 @@ OUTPUTS with exit codes, EXAMPLES, and NOTES sections.
 **For Python scripts:**
 ```
 Create a Python 3 script with module docstring following
-docs/docstrings/python.md. Use triple quotes, include Purpose,
+docs/contributing/docstring-contracts/python.md. Use triple quotes, include Purpose,
 Environment Variables, CLI Interface, Examples, Exit Codes,
 and Notes sections in reStructuredText style.
 ```
@@ -305,7 +305,7 @@ and Notes sections in reStructuredText style.
 **For PowerShell scripts:**
 ```
 Create a PowerShell script with comment-based help following
-docs/docstrings/powershell.md. Include .SYNOPSIS, .DESCRIPTION,
+docs/contributing/docstring-contracts/powershell.md. Include .SYNOPSIS, .DESCRIPTION,
 .ENVIRONMENT, .EXAMPLE, and .NOTES keywords. Document exit codes
 in .DESCRIPTION.
 ```
@@ -313,7 +313,7 @@ in .DESCRIPTION.
 **For Perl scripts:**
 ```
 Create a Perl script with POD documentation following
-docs/docstrings/perl.md. Include =head1 NAME, SYNOPSIS, DESCRIPTION,
+docs/contributing/docstring-contracts/perl.md. Include =head1 NAME, SYNOPSIS, DESCRIPTION,
 ENVIRONMENT VARIABLES, EXIT CODES, EXAMPLES, and NOTES sections.
 End with =cut.
 ```
@@ -321,7 +321,7 @@ End with =cut.
 **For Rust code:**
 ```
 Create a Rust module with rustdoc comments following
-docs/docstrings/rust.md. Use //! for module docs with # Purpose,
+docs/contributing/docstring-contracts/rust.md. Use //! for module docs with # Purpose,
 # Architecture, # Exit Behavior, # Contract References, and
 # Examples sections.
 ```
@@ -329,7 +329,7 @@ docs/docstrings/rust.md. Use //! for module docs with # Purpose,
 **For YAML workflows:**
 ```
 Create a GitHub Actions workflow with header documentation following
-docs/docstrings/yaml.md. Include Workflow, Purpose, Triggers,
+docs/contributing/docstring-contracts/yaml.md. Include Workflow, Purpose, Triggers,
 Dependencies, Outputs, and Notes sections as comments at the top.
 ```
 
@@ -337,7 +337,7 @@ Dependencies, Outputs, and Notes sections as comments at the top.
 
 After generating code:
 ```
-Verify this [language] script conforms to docs/docstrings/[language].md.
+Verify this [language] script conforms to docs/contributing/docstring-contracts/[language].md.
 Check all required sections are present and properly formatted.
 ```
 
@@ -346,7 +346,7 @@ Check all required sections are present and properly formatted.
 ```
 This script must pass validation by scripts/validate-docstrings.py.
 Ensure it includes all required docstring sections for [language].
-See docs/docstrings/[language].md for the contract.
+See docs/contributing/docstring-contracts/[language].md for the contract.
 ```
 
 ### Common AI Prompting Mistakes
@@ -354,12 +354,12 @@ See docs/docstrings/[language].md for the contract.
 ❌ **Too vague:** "Add documentation to this script"
 - AI may use generic/incomplete documentation
 
-✅ **Specific contract reference:** "Add Bash docstring following docs/docstrings/bash.md with all required sections"
+✅ **Specific contract reference:** "Add Bash docstring following docs/contributing/docstring-contracts/bash.md with all required sections"
 
 ❌ **Missing exit codes:** "Document this function"
 - Exit codes often overlooked
 
-✅ **Explicit exit codes:** "Document with exit codes: 0=success, 1=failure, 127=not found per EXIT_CODES_CONTRACT.md"
+✅ **Explicit exit codes:** "Document with exit codes: 0=success, 1=failure, 127=not found per exit-codes-contract.md"
 
 ❌ **No validation check:** Accepting AI output without verification
 - May be incomplete or non-conformant
@@ -371,8 +371,8 @@ See docs/docstrings/[language].md for the contract.
 1. **Generate with contract:**
    ```
    @workspace Create a Bash wrapper script for safe-run following
-   docs/docstrings/bash.md. Include binary discovery, all required
-   docstring sections, and exit codes per EXIT_CODES_CONTRACT.md.
+   docs/contributing/docstring-contracts/bash.md. Include binary discovery, all required
+   docstring sections, and exit codes per exit-codes-contract.md.
    ```
 
 2. **Validate:**
@@ -383,7 +383,7 @@ See docs/docstrings/[language].md for the contract.
 3. **Fix violations:**
    ```
    @workspace The validator reports missing OUTPUTS section.
-   Add OUTPUTS with exit codes 0, 1, 127 per docs/docstrings/bash.md.
+   Add OUTPUTS with exit codes 0, 1, 127 per docs/contributing/docstring-contracts/bash.md.
    ```
 
 4. **Verify examples:**
@@ -394,8 +394,8 @@ See docs/docstrings/[language].md for the contract.
 
 ## References
 
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - `scripts/validate-docstrings.py` - Validator implementation (see its docstring for meta-example)
-- [RFC-Shared-Agent-Scaffolding-v0.1.0.md](../../RFC-Shared-Agent-Scaffolding-v0.1.0.md) - M0 contract specification
+- [rfc-shared-agent-scaffolding-v0.1.0.md](../../rfc-shared-agent-scaffolding-v0.1.0.md) - M0 contract specification
 - [Conformance Contract](../conformance-contract.md) - Behavior contract
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules

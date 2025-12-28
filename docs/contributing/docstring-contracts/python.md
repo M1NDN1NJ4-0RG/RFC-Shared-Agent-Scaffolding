@@ -291,7 +291,7 @@ Notes
 
 See Also
 --------
-- RFC-Shared-Agent-Scaffolding-v0.1.0.md : Contract specification
+- rfc-shared-agent-scaffolding-v0.1.0.md : Contract specification
 - docs/wrapper-discovery.md : Binary discovery rules
 - docs/conformance-contract.md : Behavior contract
 """
@@ -471,7 +471,7 @@ The section structure (reST-style headers) goes beyond PEP 257's minimal require
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [PEP 257 – Docstring Conventions](https://peps.python.org/pep-0257/)
 - [reStructuredText Primer](https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html)
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers

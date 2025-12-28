@@ -36,7 +36,9 @@ Test plans, evidence, and validation procedures:
 
 ### Contributing
 Guidelines for contributing to the project:
-- [Docstring Contracts](./docstrings/README.md) - Documentation standards for all languages
+- [Contributing Guide](./contributing/contributing-guide.md) - How to contribute (naming conventions, required checks, PR process)
+- [Allowed Drift](./contributing/allowed-drift.md) - Behavioral difference policy
+- [Docstring Contracts](./contributing/docstring-contracts/README.md) - Documentation standards for all languages
 
 ### History
 Historical documents, decision logs, and progress tracking:
@@ -44,6 +46,6 @@ Historical documents, decision logs, and progress tracking:
 
 ## Additional Resources
 
-- [RFC v0.1.0](../RFC-Shared-Agent-Scaffolding-v0.1.0.md) - Contract specification
+- [RFC v0.1.0](../rfc-shared-agent-scaffolding-v0.1.0.md) - Contract specification
 - [Main README](../README.md) - Repository overview
 - [License](../LICENSE) - Unlicense

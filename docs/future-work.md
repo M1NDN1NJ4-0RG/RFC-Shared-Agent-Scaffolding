@@ -180,7 +180,7 @@ The preflight automerge ruleset checker validates GitHub repository configuratio
 **Source:**
 - `rust/tests/conformance.rs:810-922` (placeholder tests with TODO comments)
 - `rust/tests/README.md:66` (Vector preflight-004 not yet implemented)
-- `rust/tests/CONFORMANCE_INFRASTRUCTURE.md:62` (preflight-004 status)
+- `rust/tests/conformance-infrastructure.md:62` (preflight-004 status)
 
 **Ignored tests:**
 - `test_preflight_001_success` (lines 838-853)
@@ -233,7 +233,7 @@ Currently, there's no automated verification that every conformance vector in `c
 The conformance infrastructure is functional but has room for quality-of-life improvements that would enhance developer experience and test reliability.
 
 **Source:**
-- `rust/tests/CONFORMANCE_INFRASTRUCTURE.md:239-245` (Future Enhancements section)
+- `rust/tests/conformance-infrastructure.md:239-245` (Future Enhancements section)
 
 **Proposed enhancements:**
 - Add snapshot update mode (environment variable to regenerate snapshots)
@@ -344,7 +344,7 @@ There is an explicit placeholder indicating the need for a canonical epic/idea t
 - `.github/copilot-instructions.md:L50-L53`
 
 **Suggested next steps:**
-- Define the canonical location (e.g., `docs/FUTURE-WORK.md` or `docs/EPICS.md`)
+- Define the canonical location (e.g., `docs/future-work.md` or `docs/EPICS.md`)
 - Link it from `.github/copilot-instructions.md`
 - Optionally add a GitHub Issue template/category that points back to the canonical doc
 

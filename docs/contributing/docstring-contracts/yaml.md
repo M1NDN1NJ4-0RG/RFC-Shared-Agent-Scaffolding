@@ -255,7 +255,7 @@ jobs:
 #
 # References:
 # - docs/validation-contract.md
-# - RFC-Shared-Agent-Scaffolding-v0.1.0.md
+# - rfc-shared-agent-scaffolding-v0.1.0.md
 
 name: Comprehensive Validation Gate
 
@@ -529,7 +529,7 @@ permissions:
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [GitHub Actions Syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
 - [YAML Specification](https://yaml.org/spec/)
 - [Conformance Contract](../conformance-contract.md) - Behavior contract

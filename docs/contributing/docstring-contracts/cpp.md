@@ -59,7 +59,7 @@ Every C++ source file should include these sections in header comments:
  * @platform
  * Linux/Unix/Windows with C++17 compiler (GCC 7+, Clang 5+, MSVC 2017+)
  * 
- * @see EXIT_CODES_CONTRACT.md
+ * @see exit-codes-contract.md
  */
 
 #include <iostream>
@@ -240,7 +240,7 @@ int main(int argc, char* argv[]) {
  * @version 1.0
  * 
  * @see docs/wrapper-discovery.md
- * @see EXIT_CODES_CONTRACT.md
+ * @see exit-codes-contract.md
  */
 
 #include <iostream>
@@ -488,7 +488,7 @@ doxygen Doxyfile
 - [Doxygen Manual](https://www.doxygen.nl/manual/)
 - [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/)
 - [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html)
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [README.md](./README.md) - Overview of docstring contracts
 
 ## Status

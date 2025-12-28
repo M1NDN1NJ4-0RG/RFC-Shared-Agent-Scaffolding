@@ -1,7 +1,7 @@
 # Workflow: Docstring Contract Enforcement
 #
 # Purpose: Validates that ALL scripts and YAML files in the repository conform
-# to their language-specific docstring contracts as defined in docs/docstrings/.
+# to their language-specific docstring contracts as defined in docs/contributing/docstring-contracts/.
 # Ensures consistent, discoverable documentation across all supported languages
 # (Bash, PowerShell, Python, Perl, Rust, YAML). Any new script added anywhere
 # in the repository must conform to its language's docstring contract.
@@ -14,7 +14,7 @@
 # Dependencies:
 # - Python 3.8+
 # - scripts/validate-docstrings.py
-# - docs/docstrings/*.md (contract definitions)
+# - docs/contributing/docstring-contracts/*.md (contract definitions)
 #
 # Outputs:
 # - Status check: "Docstring Contract Validation"
@@ -26,7 +26,7 @@
 # - Validates ALL scripts repository-wide (not just specific directories)
 # - Validates presence of required sections, not content quality
 # - Exit 0 = all files conform, non-zero = violations detected
-# - See docs/docstrings/README.md for contract details
+# - See docs/contributing/docstring-contracts/README.md for contract details
 name: Docstring Contract Enforcement
 
 on:
@@ -44,7 +44,7 @@ on:
       - '.github/workflows/*.yaml'
       - '.github/ISSUE_TEMPLATE/*.yml'
       - '.github/ISSUE_TEMPLATE/*.yaml'
-      - 'docs/docstrings/**'
+      - 'docs/contributing/docstring-contracts/**'
       - 'scripts/validate-docstrings.py'
       - '.github/workflows/docstring-contract.yml'
   push:
@@ -63,7 +63,7 @@ on:
       - '.github/workflows/*.yaml'
       - '.github/ISSUE_TEMPLATE/*.yml'
       - '.github/ISSUE_TEMPLATE/*.yaml'
-      - 'docs/docstrings/**'
+      - 'docs/contributing/docstring-contracts/**'
       - 'scripts/validate-docstrings.py'
   workflow_dispatch:
 

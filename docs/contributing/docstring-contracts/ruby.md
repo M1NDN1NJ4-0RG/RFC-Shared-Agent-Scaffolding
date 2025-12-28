@@ -64,7 +64,7 @@ Every Ruby script should include these sections in documentation comments:
 # @example With environment override
 #   BINARY_PATH=/custom/path ruby script.rb command
 #
-# @see EXIT_CODES_CONTRACT.md
+# @see exit-codes-contract.md
 
 require 'pathname'
 require 'open3'
@@ -248,7 +248,7 @@ exit main(ARGV) if __FILE__ == $PROGRAM_NAME
 #   BINARY_PATH=/custom/path ruby wrapper.rb command
 #
 # @see docs/wrapper-discovery.md
-# @see EXIT_CODES_CONTRACT.md
+# @see exit-codes-contract.md
 
 require 'pathname'
 require 'open3'
@@ -385,7 +385,7 @@ rdoc
 - [YARD Tags](https://rubydoc.info/gems/yard/file/docs/Tags.md)
 - [RDoc Markup](https://ruby.github.io/rdoc/RDoc/Markup.html)
 - [Ruby Style Guide](https://rubystyle.guide/)
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [README.md](./README.md) - Overview of docstring contracts
 
 ## Status

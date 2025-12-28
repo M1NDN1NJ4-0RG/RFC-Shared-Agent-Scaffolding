@@ -193,6 +193,6 @@ Deterministic exit codes enable:
 
 ## References
 
-- **RFC v0.1.0:** `RFC-Shared-Agent-Scaffolding-v0.1.0.md` sections 7.1-7.5
+- **RFC v0.1.0:** `rfc-shared-agent-scaffolding-v0.1.0.md` sections 7.1-7.5
 - **Epic Tracker:** Issue #3
 - **Decision Commit:** c60e5c38d87d5855fe4d024a7129f9456d194c17

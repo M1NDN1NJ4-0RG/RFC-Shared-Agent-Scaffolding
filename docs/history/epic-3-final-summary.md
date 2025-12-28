@@ -218,7 +218,7 @@
 
 - **Epic Tracker:** Issue #3
 - **M0 Decisions:** M0-DECISIONS.md
-- **RFC:** RFC-Shared-Agent-Scaffolding-v0.1.0.md
+- **RFC:** rfc-shared-agent-scaffolding-v0.1.0.md
 - **Previous Status:** EPIC-3-M0-SUMMARY.md, M1-P2-I1-STATUS.md, M1-P5-I1-STATUS.md
 - **New Status:** M2-M3-M4-COMPLETION-SUMMARY.md, M2-P2-I1-DRIFT-DETECTION.md
 
