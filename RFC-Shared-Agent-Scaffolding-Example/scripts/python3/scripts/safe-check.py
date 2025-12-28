@@ -229,7 +229,7 @@ def main(argv: List[str]) -> int:
     # archive newest
     files = sorted(
         [p for p in glob.glob(os.path.join(log_dir, "*")) if os.path.isfile(p)],
-        key=lambda p: os.path.getmtime(p),
+        key=os.path.getmtime,
         reverse=True,
     )
     if not files:

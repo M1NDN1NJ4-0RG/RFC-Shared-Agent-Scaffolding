@@ -20,5 +20,8 @@ disable = [
     "invalid-name",
     "missing-class-docstring",
     "missing-function-docstring",
-    "inconsistent-return-statements"
+    "inconsistent-return-statements",
+    "too-many-locals",
+    "too-many-branches",
+    "too-many-statements"
 ]

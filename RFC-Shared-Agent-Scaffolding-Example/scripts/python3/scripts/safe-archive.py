@@ -235,7 +235,7 @@ def compress_file(method: str, path: str) -> None:
             raise RuntimeError("zstd command not found in PATH")
         subprocess.check_call(["zstd", "-q", "-T0", "-f", path])
         return
-    raise RuntimeError("Invalid SAFE_ARCHIVE_COMPRESS value: %s" % method)
+    raise RuntimeError(f"Invalid SAFE_ARCHIVE_COMPRESS value: {method}")
 
 
 def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bool = False) -> None:
@@ -248,7 +248,7 @@ def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bo
         strict_no_clobber: If True, fail if destination exists. If False (default), auto-suffix.
     """
     if not os.path.exists(src):
-        raise RuntimeError("File not found: %s" % src)
+        raise RuntimeError(f"File not found: {src}")
 
     base = os.path.basename(src)
     dest = os.path.join(archive_dir, base)
@@ -256,17 +256,16 @@ def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bo
     if os.path.exists(dest):
         if strict_no_clobber:
             # M0-P1-I3: Strict no-clobber mode - fail with error
-            raise RuntimeError("Destination exists: %s" % dest)
-        else:
-            # M0-P1-I3: Default auto-suffix mode - append .2, .3, etc.
-            n = 2
-            while os.path.exists(dest + "." + str(n)):
-                n += 1
-            dest = dest + "." + str(n)
-            eprint("WARNING: destination exists, using auto-suffix: %s" % dest)
+            raise RuntimeError(f"Destination exists: {dest}")
+        # M0-P1-I3: Default auto-suffix mode - append .2, .3, etc.
+        n = 2
+        while os.path.exists(dest + "." + str(n)):
+            n += 1
+        dest = dest + "." + str(n)
+        eprint(f"WARNING: destination exists, using auto-suffix: {dest}")
 
     shutil.move(src, dest)
-    eprint("ARCHIVED: %s -> %s" % (src, dest))
+    eprint(f"ARCHIVED: {src} -> {dest}")
     compress_file(compress, dest)
 
 
@@ -358,7 +357,7 @@ def main(argv: List[str]) -> int:
                 if os.path.isfile(os.path.join(fail_dir, n))
             ]
             if not files:
-                eprint("No files to archive in %s" % fail_dir)
+                eprint(f"No files to archive in {fail_dir}")
                 return 0
             for f in files:
                 archive_one(f, archive_dir, compress, strict_no_clobber)
@@ -371,7 +370,7 @@ def main(argv: List[str]) -> int:
             archive_one(f, archive_dir, compress, strict_no_clobber)
         return 0
     except RuntimeError as e:
-        eprint("ERROR: %s" % e)
+        eprint(f"ERROR: {e}")
         return 2
 
 

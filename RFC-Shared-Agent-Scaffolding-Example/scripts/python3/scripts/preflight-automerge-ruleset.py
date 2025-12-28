@@ -597,8 +597,8 @@ def main(argv: List[str]) -> int:
     missing = [x for x in want if x not in got]
     if missing:
         eprint("WARN: Ruleset missing required status check contexts")
-        eprint("INFO: want: %s" % json.dumps(want))
-        eprint("INFO: got : %s" % json.dumps(sorted(got)))
+        eprint(f"INFO: want: {json.dumps(want)}")
+        eprint(f"INFO: got : {json.dumps(sorted(got))}")
         return 1
 
     eprint("INFO: PRECHECK_OK: ruleset enforces required CI contexts on default branch; auto-merge flow is safe.")
