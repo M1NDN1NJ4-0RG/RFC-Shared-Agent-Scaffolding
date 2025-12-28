@@ -343,7 +343,7 @@ impl Cli {
     fn command_exists(cmd: &str) -> bool {
         // If the command is an absolute or relative path, check it directly
         let cmd_path = Path::new(cmd);
-        if cmd_path.is_absolute() || cmd_path.components().count() > 1 {
+        if cmd_path.is_absolute() || cmd_path.components().nth(1).is_some() {
             return cmd_path.exists() && cmd_path.is_file();
         }
 
