@@ -65,7 +65,7 @@ written with complete stdout/stderr capture.
 =head1 BINARY DISCOVERY
 
 The wrapper searches for the canonical binary in the following order
-(per docs/wrapper-discovery.md):
+(per docs/architecture/wrapper-discovery.md):
 
 =over 4
 
@@ -181,7 +181,7 @@ Binary not found - canonical tool is not installed or discoverable
 
 =item *
 
-Do not modify discovery order without updating docs/wrapper-discovery.md
+Do not modify discovery order without updating docs/architecture/wrapper-discovery.md
 
 =item *
 
@@ -195,7 +195,7 @@ Always preserve child process exit codes (0-255 range)
 
 =head1 SEE ALSO
 
-L<docs/wrapper-discovery.md>, L<docs/conformance-contract.md>
+L<docs/architecture/wrapper-discovery.md>, L<docs/usage/conformance-contract.md>
 
 =cut
 
@@ -229,7 +229,7 @@ POD supports linking to other documentation:
 ```perl
 =head1 SEE ALSO
 
-L<docs/wrapper-discovery.md> - Wrapper discovery rules
+L<docs/architecture/wrapper-discovery.md> - Wrapper discovery rules
 
 L<perlfunc> - Perl built-in functions reference
 
@@ -340,7 +340,7 @@ Detailed behavior description. State what it does NOT do if relevant.
 =head1 BINARY DISCOVERY
 
 The wrapper searches for the canonical binary in the following order
-(per docs/wrapper-discovery.md):
+(per docs/architecture/wrapper-discovery.md):
 
 =over 4
 
@@ -498,7 +498,7 @@ Repository: L<https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding>
 
 =head1 SEE ALSO
 
-L<docs/wrapper-discovery.md>, L<docs/conformance-contract.md>
+L<docs/architecture/wrapper-discovery.md>, L<docs/usage/conformance-contract.md>
 
 =cut
 
@@ -653,5 +653,5 @@ podchecker script-name.pl
 - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [perlpod – Plain Old Documentation](https://perldoc.perl.org/perlpod)
 - [perlpodstyle – POD Style Guide](https://perldoc.perl.org/perlpodstyle)
-- [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers
-- [Conformance Contract](../conformance-contract.md) - Behavior contract
+- [Wrapper Discovery](../../architecture/wrapper-discovery.md) - Binary discovery rules for wrappers
+- [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract

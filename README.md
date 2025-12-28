@@ -28,10 +28,10 @@ cargo build --release
 
 **Documentation:**
 
-- [Rust Canonical Tool](./docs/rust-canonical-tool.md)
-- [Wrapper Discovery](./docs/wrapper-discovery.md)
-- [Conformance Contract](./docs/conformance-contract.md)
-- [Safe-Archive Guide](./docs/safe-archive.md)
+- [Rust Canonical Tool](./docs/architecture/rust-canonical-tool.md)
+- [Wrapper Discovery](./docs/architecture/wrapper-discovery.md)
+- [Conformance Contract](./docs/usage/conformance-contract.md)
+- [Safe-Archive Guide](./docs/usage/safe-archive.md)
 
 ### Language-Specific Wrappers (Compatibility)
 

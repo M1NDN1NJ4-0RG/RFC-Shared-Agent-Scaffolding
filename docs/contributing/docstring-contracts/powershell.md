@@ -234,8 +234,8 @@ param(
 
 .LINK
   https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
-  docs/wrapper-discovery.md
-  docs/conformance-contract.md
+  docs/architecture/wrapper-discovery.md
+  docs/usage/conformance-contract.md
 #>
 
 param(
@@ -389,5 +389,5 @@ Get-Help .\script-name.ps1 -Full
 - [README.md](./README.md) - Overview of docstring contracts
 - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [PowerShell Comment-Based Help](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comment_based_help)
-- [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers
-- [Conformance Contract](../conformance-contract.md) - Behavior contract
+- [Wrapper Discovery](../../architecture/wrapper-discovery.md) - Binary discovery rules for wrappers
+- [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract

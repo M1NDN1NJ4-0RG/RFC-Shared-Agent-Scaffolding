@@ -191,8 +191,8 @@ set -euo pipefail
 #   BIN_PATH=/custom/path script-name.sh test
 #
 # CONTRACT REFERENCES:
-#   - Wrapper discovery: docs/wrapper-discovery.md
-#   - Output contract: docs/conformance-contract.md
+#   - Wrapper discovery: docs/architecture/wrapper-discovery.md
+#   - Output contract: docs/usage/conformance-contract.md
 #
 # NOTES:
 #   - Do not modify discovery order without updating docs
@@ -287,5 +287,5 @@ The validator does NOT check:
 
 - [README.md](./README.md) - Overview of docstring contracts
 - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
-- [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers
-- [Conformance Contract](../conformance-contract.md) - Behavior contract
+- [Wrapper Discovery](../../architecture/wrapper-discovery.md) - Binary discovery rules for wrappers
+- [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract

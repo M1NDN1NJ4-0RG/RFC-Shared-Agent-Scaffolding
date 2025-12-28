@@ -213,7 +213,7 @@ wrappers/scripts/<language>/
 ### 3. Implement Wrapper Behavior
 
 Wrappers MUST:
-- Discover the Rust canonical tool binary (see [wrapper-discovery.md](../wrapper-discovery.md))
+- Discover the Rust canonical tool binary (see [wrapper-discovery.md](../architecture/wrapper-discovery.md))
 - Pass through all arguments unchanged
 - Forward exit codes exactly
 - Provide actionable error messages if Rust binary is missing
@@ -355,8 +355,8 @@ Examples:
 
 - [RFC v0.1.0](../../rfc-shared-agent-scaffolding-v0.1.0.md) - Contract specification
 - [Canonical Structure](../architecture/canonical-structure.md) - Directory layout
-- [Conformance Contract](../conformance-contract.md) - Testing contract
-- [Wrapper Discovery](../wrapper-discovery.md) - How wrappers find the Rust binary
+- [Conformance Contract](../usage/conformance-contract.md) - Testing contract
+- [Wrapper Discovery](../architecture/wrapper-discovery.md) - How wrappers find the Rust binary
 - [Allowed Drift](./allowed-drift.md) - Behavioral difference policy
 
 ---

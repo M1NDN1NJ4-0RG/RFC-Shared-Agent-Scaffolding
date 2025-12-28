@@ -532,4 +532,4 @@ permissions:
 - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [GitHub Actions Syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
 - [YAML Specification](https://yaml.org/spec/)
-- [Conformance Contract](../conformance-contract.md) - Behavior contract
+- [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract

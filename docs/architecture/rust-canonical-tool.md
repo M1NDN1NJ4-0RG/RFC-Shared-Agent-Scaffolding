@@ -130,7 +130,7 @@ cargo run -- --version
 3. **Conformance tests:** Validate against contract fixtures
 4. **Cross-platform CI:** Linux, macOS, Windows matrix
 
-See [conformance-contract.md](./conformance-contract.md) for test specifications.
+See [conformance-contract.md](../usage/conformance-contract.md) for test specifications.
 
 ## Performance and Memory Characteristics
 
@@ -174,5 +174,5 @@ usage patterns and community feedback.
 
 - [rfc-shared-agent-scaffolding-v0.1.0.md](../rfc-shared-agent-scaffolding-v0.1.0.md)
 - [Wrapper Discovery](./wrapper-discovery.md)
-- [Conformance Contract](./conformance-contract.md)
+- [Conformance Contract](../usage/conformance-contract.md)
 - [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)

@@ -31,7 +31,7 @@ AssertionError: 143 != 130
 
 ### Expected Behavior
 
-Per the contract (docs/conformance-contract.md):
+Per the contract (docs/usage/conformance-contract.md):
 - SIGINT (2) → exit code 130
 - SIGTERM (15) → exit code 143
 
@@ -81,7 +81,7 @@ This matches the Bash wrapper's permissive check and aligns with cross-platform 
 
 ### References
 
-- Contract: `docs/conformance-contract.md` (SIGINT/SIGTERM exit codes)
+- Contract: `docs/usage/conformance-contract.md` (SIGINT/SIGTERM exit codes)
 - Allowed drift: `ALLOWED_DRIFT.md` (hypothetical "Signal Exit Codes" example)
 - Bash test: `wrappers/scripts/bash/tests/test-safe-run.sh:180-181`
 - Python test: `wrappers/scripts/python3/tests/test-safe-run.py:216`
@@ -99,6 +99,6 @@ This matches the Bash wrapper's permissive check and aligns with cross-platform 
 
 ## References
 
-- **Conformance Contract:** docs/conformance-contract.md
+- **Conformance Contract:** docs/usage/conformance-contract.md
 - **Allowed Drift:** ALLOWED_DRIFT.md
 - **Test Results:** Test suite output logs

@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
  * - 127: Binary not found
  *
  * @note
- * Do not modify discovery order without updating docs/wrapper-discovery.md
+ * Do not modify discovery order without updating docs/architecture/wrapper-discovery.md
  *
  * @platform
  * Linux/Unix with GCC 4.8+, requires POSIX execvp()
@@ -191,7 +191,7 @@ int main(int argc, char *argv[]) {
  * @author Repository contributors
  * @version 1.0
  * 
- * @see docs/wrapper-discovery.md
+ * @see docs/architecture/wrapper-discovery.md
  * @see exit-codes-contract.md
  */
 

@@ -23,10 +23,10 @@ Design documents, specifications, and structural decisions:
 
 ### Usage
 How to use the tools and scripts in this repository:
-- [Conformance Contract](./conformance-contract.md) - Contract specification
-- [Rust Canonical Tool](./rust-canonical-tool.md) - Rust implementation guide
-- [Safe Archive Guide](./safe-archive.md) - Archive utility documentation
-- [Wrapper Discovery](./wrapper-discovery.md) - How wrappers find the Rust binary
+- [Conformance Contract](./usage/conformance-contract.md) - Contract specification
+- [Rust Canonical Tool](./architecture/rust-canonical-tool.md) - Rust implementation guide
+- [Safe Archive Guide](./usage/safe-archive.md) - Archive utility documentation
+- [Wrapper Discovery](./architecture/wrapper-discovery.md) - How wrappers find the Rust binary
 
 ### Testing
 Test plans, evidence, and validation procedures:

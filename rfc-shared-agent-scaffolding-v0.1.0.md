@@ -37,7 +37,7 @@ As of v0.1.1, the contract behaviors defined in this RFC are **canonically imple
 
 **Language-specific wrappers** (Bash, Perl, Python3, PowerShell) are now **thin invokers** that discover and execute the Rust binary. They:
 
-1. Locate the Rust binary via deterministic discovery rules (see `docs/wrapper-discovery.md`)
+1. Locate the Rust binary via deterministic discovery rules (see `docs/architecture/wrapper-discovery.md`)
 2. Pass through all arguments without modification
 3. Forward exit codes from the Rust tool
 4. Provide actionable error messages if the Rust binary is not available
@@ -58,9 +58,9 @@ The Rust canonical tool provides:
 
 **Documentation:**
 
-- [Rust Canonical Tool](./docs/rust-canonical-tool.md)
-- [Wrapper Discovery Rules](./docs/wrapper-discovery.md)
-- [Conformance Contract](./docs/conformance-contract.md)
+- [Rust Canonical Tool](./docs/architecture/rust-canonical-tool.md)
+- [Wrapper Discovery Rules](./docs/architecture/wrapper-discovery.md)
+- [Conformance Contract](./docs/usage/conformance-contract.md)
 
 ---
 

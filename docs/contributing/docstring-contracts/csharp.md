@@ -268,7 +268,7 @@ class Program
 /// </para>
 /// <para>Platform: .NET 6.0 or later, Windows/Linux/macOS</para>
 /// </remarks>
-/// <seealso href="docs/wrapper-discovery.md"/>
+/// <seealso href="docs/architecture/wrapper-discovery.md"/>
 /// <seealso href="exit-codes-contract.md"/>
 using System;
 using System.IO;

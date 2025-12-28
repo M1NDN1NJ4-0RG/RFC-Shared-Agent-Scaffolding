@@ -239,7 +239,7 @@ int main(int argc, char* argv[]) {
  * @author Repository contributors
  * @version 1.0
  * 
- * @see docs/wrapper-discovery.md
+ * @see docs/architecture/wrapper-discovery.md
  * @see exit-codes-contract.md
  */
 
