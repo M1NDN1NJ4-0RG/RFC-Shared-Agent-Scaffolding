@@ -24,7 +24,7 @@ This document tracks **explicitly-marked future work** found in the repository. 
 | [FW-007](#fw-007-rust-tool-performance-and-feature-enhancements) | Low | Rust CLI | Rust tool performance and feature enhancements |
 | [FW-008](#fw-008-powershell-ctrl-c-signal-behavior) | Low | Wrappers | PowerShell Ctrl-C / signal behavior validation |
 | [FW-009](#fw-009-windows-exe-discovery-in-python-wrapper) | Low | Wrappers | Windows .exe discovery in Python wrapper |
-| [FW-010](#fw-010-canonical-epicidea-tracker-placeholder) | Low | Governance | Canonical epic/idea tracker placeholder |
+| [FW-010](#fw-010-canonical-epic-tracker-placeholder) | Low | Governance | Canonical Epic Tracker placeholder |
 
 ---
 
