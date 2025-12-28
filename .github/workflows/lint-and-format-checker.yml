@@ -114,13 +114,13 @@ jobs:
       - name: Run ShellCheck
         if: steps.check-bash.outputs.has_files == 'true'
         run: |
-          shellcheck -S warning $(git ls-files '**/*.sh')
+          git ls-files -z '**/*.sh' | xargs -0 shellcheck -S warning
 
       - name: Run shfmt (check)
         if: steps.check-bash.outputs.has_files == 'true'
         continue-on-error: true
         run: |
-          shfmt -d -i 2 -ci $(git ls-files '**/*.sh')
+          git ls-files -z '**/*.sh' | xargs -0 shfmt -d -i 2 -ci
 
   lint-powershell:
     runs-on: ubuntu-latest
@@ -186,6 +186,6 @@ jobs:
         if: steps.check-perl.outputs.has_files == 'true'
         continue-on-error: true
         run: |
-          perlcritic --severity 5 $(git ls-files '**/*.pl' '**/*.pm')
+          git ls-files -z '**/*.pl' '**/*.pm' | xargs -0 perlcritic --severity 5
 
 
