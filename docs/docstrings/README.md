@@ -396,6 +396,6 @@ See docs/docstrings/[language].md for the contract.
 
 - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - `scripts/validate-docstrings.py` - Validator implementation (see its docstring for meta-example)
-- [RFC-Shared-Agent-Scaffolding-v0.1.0.md](../../RFC-Shared-Agent-Scaffolding-v0.1.0.md) - M0 contract specification
+- [rfc-shared-agent-scaffolding-v0.1.0.md](../../rfc-shared-agent-scaffolding-v0.1.0.md) - M0 contract specification
 - [Conformance Contract](../conformance-contract.md) - Behavior contract
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules

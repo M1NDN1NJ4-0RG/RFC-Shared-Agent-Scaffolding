@@ -96,7 +96,7 @@ docs/
 Only canonical files remain at root:
 - `README.md` (entry point)
 - `LICENSE`
-- `RFC-Shared-Agent-Scaffolding-v0.1.0.md` (contract specification)
+- `rfc-shared-agent-scaffolding-v0.1.0.md` (contract specification)
 - Standard config files (`.gitignore`, `.flake8`, `.perlcriticrc`, `pyproject.toml`)
 
 ---

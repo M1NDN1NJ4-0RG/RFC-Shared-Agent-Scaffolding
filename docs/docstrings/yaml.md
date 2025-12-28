@@ -255,7 +255,7 @@ jobs:
 #
 # References:
 # - docs/validation-contract.md
-# - RFC-Shared-Agent-Scaffolding-v0.1.0.md
+# - rfc-shared-agent-scaffolding-v0.1.0.md
 
 name: Comprehensive Validation Gate
 

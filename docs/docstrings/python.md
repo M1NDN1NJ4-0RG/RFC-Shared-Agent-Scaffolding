@@ -291,7 +291,7 @@ Notes
 
 See Also
 --------
-- RFC-Shared-Agent-Scaffolding-v0.1.0.md : Contract specification
+- rfc-shared-agent-scaffolding-v0.1.0.md : Contract specification
 - docs/wrapper-discovery.md : Binary discovery rules
 - docs/conformance-contract.md : Behavior contract
 """

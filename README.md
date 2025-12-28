@@ -54,7 +54,7 @@ Wrappers act as **invokers**, not independent implementations. They:
 📚 **[Documentation Index](./docs/README.md)** - Complete documentation guide
 
 Quick links:
-- [RFC v0.1.0](./RFC-Shared-Agent-Scaffolding-v0.1.0.md) - Contract specification
+- [RFC v0.1.0](./rfc-shared-agent-scaffolding-v0.1.0.md) - Contract specification
 - [Canonical Structure](./docs/architecture/canonical-structure.md) - Directory layout
 - [Pre-flight Validation](./docs/history/pr0-preflight-complete.md) - Baseline conformance report
 - [Docstring Contracts](./docs/docstrings/README.md) - Documentation standards for all languages

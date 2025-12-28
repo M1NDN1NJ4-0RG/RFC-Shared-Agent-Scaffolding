@@ -3,7 +3,7 @@
 **Purpose:** This document extracts every explicit behavioral contract from the RFC and documentation, mapping each to implementation locations across all four wrappers.
 
 **Source Documents:**
-- `RFC-Shared-Agent-Scaffolding-v0.1.0.md`
+- `rfc-shared-agent-scaffolding-v0.1.0.md`
 - `docs/conformance-contract.md`
 - `docs/wrapper-discovery.md`
 - `docs/rust-canonical-tool.md`
@@ -52,7 +52,7 @@
 **Contract:** Wrappers MUST locate the repository root by:
 1. Starting from script location or current working directory
 2. Walking up directory tree looking for:
-   - `RFC-Shared-Agent-Scaffolding-v0.1.0.md` OR
+   - `rfc-shared-agent-scaffolding-v0.1.0.md` OR
    - `.git` directory
 3. Stopping at filesystem root if not found
 

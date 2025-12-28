@@ -44,6 +44,6 @@ Historical documents, decision logs, and progress tracking:
 
 ## Additional Resources
 
-- [RFC v0.1.0](../RFC-Shared-Agent-Scaffolding-v0.1.0.md) - Contract specification
+- [RFC v0.1.0](../rfc-shared-agent-scaffolding-v0.1.0.md) - Contract specification
 - [Main README](../README.md) - Repository overview
 - [License](../LICENSE) - Unlicense

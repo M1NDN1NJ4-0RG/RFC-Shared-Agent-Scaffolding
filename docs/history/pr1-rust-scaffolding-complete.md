@@ -43,7 +43,7 @@ PR1 successfully implements Rust tooling scaffolding and comprehensive documenta
 
 ### RFC Updates
 
-- **`RFC-Shared-Agent-Scaffolding-v0.1.0.md`**
+- **`rfc-shared-agent-scaffolding-v0.1.0.md`**
   - Added section 0.1 "Canonical Implementation (v0.1.1 Update)"
   - Declared Rust as the single source of truth
   - Explained rationale for canonical architecture
@@ -178,7 +178,7 @@ This is a scaffolding PR - implementation comes in PR3+
 ```
 modified:   .gitignore
 modified:   README.md
-modified:   RFC-Shared-Agent-Scaffolding-v0.1.0.md
+modified:   rfc-shared-agent-scaffolding-v0.1.0.md
 created:    docs/conformance-contract.md
 created:    docs/rust-canonical-tool.md
 created:    docs/wrapper-discovery.md

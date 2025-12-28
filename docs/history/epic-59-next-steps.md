@@ -22,7 +22,7 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
 - ✅ All wrappers include caution about large values producing noisy stderr
 - ✅ README.md: No SAFE_SNIPPET_LINES mentions (confirmed via grep)
 - ✅ docs/ directory: No SAFE_SNIPPET_LINES mentions (confirmed via grep)
-- ✅ RFC-Shared-Agent-Scaffolding-v0.1.0.md: No SAFE_SNIPPET_LINES mentions (confirmed via grep)
+- ✅ rfc-shared-agent-scaffolding-v0.1.0.md: No SAFE_SNIPPET_LINES mentions (confirmed via grep)
 
 **Changes Made:**
 1. Fixed incorrect comment in `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/tests/test-safe-run.sh` line 130
@@ -244,5 +244,5 @@ If investigating PowerShell Ctrl-C behavior in the future:
 ## References
 
 - Original Issue: EPIC #59
-- RFC: RFC-Shared-Agent-Scaffolding-v0.1.0.md
+- RFC: rfc-shared-agent-scaffolding-v0.1.0.md
 - Related: Post-audit "Risk & Improvement Analysis" document

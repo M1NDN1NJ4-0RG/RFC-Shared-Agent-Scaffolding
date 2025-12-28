@@ -81,7 +81,7 @@ Functions, structs, and other items should use `///` comments with:
 //! # Contract References
 //!
 //! This implementation conforms to:
-//! - RFC-Shared-Agent-Scaffolding-v0.1.0.md (M0 contract)
+//! - rfc-shared-agent-scaffolding-v0.1.0.md (M0 contract)
 //! - Conformance vectors in `conformance/vectors.json`
 //!
 //! # Examples
@@ -217,7 +217,7 @@ use std::collections::HashMap;
 //! # Contract References
 //!
 //! This implementation conforms to:
-//! - RFC-Shared-Agent-Scaffolding-v0.1.0.md (M0 contract)
+//! - rfc-shared-agent-scaffolding-v0.1.0.md (M0 contract)
 //! - Conformance vectors in `conformance/vectors.json`
 //! - Wrapper discovery rules in `docs/wrapper-discovery.md`
 //!
