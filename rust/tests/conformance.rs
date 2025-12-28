@@ -897,7 +897,6 @@ mod safe_check_tests {
     #[test]
     #[cfg(not(target_os = "windows"))] // Unix-specific test
     fn test_check_absolute_path() {
-        use std::fs;
         use std::os::unix::fs::PermissionsExt;
         
         let temp_dir = TempDir::new().expect("Failed to create temp dir");
