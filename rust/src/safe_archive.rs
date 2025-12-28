@@ -53,7 +53,7 @@ use std::path::{Path, PathBuf};
 ///   - args[0]: Source directory path
 ///   - args[1]: Destination archive path
 /// - `no_clobber`: If true, fail with error when destination exists (strict mode)
-///                 If false, auto-suffix the filename to avoid collision
+///   If false, auto-suffix the filename to avoid collision
 ///
 /// # Returns
 ///
@@ -98,7 +98,10 @@ pub fn execute(args: &[String], no_clobber: bool) -> Result<i32, String> {
 
     // Validate source exists and is a directory
     if !source_path.exists() {
-        eprintln!("ERROR: Source path does not exist: {}", source_path.display());
+        eprintln!(
+            "ERROR: Source path does not exist: {}",
+            source_path.display()
+        );
         return Ok(2);
     }
 
@@ -120,7 +123,9 @@ pub fn execute(args: &[String], no_clobber: bool) -> Result<i32, String> {
                 "ERROR: Destination already exists (no-clobber mode): {}",
                 dest_path.display()
             );
-            eprintln!("File collision detected. Use a different destination or remove --no-clobber flag.");
+            eprintln!(
+                "File collision detected. Use a different destination or remove --no-clobber flag."
+            );
             return Ok(40);
         } else {
             // Auto-suffix mode: find next available filename
@@ -175,7 +180,7 @@ fn determine_archive_format(path: &Path) -> Result<ArchiveFormat, String> {
 /// PathBuf with numeric suffix (e.g., output.1.tar.gz, output.2.tar.gz)
 fn find_next_available_path(base_path: &Path) -> PathBuf {
     let base_str = base_path.to_string_lossy();
-    
+
     // Find the last extension (e.g., ".tar.gz" or ".zip")
     let (name_part, ext_part) = if base_str.ends_with(".tar.gz") {
         (base_str.trim_end_matches(".tar.gz"), ".tar.gz")
@@ -248,11 +253,7 @@ enum Compression {
 ///
 /// - `Ok(())`: Archive created successfully
 /// - `Err(message)`: Archive creation failed
-fn create_tar_archive(
-    source: &Path,
-    dest: &Path,
-    compression: Compression,
-) -> Result<(), String> {
+fn create_tar_archive(source: &Path, dest: &Path, compression: Compression) -> Result<(), String> {
     use flate2::write::GzEncoder;
     use flate2::Compression as GzCompression;
 

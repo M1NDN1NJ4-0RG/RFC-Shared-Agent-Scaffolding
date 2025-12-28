@@ -552,29 +552,6 @@ impl Cli {
         vec![]
     }
 
-    /// Archive command output (scaffolding only)
-    ///
-    /// # Arguments
-    ///
-    /// - `_command`: Command to execute and archive (currently unused)
-    ///
-    /// # Implementation Status
-    ///
-    /// **SCAFFOLDING ONLY**: This subcommand is not yet implemented.
-    /// It exists for CLI structure but does not perform real work.
-    ///
-    /// # Current Behavior
-    ///
-    /// Prints an error message indicating the feature is not implemented
-    /// and exits with code 1 to prevent silent no-ops.
-    ///
-    /// # Future Implementation
-    ///
-    /// Will:
-    /// - Execute command with full output capture
-    /// - Create archive regardless of command exit status
-    /// - Include metadata (timestamp, command, exit code)
-    /// - Support artifact collection
     /// Create an archive from a source directory
     ///
     /// # Arguments

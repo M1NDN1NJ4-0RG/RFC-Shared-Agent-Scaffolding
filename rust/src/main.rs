@@ -44,8 +44,8 @@
 //! ```
 
 mod cli;
-mod safe_run;
 mod safe_archive;
+mod safe_run;
 
 use clap::Parser;
 use std::process;
