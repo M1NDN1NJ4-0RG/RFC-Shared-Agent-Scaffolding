@@ -1,5 +1,7 @@
 # Docstring Contracts
 
+**Version:** 1.1  
+**Last Updated:** 2025-12-28  
 **Purpose:** Define clear, testable, and enforceable documentation standards for all scripts and configuration files in this repository.
 
 ## Why Docstring Contracts?
@@ -19,6 +21,26 @@ Docstring contracts ensure:
 The validator scans the entire repository for script files (`.sh`, `.ps1`, `.py`, `.pl`, `.pm`, `.rs`, `.yml`, `.yaml`) and validates each one against its language contract. This ensures that any new script added anywhere in the repository will be checked.
 
 **Violations fail the build** until corrected.
+
+## Contract Version History
+
+### Version 1.1 (2025-12-28)
+- Added comprehensive EXIT_CODES_CONTRACT.md shared reference
+- Enhanced validator with pragma support (`# noqa: EXITCODES`)
+- Added basic content validation for exit codes
+- Added single-file validation mode (`--file` flag)
+- Added semantic section mapping table
+- Added "How to Extend Contracts" guide
+- Added "Prompting Tips for AI Tools" section
+- Harmonized all language contracts with consistent templates
+- Added Platform Compatibility as optional section across all contracts
+- Clarified Triggers vs Usage for YAML files
+- Made Permissions required for GitHub Actions workflows
+
+### Version 1.0 (Initial)
+- Initial docstring contract system
+- Basic validation for presence of required sections
+- Language-specific contracts for Bash, PowerShell, Python, Perl, Rust, YAML
 
 ## Language Contracts
 

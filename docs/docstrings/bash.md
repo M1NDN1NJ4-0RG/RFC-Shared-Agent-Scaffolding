@@ -21,7 +21,7 @@ Every Bash script must include these sections (case-insensitive, but conventiona
 
 ### Optional Sections
 
-- **PLATFORM COMPATIBILITY:** - Tested platforms, version requirements
+- **PLATFORM COMPATIBILITY:** - Tested platforms, version requirements - **Recommended**
 - **CONTRACT REFERENCES:** - Links to design docs, RFCs
 - **BINARY DISCOVERY ORDER:** - For wrapper scripts that discover tools
 

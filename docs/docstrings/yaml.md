@@ -29,7 +29,7 @@ Every YAML file must include these sections (as comment headers):
 ### Optional Sections
 
 - **Environment:** - Environment configuration (matrix, jobs, runners, environment variables)
-- **Platform:** - Platform requirements (e.g., "Runner: ubuntu-latest")
+- **Platform:** - Platform requirements (e.g., "Runner: ubuntu-latest") - **Recommended**
 - **References:** - Links to related docs or issues
 
 ## Formatting Rules

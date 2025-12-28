@@ -24,7 +24,7 @@ Every Python script must include these sections (as reST-style headers in the mo
 
 - **Architecture** - High-level design (for complex scripts)
 - **Functions** - Brief function descriptions (for library-style modules)
-- **Platform** - Platform compatibility notes
+- **Platform** - Platform compatibility notes - **Recommended**
 - **References** - Links to related docs
 
 ## Formatting Rules

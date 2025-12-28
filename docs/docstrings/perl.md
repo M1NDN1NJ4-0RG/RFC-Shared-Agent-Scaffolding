@@ -23,6 +23,7 @@ Every Perl script must include these POD sections (using `=head1` headers):
 ### Optional Sections
 
 - **=head1 OPTIONS** - Command-line options (if using Getopt)
+- **=head1 PLATFORM** - Platform compatibility (OS, Perl version requirements) - **Recommended**
 - **=head1 FILES** - Files read or written
 - **=head1 DIAGNOSTICS** - Error messages explained
 - **=head1 SEE ALSO** - References to related docs

@@ -24,6 +24,7 @@ Every PowerShell script must include these sections (using PowerShell help keywo
 - **.OUTPUTS** - Output types (required if script produces pipeline output)
 - **.LINK** - Links to related docs or URLs
 - **.EXITCODES** - Dedicated exit codes section (not standard PowerShell, but recommended for clarity)
+- **Platform note in .NOTES** - Platform compatibility (Windows/Linux/macOS, PowerShell version) - **Recommended**
 
 ### Exit Code Documentation
 

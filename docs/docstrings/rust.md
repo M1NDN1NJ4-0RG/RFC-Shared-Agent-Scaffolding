@@ -23,7 +23,7 @@ Every Rust module (file) must include module-level documentation with these sect
 ### Optional Sections
 
 - **# Usage** - How to use the module/binary
-- **# Platform Support** - Platform-specific notes
+- **# Platform Support** - Platform-specific notes - **Recommended**
 - **# Safety** - Unsafe code documentation (if applicable)
 - **# Panics** - Panic conditions (if applicable)
 - **# Errors** - Error handling patterns
