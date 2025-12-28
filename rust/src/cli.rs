@@ -316,14 +316,13 @@ impl Cli {
         let cmd_name = &command[0];
 
         // Phase 1: Check if the command exists on PATH
-        let cmd_path_result = Self::find_command_path(cmd_name);
-
-        if cmd_path_result.is_none() {
-            eprintln!("Command not found: {}", cmd_name);
-            return Ok(2);
-        }
-
-        let cmd_path = cmd_path_result.unwrap();
+        let cmd_path = match Self::find_command_path(cmd_name) {
+            Some(path) => path,
+            None => {
+                eprintln!("Command not found: {}", cmd_name);
+                return Ok(2);
+            }
+        };
 
         // Phase 2: Check executable permissions on Unix
         #[cfg(not(target_os = "windows"))]
@@ -385,7 +384,10 @@ impl Cli {
         }
 
         // Get PATH environment variable
-        let path_var = env::var_os("PATH")?;
+        let path_var = match env::var_os("PATH") {
+            Some(p) => p,
+            None => return None,
+        };
 
         #[cfg(target_os = "windows")]
         let extensions = Self::get_windows_executable_extensions();
