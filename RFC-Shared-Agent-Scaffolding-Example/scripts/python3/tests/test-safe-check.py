@@ -58,6 +58,7 @@ Platform Notes
 - Uses tempfile.TemporaryDirectory for isolated test execution
 - All tests are platform-independent (Linux, macOS, Windows compatible)
 """
+
 import os
 import subprocess
 import sys
@@ -67,18 +68,18 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
-SCRIPTS = ROOT / 'scripts'
-SAFE_CHECK = SCRIPTS / 'safe-check.py'
+SCRIPTS = ROOT / "scripts"
+SAFE_CHECK = SCRIPTS / "safe-check.py"
 
 
 def run_safe_check(workdir: Path, env=None, timeout=60):
     """Run safe-check.py as a subprocess in the specified directory.
-    
+
     :param workdir: Working directory for subprocess execution
     :param env: Optional environment variable overrides (dict)
     :param timeout: Timeout in seconds (default: 60)
     :returns: subprocess.CompletedProcess instance with returncode, stdout, stderr
-    
+
     Executes safe-check.py which runs contract verification tests for
     safe-run and safe-archive. The working directory must contain the
     scripts in the expected relative paths.
@@ -103,13 +104,18 @@ class TestSafeCheck(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             # Provide the scripts in cwd, since safe_check expects relative paths.
-            scripts_dir = wd / 'scripts' / 'python3'
+            scripts_dir = wd / "scripts" / "python3"
             scripts_dir.mkdir(parents=True)
-            for name in ['safe-run.py', 'safe-archive.py', 'safe-check.py', 'preflight-automerge-ruleset.py']:
-                (SCRIPTS / name).replace(scripts_dir / name) if False else (scripts_dir / name).write_bytes((SCRIPTS / name).read_bytes())
+            for name in [
+                "safe-run.py",
+                "safe-archive.py",
+                "safe-check.py",
+                "preflight-automerge-ruleset.py",
+            ]:
+                (scripts_dir / name).write_bytes((SCRIPTS / name).read_bytes())
 
             proc = subprocess.run(
-                [sys.executable, str(scripts_dir / 'safe-check.py')],
+                [sys.executable, str(scripts_dir / "safe-check.py")],
                 cwd=str(wd),
                 env=os.environ.copy(),
                 text=True,
@@ -117,7 +123,10 @@ class TestSafeCheck(unittest.TestCase):
                 stderr=subprocess.PIPE,
                 timeout=60,
             )
-            self.assertEqual(proc.returncode, 0, msg=f"stdout:\n{proc.stdout}\nstderr:\n{proc.stderr}")
+            self.assertEqual(
+                proc.returncode,
+                0,
+                msg=f"stdout:\n{proc.stdout}\nstderr:\n{proc.stderr}",
+            )
             # sanity: should mention PASS somewhere
             self.assertRegex(proc.stdout + proc.stderr, r"PASS|OK")
-

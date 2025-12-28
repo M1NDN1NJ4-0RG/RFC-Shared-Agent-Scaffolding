@@ -19,7 +19,7 @@ Two modes of operation:
    - If destination exists, append .2, .3, etc. until unique name found
    - Never overwrites existing archive files
    - Emits WARNING to stderr when auto-suffixing occurs
-   
+
 2. **Strict no-clobber mode** (via --no-clobber flag or SAFE_ARCHIVE_NO_CLOBBER=1):
    - If destination exists, fail with exit code 2
    - Prevents any archival when collision detected
@@ -29,17 +29,17 @@ Environment Variables
 ---------------------
 SAFE_FAIL_DIR : str, optional
     Source directory for failure logs (default: .agent/FAIL-LOGS)
-    
+
 SAFE_ARCHIVE_DIR : str, optional
     Destination directory for archived logs (default: .agent/FAIL-ARCHIVE)
-    
+
 SAFE_ARCHIVE_COMPRESS : str, optional
     Compression method: none (default) | gzip | xz | zstd
     - none: No compression applied
     - gzip: Python built-in gzip compression (always available)
     - xz: Requires 'xz' command in PATH, uses multi-threading (-T0)
     - zstd: Requires 'zstd' command in PATH, uses multi-threading (-T0)
-    
+
 SAFE_ARCHIVE_NO_CLOBBER : str, optional
     Set to "1" to enable strict no-clobber mode globally
 
@@ -119,46 +119,53 @@ import subprocess
 import gzip
 from typing import List
 
+
 def eprint(*args: object) -> None:
     """Print to stderr for status and error messages.
-    
+
     :param args: Variable arguments to print (passed to print())
     :returns: None
-    
+
     All output is sent to stderr to avoid interfering with stdout,
     which may be captured or redirected by calling scripts.
     """
     print(*args, file=sys.stderr)
 
+
 def usage() -> int:
     """Print usage message and return exit code 2.
-    
+
     :returns: 2 (usage error exit code)
-    
+
     Displays comprehensive help including options, environment variables,
     and examples. Caller is expected to exit with the returned code.
     """
     eprint("Usage: scripts/python3/safe-archive.py [--no-clobber] [--all | <file> ...]")
     eprint("")
     eprint("Options:")
-    eprint("  --no-clobber            Fail if destination exists (default: auto-suffix)")
+    eprint(
+        "  --no-clobber            Fail if destination exists (default: auto-suffix)"
+    )
     eprint("")
     eprint("Environment:")
     eprint("  SAFE_FAIL_DIR           Source directory (default: .agent/FAIL-LOGS)")
-    eprint("  SAFE_ARCHIVE_DIR        Destination directory (default: .agent/FAIL-ARCHIVE)")
+    eprint(
+        "  SAFE_ARCHIVE_DIR        Destination directory (default: .agent/FAIL-ARCHIVE)"
+    )
     eprint("  SAFE_ARCHIVE_COMPRESS   Compression: none|gzip|xz|zstd (default: none)")
     eprint("  SAFE_ARCHIVE_NO_CLOBBER Set to 1 to enable strict no-clobber mode")
     return 2
 
+
 def have_cmd(cmd: str) -> bool:
     """Check if a command is available in PATH.
-    
+
     :param cmd: Command name to search for (e.g., "xz", "zstd")
     :returns: True if command exists and is executable, False otherwise
-    
+
     Used to verify compression tool availability before attempting to
     invoke external commands for xz or zstd compression.
-    
+
     Platform Notes
     --------------
     - Searches all directories in PATH environment variable
@@ -171,14 +178,15 @@ def have_cmd(cmd: str) -> bool:
             return True
     return False
 
+
 def compress_file(method: str, path: str) -> None:
     """Compress a file in-place using the specified method.
-    
+
     :param method: Compression method: "none" | "gzip" | "xz" | "zstd"
     :param path: Path to file to compress (will be replaced with compressed version)
     :returns: None
     :raises RuntimeError: If method is invalid or compression tool not found
-    
+
     Compression Methods
     -------------------
     none
@@ -194,19 +202,19 @@ def compress_file(method: str, path: str) -> None:
         External 'zstd' command with multi-threading (-T0)
         Creates path.zst, removes original
         Requires 'zstd' in PATH
-    
+
     Side Effects
     ------------
     - Original file is deleted after successful compression
     - Compressed file has appropriate extension (.gz, .xz, .zst)
     - External commands invoked via subprocess.check_call()
-    
+
     Error Handling
     --------------
     - Raises RuntimeError if compression tool not found in PATH
     - Raises RuntimeError if method is not one of the supported values
     - subprocess.check_call() will raise CalledProcessError on command failure
-    
+
     Examples
     --------
     >>> compress_file("none", "mylog.txt")  # No-op
@@ -233,9 +241,12 @@ def compress_file(method: str, path: str) -> None:
         return
     raise RuntimeError("Invalid SAFE_ARCHIVE_COMPRESS value: %s" % method)
 
-def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bool = False) -> None:
+
+def archive_one(
+    src: str, archive_dir: str, compress: str, strict_no_clobber: bool = False
+) -> None:
     """Archive a single file with M0-P1-I3 no-clobber semantics.
-    
+
     Args:
         src: Source file path
         archive_dir: Destination directory
@@ -244,10 +255,10 @@ def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bo
     """
     if not os.path.exists(src):
         raise RuntimeError("File not found: %s" % src)
-    
+
     base = os.path.basename(src)
     dest = os.path.join(archive_dir, base)
-    
+
     if os.path.exists(dest):
         if strict_no_clobber:
             # M0-P1-I3: Strict no-clobber mode - fail with error
@@ -259,42 +270,43 @@ def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bo
                 n += 1
             dest = dest + "." + str(n)
             eprint("WARNING: destination exists, using auto-suffix: %s" % dest)
-    
+
     shutil.move(src, dest)
     eprint("ARCHIVED: %s -> %s" % (src, dest))
     compress_file(compress, dest)
 
+
 def main(argv: List[str]) -> int:
     """Execute archival operation with M0-P1-I3 no-clobber semantics.
-    
+
     :param argv: Command-line arguments (--no-clobber, --all, or file paths)
     :returns: Exit code (0 on success, 2 on error)
     :raises SystemExit: Via usage() on help request or missing arguments
-    
+
     Argument Parsing
     ----------------
     - Detects -h/--help and calls usage()
     - Extracts --no-clobber flag if present
     - Checks SAFE_ARCHIVE_NO_CLOBBER environment variable
     - Requires either --all or one or more file paths
-    
+
     Operation Modes
     ---------------
     --all
         Archives all files in SAFE_FAIL_DIR (sorted by name)
         Skips directories and symlinks
-        
+
     <file> ...
         Archives specific files by path
         Files can be from any directory (not limited to SAFE_FAIL_DIR)
-    
+
     Environment Configuration
     -------------------------
     - SAFE_FAIL_DIR: Source directory (default: .agent/FAIL-LOGS)
     - SAFE_ARCHIVE_DIR: Destination directory (default: .agent/FAIL-ARCHIVE)
     - SAFE_ARCHIVE_COMPRESS: Compression method (default: none)
     - SAFE_ARCHIVE_NO_CLOBBER: Set to "1" for strict no-clobber mode
-    
+
     Side Effects
     ------------
     - Creates SAFE_FAIL_DIR if it doesn't exist
@@ -302,22 +314,22 @@ def main(argv: List[str]) -> int:
     - Moves source files to archive directory
     - Compresses archived files if SAFE_ARCHIVE_COMPRESS is set
     - Prints status messages to stderr (ARCHIVED, WARNING, ERROR)
-    
+
     Error Handling
     --------------
     - Catches RuntimeError from archive_one() and compress_file()
     - Prints ERROR message to stderr
     - Returns exit code 2 on any error
     - --all mode: Continues processing remaining files after error (non-fatal)
-    
+
     Examples
     --------
     >>> main(["--all"])  # Archive all files in SAFE_FAIL_DIR
     0
-    
+
     >>> main(["--no-clobber", "mylog.txt"])  # Strict mode
     2  # If destination exists
-    
+
     >>> main(["file1.txt", "file2.txt"])  # Archive specific files
     0
     """
@@ -327,12 +339,12 @@ def main(argv: List[str]) -> int:
     # M0-P1-I3: Check for strict no-clobber mode
     strict_no_clobber = False
     args = list(argv)
-    
+
     # Check for --no-clobber flag
     if "--no-clobber" in args:
         strict_no_clobber = True
         args.remove("--no-clobber")
-    
+
     # Check for SAFE_ARCHIVE_NO_CLOBBER env var
     if os.environ.get("SAFE_ARCHIVE_NO_CLOBBER") == "1":
         strict_no_clobber = True
@@ -346,8 +358,11 @@ def main(argv: List[str]) -> int:
 
     try:
         if args and args[0] == "--all":
-            files = [os.path.join(fail_dir, n) for n in sorted(os.listdir(fail_dir))
-                     if os.path.isfile(os.path.join(fail_dir, n))]
+            files = [
+                os.path.join(fail_dir, n)
+                for n in sorted(os.listdir(fail_dir))
+                if os.path.isfile(os.path.join(fail_dir, n))
+            ]
             if not files:
                 eprint("No files to archive in %s" % fail_dir)
                 return 0
@@ -364,6 +379,7 @@ def main(argv: List[str]) -> int:
     except RuntimeError as e:
         eprint("ERROR: %s" % e)
         return 2
+
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
