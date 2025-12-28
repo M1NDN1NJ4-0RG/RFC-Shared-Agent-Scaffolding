@@ -248,10 +248,10 @@ public class Win32Process {
     }
     
     # Build the command line for the target process
-    # IMPORTANT: When lpApplicationName is NULL, lpCommandLine must contain the full command with executable
+    # IMPORTANT: Use -Command with the stop-parsing operator (--%) to pass child command raw
+    # This avoids nested quote issues and lets Windows parse the command line correctly
     # We pass NULL to lpApplicationName and let Windows parse the command line
-    # This avoids quoting issues and filename syntax errors
-    $commandLine = "`"$pwshPath`" -NoProfile -File `"$wrapperScriptResolved`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
+    $commandLine = "`"$pwshPath`" -NoProfile -Command `"& { & '$wrapperScriptResolved' --% pwsh -NoProfile -Command Start-Sleep -Seconds 60 }`""
     Write-ProbeLog ""
     Write-ProbeLog "=== CreateProcessW Debug ==="
     Write-ProbeLog "Command line: $commandLine"
