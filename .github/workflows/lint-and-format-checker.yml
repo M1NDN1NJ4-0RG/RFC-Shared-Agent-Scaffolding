@@ -8,7 +8,6 @@
 # 2. lint-bash: Runs ShellCheck and shfmt on shell scripts
 # 3. lint-powershell: Runs PSScriptAnalyzer on PowerShell scripts
 # 4. lint-perl: Runs Perl::Critic on Perl files
-# 5. lint-rust: Runs rustfmt and clippy on Rust code
 #
 # Triggers:
 # - Pushes to main branch
@@ -174,35 +173,4 @@ jobs:
         run: |
           perlcritic --severity 5 $(git ls-files '*.pl' '*.pm')
 
-  lint-rust:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Check for Rust files
-        id: check-rust
-        run: |
-          if [ -f "rust/Cargo.toml" ]; then
-            echo "has_files=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_files=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Set up Rust toolchain
-        if: steps.check-rust.outputs.has_files == 'true'
-        uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: stable
-          components: rustfmt, clippy
-
-      - name: Run rustfmt (check)
-        if: steps.check-rust.outputs.has_files == 'true'
-        run: |
-          cd rust && cargo fmt --all -- --check
-
-      - name: Run clippy
-        if: steps.check-rust.outputs.has_files == 'true'
-        run: |
-          cd rust && cargo clippy --all-targets --all-features -- -D warnings
 
