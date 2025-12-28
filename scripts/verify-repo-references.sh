@@ -1,34 +1,58 @@
 #!/usr/bin/env bash
-# Purpose: Verify that obsolete repository paths and references have been removed
 #
-# This script searches for old paths that should no longer exist after the
-# repository restructure:
-# - documents/ (replaced by docs/)
-# - RFC-Shared-Agent-Scaffolding-Example/ (replaced by wrappers/)
+# verify-repo-references.sh - Verify that obsolete repository paths have been removed
 #
-# Usage: ./scripts/verify-repo-references.sh [--strict]
+# DESCRIPTION:
+#   Searches the repository for references to old paths that should no longer
+#   exist after the repository restructure. This helps ensure that documentation
+#   and configuration files have been updated when directories are renamed or
+#   relocated.
 #
-# Arguments:
-#   --strict    Exit with non-zero if ANY obsolete references are found
+#   Currently checks for:
+#   - documents/ (replaced by docs/)
+#   - RFC-Shared-Agent-Scaffolding-Example/ (replaced by wrappers/)
 #
-# Exit Codes:
-#   0 - No obsolete references found (or non-strict mode)
-#   1 - Obsolete references found in strict mode
-#   2 - Script execution error
+#   The script excludes the .git directory and binary files from searches.
+#   It reports line numbers and context for any found references.
 #
-# Examples:
+# USAGE:
+#   verify-repo-references.sh [--strict]
+#
+# INPUTS:
+#   Arguments:
+#     --strict    (Optional) Exit with non-zero code if ANY obsolete references
+#                 are found. Without this flag, the script always exits 0 and
+#                 only reports findings.
+#
+#   Environment Variables:
+#     None
+#
+# OUTPUTS:
+#   Exit Codes:
+#     0    No obsolete references found, or non-strict mode with findings
+#     1    Obsolete references found in strict mode
+#     2    Script execution error
+#
+#   Stdout/Stderr:
+#     Success: Summary of checks performed and results
+#     Failure: Detailed list of files and line numbers with obsolete references
+#
+#   Side Effects:
+#     None - read-only operation
+#
+# EXAMPLES:
 #   # Run in reporting mode (always exits 0)
 #   ./scripts/verify-repo-references.sh
 #
 #   # Run in strict mode (exits non-zero if issues found)
 #   ./scripts/verify-repo-references.sh --strict
 #
-# Dependencies: grep, git
-#
-# Notes:
-# - Runs from repository root
-# - Ignores .git directory and binary files
-# - Reports line numbers and context for found references
+# NOTES:
+#   - Runs from repository root (automatically changes directory)
+#   - Uses git grep when available for better performance
+#   - Only searches text files (md, yml, yaml, sh, py, pl, ps1, rs, toml)
+#   - After M1: 'documents/' should be eliminated
+#   - After M2: 'RFC-Shared-Agent-Scaffolding-Example' should be eliminated
 
 set -euo pipefail
 
