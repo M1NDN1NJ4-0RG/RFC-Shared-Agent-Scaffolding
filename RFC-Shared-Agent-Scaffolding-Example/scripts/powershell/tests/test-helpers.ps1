@@ -32,6 +32,17 @@
     - Write-RandomTextFile uses Get-Random for unique content per call
     - No test framework dependencies (pure PowerShell)
 
+.ENVIRONMENT
+  None. Utility functions do not depend on environment variables.
+
+.EXAMPLE
+  # Dot-source helpers in a test file
+  PS> . "$PSScriptRoot/test-helpers.ps1"
+
+  # Use helper functions in tests
+  PS> $tmp = New-TempDir
+  PS> Write-RandomTextFile -Path "$tmp/test.txt" -Lines 100
+
 .LINK
   https://pester.dev/
 #>

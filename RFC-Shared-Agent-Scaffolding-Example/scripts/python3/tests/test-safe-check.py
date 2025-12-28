@@ -4,6 +4,11 @@ This test module validates that safe-check.py correctly verifies the
 Python3 implementations of safe-run and safe-archive conform to their
 M0 specification contracts.
 
+Purpose
+-------
+Meta-test that validates the safe-check.py contract verification script
+works correctly in a clean, isolated environment.
+
 Test Coverage
 -------------
 - End-to-end contract verification in a clean repository layout
@@ -11,6 +16,24 @@ Test Coverage
 - Verifies safe-run success path doesn't create artifacts
 - Verifies safe-archive moves files correctly
 - Verifies safe-archive respects no-clobber semantics (M0-P1-I3)
+
+Environment Variables
+---------------------
+SAFE_RUN_BIN : str, optional
+    Path to Rust canonical binary (set by test setup).
+
+Examples
+--------
+Run tests via pytest::
+
+    pytest test-safe-check.py
+
+Exit Codes
+----------
+0
+    All tests passed
+1
+    One or more tests failed
 
 Contract Validation
 -------------------

@@ -12,6 +12,21 @@
 # Triggers:
 # - Pushes to main, copilot/**, work/** branches affecting Rust or conformance files
 # - Pull requests to main affecting the same paths
+#
+# Dependencies:
+# - Rust toolchain (stable)
+# - Clippy, rustfmt
+# - conformance/vectors.json
+#
+# Outputs:
+# - Status checks: "test", "lint", "format"
+# - Artifacts: None
+# - Side effects: Fails if tests, lints, or formatting fail
+#
+# Notes:
+# - Required for merge
+# - Runs on Linux, macOS, and Windows
+# - Exit 0 = all checks pass, non-zero = failures detected
 name: Rust Conformance Tests
 
 # Permissions: Read-only access to repository contents

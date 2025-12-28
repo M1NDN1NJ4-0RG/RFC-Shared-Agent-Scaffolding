@@ -137,6 +137,22 @@ Example:
 B<Required Permissions:> The token must have C<repo> or C<read:org> scope
 to read repository rulesets.
 
+=head1 ENVIRONMENT VARIABLES
+
+=over 4
+
+=item B<TOKEN>
+
+GitHub personal access token for API authentication. Used if C<gh> command
+is not available. First priority for token authentication.
+
+=item B<GITHUB_TOKEN>
+
+GitHub personal access token (alternative to TOKEN). Used if C<gh> command
+is not available and TOKEN is not set. Second priority for token authentication.
+
+=back
+
 =head1 EXIT CODES
 
 =over 4

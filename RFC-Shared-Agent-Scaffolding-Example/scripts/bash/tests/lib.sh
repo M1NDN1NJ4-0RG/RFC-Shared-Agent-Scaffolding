@@ -36,6 +36,13 @@
 #   fail <msg>                   Print red FAIL message
 #   log <msg>                    Print to stderr
 #
+# INPUTS:
+#   Arguments:
+#     None (library is sourced, not executed)
+#
+#   Environment Variables:
+#     None (self-contained test framework)
+#
 # OUTPUTS:
 #   Exit Codes (via summary):
 #     0  All tests passed

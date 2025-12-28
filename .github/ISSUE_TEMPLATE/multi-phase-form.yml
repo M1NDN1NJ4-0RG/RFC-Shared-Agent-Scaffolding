@@ -1,3 +1,31 @@
+# File: multi-phase-form.yml
+#
+# Purpose: GitHub issue form template for tracking multi-phase feature
+# implementations. Provides structured fields for Future Work (FW) items
+# from docs/FUTURE-WORK.md that require multiple PRs across several phases.
+#
+# Usage:
+# - Users create new issues via this template when starting multi-phase work
+# - Template appears in GitHub's "New Issue" menu
+# - Form validates required fields (FW reference, summary, phases)
+#
+# Inputs:
+# - FW Reference: ID from FUTURE-WORK.md (format: FW-XXX)
+# - Summary: High-level description of the feature
+# - Phase Breakdown: List of phases with goals
+# - PR Chain: Checklist of PRs (updated as work progresses)
+#
+# Outputs:
+# - Creates GitHub issue with "epic" and "tracking" labels
+# - Assigns issue to @m1ndn1nj4
+# - Structures issue body with form fields
+#
+# Notes:
+# - This is a GitHub Issue Form YAML template, not executable code
+# - Standard phase count is 3 (adjustable per feature complexity)
+# - PR chain checklist enables progress tracking in issue
+# - See: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
+
 name: Multi-Phase Feature Implementation
 description: Track progress across multi-PR phased work for a Future Work (FW) item from docs/FUTURE-WORK.md
 title: "EPIC: Multi-Phase Implementation for FW-XXX"

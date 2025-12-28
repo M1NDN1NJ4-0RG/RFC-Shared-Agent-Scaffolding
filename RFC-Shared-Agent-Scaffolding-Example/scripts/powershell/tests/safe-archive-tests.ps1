@@ -52,6 +52,13 @@
     - Tests both individual file and --all modes
     - Compression tests validate both success and failure paths
 
+.ENVIRONMENT
+  None. Tests set environment variables per-test.
+
+.EXAMPLE
+  # Run safe-archive tests with Pester
+  PS> Invoke-Pester -Path .\safe-archive-tests.ps1
+
 .LINK
   https://pester.dev/
 

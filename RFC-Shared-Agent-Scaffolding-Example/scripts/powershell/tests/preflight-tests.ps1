@@ -62,6 +62,13 @@
     - Exit codes validated against contract (0=OK, 1=fail, 2=auth, 3=usage)
     - No external dependencies (no real gh, no network)
 
+.ENVIRONMENT
+  None. Tests use fake gh CLI and cleared environment variables.
+
+.EXAMPLE
+  # Run preflight tests with Pester
+  PS> Invoke-Pester -Path .\preflight-tests.ps1
+
 .LINK
   https://pester.dev/
 

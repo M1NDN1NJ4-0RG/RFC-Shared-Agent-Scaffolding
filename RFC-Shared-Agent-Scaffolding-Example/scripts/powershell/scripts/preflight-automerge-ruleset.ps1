@@ -64,6 +64,15 @@
     WARN: <warning or failure explanation>
     ERROR: <error that requires immediate attention>
 
+.ENVIRONMENT
+  TOKEN
+    GitHub personal access token for API authentication (first priority).
+    Used if gh CLI is not available.
+
+  GITHUB_TOKEN
+    GitHub personal access token (alternative to TOKEN, second priority).
+    Used if gh CLI is not available and TOKEN is not set.
+
 .EXAMPLE
   # Verify ruleset by name with gh CLI authentication
   PS> .\preflight-automerge-ruleset.ps1 `

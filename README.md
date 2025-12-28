@@ -53,6 +53,22 @@ Wrappers act as **invokers**, not independent implementations. They:
 - [RFC v0.1.0](./RFC-Shared-Agent-Scaffolding-v0.1.0.md) - Contract specification
 - [Canonical Structure](./documents/CANONICAL-STRUCTURE.md) - Directory layout
 - [Pre-flight Validation](./PR0-PREFLIGHT-COMPLETE.md) - Baseline conformance report
+- [Docstring Contracts](./docs/docstrings/README.md) - Documentation standards for all languages
+
+### Docstring Contracts
+
+**ALL scripts in this repository MUST conform to their language-specific docstring contract**, regardless of location. The validator checks every script file repository-wide to ensure consistent documentation.
+
+Contracts define required documentation sections (purpose, usage, examples, exit codes, etc.) for:
+
+- **Bash** (`.sh`, `.bash`, `.zsh`)
+- **PowerShell** (`.ps1`)
+- **Python 3** (`.py`)
+- **Perl** (`.pl`, `.pm`)
+- **Rust** (`.rs`)
+- **YAML** (`.yml`, `.yaml` - workflows and configs)
+
+**Any new script added anywhere in the repository** will be validated against its language contract. Conformance is enforced by CI via `scripts/validate-docstrings.py`. See [docs/docstrings/README.md](./docs/docstrings/README.md) for details and templates.
 
 ## Contributing
 

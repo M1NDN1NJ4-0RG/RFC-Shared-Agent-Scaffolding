@@ -1,0 +1,94 @@
+# Workflow: Docstring Contract Enforcement
+#
+# Purpose: Validates that ALL scripts and YAML files in the repository conform
+# to their language-specific docstring contracts as defined in docs/docstrings/.
+# Ensures consistent, discoverable documentation across all supported languages
+# (Bash, PowerShell, Python, Perl, Rust, YAML). Any new script added anywhere
+# in the repository must conform to its language's docstring contract.
+#
+# Triggers:
+# - Pull requests modifying ANY script, YAML file, docs, or this workflow
+# - Pushes to main branch
+# - Manual workflow dispatch
+#
+# Dependencies:
+# - Python 3.8+
+# - scripts/validate-docstrings.py
+# - docs/docstrings/*.md (contract definitions)
+#
+# Outputs:
+# - Status check: "Docstring Contract Validation"
+# - Artifacts: None
+# - Side effects: Fails if any file violates its docstring contract
+#
+# Notes:
+# - Required for merge
+# - Validates ALL scripts repository-wide (not just specific directories)
+# - Validates presence of required sections, not content quality
+# - Exit 0 = all files conform, non-zero = violations detected
+# - See docs/docstrings/README.md for contract details
+name: Docstring Contract Enforcement
+
+on:
+  pull_request:
+    paths:
+      - '**/*.sh'
+      - '**/*.bash'
+      - '**/*.zsh'
+      - '**/*.ps1'
+      - '**/*.py'
+      - '**/*.pl'
+      - '**/*.pm'
+      - 'rust/src/**/*.rs'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
+      - '.github/ISSUE_TEMPLATE/*.yml'
+      - '.github/ISSUE_TEMPLATE/*.yaml'
+      - 'docs/docstrings/**'
+      - 'scripts/validate-docstrings.py'
+      - '.github/workflows/docstring-contract.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.sh'
+      - '**/*.bash'
+      - '**/*.zsh'
+      - '**/*.ps1'
+      - '**/*.py'
+      - '**/*.pl'
+      - '**/*.pm'
+      - 'rust/src/**/*.rs'
+      - '.github/workflows/*.yml'
+      - '.github/workflows/*.yaml'
+      - '.github/ISSUE_TEMPLATE/*.yml'
+      - '.github/ISSUE_TEMPLATE/*.yaml'
+      - 'docs/docstrings/**'
+      - 'scripts/validate-docstrings.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Docstring Contract Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.8'
+      
+      - name: Run docstring validator
+        run: |
+          python3 scripts/validate-docstrings.py
+      
+      - name: Report success
+        if: success()
+        run: |
+          echo "✅ All files conform to docstring contracts"

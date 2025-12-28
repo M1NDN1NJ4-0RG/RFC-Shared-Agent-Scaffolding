@@ -15,6 +15,26 @@
 # USAGE:
 #   ./test-safe-check.sh
 #
+# INPUTS:
+#   Arguments:
+#     None (test script runs all tests)
+#
+#   Environment Variables:
+#     None (discovers Rust binary automatically)
+#
+# OUTPUTS:
+#   Exit Codes:
+#     0    All tests passed
+#     1    One or more tests failed
+#     127  Rust binary not found
+#
+#   Stderr:
+#     Test results (PASS/FAIL per test, summary)
+#
+# EXAMPLES:
+#   # Run all safe-check tests
+#   ./test-safe-check.sh
+#
 # CONTRACT REFERENCES:
 #   - safe-check.sh tests: success artifacts, failure artifacts, archiving
 #   - Related: safe-run.sh, safe-archive.sh

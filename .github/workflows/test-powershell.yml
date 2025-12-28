@@ -16,6 +16,15 @@
 # - Manual workflow dispatch
 #
 # Note: Runs on windows-latest (PowerShell is Windows-native)
+#
+# Outputs:
+# - Status check: "Test PowerShell Bundle"
+# - Artifacts: None (test logs printed to stdout)
+# - Side effects: Fails if tests fail
+#
+# Notes:
+# - Required for merge
+# - Exit 0 = tests pass, non-zero = tests fail
 name: Test PowerShell Bundle
 
 on:

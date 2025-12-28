@@ -37,6 +37,13 @@
 # USAGE:
 #   ./test-safe-run.sh
 #
+# INPUTS:
+#   Arguments:
+#     None (test script runs all tests)
+#
+#   Environment Variables:
+#     REPO_ROOT (optional) Override repository root detection
+#
 # REQUIREMENTS:
 #   - Rust binary must exist at:
 #     - $REPO_ROOT/dist/linux/x86_64/safe-run OR
@@ -46,6 +53,13 @@
 # OUTPUTS:
 #   Exit: 0 if all tests pass, 1 if any fail
 #   Stderr: Test results (PASS/FAIL per test, summary)
+#
+# EXAMPLES:
+#   # Run all tests
+#   ./test-safe-run.sh
+#
+#   # Run with custom repo root
+#   REPO_ROOT=/path/to/repo ./test-safe-run.sh
 #
 # PLATFORM COMPATIBILITY:
 #   - Linux: Primary test platform

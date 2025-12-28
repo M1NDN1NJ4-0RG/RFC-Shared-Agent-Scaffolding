@@ -4,6 +4,11 @@ This test module validates the Python wrapper's behavior for the safe-run tool,
 including success/failure paths, environment variable handling, signal handling,
 and event ledger generation.
 
+Purpose
+-------
+Validates that the Python wrapper for safe-run correctly delegates to the Rust
+canonical tool and satisfies contract requirements per M0-P1-I1 and M0-P1-I2.
+
 Test Coverage
 -------------
 - Success path: Command exits 0, no artifacts created
@@ -22,13 +27,41 @@ Contract Validation
 - safe-run-004: Signal handling SIGINT -> exit 130 (test_sigint_creates_aborted_log)
 - safe-run-005: Tail snippet output (test_snippet_lines_printed_to_stderr)
 
-Test Dependencies
------------------
-The tests invoke the actual safe-run.py wrapper, which requires:
-- SAFE_RUN_BIN environment variable pointing to Rust canonical tool
-- Or the Rust binary available in one of the discovery locations
+Environment Variables
+---------------------
+SAFE_RUN_BIN : str, optional
+    Path to Rust canonical binary. Required for tests unless binary is
+    discoverable via standard search order.
 
-The run-tests.sh script sets SAFE_RUN_BIN appropriately for CI/local testing.
+SAFE_LOG_DIR : str, optional
+    Directory for failure logs (tested by tests).
+
+SAFE_SNIPPET_LINES : int, optional
+    Number of tail lines for stderr snippet (tested by tests).
+
+Examples
+--------
+Run tests via pytest::
+
+    pytest test-safe-run.py
+
+Run tests via unittest::
+
+    python3 test-safe-run.py
+
+Exit Codes
+----------
+0
+    All tests passed
+1
+    One or more tests failed
+
+Notes
+-----
+- Tests invoke actual safe-run.py wrapper (not unit-tested in isolation)
+- Requires Rust binary to be built and discoverable
+- Uses tempfile.TemporaryDirectory for test isolation
+- SIGINT test timing-dependent (may need retries on slow systems)
 
 Platform Notes
 --------------

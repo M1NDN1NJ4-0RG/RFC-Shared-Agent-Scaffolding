@@ -16,6 +16,16 @@
 # - Pull requests modifying Python 3 bundle, conformance data, or this workflow
 # - Pushes to main branch affecting the same paths
 # - Manual workflow dispatch
+#
+# Outputs:
+# - Status check: "Test Python 3 Bundle"
+# - Artifacts: None (test logs printed to stdout)
+# - Side effects: Fails if tests fail
+#
+# Notes:
+# - Required for merge
+# - Tests multiple Python versions for compatibility
+# - Exit 0 = tests pass, non-zero = tests fail
 name: Test Python 3 Bundle
 
 on:

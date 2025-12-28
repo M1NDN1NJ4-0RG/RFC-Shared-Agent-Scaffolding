@@ -16,6 +16,25 @@
 # USAGE:
 #   ./test-safe-archive.sh
 #
+# INPUTS:
+#   Arguments:
+#     None (test script runs all tests)
+#
+#   Environment Variables:
+#     None (uses isolated temp directories for testing)
+#
+# OUTPUTS:
+#   Exit Codes:
+#     0  All tests passed
+#     1  One or more tests failed
+#
+#   Stderr:
+#     Test results (PASS/FAIL per test, summary)
+#
+# EXAMPLES:
+#   # Run all safe-archive tests
+#   ./test-safe-archive.sh
+#
 # CONTRACT REFERENCES:
 #   - M0-P1-I2: Log lifecycle and naming
 #   - No-clobber guarantee for archive safety
