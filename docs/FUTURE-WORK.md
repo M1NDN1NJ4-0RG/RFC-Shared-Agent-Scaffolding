@@ -16,7 +16,7 @@ This document tracks **explicitly-marked future work** found in the repository. 
 | ID | Severity | Area | Title |
 |----|----------|------|-------|
 | [FW-001](#fw-001-signal-handling-for-safe-run) | Low | Rust CLI | Signal handling for safe-run (SIGTERM/SIGINT) - ✅ IMPLEMENTED |
-| [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation - ✅ Phase 1 Complete |
+| [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation - ✅ COMPLETE |
 | [FW-003](#fw-003-safe-archive-subcommand-implementation) | Medium | Rust CLI | safe-archive subcommand implementation - ✅ COMPLETE |
 | [FW-004](#fw-004-preflight-automerge-ruleset-checker) | Medium | Rust CLI | Preflight automerge ruleset checker (preflight-004 + GitHub API mocking) |
 | [FW-005](#fw-005-programmatic-vector-to-test-mapping-check) | Low | Conformance | Programmatic vector-to-test mapping check |
