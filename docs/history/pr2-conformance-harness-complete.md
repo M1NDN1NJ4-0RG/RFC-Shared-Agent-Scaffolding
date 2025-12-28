@@ -24,7 +24,7 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
    - Test writing guidelines
    - Platform considerations
 
-2. **`rust/tests/CONFORMANCE_INFRASTRUCTURE.md`** (9.1 KB)
+2. **`rust/tests/conformance-infrastructure.md`** (9.1 KB)
    - Comprehensive infrastructure documentation
    - Component descriptions
    - CI integration details
@@ -284,7 +284,7 @@ All criteria met:
 ### New Files (11)
 - `.github/workflows/rust-conformance.yml`
 - `rust/tests/README.md`
-- `rust/tests/CONFORMANCE_INFRASTRUCTURE.md`
+- `rust/tests/conformance-infrastructure.md`
 - `rust/tests/common/mod.rs`
 - `rust/tests/common/snapshots.rs`
 - `rust/tests/conformance.rs`
@@ -312,7 +312,7 @@ All criteria met:
 - **Conformance Vectors:** `conformance/vectors.json`
 - **Documentation:**
   - [Test README](rust/tests/README.md)
-  - [Conformance Infrastructure](rust/tests/CONFORMANCE_INFRASTRUCTURE.md)
+  - [Conformance Infrastructure](rust/tests/conformance-infrastructure.md)
   - [Fixtures](rust/tests/fixtures/README.md)
   - [Snapshots](rust/tests/snapshots/README.md)
 

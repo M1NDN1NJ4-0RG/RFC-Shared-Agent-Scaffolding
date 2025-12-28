@@ -40,7 +40,7 @@ The following directory and all its contents were deleted:
 
 ```
 RFC-Shared-Agent-Scaffolding-Example/scripts/python2/
-├── README_TESTS.md
+├── readme-tests.md
 ├── run_tests.sh
 ├── scripts/
 │   ├── preflight_automerge_ruleset.py

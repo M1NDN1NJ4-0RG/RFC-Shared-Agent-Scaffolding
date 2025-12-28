@@ -61,7 +61,7 @@ Every C# source file should include these sections in XML documentation comments
 /// Platform: .NET 6.0 or later, cross-platform (Windows/Linux/macOS)
 /// </para>
 /// </remarks>
-/// <seealso href="EXIT_CODES_CONTRACT.md"/>
+/// <seealso href="exit-codes-contract.md"/>
 using System;
 using System.IO;
 using System.Diagnostics;
@@ -269,7 +269,7 @@ class Program
 /// <para>Platform: .NET 6.0 or later, Windows/Linux/macOS</para>
 /// </remarks>
 /// <seealso href="docs/wrapper-discovery.md"/>
-/// <seealso href="EXIT_CODES_CONTRACT.md"/>
+/// <seealso href="exit-codes-contract.md"/>
 using System;
 using System.IO;
 using System.Diagnostics;
@@ -416,7 +416,7 @@ docfx build docfx.json
 - [C# XML Documentation Comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
 - [Recommended XML Tags](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags)
 - [.NET API Documentation Guidelines](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [README.md](./README.md) - Overview of docstring contracts
 
 ## Status

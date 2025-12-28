@@ -237,7 +237,7 @@ L<Module::Name> - Link to installed module documentation
 
 L<https://example.com> - External URL
 
-L<Exit Codes|EXIT_CODES_CONTRACT.md> - Link with custom text
+L<Exit Codes|exit-codes-contract.md> - Link with custom text
 ```
 
 ## Templates
@@ -650,7 +650,7 @@ podchecker script-name.pl
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [perlpod – Plain Old Documentation](https://perldoc.perl.org/perlpod)
 - [perlpodstyle – POD Style Guide](https://perldoc.perl.org/perlpodstyle)
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers

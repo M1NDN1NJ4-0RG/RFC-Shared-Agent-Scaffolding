@@ -53,7 +53,7 @@ Every PowerShell script must include these sections (using PowerShell help keywo
     1    Failure
 ```
 
-See [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) for canonical exit code meanings.
+See [exit-codes-contract.md](./exit-codes-contract.md) for canonical exit code meanings.
 
 ## Formatting Rules
 
@@ -387,7 +387,7 @@ Get-Help .\script-name.ps1 -Full
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [PowerShell Comment-Based Help](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comment_based_help)
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers
 - [Conformance Contract](../conformance-contract.md) - Behavior contract

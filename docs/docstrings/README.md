@@ -25,7 +25,7 @@ The validator scans the entire repository for script files (`.sh`, `.ps1`, `.py`
 ## Contract Version History
 
 ### Version 1.1 (2025-12-28)
-- Added comprehensive EXIT_CODES_CONTRACT.md shared reference
+- Added comprehensive exit-codes-contract.md shared reference
 - Enhanced validator with pragma support (`# noqa: EXITCODES`)
 - Added basic content validation for exit codes
 - Added single-file validation mode (`--file` flag)
@@ -117,7 +117,7 @@ This table maps the required semantic concepts to their language-specific keywor
 - Usage is sometimes combined with examples (Rust, PowerShell)
 - Environment variables may be grouped with other inputs (Bash) or separate (most languages)
 
-Refer to the [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) for canonical exit code meanings across all languages.
+Refer to the [exit-codes-contract.md](./exit-codes-contract.md) for canonical exit code meanings across all languages.
 
 ## YAML Contract (Special Case)
 
@@ -359,7 +359,7 @@ See docs/docstrings/[language].md for the contract.
 ❌ **Missing exit codes:** "Document this function"
 - Exit codes often overlooked
 
-✅ **Explicit exit codes:** "Document with exit codes: 0=success, 1=failure, 127=not found per EXIT_CODES_CONTRACT.md"
+✅ **Explicit exit codes:** "Document with exit codes: 0=success, 1=failure, 127=not found per exit-codes-contract.md"
 
 ❌ **No validation check:** Accepting AI output without verification
 - May be incomplete or non-conformant
@@ -372,7 +372,7 @@ See docs/docstrings/[language].md for the contract.
    ```
    @workspace Create a Bash wrapper script for safe-run following
    docs/docstrings/bash.md. Include binary discovery, all required
-   docstring sections, and exit codes per EXIT_CODES_CONTRACT.md.
+   docstring sections, and exit codes per exit-codes-contract.md.
    ```
 
 2. **Validate:**
@@ -394,7 +394,7 @@ See docs/docstrings/[language].md for the contract.
 
 ## References
 
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - `scripts/validate-docstrings.py` - Validator implementation (see its docstring for meta-example)
 - [RFC-Shared-Agent-Scaffolding-v0.1.0.md](../../RFC-Shared-Agent-Scaffolding-v0.1.0.md) - M0 contract specification
 - [Conformance Contract](../conformance-contract.md) - Behavior contract

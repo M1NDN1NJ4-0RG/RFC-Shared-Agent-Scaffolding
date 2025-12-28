@@ -58,7 +58,7 @@ Every C source file should include these sections in header comments:
  * @platform
  * Linux/Unix with GCC 4.8+ or Clang 3.4+
  * 
- * @see EXIT_CODES_CONTRACT.md
+ * @see exit-codes-contract.md
  */
 
 #include <stdio.h>
@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
  * @version 1.0
  * 
  * @see docs/wrapper-discovery.md
- * @see EXIT_CODES_CONTRACT.md
+ * @see exit-codes-contract.md
  */
 
 #include <stdio.h>
@@ -364,7 +364,7 @@ doxygen
 - [Doxygen Manual](https://www.doxygen.nl/manual/)
 - [Doxygen Special Commands](https://www.doxygen.nl/manual/commands.html)
 - [Linux Kernel Doc Guidelines](https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html)
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [README.md](./README.md) - Overview of docstring contracts
 
 ## Status

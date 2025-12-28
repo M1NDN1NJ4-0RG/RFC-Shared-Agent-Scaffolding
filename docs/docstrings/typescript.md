@@ -72,7 +72,7 @@ Every TypeScript file should include these sections in TSDoc comments:
  * BINARY_PATH=/custom/path node wrapper.js command
  * ```
  *
- * @see {@link EXIT_CODES_CONTRACT.md}
+ * @see {@link exit-codes-contract.md}
  */
 
 import { spawn } from 'child_process';
@@ -399,7 +399,7 @@ export { main };
  * @version 1.0
  *
  * @see {@link docs/wrapper-discovery.md}
- * @see {@link EXIT_CODES_CONTRACT.md}
+ * @see {@link exit-codes-contract.md}
  */
 
 import { spawn, SpawnOptions } from 'child_process';
@@ -566,7 +566,7 @@ npm install -D eslint-plugin-tsdoc
 - [TSDoc Tags](https://tsdoc.org/pages/tags/alpha/)
 - [TypeDoc Documentation](https://typedoc.org/)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
-- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
+- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [README.md](./README.md) - Overview of docstring contracts
 
 ## Status

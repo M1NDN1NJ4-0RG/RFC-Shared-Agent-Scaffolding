@@ -25,7 +25,7 @@ The current docstring contracts in `/docs/docstrings/` are a powerful mechanism 
   - [x] Add optional pragma support (e.g., `# noqa: EXITCODES`)
   - [x] Add basic content checks for EXIT CODES
   - [x] Add single-file mode flag
-- [x] Create `docs/docstrings/EXIT_CODES_CONTRACT.md`
+- [x] Create `docs/docstrings/exit-codes-contract.md`
 
 ### Phase 2: Language-Specific Harmonization & Completion
 - [x] `bash.md`
@@ -94,7 +94,7 @@ The current docstring contracts in `/docs/docstrings/` are a powerful mechanism 
 **Date Completed:** 2025-12-28
 
 ### Key Deliverables
-1. **EXIT_CODES_CONTRACT.md** - Comprehensive exit code reference for all languages
+1. **exit-codes-contract.md** - Comprehensive exit code reference for all languages
 2. **Enhanced Validator** - Pragma support, content checks, single-file mode
 3. **Semantic Mapping Table** - Maps required sections to language-specific keywords
 4. **Extension Guide** - Step-by-step guide for adding new languages

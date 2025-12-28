@@ -1,12 +1,12 @@
-# FUTURE-WORK.md Verification Report
+# future-work.md Verification Report
 
 **Date:** 2025-12-28  
 **Reporter:** GitHub Copilot Agent  
-**Source Document:** `docs/FUTURE-WORK.md` (Last Updated: 2025-12-27)
+**Source Document:** `docs/future-work.md` (Last Updated: 2025-12-27)
 
 ## Executive Summary
 
-This report verifies the current implementation status of all items documented in `docs/FUTURE-WORK.md`. Each future work item has been reviewed against the actual repository state to determine accuracy and completeness.
+This report verifies the current implementation status of all items documented in `docs/future-work.md`. Each future work item has been reviewed against the actual repository state to determine accuracy and completeness.
 
 **Note on Line Numbers:** This report includes specific line number references for verification purposes. These references are accurate as of commit `78df11a` (2025-12-28) but may become stale if code is refactored. When in doubt, use file search or grep to locate the referenced code sections.
 
@@ -26,7 +26,7 @@ This report verifies the current implementation status of all items documented i
 
 ### Documentation Claims
 
-From FUTURE-WORK.md:
+From future-work.md:
 > Signal handling (SIGTERM/SIGINT) was intentionally deferred during the P3 safe-run implementation phase. Currently, the OS handles signal exit codes naturally, but no ABORTED log is created.
 
 ### Verification Results
@@ -145,12 +145,12 @@ fn test_safe_run_003_sigterm_aborted() {
 
 ### Recommendations
 
-1. **Update FUTURE-WORK.md** to reflect that signal handling IS implemented
+1. **Update future-work.md** to reflect that signal handling IS implemented
 2. **Update test status** - The test is incomplete, not the implementation
 3. **Consider removing `#[ignore]`** and implementing the actual signal test
 4. **Alternative**: Move FW-001 to a "Completed" section with note about test gap
 
-### Suggested FUTURE-WORK.md Update
+### Suggested future-work.md Update
 
 ```markdown
 ### FW-001: Signal handling for safe-run
@@ -189,7 +189,7 @@ The test is a placeholder that only validates the vector structure, not actual s
 
 ### Documentation Claims
 
-From FUTURE-WORK.md:
+From future-work.md:
 > The `safe-run check` subcommand exists in the CLI structure but has no implementation. It currently prints an error message and exits with code 1.
 
 ### Verification Results
@@ -229,7 +229,7 @@ fn check_command(&self, _command: &[String]) -> Result<i32, String> {
 
 ### Documentation Claims
 
-From FUTURE-WORK.md:
+From future-work.md:
 > The `safe-run archive` subcommand exists in the CLI structure but has no implementation. It currently prints an error message and exits with code 1.
 
 ### Verification Results
@@ -281,7 +281,7 @@ All tests are placeholders with `#[ignore]` attributes.
 
 ### Documentation Claims
 
-From FUTURE-WORK.md:
+From future-work.md:
 > The preflight automerge ruleset checker validates GitHub repository configurations before automated operations. Implementation requires GitHub API integration and mocking infrastructure for testing.
 
 ### Verification Results
@@ -333,7 +333,7 @@ Vector `preflight-004` EXISTS in vectors.json (lines 264-297), but there is NO c
 
 ### Recommendations
 
-1. **Update FUTURE-WORK.md** to note that `preflight-004` vector exists but has no test
+1. **Update future-work.md** to note that `preflight-004` vector exists but has no test
 2. **Consider adding** a placeholder test for `preflight-004` to maintain 1:1 mapping
 
 ---
@@ -342,7 +342,7 @@ Vector `preflight-004` EXISTS in vectors.json (lines 264-297), but there is NO c
 
 ### Documentation Claims
 
-From FUTURE-WORK.md:
+From future-work.md:
 > Currently, there's no automated verification that every conformance vector in `conformance/vectors.json` has a corresponding test function.
 
 ### Verification Results
@@ -387,7 +387,7 @@ As noted in Phase 4, `preflight-004` vector exists but has no corresponding test
 
 ### Documentation Claims
 
-From FUTURE-WORK.md:
+From future-work.md:
 > The conformance infrastructure is functional but has room for quality-of-life improvements.
 
 ### Verification Results
@@ -413,7 +413,7 @@ No snapshot update mode, coverage tools, benchmarks, or fuzzing infrastructure f
 
 ### Documentation Claims
 
-From FUTURE-WORK.md:
+From future-work.md:
 > The Rust canonical tool works correctly but has opportunities for optimization and feature expansion.
 
 ### Verification Results
@@ -463,18 +463,18 @@ The placeholder exists in `.github/copilot-instructions.md` as documented. No ca
 
 **The signal handling implementation (FW-001) is COMPLETE but documented as incomplete.**
 
-This is the only inaccuracy found in FUTURE-WORK.md. All other items accurately reflect the repository state.
+This is the only inaccuracy found in future-work.md. All other items accurately reflect the repository state.
 
 ### Recommended Actions
 
-1. **Update `docs/FUTURE-WORK.md`** - Revise FW-001 to reflect implemented status
+1. **Update `docs/future-work.md`** - Revise FW-001 to reflect implemented status
 2. **Consider test implementation** - Either implement the full signal test or document it as lower priority
 3. **Optional: Add preflight-004 test** - Create placeholder test to maintain vector coverage
 4. **No other changes needed** - FW-002 through FW-010 are accurate
 
 ### Overall Assessment
 
-**FUTURE-WORK.md is 90% accurate.** Only one item (FW-001) needs updating. The documentation quality is high and provides clear, actionable guidance for future work.
+**future-work.md is 90% accurate.** Only one item (FW-001) needs updating. The documentation quality is high and provides clear, actionable guidance for future work.
 
 ---
 
