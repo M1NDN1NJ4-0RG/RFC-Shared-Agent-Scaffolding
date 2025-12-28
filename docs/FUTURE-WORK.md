@@ -270,7 +270,7 @@ PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Wind
 The Python wrapper notes Windows native support as a future improvement: on Windows it should locate `safe-run.exe` during discovery instead of only `safe-run`.
 
 **Source:**
-- `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/scripts/safe-run.py:L74-L79`
+- `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/scripts/safe-run.py:L77-L82`
 
 **Suggested next steps:**
 - Detect Windows (`os.name == "nt"` or `platform.system() == "Windows"`)
