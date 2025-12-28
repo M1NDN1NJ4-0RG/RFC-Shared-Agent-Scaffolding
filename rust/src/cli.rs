@@ -142,23 +142,24 @@ enum Commands {
     ///
     /// # Behavior
     ///
-    /// Verifies that a command exists and can be executed without actually running it.
+    /// Verifies that a command file exists without actually running it.
     /// This is useful for pre-flight checks and dependency validation.
     ///
     /// # Current Implementation (Phase 1)
     ///
-    /// - Command existence check via PATH lookup
-    /// - Returns 0 if command found, 2 if not found
+    /// - Command file existence check via PATH lookup
+    /// - Returns 0 if command file found, 2 if not found
+    /// - Does not verify executable permissions (Unix)
     ///
     /// # Future Phases
     ///
-    /// - Phase 2: Repository state validation and dependency checks
+    /// - Phase 2: Repository state validation, dependency checks, executable permission verification
     /// - Phase 3: Full conformance test coverage
     ///
     /// # Exit Codes
     ///
-    /// - 0: Success (command exists and is executable)
-    /// - 2: Command not found or not executable
+    /// - 0: Success (command file exists)
+    /// - 2: Command file not found
     Check {
         /// Command to check
         ///
@@ -280,22 +281,27 @@ impl Cli {
     ///
     /// # Implementation Status
     ///
-    /// **Phase 1 - Command existence check**: Implements PATH lookup to verify
-    /// the target command exists and is executable.
+    /// **Phase 1 - Command file existence check**: Implements PATH lookup to verify
+    /// the target command file exists.
     ///
     /// # Behavior
     ///
-    /// Verifies that a command exists on the system PATH without executing it.
+    /// Verifies that a command file exists on the system PATH without executing it.
     /// This is useful for pre-flight checks and dependency validation.
     ///
     /// # Exit Codes
     ///
-    /// - 0: Success (command exists and is executable)
-    /// - 2: Command not found or not executable
+    /// - 0: Success (command file exists)
+    /// - 2: Command file not found
+    ///
+    /// # Limitations
+    ///
+    /// Phase 1 only checks file existence, not executable permissions (Unix).
     ///
     /// # Future Implementation
     ///
     /// Will additionally verify:
+    /// - Executable permissions (Unix)
     /// - Repository state is valid
     /// - Dependencies are available
     fn check_command(&self, command: &[String]) -> Result<i32, String> {
@@ -323,12 +329,17 @@ impl Cli {
     ///
     /// # Returns
     ///
-    /// - `true`: Command exists and is executable on PATH
-    /// - `false`: Command not found or not executable
+    /// - `true`: Command file found on PATH or at specified path
+    /// - `false`: Command file not found
     ///
     /// # Platform Considerations
     ///
     /// On Windows, also checks for .exe, .bat, and .cmd extensions.
+    ///
+    /// # Note
+    ///
+    /// This function only checks file existence, not executable permissions.
+    /// On Unix-like systems, the file may exist but not be executable.
     fn command_exists(cmd: &str) -> bool {
         // If the command is an absolute or relative path, check it directly
         let cmd_path = Path::new(cmd);
