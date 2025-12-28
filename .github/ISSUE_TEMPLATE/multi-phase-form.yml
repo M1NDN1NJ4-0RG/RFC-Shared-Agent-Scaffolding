@@ -4,7 +4,6 @@ title: "EPIC: Multi-Phase Implementation for FW-XXX"
 labels: ["epic", "tracking"]
 assignees:
   - m1ndn1nj4
-  - copilot
 body:
   - type: input
     id: fw-id
