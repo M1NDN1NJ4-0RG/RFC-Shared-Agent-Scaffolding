@@ -278,7 +278,7 @@ All scripts must include:
 1. **Purpose** - What the script does
 2. **Usage** - How to invoke it
 3. **Arguments/Parameters** - What inputs it accepts
-4. **Exit Codes** - What each exit code means (see [exit-codes-contract.md](../docstrings/exit-codes-contract.md))
+4. **Exit Codes** - What each exit code means (see [exit-codes-contract.md](./docstring-contracts/exit-codes-contract.md))
 5. **Examples** - Concrete usage examples
 6. **Environment Variables** (if applicable)
 7. **Error Conditions** - What can go wrong
@@ -286,12 +286,12 @@ All scripts must include:
 #### Language-Specific Templates
 
 See templates in:
-- [docs/contributing/docstring-contracts/bash.md](../docstrings/bash.md) - Bash/Shell scripts
-- [docs/contributing/docstring-contracts/python.md](../docstrings/python.md) - Python scripts
-- [docs/contributing/docstring-contracts/perl.md](../docstrings/perl.md) - Perl scripts
-- [docs/contributing/docstring-contracts/powershell.md](../docstrings/powershell.md) - PowerShell scripts
-- [docs/contributing/docstring-contracts/rust.md](../docstrings/rust.md) - Rust code
-- [docs/contributing/docstring-contracts/yaml.md](../docstrings/yaml.md) - YAML workflows
+- [docs/contributing/docstring-contracts/bash.md](./docstring-contracts/bash.md) - Bash/Shell scripts
+- [docs/contributing/docstring-contracts/python.md](./docstring-contracts/python.md) - Python scripts
+- [docs/contributing/docstring-contracts/perl.md](./docstring-contracts/perl.md) - Perl scripts
+- [docs/contributing/docstring-contracts/powershell.md](./docstring-contracts/powershell.md) - PowerShell scripts
+- [docs/contributing/docstring-contracts/rust.md](./docstring-contracts/rust.md) - Rust code
+- [docs/contributing/docstring-contracts/yaml.md](./docstring-contracts/yaml.md) - YAML workflows
 
 ### Documentation Standards
 
