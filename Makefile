@@ -15,6 +15,7 @@
 # - actionlint (install: see https://github.com/rhysd/actionlint)
 # - Python 3.8+ (for validation scripts)
 # - Bash (for shell scripts)
+# - For lint-all target: black, flake8, pylint (Python), shellcheck (Bash)
 #
 # Notes:
 # - Targets fail fast on errors

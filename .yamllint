@@ -13,7 +13,7 @@
 # Rules:
 # - Indentation: 2 spaces (no tabs)
 # - Line length: 120 characters (warning initially)
-# - Boolean values: true/false only (not yes/no, on/off)
+# - Boolean values: true/false only (allow 'on' for GitHub Actions triggers)
 # - Document start: Require '---' marker
 # - Newline at EOF: Required
 #
