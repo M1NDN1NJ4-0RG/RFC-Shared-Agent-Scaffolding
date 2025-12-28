@@ -63,6 +63,14 @@
     - Timing-dependent (may need retries if process not ready)
     - Process group creation may affect signal delivery
 
+.ENVIRONMENT
+  RUNNER_TEMP
+    GitHub Actions runner temp directory (used for test workspace).
+
+.EXAMPLE
+  # Run phase3 probe (disabled by default in CI)
+  PS> .\phase3-ctrlc-probe.ps1
+
 .LINK
   https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
 #>

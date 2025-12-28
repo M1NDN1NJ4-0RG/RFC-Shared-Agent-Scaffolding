@@ -4,6 +4,11 @@ This test module validates the preflight-automerge-ruleset.py implementation,
 focusing on M0-P2-I1 Bearer token authentication, error classification, and
 GitHub Ruleset verification logic.
 
+Purpose
+-------
+Validates that the preflight-automerge-ruleset.py script correctly verifies
+GitHub Ruleset configuration and uses proper Bearer token authentication.
+
 Test Coverage
 -------------
 - Authentication error detection via classify_auth()
@@ -13,6 +18,27 @@ Test Coverage
 - Ruleset not found by name: Returns exit code 3
 - Auth failure handling: Returns exit code 2 for 401/403 errors
 - M0-P2-I1 Bearer token format validation in source code
+
+Environment Variables
+---------------------
+TOKEN : str, optional
+    GitHub personal access token (tested by tests, mocked).
+
+GITHUB_TOKEN : str, optional
+    GitHub personal access token (alternative, tested by tests, mocked).
+
+Examples
+--------
+Run tests via pytest::
+
+    pytest test-preflight-automerge-ruleset.py
+
+Exit Codes
+----------
+0
+    All tests passed
+1
+    One or more tests failed
 
 Contract Validation (M0-P2-I1)
 ------------------------------

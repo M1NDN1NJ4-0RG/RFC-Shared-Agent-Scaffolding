@@ -4,6 +4,11 @@ This test module validates the safe-archive.py implementation, focusing
 on M0-P1-I3 no-clobber semantics (both strict and auto-suffix modes),
 compression functionality, and move operations.
 
+Purpose
+-------
+Validates that the Python safe-archive wrapper correctly implements the
+M0-P1-I3 no-clobber contract and archival operations.
+
 Test Coverage
 -------------
 - Strict no-clobber mode: Fails when destination exists (M0-P1-I3)
@@ -12,6 +17,30 @@ Test Coverage
 - Gzip compression: Archives with gzip compression (Python built-in)
 - Specific file archival: Archives individual files by path
 - Move semantics: Source file removed after archival (not copied)
+
+Environment Variables
+---------------------
+SAFE_FAIL_DIR : str, optional
+    Source directory for failure logs (tested by tests).
+
+SAFE_ARCHIVE_DIR : str, optional
+    Destination directory for archived logs (tested by tests).
+
+SAFE_ARCHIVE_COMPRESS : str, optional
+    Compression method: none, gzip, xz, zstd (tested by tests).
+
+Examples
+--------
+Run tests via pytest::
+
+    pytest test-safe-archive.py
+
+Exit Codes
+----------
+0
+    All tests passed
+1
+    One or more tests failed
 
 Contract Validation (M0-P1-I3)
 ------------------------------
