@@ -17,7 +17,7 @@ This document tracks **explicitly-marked future work** found in the repository. 
 |----|----------|------|-------|
 | [FW-001](#fw-001-signal-handling-for-safe-run) | Low | Rust CLI | Signal handling for safe-run (SIGTERM/SIGINT) - ✅ IMPLEMENTED |
 | [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation - ✅ Phase 1 Complete |
-| [FW-003](#fw-003-safe-archive-subcommand-implementation) | Medium | Rust CLI | safe-archive subcommand implementation |
+| [FW-003](#fw-003-safe-archive-subcommand-implementation) | Medium | Rust CLI | safe-archive subcommand implementation - ✅ COMPLETE |
 | [FW-004](#fw-004-preflight-automerge-ruleset-checker) | Medium | Rust CLI | Preflight automerge ruleset checker (preflight-004 + GitHub API mocking) |
 | [FW-005](#fw-005-programmatic-vector-to-test-mapping-check) | Low | Conformance | Programmatic vector-to-test mapping check |
 | [FW-006](#fw-006-conformance-infrastructure-enhancements) | Low | Conformance | Conformance infrastructure enhancements |
@@ -113,33 +113,57 @@ The `safe-run check` subcommand verifies command availability, repository state,
 
 **Severity:** Medium  
 **Area:** Rust CLI  
-**Status:** Scaffolding only - not yet implemented
+**Status:** ✅ COMPLETE - All phases implemented
 
-**Why it exists:**
+**Implementation Summary:**
 
-The `safe-run archive` subcommand exists in the CLI structure but has no implementation. It currently prints an error message and exits with code 1. Future implementation should execute commands and create archives regardless of exit status, useful for artifact collection in CI/CD pipelines.
+The `safe-run archive` subcommand is now fully implemented with all requested features. It creates compressed archives from source directories with no-clobber protection.
 
-> Note: an older tracker variant claimed `archive` returned 0; the current tracker reflects the scaffolding behavior as documented here.
+**Implemented Features:**
+
+1. **Multiple compression formats:**
+   - tar.gz (gzip compression) - Fast, good compression
+   - tar.bz2 (bzip2 compression) - Slower, better compression
+   - zip - Cross-platform compatibility
+
+2. **No-clobber semantics:**
+   - Default mode: Auto-suffix (output.1.tar.gz, output.2.tar.gz, etc.)
+   - Strict mode: `--no-clobber` flag fails with exit code 40 if destination exists
+
+3. **Exit codes:**
+   - 0: Archive created successfully
+   - 2: Invalid arguments or source not found
+   - 40: No-clobber collision in strict mode
+   - 50: Archive creation failed (I/O error)
+
+**Implementation Details:**
+
+- Module: `rust/src/safe_archive.rs`
+- Dependencies added: tar, flate2, bzip2, zip
+- CLI integration: `rust/src/cli.rs` with --no-clobber flag support
+- All 4 conformance tests passing
+
+**Documentation:**
+
+- User guide: `docs/safe-archive.md`
+- Examples, use cases, and technical details included
+- Contract references documented
+
+**Testing:**
+
+- ✅ test_safe_archive_001_basic - Basic archive creation
+- ✅ test_safe_archive_002_compression_formats - Multiple formats (tar.gz, tar.bz2, zip)
+- ✅ test_safe_archive_003_no_clobber_auto_suffix - Auto-suffix collision handling
+- ✅ test_safe_archive_004_no_clobber_strict - Strict mode collision detection
 
 **Source:**
-- `rust/src/cli.rs:166-188` (WARNING: NOT YET IMPLEMENTED)
-- `rust/src/cli.rs:305-335` (scaffolding implementation)
-- `rust/tests/conformance.rs:535-790` (4 placeholder/ignored tests)
-- `EPIC-59-NEXT-STEPS.md:111-143` (scaffolding clarity improvements)
+- `rust/src/safe_archive.rs` - Implementation module
+- `rust/src/cli.rs:175-202` - Command definition with --no-clobber flag
+- `rust/tests/conformance.rs:535-777` - All tests now passing (no longer ignored)
+- `docs/safe-archive.md` - Complete documentation
+- `conformance/vectors.json` - Conformance vectors (safe-archive-001 through safe-archive-004)
 
-**Ignored tests:**
-- `test_safe_archive_001_basic` (lines 561-598)
-- `test_safe_archive_002_compression_formats` (lines 618-660)
-- `test_safe_archive_003_no_clobber_auto_suffix` (lines 687-724)
-- `test_safe_archive_004_no_clobber_strict` (lines 750-790)
-
-**Suggested next steps:**
-- Implement full output capture (stdout + stderr)
-- Create archive files with metadata (timestamp, command, exit code)
-- Support artifact collection patterns
-- Preserve command exit codes
-- Remove `#[ignore]` from all 4 safe-archive tests
-- Add documentation for archive format and use cases
+**No remaining work** - FW-003 is complete.
 
 ---
 
