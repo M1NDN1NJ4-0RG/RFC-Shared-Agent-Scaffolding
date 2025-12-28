@@ -10,7 +10,7 @@ body:
     attributes:
       label: FW Reference
       placeholder: e.g. FW-002
-      description: Reference from `docs/FUTURE-WORK.md`
+      description: Reference from `FUTURE-WORK.md`
     validations:
       required: true
 
