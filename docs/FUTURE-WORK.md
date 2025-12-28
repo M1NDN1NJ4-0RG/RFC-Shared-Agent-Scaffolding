@@ -15,7 +15,7 @@ This document tracks **explicitly-marked future work** found in the repository. 
 
 | ID | Severity | Area | Title |
 |----|----------|------|-------|
-| [FW-001](#fw-001-signal-handling-for-safe-run) | High | Rust CLI | Signal handling for safe-run (SIGTERM/SIGINT) |
+| [FW-001](#fw-001-signal-handling-for-safe-run) | Low | Rust CLI | Signal handling for safe-run (SIGTERM/SIGINT) - ✅ IMPLEMENTED |
 | [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation |
 | [FW-003](#fw-003-safe-archive-subcommand-implementation) | Medium | Rust CLI | safe-archive subcommand implementation |
 | [FW-004](#fw-004-preflight-automerge-ruleset-checker) | Medium | Rust CLI | Preflight automerge ruleset checker (preflight-004 + GitHub API mocking) |
@@ -32,27 +32,36 @@ This document tracks **explicitly-marked future work** found in the repository. 
 
 ### FW-001: Signal handling for safe-run
 
-**Severity:** High  
+**Severity:** Low (implementation complete, test incomplete)
 **Area:** Rust CLI  
-**Status:** Intentionally deferred from P3 (safe-run implementation)
+**Status:** ✅ IMPLEMENTED (conformance test incomplete)
 
-**Why it exists:**
+**Implementation Status:**
 
-Signal handling (SIGTERM/SIGINT) was intentionally deferred during the P3 safe-run implementation phase. The test `safe-run-003` validates that interrupting a command with signals creates an ABORTED log file and returns appropriate exit codes (130 for SIGINT, 143 for SIGTERM). Currently, the OS handles signal exit codes naturally, but no ABORTED log is created.
+Signal handling for SIGTERM and SIGINT is **fully implemented** in `rust/src/safe_run.rs`:
+- Signal handlers registered for both SIGTERM and SIGINT using `signal_hook::flag::register()`
+- ABORTED log file created on signal interruption with full event ledger via `save_log()` function
+- Correct exit codes: 130 for SIGINT, 143 for SIGTERM
+- Child process properly terminated and output captured on signal
+- Merged view mode supported in ABORTED logs
+
+**Test Status:**
+
+The conformance test `test_safe_run_003_sigterm_aborted` (marked `#[ignore]` in `rust/tests/conformance.rs`) is a placeholder that only validates the vector structure, not actual signal behavior. The test requires implementation of:
+- Spawning safe-run with a long-running child command in a subprocess
+- Sending SIGTERM or SIGINT to the safe-run process
+- Verifying ABORTED log file creation and content
+- Validating correct exit code (130 or 143)
 
 **Source:**
-- `rust/tests/conformance.rs:313-322` (test marked as ignored)
-- `rust/tests/conformance.rs:347` (TODO comment)
-- `RUST-CANONICAL-TOOL-TODO.md:93-106` (deferred status documented)
-- `EPIC-33-FINAL-COMPLETION-SUMMARY.md:92-106` (deferred rationale)
-- `PR3-SAFE-RUN-IMPLEMENTATION-COMPLETE.md:297-334` (deferred decision)
+- `rust/src/safe_run.rs` (signal handler registration and ABORTED log creation in `execute()` function)
+- `rust/tests/conformance.rs` (incomplete test `test_safe_run_003_sigterm_aborted`)
+- `conformance/vectors.json` (vector safe-run-003 definition)
 
-**Suggested next steps:**
-- Implement signal handlers (SIGTERM, SIGINT) in `rust/src/safe_run.rs`
-- Create ABORTED log file on signal interruption with event ledger
-- Set appropriate exit codes (130 for SIGINT, 143 for SIGTERM)
-- Remove `#[ignore]` from `test_safe_run_003_sigterm_aborted` test
-- Validate on Unix platforms (test is Unix-only due to Windows signal differences)
+**Remaining Work:**
+- Implement complete signal handling test with actual signal delivery
+- Remove `#[ignore]` attribute from `test_safe_run_003_sigterm_aborted`
+- Validate behavior on Unix platforms (signal handling is Unix-specific)
 
 ---
 
@@ -137,6 +146,8 @@ The preflight automerge ruleset checker validates GitHub repository configuratio
 - `test_preflight_001_success` (lines 838-853)
 - `test_preflight_002_auth_failure` (lines 873-888)
 - `test_preflight_003_ruleset_not_found` (lines 907-922)
+
+**Note:** Vector `preflight-004` exists in `conformance/vectors.json` (lines 264-297) but has no corresponding test function in `rust/tests/conformance.rs`. This is a test coverage gap that should be addressed when implementing FW-005 (vector-to-test mapping check).
 
 **Suggested next steps:**
 - Add GitHub API client library (e.g., `octocrab` or `github-rs`)
