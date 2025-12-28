@@ -279,7 +279,7 @@ The Python wrapper notes Windows native support as a future improvement: on Wind
 
 ---
 
-### FW-010: Canonical epic/idea tracker placeholder
+### FW-010: Canonical Epic Tracker placeholder
 
 **Severity:** Low  
 **Area:** Governance  
