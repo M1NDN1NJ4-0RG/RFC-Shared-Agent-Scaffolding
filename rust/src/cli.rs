@@ -362,7 +362,8 @@ impl Cli {
 
                 // If there is no extension, try with Windows executable extensions
                 if cmd_path.extension().is_none() {
-                    for ext in Self::get_windows_executable_extensions().iter() {
+                    let extensions = Self::get_windows_executable_extensions();
+                    for ext in extensions.iter() {
                         let with_ext = cmd_path.with_extension(ext);
                         if with_ext.exists() && with_ext.is_file() {
                             return true;
@@ -379,6 +380,10 @@ impl Cli {
             Some(p) => p,
             None => return false,
         };
+
+        // On Windows, get executable extensions once before the loop
+        #[cfg(target_os = "windows")]
+        let extensions = Self::get_windows_executable_extensions();
 
         // Split PATH and check each directory
         for path_dir in env::split_paths(&path_var) {
@@ -400,7 +405,7 @@ impl Cli {
                     return true;
                 }
                 // Then check with Windows executable extensions from PATHEXT
-                for ext in Self::get_windows_executable_extensions().iter() {
+                for ext in extensions.iter() {
                     let with_ext = path_dir.join(format!("{}{}", cmd, ext));
                     if with_ext.exists() && with_ext.is_file() {
                         return true;
