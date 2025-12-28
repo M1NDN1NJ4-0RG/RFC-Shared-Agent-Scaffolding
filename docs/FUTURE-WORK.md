@@ -333,7 +333,12 @@ grep -rn \
 **Note:** This grep command is portable and works on Unix-like systems. For cross-platform compatibility, consider using `ripgrep`:
 
 ```bash
-rg -n "TODO|FIXME|deferred|not yet implemented|scaffolding only|future (PR|implementation)|placeholder|Future (Enhancements|Work)"   -g "*.{rs,md,toml,sh,py,pl,ps1}"   --iglob "!target/*"   --iglob "!dist/*"   --iglob "!node_modules/*"
+rg -n \
+  "TODO|FIXME|deferred|not yet implemented|scaffolding only|future (PR|implementation)|placeholder|Future (Enhancements|Work)" \
+  -g "*.{rs,md,toml,sh,py,pl,ps1}" \
+  --iglob "!target/*" \
+  --iglob "!dist/*" \
+  --iglob "!node_modules/*"
 ```
 
 ---
