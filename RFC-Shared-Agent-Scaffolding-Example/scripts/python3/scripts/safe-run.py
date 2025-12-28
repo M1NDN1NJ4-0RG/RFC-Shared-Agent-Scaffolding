@@ -138,9 +138,7 @@ def find_repo_root() -> Optional[Path]:
     current = script_path.parent
 
     while current != current.parent:
-        if (current / "RFC-Shared-Agent-Scaffolding-v0.1.0.md").exists() or (
-            current / ".git"
-        ).is_dir():
+        if (current / "RFC-Shared-Agent-Scaffolding-v0.1.0.md").exists() or (current / ".git").is_dir():
             return current
         current = current.parent
 

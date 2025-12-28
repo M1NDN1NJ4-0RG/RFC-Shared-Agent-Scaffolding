@@ -104,8 +104,8 @@ jobs:
         if: steps.check-bash.outputs.has_files == 'true'
         run: |
           set -e
-          SHFMT_VERSION=3.9.0
-          SHFMT_CHECKSUM=8c58e31a8dfc2df11ceeb87f6d037b7b3891c062b0eb44d053170b09ac5e5b68
+          SHFMT_VERSION=3.12.0
+          SHFMT_CHECKSUM=d9fbb2a9c33d13f47e7618cf362a914d029d02a6df124064fff04fd688a745ea
           wget -O /tmp/shfmt https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64
           echo "${SHFMT_CHECKSUM}  /tmp/shfmt" | sha256sum -c -
           chmod +x /tmp/shfmt
@@ -146,9 +146,12 @@ jobs:
         if: steps.check-powershell.outputs.has_files == 'true'
         shell: pwsh
         run: |
-          $files = git ls-files '**/*.ps1'
-          if ($files) {
-            Invoke-ScriptAnalyzer -Path $files -EnableExit
+          $files = @(git ls-files '**/*.ps1' | Where-Object { $_ })
+          if ($files.Count -gt 0) {
+            foreach ($file in $files) {
+              Write-Host "Analyzing $file"
+              Invoke-ScriptAnalyzer -Path $file -EnableExit
+            }
           }
 
   lint-perl:
@@ -176,7 +179,7 @@ jobs:
       - name: Install Perl::Critic
         if: steps.check-perl.outputs.has_files == 'true'
         run: |
-          sudo cpanm --notest Perl::Critic
+          sudo cpanm --notest Perl::Critic@1.150
 
       - name: Run Perl::Critic
         if: steps.check-perl.outputs.has_files == 'true'

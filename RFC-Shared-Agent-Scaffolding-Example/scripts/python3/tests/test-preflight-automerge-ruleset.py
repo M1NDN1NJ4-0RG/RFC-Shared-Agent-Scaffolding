@@ -92,9 +92,7 @@ def load_module():
     filename (which aren't valid in Python module names). This allows
     tests to import and inspect functions from the script.
     """
-    spec = importlib.util.spec_from_file_location(
-        "preflight_automerge_ruleset", str(MODULE_PATH)
-    )
+    spec = importlib.util.spec_from_file_location("preflight_automerge_ruleset", str(MODULE_PATH))
     mod = importlib.util.module_from_spec(spec)
     assert spec and spec.loader
     spec.loader.exec_module(mod)
@@ -127,9 +125,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
                     "type": "required_status_checks",
                     "parameters": {
                         "strict_required_status_checks_policy": False,
-                        "required_status_checks": [
-                            {"context": c} for c in required_contexts
-                        ],
+                        "required_status_checks": [{"context": c} for c in required_contexts],
                     },
                 }
             ],
@@ -147,9 +143,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         # parse_args raises ValueError (caught by main, returns 3)
         # We can't test this directly since parse_args raises, not exits
         # Test via main instead
-        rc = self.mod.main(
-            ["--repo", "o/r", "--ruleset-name", "x", "--want", "not-json"]
-        )
+        rc = self.mod.main(["--repo", "o/r", "--ruleset-name", "x", "--want", "not-json"])
         self.assertEqual(rc, 3)
 
     def test_success_path_via_http(self):
@@ -233,9 +227,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         with patch.object(self.mod, "have_cmd", return_value=False), patch.object(
             self.mod, "http_get", side_effect=fake_http_get
         ), patch.dict(os.environ, {"GITHUB_TOKEN": "dummy_token"}):
-            rc = self.mod.main(
-                ["--repo", "owner/repo", "--ruleset-name", "x", "--want", "[]"]
-            )
+            rc = self.mod.main(["--repo", "owner/repo", "--ruleset-name", "x", "--want", "[]"])
             self.assertEqual(rc, 2)
 
     def test_bearer_token_format_m0_p2_i1(self):
@@ -244,12 +236,8 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
 
         # Check the source code contains "Bearer" in the Authorization header
         source = inspect.getsource(self.mod.http_get)
-        self.assertIn(
-            "Bearer", source, "http_get should use 'Bearer' token format per M0-P2-I1"
-        )
-        self.assertIn(
-            "Authorization", source, "http_get should set Authorization header"
-        )
+        self.assertIn("Bearer", source, "http_get should use 'Bearer' token format per M0-P2-I1")
+        self.assertIn("Authorization", source, "http_get should set Authorization header")
 
         # Also verify it's not using the old 'token' format
         # Look for the pattern that would indicate old format
