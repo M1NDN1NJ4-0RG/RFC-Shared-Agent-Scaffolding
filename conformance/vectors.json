@@ -295,6 +295,108 @@
           "stderr_contains": ["missing", "test"]
         }
       }
+    ],
+    "safe_check": [
+      {
+        "id": "safe-check-001",
+        "name": "Command exists on PATH - returns 0",
+        "m0_spec": [],
+        "description": "Checking a command that exists on PATH should return exit code 0",
+        "command": {
+          "args": ["check", "ls"],
+          "env": {},
+          "platform_filter": "unix"
+        },
+        "expected": {
+          "exit_code": 0
+        }
+      },
+      {
+        "id": "safe-check-002",
+        "name": "Command does not exist - returns 2",
+        "m0_spec": [],
+        "description": "Checking a non-existent command should return exit code 2 and print error message",
+        "command": {
+          "args": ["check", "nonexistent_command_xyz_never_exists_12345"],
+          "env": {}
+        },
+        "expected": {
+          "exit_code": 2,
+          "stderr_contains": ["Command not found"]
+        }
+      },
+      {
+        "id": "safe-check-003",
+        "name": "Command with absolute path exists - returns 0",
+        "m0_spec": [],
+        "description": "Checking a command by absolute path should work when file exists",
+        "command": {
+          "args": ["check", "/bin/sh"],
+          "env": {},
+          "platform_filter": "unix"
+        },
+        "expected": {
+          "exit_code": 0
+        }
+      },
+      {
+        "id": "safe-check-004",
+        "name": "Command with relative path exists - returns 0",
+        "m0_spec": [],
+        "description": "Checking a command by relative path should work when file exists",
+        "command": {
+          "args_template": "create_executable_script",
+          "script_path": "./test_script.sh",
+          "check_args": ["check", "./test_script.sh"],
+          "platform_filter": "unix"
+        },
+        "expected": {
+          "exit_code": 0
+        }
+      },
+      {
+        "id": "safe-check-005",
+        "name": "File exists but not executable - returns 3 (Unix)",
+        "m0_spec": [],
+        "description": "On Unix, checking a file without execute permissions should return exit code 3",
+        "command": {
+          "args_template": "create_non_executable_file",
+          "file_path": "./non_exec.sh",
+          "check_args": ["check", "./non_exec.sh"],
+          "platform_filter": "unix"
+        },
+        "expected": {
+          "exit_code": 3,
+          "stderr_contains": ["not executable", "chmod"]
+        }
+      },
+      {
+        "id": "safe-check-006",
+        "name": "Windows command with extension - returns 0",
+        "m0_spec": [],
+        "description": "On Windows, checking standard executables like cmd.exe should succeed",
+        "command": {
+          "args": ["check", "cmd"],
+          "env": {},
+          "platform_filter": "windows"
+        },
+        "expected": {
+          "exit_code": 0
+        }
+      },
+      {
+        "id": "safe-check-007",
+        "name": "No command argument - returns error",
+        "m0_spec": [],
+        "description": "Calling check without a command argument should fail with usage error",
+        "command": {
+          "args": ["check"],
+          "env": {}
+        },
+        "expected": {
+          "exit_code_range": [1, 2]
+        }
+      }
     ]
   },
   "templates": {
@@ -302,6 +404,8 @@
     "print_and_exit": "Print specified text to stdout/stderr and exit with given code",
     "simple_fail": "Exit with specified code immediately",
     "long_running": "Sleep/wait for interrupt (for SIGTERM/SIGINT testing)",
-    "multiline_output": "Print multiple lines to stdout/stderr"
+    "multiline_output": "Print multiple lines to stdout/stderr",
+    "create_executable_script": "Create an executable script file at the specified path (safe-check testing)",
+    "create_non_executable_file": "Create a non-executable file at the specified path (safe-check testing)"
   }
 }

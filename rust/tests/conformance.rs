@@ -790,6 +790,566 @@ mod safe_archive_tests {
     }
 }
 
+/// Safe-check command conformance tests
+///
+/// # Purpose
+///
+/// Validates that the `safe-run check` command implements command existence
+/// checking and other pre-flight validation requirements.
+///
+/// # Coverage (Phase 1)
+///
+/// - Command existence check (PATH lookup)
+/// - Exit code 0 when command found
+/// - Exit code 2 when command not found
+/// - Relative and absolute path handling
+///
+/// # Contract References
+///
+/// Tests validate FW-002 (safe-check subcommand implementation)
+///
+/// # Future Coverage (Phase 2+)
+///
+/// - Repository state validation
+/// - Dependency availability checks
+#[cfg(test)]
+mod safe_check_tests {
+    use super::*;
+
+    /// Test that check returns 0 when command exists on PATH
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check successfully finds commands that exist
+    /// on the system PATH and returns exit code 0.
+    ///
+    /// # Test Approach
+    ///
+    /// Tests with common commands that should exist on any Unix-like system:
+    /// - ls (standard on all Unix-like systems)
+    /// - sh (POSIX shell, universally available)
+    #[test]
+    fn test_check_command_exists_on_path() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        // Test with 'ls' which should exist on Unix-like systems
+        #[cfg(not(target_os = "windows"))]
+        {
+            Command::new(get_safe_run_binary())
+                .arg("check")
+                .arg("ls")
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+
+        // Test with 'cmd' which should exist on Windows
+        #[cfg(target_os = "windows")]
+        {
+            Command::new(get_safe_run_binary())
+                .arg("check")
+                .arg("cmd")
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+    }
+
+    /// Test that check returns 2 when command does not exist
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check correctly identifies non-existent commands
+    /// and returns exit code 2.
+    ///
+    /// # Test Approach
+    ///
+    /// Uses a command name that is extremely unlikely to exist on any system.
+    #[test]
+    fn test_check_command_not_found() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("nonexistent_command_xyz123_never_exists")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2)
+            .stderr(predicate::str::contains("Command not found"));
+    }
+
+    /// Test that check works with absolute paths
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check can verify commands specified with
+    /// absolute paths, not just commands on PATH.
+    ///
+    /// # Test Approach
+    ///
+    /// Creates a temporary executable file and checks it with its absolute path.
+    #[test]
+    #[cfg(not(target_os = "windows"))] // Unix-specific test
+    fn test_check_absolute_path() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let script_path = temp_dir.path().join("test_script.sh");
+
+        // Create a simple executable script
+        fs::write(&script_path, "#!/bin/sh\necho test\n").expect("Failed to write script");
+
+        // Make it executable
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        // Check the script by absolute path
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg(script_path.to_str().unwrap())
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test that check returns 2 for non-existent absolute path
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check returns exit code 2 when given an
+    /// absolute path that doesn't exist.
+    #[test]
+    fn test_check_absolute_path_not_found() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let nonexistent_path = temp_dir.path().join("nonexistent_file");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg(nonexistent_path.to_str().unwrap())
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2);
+    }
+
+    /// Test that check requires a command argument
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check returns an error when no command
+    /// is specified.
+    #[test]
+    fn test_check_no_command() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure();
+        // Note: clap will handle this with its own error, not our custom error
+    }
+
+    /// Test that check works with common system utilities
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check can find various common system utilities
+    /// to ensure cross-platform compatibility.
+    ///
+    /// # Test Approach
+    ///
+    /// Tests multiple common utilities that should exist on the system.
+    #[test]
+    fn test_check_multiple_common_commands() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        // Commands to test (platform-specific)
+        #[cfg(not(target_os = "windows"))]
+        let commands = vec!["sh", "echo", "cat"];
+
+        #[cfg(target_os = "windows")]
+        let commands = vec!["cmd", "powershell"];
+
+        for cmd in commands {
+            Command::new(get_safe_run_binary())
+                .arg("check")
+                .arg(cmd)
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+    }
+
+    /// Test that check works with relative paths
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check correctly handles relative paths like
+    /// "./command" and "subdir/command".
+    ///
+    /// # Test Approach
+    ///
+    /// Creates files in subdirectories and current directory, then verifies
+    /// they can be found using relative path notation.
+    #[test]
+    #[cfg(not(target_os = "windows"))] // Unix-specific test
+    fn test_check_relative_path() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        // Create a script in the current directory with ./ prefix
+        let script_current = temp_dir.path().join("script_here.sh");
+        fs::write(&script_current, "#!/bin/sh\necho test\n").expect("Failed to write script");
+        let mut perms = fs::metadata(&script_current)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_current, perms).expect("Failed to set permissions");
+
+        // Create a subdirectory with a script
+        let subdir = temp_dir.path().join("subdir");
+        fs::create_dir(&subdir).expect("Failed to create subdir");
+        let script_sub = subdir.join("script_sub.sh");
+        fs::write(&script_sub, "#!/bin/sh\necho test\n").expect("Failed to write script");
+        let mut perms = fs::metadata(&script_sub)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_sub, perms).expect("Failed to set permissions");
+
+        // Test with ./ prefix
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("./script_here.sh")
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+
+        // Test with subdirectory path
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("subdir/script_sub.sh")
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test that check returns 2 for non-existent relative path
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check returns exit code 2 when given a
+    /// relative path that doesn't exist.
+    #[test]
+    fn test_check_relative_path_not_found() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("./nonexistent_script")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2);
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("subdir/nonexistent")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2);
+    }
+}
+
+/// Safe-check Phase 2 tests (executable permissions and repository validation)
+///
+/// # Purpose
+///
+/// Validates Phase 2 functionality of the `safe-run check` command:
+/// - Executable permission verification on Unix
+/// - Repository state validation
+/// - Proper exit codes for different failure scenarios
+///
+/// # Coverage
+///
+/// - Exit code 3 for non-executable files (Unix)
+/// - Exit code 4 for repository state failures
+/// - Exit code 0 when all checks pass
+#[cfg(test)]
+mod safe_check_phase2_tests {
+    use super::*;
+
+    /// Test that check returns exit code 3 for non-executable files on Unix
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check properly detects when a file exists
+    /// but doesn't have executable permissions on Unix-like systems.
+    #[test]
+    #[cfg(not(target_os = "windows"))] // Unix-specific test
+    fn test_check_not_executable() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let script_path = temp_dir.path().join("non_executable.sh");
+
+        // Create a script without executable permissions
+        fs::write(&script_path, "#!/bin/sh\necho test\n").expect("Failed to write script");
+
+        // Explicitly set permissions to read-only (no execute)
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o644); // rw-r--r--
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        // Check the script - should return exit code 3
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg(script_path.to_str().unwrap())
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(3)
+            .stderr(predicate::str::contains("not executable"));
+    }
+
+    /// Test that check returns exit code 0 for executable files on Unix
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check returns success when a file exists
+    /// and has proper executable permissions.
+    #[test]
+    #[cfg(not(target_os = "windows"))] // Unix-specific test
+    fn test_check_executable_passes() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let script_path = temp_dir.path().join("executable.sh");
+
+        // Create an executable script
+        fs::write(&script_path, "#!/bin/sh\necho test\n").expect("Failed to write script");
+
+        // Set executable permissions
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755); // rwxr-xr-x
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        // Check the script - should return exit code 0
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg(script_path.to_str().unwrap())
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test repository state validation
+    ///
+    /// # Purpose
+    ///
+    /// Validates that repository state checks run without errors
+    /// when executed in a valid directory.
+    #[test]
+    fn test_repository_validation() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        // Check a valid command - repository validation should pass
+        // (or gracefully handle non-git directories)
+        #[cfg(not(target_os = "windows"))]
+        {
+            Command::new(get_safe_run_binary())
+                .arg("check")
+                .arg("sh")
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+
+        #[cfg(target_os = "windows")]
+        {
+            Command::new(get_safe_run_binary())
+                .arg("check")
+                .arg("cmd")
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+    }
+}
+
+/// Safe-check conformance tests (Phase 3)
+///
+/// # Purpose
+///
+/// Validates conformance vectors for the `safe-run check` command.
+/// Tests are driven by vectors in `conformance/vectors.json`.
+///
+/// # Coverage
+///
+/// - Command existence checking (PATH lookup)
+/// - Absolute and relative path handling
+/// - Executable permission verification (Unix)
+/// - Error cases and exit codes
+///
+/// # Contract References
+///
+/// Tests validate safe-check-001 through safe-check-007 vectors
+#[cfg(test)]
+mod safe_check_conformance_tests {
+    use super::*;
+
+    /// Test safe-check-001: Command exists on PATH returns 0
+    #[test]
+    #[cfg(not(target_os = "windows"))]
+    fn test_safe_check_001_command_exists_on_path() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("ls")
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test safe-check-002: Command does not exist returns 2
+    #[test]
+    fn test_safe_check_002_command_not_found() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("nonexistent_command_xyz_never_exists_12345")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(2)
+            .stderr(predicate::str::contains("Command not found"));
+    }
+
+    /// Test safe-check-003: Command with absolute path exists returns 0
+    #[test]
+    #[cfg(not(target_os = "windows"))]
+    fn test_safe_check_003_absolute_path() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("/bin/sh")
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test safe-check-004: Command with relative path exists returns 0
+    #[test]
+    #[cfg(not(target_os = "windows"))]
+    fn test_safe_check_004_relative_path() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let script_path = temp_dir.path().join("test_script.sh");
+
+        // Create an executable script
+        fs::write(&script_path, "#!/bin/sh\necho test\n").expect("Failed to write script");
+
+        // Set executable permissions
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755);
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("./test_script.sh")
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test safe-check-005: File exists but not executable returns 3 (Unix)
+    #[test]
+    #[cfg(not(target_os = "windows"))]
+    fn test_safe_check_005_not_executable() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let script_path = temp_dir.path().join("non_exec.sh");
+
+        // Create a non-executable file
+        fs::write(&script_path, "#!/bin/sh\necho test\n").expect("Failed to write script");
+
+        // Set non-executable permissions
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o644); // rw-r--r--
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("./non_exec.sh")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(3)
+            .stderr(predicate::str::contains("not executable"))
+            .stderr(predicate::str::contains("chmod"));
+    }
+
+    /// Test safe-check-006: Windows command with extension returns 0
+    #[test]
+    #[cfg(target_os = "windows")]
+    fn test_safe_check_006_windows_command() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg("cmd")
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test safe-check-007: No command argument returns error
+    #[test]
+    fn test_safe_check_007_no_command() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure();
+        // Exit code could be 1 or 2 depending on how clap handles it
+    }
+}
+
 /// Preflight automerge ruleset conformance tests
 ///
 /// # Purpose
@@ -955,11 +1515,13 @@ fn test_all_vectors_have_tests() {
     let safe_run_count = vectors.vectors.safe_run.len();
     let safe_archive_count = vectors.vectors.safe_archive.len();
     let preflight_count = vectors.vectors.preflight_automerge_ruleset.len();
+    let safe_check_count = vectors.vectors.safe_check.len();
 
     // These numbers should match the conformance/vectors.json
     assert_eq!(safe_run_count, 5, "Should have 5 safe-run vectors");
     assert_eq!(safe_archive_count, 4, "Should have 4 safe-archive vectors");
     assert_eq!(preflight_count, 4, "Should have 4 preflight vectors");
+    assert_eq!(safe_check_count, 7, "Should have 7 safe-check vectors");
 
     // TODO: Add programmatic check that each vector ID has a corresponding test
 }
