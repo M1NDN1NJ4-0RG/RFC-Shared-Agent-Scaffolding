@@ -27,6 +27,7 @@
 # - Required for merge
 # - Runs on Linux, macOS, and Windows
 # - Exit 0 = all checks pass, non-zero = failures detected
+---
 name: Rust Conformance Tests
 
 # Permissions: Read-only access to repository contents
@@ -61,7 +62,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         rust: [stable]
-    
+
     steps:
       # Step 1: Checkout repository to access Rust source code
       - name: Checkout repository
@@ -171,7 +172,7 @@ jobs:
     name: Lint (Clippy)
     # Runner: Ubuntu latest (sufficient for linting, no need for multi-OS)
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Checkout repository to access Rust source code
       - name: Checkout repository
@@ -197,7 +198,7 @@ jobs:
     name: Format Check
     # Runner: Ubuntu latest (sufficient for formatting check)
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Checkout repository to access Rust source code
       - name: Checkout repository

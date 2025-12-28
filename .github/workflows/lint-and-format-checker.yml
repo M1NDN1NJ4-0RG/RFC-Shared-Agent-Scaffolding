@@ -23,13 +23,14 @@
 # Notes:
 # - Each language runs as a separate job for parallel execution
 # - Jobs only run if relevant files exist in the repository
+---
 name: Lint and Format Check
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -187,5 +188,4 @@ jobs:
         continue-on-error: true
         run: |
           git ls-files -z '**/*.pl' '**/*.pm' | xargs -0 -r perlcritic --severity 5
-
 

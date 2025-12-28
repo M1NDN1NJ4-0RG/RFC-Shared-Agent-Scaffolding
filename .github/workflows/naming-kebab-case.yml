@@ -29,6 +29,7 @@
 # Notes:
 # - Required for merge
 # - Exit 0 = all files conform, non-zero = violations detected
+---
 name: naming-kebab-case
 
 on:
