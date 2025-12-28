@@ -18,11 +18,13 @@ This document tracks **explicitly-marked future work** found in the repository. 
 | [FW-001](#fw-001-signal-handling-for-safe-run) | High | Rust CLI | Signal handling for safe-run (SIGTERM/SIGINT) |
 | [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation |
 | [FW-003](#fw-003-safe-archive-subcommand-implementation) | Medium | Rust CLI | safe-archive subcommand implementation |
-| [FW-004](#fw-004-preflight-automerge-ruleset-checker) | Medium | Rust CLI | Preflight automerge ruleset checker |
+| [FW-004](#fw-004-preflight-automerge-ruleset-checker) | Medium | Rust CLI | Preflight automerge ruleset checker (preflight-004 + GitHub API mocking) |
 | [FW-005](#fw-005-programmatic-vector-to-test-mapping-check) | Low | Conformance | Programmatic vector-to-test mapping check |
 | [FW-006](#fw-006-conformance-infrastructure-enhancements) | Low | Conformance | Conformance infrastructure enhancements |
 | [FW-007](#fw-007-rust-tool-performance-and-feature-enhancements) | Low | Rust CLI | Rust tool performance and feature enhancements |
 | [FW-008](#fw-008-powershell-ctrl-c-signal-behavior) | Low | Wrappers | PowerShell Ctrl-C / signal behavior validation |
+| [FW-009](#fw-009-windows-exe-discovery-in-python-wrapper) | Low | Wrappers | Windows .exe discovery in Python wrapper |
+| [FW-010](#fw-010-canonical-epic-tracker-placeholder) | Low | Governance | Canonical Epic Tracker placeholder |
 
 ---
 
@@ -64,6 +66,8 @@ Signal handling (SIGTERM/SIGINT) was intentionally deferred during the P3 safe-r
 
 The `safe-run check` subcommand exists in the CLI structure but has no implementation. It currently prints an error message and exits with code 1. Future implementation should verify command availability, repository state, and dependencies without executing commands.
 
+> Note: an older tracker variant claimed `check` returned 0; the current tracker reflects the scaffolding behavior as documented here.
+
 **Source:**
 - `rust/src/cli.rs:139-164` (WARNING: NOT YET IMPLEMENTED)
 - `rust/src/cli.rs:270-303` (scaffolding implementation)
@@ -89,6 +93,8 @@ The `safe-run check` subcommand exists in the CLI structure but has no implement
 **Why it exists:**
 
 The `safe-run archive` subcommand exists in the CLI structure but has no implementation. It currently prints an error message and exits with code 1. Future implementation should execute commands and create archives regardless of exit status, useful for artifact collection in CI/CD pipelines.
+
+> Note: an older tracker variant claimed `archive` returned 0; the current tracker reflects the scaffolding behavior as documented here.
 
 **Source:**
 - `rust/src/cli.rs:166-188` (WARNING: NOT YET IMPLEMENTED)
@@ -120,7 +126,7 @@ The `safe-run archive` subcommand exists in the CLI structure but has no impleme
 
 **Why it exists:**
 
-The preflight automerge ruleset checker validates GitHub repository configurations before automated operations. Implementation requires GitHub API integration and mocking infrastructure for testing. All 4 preflight conformance tests are currently ignored.
+The preflight automerge ruleset checker validates GitHub repository configurations before automated operations. Implementation requires GitHub API integration and mocking infrastructure for testing. Preflight coverage is currently blocked by ignored placeholder tests, and the docs call out `preflight-004` as not yet implemented.
 
 **Source:**
 - `rust/tests/conformance.rs:810-922` (placeholder tests with TODO comments)
@@ -135,6 +141,7 @@ The preflight automerge ruleset checker validates GitHub repository configuratio
 **Suggested next steps:**
 - Add GitHub API client library (e.g., `octocrab` or `github-rs`)
 - Implement API mocking infrastructure for tests (e.g., `wiremock` or `mockito`)
+- Define the `preflight-004` vector behavior (and add to `conformance/vectors.json` if missing)
 - Implement ruleset validation logic
 - Add authentication handling with appropriate error codes
 - Remove `#[ignore]` from all preflight tests
@@ -252,6 +259,46 @@ PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Wind
 
 ---
 
+### FW-009: Windows .exe discovery in Python wrapper
+
+**Severity:** Low  
+**Area:** Wrappers  
+**Status:** Documented as future/paper-cut
+
+**Why it exists:**
+
+The Python wrapper notes Windows native support as a future improvement: on Windows it should locate `safe-run.exe` during discovery instead of only `safe-run`.
+
+**Source:**
+- `RFC-Shared-Agent-Scaffolding-Example/scripts/python3/scripts/safe-run.py:L77-L82`
+
+**Suggested next steps:**
+- Detect Windows (`os.name == "nt"` or `platform.system() == "Windows"`)
+- Probe `safe-run.exe` in the same cascade as `safe-run`
+- Add a small wrapper-level test (or integration test under conformance infra) that exercises discovery behavior
+
+---
+
+### FW-010: Canonical Epic Tracker placeholder
+
+**Severity:** Low  
+**Area:** Governance  
+**Status:** Placeholder exists; canonical location not established
+
+**Why it exists:**
+
+There is an explicit placeholder indicating the need for a canonical epic/idea tracker, but no single authoritative location is currently defined.
+
+**Source:**
+- `.github/copilot-instructions.md:L50-L53`
+
+**Suggested next steps:**
+- Define the canonical location (e.g., `docs/FUTURE-WORK.md` or `docs/EPICS.md`)
+- Link it from `.github/copilot-instructions.md`
+- Optionally add a GitHub Issue template/category that points back to the canonical doc
+
+---
+
 ## Grep Keywords for Future Updates
 
 Use this command to scan for new future work items:
@@ -286,7 +333,8 @@ grep -rn \
 **Note:** This grep command is portable and works on Unix-like systems. For cross-platform compatibility, consider using `ripgrep`:
 
 ```bash
-rg -n "TODO|FIXME|deferred|not yet implemented|scaffolding only|future (PR|implementation)|placeholder|Future (Enhancements|Work)" \
+rg -n \
+  "TODO|FIXME|deferred|not yet implemented|scaffolding only|future (PR|implementation)|placeholder|Future (Enhancements|Work)" \
   -g "*.{rs,md,toml,sh,py,pl,ps1}" \
   --iglob "!target/*" \
   --iglob "!dist/*" \
