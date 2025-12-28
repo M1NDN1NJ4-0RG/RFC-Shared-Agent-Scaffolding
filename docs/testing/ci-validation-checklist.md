@@ -177,7 +177,7 @@ For this PR to be considered complete and the repository ready for new language 
 
 1. **Merge PR** - Repository is hardened and ready
 2. **Update documentation** - Mark repository as ready for new language wrappers
-3. **Create new language wrapper** - Follow process in `documents/conformance-tests.md`
+3. **Create new language wrapper** - Follow process in `conformance-tests.md`
 
 ### If Any Tests Fail ❌
 

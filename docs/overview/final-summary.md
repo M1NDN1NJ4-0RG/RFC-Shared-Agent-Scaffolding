@@ -18,7 +18,7 @@ This work completed a formal RCA (Root Cause Analysis) and conformance verificat
 
 ### Phase 1: Contract Extraction ✅
 
-**Deliverable:** `documents/contract-extraction.md`
+**Deliverable:** `../architecture/contract-extraction.md`
 
 - Extracted **10 behavioral contracts** from RFC and documentation
 - Mapped each contract to implementation locations in all 4 wrappers
@@ -38,7 +38,7 @@ This work completed a formal RCA (Root Cause Analysis) and conformance verificat
 
 ### Phase 2: Risk Vector Enumeration ✅
 
-**Deliverable:** `documents/risk-vector-enumeration.md`
+**Deliverable:** `../architecture/risk-vector-enumeration.md`
 
 - Identified **13 drift vectors** with priority levels (P0/P1/P2)
 - **4 P0 (CRITICAL) issues** found and addressed
@@ -51,7 +51,7 @@ This work completed a formal RCA (Root Cause Analysis) and conformance verificat
 
 ### Phase 3: Instrumentation & Reproduction ✅
 
-**Deliverable:** `documents/instrumentation-evidence.md`
+**Deliverable:** `../testing/instrumentation-evidence.md`
 
 - Built comprehensive test harness: `/tmp/vector-instrumentation.sh`
 - Reproduced all P0 vectors in isolation
@@ -68,7 +68,7 @@ This work completed a formal RCA (Root Cause Analysis) and conformance verificat
 
 ### Phase 4: Test Hardening ✅
 
-**Deliverable:** `documents/conformance-tests.md` + Updated test suites
+**Deliverable:** `../testing/conformance-tests.md` + Updated test suites
 
 - Designed **9 conformance test specifications**
 - Implemented **6 new conformance tests** in bash test suite
@@ -128,7 +128,7 @@ This work completed a formal RCA (Root Cause Analysis) and conformance verificat
 
 ### 1. Contract List with Implementation Mappings ✅
 
-**Document:** `documents/contract-extraction.md`
+**Document:** `../architecture/contract-extraction.md`
 
 Complete list of 10 contracts with:
 - Contract ID and source citation
@@ -137,7 +137,7 @@ Complete list of 10 contracts with:
 
 ### 2. Vector Audit with Mitigation Status ✅
 
-**Document:** `documents/risk-vector-enumeration.md`
+**Document:** `../architecture/risk-vector-enumeration.md`
 
 Detailed analysis of 13 vectors:
 - Priority classification (P0/P1/P2)
@@ -154,7 +154,7 @@ Detailed analysis of 13 vectors:
 
 ### 3. Instrumentation Run Outputs ✅
 
-**Document:** `documents/instrumentation-evidence.md`
+**Document:** `../testing/instrumentation-evidence.md`
 
 Complete test execution evidence:
 - Test setup and commands
@@ -170,7 +170,7 @@ Complete test execution evidence:
   - All 13 tests passing
 
 **Test Documentation:**
-- `documents/conformance-tests.md`
+- `../testing/conformance-tests.md`
   - Test specifications for all contracts
   - Implementation examples for each language
   - CI integration requirements
@@ -232,10 +232,10 @@ Complete test execution evidence:
 1. **Implement wrapper following documented contracts:**
    - `docs/wrapper-discovery.md` (binary discovery rules)
    - `docs/conformance-contract.md` (output format)
-   - `documents/contract-extraction.md` (all contracts)
+   - `../architecture/contract-extraction.md` (all contracts)
 
 2. **Implement conformance tests:**
-   - Use `documents/conformance-tests.md` as specification
+   - Use `../testing/conformance-tests.md` as specification
    - Test all 9 test suites (repo root, exit codes, quoting, env vars, etc.)
 
 3. **Validate on CI matrix:**
@@ -269,11 +269,11 @@ Complete test execution evidence:
 
 ### Documentation Created
 
-1. `documents/contract-extraction.md` (10 contracts, 12.8 KB)
-2. `documents/risk-vector-enumeration.md` (13 vectors, 16.5 KB)
-3. `documents/instrumentation-evidence.md` (test evidence, 8.2 KB)
-4. `documents/conformance-tests.md` (test specifications, 10.2 KB)
-5. `documents/final-summary.md` (this document)
+1. `../architecture/contract-extraction.md` (10 contracts, 12.8 KB)
+2. `../architecture/risk-vector-enumeration.md` (13 vectors, 16.5 KB)
+3. `../testing/instrumentation-evidence.md` (test evidence, 8.2 KB)
+4. `../testing/conformance-tests.md` (test specifications, 10.2 KB)
+5. `final-summary.md` (this document)
 
 ### Code Modified
 
@@ -351,10 +351,10 @@ The work demonstrates:
 
 ## Receipts
 
-**Contract Extraction:** `documents/contract-extraction.md`  
-**Vector Audit:** `documents/risk-vector-enumeration.md`  
-**Instrumentation Evidence:** `documents/instrumentation-evidence.md`  
-**Test Specifications:** `documents/conformance-tests.md`  
+**Contract Extraction:** `../architecture/contract-extraction.md`  
+**Vector Audit:** `../architecture/risk-vector-enumeration.md`  
+**Instrumentation Evidence:** `../testing/instrumentation-evidence.md`  
+**Test Specifications:** `../testing/conformance-tests.md`  
 **Wrapper Fixes:** Git diff in this commit  
 **Test Results:** All bash tests passing (13/13)
 
