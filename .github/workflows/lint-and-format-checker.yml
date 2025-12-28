@@ -104,12 +104,8 @@ jobs:
         if: steps.check-bash.outputs.has_files == 'true'
         run: |
           set -e
-          SHFMT_VERSION=3.12.0
-          SHFMT_CHECKSUM=d9fbb2a9c33d13f47e7618cf362a914d029d02a6df124064fff04fd688a745ea
-          wget -O /tmp/shfmt https://github.com/mvdan/sh/releases/download/v${SHFMT_VERSION}/shfmt_v${SHFMT_VERSION}_linux_amd64
-          echo "${SHFMT_CHECKSUM}  /tmp/shfmt" | sha256sum -c -
-          chmod +x /tmp/shfmt
-          sudo mv /tmp/shfmt /usr/local/bin/shfmt
+          sudo apt-get update
+          sudo apt-get install -y shfmt
 
       - name: Run ShellCheck
         if: steps.check-bash.outputs.has_files == 'true'
@@ -147,7 +143,7 @@ jobs:
         if: steps.check-powershell.outputs.has_files == 'true'
         shell: pwsh
         run: |
-          $files = @(git ls-files '**/*.ps1' | Where-Object { $_ })
+          $files = @(git ls-files '**/*.ps1')
           if ($files.Count -gt 0) {
             foreach ($file in $files) {
               Write-Host "Analyzing $file"
