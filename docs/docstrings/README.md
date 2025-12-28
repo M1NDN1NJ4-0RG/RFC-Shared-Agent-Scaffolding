@@ -59,6 +59,29 @@ Each language has its own contract document that specifies:
 | Rust | `.rs` | [rust.md](./rust.md) |
 | YAML | `.yml`, `.yaml` | [yaml.md](./yaml.md) |
 
+### Future Contracts (DRAFT)
+
+These contracts are preliminary and **not yet enforced by the validator**. Use them as guidance if adding these languages to the repository, but expect refinement before official adoption.
+
+| Language | Extensions | Contract Document | Status |
+|----------|------------|-------------------|--------|
+| JavaScript/Node.js | `.js`, `.mjs` | [javascript.md](./javascript.md) | DRAFT |
+| C | `.c`, `.h` | [c.md](./c.md) | DRAFT |
+| C++ | `.cpp`, `.hpp`, `.cc`, `.hh`, `.cxx` | [cpp.md](./cpp.md) | DRAFT |
+| C# | `.cs` | [csharp.md](./csharp.md) | DRAFT |
+| Ruby | `.rb` | [ruby.md](./ruby.md) | DRAFT |
+| TypeScript | `.ts`, `.tsx` | [typescript.md](./typescript.md) | DRAFT |
+
+### Esoteric / Satirical Contracts (UNOFFICIAL)
+
+These contracts exist for entertainment, educational, or satirical purposes. **Do not use these languages in this repository.**
+
+| Language | Extensions | Contract Document | Status | Warning Level |
+|----------|------------|-------------------|--------|---------------|
+| Malbolge | `.mb`, `.malbolge` | [malbolge.md](./malbolge.md) | EXPERIMENTAL | ⚠️⚠️⚠️ EXISTENTIAL DREAD |
+
+**Note:** The Malbolge contract demonstrates that even the most absurd and impractical languages can theoretically follow documentation standards. It serves as a reminder to appreciate readable, maintainable code.
+
 ## Required Semantic Sections (All Languages)
 
 Every script's documentation must cover these concepts (using idiomatic section names):
