@@ -650,7 +650,7 @@ mod safe_archive_tests {
 
     /// Test vector safe-archive-003: No-clobber with auto-suffix
     ///
-    /// # Purpose
+    /// Test vector safe-archive-003: No-clobber with auto-suffix
     ///
     /// # Purpose
     ///
@@ -711,7 +711,6 @@ mod safe_archive_tests {
 
     /// Test vector safe-archive-004: No-clobber strict mode
     ///
-    /// # Purpose
     /// # Purpose
     ///
     /// Validates that in strict mode, when an archive file already exists:
