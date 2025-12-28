@@ -248,10 +248,10 @@ public class Win32Process {
     }
     
     # Build the command line for the target process
-    # IMPORTANT: Use -Command with the stop-parsing operator (--%) to pass child command raw
-    # This avoids nested quote issues and lets Windows parse the command line correctly
+    # Use -File with -- separator for clean argument passing
+    # The -- tells safe-run.ps1 that everything after is the child command to execute
     # We pass NULL to lpApplicationName and let Windows parse the command line
-    $commandLine = "`"$pwshPath`" -NoProfile -Command `"& { & '$wrapperScriptResolved' --% pwsh -NoProfile -Command Start-Sleep -Seconds 60 }`""
+    $commandLine = "`"$pwshPath`" -NoProfile -File `"$wrapperScriptResolved`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
     Write-ProbeLog ""
     Write-ProbeLog "=== CreateProcessW Debug ==="
     Write-ProbeLog "Command line: $commandLine"
