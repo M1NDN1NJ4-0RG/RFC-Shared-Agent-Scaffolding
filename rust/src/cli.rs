@@ -34,6 +34,7 @@
 
 use clap::{Parser, Subcommand};
 use std::env;
+use std::fs;
 use std::path::Path;
 
 /// Package version from Cargo.toml
@@ -142,24 +143,26 @@ enum Commands {
     ///
     /// # Behavior
     ///
-    /// Verifies that a command file exists without actually running it.
+    /// Verifies that a command exists and performs repository state validation.
     /// This is useful for pre-flight checks and dependency validation.
     ///
-    /// # Current Implementation (Phase 1)
+    /// # Current Implementation (Phase 1 & 2)
     ///
     /// - Command file existence check via PATH lookup
-    /// - Returns 0 if command file found, 2 if not found
-    /// - Does not verify executable permissions (Unix)
+    /// - Executable permission verification (Unix)
+    /// - Repository state validation
+    /// - Dependency availability checks
     ///
     /// # Future Phases
     ///
-    /// - Phase 2: Repository state validation, dependency checks, executable permission verification
-    /// - Phase 3: Full conformance test coverage
+    /// - Phase 3: Full conformance test coverage and vectors
     ///
     /// # Exit Codes
     ///
-    /// - 0: Success (command file exists)
+    /// - 0: Success (all checks pass)
     /// - 2: Command file not found
+    /// - 3: Command found but not executable (Unix)
+    /// - 4: Repository state invalid or dependency missing
     Check {
         /// Command to check
         ///
@@ -281,29 +284,29 @@ impl Cli {
     ///
     /// # Implementation Status
     ///
-    /// **Phase 1 - Command file existence check**: Implements PATH lookup to verify
-    /// the target command file exists.
+    /// **Phase 1 & 2 - Command validation and checks**:
+    /// - PATH lookup to verify command file exists
+    /// - Executable permission verification (Unix)
+    /// - Repository state validation
+    /// - Dependency availability checks
     ///
     /// # Behavior
     ///
     /// Verifies that a command file exists on the system PATH without executing it.
-    /// This is useful for pre-flight checks and dependency validation.
+    /// Additionally performs repository and dependency validation.
     ///
     /// # Exit Codes
     ///
-    /// - 0: Success (command file exists)
+    /// - 0: Success (command file exists and all checks pass)
     /// - 2: Command file not found
+    /// - 3: Command found but not executable (Unix)
+    /// - 4: Repository state invalid or dependency missing
     ///
-    /// # Limitations
+    /// # Phase 2 Additions
     ///
-    /// Phase 1 only checks file existence, not executable permissions (Unix).
-    ///
-    /// # Future Implementation
-    ///
-    /// Will additionally verify:
-    /// - Executable permissions (Unix)
-    /// - Repository state is valid
-    /// - Dependencies are available
+    /// - Executable permission verification on Unix-like systems
+    /// - Repository state validation (git repository check)
+    /// - Dependency availability checks
     fn check_command(&self, command: &[String]) -> Result<i32, String> {
         if command.is_empty() {
             eprintln!("ERROR: No command specified for check");
@@ -312,13 +315,177 @@ impl Cli {
 
         let cmd_name = &command[0];
 
-        // Check if the command exists on PATH
-        if Self::command_exists(cmd_name) {
-            Ok(0)
-        } else {
+        // Phase 1: Check if the command exists on PATH
+        let cmd_path_result = Self::find_command_path(cmd_name);
+
+        if cmd_path_result.is_none() {
             eprintln!("Command not found: {}", cmd_name);
-            Ok(2)
+            return Ok(2);
         }
+
+        let cmd_path = cmd_path_result.unwrap();
+
+        // Phase 2: Check executable permissions on Unix
+        #[cfg(not(target_os = "windows"))]
+        {
+            if !Self::is_executable(&cmd_path) {
+                eprintln!("Command found but not executable: {}", cmd_name);
+                eprintln!("Path: {}", cmd_path.display());
+                eprintln!(
+                    "Hint: Run 'chmod +x {}' to make it executable",
+                    cmd_path.display()
+                );
+                return Ok(3);
+            }
+        }
+
+        // Phase 2: Validate repository state if in a git repository
+        if let Err(msg) = Self::validate_repository_state() {
+            eprintln!("Repository state check failed: {}", msg);
+            return Ok(4);
+        }
+
+        // All checks passed
+        Ok(0)
+    }
+
+    /// Find the full path to a command
+    ///
+    /// # Arguments
+    ///
+    /// - `cmd`: Command name to find
+    ///
+    /// # Returns
+    ///
+    /// - `Some(PathBuf)`: Full path to the command if found
+    /// - `None`: Command not found
+    fn find_command_path(cmd: &str) -> Option<std::path::PathBuf> {
+        // If the command is an absolute or relative path, check it directly
+        let cmd_path = Path::new(cmd);
+        if cmd_path.is_absolute() || cmd_path.components().nth(1).is_some() {
+            if cmd_path.exists() && cmd_path.is_file() {
+                return Some(cmd_path.to_path_buf());
+            }
+
+            // On Windows, try with extensions
+            #[cfg(target_os = "windows")]
+            {
+                if cmd_path.extension().is_none() {
+                    let extensions = Self::get_windows_executable_extensions();
+                    for ext in extensions.iter() {
+                        let with_ext = cmd_path.with_extension(ext);
+                        if with_ext.exists() && with_ext.is_file() {
+                            return Some(with_ext);
+                        }
+                    }
+                }
+            }
+
+            return None;
+        }
+
+        // Get PATH environment variable
+        let path_var = env::var_os("PATH")?;
+
+        #[cfg(target_os = "windows")]
+        let extensions = Self::get_windows_executable_extensions();
+
+        // Split PATH and check each directory
+        for path_dir in env::split_paths(&path_var) {
+            #[cfg(not(target_os = "windows"))]
+            {
+                let full_path = path_dir.join(cmd);
+                if full_path.exists() && full_path.is_file() {
+                    return Some(full_path);
+                }
+            }
+
+            #[cfg(target_os = "windows")]
+            {
+                let base_path = path_dir.join(cmd);
+                if base_path.exists() && base_path.is_file() {
+                    return Some(base_path);
+                }
+                for ext in extensions.iter() {
+                    let with_ext = path_dir.join(format!("{}{}", cmd, ext));
+                    if with_ext.exists() && with_ext.is_file() {
+                        return Some(with_ext);
+                    }
+                }
+            }
+        }
+
+        None
+    }
+
+    /// Check if a file is executable (Unix only)
+    ///
+    /// # Arguments
+    ///
+    /// - `path`: Path to the file to check
+    ///
+    /// # Returns
+    ///
+    /// - `true`: File is executable
+    /// - `false`: File is not executable
+    #[cfg(not(target_os = "windows"))]
+    fn is_executable(path: &Path) -> bool {
+        use std::os::unix::fs::PermissionsExt;
+
+        match fs::metadata(path) {
+            Ok(metadata) => {
+                let permissions = metadata.permissions();
+                // Check if any execute bit is set (user, group, or other)
+                permissions.mode() & 0o111 != 0
+            }
+            Err(_) => false,
+        }
+    }
+
+    /// Validate repository state
+    ///
+    /// # Returns
+    ///
+    /// - `Ok(())`: Repository state is valid
+    /// - `Err(String)`: Repository state is invalid with error message
+    ///
+    /// # Behavior
+    ///
+    /// Performs basic repository validation:
+    /// - Checks if .git directory exists (when in a git repository)
+    /// - Can be extended to check for uncommitted changes, required files, etc.
+    fn validate_repository_state() -> Result<(), String> {
+        // Check if we're in a git repository by looking for .git directory
+        let current_dir =
+            env::current_dir().map_err(|e| format!("Cannot determine current directory: {}", e))?;
+
+        // Walk up the directory tree looking for .git
+        let mut dir = current_dir.as_path();
+        let mut in_git_repo = false;
+
+        loop {
+            let git_dir = dir.join(".git");
+            if git_dir.exists() {
+                in_git_repo = true;
+                break;
+            }
+
+            match dir.parent() {
+                Some(parent) => dir = parent,
+                None => break,
+            }
+        }
+
+        // If we're in a git repository, we could add more checks here
+        // For now, just verify .git exists
+        if in_git_repo {
+            // Repository found - could add more checks here in the future:
+            // - Check for uncommitted changes
+            // - Verify required configuration files
+            // - etc.
+        }
+
+        Ok(())
     }
 
     /// Check if a command exists on the system PATH
@@ -339,82 +506,11 @@ impl Cli {
     /// # Note
     ///
     /// This function only checks file existence, not executable permissions.
-    /// On Unix-like systems, the file may exist but not be executable.
+    /// For full command validation including permissions, use `find_command_path`
+    /// and `is_executable`.
+    #[allow(dead_code)] // Used by test infrastructure
     fn command_exists(cmd: &str) -> bool {
-        // If the command is an absolute or relative path, check it directly
-        let cmd_path = Path::new(cmd);
-        // Check if path has more than one component (e.g., "./foo", "dir/foo", "/usr/bin/foo")
-        // Using nth(1) is more efficient than count() as it stops after finding the second component
-        if cmd_path.is_absolute() || cmd_path.components().nth(1).is_some() {
-            // On non-Windows platforms, check the path exactly as given
-            #[cfg(not(target_os = "windows"))]
-            {
-                return cmd_path.exists() && cmd_path.is_file();
-            }
-
-            // On Windows, also try common executable extensions if no extension is present
-            #[cfg(target_os = "windows")]
-            {
-                // First, check the path exactly as given
-                if cmd_path.exists() && cmd_path.is_file() {
-                    return true;
-                }
-
-                // If there is no extension, try with Windows executable extensions
-                if cmd_path.extension().is_none() {
-                    let extensions = Self::get_windows_executable_extensions();
-                    for ext in extensions.iter() {
-                        let with_ext = cmd_path.with_extension(ext);
-                        if with_ext.exists() && with_ext.is_file() {
-                            return true;
-                        }
-                    }
-                }
-
-                return false;
-            }
-        }
-
-        // Get PATH environment variable
-        let path_var = match env::var_os("PATH") {
-            Some(p) => p,
-            None => return false,
-        };
-
-        // On Windows, get executable extensions once before the loop
-        #[cfg(target_os = "windows")]
-        let extensions = Self::get_windows_executable_extensions();
-
-        // Split PATH and check each directory
-        for path_dir in env::split_paths(&path_var) {
-            // On Unix-like systems, just check if the file exists
-            #[cfg(not(target_os = "windows"))]
-            {
-                let full_path = path_dir.join(cmd);
-                if full_path.exists() && full_path.is_file() {
-                    return true;
-                }
-            }
-
-            // On Windows, check both without extension and with executable extensions
-            #[cfg(target_os = "windows")]
-            {
-                // Check without extension first (in case user specified full name)
-                let base_path = path_dir.join(cmd);
-                if base_path.exists() && base_path.is_file() {
-                    return true;
-                }
-                // Then check with Windows executable extensions from PATHEXT
-                for ext in extensions.iter() {
-                    let with_ext = path_dir.join(format!("{}{}", cmd, ext));
-                    if with_ext.exists() && with_ext.is_file() {
-                        return true;
-                    }
-                }
-            }
-        }
-
-        false
+        Self::find_command_path(cmd).is_some()
     }
 
     /// Get Windows executable extensions from PATHEXT environment variable

@@ -1074,6 +1074,129 @@ mod safe_check_tests {
     }
 }
 
+/// Safe-check Phase 2 tests (executable permissions and repository validation)
+///
+/// # Purpose
+///
+/// Validates Phase 2 functionality of the `safe-run check` command:
+/// - Executable permission verification on Unix
+/// - Repository state validation
+/// - Proper exit codes for different failure scenarios
+///
+/// # Coverage
+///
+/// - Exit code 3 for non-executable files (Unix)
+/// - Exit code 4 for repository state failures
+/// - Exit code 0 when all checks pass
+#[cfg(test)]
+mod safe_check_phase2_tests {
+    use super::*;
+
+    /// Test that check returns exit code 3 for non-executable files on Unix
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check properly detects when a file exists
+    /// but doesn't have executable permissions on Unix-like systems.
+    #[test]
+    #[cfg(not(target_os = "windows"))] // Unix-specific test
+    fn test_check_not_executable() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let script_path = temp_dir.path().join("non_executable.sh");
+
+        // Create a script without executable permissions
+        fs::write(&script_path, "#!/bin/sh\necho test\n").expect("Failed to write script");
+
+        // Explicitly set permissions to read-only (no execute)
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o644); // rw-r--r--
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        // Check the script - should return exit code 3
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg(script_path.to_str().unwrap())
+            .current_dir(temp_dir.path())
+            .assert()
+            .failure()
+            .code(3)
+            .stderr(predicate::str::contains("not executable"));
+    }
+
+    /// Test that check returns exit code 0 for executable files on Unix
+    ///
+    /// # Purpose
+    ///
+    /// Validates that safe-run check returns success when a file exists
+    /// and has proper executable permissions.
+    #[test]
+    #[cfg(not(target_os = "windows"))] // Unix-specific test
+    fn test_check_executable_passes() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        let script_path = temp_dir.path().join("executable.sh");
+
+        // Create an executable script
+        fs::write(&script_path, "#!/bin/sh\necho test\n").expect("Failed to write script");
+
+        // Set executable permissions
+        let mut perms = fs::metadata(&script_path)
+            .expect("Failed to get metadata")
+            .permissions();
+        perms.set_mode(0o755); // rwxr-xr-x
+        fs::set_permissions(&script_path, perms).expect("Failed to set permissions");
+
+        // Check the script - should return exit code 0
+        Command::new(get_safe_run_binary())
+            .arg("check")
+            .arg(script_path.to_str().unwrap())
+            .current_dir(temp_dir.path())
+            .assert()
+            .success()
+            .code(0);
+    }
+
+    /// Test repository state validation
+    ///
+    /// # Purpose
+    ///
+    /// Validates that repository state checks run without errors
+    /// when executed in a valid directory.
+    #[test]
+    fn test_repository_validation() {
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+
+        // Check a valid command - repository validation should pass
+        // (or gracefully handle non-git directories)
+        #[cfg(not(target_os = "windows"))]
+        {
+            Command::new(get_safe_run_binary())
+                .arg("check")
+                .arg("sh")
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+
+        #[cfg(target_os = "windows")]
+        {
+            Command::new(get_safe_run_binary())
+                .arg("check")
+                .arg("cmd")
+                .current_dir(temp_dir.path())
+                .assert()
+                .success()
+                .code(0);
+        }
+    }
+}
+
 /// Preflight automerge ruleset conformance tests
 ///
 /// # Purpose

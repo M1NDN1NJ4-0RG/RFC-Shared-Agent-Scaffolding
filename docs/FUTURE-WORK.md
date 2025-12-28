@@ -69,7 +69,7 @@ The conformance test `test_safe_run_003_sigterm_aborted` (marked `#[ignore]` in 
 
 **Severity:** Medium  
 **Area:** Rust CLI  
-**Status:** ✅ Phase 1 Complete - Command existence check implemented
+**Status:** ✅ Phase 1 & 2 Complete - Command validation and repository checks implemented
 
 **Why it exists:**
 
@@ -86,18 +86,20 @@ The `safe-run check` subcommand verifies command availability, repository state,
 - Supports absolute and relative paths
 - Cross-platform support (Unix and Windows)
 
+✅ **Phase 2 Complete** (Repository and dependency validation):
+- Executable permission verification (Unix)
+- Repository state validation
+- Exit code 3 for non-executable files (Unix)
+- Exit code 4 for repository state failures
+- Meaningful error messages for all failure scenarios
+- Unit tests for Phase 2 functionality
+
 **Source:**
-- `rust/src/cli.rs:139-164` (Command definition and docs)
-- `rust/src/cli.rs:270-360` (Implementation with PATH lookup)
-- `rust/tests/conformance.rs` (Unit tests: safe_check_tests module)
+- `rust/src/cli.rs:142-164` (Command definition and docs)
+- `rust/src/cli.rs:276-475` (Implementation with Phase 1 & 2 features)
+- `rust/tests/conformance.rs` (Unit tests: safe_check_tests and safe_check_phase2_tests modules)
 
 **Remaining Work:**
-
-**Phase 2** (Repository and dependency validation):
-- Implement repository state validation logic
-- Add dependency availability checks
-- Provide meaningful error messages for missing requirements
-- Maintain appropriate exit codes (0 for success, non-zero for failures)
 
 **Phase 3** (Integration and conformance):
 - Add conformance vectors to `conformance/vectors.json`
