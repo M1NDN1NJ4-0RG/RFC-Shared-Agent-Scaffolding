@@ -149,7 +149,7 @@ test_snippet_lines() {
     cd "$tmp"
     mkdir -p .agent/FAIL-LOGS
     set +e
-    err="$((SAFE_SNIPPET_LINES=2 SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c 'printf "L1\nL2\nL3\n"; exit 9') 2>&1 1>/dev/null)"
+    err="$( (SAFE_SNIPPET_LINES=2 SAFE_RUN_BIN="$SAFE_RUN_BIN_PATH" bash "$SAFE_RUN" bash -c 'printf "L1\nL2\nL3\n"; exit 9') 2>&1 1>/dev/null)"
     rc=$?
     set -e
     [[ "$rc" -eq 9 ]]
