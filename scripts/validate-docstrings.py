@@ -7,7 +7,8 @@ language-specific docstring contracts as defined in docs/docstrings/.
 Purpose
 -------
 Enforces consistent, discoverable documentation across all supported languages
-by validating the presence of required docstring sections.
+by validating the presence of required docstring sections. Supports pragma
+ignores for intentional omissions and basic content validation for exit codes.
 
 CLI Interface
 -------------
@@ -15,41 +16,72 @@ Run from repository root::
 
     python3 scripts/validate-docstrings.py
 
-Environment Variables
----------------------
-None. This script does not use environment variables.
+Validate specific files (single-file mode for fast iteration)::
+
+    python3 scripts/validate-docstrings.py --file scripts/my-script.sh
+    python3 scripts/validate-docstrings.py -f script1.py -f script2.sh
+
+Skip content validation (only check section presence)::
+
+    python3 scripts/validate-docstrings.py --no-content-checks
+
+Pragma Support
+--------------
+Scripts can use pragma comments to intentionally skip specific section checks::
+
+    # noqa: SECTION_NAME
+
+The validator will skip checking for SECTION_NAME in files containing this pragma.
+
+Examples::
+
+    # noqa: OUTPUTS    - Skip OUTPUTS section check
+    # noqa: EXITCODES  - Skip exit codes content validation
+
+Content Validation
+------------------
+The validator performs basic content checks on exit code sections:
+- Checks for presence of exit codes 0 and 1
+- Lenient pattern matching for exit code documentation
+- Can be disabled with --no-content-checks or pragma comments
 
 Exit Codes
 ----------
 0
-    All files conform to docstring contracts
+    All files conform to contracts
 1
-    Validation failures detected (violations printed to stdout)
+    One or more files failed validation
+
+Environment Variables
+---------------------
+None. Operates on current repository state.
 
 Examples
 --------
-Run validator from repository root::
+Validate all files::
 
     python3 scripts/validate-docstrings.py
 
-Run in CI::
+Validate specific files::
 
-    python3 scripts/validate-docstrings.py || exit 1
+    python3 scripts/validate-docstrings.py --file script.sh --file tool.py
 
 Notes
 -----
 - Validation is lightweight: checks presence of sections, not content quality
-- Uses regex-based pattern matching (no heavy parsing)
-- Scans only tracked files (via git ls-files)
-- Provides actionable error messages with file path and missing sections
-- Validates ALL scripts in repository (not just specific directories)
+- Pragma ignores should be used sparingly for legitimate exceptions
+- See docs/docstrings/README.md for detailed contract specifications
 """
 
+import argparse
 import re
 import subprocess
 import sys
 from pathlib import Path
 from typing import List, Optional
+
+# Module-level flag for content checks (set by command-line arg)
+SKIP_CONTENT_CHECKS = False
 
 
 # In-scope directory patterns for validation
@@ -91,6 +123,92 @@ EXCLUDE_PATTERNS = [
     "tmp/**",
     ".tmp/**",
 ]
+
+
+def check_pragma_ignore(content: str, section: str) -> bool:
+    """Check if a section is ignored via pragma comment.
+    
+    Supports pragmas like:
+    - # noqa: EXITCODES
+    - # docstring-ignore: EXIT CODES
+    - <!-- noqa: OUTPUTS --> (for YAML)
+    
+    Args:
+        content: File content to search
+        section: Section name to check (e.g., "EXITCODES", "EXIT CODES")
+    
+    Returns:
+        True if section should be ignored, False otherwise
+    """
+    # Normalize section name (remove spaces, uppercase)
+    normalized_section = section.upper().replace(" ", "").replace(":", "")
+    
+    # Check for various pragma formats
+    pragma_patterns = [
+        rf"#\s*noqa:\s*{normalized_section}",
+        rf"#\s*docstring-ignore:\s*{section}",
+        rf"<!--\s*noqa:\s*{normalized_section}\s*-->",
+    ]
+    
+    for pattern in pragma_patterns:
+        if re.search(pattern, content, re.IGNORECASE):
+            return True
+    
+    return False
+
+
+def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
+    """Validate that exit codes section contains minimum required codes.
+    
+    Checks that at least exit codes 0 and 1 are documented.
+    This is a soft check - we look for patterns like "0" near "success" etc.
+    
+    Args:
+        content: The exit codes section content
+        language: Language name for context
+    
+    Returns:
+        Error message if validation fails, None if valid
+    """
+    global SKIP_CONTENT_CHECKS
+    if SKIP_CONTENT_CHECKS:
+        return None
+    
+    # Look for exit code 0 (success) - be very lenient with patterns
+    # Match patterns like: 
+    # - "0    Success"
+    # - "0: Success" 
+    # - "Exit 0"
+    # - "Exit: 0 if success"
+    # - "0 if all tests pass"
+    has_exit_0 = bool(re.search(
+        r'(?:exit[:\s]+)?0[\s:\-]+(?:if\s+)?.*?(?:success|ok|pass|complete|all.*pass)', 
+        content, 
+        re.IGNORECASE | re.MULTILINE | re.DOTALL
+    ))
+    
+    # Look for exit code 1 (failure)
+    # Match patterns like:
+    # - "1    Failure"
+    # - "1: Fail"
+    # - "Exit 1"
+    # - "Exit: 1 if fail"
+    # - "1 if any fail"
+    has_exit_1 = bool(re.search(
+        r'(?:exit[:\s]+)?1[\s:\-]+(?:if\s+)?.*?(?:fail|error|invalid|any.*fail)', 
+        content, 
+        re.IGNORECASE | re.MULTILINE | re.DOTALL
+    ))
+    
+    # If we find reasonable exit code documentation, consider it valid
+    # This is intentionally lenient to avoid false positives
+    if not has_exit_0 and not has_exit_1:
+        # Only fail if there's NO exit code documentation at all
+        has_any_exit_code = bool(re.search(r'\b(?:0|1|2|127)\b', content))
+        if not has_any_exit_code:
+            return "No exit codes found (expected at least 0 and 1)"
+    
+    return None
 
 
 class ValidationError:
@@ -141,8 +259,36 @@ class BashValidator:
 
         missing = []
         for i, pattern in enumerate(BashValidator.REQUIRED_SECTIONS):
+            section_name = BashValidator.SECTION_NAMES[i]
+            
+            # Check if section is ignored via pragma
+            if check_pragma_ignore(content, section_name):
+                continue
+                
             if not re.search(pattern, header, re.IGNORECASE):
-                missing.append(BashValidator.SECTION_NAMES[i])
+                missing.append(section_name)
+
+        # Basic content validation for exit codes (if OUTPUTS present)
+        if "OUTPUTS:" not in missing:
+            # Extract OUTPUTS section content
+            outputs_match = re.search(
+                r'#\s*OUTPUTS:\s*\n((?:#.*\n)+)', 
+                header, 
+                re.IGNORECASE
+            )
+            if outputs_match:
+                # Remove leading # from each line for easier pattern matching
+                outputs_lines = outputs_match.group(1).split('\n')
+                outputs_content = '\n'.join(
+                    line.lstrip('#').strip() for line in outputs_lines if line.strip()
+                )
+                exit_codes_error = validate_exit_codes_content(outputs_content, "Bash")
+                if exit_codes_error and not check_pragma_ignore(content, "EXITCODES"):
+                    return ValidationError(
+                        str(file_path),
+                        ["OUTPUTS content"],
+                        f"Exit codes incomplete: {exit_codes_error}",
+                    )
 
         if missing:
             return ValidationError(
@@ -242,8 +388,31 @@ class PythonValidator:
 
         missing = []
         for i, pattern in enumerate(PythonValidator.REQUIRED_SECTIONS):
+            section_name = PythonValidator.SECTION_NAMES[i]
+            
+            # Check pragma ignore
+            if check_pragma_ignore(content, section_name):
+                continue
+                
             if not re.search(pattern, docstring, re.MULTILINE):
-                missing.append(PythonValidator.SECTION_NAMES[i])
+                missing.append(section_name)
+
+        # Basic content validation for exit codes
+        if "Exit Codes" not in missing:
+            exit_codes_match = re.search(
+                r"^Exit Codes\s*\n-+\n(.+?)(?:\n^[A-Z]|\Z)",
+                docstring,
+                re.MULTILINE | re.DOTALL
+            )
+            if exit_codes_match:
+                exit_codes_content = exit_codes_match.group(1)
+                exit_codes_error = validate_exit_codes_content(exit_codes_content, "Python")
+                if exit_codes_error and not check_pragma_ignore(content, "EXITCODES"):
+                    return ValidationError(
+                        str(file_path),
+                        ["Exit Codes content"],
+                        f"Exit codes incomplete: {exit_codes_error}",
+                    )
 
         if missing:
             return ValidationError(
@@ -456,11 +625,57 @@ def validate_file(file_path: Path) -> Optional[ValidationError]:
 
 def main() -> int:
     """Main entry point."""
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(
+        description="Validate docstring contracts for scripts and YAML files.",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Validate all files in repository
+  python3 scripts/validate-docstrings.py
+
+  # Validate a single file (fast iteration)
+  python3 scripts/validate-docstrings.py --file scripts/my-script.sh
+
+  # Validate multiple specific files
+  python3 scripts/validate-docstrings.py --file script1.py --file script2.sh
+        """,
+    )
+    parser.add_argument(
+        "--file",
+        "-f",
+        action="append",
+        dest="files",
+        help="Validate specific file(s) instead of all tracked files. Can be specified multiple times.",
+    )
+    parser.add_argument(
+        "--no-content-checks",
+        action="store_true",
+        help="Skip content validation (e.g., exit code completeness checks). Only check section presence.",
+    )
+    
+    args = parser.parse_args()
+    
+    # Set global flag for content checks
+    global SKIP_CONTENT_CHECKS
+    SKIP_CONTENT_CHECKS = args.no_content_checks
+    
     print("🔍 Validating docstring contracts...\n")
 
     # Get files to validate
-    files = get_tracked_files()
-    print(f"Found {len(files)} files in scope\n")
+    if args.files:
+        # Single-file mode: validate specific files
+        files = [Path(f).resolve() for f in args.files]
+        # Verify files exist
+        for f in files:
+            if not f.exists():
+                print(f"❌ Error: File not found: {f}", file=sys.stderr)
+                return 1
+        print(f"Validating {len(files)} specified file(s)\n")
+    else:
+        # Full repository scan
+        files = get_tracked_files()
+        print(f"Found {len(files)} files in scope\n")
 
     # Validate each file
     errors: List[ValidationError] = []

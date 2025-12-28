@@ -11,17 +11,25 @@ YAML configuration files in this repository use a **top-of-file comment header**
 
 Every YAML file must include these sections (as comment headers):
 
-1. **Workflow: / File:** - Name of the workflow or configuration file
+1. **Workflow:** or **File:** - Name of the workflow or configuration file
 2. **Purpose:** - What it does and what it does NOT do
-3. **Triggers:** or **Usage:** - How/when it runs (for workflows: trigger conditions)
+3. **Triggers:** (for workflows) or **Usage:** (for config files) - How/when it runs
 4. **Dependencies:** or **Inputs:** - What it expects (tools, actions, files, versions)
 5. **Outputs:** or **Side effects:** - What it produces (artifacts, status checks, files)
-6. **Notes:** or **Note:** - Maintainer notes, constraints, sharp edges
+6. **Notes:** - Maintainer notes, constraints, sharp edges
+
+**For GitHub Actions Workflows specifically:**
+- **Permissions:** - REQUIRED for workflow YAMLs (list GitHub Actions permissions)
+- Use "Triggers:" for workflows (not "Usage:")
+
+**For other YAML config files:**
+- **Permissions:** - Optional
+- Use "Usage:" for config files (not "Triggers:")
 
 ### Optional Sections
 
-- **Permissions:** - GitHub Actions permissions (recommended for workflows)
-- **Platform:** - Platform requirements (e.g., "Runner: ubuntu-latest")
+- **Environment:** - Environment configuration (matrix, jobs, runners, environment variables)
+- **Platform:** - Platform requirements (e.g., "Runner: ubuntu-latest") - **Recommended**
 - **References:** - Links to related docs or issues
 
 ## Formatting Rules
@@ -87,11 +95,17 @@ on:
 - What it validates, builds, tests, or deploys
 - What it does NOT do (scope limitations)
 
-### Triggers: (for GitHub Actions)
+### Triggers: (for GitHub Actions workflows ONLY)
+- Use "Triggers:" for workflows, "Usage:" for other YAML files
 - List trigger events clearly
 - Mention path filters if used
 - Note if manual dispatch is enabled
-- For non-workflow YAMLs, use **Usage:** instead
+- Examples: `pull_request`, `push`, `workflow_dispatch`, `schedule`
+
+### Usage: (for non-workflow YAML config files)
+- How and when the config file is loaded/used
+- What tool or system consumes it
+- When it takes effect
 
 ### Dependencies:
 - List GitHub Actions used (with versions)
@@ -104,6 +118,25 @@ on:
 - Artifacts uploaded
 - Files created or modified
 - PR comments or other side effects
+
+### Permissions: (REQUIRED for GitHub Actions workflows)
+- List all GitHub token permissions required
+- Explain why each permission is needed
+- Use least-privilege principle
+- Example: `contents: read`, `pull-requests: write`
+
+### Environment: (optional but recommended)
+- Matrix configuration (OS, versions, etc.)
+- Job-level environment variables
+- Runner specifications
+- Secrets or environment-specific settings
+- Example:
+  ```yaml
+  # Environment:
+  # - Matrix: ubuntu-latest, macos-latest, windows-latest
+  # - Node.js versions: 16, 18, 20
+  # - Environment variables: NODE_ENV=test
+  ```
 
 ### Notes:
 - Constraints or invariants
@@ -133,6 +166,10 @@ on:
 # Outputs:
 # - Status check: workflow-name
 # - Artifacts: none (or specify if any)
+#
+# Permissions:
+# - contents: read (checkout code)
+# - pull-requests: read (PR metadata)
 #
 # Notes:
 # - Must pass before merge
@@ -200,9 +237,14 @@ jobs:
 # - Artifacts: validation-report.txt (on failure, 1-day retention)
 # - Side effects: PR comment with violation details (if failures detected)
 #
-# Platform:
+# Permissions:
+# - contents: read (checkout repository)
+# - pull-requests: write (comment on PRs with violation details)
+#
+# Environment:
 # - Runner: ubuntu-latest (sufficient for validation tasks)
-# - Requires: Python 3.8+, Git
+# - Python: 3.8+ (for validation scripts)
+# - Matrix: None (single configuration)
 #
 # Notes:
 # - This is a required status check - PRs cannot merge if this fails
@@ -487,6 +529,7 @@ permissions:
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
+- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
 - [GitHub Actions Syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
 - [YAML Specification](https://yaml.org/spec/)
 - [Conformance Contract](../conformance-contract.md) - Behavior contract

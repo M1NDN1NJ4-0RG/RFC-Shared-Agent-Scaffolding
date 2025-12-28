@@ -21,7 +21,7 @@ Every Bash script must include these sections (case-insensitive, but conventiona
 
 ### Optional Sections
 
-- **PLATFORM COMPATIBILITY:** - Tested platforms, version requirements
+- **PLATFORM COMPATIBILITY:** - Tested platforms, version requirements - **Recommended**
 - **CONTRACT REFERENCES:** - Links to design docs, RFCs
 - **BINARY DISCOVERY ORDER:** - For wrapper scripts that discover tools
 
@@ -83,6 +83,8 @@ Every Bash script must include these sections (case-insensitive, but conventiona
 3. **Section headers**: All-caps followed by colon (e.g., `DESCRIPTION:`)
 4. **Indentation**: Two spaces for subsections and content
 5. **Examples prefix**: Use `#` for example commands (shell comment style)
+6. **Line length**: Aim for 80 characters per line for readability (soft limit)
+7. **Exit codes**: Always document at least codes 0 and 1 in OUTPUTS section (see [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md))
 
 ## Templates
 
@@ -284,5 +286,6 @@ The validator does NOT check:
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
+- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers
 - [Conformance Contract](../conformance-contract.md) - Behavior contract

@@ -12,18 +12,48 @@ PowerShell scripts in this repository use **comment-based help** to document the
 Every PowerShell script must include these sections (using PowerShell help keywords):
 
 1. **.SYNOPSIS** - One-line summary
-2. **.DESCRIPTION** - What the script does and does NOT do
+2. **.DESCRIPTION** - What the script does and does NOT do (include exit codes here)
 3. **.PARAMETER** - Document each parameter (if applicable)
 4. **.ENVIRONMENT** - Environment variables used (custom keyword for this repo)
 5. **.EXAMPLE** - Minimum 1 concrete usage example
 6. **.NOTES** - Maintainer notes, constraints, sharp edges
 
-### Optional Sections
+### Optional but Recommended Sections
 
-- **.INPUTS** - Input types (if using pipeline)
-- **.OUTPUTS** - Output types (if using pipeline)
+- **.INPUTS** - Input types (required if script accepts pipeline input via `ValueFromPipeline`)
+- **.OUTPUTS** - Output types (required if script produces pipeline output)
 - **.LINK** - Links to related docs or URLs
-- **Exit Codes** - Document exit codes in .DESCRIPTION or .NOTES
+- **.EXITCODES** - Dedicated exit codes section (not standard PowerShell, but recommended for clarity)
+- **Platform note in .NOTES** - Platform compatibility (Windows/Linux/macOS, PowerShell version) - **Recommended**
+
+### Exit Code Documentation
+
+**Preferred approach:** Use a dedicated `.EXITCODES` section for clarity:
+
+```powershell
+.EXITCODES
+  0
+    Success - operation completed
+  1
+    Failure - general error
+  2
+    Invalid arguments
+  127
+    Command not found
+```
+
+**Alternative approach:** Document exit codes in `.DESCRIPTION` or `.NOTES`:
+
+```powershell
+.DESCRIPTION
+  Does something useful.
+  
+  Exit Codes:
+    0    Success
+    1    Failure
+```
+
+See [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) for canonical exit code meanings.
 
 ## Formatting Rules
 
@@ -87,7 +117,7 @@ param(
 2. **Help block placement**: Immediately after shebang, before `param()` block
 3. **Keywords**: Use `.KEYWORD` format (period prefix, uppercase)
 4. **Indentation**: Two spaces for content under keywords
-5. **Examples prefix**: Use `PS>` or `PS C:\>` for PowerShell prompt
+5. **Examples prefix**: Use `PS>` for PowerShell prompt (consistent, platform-neutral)
 6. **Environment section**: Use custom `.ENVIRONMENT` keyword (not standard PowerShell, but required for this repo)
 
 ## Templates
@@ -258,9 +288,18 @@ The validator checks for:
 
 The validator does NOT check:
 - Content quality or accuracy
-- Parameter documentation completeness
-- Help system compatibility
+- Parameter documentation completeness (though all parameters should be documented)
+- `.INPUTS`/`.OUTPUTS` presence (these are optional unless script uses pipeline)
+- Help system compatibility with `Get-Help`
 - Grammar or spelling
+- Exit code completeness (but basic content checks apply if using validator --content-checks)
+
+**Validation Best Practices:**
+- Run validator locally before committing: `python3 scripts/validate-docstrings.py --file my-script.ps1`
+- Test help system integration: `Get-Help .\my-script.ps1 -Detailed`
+- If using pipeline parameters, add `.INPUTS` and `.OUTPUTS` sections
+- Document all parameters with `.PARAMETER` blocks
+- Use pragma comments for intentional omissions: `# noqa: PARAMETER`
 
 ## Common Mistakes
 
@@ -348,6 +387,7 @@ Get-Help .\script-name.ps1 -Full
 ## References
 
 - [README.md](./README.md) - Overview of docstring contracts
+- [EXIT_CODES_CONTRACT.md](./EXIT_CODES_CONTRACT.md) - Canonical exit code meanings
 - [PowerShell Comment-Based Help](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comment_based_help)
 - [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers
 - [Conformance Contract](../conformance-contract.md) - Behavior contract
