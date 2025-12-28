@@ -247,7 +247,7 @@ exit main(ARGV) if __FILE__ == $PROGRAM_NAME
 # @example With environment override
 #   BINARY_PATH=/custom/path ruby wrapper.rb command
 #
-# @see docs/wrapper-discovery.md
+# @see docs/architecture/wrapper-discovery.md
 # @see exit-codes-contract.md
 
 require 'pathname'

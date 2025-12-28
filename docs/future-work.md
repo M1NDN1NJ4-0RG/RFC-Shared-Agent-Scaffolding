@@ -145,7 +145,7 @@ The `safe-run archive` subcommand is now fully implemented with all requested fe
 
 **Documentation:**
 
-- User guide: `docs/safe-archive.md`
+- User guide: `docs/usage/safe-archive.md`
 - Examples, use cases, and technical details included
 - Contract references documented
 
@@ -160,7 +160,7 @@ The `safe-run archive` subcommand is now fully implemented with all requested fe
 - `rust/src/safe_archive.rs` - Implementation module
 - `rust/src/cli.rs:175-202` - Command definition with --no-clobber flag
 - `rust/tests/conformance.rs:535-777` - All tests now passing (no longer ignored)
-- `docs/safe-archive.md` - Complete documentation
+- `docs/usage/safe-archive.md` - Complete documentation
 - `conformance/vectors.json` - Conformance vectors (safe-archive-001 through safe-archive-004)
 
 **No remaining work** - FW-003 is complete.
@@ -262,7 +262,7 @@ The conformance infrastructure is functional but has room for quality-of-life im
 The Rust canonical tool works correctly but has opportunities for optimization and feature expansion beyond the current contract requirements.
 
 **Source:**
-- `docs/rust-canonical-tool.md:165-171` (Future Enhancements section)
+- `docs/architecture/rust-canonical-tool.md:165-171` (Future Enhancements section)
 
 **Proposed enhancements:**
 - **Performance:** Optimize buffering and I/O for high-throughput logs
@@ -305,7 +305,7 @@ PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Wind
 - Test both direct invocation and `Start-Process` approaches
 - Verify ABORTED log creation on Ctrl-C interruption
 - Verify exit codes (130 or 143) match Unix behavior
-- If limitation found, document in `safe-run.ps1` and `docs/rust-canonical-tool.md`
+- If limitation found, document in `safe-run.ps1` and `docs/architecture/rust-canonical-tool.md`
 - If behavior is acceptable, document validation results
 
 ---

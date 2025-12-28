@@ -230,8 +230,8 @@ Complete test execution evidence:
 **Process for Adding New Language:**
 
 1. **Implement wrapper following documented contracts:**
-   - `docs/wrapper-discovery.md` (binary discovery rules)
-   - `docs/conformance-contract.md` (output format)
+   - `docs/architecture/wrapper-discovery.md` (binary discovery rules)
+   - `docs/usage/conformance-contract.md` (output format)
    - `../architecture/contract-extraction.md` (all contracts)
 
 2. **Implement conformance tests:**

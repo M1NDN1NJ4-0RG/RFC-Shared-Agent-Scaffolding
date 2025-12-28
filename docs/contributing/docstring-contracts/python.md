@@ -68,7 +68,7 @@ Acts as a <role> that <action>. More detailed purpose statement.
 
 Binary Discovery Order
 ----------------------
-Per docs/wrapper-discovery.md (for wrapper scripts only):
+Per docs/architecture/wrapper-discovery.md (for wrapper scripts only):
 
 1. **ENV_VAR** environment variable (if set, used without validation)
 2. **./path/to/dev/binary** (dev mode, relative to repo root)
@@ -118,8 +118,8 @@ Notes
 
 See Also
 --------
-- docs/wrapper-discovery.md
-- docs/conformance-contract.md
+- docs/architecture/wrapper-discovery.md
+- docs/usage/conformance-contract.md
 """
 
 import sys
@@ -214,7 +214,7 @@ detection, and transparent argument forwarding.
 
 Binary Discovery Order
 ----------------------
-Per docs/wrapper-discovery.md, searches for the binary in this order:
+Per docs/architecture/wrapper-discovery.md, searches for the binary in this order:
 
 1. **BINARY_PATH** environment variable (if set, used without validation)
 2. **./rust/target/release/binary** (dev mode, relative to repo root)
@@ -284,7 +284,7 @@ Platform Support
 
 Notes
 -----
-- Do not modify discovery order without updating docs/wrapper-discovery.md
+- Do not modify discovery order without updating docs/architecture/wrapper-discovery.md
 - Exit codes must match canonical tool behavior per conformance contract
 - Always preserve child process exit codes (0-255 range)
 - This wrapper does NOT implement business logic; all behavior is delegated
@@ -292,8 +292,8 @@ Notes
 See Also
 --------
 - rfc-shared-agent-scaffolding-v0.1.0.md : Contract specification
-- docs/wrapper-discovery.md : Binary discovery rules
-- docs/conformance-contract.md : Behavior contract
+- docs/architecture/wrapper-discovery.md : Binary discovery rules
+- docs/usage/conformance-contract.md : Behavior contract
 """
 
 import sys
@@ -474,5 +474,5 @@ The section structure (reST-style headers) goes beyond PEP 257's minimal require
 - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
 - [PEP 257 – Docstring Conventions](https://peps.python.org/pep-0257/)
 - [reStructuredText Primer](https://www.sphinx-doc.org/en/master/usage/restructuredtext/basics.html)
-- [Wrapper Discovery](../wrapper-discovery.md) - Binary discovery rules for wrappers
-- [Conformance Contract](../conformance-contract.md) - Behavior contract
+- [Wrapper Discovery](../../architecture/wrapper-discovery.md) - Binary discovery rules for wrappers
+- [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract

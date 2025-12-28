@@ -398,7 +398,7 @@ export { main };
  * @author Repository contributors
  * @version 1.0
  *
- * @see {@link docs/wrapper-discovery.md}
+ * @see {@link docs/architecture/wrapper-discovery.md}
  * @see {@link exit-codes-contract.md}
  */
 

@@ -97,7 +97,7 @@ Or download a pre-built binary from:
   https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases
 
 For more information, see:
-  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/blob/main/docs/rust-canonical-tool.md
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/blob/main/docs/architecture/rust-canonical-tool.md
 ```
 
 ## Argument Pass-Through
@@ -220,5 +220,5 @@ During the transition from independent implementations to Rust canonical:
 ## References
 
 - [Rust Canonical Tool](./rust-canonical-tool.md)
-- [Conformance Contract](./conformance-contract.md)
+- [Conformance Contract](../usage/conformance-contract.md)
 - [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)

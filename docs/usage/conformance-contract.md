@@ -281,7 +281,7 @@ Wrappers MUST declare the contract version they target in their help text or hea
 ## References
 
 - [rfc-shared-agent-scaffolding-v0.1.0.md](../rfc-shared-agent-scaffolding-v0.1.0.md)
-- [Rust Canonical Tool](./rust-canonical-tool.md)
-- [Wrapper Discovery](./wrapper-discovery.md)
+- [Rust Canonical Tool](../architecture/rust-canonical-tool.md)
+- [Wrapper Discovery](../architecture/wrapper-discovery.md)
 - [Test Vectors](../conformance/vectors.json)
 - [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)

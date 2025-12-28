@@ -4,9 +4,9 @@
 
 **Source Documents:**
 - `rfc-shared-agent-scaffolding-v0.1.0.md`
-- `docs/conformance-contract.md`
-- `docs/wrapper-discovery.md`
-- `docs/rust-canonical-tool.md`
+- `docs/usage/conformance-contract.md`
+- `docs/architecture/wrapper-discovery.md`
+- `docs/architecture/rust-canonical-tool.md`
 - `conformance/vectors.json`
 
 ---
@@ -14,7 +14,7 @@
 ## 1. Binary Discovery Contract
 
 ### Contract ID: BIN-DISC-001
-**Source:** `docs/wrapper-discovery.md:9-74`
+**Source:** `docs/architecture/wrapper-discovery.md:9-74`
 
 **Contract:** Wrappers MUST attempt to locate the Rust binary in the following deterministic order:
 
@@ -73,7 +73,7 @@
 ## 3. Argument Pass-Through Contract
 
 ### Contract ID: ARG-PASS-001
-**Source:** `docs/wrapper-discovery.md:105-135`
+**Source:** `docs/architecture/wrapper-discovery.md:105-135`
 
 **Contract:** Wrappers MUST:
 1. Pass all arguments to Rust binary without modification or interpretation
@@ -103,7 +103,7 @@ $BINARY run "$@"
 ## 4. Exit Code Forwarding Contract
 
 ### Contract ID: EXIT-CODE-001
-**Source:** `docs/wrapper-discovery.md:138-156`, `docs/conformance-contract.md:90-111`
+**Source:** `docs/architecture/wrapper-discovery.md:138-156`, `docs/usage/conformance-contract.md:90-111`
 
 **Contract:** Wrappers MUST preserve the exit code from the Rust binary exactly:
 - **Normal exit:** code 0-255 → forward as-is
@@ -130,7 +130,7 @@ $BINARY run "$@"
 ## 5. Error Handling Contract
 
 ### Contract ID: ERROR-HAND-001
-**Source:** `docs/wrapper-discovery.md:75-101`
+**Source:** `docs/architecture/wrapper-discovery.md:75-101`
 
 **Contract:** If no binary is found, wrapper MUST:
 1. Print actionable error message to stderr
@@ -156,7 +156,7 @@ $BINARY run "$@"
 ## 6. Output Mode Contract
 
 ### Contract ID: OUTPUT-MODE-001
-**Source:** `docs/conformance-contract.md:14-88`
+**Source:** `docs/usage/conformance-contract.md:14-88`
 
 **Contract:** The Rust canonical tool (NOT wrappers) MUST support two output modes:
 
@@ -187,7 +187,7 @@ $BINARY run "$@"
 ## 7. Artifact Generation Contract
 
 ### Contract ID: ARTIFACT-GEN-001
-**Source:** `docs/conformance-contract.md:113-146`
+**Source:** `docs/usage/conformance-contract.md:113-146`
 
 **Contract:** Rust canonical tool MUST:
 - **Success (exit 0):** No artifacts created

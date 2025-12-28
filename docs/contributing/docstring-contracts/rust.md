@@ -219,7 +219,7 @@ use std::collections::HashMap;
 //! This implementation conforms to:
 //! - rfc-shared-agent-scaffolding-v0.1.0.md (M0 contract)
 //! - Conformance vectors in `conformance/vectors.json`
-//! - Wrapper discovery rules in `docs/wrapper-discovery.md`
+//! - Wrapper discovery rules in `docs/architecture/wrapper-discovery.md`
 //!
 //! # Examples
 //!
@@ -456,4 +456,4 @@ and unclear examples before committing.
 - [Rustdoc Book](https://doc.rust-lang.org/rustdoc/) - Official Rustdoc documentation
 - [RFC 1574 – API Documentation Conventions](https://rust-lang.github.io/rfcs/1574-more-api-documentation-conventions.html)
 - [Rust API Guidelines](https://rust-lang.github.io/api-guidelines/documentation.html)
-- [Conformance Contract](../conformance-contract.md) - Behavior contract
+- [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract

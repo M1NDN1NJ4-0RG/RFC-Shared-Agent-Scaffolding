@@ -61,7 +61,7 @@ Every JavaScript script/module should include these sections in JSDoc comments:
  *
  * @platform Node.js 16+
  *
- * @see {@link docs/wrapper-discovery.md}
+ * @see {@link docs/architecture/wrapper-discovery.md}
  * @see {@link exit-codes-contract.md}
  */
 
@@ -203,7 +203,7 @@ module.exports = { main };
  *
  * @platform Node.js 16+ (ESM support required)
  *
- * @see {@link docs/wrapper-discovery.md}
+ * @see {@link docs/architecture/wrapper-discovery.md}
  * @see {@link exit-codes-contract.md}
  */
 
