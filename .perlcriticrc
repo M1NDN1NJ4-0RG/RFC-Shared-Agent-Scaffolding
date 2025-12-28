@@ -1,5 +1,5 @@
 # Perl::Critic configuration
 # Set severity to 5 (gentlest - cosmetic issues only)
 severity = 5
-# Only report violations, don't fail on them
-# This allows the linter to report issues without breaking the build
+# Report only lowest-severity (cosmetic) violations
+# Note: whether the build fails is controlled by the CI/workflow configuration, not this setting
