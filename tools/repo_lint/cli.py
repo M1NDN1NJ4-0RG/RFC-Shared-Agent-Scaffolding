@@ -13,12 +13,36 @@
     - --ci/--no-install: CI mode - fail if tools are missing instead of installing
     - --verbose: Show verbose output including passed checks
     - --json: Output results in JSON format (future)
+
+:Environment Variables:
+    None - all configuration via command-line arguments
+
+:Exit Codes:
+    - 0: All checks passed
+    - 1: Linting violations found
+    - 2: Required tools missing (CI mode)
+    - 3: Internal error
+
+:Examples:
+    Run checks in local mode::
+
+        python -m tools.repo_lint check
+
+    Run checks in CI mode::
+
+        python -m tools.repo_lint check --ci
+
+    Apply fixes::
+
+        python -m tools.repo_lint fix
 """
 
 import argparse
 import sys
 
 from tools.repo_lint.common import ExitCode, MissingToolError
+from tools.repo_lint.reporting import print_install_instructions, report_results
+from tools.repo_lint.runners.python_runner import PythonRunner
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -33,16 +57,14 @@ def create_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-    # Global flags
-    parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
-    parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
-    parser.add_argument("--json", action="store_true", help="Output results in JSON format (not yet implemented)")
-
     # Subcommands
     subparsers = parser.add_subparsers(dest="command", help="Command to run")
 
     # check command
     check_parser = subparsers.add_parser("check", help="Run linting checks without modifying files")
+    check_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
+    check_parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
+    check_parser.add_argument("--json", action="store_true", help="Output results in JSON format (not yet implemented)")
     check_parser.add_argument(
         "--language",
         "-l",
@@ -52,12 +74,16 @@ def create_parser() -> argparse.ArgumentParser:
 
     # fix command
     fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
+    fix_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
+    fix_parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
+    fix_parser.add_argument("--json", action="store_true", help="Output results in JSON format (not yet implemented)")
     fix_parser.add_argument(
         "--language", "-l", action="append", help="Fix only specific language(s): python, bash, powershell, perl, yaml"
     )
 
     # install command
     install_parser = subparsers.add_parser("install", help="Install/bootstrap required linting tools")
+    install_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
     install_parser.add_argument("--tool", "-t", action="append", help="Install only specific tool(s)")
 
     return parser
@@ -72,21 +98,37 @@ def cmd_check(args: argparse.Namespace) -> int:
     :Returns:
         Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
-    # Placeholder implementation - will be replaced with actual runner logic
     print("🔍 Running repository linters and formatters...")
     print("")
 
-    # For now, just print a message that we're a stub
-    print("⚠️  repo-lint check is not yet fully implemented")
-    print("    This is a minimal stub implementation for Phase 1")
-    print("")
-    print("Next steps:")
-    print("  - Implement per-language runners (Phase 3)")
-    print("  - Add Ruff configuration (Phase 2)")
-    print("  - Integrate with existing validate_docstrings.py")
-    print("")
+    all_results = []
 
-    return ExitCode.SUCCESS
+    # Python linting
+    python_runner = PythonRunner(ci_mode=args.ci, verbose=args.verbose)
+    if python_runner.has_files():
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        print("  Python Linting")
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+        missing_tools = python_runner.check_tools()
+        if missing_tools:
+            if args.ci:
+                print_install_instructions(missing_tools)
+                return ExitCode.MISSING_TOOLS
+            print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
+            print("   Run 'python -m tools.repo_lint install' to install them")
+            print("")
+            return ExitCode.MISSING_TOOLS
+
+        results = python_runner.check()
+        all_results.extend(results)
+    else:
+        if args.verbose:
+            print("No Python files found. Skipping Python linting.")
+
+    # Report results
+    print("")
+    return report_results(all_results, verbose=args.verbose)
 
 
 def cmd_fix(args: argparse.Namespace) -> int:
@@ -101,17 +143,34 @@ def cmd_fix(args: argparse.Namespace) -> int:
     print("🔧 Running formatters in fix mode...")
     print("")
 
-    # Placeholder implementation
-    print("⚠️  repo-lint fix is not yet fully implemented")
-    print("    This is a minimal stub implementation for Phase 1")
-    print("")
-    print("Next steps:")
-    print("  - Implement formatter runners (Black, shfmt)")
-    print("  - Add fix mode to language runners")
-    print("  - Re-run checks after fixing")
-    print("")
+    all_results = []
 
-    return ExitCode.SUCCESS
+    # Python formatting
+    python_runner = PythonRunner(ci_mode=args.ci, verbose=args.verbose)
+    if python_runner.has_files():
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        print("  Python Formatting")
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+        missing_tools = python_runner.check_tools()
+        if missing_tools:
+            if args.ci:
+                print_install_instructions(missing_tools)
+                return ExitCode.MISSING_TOOLS
+            print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
+            print("   Run 'python -m tools.repo_lint install' to install them")
+            print("")
+            return ExitCode.MISSING_TOOLS
+
+        results = python_runner.fix()
+        all_results.extend(results)
+    else:
+        if args.verbose:
+            print("No Python files found. Skipping Python formatting.")
+
+    # Report results
+    print("")
+    return report_results(all_results, verbose=args.verbose)
 
 
 def cmd_install(args: argparse.Namespace) -> int:
