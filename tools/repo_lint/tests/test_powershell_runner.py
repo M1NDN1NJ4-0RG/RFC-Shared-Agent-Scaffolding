@@ -148,12 +148,12 @@ class TestPowerShellRunner(unittest.TestCase):
 
         # Check PSScriptAnalyzer call (second call)
         pssa_args = mock_run.call_args_list[1][0][0]
-        
+
         # Should use $args[0] in command string
         command_idx = pssa_args.index("-Command")
         command_str = pssa_args[command_idx + 1]
         self.assertIn("$args[0]", command_str, "Should use $args[0] for parameter passing")
-        
+
         # File path should be separate argument
         self.assertEqual(pssa_args[-1], "test.ps1", "File path should be last argument")
         self.assertTrue(result.passed)
