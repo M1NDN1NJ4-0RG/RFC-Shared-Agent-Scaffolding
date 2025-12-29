@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# noqa: EXITCODES
 """Perl script docstring validator.
 
 This module validates Perl script POD documentation, including file-level
@@ -7,6 +8,18 @@ POD sections and subroutine documentation.
 :Purpose:
     Enforce Perl docstring contracts as defined in
     docs/contributing/docstring-contracts/perl.md
+
+:Environment Variables:
+    None
+
+:Examples:
+    Validate a Perl script::
+
+        from docstring_validators.perl_validator import PerlValidator
+        errors = PerlValidator.validate(file_path, content)
+
+:Exit Codes:
+    N/A - This is a library module, not an executable script
 """
 
 import re

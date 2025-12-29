@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# noqa: EXITCODES
 """Bash script docstring validator.
 
 This module validates Bash script documentation, including file-level header
@@ -7,6 +8,18 @@ comments and individual function documentation blocks.
 :Purpose:
     Enforce Bash docstring contracts as defined in
     docs/contributing/docstring-contracts/bash.md
+
+:Environment Variables:
+    None
+
+:Examples:
+    Validate a Bash script::
+
+        from docstring_validators.bash_validator import BashValidator
+        errors = BashValidator.validate(file_path, content)
+
+:Exit Codes:
+    N/A - This is a library module, not an executable script
 """
 
 import re

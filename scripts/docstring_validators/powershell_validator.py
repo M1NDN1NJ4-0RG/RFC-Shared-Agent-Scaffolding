@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# noqa: EXITCODES
 """PowerShell script docstring validator.
 
 This module validates PowerShell script comment-based help documentation,
@@ -7,6 +8,18 @@ including file-level comment blocks and function documentation.
 :Purpose:
     Enforce PowerShell docstring contracts as defined in
     docs/contributing/docstring-contracts/powershell.md
+
+:Environment Variables:
+    None
+
+:Examples:
+    Validate a PowerShell script::
+
+        from docstring_validators.powershell_validator import PowerShellValidator
+        errors = PowerShellValidator.validate(file_path, content)
+
+:Exit Codes:
+    N/A - This is a library module, not an executable script
 """
 
 import re

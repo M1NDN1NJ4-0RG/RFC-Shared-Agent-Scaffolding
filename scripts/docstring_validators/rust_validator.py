@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# noqa: EXITCODES
 """Rust module docstring validator.
 
 This module validates Rust module documentation using rustdoc comments,
@@ -7,6 +8,18 @@ including module-level documentation and public item documentation.
 :Purpose:
     Enforce Rust docstring contracts as defined in
     docs/contributing/docstring-contracts/rust.md
+
+:Environment Variables:
+    None
+
+:Examples:
+    Validate a Rust module::
+
+        from docstring_validators.rust_validator import RustValidator
+        errors = RustValidator.validate(file_path, content)
+
+:Exit Codes:
+    N/A - This is a library module, not an executable script
 """
 
 import re

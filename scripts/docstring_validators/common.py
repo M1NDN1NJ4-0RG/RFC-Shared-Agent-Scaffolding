@@ -7,6 +7,20 @@ validators, including the ValidationError class and helper functions.
 :Purpose:
     Centralize shared validation logic to avoid duplication and ensure
     consistency across language validators.
+
+:Environment Variables:
+    SKIP_CONTENT_CHECKS
+        Global flag set by main script to control content validation
+
+:Examples:
+    Check pragma ignore::
+
+        from docstring_validators.common import check_pragma_ignore
+        if check_pragma_ignore(content, "OUTPUTS"):
+            # Skip OUTPUTS validation
+
+:Exit Codes:
+    N/A - This is a library module, not an executable script
 """
 
 import re

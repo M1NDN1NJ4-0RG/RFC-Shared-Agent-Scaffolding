@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# noqa: EXITCODES
 """Python module docstring validator.
 
 This module validates Python module documentation, including module-level
@@ -7,6 +8,18 @@ docstrings and symbol-level documentation (functions, classes, methods).
 :Purpose:
     Enforce Python docstring contracts as defined in
     docs/contributing/docstring-contracts/python.md
+
+:Environment Variables:
+    None
+
+:Examples:
+    Validate a Python module::
+
+        from docstring_validators.python_validator import PythonValidator
+        errors = PythonValidator.validate(file_path, content)
+
+:Exit Codes:
+    N/A - This is a library module, not an executable script
 """
 
 import ast

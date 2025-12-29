@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# noqa: EXITCODES
 """YAML file docstring validator.
 
 This module validates YAML file documentation headers, including workflow
@@ -7,6 +8,18 @@ files and configuration files.
 :Purpose:
     Enforce YAML docstring contracts as defined in
     docs/contributing/docstring-contracts/yaml.md
+
+:Environment Variables:
+    None
+
+:Examples:
+    Validate a YAML file::
+
+        from docstring_validators.yaml_validator import YAMLValidator
+        errors = YAMLValidator.validate(file_path, content)
+
+:Exit Codes:
+    N/A - This is a library module, not an executable script
 """
 
 import re
