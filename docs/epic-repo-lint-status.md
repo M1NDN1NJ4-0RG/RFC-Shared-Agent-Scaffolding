@@ -25,7 +25,7 @@ This tool must be:
 - [x] **Sub-Item 0.1.3:** Package location: `tools/repo_lint/` (repo tooling, not PyPI)
 
 ### Item 0.2 — Execution Model (Locked)
-- [x] **Sub-Item 0.2.1:** Run in-place first (CI runs `python3 -m tools.repo_lint ...`)
+- [x] **Sub-Item 0.2.1:** Run in-place first (CI runs `python -m tools.repo_lint ...`)
 - [x] **Sub-Item 0.2.2:** Add TODOs in `docs/future-work.md` for:
   - Making `repo_lint` installable later (`pip install -e .`, console script, etc.)
   - Future repo-local tool isolation ideas (`.psmodules/`, `.cpan-local/`, etc.) and cleanup implications
@@ -72,7 +72,7 @@ This tool must be:
 - [x] **Sub-Item 0.9.1:** Ruff fix policy (Option A2):
   - `repo-lint check` is **non-mutating** and MUST run Ruff without fixes (e.g., `ruff check --no-fix`).
   - `repo-lint fix` may apply **safe** Ruff fixes only (e.g., `ruff check --fix` WITHOUT enabling unsafe fixes).
-- [x] **Sub-Item 0.9.2:** Canonical run-in-place invocation is `python3 -m tools.repo_lint check` (and corresponding `fix`/`install`). Do not standardize on `tools.repo_lint.cli` in docs.
+- [x] **Sub-Item 0.9.2:** Canonical run-in-place invocation is `python -m tools.repo_lint check` (and corresponding `fix`/`install`). Do not standardize on `tools.repo_lint.cli` in docs.
 - [x] **Sub-Item 0.9.3:** PowerShell symbol discovery/doc enforcement MUST use native AST parse **from files** via `Parser::ParseFile` (C1). `Parser::ParseInput` (C2) may be used in unit tests/fixtures only.
 - [x] **Sub-Item 0.9.4:** Bash symbol discovery MUST use Tree-sitter (D2) with a pinned Bash grammar (no execution).
 - [x] **Sub-Item 0.9.5:** Perl symbol discovery MUST use PPI plus a structure-aware fallback strategy (E2) for edge cases (no regex-only parsing).
@@ -94,8 +94,8 @@ This tool must be:
   - `runners/` (per-language runners)
   - `install/` (bootstrap/install helpers)
 - [x] **Sub-Item 1.1.2:** Implement module execution path:
-  - `python3 -m tools.repo_lint check` (standardized)
-  - Ensure `python3 -m tools.repo_lint fix` and `python3 -m tools.repo_lint install` work equivalently
+  - `python -m tools.repo_lint check` (standardized)
+  - Ensure `python -m tools.repo_lint fix` and `python -m tools.repo_lint install` work equivalently
 
 ### Item 1.2 — Implement CLI contract (High)
 - [x] **Sub-Item 1.2.1:** Implement `repo-lint check`
@@ -273,13 +273,13 @@ This tool must be:
 - [x] **Sub-Item 5.1.1:** Keep/rename bash wrapper as kebab-case:
   - ✅ `scripts/run-linters.sh` kept (kebab-case compliant)
 - [x] **Sub-Item 5.1.2:** Convert it into a thin wrapper that calls:
-  - ✅ Wrapper delegates to `python3 -m tools.repo_lint check` / `fix` / `install`
+  - ✅ Wrapper delegates to `python -m tools.repo_lint check` / `fix` / `install`
   - ✅ Supports `--fix` → `repo-lint fix`
   - ✅ Supports `--install` → `repo-lint install`
   - ✅ Default (no args) → `repo-lint check`
 - [x] **Sub-Item 5.1.3:** Ensure Global Rules reference **one canonical command path** (repo-lint + wrapper)
   - ✅ Updated in CONTRIBUTING.md Quick Start section
-  - ✅ All references point to `python3 -m tools.repo_lint` as canonical
+  - ✅ All references point to `python -m tools.repo_lint` as canonical
 
 ### Item 5.2 — Documentation updates (High)
 - [x] **Sub-Item 5.2.1:** Update `CONTRIBUTING.md` to make repo-lint the canonical entrypoint
@@ -294,19 +294,52 @@ This tool must be:
 - [x] **Sub-Item 5.2.4:** Update repo Global Rules / CONTRIBUTING policy text to make it explicit and **required** that before every commit you run:
   - ✅ Added "REQUIRED Before Every Commit" section in Code Quality and Linting
   - ✅ Explicit 3-step requirement in Quick Start (lines 11-14):
-    1. Run `python3 -m tools.repo_lint check` to lint all code
+    1. Run `python -m tools.repo_lint check` to lint all code
     2. Run relevant test suites for code you changed
     3. Verify all CI checks pass
   - ✅ No "commit first, lint later" allowed
 
 **Phase 5 Success Criteria**
-- ✅ Contributors have exactly one obvious way to run checks: `python3 -m tools.repo_lint check`
+- ✅ Contributors have exactly one obvious way to run checks: `python -m tools.repo_lint check`
 - ✅ Bash wrapper is a thin delegation layer (63 lines vs. 413 lines before)
 - ✅ Documentation is updated and consistent across all files
 
 ---
 
 ## Phase 6 — CI Integration as Single Source of Truth
+
+### Item 6.0 — Auto-Fix Must Run First + Forensics (Mandatory)
+
+**Caveat (hard requirement):** In CI, the **Auto-Fix** portion (Black auto-patch) MUST run **first** and MUST **finish** before *any* other lint or docstring enforcement runs.
+
+Rationale:
+- If auto-fix changes files, every subsequent lint/docstring result must reflect the **post-fix** state.
+- We must avoid running checks on a stale commit SHA after auto-commit/patch.
+
+- [ ] **Sub-Item 6.0.1:** In the umbrella workflow, implement a dedicated first job named **Auto-Fix: Black** that:
+  - Checks out the PR head
+  - Runs Black in auto-fix mode (same-repo PRs only)
+  - Applies the existing safety rules (same-repo-only, fork patch artifact, bot-loop guard, pinned actions)
+
+- [ ] **Sub-Item 6.0.2:** If the auto-fix job **changes any files**:
+  - Same-repo PRs: commit + push the changes
+  - Fork PRs: produce a patch artifact
+  - In **both** cases: set an output flag (e.g., `autofix_applied=true`) and ensure **all other jobs are skipped** for this workflow run.
+    - All lint/docstring jobs MUST include an `if:` guard so they do not run when `autofix_applied=true`.
+    - The workflow must instruct the contributor that checks will run on the next workflow run for the updated commit.
+
+- [ ] **Sub-Item 6.0.3:** Forensics requirement — when Black changes anything, CI MUST leave a reviewable trail:
+  - Upload an artifact containing:
+    - `black.diff` (unified diff of changes)
+    - `black.log` (command output, version, and the files modified)
+  - Also write a short summary into the GitHub Actions job summary (what changed + where + how to reproduce locally).
+
+- [ ] **Sub-Item 6.0.4:** If an auto-fix commit is pushed, the auto-fix job MUST:
+  - Use an explicit commit message marker (for loop-guarding)
+  - Leave a PR comment that includes:
+    - That an auto-fix commit was pushed
+    - A link to the workflow run
+    - Where to find the diff/log artifacts
 
 ### Item 6.1 — Replace CI steps with repo-lint (High)
 - [ ] **Sub-Item 6.1.1:** Update workflows to run:
@@ -320,6 +353,7 @@ This tool must be:
 - [ ] **Sub-Item 6.2.2:** Keep same-repo-only auto-commit restriction
 - [ ] **Sub-Item 6.2.3:** Keep fork patch artifact behavior
 - [ ] **Sub-Item 6.2.4:** Pin actions by commit SHA everywhere
+- [ ] **Sub-Item 6.2.5:** Ensure Black auto-patch output is forensically reviewable (see Item 6.0 Sub-Item 6.0.3).
 
 ### Item 6.3 — Complete CI Migration Flake8 → Ruff + Remove `.flake8` (High)
 - [ ] **Sub-Item 6.3.1:** Update CI workflows to use Ruff instead of Flake8
@@ -339,6 +373,7 @@ This tool must be:
 - Workflow file name (kebab-case): `.github/workflows/repo-lint-and-docstring-enforcement.yml`
 
 **Job / Check Naming (Title Case)**
+- **Auto-Fix: Black**
 - **Detect Changed Files**
 - **Repo Lint: Python**
 - **Repo Lint: Bash**
@@ -347,7 +382,7 @@ This tool must be:
 - **Repo Lint: YAML**
 - (Optional, if implemented later) **Repo Lint: Rust**
 
-- [ ] **Sub-Item 6.4.1:** Add a new umbrella workflow file: `.github/workflows/repo-lint-and-docstring-enforcement.yml` with `name: Repo Lint and Docstring Enforcement`.
+- [ ] **Sub-Item 6.4.1:** Add a new umbrella workflow file: `.github/workflows/repo-lint-and-docstring-enforcement.yml` with `name: Repo Lint and Docstring Enforcement`, and ensure it begins with the **Auto-Fix: Black** job (see Item 6.0).
 - [ ] **Sub-Item 6.4.2:** Implement **Detect Changed Files** job that computes changed paths using `git diff` (or an equivalent deterministic mechanism) and exposes outputs for each language bucket (Python/Bash/PowerShell/Perl/YAML/Rust) **plus a `shared_tooling` bucket**.
   - `shared_tooling` MUST be set when changes touch shared lint/config/enforcement surfaces (examples):
     - `tools/repo_lint/**`
@@ -363,7 +398,7 @@ This tool must be:
   - YAML checks run only when YAML files change (including workflow YAML), or when `shared_tooling` is true
   - Markdown-only changes do **not** trigger PowerShell/Perl/Bash runners (unless docs tooling is added later)
 - [ ] **Sub-Item 6.4.4:** Each conditional language job MUST run `repo_lint` (run-in-place) as the canonical enforcement mechanism:
-  - `python3 -m tools.repo_lint check --ci --only <language>`
+  - `python -m tools.repo_lint check --ci --only <language>`
   - The `--only` selector MUST be implemented if it does not exist yet (see Sub-Item 6.4.6).
 - [ ] **Sub-Item 6.4.5:** Ensure docstring enforcement is included automatically by the relevant language runner(s) (no separate docstring-only workflow once this is in place).
 - [ ] **Sub-Item 6.4.6:** Implement `repo-lint changed` and/or a `--only <language>` selector in `repo_lint` so the umbrella workflow can target exactly the needed runners. Requirements:
@@ -457,4 +492,4 @@ This tool must be:
 - [ ] Python linter configs consolidated into `pyproject.toml` (Ruff/Black/Pylint)
 - [ ] Output is stable and actionable across local + CI
 - [ ] `--cleanup` removes only repo-local installs (never system packages)
-- [ ] CI Black auto-patch is safe (loop guard + same-repo only + fork patch + pinned actions)
+- [ ] CI Black auto-patch is safe **and** forensically reviewable (runs first, loop guard + same-repo only + fork patch + pinned actions + diff/log artifacts)
