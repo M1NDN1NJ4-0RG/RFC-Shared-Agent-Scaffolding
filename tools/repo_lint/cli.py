@@ -41,6 +41,14 @@ import argparse
 import sys
 
 from tools.repo_lint.common import ExitCode, MissingToolError
+from tools.repo_lint.install.install_helpers import (
+    cleanup_repo_local,
+    get_venv_path,
+    install_python_tools,
+    print_bash_tool_instructions,
+    print_perl_tool_instructions,
+    print_powershell_tool_instructions,
+)
 from tools.repo_lint.reporting import print_install_instructions, report_results
 from tools.repo_lint.runners.bash_runner import BashRunner
 from tools.repo_lint.runners.perl_runner import PerlRunner
@@ -171,15 +179,6 @@ def cmd_install(args: argparse.Namespace) -> int:
     :Returns:
         Exit code (0=success, 3=error)
     """
-    from tools.repo_lint.install.install_helpers import (
-        cleanup_repo_local,
-        get_venv_path,
-        install_python_tools,
-        print_bash_tool_instructions,
-        print_perl_tool_instructions,
-        print_powershell_tool_instructions,
-    )
-
     # Handle cleanup mode
     if args.cleanup:
         print("🧹 Cleaning up repo-local tool installations...")

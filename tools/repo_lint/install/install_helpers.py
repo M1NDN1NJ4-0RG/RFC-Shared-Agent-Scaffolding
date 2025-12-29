@@ -17,6 +17,7 @@
 """
 
 import os
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -241,8 +242,6 @@ def cleanup_repo_local(verbose: bool = False) -> Tuple[bool, List[str]]:
         Only removes directories created by repo-lint install.
         Never removes system packages.
     """
-    import shutil
-
     messages = []
     success = True
 
@@ -268,7 +267,7 @@ def cleanup_repo_local(verbose: bool = False) -> Tuple[bool, List[str]]:
             if verbose:
                 print(f"Removing {dir_name}/ ({description})...")
 
-            shutil.rmtree(dir_path)
+            shutil.rmtree(dir_path, ignore_errors=False)
             messages.append(f"✓ Removed {dir_name}/ ({description})")
 
         except Exception as e:
