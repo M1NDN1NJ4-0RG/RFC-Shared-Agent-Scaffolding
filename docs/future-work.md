@@ -360,18 +360,18 @@ There is an explicit placeholder indicating the need for a canonical epic/idea t
 
 **Why it exists:**
 
-Phase 5 implements language-native test runners (`run_tests.py`, `run-tests.pl`) as **thin wrappers** around the existing Bash `run-tests.sh` scripts. This approach minimizes drift and implementation complexity, but means the runners still depend on Bash being available.
+Phase 5 implements language-native test runners (`run_tests.py`, `run_tests.pl`) as **thin wrappers** around the existing Bash `run-tests.sh` scripts. This approach minimizes drift and implementation complexity, but means the runners still depend on Bash being available.
 
 A future enhancement would migrate to **fully native implementations** where each runner directly invokes its language's test framework without calling the Bash script.
 
 **Current Implementation (Phase 5):**
 - Python `run_tests.py` → calls `subprocess.run(['bash', 'run-tests.sh'])`
-- Perl `run-tests.pl` → calls `system('bash', 'run-tests.sh')`
+- Perl `run_tests.pl` → calls `system('bash', 'run-tests.sh')`
 - PowerShell `RunTests.ps1` → already fully native (calls Pester directly)
 
 **Future Native Implementation:**
 - Python `run_tests.py` → directly uses `unittest.TestLoader()` and runs tests
-- Perl `run-tests.pl` → directly invokes `prove` or `perl -I tests/lib tests/*.t`
+- Perl `run_tests.pl` → directly invokes `prove` or `perl -I tests/lib tests/*.t`
 - PowerShell `RunTests.ps1` → no change (already native)
 
 **Pros of migration:**
@@ -403,7 +403,7 @@ A future enhancement would migrate to **fully native implementations** where eac
 
 **Why it exists:**
 
-Phase 5 configures CI to run BOTH the Bash `run-tests.sh` and language-native runners (`run_tests.py`, `run-tests.pl`) for each wrapper language. This provides redundancy and validates parity, but doubles the wrapper test runtime.
+Phase 5 configures CI to run BOTH the Bash `run-tests.sh` and language-native runners (`run_tests.py`, `run_tests.pl`) for each wrapper language. This provides redundancy and validates parity, but doubles the wrapper test runtime.
 
 If CI runtime becomes excessive (e.g., PR checks take >10 minutes), we could optimize by:
 - Running language-native runners on all PR/push builds (fast feedback)

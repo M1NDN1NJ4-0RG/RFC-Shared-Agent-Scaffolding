@@ -16,7 +16,7 @@
 #
 #   Environment Variables:
 #     SAFE_RUN_BIN  Path to Rust canonical binary (default: auto-detected)
-#     SRC_SAFE_RUN  Path to safe-run.pl (default: scripts/safe-run.pl)
+#     SRC_SAFE_RUN  Path to safe_run.pl (default: scripts/safe_run.pl)
 #
 # OUTPUTS:
 #   Exit Codes:
@@ -42,10 +42,10 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-export SRC_SAFE_RUN="${SRC_SAFE_RUN:-$ROOT/scripts/safe-run.pl}"
-export SRC_SAFE_ARCHIVE="${SRC_SAFE_ARCHIVE:-$ROOT/scripts/safe-archive.pl}"
-export SRC_SAFE_CHECK="${SRC_SAFE_CHECK:-$ROOT/scripts/safe-check.pl}"
-export SRC_PREFLIGHT="${SRC_PREFLIGHT:-$ROOT/scripts/preflight-automerge-ruleset.pl}"
+export SRC_SAFE_RUN="${SRC_SAFE_RUN:-$ROOT/scripts/safe_run.pl}"
+export SRC_SAFE_ARCHIVE="${SRC_SAFE_ARCHIVE:-$ROOT/scripts/safe_archive.pl}"
+export SRC_SAFE_CHECK="${SRC_SAFE_CHECK:-$ROOT/scripts/safe_check.pl}"
+export SRC_PREFLIGHT="${SRC_PREFLIGHT:-$ROOT/scripts/preflight_automerge_ruleset.pl}"
 
 # For thin wrapper tests: point to Rust canonical binary
 REPO_ROOT="$(cd "$ROOT/../.." && pwd)"

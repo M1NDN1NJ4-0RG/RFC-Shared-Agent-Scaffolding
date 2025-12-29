@@ -512,7 +512,7 @@ use v5.10;
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
-**File:** `wrappers/perl/scripts/safe-run.pl`
+**File:** `wrappers/perl/scripts/safe_run.pl`
 
 This file demonstrates:
 - Full POD with all required sections
@@ -531,7 +531,7 @@ This file demonstrates:
 - NOTES section for module constraints
 
 ### Example 3: Utility Script
-**File:** `wrappers/perl/scripts/safe-check.pl`
+**File:** `wrappers/perl/scripts/safe_check.pl`
 
 This file demonstrates:
 - DESCRIPTION that states what it does NOT do

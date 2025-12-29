@@ -38,7 +38,7 @@ cargo build --release
 Thin wrapper scripts that discover and invoke the Rust canonical tool:
 
 - **Bash:** `wrappers/bash/scripts/safe-run.sh`
-- **Perl:** `wrappers/perl/scripts/safe-run.pl`
+- **Perl:** `wrappers/perl/scripts/safe_run.pl`
 - **Python3:** `wrappers/python3/scripts/safe_run.py`
 - **PowerShell:** `wrappers/powershell/scripts/safe-run.ps1`
 
