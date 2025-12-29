@@ -136,7 +136,7 @@ This tool must be:
 
 ---
 
-## Phase 3 — Implement Per-Language Runner Modules 🚧 IN PROGRESS
+## Phase 3 — Implement Per-Language Runner Modules ✅ COMPLETE
 ### Item 3.1 — Define runner interface + shared result types (High)
 - [x] **Sub-Item 3.1.1:** Define `Runner` interface/protocol (check/fix/install_check)
 - [x] **Sub-Item 3.1.2:** Standardize `LintResult` + `Violation` structures (tool, file, line, message)
@@ -151,24 +151,24 @@ This tool must be:
 - [x] **Sub-Item 3.2.2:** Ensure “no skipping private symbols” remains enforced (docstring validator contract) ✅
 
 ### Item 3.3 — Bash runner (High)
-- [ ] **Sub-Item 3.3.1:** Implement Bash runner:
+- [x] **Sub-Item 3.3.1:** Implement Bash runner:
   - ShellCheck
   - shfmt check/fix
   - Bash docstring validation
 
 ### Item 3.4 — PowerShell runner (High)
-- [ ] **Sub-Item 3.4.1:** Implement PowerShell runner:
+- [x] **Sub-Item 3.4.1:** Implement PowerShell runner:
   - PSScriptAnalyzer (run via `pwsh -NoProfile -NonInteractive`)
   - PowerShell docstring validation
   - Best practice: for symbol discovery / doc enforcement, parse with PowerShell’s native AST (`Parser::ParseFile`) and emit JSON—**never** execute repo scripts during linting
 
 ### Item 3.5 — Perl runner (High)
-- [ ] **Sub-Item 3.5.1:** Implement Perl runner:
+- [x] **Sub-Item 3.5.1:** Implement Perl runner:
   - Perl::Critic
   - Perl docstring validation
 
 ### Item 3.6 — YAML runner (Medium)
-- [ ] **Sub-Item 3.6.1:** Implement YAML runner:
+- [x] **Sub-Item 3.6.1:** Implement YAML runner:
   - yamllint
 
 ### Item 3.7 — Docstring validator modularization + symbol scanners (Imported from Repo Cleanup EPIC Phase 5.5) (High)
@@ -193,7 +193,11 @@ This tool must be:
 
 **Phase 3 Success Criteria**
 - ✅ Python runner complete and functional
-- ⏸️ Other language runners deferred to follow-up PRs
+- ✅ Bash runner complete and functional
+- ✅ PowerShell runner complete and functional
+- ✅ Perl runner complete and functional
+- ✅ YAML runner complete and functional
+- ⏸️ Docstring validator modularization (Item 3.7) deferred to follow-up PRs
 
 ---
 

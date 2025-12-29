@@ -42,7 +42,11 @@ import sys
 
 from tools.repo_lint.common import ExitCode, MissingToolError
 from tools.repo_lint.reporting import print_install_instructions, report_results
+from tools.repo_lint.runners.bash_runner import BashRunner
+from tools.repo_lint.runners.perl_runner import PerlRunner
+from tools.repo_lint.runners.powershell_runner import PowerShellRunner
 from tools.repo_lint.runners.python_runner import PythonRunner
+from tools.repo_lint.runners.yaml_runner import YAMLRunner
 
 
 def create_parser() -> argparse.ArgumentParser:
@@ -91,28 +95,37 @@ def cmd_check(args: argparse.Namespace) -> int:
 
     all_results = []
 
-    # Python linting
-    python_runner = PythonRunner(ci_mode=args.ci, verbose=args.verbose)
-    if python_runner.has_files():
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        print("  Python Linting")
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    # Define all runners
+    runners = [
+        ("Python", PythonRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("Bash", BashRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("PowerShell", PowerShellRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("Perl", PerlRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
+    ]
 
-        missing_tools = python_runner.check_tools()
-        if missing_tools:
-            if args.ci:
-                print_install_instructions(missing_tools)
+    # Run each runner if it has files
+    for name, runner in runners:
+        if runner.has_files():
+            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            print(f"  {name} Linting")
+            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+            missing_tools = runner.check_tools()
+            if missing_tools:
+                if args.ci:
+                    print_install_instructions(missing_tools)
+                    return ExitCode.MISSING_TOOLS
+                print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
+                print("   Run 'python -m tools.repo_lint install' to install them")
+                print("")
                 return ExitCode.MISSING_TOOLS
-            print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
-            print("   Run 'python -m tools.repo_lint install' to install them")
-            print("")
-            return ExitCode.MISSING_TOOLS
 
-        results = python_runner.check()
-        all_results.extend(results)
-    else:
-        if args.verbose:
-            print("No Python files found. Skipping Python linting.")
+            results = runner.check()
+            all_results.extend(results)
+        else:
+            if args.verbose:
+                print(f"No {name} files found. Skipping {name} linting.")
 
     # Report results
     print("")
@@ -133,28 +146,37 @@ def cmd_fix(args: argparse.Namespace) -> int:
 
     all_results = []
 
-    # Python formatting
-    python_runner = PythonRunner(ci_mode=args.ci, verbose=args.verbose)
-    if python_runner.has_files():
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        print("  Python Formatting")
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    # Define all runners
+    runners = [
+        ("Python", PythonRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("Bash", BashRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("PowerShell", PowerShellRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("Perl", PerlRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
+    ]
 
-        missing_tools = python_runner.check_tools()
-        if missing_tools:
-            if args.ci:
-                print_install_instructions(missing_tools)
+    # Run each runner if it has files
+    for name, runner in runners:
+        if runner.has_files():
+            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            print(f"  {name} Formatting")
+            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+
+            missing_tools = runner.check_tools()
+            if missing_tools:
+                if args.ci:
+                    print_install_instructions(missing_tools)
+                    return ExitCode.MISSING_TOOLS
+                print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
+                print("   Run 'python -m tools.repo_lint install' to install them")
+                print("")
                 return ExitCode.MISSING_TOOLS
-            print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
-            print("   Run 'python -m tools.repo_lint install' to install them")
-            print("")
-            return ExitCode.MISSING_TOOLS
 
-        results = python_runner.fix()
-        all_results.extend(results)
-    else:
-        if args.verbose:
-            print("No Python files found. Skipping Python formatting.")
+            results = runner.fix()
+            all_results.extend(results)
+        else:
+            if args.verbose:
+                print(f"No {name} files found. Skipping {name} formatting.")
 
     # Report results
     print("")
@@ -178,11 +200,22 @@ def cmd_install(args: argparse.Namespace) -> int:
     print("    This is a minimal stub implementation for Phase 1")
     print("")
     print("For now, please install tools manually:")
-    print("  - Python: pip install black ruff pylint")
-    print("  - Bash: apt-get install shellcheck && go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0")
-    print("  - PowerShell: Install-Module -Name PSScriptAnalyzer")
-    print("  - Perl: cpanm Perl::Critic")
-    print("  - YAML: pip install yamllint")
+    print("")
+    print("Python tools:")
+    print("  pip install black ruff pylint")
+    print("")
+    print("Bash tools:")
+    print("  apt-get install shellcheck  # or: brew install shellcheck")
+    print("  go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0")
+    print("")
+    print("PowerShell tools:")
+    print("  Install-Module -Name PSScriptAnalyzer")
+    print("")
+    print("Perl tools:")
+    print("  cpanm Perl::Critic")
+    print("")
+    print("YAML tools:")
+    print("  pip install yamllint")
     print("")
 
     return ExitCode.SUCCESS
