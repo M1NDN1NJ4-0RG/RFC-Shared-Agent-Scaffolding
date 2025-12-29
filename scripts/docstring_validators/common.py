@@ -177,7 +177,9 @@ def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
     return None
 
 
-def check_symbol_pragma_exemption(lines: List[str], symbol_line: int, pragma_pattern: str = r"#\s*noqa:\s*FUNCTION") -> bool:
+def check_symbol_pragma_exemption(
+    lines: List[str], symbol_line: int, pragma_pattern: str = r"#\s*noqa:\s*FUNCTION"
+) -> bool:
     """Check if a symbol (function/subroutine) is exempt from documentation via pragma.
 
     Checks the symbol's line and up to 5 lines before it for a pragma comment.
