@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # noqa: EXITCODES
 """Docstring validators package for RFC-Shared-Agent-Scaffolding.
 

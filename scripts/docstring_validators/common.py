@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# noqa: EXITCODES
 """Common utilities and classes for docstring validation.
 
 This module provides shared functionality used across all language-specific
@@ -24,7 +25,6 @@ validators, including the ValidationError class and helper functions.
 """
 
 import re
-from pathlib import Path
 from typing import List, Optional
 
 

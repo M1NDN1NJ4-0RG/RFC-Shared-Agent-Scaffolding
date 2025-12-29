@@ -143,17 +143,16 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
 """
 
 import argparse
+import os
 import subprocess
 import sys
 from pathlib import Path
 from typing import List
 
-# Import validator classes from modular package
 # Add scripts directory to path for imports
-import os
-import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 
+# Import validator classes from modular package
 from docstring_validators.bash_validator import BashValidator
 from docstring_validators.common import ValidationError
 from docstring_validators.perl_validator import PerlValidator
@@ -161,22 +160,7 @@ from docstring_validators.powershell_validator import PowerShellValidator
 from docstring_validators.python_validator import PythonValidator
 from docstring_validators.rust_validator import RustValidator
 from docstring_validators.yaml_validator import YAMLValidator
-
-# Import common module to set global flag
 import docstring_validators.common as common_module
-
-
-
-import argparse
-import ast
-import re
-import subprocess
-import sys
-from pathlib import Path
-from typing import List, Optional
-
-# Module-level flag for content checks (set by command-line arg)
-SKIP_CONTENT_CHECKS = False
 
 
 # In-scope directory patterns for validation
@@ -218,7 +202,6 @@ EXCLUDE_PATTERNS = [
     "tmp/**",
     ".tmp/**",
 ]
-
 
 
 def get_tracked_files() -> List[Path]:
@@ -328,9 +311,8 @@ Examples:
 
     args = parser.parse_args()
 
-    # Set global flag for content checks
-    global SKIP_CONTENT_CHECKS
-    SKIP_CONTENT_CHECKS = args.no_content_checks
+    # Set global flag for content checks in common module
+    common_module.SKIP_CONTENT_CHECKS = args.no_content_checks
 
     print("🔍 Validating docstring contracts...\n")
 
