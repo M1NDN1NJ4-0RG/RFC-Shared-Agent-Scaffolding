@@ -1,0 +1,51 @@
+{
+  "id": "bash-docstring-001",
+  "name": "Bash docstring validation - missing docstrings",
+  "description": "Validates that Bash functions without docstrings are detected via tree-sitter parsing",
+  "language": "bash",
+  "fixture": "conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh",
+  "expected_violations": [
+    {
+      "rule_id": "DOCSTRING.MISSING",
+      "path": "conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh",
+      "symbol": "function_without_doc",
+      "symbol_kind": "function",
+      "line": 14,
+      "severity": "error",
+      "message": "Function 'function_without_doc' is missing a docstring"
+    }
+  ],
+  "expected_passes": [
+    {
+      "symbol": "function_with_doc",
+      "symbol_kind": "function",
+      "reason": "Has proper comment-based docstring with Purpose"
+    },
+    {
+      "symbol": "multiline_function",
+      "symbol_kind": "function",
+      "reason": "Has proper docstring with Purpose and Args sections"
+    },
+    {
+      "symbol": "exempted_function",
+      "symbol_kind": "function",
+      "reason": "Exempted via # noqa: FUNCTION pragma"
+    },
+    {
+      "symbol": "outer_function",
+      "symbol_kind": "function",
+      "reason": "Has proper docstring"
+    },
+    {
+      "symbol": "inner_function",
+      "symbol_kind": "function",
+      "reason": "Nested function with proper docstring"
+    }
+  ],
+  "notes": [
+    "Uses tree-sitter Bash grammar (v0.25.1) for symbol discovery",
+    "Tests pragma-based exemptions (# noqa: FUNCTION)",
+    "Verifies nested function handling",
+    "Bash docstrings are comment-based (# Purpose: ...)"
+  ]
+}

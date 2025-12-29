@@ -1,0 +1,47 @@
+{
+  "id": "perl-docstring-001",
+  "name": "Perl docstring validation - missing docstrings",
+  "description": "Validates that Perl subroutines without docstrings are detected via PPI parsing",
+  "language": "perl",
+  "fixture": "conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl",
+  "expected_violations": [
+    {
+      "rule_id": "DOCSTRING.MISSING",
+      "path": "conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl",
+      "symbol": "function_without_doc",
+      "symbol_kind": "sub",
+      "line": 17,
+      "severity": "error",
+      "message": "Subroutine 'function_without_doc' is missing a docstring"
+    }
+  ],
+  "expected_passes": [
+    {
+      "symbol": "function_with_doc",
+      "symbol_kind": "sub",
+      "reason": "Has proper comment-based docstring with Purpose"
+    },
+    {
+      "symbol": "multiline_function",
+      "symbol_kind": "sub",
+      "reason": "Has proper docstring with Purpose and Args sections"
+    },
+    {
+      "symbol": "exempted_function",
+      "symbol_kind": "sub",
+      "reason": "Exempted via # noqa: FUNCTION pragma"
+    },
+    {
+      "symbol": "TestPackage::package_function",
+      "symbol_kind": "sub",
+      "reason": "Package-scoped subroutine with proper docstring"
+    }
+  ],
+  "notes": [
+    "Uses PPI module for Perl symbol discovery",
+    "Tests pragma-based exemptions (# noqa: FUNCTION)",
+    "Verifies package-scoped subroutine handling",
+    "Perl docstrings are comment-based (# Purpose: ...)",
+    "Per Phase 0 Item 0.9.5: uses PPI with structure-aware fallback"
+  ]
+}

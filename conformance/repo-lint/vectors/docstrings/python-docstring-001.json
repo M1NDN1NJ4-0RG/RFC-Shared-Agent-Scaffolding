@@ -1,0 +1,79 @@
+{
+  "id": "python-docstring-001",
+  "name": "Python docstring validation - missing docstrings",
+  "description": "Validates that Python symbols without docstrings are detected",
+  "language": "python",
+  "fixture": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
+  "expected_violations": [
+    {
+      "rule_id": "DOCSTRING.MISSING",
+      "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
+      "symbol": "no_doc",
+      "symbol_kind": "function",
+      "line": 13,
+      "severity": "error",
+      "message": "Function 'no_doc' is missing a docstring"
+    },
+    {
+      "rule_id": "DOCSTRING.MISSING",
+      "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
+      "symbol": "MissingClassDoc",
+      "symbol_kind": "class",
+      "line": 17,
+      "severity": "error",
+      "message": "Class 'MissingClassDoc' is missing a docstring"
+    },
+    {
+      "rule_id": "DOCSTRING.MISSING",
+      "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
+      "symbol": "MissingClassDoc.method_without_doc",
+      "symbol_kind": "method",
+      "line": 22,
+      "severity": "error",
+      "message": "Method 'method_without_doc' is missing a docstring"
+    }
+  ],
+  "expected_passes": [
+    {
+      "symbol": "function_with_doc",
+      "symbol_kind": "function",
+      "reason": "Has proper docstring"
+    },
+    {
+      "symbol": "MissingClassDoc.method_with_doc",
+      "symbol_kind": "method",
+      "reason": "Has proper docstring"
+    },
+    {
+      "symbol": "ProperlyDocumented",
+      "symbol_kind": "class",
+      "reason": "Has proper docstring with Purpose section"
+    },
+    {
+      "symbol": "ProperlyDocumented.__init__",
+      "symbol_kind": "method",
+      "reason": "Has proper docstring"
+    },
+    {
+      "symbol": "ProperlyDocumented.public_method",
+      "symbol_kind": "method",
+      "reason": "Has proper docstring"
+    },
+    {
+      "symbol": "exempted_function",
+      "symbol_kind": "function",
+      "reason": "Exempted via # noqa: FUNCTION pragma"
+    },
+    {
+      "symbol": "multiline_signature",
+      "symbol_kind": "function",
+      "reason": "Has proper docstring"
+    }
+  ],
+  "notes": [
+    "Validates Python AST-based symbol discovery",
+    "Tests pragma-based exemptions (# noqa: FUNCTION)",
+    "Verifies multiline signature handling",
+    "Ensures private symbols (_name, __name) are not skipped implicitly"
+  ]
+}
