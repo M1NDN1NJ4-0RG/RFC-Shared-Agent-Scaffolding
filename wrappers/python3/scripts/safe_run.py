@@ -114,8 +114,8 @@ def find_repo_root() -> Optional[Path]:
     Searches for repository markers (RFC specification file or .git directory)
     by traversing parent directories from the script's location.
 
-    :returns: Path to repository root if found, None otherwise
-    :raises: None - returns None on failure instead of raising
+    Returns:
+        Path to repository root if found, None otherwise
 
     Detection Logic
     ---------------
@@ -148,7 +148,8 @@ def find_repo_root() -> Optional[Path]:
 def detect_platform() -> str:
     """Detect OS and architecture for CI artifact path resolution.
 
-    :returns: Platform string in format "<os>/<arch>" for dist/ path construction
+    Returns:
+        Platform string in format "<os>/<arch>" for dist/ path construction
 
     Supported Platforms
     -------------------
@@ -205,7 +206,8 @@ def find_safe_run_binary() -> Optional[str]:
     Implements the deterministic binary discovery rules that all language
     wrappers must follow to locate the Rust canonical tool.
 
-    :returns: Absolute path to safe-run binary if found, None otherwise
+    Returns:
+        Absolute path to safe-run binary if found, None otherwise
 
     Discovery Order
     ---------------
@@ -298,8 +300,11 @@ def find_safe_run_binary() -> Optional[str]:
 def main() -> int:
     """Main execution: discover binary and exec with argument forwarding.
 
-    :returns: Exit code (127 if binary not found, otherwise does not return)
-    :raises SystemExit: Via os.execvp() on successful binary execution
+    Returns:
+        Exit code (127 if binary not found, otherwise does not return)
+    
+    Raises:
+        SystemExit: Via os.execvp() on successful binary execution
 
     Behavior
     --------
