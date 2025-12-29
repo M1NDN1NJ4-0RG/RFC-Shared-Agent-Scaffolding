@@ -21,10 +21,9 @@ select = [
 ]
 
 # Ignore rules that conflict with Black or are disabled in current Flake8 config
-ignore = [
-    # E203 has been removed from Ruff entirely (was deprecated in pycodestyle)
-    # Kept here for documentation only - this entry has no effect
-]
+# Note: E203 was removed from Ruff (obsolete in pycodestyle). Array kept for
+# future ignore rules that may be needed as Ruff evolves.
+ignore = []
 
 [tool.pylint.format]
 max-line-length = 120

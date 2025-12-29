@@ -1,7 +1,5 @@
 # [EPIC] Build `repo_lint` Python Package/CLI - Implementation Status
 
-**Last Updated:** 2025-12-29
-
 This document tracks the implementation status of the `repo_lint` Python Package/CLI epic. It serves as a living document updated as work progresses through the 7 phases.
 
 ---
