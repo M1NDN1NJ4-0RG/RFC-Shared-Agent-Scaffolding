@@ -3,11 +3,11 @@
   "name": "PowerShell docstring validation - missing docstrings",
   "description": "Validates that PowerShell functions without docstrings are detected via AST parsing",
   "language": "powershell",
-  "fixture": "conformance/repo_lint/vectors/fixtures/powershell/DocstringTest.ps1",
+  "fixture": "conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1",
   "expected_violations": [
     {
       "rule_id": "DOCSTRING.MISSING",
-      "path": "conformance/repo_lint/vectors/fixtures/powershell/DocstringTest.ps1",
+      "path": "conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1",
       "symbol": "FunctionWithoutDoc",
       "symbol_kind": "function",
       "line": 16,

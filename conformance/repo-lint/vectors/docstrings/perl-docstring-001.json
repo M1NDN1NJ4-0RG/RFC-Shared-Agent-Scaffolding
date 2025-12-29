@@ -3,11 +3,11 @@
   "name": "Perl docstring validation - missing docstrings",
   "description": "Validates that Perl subroutines without docstrings are detected via PPI parsing",
   "language": "perl",
-  "fixture": "conformance/repo_lint/vectors/fixtures/perl/docstring_test.pl",
+  "fixture": "conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl",
   "expected_violations": [
     {
       "rule_id": "DOCSTRING.MISSING",
-      "path": "conformance/repo_lint/vectors/fixtures/perl/docstring_test.pl",
+      "path": "conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl",
       "symbol": "function_without_doc",
       "symbol_kind": "sub",
       "line": 17,

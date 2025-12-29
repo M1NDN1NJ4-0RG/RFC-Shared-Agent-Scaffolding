@@ -3,11 +3,11 @@
   "name": "Bash docstring validation - missing docstrings",
   "description": "Validates that Bash functions without docstrings are detected via tree-sitter parsing",
   "language": "bash",
-  "fixture": "conformance/repo_lint/vectors/fixtures/bash/docstring-test.sh",
+  "fixture": "conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh",
   "expected_violations": [
     {
       "rule_id": "DOCSTRING.MISSING",
-      "path": "conformance/repo_lint/vectors/fixtures/bash/docstring-test.sh",
+      "path": "conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh",
       "symbol": "function_without_doc",
       "symbol_kind": "function",
       "line": 14,

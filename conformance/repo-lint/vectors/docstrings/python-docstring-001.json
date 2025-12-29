@@ -3,11 +3,11 @@
   "name": "Python docstring validation - missing docstrings",
   "description": "Validates that Python symbols without docstrings are detected",
   "language": "python",
-  "fixture": "conformance/repo_lint/vectors/fixtures/python/docstring_test.py",
+  "fixture": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
   "expected_violations": [
     {
       "rule_id": "DOCSTRING.MISSING",
-      "path": "conformance/repo_lint/vectors/fixtures/python/docstring_test.py",
+      "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
       "symbol": "no_doc",
       "symbol_kind": "function",
       "line": 12,
@@ -16,7 +16,7 @@
     },
     {
       "rule_id": "DOCSTRING.MISSING",
-      "path": "conformance/repo_lint/vectors/fixtures/python/docstring_test.py",
+      "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
       "symbol": "MissingClassDoc",
       "symbol_kind": "class",
       "line": 16,
@@ -25,7 +25,7 @@
     },
     {
       "rule_id": "DOCSTRING.MISSING",
-      "path": "conformance/repo_lint/vectors/fixtures/python/docstring_test.py",
+      "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
       "symbol": "MissingClassDoc.method_without_doc",
       "symbol_kind": "method",
       "line": 21,

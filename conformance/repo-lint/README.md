@@ -19,14 +19,14 @@ This directory contains conformance test vectors for `repo_lint` linting and doc
 ## Directory Structure
 
 ```
-conformance/repo_lint/
-├── autofix_policy.json           # Deny-by-default auto-fix allow/deny policy
+conformance/repo-lint/
+├── autofix-policy.json           # Deny-by-default auto-fix allow/deny policy
 ├── vectors/
 │   ├── docstrings/                # Docstring validation test vectors (JSON)
-│   │   ├── python_docstring_001.json
-│   │   ├── bash_docstring_001.json
-│   │   ├── powershell_docstring_001.json
-│   │   ├── perl_docstring_001.json
+│   │   ├── python-docstring-001.json
+│   │   ├── bash-docstring-001.json
+│   │   ├── powershell-docstring-001.json
+│   │   ├── perl-docstring-001.json
 │   │   └── ...
 │   └── fixtures/                  # Source code fixtures for testing
 │       ├── python/
@@ -49,7 +49,7 @@ All test vectors use a **normalized violation schema** to ensure stable, compara
 
 ### Vector File Structure
 
-Each vector file (e.g., `python_docstring_001.json`) contains:
+Each vector file (e.g., `python-docstring-001.json`) contains:
 
 ```json
 {
@@ -61,7 +61,7 @@ Each vector file (e.g., `python_docstring_001.json`) contains:
   "expected_violations": [
     {
       "rule_id": "DOCSTRING.MISSING",
-      "path": "conformance/repo_lint/vectors/fixtures/python/docstring_test.py",
+      "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
       "symbol": "function_name",
       "symbol_kind": "function | method | class | sub",
       "line": 12,
@@ -106,7 +106,7 @@ Each vector file (e.g., `python_docstring_001.json`) contains:
 
 ## Auto-Fix Policy
 
-The auto-fix policy (`autofix_policy.json`) defines which fix categories are allowed to run under `repo-lint fix`.
+The auto-fix policy (`autofix-policy.json`) defines which fix categories are allowed to run under `repo-lint fix`.
 
 **Policy:** Deny-by-default. Only explicitly allowed categories may execute auto-fixes.
 
@@ -134,7 +134,7 @@ The auto-fix policy (`autofix_policy.json`) defines which fix categories are all
 
 ### For Test Implementers
 
-1. Load vector files from `conformance/repo_lint/vectors/docstrings/`
+1. Load vector files from `conformance/repo-lint/vectors/docstrings/` (kebab-case JSON files)
 2. For each vector:
    - Run the relevant `repo_lint` runner against the fixture file
    - Capture violations in the normalized schema format
@@ -151,7 +151,7 @@ from tools.repo_lint.runners.python_runner import PythonRunner
 
 def test_python_docstring_001():
     # Load vector
-    vector_path = Path("conformance/repo_lint/vectors/docstrings/python_docstring_001.json")
+    vector_path = Path("conformance/repo-lint/vectors/docstrings/python-docstring-001.json")
     vector = json.loads(vector_path.read_text())
     
     # Run linter
@@ -174,7 +174,7 @@ def test_python_docstring_001():
 Vectors should be tested whenever:
 - Linting or docstring validation code changes
 - Parser implementations are swapped (e.g., tree-sitter upgrade)
-- `autofix_policy.json` is updated
+- `autofix-policy.json` is updated
 
 A failing vector test indicates **behavioral drift** and blocks merge.
 
