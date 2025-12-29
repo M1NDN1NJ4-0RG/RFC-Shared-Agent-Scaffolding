@@ -13,6 +13,9 @@
     Import version constants when implementing tool installation logic.
 """
 
+# Pip version for venv creation (pinned for deterministic installs)
+PIP_VERSION = "25.3"
+
 # Python-based tools (must match pyproject.toml [project.optional-dependencies.lint])
 PYTHON_TOOLS = {
     "black": "24.10.0",

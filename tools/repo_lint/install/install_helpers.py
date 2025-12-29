@@ -10,20 +10,19 @@
 
 :Functions:
     - install_python_tools: Install Python tools in repo-local venv
-    - install_bash_tools: Print instructions for Bash tools
-    - install_powershell_tools: Print instructions for PowerShell tools
-    - install_perl_tools: Print instructions for Perl tools
+    - print_bash_tool_instructions: Print instructions for Bash tools
+    - print_powershell_tool_instructions: Print instructions for PowerShell tools
+    - print_perl_tool_instructions: Print instructions for Perl tools
     - cleanup_repo_local: Remove repo-local tool installations
 """
 
-import os
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from tools.repo_lint.install.version_pins import BASH_TOOLS, PERL_TOOLS, POWERSHELL_TOOLS, PYTHON_TOOLS
+from tools.repo_lint.install.version_pins import BASH_TOOLS, PIP_VERSION, POWERSHELL_TOOLS, PYTHON_TOOLS
 
 
 def get_repo_root() -> Path:
@@ -113,11 +112,11 @@ def create_venv(verbose: bool = False) -> Tuple[bool, Optional[str]]:
         else:
             venv_python = venv_path / "bin" / "python"
 
-        # Upgrade pip to latest
+        # Upgrade pip to pinned version for deterministic installs
         if verbose:
-            print("Upgrading pip...")
+            print(f"Upgrading pip to version {PIP_VERSION}...")
         subprocess.run(
-            [str(venv_python), "-m", "pip", "install", "--upgrade", "pip"], check=True, capture_output=not verbose
+            [str(venv_python), "-m", "pip", "install", f"pip=={PIP_VERSION}"], check=True, capture_output=not verbose
         )
 
         if verbose:
@@ -148,10 +147,8 @@ def install_python_tools(verbose: bool = False) -> Tuple[bool, List[str]]:
 
     venv_path = get_venv_path()
     if sys.platform == "win32":
-        venv_python = venv_path / "Scripts" / "python.exe"
         venv_pip = venv_path / "Scripts" / "pip.exe"
     else:
-        venv_python = venv_path / "bin" / "python"
         venv_pip = venv_path / "bin" / "pip"
 
     # Install each tool with pinned version
