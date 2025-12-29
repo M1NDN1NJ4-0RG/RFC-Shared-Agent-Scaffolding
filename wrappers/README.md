@@ -63,15 +63,15 @@ python3 ./wrappers/python3/scripts/safe_run.py echo "Hello, World!"
 
 **Location:** `wrappers/powershell/scripts/`
 
-- `safe-run.ps1` - Execute commands with event logging
-- `safe-check.ps1` - Check for existing artifacts
-- `safe-archive.ps1` - Archive artifacts to timestamped directories
+- `SafeRun.ps1` - Execute commands with event logging
+- `SafeCheck.ps1` - Check for existing artifacts
+- `SafeArchive.ps1` - Archive artifacts to timestamped directories
 
 **Requirements:** PowerShell 5.1+ (Windows), PowerShell Core 7+ (cross-platform)
 
 **Usage:**
 ```powershell
-pwsh ./wrappers/powershell/scripts/safe-run.ps1 echo "Hello, World!"
+pwsh ./wrappers/powershell/scripts/SafeRun.ps1 echo "Hello, World!"
 ```
 
 ## How Wrappers Locate the Rust Binary

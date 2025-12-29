@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  safe-archive.ps1 - Non-destructive archival of failure logs with optional compression
+  SafeArchive.ps1 - Non-destructive archival of failure logs with optional compression
 
 .DESCRIPTION
   Moves failure logs from SAFE_FAIL_DIR to SAFE_ARCHIVE_DIR using safe move semantics.
@@ -61,29 +61,29 @@
 
 .EXAMPLE
   # Archive all logs without compression
-  PS> .\safe-archive.ps1 --all
+  PS> .\SafeArchive.ps1 --all
   ARCHIVED: .agent/FAIL-LOGS/20231215T120000Z-pid123-FAIL.log -> .agent/FAIL-ARCHIVE/20231215T120000Z-pid123-FAIL.log
 
 .EXAMPLE
   # Archive specific file with gzip compression
   PS> $env:SAFE_ARCHIVE_COMPRESS = "gzip"
-  PS> .\safe-archive.ps1 .agent/FAIL-LOGS/test-FAIL.log
+  PS> .\SafeArchive.ps1 .agent/FAIL-LOGS/test-FAIL.log
   ARCHIVED: .agent/FAIL-LOGS/test-FAIL.log -> .agent/FAIL-ARCHIVE/test-FAIL.log
 
 .EXAMPLE
   # Archive all logs with xz compression (requires 'xz' in PATH)
   PS> $env:SAFE_ARCHIVE_COMPRESS = "xz"
-  PS> .\safe-archive.ps1 --all
+  PS> .\SafeArchive.ps1 --all
   ARCHIVED: .agent/FAIL-LOGS/log1.log -> .agent/FAIL-ARCHIVE/log1.log
   # Destination will be .agent/FAIL-ARCHIVE/log1.log.xz after compression
 
 .EXAMPLE
   # No-clobber behavior demonstration
   PS> # First archive creates: archive/test.log
-  PS> .\safe-archive.ps1 logs/test.log
+  PS> .\SafeArchive.ps1 logs/test.log
   ARCHIVED: logs/test.log -> archive/test.log
   PS> # Second archive with same name creates: archive/test-1.log
-  PS> .\safe-archive.ps1 logs/test.log
+  PS> .\SafeArchive.ps1 logs/test.log
   ARCHIVED: logs/test.log -> archive/test-1.log
 
 .NOTES
@@ -206,7 +206,7 @@ function Archive-One([string]$src, [string]$archiveDir, [string]$compress) {
 }
 
 if ($null -eq $ArgsRest -or $ArgsRest.Count -eq 0 -or $ArgsRest[0] -in @('-h','--help')) {
-  Write-Err "Usage: scripts/safe-archive.ps1 [--all | <file> ...]"
+  Write-Err "Usage: scripts/SafeArchive.ps1 [--all | <file> ...]"
   exit 2
 }
 

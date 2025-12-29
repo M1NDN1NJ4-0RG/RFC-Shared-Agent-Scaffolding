@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  safe-check.ps1 - Automated contract verification for safe-run and safe-archive wrappers
+  SafeCheck.ps1 - Automated contract verification for safe-run and safe-archive wrappers
 
 .DESCRIPTION
   Executable conformance test that validates the PowerShell wrapper implementations
@@ -30,7 +30,7 @@
     Override for failure log directory during testing.
     Default: .agent/FAIL-LOGS
 
-  All environment variables consumed by safe-run.ps1 and safe-archive.ps1 are
+  All environment variables consumed by SafeRun.ps1 and SafeArchive.ps1 are
   implicitly tested through their invocation in this script.
 
 .OUTPUTS
@@ -82,8 +82,8 @@
     4. safe-archive no-clobber: automatic suffix on destination collision
 
   Prerequisites:
-    - scripts/safe-run.ps1 must exist
-    - scripts/safe-archive.ps1 must exist
+    - scripts/SafeRun.ps1 must exist
+    - scripts/SafeArchive.ps1 must exist
     - Rust canonical safe-run binary must be discoverable (or SAFE_RUN_BIN set)
 
   Design Notes:
@@ -101,7 +101,7 @@ $ErrorActionPreference = 'Stop'
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 function Die([string]$Msg) { Write-Err "ERROR: $Msg"; exit 1 }
 
-if ($args.Count -ne 0) { Write-Err "Usage: scripts/safe-check.ps1"; exit 2 }
+if ($args.Count -ne 0) { Write-Err "Usage: scripts/SafeCheck.ps1"; exit 2 }
 
 $logDir = $env:SAFE_LOG_DIR
 if ([string]::IsNullOrWhiteSpace($logDir)) { $logDir = ".agent/FAIL-LOGS" }

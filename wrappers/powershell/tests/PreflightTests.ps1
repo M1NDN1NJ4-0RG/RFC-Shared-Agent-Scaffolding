@@ -32,7 +32,7 @@
   Prerequisites:
     - Pester module (v5.0+)
     - preflight-automerge-ruleset.ps1 script in ../scripts/
-    - test-helpers.ps1 in same directory (provides Add-FakeGhToPath, New-TempDir)
+    - TestHelpers.ps1 in same directory (provides Add-FakeGhToPath, New-TempDir)
 
   Test Isolation:
     - Each test creates unique temporary directory
@@ -82,7 +82,7 @@ Set-StrictMode -Version Latest
 
 Describe "preflight-automerge-ruleset.ps1" {
   BeforeAll {
-    . "$PSScriptRoot/test-helpers.ps1"
+    . "$PSScriptRoot/TestHelpers.ps1"
     $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\preflight-automerge-ruleset.ps1"
   }
 
