@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  safe-run.ps1 - PowerShell wrapper for Rust canonical safe-run tool
+  SafeRun.ps1 - PowerShell wrapper for Rust canonical safe-run tool
 
 .DESCRIPTION
   Thin invoker that discovers and delegates to the Rust canonical safe-run implementation.
@@ -30,8 +30,8 @@
   An optional leading '--' separator is stripped if present (common shell convention).
 
   Examples:
-    safe-run.ps1 -- pwsh -Command "Write-Output 'test'"
-    safe-run.ps1 pwsh -Command "Write-Output 'test'"  # Also valid
+    SafeRun.ps1 -- pwsh -Command "Write-Output 'test'"
+    SafeRun.ps1 pwsh -Command "Write-Output 'test'"  # Also valid
 
 .ENVIRONMENT
   SAFE_RUN_BIN
@@ -71,7 +71,7 @@
 
 .EXAMPLE
   # Run a command that succeeds
-  PS> .\safe-run.ps1 -- pwsh -Command "Write-Output 'hello'"
+  PS> .\SafeRun.ps1 -- pwsh -Command "Write-Output 'hello'"
   hello
   PS> $LASTEXITCODE
   0
@@ -80,7 +80,7 @@
   # Run a command that fails (creates failure log)
   PS> $env:SAFE_LOG_DIR = ".agent/FAIL-LOGS"
   PS> $env:SAFE_SNIPPET_LINES = "5"
-  PS> .\safe-run.ps1 -- pwsh -Command "Write-Error 'boom'; exit 42"
+  PS> .\SafeRun.ps1 -- pwsh -Command "Write-Error 'boom'; exit 42"
   # Stderr will show last 5 lines of output
   # Failure log created: .agent/FAIL-LOGS/20231215T143022Z-pid1234-FAIL.log
   PS> $LASTEXITCODE
@@ -89,7 +89,7 @@
 .EXAMPLE
   # Use custom binary location
   PS> $env:SAFE_RUN_BIN = "/opt/custom/safe-run"
-  PS> .\safe-run.ps1 -- echo "test"
+  PS> .\SafeRun.ps1 -- echo "test"
 
 .NOTES
   Platform Compatibility:

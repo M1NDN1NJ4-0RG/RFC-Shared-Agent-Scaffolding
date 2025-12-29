@@ -42,10 +42,10 @@ Verification Tests
 
 CLI Usage
 ---------
-    python3 scripts/python3/safe-check.py
+    python3 scripts/python3/safe_check.py
 
 No arguments accepted. The script discovers and tests the sibling scripts
-(safe-run.py, safe-archive.py) in the same directory tree.
+(safe_run.py, safe_archive.py) in the same directory tree.
 
 Exit Codes
 ----------
@@ -68,7 +68,7 @@ Examples
 Run contract verification::
 
     cd /path/to/repo
-    python3 scripts/python3/safe-check.py
+    python3 scripts/python3/safe_check.py
     # Output: INFO: SAFE-CHECK: contract verification PASSED
 
 Contract References
@@ -81,8 +81,8 @@ This script verifies conformance with:
 
 See Also
 --------
-- scripts/python3/safe-run.py: Wrapper under test
-- scripts/python3/safe-archive.py: Archival tool under test
+- scripts/python3/safe_run.py: Wrapper under test
+- scripts/python3/safe_archive.py: Archival tool under test
 - docs/rust-canonical-tool.md: Canonical contract specification
 """
 import os
@@ -123,7 +123,7 @@ def usage() -> None:
 
     :raises SystemExit: Always exits with code 2 (usage error)
     """
-    eprint("Usage: scripts/python3/safe-check.py")
+    eprint("Usage: scripts/python3/safe_check.py")
     raise SystemExit(2)
 
 
@@ -180,10 +180,10 @@ def main(argv: List[str]) -> int:
     os.makedirs(log_dir, exist_ok=True)
     os.makedirs(".agent/FAIL-ARCHIVE", exist_ok=True)
 
-    if not Path("scripts/python3/safe-run.py").is_file():
-        die("Missing scripts/python3/safe-run.py")
-    if not Path("scripts/python3/safe-archive.py").is_file():
-        die("Missing scripts/python3/safe-archive.py")
+    if not Path("scripts/python3/safe_run.py").is_file():
+        die("Missing scripts/python3/safe_run.py")
+    if not Path("scripts/python3/safe_archive.py").is_file():
+        die("Missing scripts/python3/safe_archive.py")
 
     before = count_files(log_dir)
 
@@ -191,7 +191,7 @@ def main(argv: List[str]) -> int:
     rc = subprocess.call(
         [
             sys.executable,
-            "scripts/python3/safe-run.py",
+            "scripts/python3/safe_run.py",
             "--",
             sys.executable,
             "-c",
@@ -211,7 +211,7 @@ def main(argv: List[str]) -> int:
     rc = subprocess.call(
         [
             sys.executable,
-            "scripts/python3/safe-run.py",
+            "scripts/python3/safe_run.py",
             "--",
             sys.executable,
             "-c",
@@ -239,7 +239,7 @@ def main(argv: List[str]) -> int:
     dest = os.path.join(".agent/FAIL-ARCHIVE", base)
 
     rc = subprocess.call(
-        [sys.executable, "scripts/python3/safe-archive.py", newest],
+        [sys.executable, "scripts/python3/safe_archive.py", newest],
         stdout=subprocess.DEVNULL,
     )
     if rc != 0:
@@ -255,7 +255,7 @@ def main(argv: List[str]) -> int:
     with open(dummy, "w", encoding="utf-8") as fh:
         fh.write("dummy\n")
     rc = subprocess.call(
-        [sys.executable, "scripts/python3/safe-archive.py", dummy],
+        [sys.executable, "scripts/python3/safe_archive.py", dummy],
         stdout=subprocess.DEVNULL,
     )
     if rc != 0:

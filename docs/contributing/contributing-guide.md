@@ -45,7 +45,7 @@ cargo test --test conformance
 
 ```bash
 # Validate docstrings
-python3 scripts/validate-docstrings.py
+python3 scripts/validate_docstrings.py
 
 # Validate structure
 ./scripts/validate-structure.sh
@@ -140,7 +140,7 @@ find . -type f -name "*" | grep -E "[A-Z_]" | grep -v -E "(README|LICENSE|Cargo|
 
 ```bash
 # Validate all docstrings
-python3 scripts/validate-docstrings.py
+python3 scripts/validate_docstrings.py
 ```
 
 See [Docstring Contracts](#docstring-contracts) for details.
@@ -292,7 +292,7 @@ cd wrappers/bash/
 
 **EVERY script file in the repository MUST conform to its language-specific docstring contract.**
 
-Contracts are defined in `docs/contributing/docstring-contracts/` and enforced by CI via `scripts/validate-docstrings.py`.
+Contracts are defined in `docs/contributing/docstring-contracts/` and enforced by CI via `scripts/validate_docstrings.py`.
 
 #### Required Sections
 
@@ -335,7 +335,7 @@ See templates in:
    make lint-yaml
    
    # Docstrings, structure, and references
-   python3 scripts/validate-docstrings.py
+   python3 scripts/validate_docstrings.py
    ./scripts/validate-structure.sh
    ./scripts/verify-repo-references.sh
    

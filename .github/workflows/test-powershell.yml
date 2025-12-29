@@ -8,7 +8,7 @@
 # - Rust canonical binary (built and staged at dist/windows/x86_64/safe-run.exe)
 # - PowerShell (built into Windows)
 # - Pester 5.0+ (PowerShell testing framework)
-# - PowerShell test suite (run-tests.ps1)
+# - PowerShell test suite (RunTests.ps1)
 #
 # Triggers:
 # - Pull requests modifying PowerShell bundle, conformance data, or this workflow
@@ -93,14 +93,14 @@ jobs:
           Write-Host "Pester version: $((Get-Module Pester -ListAvailable).Version)"
 
       # Step 6: Run PowerShell test suite
-      # Executes run-tests.ps1 which runs all Pester tests in tests/ directory
+      # Executes RunTests.ps1 which runs all Pester tests in tests/ directory
       # Uses -NoProfile to avoid loading user profile scripts
       # Test runner sets $env:SAFE_RUN_BIN to point to staged Rust binary
       - name: Run PowerShell tests
         shell: pwsh
         working-directory: wrappers/powershell
         run: |
-          pwsh -NoProfile -File ./run-tests.ps1
+          pwsh -NoProfile -File ./RunTests.ps1
 
       # Step 7: Upload failure logs as artifacts (only on test failure)
       # Preserves .agent/FAIL-LOGS/ directory for debugging

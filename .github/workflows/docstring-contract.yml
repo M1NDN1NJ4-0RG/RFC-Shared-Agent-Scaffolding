@@ -13,7 +13,7 @@
 #
 # Dependencies:
 # - Python 3.8+
-# - scripts/validate-docstrings.py
+# - scripts/validate_docstrings.py
 # - docs/contributing/docstring-contracts/*.md (contract definitions)
 #
 # Outputs:
@@ -46,7 +46,7 @@ on:
       - '.github/ISSUE_TEMPLATE/*.yml'
       - '.github/ISSUE_TEMPLATE/*.yaml'
       - 'docs/contributing/docstring-contracts/**'
-      - 'scripts/validate-docstrings.py'
+      - 'scripts/validate_docstrings.py'
       - '.github/workflows/docstring-contract.yml'
   push:
     branches:
@@ -65,7 +65,7 @@ on:
       - '.github/ISSUE_TEMPLATE/*.yml'
       - '.github/ISSUE_TEMPLATE/*.yaml'
       - 'docs/contributing/docstring-contracts/**'
-      - 'scripts/validate-docstrings.py'
+      - 'scripts/validate_docstrings.py'
   workflow_dispatch:
 
 permissions:
@@ -87,7 +87,7 @@ jobs:
 
       - name: Run docstring validator
         run: |
-          python3 scripts/validate-docstrings.py
+          python3 scripts/validate_docstrings.py
 
       - name: Report success
         if: success()

@@ -295,7 +295,7 @@ The validator does NOT check:
 - Exit code completeness (but basic content checks apply if using validator --content-checks)
 
 **Validation Best Practices:**
-- Run validator locally before committing: `python3 scripts/validate-docstrings.py --file my-script.ps1`
+- Run validator locally before committing: `python3 scripts/validate_docstrings.py --file my-script.ps1`
 - Test help system integration: `Get-Help .\my-script.ps1 -Detailed`
 - If using pipeline parameters, add `.INPUTS` and `.OUTPUTS` sections
 - Document all parameters with `.PARAMETER` blocks

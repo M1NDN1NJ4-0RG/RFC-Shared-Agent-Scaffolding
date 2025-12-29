@@ -16,7 +16,7 @@ Docstring contracts ensure:
 
 ## Enforcement
 
-**ALL scripts in this repository MUST conform to their language's docstring contract**, regardless of location. Conformance is validated by CI via `.github/workflows/docstring-contract.yml`, which runs `scripts/validate-docstrings.py` on every PR.
+**ALL scripts in this repository MUST conform to their language's docstring contract**, regardless of location. Conformance is validated by CI via `.github/workflows/docstring-contract.yml`, which runs `scripts/validate_docstrings.py` on every PR.
 
 The validator scans the entire repository for script files (`.sh`, `.ps1`, `.py`, `.pl`, `.pm`, `.rs`, `.yml`, `.yaml`) and validates each one against its language contract. This ensures that any new script added anywhere in the repository will be checked.
 
@@ -151,7 +151,7 @@ This means **any new script added anywhere in the repository** will be validated
 
 ## Validator
 
-The validator (`scripts/validate-docstrings.py`) performs lightweight checks:
+The validator (`scripts/validate_docstrings.py`) performs lightweight checks:
 - **Presence** of a docstring/comment block near the top of file
 - **Presence** of required semantic sections (regex-based)
 
@@ -171,7 +171,7 @@ It does **not** validate:
 2. Open the contract document (e.g., `bash.md`)
 3. Copy the template
 4. Fill in the required sections
-5. Run `python3 scripts/validate-docstrings.py` locally
+5. Run `python3 scripts/validate_docstrings.py` locally
 6. Commit when validation passes
 
 ## CI Integration
@@ -204,7 +204,7 @@ Create a new file `docs/contributing/docstring-contracts/<language>.md` with the
 
 ### 2. Update the Validator
 
-Edit `scripts/validate-docstrings.py`:
+Edit `scripts/validate_docstrings.py`:
 
 ```python
 # Add file extension patterns to IN_SCOPE_PATTERNS
@@ -253,11 +253,11 @@ def validate_file(file_path: Path) -> Optional[ValidationError]:
 touch test-script.ext
 
 # Run validator - should fail
-python3 scripts/validate-docstrings.py
+python3 scripts/validate_docstrings.py
 
 # Add proper docstring following your contract
 # Run validator again - should pass
-python3 scripts/validate-docstrings.py
+python3 scripts/validate_docstrings.py
 ```
 
 ### 5. Add CI Coverage
@@ -344,7 +344,7 @@ Check all required sections are present and properly formatted.
 ### Reference the Validator
 
 ```
-This script must pass validation by scripts/validate-docstrings.py.
+This script must pass validation by scripts/validate_docstrings.py.
 Ensure it includes all required docstring sections for [language].
 See docs/contributing/docstring-contracts/[language].md for the contract.
 ```
@@ -364,7 +364,7 @@ See docs/contributing/docstring-contracts/[language].md for the contract.
 ❌ **No validation check:** Accepting AI output without verification
 - May be incomplete or non-conformant
 
-✅ **Request validation:** "Generate script and verify it passes scripts/validate-docstrings.py"
+✅ **Request validation:** "Generate script and verify it passes scripts/validate_docstrings.py"
 
 ### Example: Full Copilot Workflow
 
@@ -377,7 +377,7 @@ See docs/contributing/docstring-contracts/[language].md for the contract.
 
 2. **Validate:**
    ```
-   @terminal Run python3 scripts/validate-docstrings.py on the new script
+   @terminal Run python3 scripts/validate_docstrings.py on the new script
    ```
 
 3. **Fix violations:**
@@ -395,7 +395,7 @@ See docs/contributing/docstring-contracts/[language].md for the contract.
 ## References
 
 - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
-- `scripts/validate-docstrings.py` - Validator implementation (see its docstring for meta-example)
+- `scripts/validate_docstrings.py` - Validator implementation (see its docstring for meta-example)
 - [rfc-shared-agent-scaffolding-v0.1.0.md](../../rfc-shared-agent-scaffolding-v0.1.0.md) - M0 contract specification
 - [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract
 - [Wrapper Discovery](../../architecture/wrapper-discovery.md) - Binary discovery rules

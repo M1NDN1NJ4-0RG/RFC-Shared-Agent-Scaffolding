@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  test-helpers.ps1 - Shared test utilities for PowerShell Pester test suites
+  TestHelpers.ps1 - Shared test utilities for PowerShell Pester test suites
 
 .DESCRIPTION
   Common helper functions used across multiple Pester test files to reduce
@@ -22,7 +22,7 @@
 
   Usage:
     This file is dot-sourced by test files:
-      . "$PSScriptRoot/test-helpers.ps1"
+      . "$PSScriptRoot/TestHelpers.ps1"
 
     Functions are then available in the test scope.
 
@@ -37,7 +37,7 @@
 
 .EXAMPLE
   # Dot-source helpers in a test file
-  PS> . "$PSScriptRoot/test-helpers.ps1"
+  PS> . "$PSScriptRoot/TestHelpers.ps1"
 
   # Use helper functions in tests
   PS> $tmp = New-TempDir

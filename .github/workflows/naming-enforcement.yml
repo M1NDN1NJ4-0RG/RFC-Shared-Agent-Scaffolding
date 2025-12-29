@@ -1,0 +1,123 @@
+# Workflow: Language-Specific Naming Enforcement
+#
+# Purpose: Enforces language-specific naming conventions for script filenames
+# as defined in docs/contributing/naming-and-style.md. Each language follows
+# its ecosystem conventions rather than a single repository-wide pattern.
+#
+# Conventions:
+# - Python: snake_case.py (PEP 8)
+# - PowerShell: PascalCase.ps1 (PowerShell community)
+# - Bash: kebab-case.sh (Unix/Linux tradition)
+# - Perl: kebab-case.pl, PascalCase.pm (Perl conventions)
+# - Non-script files: kebab-case (docs, configs, general files)
+#
+# Scope:
+# - wrappers/**
+# - scripts/**
+# - docs/**
+# - Root-level files
+#
+# Triggers:
+# - Pull requests (all paths)
+# - Pushes to main branch
+#
+# Dependencies:
+# - Python 3 (embedded validation script)
+# - git ls-files
+#
+# Outputs:
+# - Status check: "Language-Specific Naming Validation"
+# - Artifacts: None
+# - Side effects: Warns on violations (Phase 4), fails on violations (Phase 4.5+)
+#
+# Notes:
+# - Phase 4: WARN mode (exit 0 even with violations, print warnings)
+# - Phase 4.5: Will be converted to FAIL mode (exit non-zero on violations)
+# - See docs/contributing/naming-and-style.md for full specification
+---
+name: naming-enforcement
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate_naming:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate language-specific naming conventions
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import re, subprocess, sys
+          from pathlib import PurePosixPath
+
+          # Naming patterns per language
+          SNAKE_CASE = re.compile(r"^[a-z0-9]+(_[a-z0-9]+)*$")
+          KEBAB_CASE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
+          PASCAL_CASE = re.compile(r"^[A-Z][a-zA-Z0-9]*$")
+
+          # Get all tracked files
+          out = subprocess.check_output(["git", "ls-files", "-z"])
+          files = [f.decode("utf-8") for f in out.split(b"\0") if f]
+
+          violations = []
+          for path in files:
+            p = PurePosixPath(path)
+            suffix = p.suffix.lower()
+            stem = p.stem
+
+            # Skip special files
+            if stem.startswith("__") and stem.endswith("__"):
+              continue
+
+            # Python files should be snake_case
+            if suffix == ".py":
+              if not SNAKE_CASE.match(stem):
+                violations.append(f"{path} - Expected snake_case, got: {stem}")
+
+            # PowerShell files should be PascalCase
+            elif suffix == ".ps1":
+              if not PASCAL_CASE.match(stem):
+                violations.append(f"{path} - Expected PascalCase, got: {stem}")
+
+            # Bash files should be kebab-case
+            elif suffix in {".sh", ".bash", ".zsh"}:
+              if not KEBAB_CASE.match(stem):
+                violations.append(f"{path} - Expected kebab-case, got: {stem}")
+
+            # Perl scripts should be kebab-case
+            elif suffix == ".pl":
+              if not KEBAB_CASE.match(stem):
+                violations.append(f"{path} - Expected kebab-case, got: {stem}")
+
+            # Perl modules should be PascalCase
+            elif suffix == ".pm":
+              if not PASCAL_CASE.match(stem):
+                violations.append(f"{path} - Expected PascalCase, got: {stem}")
+
+          if violations:
+            print("⚠️  NAMING CONVENTION VIOLATIONS DETECTED")
+            print("")
+            print("The following files do not follow language-specific naming conventions:")
+            print("See docs/contributing/naming-and-style.md for details.")
+            print("")
+            for v in sorted(violations):
+              print(f"  - {v}")
+            print("")
+            print("Phase 4 Status: WARN-ONLY MODE")
+            print("These violations are reported but do not fail the build.")
+            print("Action required: Fix violations before Phase 4.5 enforcement conversion.")
+            print("")
+            # Phase 4: WARN mode - exit 0 (allow merge)
+            # Phase 4.5: Will change to sys.exit(1) (block merge)
+            sys.exit(0)
+          else:
+            print("✅ All files follow language-specific naming conventions")
+          PY

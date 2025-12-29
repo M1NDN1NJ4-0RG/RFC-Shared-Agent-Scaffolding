@@ -81,7 +81,7 @@ Before submitting a PR:
 2. **Run tests** - Language-specific test suites must pass
 3. **Run conformance** - For wrapper changes: `make conformance`
 4. **Verify structure** - `scripts/validate-structure.sh`
-5. **Check docstrings** - `scripts/validate-docstrings.py`
+5. **Check docstrings** - `scripts/validate_docstrings.py`
 
 ### Pull Request Guidelines
 

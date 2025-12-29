@@ -1,10 +1,10 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-  preflight-tests.ps1 - Pester test suite for preflight-automerge-ruleset.ps1
+  PreflightTests.ps1 - Pester test suite for PreflightAutomergeRuleset.ps1
 
 .DESCRIPTION
-  Comprehensive Pester test suite validating the preflight-automerge-ruleset.ps1
+  Comprehensive Pester test suite validating the PreflightAutomergeRuleset.ps1
   GitHub API integration and validation logic.
 
   Test Coverage:
@@ -31,8 +31,8 @@
 
   Prerequisites:
     - Pester module (v5.0+)
-    - preflight-automerge-ruleset.ps1 script in ../scripts/
-    - test-helpers.ps1 in same directory (provides Add-FakeGhToPath, New-TempDir)
+    - PreflightAutomergeRuleset.ps1 script in ../scripts/
+    - TestHelpers.ps1 in same directory (provides Add-FakeGhToPath, New-TempDir)
 
   Test Isolation:
     - Each test creates unique temporary directory
@@ -67,7 +67,7 @@
 
 .EXAMPLE
   # Run preflight tests with Pester
-  PS> Invoke-Pester -Path .\preflight-tests.ps1
+  PS> Invoke-Pester -Path .\PreflightTests.ps1
 
 .LINK
   https://pester.dev/
@@ -80,10 +80,10 @@
 #>
 Set-StrictMode -Version Latest
 
-Describe "preflight-automerge-ruleset.ps1" {
+Describe "PreflightAutomergeRuleset.ps1" {
   BeforeAll {
-    . "$PSScriptRoot/test-helpers.ps1"
-    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\preflight-automerge-ruleset.ps1"
+    . "$PSScriptRoot/TestHelpers.ps1"
+    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\PreflightAutomergeRuleset.ps1"
   }
 
   It "fails when no --repo is provided" {

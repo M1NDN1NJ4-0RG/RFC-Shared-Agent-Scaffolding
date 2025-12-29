@@ -28,7 +28,7 @@
     - safe-check.ps1 script in ../scripts/
     - safe-run.ps1 script in ../scripts/
     - safe-archive.ps1 script in ../scripts/
-    - test-helpers.ps1 in same directory
+    - TestHelpers.ps1 in same directory
     - Rust canonical safe-run binary must be discoverable
 
   Test Isolation:
@@ -64,7 +64,7 @@ Set-StrictMode -Version Latest
 
 Describe "safe-check.ps1" {
   BeforeAll {
-    . "$PSScriptRoot/test-helpers.ps1"
+    . "$PSScriptRoot/TestHelpers.ps1"
     $script:ScriptRoot = Join-Path $PSScriptRoot "..\scripts"
     
     # Find Rust binary for wrapper discovery (like Bash test does)
@@ -110,8 +110,8 @@ Describe "safe-check.ps1" {
         Copy-Item -Path $_.FullName -Destination $scriptsDir
       }
       
-      # Run safe-check.ps1 from the temp directory
-      $safeCheckScript = Join-Path $scriptsDir "safe-check.ps1"
+      # Run SafeCheck.ps1 from the temp directory
+      $safeCheckScript = Join-Path $scriptsDir "SafeCheck.ps1"
       & pwsh -NoProfile -File $safeCheckScript
       $LASTEXITCODE | Should -Be 0
     } finally {

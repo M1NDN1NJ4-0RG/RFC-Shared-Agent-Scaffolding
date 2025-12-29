@@ -1,4 +1,4 @@
-"""Unit tests for safe-run.py Python wrapper.
+"""Unit tests for safe_run.py Python wrapper.
 
 This test module validates the Python wrapper's behavior for the safe-run tool,
 including success/failure paths, environment variable handling, signal handling,
@@ -43,11 +43,11 @@ Examples
 --------
 Run tests via pytest::
 
-    pytest test-safe-run.py
+    pytest test-safe_run.py
 
 Run tests via unittest::
 
-    python3 test-safe-run.py
+    python3 test-safe_run.py
 
 Exit Codes
 ----------
@@ -58,7 +58,7 @@ Exit Codes
 
 Notes
 -----
-- Tests invoke actual safe-run.py wrapper (not unit-tested in isolation)
+- Tests invoke actual safe_run.py wrapper (not unit-tested in isolation)
 - Requires Rust binary to be built and discoverable
 - Uses tempfile.TemporaryDirectory for test isolation
 - SIGINT test timing-dependent (may need retries on slow systems)
@@ -82,11 +82,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SCRIPTS = ROOT / "scripts"
-SAFE_RUN = SCRIPTS / "safe-run.py"
+SAFE_RUN = SCRIPTS / "safe_run.py"
 
 
 def run_safe_run(cmd_args, workdir: Path, env=None, timeout=25):
-    """Run safe-run.py as a subprocess with specified command.
+    """Run safe_run.py as a subprocess with specified command.
 
     :param cmd_args: Command to run through safe_run (list[str])
     :param workdir: Working directory for subprocess execution
@@ -94,7 +94,7 @@ def run_safe_run(cmd_args, workdir: Path, env=None, timeout=25):
     :param timeout: Timeout in seconds (default: 25)
     :returns: subprocess.CompletedProcess instance with returncode, stdout, stderr
 
-    This helper function invokes safe-run.py with the specified command,
+    This helper function invokes safe_run.py with the specified command,
     capturing stdout and stderr for verification. The working directory
     is set to workdir to isolate test artifacts.
 

@@ -48,30 +48,30 @@ perl ./wrappers/perl/scripts/safe-run.pl echo "Hello, World!"
 
 **Location:** `wrappers/python3/scripts/`
 
-- `safe-run.py` - Execute commands with event logging
-- `safe-check.py` - Check for existing artifacts
-- `safe-archive.py` - Archive artifacts to timestamped directories
+- `safe_run.py` - Execute commands with event logging
+- `safe_check.py` - Check for existing artifacts
+- `safe_archive.py` - Archive artifacts to timestamped directories
 
 **Requirements:** Python 3.8+
 
 **Usage:**
 ```bash
-python3 ./wrappers/python3/scripts/safe-run.py echo "Hello, World!"
+python3 ./wrappers/python3/scripts/safe_run.py echo "Hello, World!"
 ```
 
 ### PowerShell
 
 **Location:** `wrappers/powershell/scripts/`
 
-- `safe-run.ps1` - Execute commands with event logging
-- `safe-check.ps1` - Check for existing artifacts
-- `safe-archive.ps1` - Archive artifacts to timestamped directories
+- `SafeRun.ps1` - Execute commands with event logging
+- `SafeCheck.ps1` - Check for existing artifacts
+- `SafeArchive.ps1` - Archive artifacts to timestamped directories
 
 **Requirements:** PowerShell 5.1+ (Windows), PowerShell Core 7+ (cross-platform)
 
 **Usage:**
 ```powershell
-pwsh ./wrappers/powershell/scripts/safe-run.ps1 echo "Hello, World!"
+pwsh ./wrappers/powershell/scripts/SafeRun.ps1 echo "Hello, World!"
 ```
 
 ## How Wrappers Locate the Rust Binary

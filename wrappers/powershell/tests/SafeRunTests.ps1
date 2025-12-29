@@ -30,7 +30,7 @@
   Prerequisites:
     - Pester module (v5.0+)
     - safe-run.ps1 script in ../scripts/
-    - test-helpers.ps1 in same directory
+    - TestHelpers.ps1 in same directory
     - Rust canonical safe-run binary must be discoverable
 
   Test Isolation:
@@ -69,8 +69,8 @@ Set-StrictMode -Version Latest
 
 Describe "safe-run.ps1" {
   BeforeAll {
-    . "$PSScriptRoot/test-helpers.ps1"
-    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\safe-run.ps1"
+    . "$PSScriptRoot/TestHelpers.ps1"
+    $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\SafeRun.ps1"
   }
 
   It "succeeds without creating artifacts" {

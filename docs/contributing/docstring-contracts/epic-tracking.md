@@ -21,7 +21,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
   - [x] Add "Prompting Tips for AI Tools" section
   - [x] Fix references to use full paths
   - [x] Add link to validator script's docstring
-- [x] Enhance `scripts/validate-docstrings.py`
+- [x] Enhance `scripts/validate_docstrings.py`
   - [x] Add optional pragma support (e.g., `# noqa: EXITCODES`)
   - [x] Add basic content checks for EXIT CODES
   - [x] Add single-file mode flag
@@ -100,7 +100,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 4. **Extension Guide** - Step-by-step guide for adding new languages
 5. **AI Prompting Guide** - Best practices for using GitHub Copilot with contracts
 6. **Harmonized Contracts** - All 6 language contracts (bash, perl, powershell, python, rust, yaml) updated
-7. **Unit Tests** - test-validate-docstrings.py with coverage for each language
+7. **Unit Tests** - test_validate_docstrings.py with coverage for each language
 8. **Version History** - Contract suite now versioned (v1.1)
 9. **Platform Compatibility** - Recommended as optional section across all contracts
 10. **Future Planning** - FUTURE_VALIDATION.md outlines next-generation validation
@@ -125,5 +125,5 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 
 ## References
 - Original contracts: `docs/contributing/docstring-contracts/`
-- Validator: `scripts/validate-docstrings.py`
+- Validator: `scripts/validate_docstrings.py`
 - Repository instructions: `.github/copilot-instructions.md`
