@@ -1,63 +1,19 @@
-# CLAUDE.md — Bootstrap (Read First)
+# CLAUDE.md — Obsolete Bootstrap (Read First)
 
-This repository uses *sharded* agent instructions plus a *journaled* work tracker.  
-Your job is to **load only the shards you need**, and to **resume deterministically** after any interruption.
+This document describes a historical *sharded* agent-instruction and *journaled* work-tracker system that is **no longer authoritative** for this repository.
 
----
+The current, canonical instructions for all agents are defined in:
 
-## 0) Non-negotiables (Always apply)
+- `.github/copilot-instructions.md`
 
-1) **No destructive commands** (no deletes/resets/overwrites) unless the user explicitly approves.  
-2) **Follow the repo’s PR workflow** (including auto-merge rules when applicable).
-   - If using auto-merge, you MUST run the auto-merge preflight (see `.docs/agent/22_AUTOMERGE_PREFLIGHT.md`).  
-3) **Work in small, verifiable chunks**; record progress in the journal.  
-4) **When context is lost:** resume using the journal + routing index (below).  
-5) **If anything conflicts:** this `CLAUDE.md` wins; then `.docs/agent/00_INDEX.md`.
+Follow **only** `.github/copilot-instructions.md` for:
 
----
+- Operational rules and non‑negotiables
+- Repository workflow, CI, and validation steps
+- Any agent behavior, routing, or work-tracking guidance
 
-## 1) Where the rules live (Routing)
+Any `.docs/agent/*` or `.docs/journal/*` content that may exist in this repository (or in `docs/history/ai-agent-guidelines/`) should be treated as **archival documentation only**, not as live instructions.
 
-Read `.docs/agent/00_INDEX.md` to decide which shard(s) to load for the current task.
+If there is ever a conflict between this file and `.github/copilot-instructions.md`, the `.github/copilot-instructions.md` file **wins**.
 
-**Do not ingest every file by default.** Load only what the current chunk needs.
-
----
-
-## 2) Resume protocol (Mandatory)
-
-Whenever you start, restart, or regain context:
-
-1) Re-establish the current task from the user request, issue, or PR description.
-2) Load the minimum relevant shard(s) from `.docs/agent/` using the routing table in `00_INDEX.md`.
-3) Validate reality (e.g., `git status`, PR state, and any verification notes available in the repo or PR).
-4) Continue at the next clearly defined, unchecked item for the active task.
-
-> Note: A previous journal system based on `.docs/journal/CURRENT.md` and `.docs/journal/PR-LOG/*` was archived and is **not** currently used by this repository. Do not attempt to read or write those paths.
-
----
-
-## 3) Work tracking (Journaled)
-
-The earlier, journaled work-tracking system has been archived under:
-
-- `docs/history/ai-agent-guidelines/journal/`
-
-You may consult this history for background, but you **must not** assume any `.docs/journal/*` files exist or are authoritative in the current repository state.
-
----
-
-## 4) Key expectations baked into this setup
-
-- Use an appropriate Git/PR workflow consistent with the current repository instructions (see `.github/copilot-instructions.md` or other active governance docs, not archived history files).
-- Treat auto-merge timing and similar operational limits as configuration owned by humans or CI, not as hard-coded constants in this repository.
-- Prefer a **journaled tracker** (e.g., a small CURRENT file plus per-PR or per-milestone log entries) over a single ever-growing document.
-- Perform dependency/tooling changes only with explicit human approval; do not introduce or modify tools unilaterally.
-
----
-
-## 5) If you need “the old monolith”
-
-The previous monolithic rules and their journal templates have been archived under `docs/history/ai-agent-guidelines/journal/` and redistributed into `.docs/agent/*` shards.  
-Follow the routing index rather than searching ad-hoc or relying on `.docs/journal/*` paths.
-
+This file is kept only to provide context about the previous architecture and to explain why older references to `.docs/agent/*` or `.docs/journal/*` must be ignored in favor of the current, unified instructions.
