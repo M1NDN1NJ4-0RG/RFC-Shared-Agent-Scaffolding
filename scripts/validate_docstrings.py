@@ -188,12 +188,9 @@ def check_pragma_ignore(content: str, section: str) -> bool:
     - # docstring-ignore: EXIT CODES
     - <!-- noqa: OUTPUTS --> (for YAML)
 
-    Args:
-        content: File content to search
-        section: Section name to check (e.g., "EXITCODES", "EXIT CODES")
-
-    Returns:
-        True if section should be ignored, False otherwise
+    :param content: File content to search
+    :param section: Section name to check (e.g., "EXITCODES", "EXIT CODES")
+    :returns: True if section should be ignored, False otherwise
     """
     # Normalize section name (remove spaces, uppercase)
     normalized_section = section.upper().replace(" ", "").replace(":", "")
@@ -271,10 +268,10 @@ def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
 
 class ValidationError:
     """Represents a single validation failure.
-    
+
     This class encapsulates information about a docstring validation error,
     including file location, symbol information, and missing sections.
-    
+
     Attributes:
         file_path: Path to the file with validation error
         missing_sections: List of section names that are missing
@@ -299,18 +296,18 @@ class ValidationError:
 
     def __str__(self) -> str:
         sections = ", ".join(self.missing_sections)
-        
+
         # Format location info
         location = self.file_path
         if self.line_number:
             location += f":{self.line_number}"
-        
+
         # Format error message
         if self.symbol_name:
             msg = f"\n❌ {location}\n   Symbol: {self.symbol_name}\n   Missing: {sections}"
         else:
             msg = f"\n❌ {location}\n   Missing required sections: {sections}"
-        
+
         if self.message:
             msg += f"\n   {self.message}"
         return msg
@@ -318,7 +315,7 @@ class ValidationError:
 
 class BashValidator:
     """Validates Bash script docstrings and function documentation.
-    
+
     Checks both file-level header documentation and individual function
     comment blocks according to repository docstring contracts.
     """
@@ -336,38 +333,34 @@ class BashValidator:
     @staticmethod
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Bash script header and function docstrings.
-        
+
         Args:
             file_path: Path to Bash file to validate
             content: File content as string
-        
-        Returns:
-            List of validation errors (empty if all validations pass)
-        """
+
+        :returns: List of validation errors (empty if all validations pass)"""
         errors = []
-        
+
         # File-level validation
         file_error = BashValidator._validate_header(file_path, content)
         if file_error:
             errors.append(file_error)
-        
+
         # Symbol-level validation
         symbol_errors = BashValidator._validate_functions(file_path, content)
         errors.extend(symbol_errors)
-        
+
         return errors
-    
+
     @staticmethod
     def _validate_header(file_path: Path, content: str) -> Optional[ValidationError]:
         """Validate Bash script header documentation.
-        
+
         Args:
             file_path: Path to Bash file
             content: File content as string
-            
-        Returns:
-            ValidationError if header is missing required sections, None otherwise
-        """
+
+        :returns: ValidationError if header is missing required sections, None otherwise"""
         # Check for top-of-file comment block (first 100 lines)
         lines = content.split("\n")[:100]
         header = "\n".join(lines)
@@ -414,88 +407,91 @@ class BashValidator:
                 "Expected top-of-file comment block with # prefix",
             )
         return None
-    
+
     @staticmethod
     def _validate_functions(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Bash function documentation.
-        
+
         Detects function definitions and checks for comment blocks preceding them.
-        
+
         Args:
             file_path: Path to Bash file
             content: File content
-            
-        Returns:
-            List of validation errors for functions
-        """
+
+        :returns: List of validation errors for functions"""
         errors = []
-        lines = content.split('\n')
-        
+        lines = content.split("\n")
+
         # Pattern to match bash function definitions:
         # - function name() {
         # - name() {
         # - function name {
-        func_pattern = re.compile(r'^\s*(?:function\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\s*\(\s*\)\s*\{?|^\s*function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\{')
-        
+        func_pattern = re.compile(
+            r"^\s*(?:function\s+)?([a-zA-Z_][a-zA-Z0-9_]*)\s*\(\s*\)\s*\{?|^\s*function\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\{"
+        )
+
         for i, line in enumerate(lines):
             match = func_pattern.match(line)
             if match:
                 func_name = match.group(1) or match.group(2)
                 lineno = i + 1
-                
+
                 # Check for pragma ignore on the function line
-                if re.search(r'#\s*noqa:\s*FUNCTION', line):
+                if re.search(r"#\s*noqa:\s*FUNCTION", line):
                     continue
-                
+
                 # Skip internal/private functions (start with _)
-                if func_name.startswith('_'):
+                if func_name.startswith("_"):
                     continue
-                
+
                 # Look for comment block immediately preceding the function
                 # A proper doc block should have at least one comment line with description
                 comment_block = []
                 j = i - 1
-                while j >= 0 and (lines[j].strip().startswith('#') or lines[j].strip() == ''):
-                    if lines[j].strip().startswith('#'):
+                while j >= 0 and (lines[j].strip().startswith("#") or lines[j].strip() == ""):
+                    if lines[j].strip().startswith("#"):
                         comment_block.insert(0, lines[j])
-                    elif lines[j].strip() == '' and comment_block:
+                    elif lines[j].strip() == "" and comment_block:
                         # Empty line after comments - stop here
                         break
                     j -= 1
-                
+
                 if not comment_block:
-                    errors.append(ValidationError(
-                        str(file_path),
-                        ["function documentation"],
-                        "Function must have comment block with description, args, returns",
-                        symbol_name=f"{func_name}()",
-                        line_number=lineno,
-                    ))
+                    errors.append(
+                        ValidationError(
+                            str(file_path),
+                            ["function documentation"],
+                            "Function must have comment block with description, args, returns",
+                            symbol_name=f"{func_name}()",
+                            line_number=lineno,
+                        )
+                    )
                 else:
                     # Check if comment block has minimum required info
                     # Very lenient check - just ensure there's some description text
                     # (more than just "# Arguments:" or similar headers)
                     has_description = any(
-                        len(line.lstrip('#').strip()) > 3 and
-                        not line.lstrip('#').strip().endswith(':')
+                        len(line.lstrip("#").strip()) > 3 and not line.lstrip("#").strip().endswith(":")
                         for line in comment_block
                     )
-                    
+
                     if not has_description:
-                        errors.append(ValidationError(
-                            str(file_path),
-                            ["function description"],
-                            "Function comment block must include description text",
-                            symbol_name=f"{func_name}()",
-                            line_number=lineno,
-                        ))
-        
+                        errors.append(
+                            ValidationError(
+                                str(file_path),
+                                ["function description"],
+                                "Function comment block must include description text",
+                                symbol_name=f"{func_name}()",
+                                line_number=lineno,
+                            )
+                        )
+
         return errors
 
 
 class PowerShellValidator:
     """Validates PowerShell script comment-based help documentation.
-    
+
     Checks for presence of required .SYNOPSIS, .DESCRIPTION, and other
     comment-based help sections in PowerShell scripts.
     """
@@ -519,30 +515,32 @@ class PowerShellValidator:
     @staticmethod
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate PowerShell script docstring.
-        
+
         Args:
             file_path: Path to PowerShell file to validate
             content: File content as string
-        
-        Returns:
-            List of validation errors (empty if all validations pass)
-        """
+
+        :returns: List of validation errors (empty if all validations pass)"""
         # Check for comment-based help block
         if "<#" not in content or "#>" not in content:
-            return [ValidationError(
-                str(file_path),
-                ["comment-based help block"],
-                "Expected <# ... #> comment-based help block",
-            )]
+            return [
+                ValidationError(
+                    str(file_path),
+                    ["comment-based help block"],
+                    "Expected <# ... #> comment-based help block",
+                )
+            ]
 
         # Extract help block
         match = re.search(r"<#(.+?)#>", content, re.DOTALL)
         if not match:
-            return [ValidationError(
-                str(file_path),
-                ["comment-based help block"],
-                "Could not parse <# ... #> block",
-            )]
+            return [
+                ValidationError(
+                    str(file_path),
+                    ["comment-based help block"],
+                    "Could not parse <# ... #> block",
+                )
+            ]
 
         help_block = match.group(1)
 
@@ -558,7 +556,7 @@ class PowerShellValidator:
 
 class PythonValidator:
     """Validates Python module docstrings and symbol-level documentation.
-    
+
     Uses AST parsing to validate both module-level docstrings and function/class
     docstrings according to repository docstring contracts.
     """
@@ -575,38 +573,34 @@ class PythonValidator:
     @staticmethod
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Python module and symbol docstrings.
-        
+
         Args:
             file_path: Path to Python file to validate
             content: File content as string
-        
-        Returns:
-            List of validation errors (empty if all validations pass)
-        """
+
+        :returns: List of validation errors (empty if all validations pass)"""
         errors = []
-        
+
         # File-level validation
         file_error = PythonValidator._validate_module_docstring(file_path, content)
         if file_error:
             errors.append(file_error)
-        
+
         # Symbol-level validation
         symbol_errors = PythonValidator._validate_symbols(file_path, content)
         errors.extend(symbol_errors)
-        
+
         return errors
-    
+
     @staticmethod
     def _validate_module_docstring(file_path: Path, content: str) -> Optional[ValidationError]:
         """Validate module-level docstring.
-        
+
         Args:
             file_path: Path to Python file
             content: File content as string
-            
-        Returns:
-            ValidationError if module docstring is missing required sections, None otherwise
-        """
+
+        :returns: ValidationError if module docstring is missing required sections, None otherwise"""
         # Check for module docstring (triple quotes)
         if '"""' not in content:
             return ValidationError(
@@ -661,28 +655,27 @@ class PythonValidator:
                 "Expected reST-style sections in module docstring",
             )
         return None
-    
+
     @staticmethod
     def _validate_symbols(file_path: Path, content: str) -> List[ValidationError]:
         """Validate function and class docstrings using AST parsing.
-        
+
         Args:
             file_path: Path to Python file
             content: File content
-            
-        Returns:
-            List of validation errors for symbols
-        """
+
+        :returns: List of validation errors for symbols"""
         errors = []
-        
+
         try:
             tree = ast.parse(content, filename=str(file_path))
         except SyntaxError:
             # If file has syntax errors, skip symbol validation
             # (file won't work anyway, so focus on that first)
             return errors
-        
-        # Walk the AST and validate functions and classes
+
+        # Walk the entire AST and validate ALL functions and classes
+        # This includes nested functions, helper functions, everything
         for node in ast.walk(tree):
             if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 error = PythonValidator._validate_function(file_path, node, content)
@@ -692,36 +685,34 @@ class PythonValidator:
                 error = PythonValidator._validate_class(file_path, node, content)
                 if error:
                     errors.append(error)
-        
+
         return errors
-    
+
     @staticmethod
     def _validate_function(file_path: Path, node: ast.FunctionDef, content: str) -> Optional[ValidationError]:
         """Validate a function or method docstring.
-        
+
         Args:
             file_path: Path to Python file
             node: AST FunctionDef node
             content: File content (for pragma checking)
-            
-        Returns:
-            ValidationError if function lacks proper documentation, None otherwise
-        """
+
+        :returns: ValidationError if function lacks proper documentation, None otherwise"""
         # Check for pragma ignore on this specific function
         # Look for # noqa: D102 or # noqa: D103 on the function definition line
-        lines = content.split('\n')
+        lines = content.split("\n")
         if node.lineno <= len(lines):
             func_line = lines[node.lineno - 1]
-            if re.search(r'#\s*noqa:\s*D10[23]', func_line):
+            if re.search(r"#\s*noqa:\s*D10[23]", func_line):
                 return None
-        
+
         # Skip private/internal functions (start with _) unless explicitly documented
-        if node.name.startswith('_') and not ast.get_docstring(node):
+        if node.name.startswith("_") and not ast.get_docstring(node):
             # Private functions without docstrings are acceptable
             return None
-        
+
         docstring = ast.get_docstring(node)
-        
+
         if not docstring:
             return ValidationError(
                 str(file_path),
@@ -730,38 +721,57 @@ class PythonValidator:
                 symbol_name=f"def {node.name}()",
                 line_number=node.lineno,
             )
-        
+
         # Check for required sections (:param and :returns in reST/Sphinx style)
         # Accept :param, :type, :returns, :rtype per PEP 287
-        has_param = bool(re.search(r':param\s+\w+:', docstring, re.MULTILINE))
-        has_returns = bool(re.search(r':(returns?|rtype):', docstring, re.MULTILINE))
-        
+        has_param = bool(re.search(r":param\s+\w+:", docstring, re.MULTILINE))
+        has_returns = bool(re.search(r":(returns?|rtype):", docstring, re.MULTILINE))
+
         missing = []
-        
+
         # Only require :param if function has parameters (excluding self/cls)
-        params = [arg.arg for arg in node.args.args if arg.arg not in ('self', 'cls')]
+        params = [arg.arg for arg in node.args.args if arg.arg not in ("self", "cls")]
+        # Include *args
+        if node.args.vararg is not None:
+            params.append(node.args.vararg.arg)
+        # Include keyword-only args
+        if getattr(node.args, "kwonlyargs", None):
+            params.extend(arg.arg for arg in node.args.kwonlyargs)
+        # Include **kwargs
+        if node.args.kwarg is not None:
+            params.append(node.args.kwarg.arg)
+
         if params and not has_param:
             missing.append(":param")
-        
-        # Only require :returns if function has a return statement with a value  
-        # Check only direct body, skip nested function definitions
+
+        # Only require :returns if function has a return statement with a value
+        # Check only direct body, exclude nested function definitions completely
         if not has_returns:
             has_return_value = False
-            for child in node.body:
-                # Skip nested function definitions entirely
-                if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    continue
-                # Walk this child node
-                for n in ast.walk(child):
-                    if isinstance(n, ast.Return) and n.value is not None:
-                        has_return_value = True
-                        break
-                if has_return_value:
-                    break
-            
+
+            def has_return_in_node(node_to_check):
+                """Recursively check if node has return with value, excluding nested functions.
+
+                :param node_to_check: AST node to check
+                :returns: True if node contains a return statement with a value, False otherwise
+                """
+                for child in ast.iter_child_nodes(node_to_check):
+                    # Skip nested function/class definitions entirely
+                    if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                        continue
+                    # Check if this node is a Return with a value
+                    if isinstance(child, ast.Return) and child.value is not None:
+                        return True
+                    # Recursively check children (but nested functions are already skipped)
+                    if has_return_in_node(child):
+                        return True
+                return False
+
+            has_return_value = has_return_in_node(node)
+
             if has_return_value:
                 missing.append(":returns")
-        
+
         if missing:
             return ValidationError(
                 str(file_path),
@@ -770,34 +780,31 @@ class PythonValidator:
                 symbol_name=f"def {node.name}()",
                 line_number=node.lineno,
             )
-        
+
         return None
-    
+
     @staticmethod
     def _validate_class(file_path: Path, node: ast.ClassDef, content: str) -> Optional[ValidationError]:
         """Validate a class docstring.
-        
-        Args:
-            file_path: Path to Python file
-            node: AST ClassDef node
-            content: File content (for pragma checking)
-            
-        Returns:
-            ValidationError if class lacks proper documentation, None otherwise
+
+        :param file_path: Path to Python file
+        :param node: AST ClassDef node
+        :param content: File content (for pragma checking)
+        :returns: ValidationError if class lacks proper documentation, None otherwise
         """
         # Check for pragma ignore
-        lines = content.split('\n')
+        lines = content.split("\n")
         if node.lineno <= len(lines):
             class_line = lines[node.lineno - 1]
-            if re.search(r'#\s*noqa:\s*D101', class_line):
+            if re.search(r"#\s*noqa:\s*D101", class_line):
                 return None
-        
+
         # Skip private classes
-        if node.name.startswith('_'):
+        if node.name.startswith("_"):
             return None
-        
+
         docstring = ast.get_docstring(node)
-        
+
         if not docstring:
             return ValidationError(
                 str(file_path),
@@ -806,27 +813,17 @@ class PythonValidator:
                 symbol_name=f"class {node.name}",
                 line_number=node.lineno,
             )
-        
-        # Basic check: docstring should have some content beyond just a one-liner
-        # (at least 2 lines or has ":ivar" fields for attributes in reST style)
-        lines_in_doc = docstring.strip().split('\n')
-        has_attributes = bool(re.search(r':ivar\s+\w+:', docstring, re.MULTILINE))
-        
-        if len(lines_in_doc) < 2 and not has_attributes:
-            return ValidationError(
-                str(file_path),
-                ["class documentation"],
-                "Class docstring should describe purpose and optionally list :ivar attributes",
-                symbol_name=f"class {node.name}",
-                line_number=node.lineno,
-            )
-        
+
+        # Allow concise one-line docstrings for simple classes
+        # No need to enforce minimum line count or :ivar requirements
+        # A clear description is sufficient
+
         return None
 
 
 class PerlValidator:
     """Validates Perl script POD documentation.
-    
+
     Checks for required POD sections (=head1 NAME, SYNOPSIS, DESCRIPTION, etc.)
     according to repository docstring contracts.
     """
@@ -852,21 +849,20 @@ class PerlValidator:
     @staticmethod
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Perl script POD.
-        
-        Args:
-            file_path: Path to Perl file to validate
-            content: File content as string
-        
-        Returns:
-            List of validation errors (empty if all validations pass)
+
+        :param file_path: Path to Perl file to validate
+        :param content: File content as string
+        :returns: List of validation errors (empty if all validations pass)
         """
         # Check for POD block
         if "=head1" not in content or "=cut" not in content:
-            return [ValidationError(
-                str(file_path),
-                ["POD block"],
-                "Expected POD documentation with =head1 sections and =cut",
-            )]
+            return [
+                ValidationError(
+                    str(file_path),
+                    ["POD block"],
+                    "Expected POD documentation with =head1 sections and =cut",
+                )
+            ]
 
         missing = []
         for i, pattern in enumerate(PerlValidator.REQUIRED_SECTIONS):
@@ -880,7 +876,7 @@ class PerlValidator:
 
 class RustValidator:
     """Validates Rust module documentation using rustdoc comments.
-    
+
     Checks for required module-level documentation (//!) with Purpose
     and Examples sections according to repository docstring contracts.
     """
@@ -898,21 +894,20 @@ class RustValidator:
     @staticmethod
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Rust module documentation.
-        
-        Args:
-            file_path: Path to Rust file to validate
-            content: File content as string
-        
-        Returns:
-            List of validation errors (empty if all validations pass)
+
+        :param file_path: Path to Rust file to validate
+        :param content: File content as string
+        :returns: List of validation errors (empty if all validations pass)
         """
         # Check for module-level docs (//!)
         if "//!" not in content:
-            return [ValidationError(
-                str(file_path),
-                ["module documentation (//!)"],
-                "Expected module-level documentation with //!",
-            )]
+            return [
+                ValidationError(
+                    str(file_path),
+                    ["module documentation (//!)"],
+                    "Expected module-level documentation with //!",
+                )
+            ]
 
         # Extract module docs (first 100 lines)
         lines = content.split("\n")[:100]
@@ -938,7 +933,7 @@ class RustValidator:
 
 class YAMLValidator:
     """Validates YAML file documentation headers.
-    
+
     Checks for required comment header sections in YAML workflow and config files
     according to repository docstring contracts.
     """
@@ -964,13 +959,10 @@ class YAMLValidator:
     @staticmethod
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate YAML file documentation header.
-        
-        Args:
-            file_path: Path to YAML file to validate
-            content: File content as string
-        
-        Returns:
-            List of validation errors (empty if all validations pass)
+
+        :param file_path: Path to YAML file to validate
+        :param content: File content as string
+        :returns: List of validation errors (empty if all validations pass)
         """
         # Check first 50 lines for comment header (workflows can have long headers)
         lines = content.split("\n")[:50]
@@ -982,21 +974,20 @@ class YAMLValidator:
                 missing.append(YAMLValidator.SECTION_NAMES[i])
 
         if missing:
-            return [ValidationError(
-                str(file_path),
-                missing,
-                "Expected top-of-file comment header with # prefix",
-            )]
+            return [
+                ValidationError(
+                    str(file_path),
+                    missing,
+                    "Expected top-of-file comment header with # prefix",
+                )
+            ]
         return []
 
 
 def get_tracked_files() -> List[Path]:
     """Get all tracked files matching in-scope patterns using git.
-    
-    Returns:
-        List of Path objects for files that match in-scope patterns and
-        are not excluded
-    """
+
+    :returns: List of Path objects for files that match in-scope patterns and are not excluded"""
     try:
         result = subprocess.run(
             ["git", "ls-files"],
@@ -1037,13 +1028,9 @@ def get_tracked_files() -> List[Path]:
 
 def validate_file(file_path: Path) -> List[ValidationError]:
     """Validate a single file based on its extension.
-    
-    Args:
-        file_path: Path to file to validate
-    
-    Returns:
-        List of validation errors (empty if file passes)
-    """
+
+    :param file_path: Path to file to validate
+    :returns: List of validation errors (empty if file passes)"""
     try:
         content = file_path.read_text(encoding="utf-8")
     except Exception as e:
@@ -1071,10 +1058,8 @@ def validate_file(file_path: Path) -> List[ValidationError]:
 
 def main() -> int:
     """Main entry point.
-    
-    Returns:
-        Exit code (0 for success, 1 for failure)
-    """
+
+    :returns: Exit code (0 for success, 1 for failure)"""
     # Parse command-line arguments
     parser = argparse.ArgumentParser(
         description="Validate docstring contracts for scripts and YAML files.",

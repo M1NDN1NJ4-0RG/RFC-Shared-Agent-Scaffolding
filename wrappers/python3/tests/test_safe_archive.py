@@ -116,11 +116,11 @@ def run_archive(args, workdir: Path, env=None, timeout=25):
 
 class TestSafeArchive(unittest.TestCase):
     """Test safe_archive.py wrapper script functionality.
-    
+
     Validates archival operations including file moving, compression,
     and no-clobber semantics.
     """
-    
+
     def test_moves_all_no_clobber(self):
         """Test that --all moves all files with no-clobber behavior."""
         with tempfile.TemporaryDirectory() as td:

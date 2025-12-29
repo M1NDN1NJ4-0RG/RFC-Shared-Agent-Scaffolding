@@ -85,7 +85,7 @@ except ImportError:
 
 class TestBashValidator(unittest.TestCase):
     """Test Bash script validation.
-    
+
     Tests for BashValidator class including file-level header validation
     and function-level comment block validation.
     """
@@ -152,7 +152,7 @@ echo "test"
 
 class TestPythonValidator(unittest.TestCase):
     """Test Python script validation.
-    
+
     Tests for PythonValidator class including module docstring validation
     and symbol-level validation using AST parsing.
     """
@@ -200,7 +200,7 @@ print("test")
 
 class TestYAMLValidator(unittest.TestCase):
     """Test YAML file validation.
-    
+
     Tests for YAMLValidator class including workflow and config file
     header documentation validation.
     """
@@ -232,7 +232,7 @@ on: [pull_request]
 
 class TestExitCodeContentValidation(unittest.TestCase):
     """Test exit code content validation.
-    
+
     Tests for exit code content validation logic across Bash and Python
     validators to ensure scripts document minimum required exit codes.
     """
@@ -266,9 +266,8 @@ echo "test"
 
 def run_tests():
     """Run tests when executed as script.
-    
-    Returns:
-        Exit code from unittest.main()
+
+    :returns: Exit code from unittest.main()
     """
     # Try to use pytest if available
     try:

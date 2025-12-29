@@ -101,18 +101,18 @@ def load_module():
 
 class TestPreflightAutomergeRuleset(unittest.TestCase):
     """Test preflight_automerge_ruleset.py wrapper script.
-    
+
     Validates ruleset verification logic including auth detection,
     argument parsing, and required context checking.
     """
-    
+
     def setUp(self):
         """Set up test by loading the module."""
         self.mod = load_module()
 
     def _rulesets_list(self):
         """Generate test ruleset list fixture.
-        
+
         :returns: List of ruleset dicts for testing
         """
         return [
@@ -122,7 +122,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
 
     def _ruleset_detail(self, required_contexts):
         """Generate test ruleset detail fixture.
-        
+
         :param required_contexts: List of required status check contexts
         :returns: Dict representing a GitHub ruleset configuration
         """
@@ -166,7 +166,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
 
     def test_success_path_via_http(self):
         """Test successful ruleset verification via HTTP API.
-        
+
         Verifies that the script correctly validates required contexts when
         accessing GitHub API via HTTP (gh CLI not available).
         """
@@ -174,7 +174,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
 
         def fake_http_get(url, api_version):
             """Mock HTTP GET for ruleset API calls.
-            
+
             :param url: API endpoint URL
             :param api_version: GitHub API version string
             :returns: Tuple of (status_code, json_body)
@@ -202,7 +202,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
 
     def test_missing_required_context_fails(self):
         """Test that missing required status contexts causes failure.
-        
+
         Verifies that the script exits with non-zero when the ruleset
         is missing one of the required status check contexts.
         """
@@ -211,7 +211,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
 
         def fake_http_get(url, api_version):
             """Mock HTTP GET missing one required context.
-            
+
             :param url: API endpoint URL
             :param api_version: GitHub API version string
             :returns: Tuple of (status_code, json_body)
@@ -239,13 +239,14 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
 
     def test_ruleset_not_found_returns_3(self):
         """Test that non-existent ruleset returns exit code 3.
-        
+
         Verifies that the script returns exit code 3 when the specified
         ruleset name is not found in the repository's rulesets.
         """
+
         def fake_http_get(url, api_version):
             """Mock HTTP GET with no matching ruleset.
-            
+
             :param url: API endpoint URL
             :param api_version: GitHub API version string
             :returns: Tuple of (status_code, json_body)
@@ -271,13 +272,14 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
 
     def test_auth_failure_returns_2(self):
         """Test that authentication failure returns exit code 2.
-        
+
         Verifies that the script returns exit code 2 when GitHub API
         returns a 401 authentication error.
         """
+
         def fake_http_get(url, api_version):
             """Mock HTTP GET with auth error.
-            
+
             :param url: API endpoint URL
             :param api_version: GitHub API version string
             :returns: Tuple of (status_code, json_body)
