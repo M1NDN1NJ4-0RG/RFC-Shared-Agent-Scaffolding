@@ -81,18 +81,17 @@ def create_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def cmd_check(args: argparse.Namespace) -> int:
-    """Run linting checks without modifying files.
+def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> int:
+    """Run all language runners with common logic.
 
     :Args:
         args: Parsed command-line arguments
+        mode: Mode description for output ("Linting" or "Formatting")
+        action_callback: Callable that takes a runner and returns results
 
     :Returns:
         Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
-    print("🔍 Running repository linters and formatters...")
-    print("")
-
     all_results = []
 
     # Define all runners
@@ -108,7 +107,7 @@ def cmd_check(args: argparse.Namespace) -> int:
     for name, runner in runners:
         if runner.has_files():
             print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-            print(f"  {name} Linting")
+            print(f"  {name} {mode}")
             print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
             missing_tools = runner.check_tools()
@@ -121,15 +120,30 @@ def cmd_check(args: argparse.Namespace) -> int:
                 print("")
                 return ExitCode.MISSING_TOOLS
 
-            results = runner.check()
+            results = action_callback(runner)
             all_results.extend(results)
         else:
             if args.verbose:
-                print(f"No {name} files found. Skipping {name} linting.")
+                print(f"No {name} files found. Skipping {name} {mode.lower()}.")
 
     # Report results
     print("")
     return report_results(all_results, verbose=args.verbose)
+
+
+def cmd_check(args: argparse.Namespace) -> int:
+    """Run linting checks without modifying files.
+
+    :Args:
+        args: Parsed command-line arguments
+
+    :Returns:
+        Exit code (0=success, 1=violations, 2=missing tools, 3=error)
+    """
+    print("🔍 Running repository linters and formatters...")
+    print("")
+
+    return _run_all_runners(args, "Linting", lambda runner: runner.check())
 
 
 def cmd_fix(args: argparse.Namespace) -> int:
@@ -144,43 +158,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
     print("🔧 Running formatters in fix mode...")
     print("")
 
-    all_results = []
-
-    # Define all runners
-    runners = [
-        ("Python", PythonRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("Bash", BashRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("PowerShell", PowerShellRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("Perl", PerlRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
-    ]
-
-    # Run each runner if it has files
-    for name, runner in runners:
-        if runner.has_files():
-            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-            print(f"  {name} Formatting")
-            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-
-            missing_tools = runner.check_tools()
-            if missing_tools:
-                if args.ci:
-                    print_install_instructions(missing_tools)
-                    return ExitCode.MISSING_TOOLS
-                print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
-                print("   Run 'python -m tools.repo_lint install' to install them")
-                print("")
-                return ExitCode.MISSING_TOOLS
-
-            results = runner.fix()
-            all_results.extend(results)
-        else:
-            if args.verbose:
-                print(f"No {name} files found. Skipping {name} formatting.")
-
-    # Report results
-    print("")
-    return report_results(all_results, verbose=args.verbose)
+    return _run_all_runners(args, "Formatting", lambda runner: runner.fix())
 
 
 def cmd_install(args: argparse.Namespace) -> int:
