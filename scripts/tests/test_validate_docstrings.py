@@ -117,7 +117,7 @@ class TestBashValidator(unittest.TestCase):
 echo "test"
 """
         result = BashValidator.validate(Path("test.sh"), content)
-        self.assertIsNone(result, "Valid Bash script should pass validation")
+        self.assertEqual(result, [], "Valid Bash script should pass validation")
 
     def test_missing_shebang(self):
         """Test that missing shebang is caught."""
@@ -129,8 +129,8 @@ echo "test"
 # EXAMPLES: ./test.sh
 """
         result = BashValidator.validate(Path("test.sh"), content)
-        self.assertIsNotNone(result, "Missing shebang should fail validation")
-        self.assertIn("shebang", result.missing_sections)
+        self.assertEqual(len(result), 1, "Missing shebang should fail validation")
+        self.assertIn("shebang", result[0].missing_sections)
 
     def test_missing_required_section(self):
         """Test that missing required section is caught."""
@@ -147,7 +147,7 @@ echo "test"
 echo "test"
 """
         result = BashValidator.validate(Path("test.sh"), content)
-        self.assertIsNotNone(result, "Missing INPUTS, OUTPUTS, EXAMPLES should fail")
+        self.assertGreater(len(result), 0, "Missing INPUTS, OUTPUTS, EXAMPLES should fail")
 
 
 class TestPythonValidator(unittest.TestCase):
@@ -187,7 +187,7 @@ Exit Codes
 print("test")
 '''
         result = PythonValidator.validate(Path("test.py"), content)
-        self.assertIsNone(result, "Valid Python script should pass validation")
+        self.assertEqual(result, [], "Valid Python script should pass validation")
 
     def test_missing_docstring(self):
         """Test that missing docstring is caught."""
@@ -195,7 +195,7 @@ print("test")
 print("test")
 """
         result = PythonValidator.validate(Path("test.py"), content)
-        self.assertIsNotNone(result, "Missing docstring should fail validation")
+        self.assertGreater(len(result), 0, "Missing docstring should fail validation")
 
 
 class TestYAMLValidator(unittest.TestCase):
@@ -227,7 +227,7 @@ name: Test
 on: [pull_request]
 """
         result = YAMLValidator.validate(Path("test.yml"), content)
-        self.assertIsNone(result, "Valid YAML workflow should pass validation")
+        self.assertEqual(result, [], "Valid YAML workflow should pass validation")
 
 
 class TestExitCodeContentValidation(unittest.TestCase):
@@ -261,7 +261,7 @@ class TestExitCodeContentValidation(unittest.TestCase):
 echo "test"
 """
         result = BashValidator.validate(Path("test.sh"), content)
-        self.assertIsNone(result, "Exit codes with 0 and 1 should pass")
+        self.assertEqual(result, [], "Exit codes with 0 and 1 should pass")
 
 
 def run_tests():

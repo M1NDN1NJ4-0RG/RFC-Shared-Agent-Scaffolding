@@ -133,7 +133,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 # Module-level flag for content checks (set by command-line arg)
 SKIP_CONTENT_CHECKS = False
@@ -473,7 +473,6 @@ class BashValidator:
                     ))
                 else:
                     # Check if comment block has minimum required info
-                    comment_text = '\n'.join(comment_block)
                     # Very lenient check - just ensure there's some description text
                     # (more than just "# Arguments:" or similar headers)
                     has_description = any(
@@ -727,7 +726,7 @@ class PythonValidator:
             return ValidationError(
                 str(file_path),
                 ["function docstring"],
-                f"Function must have docstring with Args and Returns sections",
+                "Function must have a docstring",
                 symbol_name=f"def {node.name}()",
                 line_number=node.lineno,
             )
