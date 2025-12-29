@@ -66,8 +66,6 @@ class LintResult:
 class RepoLintError(Exception):
     """Base exception for all repo_lint errors."""
 
-    pass
-
 
 class MissingToolError(RepoLintError):
     """Raised when required tools are not installed."""
@@ -89,5 +87,3 @@ class MissingToolError(RepoLintError):
 
 class RunnerError(RepoLintError):
     """Raised when a runner encounters an error."""
-
-    pass

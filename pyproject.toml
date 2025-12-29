@@ -22,7 +22,8 @@ select = [
 
 # Ignore rules that conflict with Black or are disabled in current Flake8 config
 ignore = [
-    "E203",  # whitespace before ':' (conflicts with Black, not used in Ruff)
+    # E203 has been removed from Ruff entirely (was deprecated in pycodestyle)
+    # Kept here for documentation only - this entry has no effect
 ]
 
 [tool.pylint.format]

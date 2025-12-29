@@ -64,27 +64,15 @@ def create_parser() -> argparse.ArgumentParser:
     check_parser = subparsers.add_parser("check", help="Run linting checks without modifying files")
     check_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
     check_parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
-    check_parser.add_argument("--json", action="store_true", help="Output results in JSON format (not yet implemented)")
-    check_parser.add_argument(
-        "--language",
-        "-l",
-        action="append",
-        help="Run only specific language(s): python, bash, powershell, perl, yaml",
-    )
 
     # fix command
     fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
     fix_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
     fix_parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
-    fix_parser.add_argument("--json", action="store_true", help="Output results in JSON format (not yet implemented)")
-    fix_parser.add_argument(
-        "--language", "-l", action="append", help="Fix only specific language(s): python, bash, powershell, perl, yaml"
-    )
 
     # install command
     install_parser = subparsers.add_parser("install", help="Install/bootstrap required linting tools")
     install_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
-    install_parser.add_argument("--tool", "-t", action="append", help="Install only specific tool(s)")
 
     return parser
 
@@ -232,7 +220,7 @@ def main() -> None:
         print(f"❌ Error: {e}", file=sys.stderr)
         if args.ci:
             sys.exit(ExitCode.MISSING_TOOLS)
-        print("\nRun 'repo-lint install' to install missing tools", file=sys.stderr)
+        print("\nRun 'python -m tools.repo_lint install' to install missing tools", file=sys.stderr)
         sys.exit(ExitCode.MISSING_TOOLS)
 
     except Exception as e:

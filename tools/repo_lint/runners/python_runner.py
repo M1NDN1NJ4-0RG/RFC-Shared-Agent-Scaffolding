@@ -72,8 +72,8 @@ class PythonRunner(Runner):
         black_result = self._run_black_fix()
         results.append(black_result)
 
-        # Re-run checks after formatting
-        if black_result.passed or not black_result.violations:
+        # Re-run checks after formatting only if Black succeeded
+        if black_result.passed:
             results.append(self._run_ruff_check())
             results.append(self._run_pylint())
             results.append(self._run_docstring_validation())
@@ -102,7 +102,7 @@ class PythonRunner(Runner):
                     tool="black",
                     file=".",
                     line=None,
-                    message="Code formatting does not match Black style. Run 'repo-lint fix' to auto-format.",
+                    message="Code formatting does not match Black style. Run 'python -m tools.repo_lint fix' to auto-format.",
                 )
             )
 
