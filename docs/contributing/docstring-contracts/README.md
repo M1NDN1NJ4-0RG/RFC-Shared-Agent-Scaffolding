@@ -1,8 +1,8 @@
 # Docstring Contracts
 
-**Version:** 1.1  
-**Last Updated:** 2025-12-28  
-**Purpose:** Define clear, testable, and enforceable documentation standards for all scripts and configuration files in this repository.
+**Version:** 1.2  
+**Last Updated:** 2025-12-29  
+**Purpose:** Define clear, testable, and enforceable documentation standards for all scripts, configuration files, and code symbols in this repository.
 
 ## Why Docstring Contracts?
 
@@ -16,13 +16,32 @@ Docstring contracts ensure:
 
 ## Enforcement
 
-**ALL scripts in this repository MUST conform to their language's docstring contract**, regardless of location. Conformance is validated by CI via `.github/workflows/docstring-contract.yml`, which runs `scripts/validate_docstrings.py` on every PR.
+**ALL scripts and code symbols in this repository MUST conform to their language's docstring contract**, regardless of location. Conformance is validated by CI via `.github/workflows/docstring-contract.yml`, which runs `scripts/validate_docstrings.py` on every PR.
 
-The validator scans the entire repository for script files (`.sh`, `.ps1`, `.py`, `.pl`, `.pm`, `.rs`, `.yml`, `.yaml`) and validates each one against its language contract. This ensures that any new script added anywhere in the repository will be checked.
+### Current Enforcement (Phase 5.5)
+
+The validator scans:
+1. **File/module-level documentation** - All script files (`.sh`, `.ps1`, `.py`, `.pl`, `.pm`, `.rs`, `.yml`, `.yaml`)
+2. **Symbol-level documentation** - All public/exported functions, classes, methods, and subs (Phase 5.5+)
+
+### Enforcement Scope
+
+- **File/module docs:** REQUIRED for all script files
+- **Symbol docs:** REQUIRED for all public/exported symbols (functions, classes, methods, subs)
+- **Private symbol docs:** RECOMMENDED but not enforced initially
 
 **Violations fail the build** until corrected.
 
 ## Contract Version History
+
+### Version 1.2 (2025-12-29) - Phase 5.5
+- **Added symbol-level documentation contracts** (symbol-level-contracts.md)
+  - Defined requirements for functions, classes, methods across all languages
+  - Established enforcement scope (public/exported symbols minimum)
+  - Created templates and examples for Python, Bash, Perl, PowerShell, Rust
+  - Added pragma/exemption support for symbol-level documentation
+- Updated Perl script naming convention from kebab-case to snake_case
+- Aligned test runner naming across languages
 
 ### Version 1.1 (2025-12-28)
 - Added comprehensive exit-codes-contract.md shared reference
@@ -84,6 +103,8 @@ These contracts exist for entertainment, educational, or satirical purposes. **D
 
 ## Required Semantic Sections (All Languages)
 
+### File/Module-Level Documentation
+
 Every script's documentation must cover these concepts (using idiomatic section names):
 
 1. **Name / one-line summary** - What is this script called and what does it do?
@@ -96,6 +117,17 @@ Every script's documentation must cover these concepts (using idiomatic section 
 8. **Notes for maintainers** - Constraints, invariants, sharp edges
 
 > Language contracts may add optional sections, but the above are required.
+
+### Symbol-Level Documentation
+
+Every function, class, method, and subroutine must be documented. See **[symbol-level-contracts.md](./symbol-level-contracts.md)** for detailed requirements per language.
+
+**Minimum requirements:**
+- Functions/methods: Purpose, parameters, return value
+- Classes/structs: Purpose, attributes/fields
+- Public APIs: Full documentation including examples
+
+**Phase 5.5 enforcement:** Public/exported symbols only. Private helper documentation recommended but not required initially.
 
 ## Semantic Section to Language Keyword Mapping
 
