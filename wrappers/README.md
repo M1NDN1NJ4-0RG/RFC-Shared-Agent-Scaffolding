@@ -111,7 +111,7 @@ Each wrapper provides a language-native test runner for convenience:
 cd wrappers/python3 && python3 run_tests.py
 
 # Perl (native runner)
-cd wrappers/perl && perl run_tests.pl
+cd wrappers/perl && perl run-tests.pl
 
 # PowerShell (native runner)
 cd wrappers/powershell && pwsh RunTests.ps1

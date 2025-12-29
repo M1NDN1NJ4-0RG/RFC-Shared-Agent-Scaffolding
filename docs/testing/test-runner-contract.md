@@ -6,7 +6,7 @@
 
 ## Overview
 
-This document defines the contract that all language-native test runners (`run_tests.py`, `RunTests.ps1`, `run_tests.pl`) must follow to maintain strict parity with the existing Bash `run-tests.sh` runners.
+This document defines the contract that all language-native test runners (`run_tests.py`, `RunTests.ps1`, `run-tests.pl`) must follow to maintain strict parity with the existing Bash `run-tests.sh` runners.
 
 **Key Principle:** All test runners must be **functionally equivalent** - same behavior, exit codes, environment setup, and output conventions, regardless of implementation language.
 
@@ -196,16 +196,17 @@ All language-native test runners must:
 **File naming:**
 - Python: `run_tests.py` (snake_case per PEP 8)
 - PowerShell: `RunTests.ps1` (PascalCase, already exists)
-- Perl: `run_tests.pl` (kebab-case standard would be `run-tests.pl`, but match Python style for consistency with phase 4; **DECISION: use `run_tests.pl`** to match Python and avoid confusion)
+- Perl: `run-tests.pl` (kebab-case, matching all other Perl scripts in the repository)
 
 **Rationale for Perl choice:**
-- Perl scripts typically use kebab-case (e.g., `safe-run.pl`)
-- BUT: Test runners are utilities, not main scripts
-- Using `run_tests.pl` (snake_case with underscores) matches Python and signals "test utility"
-- Avoids having both `run-tests.sh` and `run-tests.pl` in the same directory (confusing)
+- All Perl scripts in this repository use kebab-case (e.g., `safe-run.pl`, `safe-check.pl`, `safe-archive.pl`)
+- All Perl test files use kebab-case (e.g., `01-safe-run.t`, `02-safe-run-sigint.t`)
+- Using `run-tests.pl` maintains consistency within the Perl ecosystem of this repository
+- Having both `run-tests.sh` and `run-tests.pl` in the same directory is acceptable (similar to how `safe-run.sh` and `safe-run.pl` coexist in scripts/)
+- Language-specific naming conventions take precedence over cross-language consistency for test utilities
 
 **Placement:**
-- All runners at wrapper top-level: `wrappers/<lang>/run_tests.{py,ps1,pl}`
+- All runners at wrapper top-level: `wrappers/<lang>/run_tests.py`, `wrappers/<lang>/RunTests.ps1`, `wrappers/<lang>/run-tests.pl`
 - Matches existing placement of `run-tests.sh` and `RunTests.ps1`
 
 ---
@@ -302,7 +303,7 @@ wrappers/
 │   └── tests/run-all.sh          (Actual test orchestrator, unchanged)
 ├── perl/
 │   ├── run-tests.sh              (Bash runner, unchanged)
-│   └── run_tests.pl              (NEW: Native Perl runner)
+│   └── run-tests.pl              (NEW: Native Perl runner)
 ├── python3/
 │   ├── run-tests.sh              (Bash runner, unchanged)
 │   └── run_tests.py              (NEW: Native Python runner)

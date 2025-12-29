@@ -142,18 +142,14 @@ def run_tests() -> int:
     if not check_prerequisites():
         print("ERROR: bash not found", file=sys.stderr)
         print("", file=sys.stderr)
-        print(
-            "This test runner requires bash to be available.", file=sys.stderr
-        )
+        print("This test runner requires bash to be available.", file=sys.stderr)
         print("Install bash, then re-run this script.", file=sys.stderr)
         print("", file=sys.stderr)
         print(
             "Note: Future enhancement will remove bash dependency.",
             file=sys.stderr,
         )
-        print(
-            "See docs/future-work.md FW-011 for details.", file=sys.stderr
-        )
+        print("See docs/future-work.md FW-011 for details.", file=sys.stderr)
         return 2
 
     # Set up environment
