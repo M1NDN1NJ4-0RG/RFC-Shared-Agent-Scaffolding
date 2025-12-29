@@ -227,7 +227,10 @@ jobs:
     name: "Detect Changed Files"
     runs-on: ubuntu-latest
     needs: auto-fix-black
-    if: needs.auto-fix-black.outputs.autofix_applied != 'true'
+    if: |
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.head_commit.message, '[auto-format]') &&
+      needs.auto-fix-black.outputs.autofix_applied != 'true'
     outputs:
       python: ${{ steps.detect.outputs.python }}
       bash: ${{ steps.detect.outputs.bash }}
