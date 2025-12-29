@@ -34,6 +34,7 @@
 
 use clap::{Parser, Subcommand};
 use std::env;
+#[cfg(not(target_os = "windows"))]
 use std::fs;
 use std::path::Path;
 
@@ -320,6 +321,7 @@ impl Cli {
         let cmd_name = &command[0];
 
         // Phase 1: Check if the command exists on PATH
+        #[cfg(not(target_os = "windows"))]
         let cmd_path = match Self::find_command_path(cmd_name) {
             Some(path) => path,
             None => {
@@ -327,6 +329,13 @@ impl Cli {
                 return Ok(2);
             }
         };
+
+        // On Windows, just check if command exists
+        #[cfg(target_os = "windows")]
+        if Self::find_command_path(cmd_name).is_none() {
+            eprintln!("Command not found: {}", cmd_name);
+            return Ok(2);
+        }
 
         // Phase 2: Check executable permissions on Unix
         #[cfg(not(target_os = "windows"))]

@@ -1,7 +1,7 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-  safe-archive-tests.ps1 - Pester test suite for safe-archive.ps1
+  SafeArchiveTests.ps1 - Pester test suite for SafeArchive.ps1
 
 .DESCRIPTION
   Comprehensive Pester test suite validating the PowerShell safe-archive wrapper
@@ -27,7 +27,7 @@
 
   Prerequisites:
     - Pester module (v5.0+)
-    - safe-archive.ps1 script in ../scripts/
+    - SafeArchive.ps1 script in ../scripts/
     - TestHelpers.ps1 in same directory (provides Write-RandomTextFile, New-TempDir)
 
   Test Isolation:
@@ -56,8 +56,8 @@
   None. Tests set environment variables per-test.
 
 .EXAMPLE
-  # Run safe-archive tests with Pester
-  PS> Invoke-Pester -Path .\safe-archive-tests.ps1
+  # Run SafeArchive tests with Pester
+  PS> Invoke-Pester -Path .\SafeArchiveTests.ps1
 
 .LINK
   https://pester.dev/
@@ -67,7 +67,7 @@
 #>
 Set-StrictMode -Version Latest
 
-Describe "safe-archive.ps1" {
+Describe "SafeArchive.ps1" {
   BeforeAll {
     . "$PSScriptRoot/TestHelpers.ps1"
     $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\SafeArchive.ps1"

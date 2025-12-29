@@ -149,7 +149,7 @@ def main(argv: List[str]) -> int:
     Test Sequence
     -------------
     1. Setup: Create .agent/FAIL-LOGS and .agent/FAIL-ARCHIVE directories
-    2. Verify scripts exist: safe-run.py, safe-archive.py
+    2. Verify scripts exist: safe_run.py, safe_archive.py
     3. Test failure path: Command exits 42, verify artifact created and exit code preserved
     4. Test success path: Command exits 0, verify no artifact created
     5. Test archive move: Archive newest log, verify move semantics

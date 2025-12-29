@@ -1,10 +1,10 @@
 #!/usr/bin/env pwsh
 <#
 .SYNOPSIS
-  phase3-ctrlc-probe.ps1 - Windows Ctrl-C signal behavior probe for safe-run.ps1
+  Phase3CtrlcProbe.ps1 - Windows Ctrl-C signal behavior probe for SafeRun.ps1
 
 .DESCRIPTION
-  This script programmatically tests how safe-run.ps1 handles Ctrl-C (SIGINT)
+  This script programmatically tests how SafeRun.ps1 handles Ctrl-C (SIGINT)
   on native Windows by sending console control events to a running process.
   
   Purpose:
@@ -26,7 +26,7 @@
     1. Create isolated temp directory for logs
     2. Set SAFE_RUN_BIN to built Rust binary (rust/target/release/safe-run.exe)
     3. Set SAFE_LOG_DIR to temp directory
-    4. Launch safe-run.ps1 as background job with long-running child command
+    4. Launch SafeRun.ps1 as background job with long-running child command
     5. Wait for child process to start (ensure it's running)
     6. Send Ctrl-C to the process group using GenerateConsoleCtrlEvent
     7. Wait for process to exit
@@ -49,7 +49,7 @@
   Requires:
     - PowerShell 5.1+ or pwsh 6+
     - Rust canonical tool built at rust/target/release/safe-run.exe
-    - safe-run.ps1 wrapper at wrappers/powershell/scripts/safe-run.ps1
+    - SafeRun.ps1 wrapper at wrappers/powershell/scripts/SafeRun.ps1
   
   Design Notes:
     - Uses GenerateConsoleCtrlEvent for native Windows Ctrl-C simulation
@@ -69,7 +69,7 @@
 
 .EXAMPLE
   # Run phase3 probe (disabled by default in CI)
-  PS> .\phase3-ctrlc-probe.ps1
+  PS> .\Phase3CtrlcProbe.ps1
 
 .LINK
   https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
@@ -110,7 +110,7 @@ function Invoke-CtrlCProbe {
     
     Write-ProbeLog "Rust binary: $rustBinary"
     
-    # Locate safe-run.ps1 wrapper with detailed debugging
+    # Locate SafeRun.ps1 wrapper with detailed debugging
     Write-ProbeLog "=== Path Resolution Debug ==="
     Write-ProbeLog "Current location: $(Get-Location)"
     Write-ProbeLog "`$PSScriptRoot: $PSScriptRoot"
@@ -154,9 +154,9 @@ function Invoke-CtrlCProbe {
     Write-ProbeLog "  SAFE_LOG_DIR: $env:SAFE_LOG_DIR"
     Write-ProbeLog ""
     
-    # Test strategy: Launch safe-run.ps1 with a long-running command (sleep)
+    # Test strategy: Launch SafeRun.ps1 with a long-running command (sleep)
     # Then send Ctrl-C and observe the behavior
-    Write-ProbeLog "Launching safe-run.ps1 with long-running command..."
+    Write-ProbeLog "Launching SafeRun.ps1 with long-running command..."
     
     # Define Win32 API structures and functions for process creation with process group
     # This allows us to create a new process group and properly send console control events
@@ -257,7 +257,7 @@ public class Win32Process {
     
     # Build the command line for the target process
     # Use -File with -- separator for clean argument passing
-    # The -- tells safe-run.ps1 that everything after is the child command to execute
+    # The -- tells SafeRun.ps1 that everything after is the child command to execute
     # We pass NULL to lpApplicationName and let Windows parse the command line
     $commandLine = "`"$pwshPath`" -NoProfile -File `"$wrapperScriptResolved`" -- pwsh -NoProfile -Command `"Start-Sleep -Seconds 60`""
     Write-ProbeLog ""

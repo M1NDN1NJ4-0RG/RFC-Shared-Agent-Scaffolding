@@ -44,7 +44,7 @@ CLI Interface
 -------------
 The wrapper accepts the same arguments as the Rust canonical tool:
 
-    python3 safe-run.py [--] <command> [args...]
+    python3 safe_run.py [--] <command> [args...]
 
 The optional "--" separator is stripped before forwarding to Rust, which
 expects the structure: safe-run run <command> [args...]
@@ -53,13 +53,13 @@ Examples
 --------
 Basic usage with argument forwarding::
 
-    python3 safe-run.py python3 -c "print('hello')"
-    python3 safe-run.py -- bash -c "exit 42"
+    python3 safe_run.py python3 -c "print('hello')"
+    python3 safe_run.py -- bash -c "exit 42"
 
 Using environment override::
 
     export SAFE_RUN_BIN=/custom/path/to/safe-run
-    python3 safe-run.py echo "uses custom binary"
+    python3 safe_run.py echo "uses custom binary"
 
 Exit Codes
 ----------

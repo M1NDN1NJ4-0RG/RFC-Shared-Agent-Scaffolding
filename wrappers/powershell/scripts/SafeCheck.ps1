@@ -43,7 +43,7 @@
   match the convention used by the tested scripts.
 
 .EXAMPLE
-  PS> .\safe-check.ps1
+  PS> .\SafeCheck.ps1
   INFO: safe-run failure-path OK
   INFO: safe-run success-path OK
   INFO: safe-archive move OK
@@ -54,7 +54,7 @@
 
 .EXAMPLE
   # Run from CI/CD pipeline
-  PS> pwsh -NoProfile -File scripts/safe-check.ps1
+  PS> pwsh -NoProfile -File scripts/SafeCheck.ps1
   # Exit code signals pass/fail for automation
 
 .NOTES

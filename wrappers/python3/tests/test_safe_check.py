@@ -26,7 +26,7 @@ Examples
 --------
 Run tests via pytest::
 
-    pytest test-safe_check.py
+    pytest test_safe_check.py
 
 Exit Codes
 ----------
