@@ -120,7 +120,13 @@ _color() {
 
 # Logging helpers
 log() { printf "%s\n" "$*" >&2; }  # Print to stderr
+
+# Print PASS message with green color
+# Args: $* = pass message
 pass() { log "$(_color '32' 'PASS') $*"; }  # Green PASS
+
+# Print FAIL message with red color
+# Args: $* = fail message
 fail() { log "$(_color '31' 'FAIL') $*"; }  # Red FAIL
 
 # t - Run a test and track results
@@ -160,8 +166,17 @@ assert_ne() {
 }
 
 # File existence assertions
-assert_file_exists() { [[ -f "$1" ]] || { log "expected file to exist: $1"; return 1; }; }
+
+# Assert file exists
+# Args: $1 = file path
+assert_file_exists() { [[ -e "$1" ]] || { log "expected file to exist: $1"; return 1; }; }
+
+# Assert directory exists
+# Args: $1 = directory path
 assert_dir_exists() { [[ -d "$1" ]] || { log "expected dir to exist: $1"; return 1; }; }
+
+# Assert file does not exist
+# Args: $1 = file path
 assert_file_not_exists() { [[ ! -e "$1" ]] || { log "expected file to NOT exist: $1"; return 1; }; }
 
 # String containment assertions
@@ -169,6 +184,9 @@ assert_contains() {
   local hay="$1" needle="$2" msg="${3:-}"
   grep -F -- "$needle" <<<"$hay" >/dev/null 2>&1 || { log "expected output to contain: $needle $msg"; return 1; }
 }
+
+# Assert string not in content
+# Args: $1 = haystack, $2 = needle, $3 = optional message
 assert_not_contains() {
   local hay="$1" needle="$2" msg="${3:-}"
   grep -F -- "$needle" <<<"$hay" >/dev/null 2>&1 && { log "expected output NOT to contain: $needle $msg"; return 1; }

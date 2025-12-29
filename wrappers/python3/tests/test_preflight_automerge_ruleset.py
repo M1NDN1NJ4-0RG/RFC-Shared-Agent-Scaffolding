@@ -4,13 +4,11 @@ This test module validates the preflight_automerge_ruleset.py implementation,
 focusing on M0-P2-I1 Bearer token authentication, error classification, and
 GitHub Ruleset verification logic.
 
-Purpose
--------
+:Purpose:
 Validates that the preflight_automerge_ruleset.py script correctly verifies
 GitHub Ruleset configuration and uses proper Bearer token authentication.
 
-Test Coverage
--------------
+:Test Coverage:
 - Authentication error detection via classify_auth()
 - Malformed --want argument rejection (non-JSON, non-array)
 - Success path: Ruleset active, targets default branch, has all required checks
@@ -19,22 +17,19 @@ Test Coverage
 - Auth failure handling: Returns exit code 2 for 401/403 errors
 - M0-P2-I1 Bearer token format validation in source code
 
-Environment Variables
----------------------
+:Environment Variables:
 TOKEN : str, optional
     GitHub personal access token (tested by tests, mocked).
 
 GITHUB_TOKEN : str, optional
     GitHub personal access token (alternative, tested by tests, mocked).
 
-Examples
---------
+:Examples:
 Run tests via pytest::
 
     pytest test-preflight_automerge_ruleset.py
 
-Exit Codes
-----------
+:Exit Codes:
 0
     All tests passed
 1
@@ -49,8 +44,7 @@ This replaces the deprecated "token <token>" format. The test validates
 this by inspecting the source code of http_get() to ensure it contains
 the correct authentication header format.
 
-Test Dependencies
------------------
+:Test Dependencies:
 Uses unittest.mock.patch to mock GitHub API calls:
 - have_cmd() mocked to return False (force HTTP path)
 - http_get() mocked to return fixture responses
@@ -58,13 +52,11 @@ Uses unittest.mock.patch to mock GitHub API calls:
 
 All tests run fully offline with no actual GitHub API calls.
 
-Test Fixtures
--------------
+:Test Fixtures:
 - _rulesets_list(): Mock response for GET /repos/{repo}/rulesets
 - _ruleset_detail(contexts): Mock response for GET /repos/{repo}/rulesets/{id}
 
-Platform Notes
---------------
+:Platform Notes:
 - All tests are platform-independent (Linux, macOS, Windows compatible)
 - No network access required (all API calls mocked)
 - Uses importlib to dynamically load the module under test
@@ -100,16 +92,32 @@ def load_module():
 
 
 class TestPreflightAutomergeRuleset(unittest.TestCase):
+    """Test preflight_automerge_ruleset.py wrapper script.
+
+    Validates ruleset verification logic including auth detection,
+    argument parsing, and required context checking.
+    """
+
     def setUp(self):
+        """Set up test by loading the module."""
         self.mod = load_module()
 
     def _rulesets_list(self):
+        """Generate test ruleset list fixture.
+
+        :returns: List of ruleset dicts for testing
+        """
         return [
             {"id": 111, "name": "Main - PR Only + Green CI"},
             {"id": 222, "name": "Other Ruleset"},
         ]
 
     def _ruleset_detail(self, required_contexts):
+        """Generate test ruleset detail fixture.
+
+        :param required_contexts: List of required status check contexts
+        :returns: Dict representing a GitHub ruleset configuration
+        """
         return {
             "id": 111,
             "name": "Main - PR Only + Green CI",
@@ -132,6 +140,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         }
 
     def test_classify_auth_detects_auth_errors(self):
+        """Test that classify_auth correctly identifies authentication errors."""
         # classify_auth returns True if the response indicates an auth error
         self.assertTrue(self.mod.classify_auth({"message": "Bad credentials"}))
         self.assertTrue(self.mod.classify_auth({"message": "Requires authentication"}))
@@ -140,6 +149,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         self.assertFalse(self.mod.classify_auth("not a dict"))
 
     def test_parse_args_rejects_malformed_want(self):
+        """Test that malformed --want argument returns exit code 3."""
         # parse_args raises ValueError (caught by main, returns 3)
         # We can't test this directly since parse_args raises, not exits
         # Test via main instead
@@ -147,9 +157,20 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         self.assertEqual(rc, 3)
 
     def test_success_path_via_http(self):
+        """Test successful ruleset verification via HTTP API.
+
+        Verifies that the script correctly validates required contexts when
+        accessing GitHub API via HTTP (gh CLI not available).
+        """
         want = ["lint", "test"]
 
         def fake_http_get(url, api_version):
+            """Mock HTTP GET for ruleset API calls.
+
+            :param url: API endpoint URL
+            :param api_version: GitHub API version string
+            :returns: Tuple of (status_code, json_body)
+            """
             if url.endswith("/rulesets"):
                 return 200, json.dumps(self._rulesets_list())
             if "/rulesets/111" in url:
@@ -172,10 +193,21 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
             self.assertEqual(rc, 0)
 
     def test_missing_required_context_fails(self):
+        """Test that missing required status contexts causes failure.
+
+        Verifies that the script exits with non-zero when the ruleset
+        is missing one of the required status check contexts.
+        """
         want = ["lint", "test"]
         have = ["lint"]
 
         def fake_http_get(url, api_version):
+            """Mock HTTP GET missing one required context.
+
+            :param url: API endpoint URL
+            :param api_version: GitHub API version string
+            :returns: Tuple of (status_code, json_body)
+            """
             if url.endswith("/rulesets"):
                 return 200, json.dumps(self._rulesets_list())
             if "/rulesets/111" in url:
@@ -198,7 +230,19 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
             self.assertNotEqual(rc, 0)
 
     def test_ruleset_not_found_returns_3(self):
+        """Test that non-existent ruleset returns exit code 3.
+
+        Verifies that the script returns exit code 3 when the specified
+        ruleset name is not found in the repository's rulesets.
+        """
+
         def fake_http_get(url, api_version):
+            """Mock HTTP GET with no matching ruleset.
+
+            :param url: API endpoint URL
+            :param api_version: GitHub API version string
+            :returns: Tuple of (status_code, json_body)
+            """
             if url.endswith("/rulesets"):
                 return 200, json.dumps([{"id": 999, "name": "nope"}])
             raise AssertionError(f"unexpected url {url}")
@@ -219,7 +263,19 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
             self.assertEqual(rc, 3)
 
     def test_auth_failure_returns_2(self):
+        """Test that authentication failure returns exit code 2.
+
+        Verifies that the script returns exit code 2 when GitHub API
+        returns a 401 authentication error.
+        """
+
         def fake_http_get(url, api_version):
+            """Mock HTTP GET with auth error.
+
+            :param url: API endpoint URL
+            :param api_version: GitHub API version string
+            :returns: Tuple of (status_code, json_body)
+            """
             if url.endswith("/rulesets"):
                 return 401, json.dumps({"message": "Bad credentials"})
             raise AssertionError(f"unexpected url {url}")

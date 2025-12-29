@@ -4,100 +4,92 @@
 This module moves failure logs from .agent/FAIL-LOGS to .agent/FAIL-ARCHIVE
 with configurable compression and strict no-clobber guarantees.
 
-Purpose
--------
-Provides safe, non-destructive archival of agent failure logs to prevent
-accidental data loss while managing disk space through optional compression.
-The tool never overwrites existing archive files unless explicitly configured
-to fail (strict no-clobber mode).
+:Purpose:
+    Provides safe, non-destructive archival of agent failure logs to prevent
+    accidental data loss while managing disk space through optional compression.
+    The tool never overwrites existing archive files unless explicitly configured
+    to fail (strict no-clobber mode).
 
-M0-P1-I3 No-Clobber Semantics
-------------------------------
-Two modes of operation:
+:M0-P1-I3 No-Clobber Semantics:
+    Two modes of operation:
 
-1. **Auto-suffix mode (default)**:
-   - If destination exists, append .2, .3, etc. until unique name found
-   - Never overwrites existing archive files
-   - Emits WARNING to stderr when auto-suffixing occurs
+    1. **Auto-suffix mode (default)**:
+       - If destination exists, append .2, .3, etc. until unique name found
+       - Never overwrites existing archive files
+       - Emits WARNING to stderr when auto-suffixing occurs
 
-2. **Strict no-clobber mode** (via --no-clobber flag or SAFE_ARCHIVE_NO_CLOBBER=1):
-   - If destination exists, fail with exit code 2
-   - Prevents any archival when collision detected
-   - Use for workflows requiring explicit collision handling
+    2. **Strict no-clobber mode** (via --no-clobber flag or SAFE_ARCHIVE_NO_CLOBBER=1):
+       - If destination exists, fail with exit code 2
+       - Prevents any archival when collision detected
+       - Use for workflows requiring explicit collision handling
 
-Environment Variables
----------------------
-SAFE_FAIL_DIR : str, optional
-    Source directory for failure logs (default: .agent/FAIL-LOGS)
+:Environment Variables:
+    SAFE_FAIL_DIR : str, optional
+        Source directory for failure logs (default: .agent/FAIL-LOGS)
 
-SAFE_ARCHIVE_DIR : str, optional
-    Destination directory for archived logs (default: .agent/FAIL-ARCHIVE)
+    SAFE_ARCHIVE_DIR : str, optional
+        Destination directory for archived logs (default: .agent/FAIL-ARCHIVE)
 
-SAFE_ARCHIVE_COMPRESS : str, optional
-    Compression method: none (default) | gzip | xz | zstd
-    - none: No compression applied
-    - gzip: Python built-in gzip compression (always available)
-    - xz: Requires 'xz' command in PATH, uses multi-threading (-T0)
-    - zstd: Requires 'zstd' command in PATH, uses multi-threading (-T0)
+    SAFE_ARCHIVE_COMPRESS : str, optional
+        Compression method: none (default) | gzip | xz | zstd
 
-SAFE_ARCHIVE_NO_CLOBBER : str, optional
-    Set to "1" to enable strict no-clobber mode globally
+        - none: No compression applied
+        - gzip: Python built-in gzip compression (always available)
+        - xz: Requires 'xz' command in PATH, uses multi-threading (-T0)
+        - zstd: Requires 'zstd' command in PATH, uses multi-threading (-T0)
 
-CLI Interface
--------------
-    python3 safe_archive.py [--no-clobber] [--all | <file> ...]
+    SAFE_ARCHIVE_NO_CLOBBER : str, optional
+        Set to "1" to enable strict no-clobber mode globally
 
-Options:
-    --no-clobber    Enable strict no-clobber mode (fail on collision)
-    --all           Archive all files in SAFE_FAIL_DIR
-    <file> ...      Archive specific file(s) by path
+:CLI Interface:
+    ``python3 safe_archive.py [--no-clobber] [--all | <file> ...]``
 
-Examples
---------
-Archive specific failure log::
+    Options:
+        --no-clobber    Enable strict no-clobber mode (fail on collision)
+        --all           Archive all files in SAFE_FAIL_DIR
+        <file> ...      Archive specific file(s) by path
 
-    python3 safe_archive.py .agent/FAIL-LOGS/fail-2024-01-15T10-30-00.txt
+:Examples:
+    Archive specific failure log::
 
-Archive all failure logs with gzip compression::
+        python3 safe_archive.py .agent/FAIL-LOGS/fail-2024-01-15T10-30-00.txt
 
-    export SAFE_ARCHIVE_COMPRESS=gzip
-    python3 safe_archive.py --all
+    Archive all failure logs with gzip compression::
 
-Strict no-clobber mode via flag::
+        export SAFE_ARCHIVE_COMPRESS=gzip
+        python3 safe_archive.py --all
 
-    python3 safe_archive.py --no-clobber mylog.txt
-    # Fails with exit 2 if .agent/FAIL-ARCHIVE/mylog.txt exists
+    Strict no-clobber mode via flag::
 
-Auto-suffix mode (default)::
+        python3 safe_archive.py --no-clobber mylog.txt
+        # Fails with exit 2 if .agent/FAIL-ARCHIVE/mylog.txt exists
 
-    python3 safe_archive.py mylog.txt
-    # If mylog.txt exists, creates mylog.txt.2
-    # If mylog.txt.2 exists, creates mylog.txt.3, etc.
+    Auto-suffix mode (default)::
 
-Exit Codes
-----------
-0
-    All files archived successfully
-2
-    Error: File not found, compression tool missing, or no-clobber collision
+        python3 safe_archive.py mylog.txt
+        # If mylog.txt exists, creates mylog.txt.2
+        # If mylog.txt.2 exists, creates mylog.txt.3, etc.
 
-Side Effects
-------------
-- Creates SAFE_FAIL_DIR if it doesn't exist
-- Creates SAFE_ARCHIVE_DIR if it doesn't exist
-- Moves (not copies) source files to archive directory
-- May compress archived files (removes uncompressed original)
-- Prints status messages to stderr (ARCHIVED, WARNING, ERROR)
+:Exit Codes:
+    0
+        All files archived successfully
+    2
+        Error: File not found, compression tool missing, or no-clobber collision
 
-Filesystem Operations
----------------------
-- Uses shutil.move() for atomic file operations
-- Compressed files get extension: .gz (gzip), .xz (xz), .zst (zstd)
-- Source file deleted after successful compression
-- No partial writes (compression creates new file, then removes source)
+:Side Effects:
+    - Creates SAFE_FAIL_DIR if it doesn't exist
+    - Creates SAFE_ARCHIVE_DIR if it doesn't exist
+    - Moves (not copies) source files to archive directory
+    - May compress archived files (removes uncompressed original)
+    - Prints status messages to stderr (ARCHIVED, WARNING, ERROR)
 
-Platform Notes
---------------
+:Filesystem Operations:
+    - Uses shutil.move() for atomic file operations
+    - Compressed files get extension: .gz (gzip), .xz (xz), .zst (zstd)
+    - Source file deleted after successful compression
+    - No partial writes (compression creates new file, then removes source)
+
+:Platform Notes:
 - gzip compression: Python built-in, available on all platforms
 - xz compression: Requires 'xz' binary in PATH (common on Linux/macOS)
 - zstd compression: Requires 'zstd' binary in PATH (install via package manager)
@@ -241,11 +233,10 @@ def compress_file(method: str, path: str) -> None:
 def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bool = False) -> None:
     """Archive a single file with M0-P1-I3 no-clobber semantics.
 
-    Args:
-        src: Source file path
-        archive_dir: Destination directory
-        compress: Compression method
-        strict_no_clobber: If True, fail if destination exists. If False (default), auto-suffix.
+    :param src: Source file path
+    :param archive_dir: Destination directory
+    :param compress: Compression method
+    :param strict_no_clobber: If True, fail if destination exists. If False (default), auto-suffix.
     """
     if not os.path.exists(src):
         raise RuntimeError(f"File not found: {src}")

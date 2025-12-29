@@ -5,14 +5,12 @@ This module provides a thin invoker that discovers and executes the Rust
 canonical implementation of safe-run. It does NOT reimplement any contract
 logic or business rules - all functionality is delegated to the Rust binary.
 
-Purpose
--------
+:Purpose:
 Acts as a language-specific entry point for Python users while maintaining
 contract conformance through the canonical Rust implementation. The wrapper
 handles binary discovery, platform detection, and transparent argument forwarding.
 
-Binary Discovery Order
-----------------------
+:Binary Discovery Order:
 Per docs/wrapper-discovery.md, the wrapper searches for the Rust binary in
 this deterministic order:
 
@@ -22,8 +20,7 @@ this deterministic order:
 4. **PATH lookup** (system-wide installation via which/shutil.which)
 5. **Error with instructions** (exit 127 if not found)
 
-Environment Variables
----------------------
+:Environment Variables:
 SAFE_RUN_BIN : str, optional
     Override binary path. If set, this path is used without validation.
     The wrapper will attempt to execute it and report errors if it fails.
@@ -40,8 +37,7 @@ SAFE_SNIPPET_LINES : int, optional
 SAFE_RUN_VIEW : str, optional
     Output view format: 'split' (default) or 'merged'
 
-CLI Interface
--------------
+:CLI Interface:
 The wrapper accepts the same arguments as the Rust canonical tool:
 
     python3 safe_run.py [--] <command> [args...]
@@ -49,8 +45,7 @@ The wrapper accepts the same arguments as the Rust canonical tool:
 The optional "--" separator is stripped before forwarding to Rust, which
 expects the structure: safe-run run <command> [args...]
 
-Examples
---------
+:Examples:
 Basic usage with argument forwarding::
 
     python3 safe_run.py python3 -c "print('hello')"
@@ -61,8 +56,7 @@ Using environment override::
     export SAFE_RUN_BIN=/custom/path/to/safe-run
     python3 safe_run.py echo "uses custom binary"
 
-Exit Codes
-----------
+:Exit Codes:
 0
     Command succeeded (proxied from Rust tool)
 1-125
@@ -74,15 +68,13 @@ Exit Codes
 130
     SIGINT/Ctrl+C (proxied from Rust tool)
 
-Platform Notes
---------------
+:Platform Notes:
 - **Linux**: Expects x86_64 or aarch64 architecture
 - **macOS**: Supports both Intel (x86_64) and Apple Silicon (aarch64/arm64)
 - **Windows**: Expects x86_64 (future support, requires .exe extension)
 - **Other**: Falls back to PATH lookup only
 
-Contract References
--------------------
+:Contract References:
 This wrapper implements the discovery contract defined in:
 - docs/wrapper-discovery.md: Binary discovery cascade
 - docs/rust-canonical-tool.md: Canonical tool architecture
@@ -94,8 +86,7 @@ The Rust binary implements the conformance contracts:
 - safe-run-004: Signal handling (SIGINT -> exit 130)
 - safe-run-005: Tail snippet output
 
-See Also
---------
+:See Also:
 - Repository: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
 - Releases: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases
 """

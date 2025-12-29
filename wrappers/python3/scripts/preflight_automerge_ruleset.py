@@ -5,8 +5,7 @@ This module verifies that a GitHub Repository Ruleset enforces required status
 checks on the default branch, ensuring safe automerge workflows. It validates
 ruleset configuration via the GitHub API using M0-P2-I1 Bearer token authentication.
 
-Purpose
--------
+:Purpose:
 Prevents unsafe automerge operations by verifying that GitHub Rulesets require
 all specified CI status checks (e.g., "lint", "test") to pass before merging
 to the default branch. This is a preflight check to ensure repository protection
@@ -21,8 +20,7 @@ This replaces the deprecated "token <token>" format. The implementation
 prioritizes the 'gh' CLI when available (which handles auth automatically),
 and falls back to urllib with explicit Bearer token headers.
 
-Environment Variables
----------------------
+:Environment Variables:
 TOKEN : str, optional
     GitHub personal access token (classic or fine-grained)
     Used for authentication if 'gh' CLI is not available
@@ -31,15 +29,13 @@ GITHUB_TOKEN : str, optional
     Alternative to TOKEN, same purpose
     Checked as fallback if TOKEN is not set
 
-GitHub API Requirements
------------------------
+:GitHub API Requirements:
 The token must have the following scopes/permissions:
 - Repository: Read access to administration (for rulesets)
 - Classic token: repo scope
 - Fine-grained token: Administration: Read-only
 
-CLI Interface
--------------
+:CLI Interface:
     python3 preflight-automerge-ruleset.py \
         --repo OWNER/REPO \
         [--ruleset-id ID | --ruleset-name NAME] \
@@ -63,8 +59,7 @@ Optional Arguments:
     --api-version VERSION
         GitHub API version (default: 2022-11-28)
 
-Exit Codes
-----------
+:Exit Codes:
 0
     Verification passed: ruleset is active, targets default branch,
     and enforces all required status checks
@@ -76,8 +71,7 @@ Exit Codes
 3
     Usage error: invalid arguments, malformed JSON, ruleset not found
 
-Verification Logic
-------------------
+:Verification Logic:
 1. Fetch all rulesets for the repository
 2. If --ruleset-name provided, resolve to ruleset ID
 3. Fetch detailed ruleset configuration
@@ -86,8 +80,7 @@ Verification Logic
 6. Extract required_status_checks contexts
 7. Verify all --want contexts are present
 
-Examples
---------
+:Examples:
 Verify by ruleset name::
 
     python3 preflight-automerge-ruleset.py \
@@ -112,26 +105,22 @@ Using with TOKEN environment variable::
     export GITHUB_TOKEN=ghp_xxxxxxxxxxxx
     python3 preflight-automerge-ruleset.py --repo owner/repo --ruleset-id 999 --want '["lint"]'
 
-Security Notes
---------------
+:Security Notes:
 - Token values are NEVER printed to stdout or stderr
 - Errors are classified as auth/permission vs. other API failures
 - Uses GitHub API version headers for forward compatibility
 - User-Agent header identifies the tool for GitHub API analytics
 
-Side Effects
-------------
+:Side Effects:
 - Makes HTTP GET requests to api.github.com
 - May invoke 'gh api' command if 'gh' CLI is available
 - Prints INFO, WARN, and ERROR messages to stderr
 - No filesystem modifications
 
-Contract References
--------------------
+:Contract References:
 - **M0-P2-I1**: Bearer token authentication format for GitHub API
 
-See Also
---------
+:See Also:
 - GitHub Rulesets API: https://docs.github.com/en/rest/repos/rules
 - GitHub API Authentication: https://docs.github.com/en/rest/authentication
 """

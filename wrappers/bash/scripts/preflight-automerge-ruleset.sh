@@ -115,7 +115,13 @@ IFS=$'\n\t'
 
 # Helper functions for consistent logging
 die() { printf 'ERROR: %s\n' "$*" >&2; exit 1; }
+
+# Print warning message to stderr
+# Args: $* = warning message
 warn() { printf 'WARN: %s\n' "$*" >&2; }
+
+# Print info message to stderr
+# Args: $* = info message
 info() { printf 'INFO: %s\n' "$*" >&2; }
 
 # usage - Display help text and exit

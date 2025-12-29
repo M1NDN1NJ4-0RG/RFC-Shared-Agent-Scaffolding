@@ -4,13 +4,11 @@ This test module validates the Python wrapper's behavior for the safe-run tool,
 including success/failure paths, environment variable handling, signal handling,
 and event ledger generation.
 
-Purpose
--------
+:Purpose:
 Validates that the Python wrapper for safe-run correctly delegates to the Rust
 canonical tool and satisfies contract requirements per M0-P1-I1 and M0-P1-I2.
 
-Test Coverage
--------------
+:Test Coverage:
 - Success path: Command exits 0, no artifacts created
 - Failure path: Command exits non-zero, artifact created, exit code preserved
 - Custom log directory via SAFE_LOG_DIR environment variable
@@ -19,16 +17,14 @@ Test Coverage
 - Event ledger: Sequence numbers and standardized META events
 - Merged view: Optional SAFE_RUN_VIEW=merged format
 
-Contract Validation
--------------------
+:Contract Validation:
 - safe-run-001: Exit code preservation (test_failure_creates_log_and_preserves_exit_code)
 - safe-run-002: Stdout/stderr capture on failure (test_failure_creates_log_and_preserves_exit_code)
 - safe-run-003: Failure artifact generation (test_failure_creates_log_and_preserves_exit_code)
 - safe-run-004: Signal handling SIGINT -> exit 130 (test_sigint_creates_aborted_log)
 - safe-run-005: Tail snippet output (test_snippet_lines_printed_to_stderr)
 
-Environment Variables
----------------------
+:Environment Variables:
 SAFE_RUN_BIN : str, optional
     Path to Rust canonical binary. Required for tests unless binary is
     discoverable via standard search order.
@@ -39,8 +35,7 @@ SAFE_LOG_DIR : str, optional
 SAFE_SNIPPET_LINES : int, optional
     Number of tail lines for stderr snippet (tested by tests).
 
-Examples
---------
+:Examples:
 Run tests via pytest::
 
     pytest test_safe_run.py
@@ -49,22 +44,19 @@ Run tests via unittest::
 
     python3 test_safe_run.py
 
-Exit Codes
-----------
+:Exit Codes:
 0
     All tests passed
 1
     One or more tests failed
 
-Notes
------
+:Notes:
 - Tests invoke actual safe_run.py wrapper (not unit-tested in isolation)
 - Requires Rust binary to be built and discoverable
 - Uses tempfile.TemporaryDirectory for test isolation
 - SIGINT test timing-dependent (may need retries on slow systems)
 
-Platform Notes
---------------
+:Platform Notes:
 - Uses tempfile.TemporaryDirectory for isolated test execution
 - SIGINT test uses subprocess.Popen with signal.SIGINT
 - All tests are platform-independent (Linux, macOS, Windows compatible)
@@ -144,7 +136,10 @@ def list_fail_logs(log_dir: Path):
 
 
 class TestSafeRun(unittest.TestCase):
+    """Test safe_run.py wrapper script functionality."""
+
     def test_success_creates_no_artifacts(self):
+        """Test that successful runs don't create FAIL-LOGS artifacts."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             log_dir = wd / ".agent" / "FAIL-LOGS"
@@ -156,6 +151,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertFalse(log_dir.exists(), "FAIL-LOGS directory should not be created on success")
 
     def test_failure_creates_log_and_preserves_exit_code(self):
+        """Test that failures create FAIL-LOGS and preserve exit code."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             log_dir = wd / ".agent" / "FAIL-LOGS"
@@ -179,6 +175,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertIn("ERR", content)
 
     def test_custom_log_dir_env(self):
+        """Test that AGENT_FAIL_LOG_DIR environment variable works."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             custom = wd / "custom_logs"
@@ -192,6 +189,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertEqual(len(list_fail_logs(custom)), 1)
 
     def test_snippet_lines_printed_to_stderr(self):
+        """Test that snippet lines are printed to stderr."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             proc = run_safe_run(
@@ -217,6 +215,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertIn("line4", proc.stderr)
 
     def test_sigint_creates_aborted_log(self):
+        """Test that SIGINT creates an aborted log file."""
         # Run a long-ish process via safe-run, then SIGINT safe-run itself.
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)

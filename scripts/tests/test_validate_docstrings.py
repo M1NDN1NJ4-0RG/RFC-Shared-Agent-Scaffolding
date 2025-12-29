@@ -4,32 +4,27 @@
 This module provides basic unit tests for the docstring validator,
 covering each language's validation logic.
 
-Purpose
--------
+:Purpose:
 Ensures the validator correctly identifies valid and invalid docstrings
 for all supported languages (Bash, PowerShell, Python, Perl, Rust, YAML).
 
-Usage
------
+:Usage:
 Run tests from repository root::
 
     python3 -m pytest scripts/tests/test_validate_docstrings.py
     # or
     python3 scripts/tests/test_validate_docstrings.py
 
-Environment Variables
----------------------
+:Environment Variables:
 None. Tests are self-contained.
 
-Exit Codes
-----------
+:Exit Codes:
 0
     All tests passed
 1
     One or more tests failed
 
-Examples
---------
+:Examples:
 Run all tests::
 
     python3 -m pytest scripts/tests/test_validate_docstrings.py -v
@@ -38,8 +33,7 @@ Run specific test::
 
     python3 -m pytest scripts/tests/test_validate_docstrings.py::test_bash_valid -v
 
-Notes
------
+:Notes:
 - Tests use minimal valid/invalid examples for each language
 - Can be run with pytest or as standalone script (uses unittest)
 - Add more tests as validation rules evolve
@@ -84,7 +78,11 @@ except ImportError:
 
 
 class TestBashValidator(unittest.TestCase):
-    """Test Bash script validation."""
+    """Test Bash script validation.
+
+    Tests for BashValidator class including file-level header validation
+    and function-level comment block validation.
+    """
 
     def test_valid_bash_script(self):
         """Test that a valid Bash script passes validation."""
@@ -113,7 +111,7 @@ class TestBashValidator(unittest.TestCase):
 echo "test"
 """
         result = BashValidator.validate(Path("test.sh"), content)
-        self.assertIsNone(result, "Valid Bash script should pass validation")
+        self.assertEqual(result, [], "Valid Bash script should pass validation")
 
     def test_missing_shebang(self):
         """Test that missing shebang is caught."""
@@ -125,8 +123,8 @@ echo "test"
 # EXAMPLES: ./test.sh
 """
         result = BashValidator.validate(Path("test.sh"), content)
-        self.assertIsNotNone(result, "Missing shebang should fail validation")
-        self.assertIn("shebang", result.missing_sections)
+        self.assertEqual(len(result), 1, "Missing shebang should fail validation")
+        self.assertIn("shebang", result[0].missing_sections)
 
     def test_missing_required_section(self):
         """Test that missing required section is caught."""
@@ -143,33 +141,33 @@ echo "test"
 echo "test"
 """
         result = BashValidator.validate(Path("test.sh"), content)
-        self.assertIsNotNone(result, "Missing INPUTS, OUTPUTS, EXAMPLES should fail")
+        self.assertGreater(len(result), 0, "Missing INPUTS, OUTPUTS, EXAMPLES should fail")
 
 
 class TestPythonValidator(unittest.TestCase):
-    """Test Python script validation."""
+    """Test Python script validation.
+
+    Tests for PythonValidator class including module docstring validation
+    and symbol-level validation using AST parsing.
+    """
 
     def test_valid_python_script(self):
         """Test that a valid Python script passes validation."""
         content = '''#!/usr/bin/env python3
 """Test script.
 
-Purpose
--------
+:Purpose:
 Tests validation.
 
-Environment Variables
----------------------
+:Environment Variables:
 None.
 
-Examples
---------
+:Examples:
 Run the script::
 
     python3 test.py
 
-Exit Codes
-----------
+:Exit Codes:
 0
     Success
 1
@@ -179,7 +177,7 @@ Exit Codes
 print("test")
 '''
         result = PythonValidator.validate(Path("test.py"), content)
-        self.assertIsNone(result, "Valid Python script should pass validation")
+        self.assertEqual(result, [], "Valid Python script should pass validation")
 
     def test_missing_docstring(self):
         """Test that missing docstring is caught."""
@@ -187,11 +185,15 @@ print("test")
 print("test")
 """
         result = PythonValidator.validate(Path("test.py"), content)
-        self.assertIsNotNone(result, "Missing docstring should fail validation")
+        self.assertGreater(len(result), 0, "Missing docstring should fail validation")
 
 
 class TestYAMLValidator(unittest.TestCase):
-    """Test YAML file validation."""
+    """Test YAML file validation.
+
+    Tests for YAMLValidator class including workflow and config file
+    header documentation validation.
+    """
 
     def test_valid_yaml_workflow(self):
         """Test that a valid YAML workflow passes validation."""
@@ -215,11 +217,15 @@ name: Test
 on: [pull_request]
 """
         result = YAMLValidator.validate(Path("test.yml"), content)
-        self.assertIsNone(result, "Valid YAML workflow should pass validation")
+        self.assertEqual(result, [], "Valid YAML workflow should pass validation")
 
 
 class TestExitCodeContentValidation(unittest.TestCase):
-    """Test exit code content validation."""
+    """Test exit code content validation.
+
+    Tests for exit code content validation logic across Bash and Python
+    validators to ensure scripts document minimum required exit codes.
+    """
 
     def test_bash_with_valid_exit_codes(self):
         """Test that Bash script with valid exit codes passes."""
@@ -245,11 +251,14 @@ class TestExitCodeContentValidation(unittest.TestCase):
 echo "test"
 """
         result = BashValidator.validate(Path("test.sh"), content)
-        self.assertIsNone(result, "Exit codes with 0 and 1 should pass")
+        self.assertEqual(result, [], "Exit codes with 0 and 1 should pass")
 
 
 def run_tests():
-    """Run tests when executed as script."""
+    """Run tests when executed as script.
+
+    :returns: Exit code from unittest.main()
+    """
     # Try to use pytest if available
     try:
         import pytest
