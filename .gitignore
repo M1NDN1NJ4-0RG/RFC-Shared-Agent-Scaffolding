@@ -5,6 +5,9 @@
 # Rust build artifacts
 rust/target/
 
+# CI artifact staging (do not commit binaries)
+dist/
+
 # Language-specific
 __pycache__/
 *.pyc
