@@ -301,7 +301,7 @@ This tool must be:
 
 **Phase 5 Success Criteria**
 - ✅ Contributors have exactly one obvious way to run checks: `python -m tools.repo_lint check`
-- ✅ Bash wrapper is a thin delegation layer (54 lines vs. 413 lines before)
+- ✅ Bash wrapper is a thin delegation layer (63 lines vs. 413 lines before)
 - ✅ Documentation is updated and consistent across all files
 
 ---
