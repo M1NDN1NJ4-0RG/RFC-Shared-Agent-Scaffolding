@@ -1,7 +1,7 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-  safe-run-tests.ps1 - Pester test suite for safe-run.ps1 wrapper
+  SafeRunTests.ps1 - Pester test suite for SafeRun.ps1 wrapper
 
 .DESCRIPTION
   Comprehensive Pester test suite validating the PowerShell safe-run wrapper
@@ -29,7 +29,7 @@
 
   Prerequisites:
     - Pester module (v5.0+)
-    - safe-run.ps1 script in ../scripts/
+    - SafeRun.ps1 script in ../scripts/
     - TestHelpers.ps1 in same directory
     - Rust canonical safe-run binary must be discoverable
 
@@ -53,11 +53,11 @@
   None. Tests run in isolated environments with per-test environment variables.
 
 .EXAMPLE
-  # Run all safe-run tests with Pester
-  PS> Invoke-Pester -Path .\safe-run-tests.ps1
+  # Run all SafeRun tests with Pester
+  PS> Invoke-Pester -Path .\SafeRunTests.ps1
 
   # Run tests with detailed output
-  PS> Invoke-Pester -Path .\safe-run-tests.ps1 -Output Detailed
+  PS> Invoke-Pester -Path .\SafeRunTests.ps1 -Output Detailed
 
 .LINK
   https://pester.dev/
@@ -67,7 +67,7 @@
 #>
 Set-StrictMode -Version Latest
 
-Describe "safe-run.ps1" {
+Describe "SafeRun.ps1" {
   BeforeAll {
     . "$PSScriptRoot/TestHelpers.ps1"
     $script:ScriptUnderTest = Join-Path $PSScriptRoot "..\scripts\SafeRun.ps1"

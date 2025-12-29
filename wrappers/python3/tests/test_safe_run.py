@@ -43,11 +43,11 @@ Examples
 --------
 Run tests via pytest::
 
-    pytest test-safe_run.py
+    pytest test_safe_run.py
 
 Run tests via unittest::
 
-    python3 test-safe_run.py
+    python3 test_safe_run.py
 
 Exit Codes
 ----------

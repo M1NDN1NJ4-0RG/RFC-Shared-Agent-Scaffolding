@@ -45,7 +45,7 @@ SAFE_ARCHIVE_NO_CLOBBER : str, optional
 
 CLI Interface
 -------------
-    python3 safe-archive.py [--no-clobber] [--all | <file> ...]
+    python3 safe_archive.py [--no-clobber] [--all | <file> ...]
 
 Options:
     --no-clobber    Enable strict no-clobber mode (fail on collision)
@@ -56,21 +56,21 @@ Examples
 --------
 Archive specific failure log::
 
-    python3 safe-archive.py .agent/FAIL-LOGS/fail-2024-01-15T10-30-00.txt
+    python3 safe_archive.py .agent/FAIL-LOGS/fail-2024-01-15T10-30-00.txt
 
 Archive all failure logs with gzip compression::
 
     export SAFE_ARCHIVE_COMPRESS=gzip
-    python3 safe-archive.py --all
+    python3 safe_archive.py --all
 
 Strict no-clobber mode via flag::
 
-    python3 safe-archive.py --no-clobber mylog.txt
+    python3 safe_archive.py --no-clobber mylog.txt
     # Fails with exit 2 if .agent/FAIL-ARCHIVE/mylog.txt exists
 
 Auto-suffix mode (default)::
 
-    python3 safe-archive.py mylog.txt
+    python3 safe_archive.py mylog.txt
     # If mylog.txt exists, creates mylog.txt.2
     # If mylog.txt.2 exists, creates mylog.txt.3, etc.
 
@@ -109,8 +109,8 @@ Contract References
 
 See Also
 --------
-- scripts/python3/safe-run.py: Generates failure logs for archival
-- scripts/python3/safe-check.py: Verifies archival contract conformance
+- scripts/python3/safe_run.py: Generates failure logs for archival
+- scripts/python3/safe_check.py: Verifies archival contract conformance
 """
 import os
 import sys
@@ -140,7 +140,7 @@ def usage() -> int:
     Displays comprehensive help including options, environment variables,
     and examples. Caller is expected to exit with the returned code.
     """
-    eprint("Usage: scripts/python3/safe-archive.py [--no-clobber] [--all | <file> ...]")
+    eprint("Usage: scripts/python3/safe_archive.py [--no-clobber] [--all | <file> ...]")
     eprint("")
     eprint("Options:")
     eprint("  --no-clobber            Fail if destination exists (default: auto-suffix)")

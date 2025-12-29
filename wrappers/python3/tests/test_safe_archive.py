@@ -33,7 +33,7 @@ Examples
 --------
 Run tests via pytest::
 
-    pytest test-safe_archive.py
+    pytest test_safe_archive.py
 
 Exit Codes
 ----------

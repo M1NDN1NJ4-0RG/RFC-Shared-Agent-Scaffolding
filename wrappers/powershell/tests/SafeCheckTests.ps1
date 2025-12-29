@@ -1,21 +1,21 @@
 #requires -Version 5.1
 <#
 .SYNOPSIS
-  safe-check-tests.ps1 - Pester test suite for safe-check.ps1 contract verifier
+  SafeCheckTests.ps1 - Pester test suite for SafeCheck.ps1 contract verifier
 
 .DESCRIPTION
-  Pester test suite that validates the safe-check.ps1 contract verification script.
+  Pester test suite that validates the SafeCheck.ps1 contract verification script.
   
-  The safe-check.ps1 script is itself a test, so this meta-test ensures that the
+  The SafeCheck.ps1 script is itself a test, so this meta-test ensures that the
   contract verifier runs successfully in a clean, isolated environment.
 
   Test Coverage:
-    - Runs safe-check.ps1 in temporary workspace
+    - Runs SafeCheck.ps1 in temporary workspace
     - Validates successful execution (exit code 0)
-    - Ensures contract checks for safe-run and safe-archive pass
+    - Ensures contract checks for SafeRun and SafeArchive pass
     - Verifies proper environment isolation (no pollution from host)
 
-  The test copies all PowerShell scripts to a temp directory and runs safe-check.ps1
+  The test copies all PowerShell scripts to a temp directory and runs SafeCheck.ps1
   there, mimicking the environment it would encounter in CI/CD.
 
 .NOTES
@@ -25,9 +25,9 @@
 
   Prerequisites:
     - Pester module (v5.0+)
-    - safe-check.ps1 script in ../scripts/
-    - safe-run.ps1 script in ../scripts/
-    - safe-archive.ps1 script in ../scripts/
+    - SafeCheck.ps1 script in ../scripts/
+    - SafeRun.ps1 script in ../scripts/
+    - SafeArchive.ps1 script in ../scripts/
     - TestHelpers.ps1 in same directory
     - Rust canonical safe-run binary must be discoverable
 
@@ -38,12 +38,12 @@
     - Copies all scripts to temp location (no shared state)
 
   Contract References:
-    - M0-P1-I1: safe-run contract (tested by safe-check.ps1)
-    - M0-P1-I2: Failure artifact contract (tested by safe-check.ps1)
-    - M0-P1-I3: safe-archive no-clobber contract (tested by safe-check.ps1)
+    - M0-P1-I1: safe-run contract (tested by SafeCheck.ps1)
+    - M0-P1-I2: Failure artifact contract (tested by SafeCheck.ps1)
+    - M0-P1-I3: safe-archive no-clobber contract (tested by SafeCheck.ps1)
 
   Design Notes:
-    - Single test ensures safe-check.ps1 works end-to-end
+    - Single test ensures SafeCheck.ps1 works end-to-end
     - Mimics Bash test approach (copies scripts, sets SAFE_RUN_BIN)
     - Validates entire contract verification workflow in one go
 
@@ -51,8 +51,8 @@
   None. Tests run in isolated environments.
 
 .EXAMPLE
-  # Run safe-check tests with Pester
-  PS> Invoke-Pester -Path .\safe-check-tests.ps1
+  # Run SafeCheck tests with Pester
+  PS> Invoke-Pester -Path .\SafeCheckTests.ps1
 
 .LINK
   https://pester.dev/
@@ -62,7 +62,7 @@
 #>
 Set-StrictMode -Version Latest
 
-Describe "safe-check.ps1" {
+Describe "SafeCheck.ps1" {
   BeforeAll {
     . "$PSScriptRoot/TestHelpers.ps1"
     $script:ScriptRoot = Join-Path $PSScriptRoot "..\scripts"
