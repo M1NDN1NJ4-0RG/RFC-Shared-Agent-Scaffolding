@@ -50,6 +50,7 @@ from tools.repo_lint.install.install_helpers import (
     print_perl_tool_instructions,
     print_powershell_tool_instructions,
 )
+from tools.repo_lint.policy import get_policy_summary, load_policy, validate_policy
 from tools.repo_lint.reporting import print_install_instructions, report_results
 from tools.repo_lint.runners.bash_runner import BashRunner
 from tools.repo_lint.runners.perl_runner import PerlRunner
@@ -198,7 +199,34 @@ def cmd_fix(args: argparse.Namespace) -> int:
     print("🔧 Running formatters in fix mode...")
     print("")
 
-    return _run_all_runners(args, "Formatting", lambda runner: runner.fix())
+    # Load and validate auto-fix policy
+    try:
+        policy = load_policy()
+        policy_errors = validate_policy(policy)
+        if policy_errors:
+            print("❌ Auto-fix policy validation failed:")
+            for error in policy_errors:
+                print(f"   {error}")
+            print("")
+            return ExitCode.INTERNAL_ERROR
+
+        # Display policy summary
+        if args.verbose:
+            print(get_policy_summary(policy))
+            print("")
+
+    except FileNotFoundError:
+        print("❌ Auto-fix policy file not found")
+        print("   Expected: conformance/repo-lint/autofix-policy.json")
+        print("")
+        return ExitCode.INTERNAL_ERROR
+    except Exception as e:
+        print(f"❌ Failed to load auto-fix policy: {e}")
+        print("")
+        return ExitCode.INTERNAL_ERROR
+
+    # Pass policy to runners via callback
+    return _run_all_runners(args, "Formatting", lambda runner: runner.fix(policy=policy))
 
 
 def cmd_install(args: argparse.Namespace) -> int:

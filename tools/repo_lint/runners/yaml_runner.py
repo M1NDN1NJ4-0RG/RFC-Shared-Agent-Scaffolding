@@ -8,7 +8,7 @@
 """
 
 import subprocess
-from typing import List
+from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
 from tools.repo_lint.runners.base import Runner, command_exists
@@ -54,7 +54,7 @@ class YAMLRunner(Runner):
 
         return results
 
-    def fix(self) -> List[LintResult]:
+    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply YAML auto-fixes where possible.
 
         Note: yamllint does not have an auto-fix mode.

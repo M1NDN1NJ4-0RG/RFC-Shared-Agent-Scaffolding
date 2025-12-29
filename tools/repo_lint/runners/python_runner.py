@@ -13,9 +13,10 @@
 
 import subprocess
 import sys
-from typing import List
+from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.policy import is_category_allowed
 from tools.repo_lint.runners.base import Runner, command_exists
 
 
@@ -58,10 +59,14 @@ class PythonRunner(Runner):
 
         return results
 
-    def fix(self) -> List[LintResult]:
+    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply Python formatters and safe auto-fixes.
 
         Per Phase 0 Item 0.9.1: Apply Black formatting and Ruff safe fixes.
+        Per Phase 6 Item 6.5.6: Consult auto-fix policy before running fixes.
+
+        :Args:
+            policy: Auto-fix policy dictionary (deny-by-default)
 
         :Returns:
             List of results after applying fixes
@@ -70,13 +75,29 @@ class PythonRunner(Runner):
 
         results = []
 
-        # Apply Black formatting
-        black_result = self._run_black_fix()
-        results.append(black_result)
+        # Default policy if none provided (for backwards compatibility during transition)
+        if policy is None:
+            policy = {"allowed_categories": []}
 
-        # Apply Ruff safe fixes
-        ruff_result = self._run_ruff_fix()
-        results.append(ruff_result)
+        # Apply Black formatting (if allowed by policy)
+        if is_category_allowed(policy, "FORMAT.BLACK"):
+            black_result = self._run_black_fix()
+            results.append(black_result)
+        else:
+            if self.verbose:
+                print("  ⊘ Skipping Black (denied by policy)")
+            black_result = LintResult(tool="black", passed=True, violations=[])
+            results.append(black_result)
+
+        # Apply Ruff safe fixes (if allowed by policy)
+        if is_category_allowed(policy, "LINT.RUFF.SAFE"):
+            ruff_result = self._run_ruff_fix()
+            results.append(ruff_result)
+        else:
+            if self.verbose:
+                print("  ⊘ Skipping Ruff safe fixes (denied by policy)")
+            ruff_result = LintResult(tool="ruff", passed=True, violations=[])
+            results.append(ruff_result)
 
         # Re-run checks only if both Black and Ruff succeeded
         if black_result.passed and ruff_result.passed:
