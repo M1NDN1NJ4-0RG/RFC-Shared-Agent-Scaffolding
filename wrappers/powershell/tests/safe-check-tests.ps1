@@ -69,8 +69,8 @@ Describe "safe-check.ps1" {
     
     # Find Rust binary for wrapper discovery (like Bash test does)
     # PSScriptRoot is .../wrappers/powershell/tests
-    # Repo root is 3 levels up from tests: ../../../
-    $script:RepoRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
+    # Repo root is 2 levels up from tests: ../../
+    $script:RepoRoot = Split-Path -Parent (Split-Path -Parent (Split-Path -Parent $PSScriptRoot))
     $script:SafeRunBinPath = $null
     
     $binaryName = if ($IsWindows) { "safe-run.exe" } else { "safe-run" }

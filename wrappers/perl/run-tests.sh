@@ -48,7 +48,7 @@ export SRC_SAFE_CHECK="${SRC_SAFE_CHECK:-$ROOT/scripts/safe-check.pl}"
 export SRC_PREFLIGHT="${SRC_PREFLIGHT:-$ROOT/scripts/preflight-automerge-ruleset.pl}"
 
 # For thin wrapper tests: point to Rust canonical binary
-REPO_ROOT="$(cd "$ROOT/../../.." && pwd)"
+REPO_ROOT="$(cd "$ROOT/../.." && pwd)"
 export SAFE_RUN_BIN="${SAFE_RUN_BIN:-$REPO_ROOT/rust/target/release/safe-run}"
 
 cd "$ROOT"

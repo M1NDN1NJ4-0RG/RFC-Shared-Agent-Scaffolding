@@ -89,7 +89,7 @@ SAFE_RUN="${ROOT}/scripts/safe-run.sh"
 
 # Compute repo root and find Rust binary for wrapper discovery
 # This mirrors the wrapper's own discovery logic for testing
-REPO_ROOT="$(cd "$ROOT/../../.." && pwd)"
+REPO_ROOT="$(cd "$ROOT/../.." && pwd)"
 if [ -x "$REPO_ROOT/dist/linux/x86_64/safe-run" ]; then
   SAFE_RUN_BIN_PATH="$REPO_ROOT/dist/linux/x86_64/safe-run"
 elif [ -x "$REPO_ROOT/rust/target/release/safe-run" ]; then
