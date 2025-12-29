@@ -1,6 +1,6 @@
 # Future Work / Deferred Ideas Tracker
 
-**Last Updated:** 2025-12-27
+**Last Updated:** 2025-12-29
 
 This document tracks **explicitly-marked future work** found in the repository. All items are sourced from in-repo TODO comments, deferred work notes, ignored tests, or documented future enhancement sections.
 
@@ -25,6 +25,8 @@ This document tracks **explicitly-marked future work** found in the repository. 
 | [FW-008](#fw-008-powershell-ctrl-c-signal-behavior) | Low | Wrappers | PowerShell Ctrl-C / signal behavior validation |
 | [FW-009](#fw-009-windows-exe-discovery-in-python-wrapper) | Low | Wrappers | Windows .exe discovery in Python wrapper |
 | [FW-010](#fw-010-canonical-epic-tracker-placeholder) | Low | Governance | Canonical Epic Tracker placeholder |
+| [FW-011](#fw-011-migrate-test-runners-to-fully-native-implementations) | Low | Testing | Migrate test runners to fully native implementations |
+| [FW-012](#fw-012-optimize-ci-runtime-with-scheduled-bash-runners) | Low | CI/CD | Optimize CI runtime with scheduled Bash runners |
 
 ---
 
@@ -347,6 +349,103 @@ There is an explicit placeholder indicating the need for a canonical epic/idea t
 - Define the canonical location (e.g., `docs/future-work.md` or `docs/EPICS.md`)
 - Link it from `.github/copilot-instructions.md`
 - Optionally add a GitHub Issue template/category that points back to the canonical doc
+
+---
+
+### FW-011: Migrate test runners to fully native implementations
+
+**Severity:** Low  
+**Area:** Testing  
+**Status:** Deferred - thin wrappers sufficient for now
+
+**Why it exists:**
+
+Phase 5 implements language-native test runners (`run_tests.py`, `run_tests.pl`) as **thin wrappers** around the existing Bash `run-tests.sh` scripts. This approach minimizes drift and implementation complexity, but means the runners still depend on Bash being available.
+
+A future enhancement would migrate to **fully native implementations** where each runner directly invokes its language's test framework without calling the Bash script.
+
+**Current Implementation (Phase 5):**
+- Python `run_tests.py` → calls `subprocess.run(['bash', 'run-tests.sh'])`
+- Perl `run_tests.pl` → calls `system('bash', 'run-tests.sh')`
+- PowerShell `RunTests.ps1` → already fully native (calls Pester directly)
+
+**Future Native Implementation:**
+- Python `run_tests.py` → directly uses `unittest.TestLoader()` and runs tests
+- Perl `run_tests.pl` → directly invokes `prove` or `perl -I tests/lib tests/*.t`
+- PowerShell `RunTests.ps1` → no change (already native)
+
+**Pros of migration:**
+- No Bash dependency (Windows native support without Git Bash/WSL)
+- Language-specific test discovery optimizations
+- Better error messages in native language
+
+**Cons of migration:**
+- More code to maintain (3 implementations instead of 1)
+- Risk of behavioral drift between languages
+- Additional testing burden to ensure parity
+
+**Source:**
+- `docs/testing/test-runner-contract.md` (Implementation Strategy section)
+
+**Suggested next steps:**
+- Only migrate if there's a strong reason (e.g., Windows users complaining about Bash dependency)
+- Migrate one language at a time (start with Python as proof of concept)
+- Run both thin wrapper and native implementation in CI during transition
+- Document parity testing strategy
+
+---
+
+### FW-012: Optimize CI runtime with scheduled Bash runners
+
+**Severity:** Low  
+**Area:** CI/CD  
+**Status:** Deferred - CI runtime not currently a concern
+
+**Why it exists:**
+
+Phase 5 configures CI to run BOTH the Bash `run-tests.sh` and language-native runners (`run_tests.py`, `run_tests.pl`) for each wrapper language. This provides redundancy and validates parity, but doubles the wrapper test runtime.
+
+If CI runtime becomes excessive (e.g., PR checks take >10 minutes), we could optimize by:
+- Running language-native runners on all PR/push builds (fast feedback)
+- Running Bash runners only on scheduled/nightly builds (coverage safety net)
+
+**Current CI Strategy (Phase 5):**
+```yaml
+# Each wrapper workflow runs both runners
+- name: Run Python tests (Bash runner)
+  run: bash run-tests.sh
+
+- name: Run Python tests (native runner)
+  run: python3 run_tests.py
+```
+
+**Future Optimized Strategy:**
+```yaml
+# PR/push workflow (fast)
+- name: Run Python tests
+  run: python3 run_tests.py
+
+# Scheduled/nightly workflow (comprehensive)
+- name: Run Python tests (Bash runner)
+  run: bash run-tests.sh
+
+- name: Run Python tests (native runner)
+  run: python3 run_tests.py
+```
+
+**When to implement:**
+- Monitor CI runtime after Phase 5 merges
+- Threshold: If total CI runtime exceeds 10 minutes consistently
+- Coordinate with team before changing (affects merge requirements)
+
+**Source:**
+- `docs/testing/test-runner-contract.md` (CI Integration Strategy section)
+
+**Suggested next steps:**
+- Measure baseline CI runtime after Phase 5
+- Set up scheduled/nightly workflow template
+- Document which runners are required for PR merge vs. optional
+- Consider adding "full test suite" manual trigger for pre-merge validation
 
 ---
 
