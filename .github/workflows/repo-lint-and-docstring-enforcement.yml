@@ -289,7 +289,7 @@ jobs:
           fi
           
           # Check for shared tooling changes
-          if echo "$CHANGED_FILES" | grep -qE '^(tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/|pyproject\.toml|\.github/workflows/|docs/contributing/)'; then
+          if echo "$CHANGED_FILES" | grep -qE '(^|/)tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/|^pyproject\.toml$|^\.github/workflows/|docs/contributing/'; then
             echo "shared_tooling=true" >> $GITHUB_OUTPUT
           fi
 

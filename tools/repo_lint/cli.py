@@ -127,9 +127,6 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     only_language = getattr(args, "only", None)
     if only_language:
         runners = [(key, name, runner) for key, name, runner in all_runners if key == only_language]
-        if not runners:
-            print(f"❌ Error: Unknown language '{only_language}'", file=sys.stderr)
-            return ExitCode.INTERNAL_ERROR
     else:
         runners = all_runners
 
