@@ -1,60 +1,67 @@
 #!/usr/bin/env python3
-"""
-run_tests.py - Python3 test suite runner (native wrapper)
+"""Language-native test runner for Python3 wrappers.
 
-DESCRIPTION:
-    Language-native test runner that executes all Python3 unit tests for the
-    safe-run/safe-check/safe-archive wrapper implementations. This runner is
-    functionally equivalent to run-tests.sh but provides a native Python
-    interface.
+Executes all Python3 unit tests for the safe-run/safe-check/safe-archive
+wrapper implementations. This runner provides a native Python interface
+that is functionally equivalent to run-tests.sh.
 
-    Implementation Strategy:
-        Thin wrapper around existing run-tests.sh (Phase 5 decision).
-        Sets up environment (SAFE_RUN_BIN, working directory) and delegates
-        to the proven Bash runner. Future enhancement: migrate to fully
-        native implementation (see docs/future-work.md FW-011).
+Purpose
+-------
+Thin wrapper around existing run-tests.sh (Phase 5 decision).
+Sets up environment (SAFE_RUN_BIN, working directory) and delegates
+to the proven Bash runner. Future enhancement: migrate to fully
+native implementation (see docs/future-work.md FW-011).
 
-USAGE:
+Environment Variables
+---------------------
+SAFE_RUN_BIN : str, optional
+    Path to Rust canonical binary.
+    Default: {repo_root}/rust/target/release/safe-run
+    Auto-detected from repository structure.
+
+Usage
+-----
+Run from wrapper directory::
+
     ./run_tests.py
     python3 run_tests.py
 
-INPUTS:
-    Arguments:
-        None
+Run from repository root::
 
-    Environment Variables:
-        SAFE_RUN_BIN  Path to Rust canonical binary (default: auto-detected)
-
-OUTPUTS:
-    Exit Codes:
-        0  All tests passed
-        1  One or more tests failed
-        2  Prerequisites not met (bash not found)
-
-    Stdout:
-        Test results and summary (delegated to run-tests.sh)
-
-EXAMPLES:
-    # Run all Python3 tests
-    ./run_tests.py
-
-    # Run with custom binary path
-    SAFE_RUN_BIN=/path/to/safe-run ./run_tests.py
-
-    # Run from repo root
     python3 wrappers/python3/run_tests.py
 
-NOTES:
-    - Requires Python 3.8+
-    - Requires bash to be available (thin wrapper implementation)
-    - Requires Rust canonical binary to be built
-    - Sets SAFE_RUN_BIN environment variable for tests
-    - Functionally equivalent to run-tests.sh (strict parity)
+Examples
+--------
+Run all Python3 tests::
 
-SEE ALSO:
-    - run-tests.sh: Bash test runner (delegated to by this script)
-    - docs/testing/test-runner-contract.md: Parity contract specification
-    - docs/future-work.md: FW-011 (future native implementation)
+    ./run_tests.py
+
+Run with custom binary path::
+
+    SAFE_RUN_BIN=/path/to/safe-run ./run_tests.py
+
+Exit Codes
+----------
+0
+    All tests passed
+1
+    One or more tests failed
+2
+    Prerequisites not met (bash not found)
+
+Notes
+-----
+- Requires Python 3.8+
+- Requires bash to be available (thin wrapper implementation)
+- Requires Rust canonical binary to be built
+- Sets SAFE_RUN_BIN environment variable for tests
+- Functionally equivalent to run-tests.sh (strict parity)
+
+See Also
+--------
+- run-tests.sh: Bash test runner (delegated to by this script)
+- docs/testing/test-runner-contract.md: Parity contract specification
+- docs/future-work.md: FW-011 (future native implementation)
 """
 
 import os

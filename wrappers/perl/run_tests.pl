@@ -1,60 +1,129 @@
 #!/usr/bin/env perl
-#
-# run_tests.pl - Perl test suite runner (native wrapper)
-#
-# DESCRIPTION:
-#   Language-native test runner that executes all Perl tests for the
-#   safe-run/safe-check/safe-archive wrapper implementations. This runner is
-#   functionally equivalent to run-tests.sh but provides a native Perl
-#   interface.
-#
-#   Implementation Strategy:
-#       Thin wrapper around existing run-tests.sh (Phase 5 decision).
-#       Sets up environment (SAFE_RUN_BIN, working directory) and delegates
-#       to the proven Bash runner. Future enhancement: migrate to fully
-#       native implementation (see docs/future-work.md FW-011).
-#
-# USAGE:
-#   ./run_tests.pl
-#   perl run_tests.pl
-#
-# INPUTS:
-#   Arguments:
-#     None
-#
-#   Environment Variables:
-#     SAFE_RUN_BIN  Path to Rust canonical binary (default: auto-detected)
-#
-# OUTPUTS:
-#   Exit Codes:
-#     0  All tests passed
-#     1  One or more tests failed
-#     2  Prerequisites not met (bash not found)
-#
-#   Stdout:
-#     Test results and summary (delegated to run-tests.sh)
-#
-# EXAMPLES:
-#   # Run all Perl tests
-#   ./run_tests.pl
-#
-#   # Run with custom binary path
-#   SAFE_RUN_BIN=/path/to/safe-run ./run_tests.pl
-#
-#   # Run from repo root
-#   perl wrappers/perl/run_tests.pl
-#
-# NOTES:
-#   - Requires Perl 5.10+
-#   - Requires bash to be available (thin wrapper implementation)
-#   - Requires Rust canonical binary to be built
-#   - Sets SAFE_RUN_BIN environment variable for tests
-#   - Functionally equivalent to run-tests.sh (strict parity)
-#
-# SEE ALSO:
-#   - run-tests.sh: Bash test runner (delegated to by this script)
-#   - docs/testing/test-runner-contract.md: Parity contract specification
-#   - docs/future-work.md: FW-011 (future native implementation)
+
+=head1 NAME
+
+run_tests.pl - Language-native test runner for Perl wrappers
+
+=head1 SYNOPSIS
+
+  # Run from wrapper directory
+  ./run_tests.pl
+  perl run_tests.pl
+
+  # Run from repository root
+  perl wrappers/perl/run_tests.pl
+
+  # Run with custom binary path
+  SAFE_RUN_BIN=/path/to/safe-run ./run_tests.pl
+
+=head1 DESCRIPTION
+
+Language-native test runner that executes all Perl tests for the
+safe-run/safe-check/safe-archive wrapper implementations. This runner is
+functionally equivalent to run-tests.sh but provides a native Perl
+interface.
+
+B<Implementation Strategy:> Thin wrapper around existing run-tests.sh
+(Phase 5 decision). Sets up environment (SAFE_RUN_BIN, working directory)
+and delegates to the proven Bash runner. Future enhancement: migrate to
+fully native implementation (see docs/future-work.md FW-011).
+
+=head1 ENVIRONMENT VARIABLES
+
+=over 4
+
+=item B<SAFE_RUN_BIN>
+
+Path to Rust canonical binary.
+
+Default: {repo_root}/rust/target/release/safe-run
+
+Auto-detected from repository structure (2 levels up from wrapper directory).
+
+Example:
+
+  export SAFE_RUN_BIN=/custom/path/to/safe-run
+  ./run_tests.pl
+
+=back
+
+=head1 EXIT CODES
+
+=over 4
+
+=item B<0>
+
+All tests passed
+
+=item B<1>
+
+One or more tests failed
+
+=item B<2>
+
+Prerequisites not met (bash not found)
+
+=back
+
+=head1 EXAMPLES
+
+Run all Perl tests:
+
+  ./run_tests.pl
+
+Run with custom binary path:
+
+  SAFE_RUN_BIN=/path/to/safe-run ./run_tests.pl
+
+Run from repository root:
+
+  perl wrappers/perl/run_tests.pl
+
+=head1 NOTES
+
+=over 4
+
+=item *
+
+Requires Perl 5.10+
+
+=item *
+
+Requires bash to be available (thin wrapper implementation)
+
+=item *
+
+Requires Rust canonical binary to be built
+
+=item *
+
+Sets SAFE_RUN_BIN environment variable for tests
+
+=item *
+
+Functionally equivalent to run-tests.sh (strict parity)
+
+=back
+
+=head1 SEE ALSO
+
+=over 4
+
+=item *
+
+run-tests.sh: Bash test runner (delegated to by this script)
+
+=item *
+
+docs/testing/test-runner-contract.md: Parity contract specification
+
+=item *
+
+docs/future-work.md: FW-011 (future native implementation)
+
+=back
+
+=cut
 
 use strict;
 use warnings;
