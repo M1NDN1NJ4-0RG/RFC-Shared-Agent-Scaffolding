@@ -108,9 +108,7 @@ class RustRunner(Runner):
             return [LintResult(tool="rustfmt", passed=True, violations=[])]
 
         # Run rustfmt to format code
-        rustfmt_result = subprocess.run(
-            ["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False
-        )
+        rustfmt_result = subprocess.run(["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False)
 
         if rustfmt_result.returncode != 0:
             results.append(
