@@ -224,7 +224,7 @@ def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
     This is a soft check - we look for patterns like "0" near "success" etc.
 
     :param content: The exit codes section content
-        language: Language name for context
+    :param language: Language name for context
 
     :returns: Error message if validation fails, None if valid
     """
@@ -278,12 +278,11 @@ class ValidationError:
     This class encapsulates information about a docstring validation error,
     including file location, symbol information, and missing sections.
 
-    Attributes:
-        file_path: Path to the file with validation error
-        missing_sections: List of section names that are missing
-        message: Additional context or guidance message
-        symbol_name: Optional name of the symbol (function/class) with error
-        line_number: Optional line number where symbol is defined
+    :ivar file_path: Path to the file with validation error
+    :ivar missing_sections: List of section names that are missing
+    :ivar message: Additional context or guidance message
+    :ivar symbol_name: Optional name of the symbol (function/class) with error
+    :ivar line_number: Optional line number where symbol is defined
     """
 
     # pylint: disable=too-many-arguments

@@ -163,7 +163,7 @@ This document outlines potential future enhancements for deeper semantic validat
 ## References
 
 - PEP 257: Python Docstring Conventions
-- Google Python Style Guide: Docstrings
+- PEP 287: reStructuredText Docstring Format
 - Rust API Guidelines: Documentation
 - PowerShell Comment-Based Help
 - shellcheck: Bash linting tool (inspiration for validation patterns)

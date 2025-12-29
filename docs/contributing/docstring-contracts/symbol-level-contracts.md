@@ -428,8 +428,7 @@ After each language batch:
 ## References
 
 - [PEP 257 – Docstring Conventions](https://peps.python.org/pep-0257/)
-- [Google Python Style Guide - Docstrings](https://google.github.io/styleguide/pyguide.html#38-comments-and-docstrings)
-- [NumPy Docstring Guide](https://numpydoc.readthedocs.io/en/latest/format.html)
+- [PEP 287 – reStructuredText Docstring Format](https://peps.python.org/pep-0287/)
 - [Rust Rustdoc Guide](https://doc.rust-lang.org/rustdoc/how-to-write-documentation.html)
 - [PowerShell Comment-Based Help](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_comment_based_help)
 - [Perl POD Documentation](https://perldoc.perl.org/perlpod)
