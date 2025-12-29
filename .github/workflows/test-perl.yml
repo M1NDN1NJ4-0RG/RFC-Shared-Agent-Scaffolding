@@ -96,16 +96,26 @@ jobs:
         run: |
           perl -MJSON::PP -e 1 2>/dev/null || cpanm --notest JSON::PP
 
-      # Step 8: Run Perl test suite
+      # Step 8: Run Perl test suite (Bash runner)
       # Executes run-tests.sh which runs all tests in tests/ directory
       # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
-      - name: Run Perl tests
+      - name: Run Perl tests (Bash runner)
         working-directory: wrappers/perl
         run: |
           chmod +x run-tests.sh
           ./run-tests.sh
 
-      # Step 9: Upload failure logs as artifacts (only on test failure)
+      # Step 9: Run Perl test suite (native runner)
+      # Executes run_tests.pl which delegates to run-tests.sh
+      # Validates parity between Bash and native Perl runners
+      # Both runners must pass for CI to pass (Phase 5 requirement)
+      - name: Run Perl tests (native runner)
+        working-directory: wrappers/perl
+        run: |
+          chmod +x run_tests.pl
+          perl run_tests.pl
+
+      # Step 10: Upload failure logs as artifacts (only on test failure)
       # Preserves .agent/FAIL-LOGS/ directory for debugging
       # if-no-files-found: ignore prevents failure if no logs exist
       - name: Upload test artifacts on failure

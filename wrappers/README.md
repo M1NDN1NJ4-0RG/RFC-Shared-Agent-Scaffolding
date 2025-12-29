@@ -102,7 +102,27 @@ Each language wrapper has its own test suite documented in its `README.md`:
 - **Python 3:** `wrappers/python3/README.md` - Test documentation
 - **PowerShell:** `wrappers/powershell/README.md` - Test documentation
 
-To run tests for a specific language:
+### Running Tests with Language-Native Runners
+
+Each wrapper provides a language-native test runner for convenience:
+
+```bash
+# Python 3 (native runner)
+cd wrappers/python3 && python3 run_tests.py
+
+# Perl (native runner)
+cd wrappers/perl && perl run_tests.pl
+
+# PowerShell (native runner)
+cd wrappers/powershell && pwsh RunTests.ps1
+
+# Bash (uses bash runner)
+cd wrappers/bash && bash run-tests.sh
+```
+
+### Running Tests with Bash Runner
+
+All wrappers also provide a Bash-based test runner:
 
 ```bash
 # Bash
@@ -115,8 +135,10 @@ cd wrappers/perl && bash run-tests.sh
 cd wrappers/python3 && bash run-tests.sh
 
 # PowerShell
-cd wrappers/powershell && pwsh run-tests.ps1
+cd wrappers/powershell && pwsh RunTests.ps1
 ```
+
+**Note:** Both runners are functionally equivalent and produce the same results. See [Test Runner Contract](../docs/testing/test-runner-contract.md) for details on parity guarantees.
 
 ## Conformance Testing
 

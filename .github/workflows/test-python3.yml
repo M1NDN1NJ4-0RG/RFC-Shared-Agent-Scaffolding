@@ -99,16 +99,25 @@ jobs:
       - name: Display Python version
         run: python --version
 
-      # Step 7: Run Python 3 test suite
+      # Step 7: Run Python 3 test suite (Bash runner)
       # Executes run-tests.sh which runs all tests in tests/ directory
       # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
       # Conformance tests parse JSON-based test vectors via the Python test harness
-      - name: Run Python 3 tests
+      - name: Run Python 3 tests (Bash runner)
         working-directory: wrappers/python3
         run: |
           ./run-tests.sh
 
-      # Step 8: Upload failure logs as artifacts (only on test failure)
+      # Step 8: Run Python 3 test suite (native runner)
+      # Executes run_tests.py which delegates to run-tests.sh
+      # Validates parity between Bash and native Python runners
+      # Both runners must pass for CI to pass (Phase 5 requirement)
+      - name: Run Python 3 tests (native runner)
+        working-directory: wrappers/python3
+        run: |
+          python3 run_tests.py
+
+      # Step 9: Upload failure logs as artifacts (only on test failure)
       # Preserves .agent/FAIL-LOGS/ directory for debugging
       # Artifact name includes Python version to distinguish matrix runs
       # if-no-files-found: ignore prevents failure if no logs exist
