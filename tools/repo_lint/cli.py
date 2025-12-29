@@ -17,10 +17,8 @@
 
 import argparse
 import sys
-from typing import List
 
 from tools.repo_lint.common import ExitCode, MissingToolError
-from tools.repo_lint.reporting import print_install_instructions, report_results
 
 
 def create_parser() -> argparse.ArgumentParser:

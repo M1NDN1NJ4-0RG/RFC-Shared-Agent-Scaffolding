@@ -22,8 +22,7 @@ select = [
 
 # Ignore rules that conflict with Black or are disabled in current Flake8 config
 ignore = [
-    "E203",  # whitespace before ':' (conflicts with Black)
-    "W503",  # line break before binary operator (deprecated, conflicts with Black)
+    "E203",  # whitespace before ':' (conflicts with Black, not used in Ruff)
 ]
 
 [tool.pylint.format]

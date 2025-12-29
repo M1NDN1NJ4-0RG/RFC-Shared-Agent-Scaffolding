@@ -27,7 +27,6 @@ validators, including the ValidationError class and helper functions.
 import re
 from typing import List, Optional
 
-
 # Module-level flag for content checks (set by command-line arg in main script)
 SKIP_CONTENT_CHECKS = False
 

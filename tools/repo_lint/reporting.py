@@ -10,7 +10,6 @@
     - print_summary: Print summary statistics
 """
 
-import sys
 from typing import List
 
 from tools.repo_lint.common import LintResult, Violation

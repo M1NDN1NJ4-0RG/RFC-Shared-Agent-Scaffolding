@@ -104,11 +104,11 @@ See Also
 - scripts/python3/safe_run.py: Generates failure logs for archival
 - scripts/python3/safe_check.py: Verifies archival contract conformance
 """
+import gzip
 import os
-import sys
 import shutil
 import subprocess
-import gzip
+import sys
 from typing import List
 
 

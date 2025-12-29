@@ -62,12 +62,12 @@ All tests run fully offline with no actual GitHub API calls.
 - Uses importlib to dynamically load the module under test
 """
 
+import importlib.util
 import json
 import os
 import unittest
 from pathlib import Path
 from unittest.mock import patch
-import importlib.util
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
