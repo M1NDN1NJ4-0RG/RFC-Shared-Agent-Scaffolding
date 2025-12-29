@@ -31,7 +31,7 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional
 
-from .common import ValidationError
+from .common import ValidationError, check_symbol_pragma_exemption
 
 
 class PowerShellValidator:
@@ -170,26 +170,18 @@ class PowerShellValidator:
                         )
                     )
 
-            # Validate each function
+            # Split content into lines once for all pragma checks
             lines = content.split("\n")
+
+            # Validate each function
             for func in parse_result.get("functions", []):
                 func_name = func.get("name")
                 func_line = func.get("line")
                 has_help = func.get("has_help", False)
                 help_sections = func.get("help_sections", [])
 
-                # Check for pragma ignore on or near the function
-                # Look at the function line and a few lines before
-                pragma_exempt = False
-                if func_line > 0 and func_line <= len(lines):
-                    # Check the function line and up to 5 lines before
-                    for i in range(max(0, func_line - 5), min(func_line + 1, len(lines))):
-                        if re.search(r"#\s*noqa:\s*FUNCTION", lines[i], re.IGNORECASE):
-                            pragma_exempt = True
-                            break
-
-                # Skip validation if explicitly exempted via pragma
-                if pragma_exempt:
+                # Check for pragma exemption using shared helper
+                if check_symbol_pragma_exemption(lines, func_line):
                     continue
 
                 if not has_help:

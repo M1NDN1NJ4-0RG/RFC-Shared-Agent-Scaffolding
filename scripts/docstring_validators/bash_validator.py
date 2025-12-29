@@ -30,7 +30,7 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
-from .common import ValidationError, check_pragma_ignore, validate_exit_codes_content
+from .common import ValidationError, check_pragma_ignore, check_symbol_pragma_exemption, validate_exit_codes_content
 
 # Import tree-sitter helper if available
 try:
@@ -164,25 +164,17 @@ class BashValidator:
                 # If tree-sitter fails, fall back to regex
                 return BashValidator._validate_functions_regex(file_path, content)
 
+            # Split content into lines once for all pragma checks
+            lines = content.split("\n")
+
             # Validate each function
             for func in parse_result.get("functions", []):
                 func_name = func.get("name")
                 func_line = func.get("line")
                 has_doc = func.get("has_doc_comment", False)
 
-                # Check for pragma ignore on or near the function
-                # Look at the function line and a few lines before
-                lines = content.split("\n")
-                pragma_exempt = False
-                if func_line > 0 and func_line <= len(lines):
-                    # Check the function line and up to 5 lines before
-                    for i in range(max(0, func_line - 5), min(func_line + 1, len(lines))):
-                        if re.search(r"#\s*noqa:\s*FUNCTION", lines[i], re.IGNORECASE):
-                            pragma_exempt = True
-                            break
-
-                # Skip validation if explicitly exempted via pragma
-                if pragma_exempt:
+                # Check for pragma exemption using shared helper
+                if check_symbol_pragma_exemption(lines, func_line):
                     continue
 
                 # Per Phase 5.5 policy: Do NOT skip private/internal functions

@@ -175,3 +175,29 @@ def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
             return "No exit codes found (expected at least 0 and 1)"
 
     return None
+
+
+def check_symbol_pragma_exemption(lines: List[str], symbol_line: int, pragma_pattern: str = r"#\s*noqa:\s*FUNCTION") -> bool:
+    """Check if a symbol (function/subroutine) is exempt from documentation via pragma.
+
+    Checks the symbol's line and up to 5 lines before it for a pragma comment.
+
+    :param lines: List of file content lines (0-indexed)
+    :param symbol_line: Line number where symbol is defined (1-indexed from parser)
+    :param pragma_pattern: Regex pattern to match pragma comment
+
+    :returns: True if pragma exemption found, False otherwise
+    """
+    if symbol_line is None or symbol_line < 1 or symbol_line > len(lines):
+        return False
+
+    # Convert 1-indexed line number to 0-indexed array access
+    # Check from 5 lines before the symbol up to (but not including) the symbol line
+    start_idx = max(0, symbol_line - 1 - 5)
+    end_idx = symbol_line  # This will check indices up to symbol_line - 1 (the line before)
+
+    for i in range(start_idx, min(end_idx, len(lines))):
+        if re.search(pragma_pattern, lines[i], re.IGNORECASE):
+            return True
+
+    return False

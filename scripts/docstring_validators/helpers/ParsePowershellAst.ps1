@@ -15,7 +15,7 @@ Path to PowerShell script file to parse
 PowerShell 5.1 or later (pwsh 7.x recommended)
 
 .EXAMPLE
-pwsh -NoProfile -NonInteractive -File parse_powershell_ast.ps1 -FilePath script.ps1
+pwsh -NoProfile -NonInteractive -File ParsePowershellAst.ps1 -FilePath script.ps1
 
 .NOTES
 Per Phase 0 Item 0.9.3: PowerShell symbol discovery MUST use Parser::ParseFile (C1)

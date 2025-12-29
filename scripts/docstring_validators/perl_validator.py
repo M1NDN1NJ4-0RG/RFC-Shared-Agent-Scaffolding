@@ -31,7 +31,7 @@ import subprocess
 from pathlib import Path
 from typing import List, Optional
 
-from .common import ValidationError
+from .common import ValidationError, check_symbol_pragma_exemption
 
 
 class PerlValidator:
@@ -164,8 +164,10 @@ class PerlValidator:
                         )
                     )
 
-            # Validate each subroutine
+            # Split content into lines once for all pragma checks
             lines = content.split("\n")
+
+            # Validate each subroutine
             for sub in parse_result.get("subs", []):
                 sub_name = sub.get("name")
                 sub_line = sub.get("line")
@@ -174,18 +176,8 @@ class PerlValidator:
                 # Per Phase 5.5 policy: Do NOT skip private/internal subs
                 # All subs must have documentation unless explicitly exempted via pragma
 
-                # Check for pragma ignore on or near the subroutine
-                # Look at the sub line and a few lines before
-                pragma_exempt = False
-                if sub_line > 0 and sub_line <= len(lines):
-                    # Check the sub line and up to 5 lines before
-                    for i in range(max(0, sub_line - 5), min(sub_line + 1, len(lines))):
-                        if re.search(r"#\s*noqa:\s*FUNCTION", lines[i], re.IGNORECASE):
-                            pragma_exempt = True
-                            break
-
-                # Skip validation if explicitly exempted via pragma
-                if pragma_exempt:
+                # Check for pragma exemption using shared helper
+                if check_symbol_pragma_exemption(lines, sub_line):
                     continue
 
                 if not has_pod:
