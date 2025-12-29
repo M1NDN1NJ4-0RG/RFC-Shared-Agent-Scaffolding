@@ -1,0 +1,14 @@
+diff --git a/tools/repo_lint/cli.py b/tools/repo_lint/cli.py
+index 64107e5..8049c8d 100644
+--- a/tools/repo_lint/cli.py
++++ b/tools/repo_lint/cli.py
+@@ -137,8 +137,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
+             return ExitCode.ERROR
+         if not any(runner.has_files() for _, _, runner in runners):
+             print(
+-                f"Error: No files found for language '{only_language}'. "
+-                f"Nothing to {mode.lower()}.",
++                f"Error: No files found for language '{only_language}'. " f"Nothing to {mode.lower()}.",
+                 file=sys.stderr,
+             )
+             return ExitCode.ERROR

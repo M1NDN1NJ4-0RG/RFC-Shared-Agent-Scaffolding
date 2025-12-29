@@ -137,8 +137,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             return ExitCode.ERROR
         if not any(runner.has_files() for _, _, runner in runners):
             print(
-                f"Error: No files found for language '{only_language}'. "
-                f"Nothing to {mode.lower()}.",
+                f"Error: No files found for language '{only_language}'. " f"Nothing to {mode.lower()}.",
                 file=sys.stderr,
             )
             return ExitCode.ERROR
