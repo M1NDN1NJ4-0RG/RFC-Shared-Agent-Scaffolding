@@ -267,29 +267,42 @@ This tool must be:
 
 ---
 
-## Phase 5 — Migration of Existing Bash Wrapper + Docs
+## Phase 5 — Migration of Existing Bash Wrapper + Docs ✅ COMPLETE
 
 ### Item 5.1 — Keep a thin bash wrapper (High)
-- [ ] **Sub-Item 5.1.1:** Keep/rename bash wrapper as kebab-case:
-  - e.g. `scripts/run-linters.sh` stays (kebab-case allowed for bash)
-- [ ] **Sub-Item 5.1.2:** Convert it into a thin wrapper that calls:
-  - `python -m tools.repo_lint check` / `fix` / `install`
-- [ ] **Sub-Item 5.1.3:** Ensure Global Rules reference **one canonical command path** (repo-lint + wrapper)
+- [x] **Sub-Item 5.1.1:** Keep/rename bash wrapper as kebab-case:
+  - ✅ `scripts/run-linters.sh` kept (kebab-case compliant)
+- [x] **Sub-Item 5.1.2:** Convert it into a thin wrapper that calls:
+  - ✅ Wrapper delegates to `python -m tools.repo_lint check` / `fix` / `install`
+  - ✅ Supports `--fix` → `repo-lint fix`
+  - ✅ Supports `--install` → `repo-lint install`
+  - ✅ Default (no args) → `repo-lint check`
+- [x] **Sub-Item 5.1.3:** Ensure Global Rules reference **one canonical command path** (repo-lint + wrapper)
+  - ✅ Updated in CONTRIBUTING.md Quick Start section
+  - ✅ All references point to `python -m tools.repo_lint` as canonical
 
 ### Item 5.2 — Documentation updates (High)
-- [ ] **Sub-Item 5.2.1:** Update `CONTRIBUTING.md` to make repo-lint the canonical entrypoint
-- [ ] **Sub-Item 5.2.2:** Add “quickstart” section:
-  - install/bootstrap
-  - fix
-  - check
-- [ ] **Sub-Item 5.2.3:** Update `docs/future-work.md` with installable-package TODO
-- [ ] **Sub-Item 5.2.4:** Update repo Global Rules / CONTRIBUTING policy text to make it explicit and **required** that before every commit you run:
-  - `repo-lint check` (all languages + docstrings)
-  - the full relevant test suite(s) for impacted code
-  - and that CI must remain green (no “commit first, lint later”)
+- [x] **Sub-Item 5.2.1:** Update `CONTRIBUTING.md` to make repo-lint the canonical entrypoint
+  - ✅ Replaced old linting section with repo-lint commands
+  - ✅ Added canonical tool documentation
+  - ✅ Updated file naming conventions to reflect language-specific standards
+- [x] **Sub-Item 5.2.2:** Add "quickstart" section:
+  - ✅ Added install, fix, check workflow to Quick Start
+  - ✅ Clear step-by-step instructions for contributors
+- [x] **Sub-Item 5.2.3:** Update `docs/future-work.md` with installable-package TODO
+  - ✅ Already exists as FW-013 (no changes needed)
+- [x] **Sub-Item 5.2.4:** Update repo Global Rules / CONTRIBUTING policy text to make it explicit and **required** that before every commit you run:
+  - ✅ Added "REQUIRED Before Every Commit" section in Code Quality and Linting
+  - ✅ Explicit 3-step requirement in Quick Start (lines 11-14):
+    1. Run `python -m tools.repo_lint check` to lint all code
+    2. Run relevant test suites for code you changed
+    3. Verify all CI checks pass
+  - ✅ No "commit first, lint later" allowed
 
 **Phase 5 Success Criteria**
-- ✅ Contributors have exactly one obvious way to run checks.
+- ✅ Contributors have exactly one obvious way to run checks: `python -m tools.repo_lint check`
+- ✅ Bash wrapper is a thin delegation layer (54 lines vs. 413 lines before)
+- ✅ Documentation is updated and consistent across all files
 
 ---
 
