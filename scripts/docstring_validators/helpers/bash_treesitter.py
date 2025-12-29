@@ -47,18 +47,20 @@ def parse_bash_functions(file_path: Path) -> Dict[str, any]:
         return {"functions": [], "errors": ["tree-sitter-bash not installed"]}
 
     try:
-        # Read file content
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
+        # Read file content as bytes (tree-sitter works with bytes)
+        with open(file_path, "rb") as f:
+            content_bytes = f.read()
+
+        # Also read as text for display/comment checking
+        content_text = content_bytes.decode("utf-8")
 
         # Initialize parser with Bash language
+        # tree-sitter 0.25+ uses a different API
         parser = Parser()
-        # Use tree-sitter-bash pinned version
-        bash_language = Language(tsbash.language())
-        parser.set_language(bash_language)
+        parser.language = Language(tsbash.language())
 
-        # Parse the file
-        tree = parser.parse(bytes(content, "utf8"))
+        # Parse the file (pass bytes directly)
+        tree = parser.parse(content_bytes)
 
         # Extract functions
         functions = []
@@ -71,22 +73,32 @@ def parse_bash_functions(file_path: Path) -> Dict[str, any]:
         def find_functions(node):
             """Recursively find all function_definition nodes."""
             if node.type == "function_definition":
-                # Extract function name
-                name_node = node.child_by_field_name("name")
-                if name_node:
-                    func_name = content[name_node.start_byte : name_node.end_byte]
-                    func_line = name_node.start_point[0] + 1  # 0-indexed to 1-indexed
+                # Extract function name - it's a "word" child node, not a named field
+                func_name = None
+                for child in node.children:
+                    if child.type == "word":
+                        # Extract name using byte offsets
+                        func_name = content_bytes[child.start_byte : child.end_byte].decode("utf-8").strip()
+                        break
 
-                    # Check for comment block immediately preceding the function
-                    has_doc = _check_for_doc_comment(node, content, root_node)
+                if not func_name:
+                    # Couldn't extract name, skip
+                    for child in node.children:
+                        find_functions(child)
+                    return
 
-                    functions.append(
-                        {
-                            "name": func_name,
-                            "line": func_line,
-                            "has_doc_comment": has_doc,
-                        }
-                    )
+                func_line = node.start_point[0] + 1  # 0-indexed to 1-indexed
+
+                # Check for comment block immediately preceding the function
+                has_doc = _check_for_doc_comment(node, content_text, root_node)
+
+                functions.append(
+                    {
+                        "name": func_name,
+                        "line": func_line,
+                        "has_doc_comment": has_doc,
+                    }
+                )
 
             # Recurse to children
             for child in node.children:
