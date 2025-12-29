@@ -1,0 +1,65 @@
+{
+  "version": "1.0",
+  "description": "Auto-fix allow/deny policy for repo-lint fix command. Deny-by-default: only explicitly allowed fix categories may run.",
+  "policy": "deny_by_default",
+  "allowed_categories": [
+    {
+      "category": "FORMAT.BLACK",
+      "description": "Black Python code formatter",
+      "tool": "black",
+      "safe": true,
+      "mutating": true
+    },
+    {
+      "category": "FORMAT.SHFMT",
+      "description": "shfmt shell script formatter",
+      "tool": "shfmt",
+      "safe": true,
+      "mutating": true
+    },
+    {
+      "category": "LINT.RUFF.SAFE",
+      "description": "Ruff safe auto-fixes only (no unsafe fixes)",
+      "tool": "ruff",
+      "safe": true,
+      "mutating": true,
+      "flags": ["--fix", "--no-unsafe-fixes"]
+    }
+  ],
+  "denied_categories": [
+    {
+      "category": "LINT.RUFF.UNSAFE",
+      "description": "Ruff unsafe auto-fixes (explicitly denied)",
+      "tool": "ruff",
+      "safe": false,
+      "reason": "May change code semantics"
+    },
+    {
+      "category": "REWRITE.DOCSTRING_CONTENT",
+      "description": "Automatic docstring content generation/rewriting",
+      "tool": null,
+      "safe": false,
+      "reason": "Not implemented; would require AI/heuristics"
+    },
+    {
+      "category": "MODIFY_LOGIC",
+      "description": "Any fix that changes code logic",
+      "tool": null,
+      "safe": false,
+      "reason": "Beyond scope of linting/formatting"
+    },
+    {
+      "category": "REORDER_IMPORTS",
+      "description": "Import sorting/reordering",
+      "tool": null,
+      "safe": false,
+      "reason": "Not currently enabled; may be reconsidered later"
+    }
+  ],
+  "notes": [
+    "This policy is enforced by repo_lint.cli when running 'repo-lint fix'",
+    "Only categories in 'allowed_categories' may execute auto-fixes",
+    "Denied categories must be skipped with a clear message",
+    "Policy updates require human review and approval"
+  ]
+}
