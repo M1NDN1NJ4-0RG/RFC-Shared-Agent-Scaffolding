@@ -4,13 +4,11 @@ This test module validates the safe_archive.py implementation, focusing
 on M0-P1-I3 no-clobber semantics (both strict and auto-suffix modes),
 compression functionality, and move operations.
 
-Purpose
--------
+:Purpose:
 Validates that the Python safe-archive wrapper correctly implements the
 M0-P1-I3 no-clobber contract and archival operations.
 
-Test Coverage
--------------
+:Test Coverage:
 - Strict no-clobber mode: Fails when destination exists (M0-P1-I3)
 - Auto-suffix mode (default): Creates .2, .3, etc. when destination exists (M0-P1-I3)
 - Multiple collision handling: Correctly increments suffix (.2, .3, .4, ...)
@@ -18,8 +16,7 @@ Test Coverage
 - Specific file archival: Archives individual files by path
 - Move semantics: Source file removed after archival (not copied)
 
-Environment Variables
----------------------
+:Environment Variables:
 SAFE_FAIL_DIR : str, optional
     Source directory for failure logs (tested by tests).
 
@@ -29,14 +26,12 @@ SAFE_ARCHIVE_DIR : str, optional
 SAFE_ARCHIVE_COMPRESS : str, optional
     Compression method: none, gzip, xz, zstd (tested by tests).
 
-Examples
---------
+:Examples:
 Run tests via pytest::
 
     pytest test_safe_archive.py
 
-Exit Codes
-----------
+:Exit Codes:
 0
     All tests passed
 1
@@ -55,13 +50,11 @@ Contract Validation (M0-P1-I3)
   - Original destination unchanged
   - Warning printed to stderr
 
-Test Dependencies
------------------
+:Test Dependencies:
 Requires safe_archive.py in the expected relative path.
 All tests use temporary directories for isolation.
 
-Platform Notes
---------------
+:Platform Notes:
 - Uses tempfile.TemporaryDirectory for isolated test execution
 - gzip compression tested (Python built-in, always available)
 - xz and zstd compression not tested (requires external tools)

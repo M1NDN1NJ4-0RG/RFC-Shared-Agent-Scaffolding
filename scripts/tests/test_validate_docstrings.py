@@ -4,32 +4,27 @@
 This module provides basic unit tests for the docstring validator,
 covering each language's validation logic.
 
-Purpose
--------
+:Purpose:
 Ensures the validator correctly identifies valid and invalid docstrings
 for all supported languages (Bash, PowerShell, Python, Perl, Rust, YAML).
 
-Usage
------
+:Usage:
 Run tests from repository root::
 
     python3 -m pytest scripts/tests/test_validate_docstrings.py
     # or
     python3 scripts/tests/test_validate_docstrings.py
 
-Environment Variables
----------------------
+:Environment Variables:
 None. Tests are self-contained.
 
-Exit Codes
-----------
+:Exit Codes:
 0
     All tests passed
 1
     One or more tests failed
 
-Examples
---------
+:Examples:
 Run all tests::
 
     python3 -m pytest scripts/tests/test_validate_docstrings.py -v
@@ -38,8 +33,7 @@ Run specific test::
 
     python3 -m pytest scripts/tests/test_validate_docstrings.py::test_bash_valid -v
 
-Notes
------
+:Notes:
 - Tests use minimal valid/invalid examples for each language
 - Can be run with pytest or as standalone script (uses unittest)
 - Add more tests as validation rules evolve
@@ -162,22 +156,18 @@ class TestPythonValidator(unittest.TestCase):
         content = '''#!/usr/bin/env python3
 """Test script.
 
-Purpose
--------
+:Purpose:
 Tests validation.
 
-Environment Variables
----------------------
+:Environment Variables:
 None.
 
-Examples
---------
+:Examples:
 Run the script::
 
     python3 test.py
 
-Exit Codes
-----------
+:Exit Codes:
 0
     Success
 1

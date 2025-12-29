@@ -345,7 +345,7 @@ class BashValidator:
         """Validate Bash script header and function docstrings.
 
         :param file_path: Path to Bash file to validate
-            content: File content as string
+        :param content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)"""
         errors = []
@@ -366,7 +366,7 @@ class BashValidator:
         """Validate Bash script header documentation.
 
         :param file_path: Path to Bash file
-            content: File content as string
+        :param content: File content as string
 
         :returns: ValidationError if header is missing required sections, None otherwise"""
         # Check for top-of-file comment block (first 100 lines)
@@ -423,7 +423,7 @@ class BashValidator:
         Detects function definitions and checks for comment blocks preceding them.
 
         :param file_path: Path to Bash file
-            content: File content
+        :param content: File content
 
         :returns: List of validation errors for functions"""
         errors = []
@@ -524,7 +524,7 @@ class PowerShellValidator:
         """Validate PowerShell script docstring.
 
         :param file_path: Path to PowerShell file to validate
-            content: File content as string
+        :param content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)"""
         # Check for comment-based help block
@@ -568,10 +568,10 @@ class PythonValidator:
     """
 
     REQUIRED_SECTIONS = [
-        r"^Purpose\s*$",
-        r"^Environment Variables\s*$",
-        r"^Examples\s*$",
-        r"^Exit Codes\s*$",
+        r"^:Purpose:\s*$",
+        r"^:Environment Variables:\s*$",
+        r"^:Examples:\s*$",
+        r"^:Exit Codes:\s*$",
     ]
 
     SECTION_NAMES = ["Purpose", "Environment Variables", "Examples", "Exit Codes"]
@@ -581,7 +581,7 @@ class PythonValidator:
         """Validate Python module and symbol docstrings.
 
         :param file_path: Path to Python file to validate
-            content: File content as string
+        :param content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)"""
         errors = []
@@ -602,7 +602,7 @@ class PythonValidator:
         """Validate module-level docstring.
 
         :param file_path: Path to Python file
-            content: File content as string
+        :param content: File content as string
 
         :returns: ValidationError if module docstring is missing required sections, None otherwise"""
         # Check for module docstring (triple quotes)
@@ -637,11 +637,19 @@ class PythonValidator:
 
         # Basic content validation for exit codes
         if "Exit Codes" not in missing:
+            # Try reST field format first (:Exit Codes:)
             exit_codes_match = re.search(
-                r"^Exit Codes\s*\n-+\n(.+?)(?:\n^[A-Z]|\Z)",
+                r"^:Exit Codes:\s*\n+(.+?)(?:\n^:|\Z)",
                 docstring,
                 re.MULTILINE | re.DOTALL,
             )
+            # Fallback to underline format (Exit Codes\n---)
+            if not exit_codes_match:
+                exit_codes_match = re.search(
+                    r"^Exit Codes\s*\n-+\n(.+?)(?:\n^[A-Z]|\Z)",
+                    docstring,
+                    re.MULTILINE | re.DOTALL,
+                )
             if exit_codes_match:
                 exit_codes_content = exit_codes_match.group(1)
                 exit_codes_error = validate_exit_codes_content(exit_codes_content, "Python")
@@ -665,7 +673,7 @@ class PythonValidator:
         """Validate function and class docstrings using AST parsing.
 
         :param file_path: Path to Python file
-            content: File content
+        :param content: File content
 
         :returns: List of validation errors for symbols"""
         errors = []
@@ -696,8 +704,8 @@ class PythonValidator:
         """Validate a function or method docstring.
 
         :param file_path: Path to Python file
-            node: AST FunctionDef node
-            content: File content (for pragma checking)
+        :param node: AST FunctionDef node
+        :param content: File content (for pragma checking)
 
         :returns: ValidationError if function lacks proper documentation, None otherwise"""
         # Check for pragma ignore on this specific function

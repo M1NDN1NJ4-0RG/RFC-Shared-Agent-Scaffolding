@@ -5,22 +5,19 @@ Executes all Python3 unit tests for the safe-run/safe-check/safe-archive
 wrapper implementations. This runner provides a native Python interface
 that is functionally equivalent to run-tests.sh.
 
-Purpose
--------
+:Purpose:
 Thin wrapper around existing run-tests.sh (Phase 5 decision).
 Sets up environment (SAFE_RUN_BIN, working directory) and delegates
 to the proven Bash runner. Future enhancement: migrate to fully
 native implementation (see docs/future-work.md FW-011).
 
-Environment Variables
----------------------
+:Environment Variables:
 SAFE_RUN_BIN : str, optional
     Path to Rust canonical binary.
     Default: {repo_root}/rust/target/release/safe-run
     Auto-detected from repository structure.
 
-Usage
------
+:Usage:
 Run from wrapper directory::
 
     ./run_tests.py
@@ -30,8 +27,7 @@ Run from repository root::
 
     python3 wrappers/python3/run_tests.py
 
-Examples
---------
+:Examples:
 Run all Python3 tests::
 
     ./run_tests.py
@@ -40,8 +36,7 @@ Run with custom binary path::
 
     SAFE_RUN_BIN=/path/to/safe-run ./run_tests.py
 
-Exit Codes
-----------
+:Exit Codes:
 0
     All tests passed
 1
@@ -49,16 +44,14 @@ Exit Codes
 2
     Prerequisites not met (bash not found)
 
-Notes
------
+:Notes:
 - Requires Python 3.8+
 - Requires bash to be available (thin wrapper implementation)
 - Requires Rust canonical binary to be built
 - Sets SAFE_RUN_BIN environment variable for tests
 - Functionally equivalent to run-tests.sh (strict parity)
 
-See Also
---------
+:See Also:
 - run-tests.sh: Bash test runner (delegated to by this script)
 - docs/testing/test-runner-contract.md: Parity contract specification
 - docs/future-work.md: FW-011 (future native implementation)

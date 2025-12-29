@@ -4,13 +4,11 @@ This test module validates the preflight_automerge_ruleset.py implementation,
 focusing on M0-P2-I1 Bearer token authentication, error classification, and
 GitHub Ruleset verification logic.
 
-Purpose
--------
+:Purpose:
 Validates that the preflight_automerge_ruleset.py script correctly verifies
 GitHub Ruleset configuration and uses proper Bearer token authentication.
 
-Test Coverage
--------------
+:Test Coverage:
 - Authentication error detection via classify_auth()
 - Malformed --want argument rejection (non-JSON, non-array)
 - Success path: Ruleset active, targets default branch, has all required checks
@@ -19,22 +17,19 @@ Test Coverage
 - Auth failure handling: Returns exit code 2 for 401/403 errors
 - M0-P2-I1 Bearer token format validation in source code
 
-Environment Variables
----------------------
+:Environment Variables:
 TOKEN : str, optional
     GitHub personal access token (tested by tests, mocked).
 
 GITHUB_TOKEN : str, optional
     GitHub personal access token (alternative, tested by tests, mocked).
 
-Examples
---------
+:Examples:
 Run tests via pytest::
 
     pytest test-preflight_automerge_ruleset.py
 
-Exit Codes
-----------
+:Exit Codes:
 0
     All tests passed
 1
@@ -49,8 +44,7 @@ This replaces the deprecated "token <token>" format. The test validates
 this by inspecting the source code of http_get() to ensure it contains
 the correct authentication header format.
 
-Test Dependencies
------------------
+:Test Dependencies:
 Uses unittest.mock.patch to mock GitHub API calls:
 - have_cmd() mocked to return False (force HTTP path)
 - http_get() mocked to return fixture responses
@@ -58,13 +52,11 @@ Uses unittest.mock.patch to mock GitHub API calls:
 
 All tests run fully offline with no actual GitHub API calls.
 
-Test Fixtures
--------------
+:Test Fixtures:
 - _rulesets_list(): Mock response for GET /repos/{repo}/rulesets
 - _ruleset_detail(contexts): Mock response for GET /repos/{repo}/rulesets/{id}
 
-Platform Notes
---------------
+:Platform Notes:
 - All tests are platform-independent (Linux, macOS, Windows compatible)
 - No network access required (all API calls mocked)
 - Uses importlib to dynamically load the module under test

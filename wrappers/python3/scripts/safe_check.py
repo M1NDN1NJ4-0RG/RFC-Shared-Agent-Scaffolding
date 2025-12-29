@@ -5,8 +5,7 @@ This module validates that the Python3 implementations of safe-run and
 safe-archive conform to the M0 specification contracts for failure logging,
 exit code preservation, and archival semantics.
 
-Purpose
--------
+:Purpose:
 Provides automated contract verification to ensure:
 - safe-run creates failure artifacts on non-zero exit codes
 - safe-run does NOT create artifacts on successful (exit 0) execution
@@ -14,14 +13,12 @@ Provides automated contract verification to ensure:
 - safe-archive moves files to the archive directory
 - safe-archive respects no-clobber semantics (M0-P1-I3)
 
-Environment Variables
----------------------
+:Environment Variables:
 SAFE_LOG_DIR : str, optional
     Directory for failure logs (default: .agent/FAIL-LOGS)
     Used by safe-run when creating failure artifacts
 
-Verification Tests
-------------------
+:Verification Tests:
 1. **Failure path**: Run command that exits with code 42
    - Verify safe-run returns exit code 42 (exit code preservation)
    - Verify exactly one new artifact created in FAIL-LOGS
@@ -40,15 +37,13 @@ Verification Tests
    - Verify original archive file unchanged (no clobber)
    - Verify new file uses .2 suffix
 
-CLI Usage
----------
+:CLI Usage:
     python3 scripts/python3/safe_check.py
 
 No arguments accepted. The script discovers and tests the sibling scripts
 (safe_run.py, safe_archive.py) in the same directory tree.
 
-Exit Codes
-----------
+:Exit Codes:
 0
     All contract verification tests passed
 1
@@ -56,31 +51,27 @@ Exit Codes
 2
     Usage error (unexpected arguments provided)
 
-Side Effects
-------------
+:Side Effects:
 - Creates temporary directories: .agent/FAIL-LOGS, .agent/FAIL-ARCHIVE
 - Generates test failure logs during verification
 - Moves test artifacts to archive during verification
 - All side effects occur in current working directory
 
-Examples
---------
+:Examples:
 Run contract verification::
 
     cd /path/to/repo
     python3 scripts/python3/safe_check.py
     # Output: INFO: SAFE-CHECK: contract verification PASSED
 
-Contract References
--------------------
+:Contract References:
 This script verifies conformance with:
 - safe-run-001: Exit code preservation
 - safe-run-002: Stdout/stderr capture on failure
 - safe-run-003: Failure artifact generation
 - M0-P1-I3: No-clobber archival semantics (auto-suffix mode)
 
-See Also
---------
+:See Also:
 - scripts/python3/safe_run.py: Wrapper under test
 - scripts/python3/safe_archive.py: Archival tool under test
 - docs/rust-canonical-tool.md: Canonical contract specification

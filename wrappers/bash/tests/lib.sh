@@ -167,6 +167,10 @@ assert_ne() {
 
 # File existence assertions
 
+# Assert file exists
+# Args: $1 = file path
+assert_file_exists() { [[ -e "$1" ]] || { log "expected file to exist: $1"; return 1; }; }
+
 # Assert directory exists
 # Args: $1 = directory path
 assert_dir_exists() { [[ -d "$1" ]] || { log "expected dir to exist: $1"; return 1; }; }
