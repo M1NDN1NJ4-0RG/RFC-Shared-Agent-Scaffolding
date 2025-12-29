@@ -34,6 +34,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$REPO_ROOT"
 
 # Parse arguments and map to repo-lint commands
+# Note: This wrapper accepts only one command at a time
 COMMAND="check"
 if [[ "${1:-}" == "--fix" ]]; then
   COMMAND="fix"
@@ -49,5 +50,14 @@ elif [[ -n "${1:-}" ]]; then
   exit 1
 fi
 
+# Ensure only one argument is provided
+if [[ -n "${2:-}" ]]; then
+  echo "Error: Multiple arguments not supported"
+  echo "Usage: $0 [--fix|--install]"
+  exit 1
+fi
+
 # Delegate to repo_lint Python module
+# Using exec to replace this shell process with the Python process,
+# which correctly propagates exit codes and signals
 exec python -m tools.repo_lint "$COMMAND"
