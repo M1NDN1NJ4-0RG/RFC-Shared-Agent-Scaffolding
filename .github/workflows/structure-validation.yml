@@ -6,10 +6,10 @@
 # - scripts/       (implementation files)
 # - tests/         (test files)
 # - run-tests.*    (test runner script)
-# - README_TESTS.md (optional documentation)
+# - README.md (optional documentation)
 #
 # Also verifies that obsolete paths from repository restructure have been
-# properly migrated (e.g., 'documents/' -> 'docs/', 
+# properly migrated (e.g., 'documents/' -> 'docs/',
 # 'RFC-Shared-Agent-Scaffolding-Example/' -> 'wrappers/')
 #
 # Triggers:

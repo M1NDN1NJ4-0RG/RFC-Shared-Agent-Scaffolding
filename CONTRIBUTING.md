@@ -110,10 +110,10 @@ Each language wrapper has its own test suite:
 cd wrappers/scripts/bash && bash run-tests.sh
 
 # Perl
-cd wrappers/scripts/perl && perl run-tests.pl
+cd wrappers/scripts/perl && bash run-tests.sh
 
 # Python
-cd wrappers/scripts/python3 && python3 run-tests.py
+cd wrappers/scripts/python3 && bash run-tests.sh
 
 # PowerShell
 cd wrappers/scripts/powershell && pwsh run-tests.ps1

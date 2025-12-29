@@ -100,8 +100,8 @@ search_pattern() {
     # Fallback to git grep, then regular grep if needed
     local results=""
     if command -v rg &> /dev/null; then
-        # Use ripgrep with file type filters
-        results=$(rg -n "${pattern}" --type md --type yaml --type sh --type python --type perl --type rust --type toml 2>/dev/null || true)
+        # Use ripgrep with file type filters (include PowerShell via glob)
+        results=$(rg -n "${pattern}" --type md --type yaml --type sh --type python --type perl --type rust --type toml --glob '*.ps1' 2>/dev/null || true)
     elif command -v git &> /dev/null && git rev-parse --git-dir &> /dev/null; then
         results=$(git grep -n "${pattern}" -- '*.md' '*.yml' '*.yaml' '*.sh' '*.py' '*.pl' '*.ps1' '*.rs' '*.toml' 2>/dev/null || true)
     else
