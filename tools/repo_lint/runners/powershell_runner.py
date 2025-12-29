@@ -37,7 +37,6 @@ class PowerShellRunner(Runner):
         :Returns:
             List of missing tool names
         """
-        required = ["pwsh"]
         missing = []
 
         if not command_exists("pwsh"):
@@ -92,32 +91,41 @@ class PowerShellRunner(Runner):
 
         return results
 
+    def _get_powershell_files(self) -> List[str]:
+        """Get list of PowerShell files in repository.
+
+        :Returns:
+            List of PowerShell file paths (empty list if none found)
+        """
+        result = subprocess.run(
+            ["git", "ls-files", "**/*.ps1"], cwd=self.repo_root, capture_output=True, text=True, check=False
+        )
+        if not result.stdout.strip():
+            return []
+        return result.stdout.strip().split("\n")
+
     def _run_psscriptanalyzer(self) -> LintResult:
         """Run PSScriptAnalyzer.
 
         :Returns:
             LintResult for PSScriptAnalyzer
         """
-        # Get all PowerShell files
-        ps_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.ps1"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-
-        if not ps_files_result.stdout.strip():
+        ps_files = self._get_powershell_files()
+        if not ps_files:
             return LintResult(tool="PSScriptAnalyzer", passed=True, violations=[])
-
-        ps_files = ps_files_result.stdout.strip().split("\n")
 
         # Run PSScriptAnalyzer on each file
         violations = []
         for ps_file in ps_files:
+            # Use -File parameter to safely pass the script path
             result = subprocess.run(
                 [
                     "pwsh",
                     "-NoProfile",
                     "-NonInteractive",
                     "-Command",
-                    f"Invoke-ScriptAnalyzer -Path '{ps_file}' -Severity Warning,Error",
+                    "Invoke-ScriptAnalyzer -Path $args[0] -Severity Warning,Error",
+                    ps_file,
                 ],
                 cwd=self.repo_root,
                 capture_output=True,
@@ -154,15 +162,9 @@ class PowerShellRunner(Runner):
                 error=f"Docstring validator script not found: {validator_script}",
             )
 
-        # Get all PowerShell files to validate
-        ps_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.ps1"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-
-        if not ps_files_result.stdout.strip():
+        ps_files = self._get_powershell_files()
+        if not ps_files:
             return LintResult(tool="validate_docstrings", passed=True, violations=[])
-
-        ps_files = ps_files_result.stdout.strip().split("\n")
 
         # Run validator for each PowerShell file
         result = subprocess.run(

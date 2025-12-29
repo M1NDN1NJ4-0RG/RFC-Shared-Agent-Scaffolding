@@ -77,21 +77,28 @@ class BashRunner(Runner):
 
         return results
 
+    def _get_bash_files(self) -> List[str]:
+        """Get list of Bash files in repository.
+
+        :Returns:
+            List of Bash file paths (empty list if none found)
+        """
+        result = subprocess.run(
+            ["git", "ls-files", "**/*.sh"], cwd=self.repo_root, capture_output=True, text=True, check=False
+        )
+        if not result.stdout.strip():
+            return []
+        return result.stdout.strip().split("\n")
+
     def _run_shellcheck(self) -> LintResult:
         """Run ShellCheck.
 
         :Returns:
             LintResult for ShellCheck
         """
-        # Get all Bash files
-        bash_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.sh"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-
-        if not bash_files_result.stdout.strip():
+        bash_files = self._get_bash_files()
+        if not bash_files:
             return LintResult(tool="shellcheck", passed=True, violations=[])
-
-        bash_files = bash_files_result.stdout.strip().split("\n")
 
         # Run shellcheck
         result = subprocess.run(
@@ -118,15 +125,9 @@ class BashRunner(Runner):
         :Returns:
             LintResult for shfmt check
         """
-        # Get all Bash files
-        bash_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.sh"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-
-        if not bash_files_result.stdout.strip():
+        bash_files = self._get_bash_files()
+        if not bash_files:
             return LintResult(tool="shfmt", passed=True, violations=[])
-
-        bash_files = bash_files_result.stdout.strip().split("\n")
 
         # Run shfmt in check mode (-d = diff, -l = list files)
         result = subprocess.run(
@@ -147,9 +148,7 @@ class BashRunner(Runner):
                     tool="shfmt",
                     file=".",
                     line=None,
-                    message=(
-                        "Shell scripts do not match shfmt style. " "Run 'python -m tools.repo_lint fix' to auto-format."
-                    ),
+                    message="Shell scripts do not match shfmt style. Run 'python -m tools.repo_lint fix' to auto-format.",
                 )
             )
 
@@ -161,15 +160,9 @@ class BashRunner(Runner):
         :Returns:
             LintResult for shfmt fix operation
         """
-        # Get all Bash files
-        bash_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.sh"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-
-        if not bash_files_result.stdout.strip():
+        bash_files = self._get_bash_files()
+        if not bash_files:
             return LintResult(tool="shfmt", passed=True, violations=[])
-
-        bash_files = bash_files_result.stdout.strip().split("\n")
 
         # Run shfmt in fix mode (-w = write)
         result = subprocess.run(
@@ -203,15 +196,9 @@ class BashRunner(Runner):
                 error=f"Docstring validator script not found: {validator_script}",
             )
 
-        # Get all Bash files to validate
-        bash_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.sh"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-
-        if not bash_files_result.stdout.strip():
+        bash_files = self._get_bash_files()
+        if not bash_files:
             return LintResult(tool="validate_docstrings", passed=True, violations=[])
-
-        bash_files = bash_files_result.stdout.strip().split("\n")
 
         # Run validator for each Bash file
         result = subprocess.run(

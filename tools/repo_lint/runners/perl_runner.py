@@ -71,21 +71,28 @@ class PerlRunner(Runner):
 
         return results
 
+    def _get_perl_files(self) -> List[str]:
+        """Get list of Perl files in repository.
+
+        :Returns:
+            List of Perl file paths (empty list if none found)
+        """
+        result = subprocess.run(
+            ["git", "ls-files", "**/*.pl"], cwd=self.repo_root, capture_output=True, text=True, check=False
+        )
+        if not result.stdout.strip():
+            return []
+        return result.stdout.strip().split("\n")
+
     def _run_perlcritic(self) -> LintResult:
         """Run Perl::Critic.
 
         :Returns:
             LintResult for Perl::Critic
         """
-        # Get all Perl files
-        perl_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.pl"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-
-        if not perl_files_result.stdout.strip():
+        perl_files = self._get_perl_files()
+        if not perl_files:
             return LintResult(tool="perlcritic", passed=True, violations=[])
-
-        perl_files = perl_files_result.stdout.strip().split("\n")
 
         # Run perlcritic
         result = subprocess.run(
@@ -123,15 +130,9 @@ class PerlRunner(Runner):
                 error=f"Docstring validator script not found: {validator_script}",
             )
 
-        # Get all Perl files to validate
-        perl_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.pl"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-
-        if not perl_files_result.stdout.strip():
+        perl_files = self._get_perl_files()
+        if not perl_files:
             return LintResult(tool="validate_docstrings", passed=True, violations=[])
-
-        perl_files = perl_files_result.stdout.strip().split("\n")
 
         # Run validator for each Perl file
         result = subprocess.run(
