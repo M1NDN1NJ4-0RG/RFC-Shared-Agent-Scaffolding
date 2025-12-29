@@ -90,25 +90,41 @@ Before submitting a PR:
 All code must adhere to language-specific standards:
 - **Python**: 120-character lines, Black formatting, Flake8 + Pylint compliance
 - **Bash**: ShellCheck warnings addressed, shfmt formatting
+- **PowerShell**: PSScriptAnalyzer error-level compliance
+- **Perl**: Perl::Critic severity 5 compliance
 - **YAML**: yamllint compliance
 
 **Quick linting commands:**
 
 ```bash
-# Run all linters (Python, Bash, YAML)
+# Run all linters (Python, Bash, PowerShell, Perl, YAML)
 ./scripts/run-linters.sh
 
-# Auto-format code where possible
+# Auto-format code where possible (Python, Bash)
 ./scripts/run-linters.sh --fix
 
-# Or run tools individually:
-black .                    # Python: Auto-format
-flake8 .                   # Python: Style check
-pylint **/*.py             # Python: Static analysis
-shellcheck **/*.sh         # Bash: Shell script analysis
-shfmt -d -i 2 -ci **/*.sh  # Bash: Format check
-yamllint .                 # YAML: Linting
-python3 scripts/validate_docstrings.py  # All: Docstring validation
+# Or run tools individually by language:
+
+# Python
+black .                    # Auto-format
+flake8 .                   # Style check
+pylint **/*.py             # Static analysis
+
+# Bash
+shellcheck **/*.sh         # Shell script analysis
+shfmt -d -i 2 -ci **/*.sh  # Format check
+
+# PowerShell
+pwsh -Command "Invoke-ScriptAnalyzer -Path script.ps1 -Severity Error"
+
+# Perl
+perlcritic --severity 5 **/*.pl
+
+# YAML
+yamllint .                 # Linting
+
+# All languages
+python3 scripts/validate_docstrings.py  # Docstring validation
 ```
 
 **Configuration files:**
@@ -117,12 +133,20 @@ python3 scripts/validate_docstrings.py  # All: Docstring validation
 - Python Pylint: `pyproject.toml` (`[tool.pylint.*]`)
 - YAML: `.yamllint`
 
-All tools are configured for 120-character line length (Python) and compatible rule sets.
+All Python tools are configured for 120-character line length and compatible rule sets.
 
 **CI behavior:**
 - Black formatting is **automatically applied** for same-repo PRs
 - For fork PRs, a patch artifact is provided if formatting is needed
 - All other linters must pass without errors
+
+**Automatic linter installation:**
+The `./scripts/run-linters.sh` script automatically installs missing linters:
+- Python: black, flake8, pylint (via pip)
+- Bash: shellcheck (via apt/brew), shfmt (via go install)
+- PowerShell: pwsh, PSScriptAnalyzer (via apt/brew + PowerShell Gallery)
+- Perl: perlcritic (via cpanm)
+- YAML: yamllint (via pip)
 
 ### Pull Request Guidelines
 
