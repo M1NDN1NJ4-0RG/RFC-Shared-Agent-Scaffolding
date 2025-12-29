@@ -1,8 +1,8 @@
 # Naming and Style Conventions
 
-**Status:** Canonical source of truth for naming and casing standards (Phase 4)  
+**Status:** Canonical source of truth for naming and casing standards (Phase 4.5 - Enforcement Active)  
 **Last Updated:** 2025-12-29  
-**Enforcement:** Warn-first rollout (Phase 4), full enforcement in Phase 4.5
+**Enforcement:** Full enforcement active (Phase 4.5)
 
 ## Overview
 
@@ -276,15 +276,10 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 - Perl scripts (`.pl`): `kebab-case` pattern
 - Perl modules (`.pm`): `PascalCase` pattern
 
-**Current Status (Phase 4):** WARN mode
-- Violations are reported in CI output
-- Build passes even with violations
-- Gives contributors time to fix violations
-
-**Future Status (Phase 4.5):** ENFORCE mode
-- Violations will fail CI
+**Current Status (Phase 4.5):** ENFORCE mode
+- Violations fail CI
 - Blocks merge until violations are fixed
-- Conversion will happen one language at a time
+- All language-specific naming is now enforced
 
 ### Legacy Kebab-Case Enforcement (Pre-Phase 4)
 

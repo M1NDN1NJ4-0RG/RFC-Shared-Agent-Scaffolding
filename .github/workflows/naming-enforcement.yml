@@ -31,8 +31,7 @@
 # - Side effects: Warns on violations (Phase 4), fails on violations (Phase 4.5+)
 #
 # Notes:
-# - Phase 4: WARN mode (exit 0 even with violations, print warnings)
-# - Phase 4.5: Will be converted to FAIL mode (exit non-zero on violations)
+# - Phase 4.5: ENFORCE mode (exit non-zero on violations, block merge)
 # - See docs/contributing/naming-and-style.md for full specification
 ---
 name: naming-enforcement
@@ -103,7 +102,7 @@ jobs:
                 violations.append(f"{path} - Expected PascalCase, got: {stem}")
 
           if violations:
-            print("⚠️  NAMING CONVENTION VIOLATIONS DETECTED")
+            print("❌ NAMING CONVENTION VIOLATIONS DETECTED")
             print("")
             print("The following files do not follow language-specific naming conventions:")
             print("See docs/contributing/naming-and-style.md for details.")
@@ -111,13 +110,12 @@ jobs:
             for v in sorted(violations):
               print(f"  - {v}")
             print("")
-            print("Phase 4 Status: WARN-ONLY MODE")
-            print("These violations are reported but do not fail the build.")
-            print("Action required: Fix violations before Phase 4.5 enforcement conversion.")
+            print("Phase 4.5 Status: ENFORCEMENT MODE")
+            print("These violations will block the build.")
+            print("Action required: Fix violations before merge.")
             print("")
-            # Phase 4: WARN mode - exit 0 (allow merge)
-            # Phase 4.5: Will change to sys.exit(1) (block merge)
-            sys.exit(0)
+            # Phase 4.5: ENFORCE mode - exit 1 (block merge)
+            sys.exit(1)
           else:
             print("✅ All files follow language-specific naming conventions")
           PY
