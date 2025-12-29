@@ -5,7 +5,7 @@ This directory contains all documentation for the RFC-Shared-Agent-Scaffolding r
 ## Quick Start
 
 - **New Users:** Start with [Usage Guide](./usage/) to learn how to use the tools
-- **Contributors:** See [Contributing Guide](./contributing/) for development guidelines
+- **Contributors:** See [CONTRIBUTING.md](../CONTRIBUTING.md) for quick reference, then [Contributing Guide](./contributing/) for detailed guidelines
 - **Maintainers:** Review [Architecture](./architecture/) for design decisions
 
 ## Documentation Structure
@@ -36,13 +36,19 @@ Test plans, evidence, and validation procedures:
 
 ### Contributing
 Guidelines for contributing to the project:
-- [Contributing Guide](./contributing/contributing-guide.md) - How to contribute (naming conventions, required checks, PR process)
+- **[Root CONTRIBUTING.md](../CONTRIBUTING.md)** - Quick start guide for contributors (GitHub surfaces this automatically)
+- [Contributing Guide](./contributing/contributing-guide.md) - Detailed contributing workflow (naming conventions, required checks, PR process)
 - [Allowed Drift](./contributing/allowed-drift.md) - Behavioral difference policy
 - [Docstring Contracts](./contributing/docstring-contracts/README.md) - Documentation standards for all languages
 
 ### History
 Historical documents, decision logs, and progress tracking:
-- Located in [history/](./history/) (to be populated)
+- **[History Index](./history/README.md)** - Complete index of historical documentation
+- Major epics (EPIC #3, EPIC #33, EPIC #59)
+- Milestone summaries (M0, M1, M2-M4, M5)
+- PR completion reports
+- Verification evidence and decision records
+- Legacy AI agent guidelines
 
 ## Additional Resources
 

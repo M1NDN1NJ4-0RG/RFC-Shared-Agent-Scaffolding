@@ -76,7 +76,7 @@ Contracts define required documentation sections (purpose, usage, examples, exit
 
 ## Contributing
 
-📝 **[Contributing Guide](./docs/contributing/contributing-guide.md)** - How to contribute to this repository
+📝 **[CONTRIBUTING.md](./CONTRIBUTING.md)** - How to contribute to this repository
 
 Quick reference:
 - Follow kebab-case naming conventions for all files
@@ -84,7 +84,12 @@ Quick reference:
 - Use `git mv` to preserve history when renaming/moving files
 - Run all validation checks before submitting PRs
 
-See also: [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) for the implementation roadmap.
+See also:
+- **[Contributing Guide](./docs/contributing/contributing-guide.md)** - Detailed contributing workflow
+- **[Docstring Contracts](./docs/contributing/docstring-contracts/README.md)** - Required documentation standards
+- **[Testing Documentation](./docs/testing/)** - How to run and write tests
+
+**Roadmap:** [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)
 
 ## License
 
