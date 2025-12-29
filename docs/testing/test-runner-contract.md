@@ -41,9 +41,9 @@ Each wrapper language currently has a Bash-based test runner:
 #### 2. Test Discovery and Execution
 
 **Python3 (`wrappers/python3/run-tests.sh`):**
-- Discovers: `tests/test-*.py` files
+- Discovers: `tests/test_*.py` files (snake_case per Phase 4)
 - Execution: Uses Python `unittest` framework with custom importlib loader
-- Reason for custom loader: Python module names cannot contain hyphens
+- Reason for custom loader: Explicit control over test discovery
 - Verbosity: `verbosity=2` (shows individual test names and results)
 
 **Perl (`wrappers/perl/run-tests.sh`):**
