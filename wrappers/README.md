@@ -48,15 +48,15 @@ perl ./wrappers/perl/scripts/safe-run.pl echo "Hello, World!"
 
 **Location:** `wrappers/python3/scripts/`
 
-- `safe-run.py` - Execute commands with event logging
-- `safe-check.py` - Check for existing artifacts
-- `safe-archive.py` - Archive artifacts to timestamped directories
+- `safe_run.py` - Execute commands with event logging
+- `safe_check.py` - Check for existing artifacts
+- `safe_archive.py` - Archive artifacts to timestamped directories
 
 **Requirements:** Python 3.8+
 
 **Usage:**
 ```bash
-python3 ./wrappers/python3/scripts/safe-run.py echo "Hello, World!"
+python3 ./wrappers/python3/scripts/safe_run.py echo "Hello, World!"
 ```
 
 ### PowerShell

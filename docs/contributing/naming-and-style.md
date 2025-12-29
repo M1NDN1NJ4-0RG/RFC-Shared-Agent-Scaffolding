@@ -47,13 +47,13 @@ Applies to:
 
 **Rationale:** Python's PEP 8 style guide specifies snake_case for module names.
 
-**Current Transition:** Files currently use kebab-case (`safe-run.py`). Will transition in Phase 4.3.
+**Current Transition:** Files currently use kebab-case (`safe_run.py`). Will transition in Phase 4.3.
 
 Examples:
 - ✅ `safe_run.py`
 - ✅ `test_safe_check.py`
 - ✅ `preflight_automerge_ruleset.py`
-- ❌ `safe-run.py` (kebab-case, legacy)
+- ❌ `safe_run.py` (kebab-case, legacy)
 - ❌ `SafeRun.py` (PascalCase)
 
 ### PowerShell Scripts
@@ -299,10 +299,10 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 ### Item 4.3: File Renaming
 
 **Python:**
-- `safe-run.py` → `safe_run.py`
-- `safe-check.py` → `safe_check.py`
-- `safe-archive.py` → `safe_archive.py`
-- `preflight-automerge-ruleset.py` → `preflight_automerge_ruleset.py`
+- `safe_run.py` → `safe_run.py`
+- `safe_check.py` → `safe_check.py`
+- `safe_archive.py` → `safe_archive.py`
+- `preflight_automerge_ruleset.py` → `preflight_automerge_ruleset.py`
 - All test files: `test-*.py` → `test_*.py`
 
 **PowerShell:**

@@ -33,7 +33,7 @@
 **Implementation Locations:**
 - Bash: `wrappers/bash/scripts/safe-run.sh:54-84`
 - Perl: `wrappers/perl/scripts/safe-run.pl:71-103`
-- Python3: `wrappers/python3/scripts/safe-run.py:58-89`
+- Python3: `wrappers/python3/scripts/safe_run.py:58-89`
 - PowerShell: `wrappers/powershell/scripts/safe-run.ps1:63-102`
 
 **Potential Drift Vectors:**
@@ -59,7 +59,7 @@
 **Implementation Locations:**
 - Bash: `wrappers/bash/scripts/safe-run.sh:18-30`
 - Perl: `wrappers/perl/scripts/safe-run.pl:21-37`
-- Python3: `wrappers/python3/scripts/safe-run.py:21-32`
+- Python3: `wrappers/python3/scripts/safe_run.py:21-32`
 - PowerShell: `wrappers/powershell/scripts/safe-run.ps1:23-44`
 
 **Potential Drift Vectors:**
@@ -89,7 +89,7 @@ $BINARY run "$@"
 **Implementation Locations:**
 - Bash: `wrappers/bash/scripts/safe-run.sh:113` - uses `exec "$BINARY" run "$@"`
 - Perl: `wrappers/perl/scripts/safe-run.pl:140` - uses `exec($binary, 'run', @args)`
-- Python3: `wrappers/python3/scripts/safe-run.py:126` - uses `os.execvp(binary, [binary, "run"] + args)`
+- Python3: `wrappers/python3/scripts/safe_run.py:126` - uses `os.execvp(binary, [binary, "run"] + args)`
 - PowerShell: `wrappers/powershell/scripts/safe-run.ps1:140` - uses `& $binary run @invokeArgs`
 
 **Potential Drift Vectors:**
@@ -116,7 +116,7 @@ $BINARY run "$@"
 **Implementation Locations:**
 - Bash: `wrappers/bash/scripts/safe-run.sh:113` - uses `exec` (replaces process, automatic)
 - Perl: `wrappers/perl/scripts/safe-run.pl:140` - uses `exec` (replaces process, automatic)
-- Python3: `wrappers/python3/scripts/safe-run.py:126` - uses `os.execvp` (replaces process, automatic)
+- Python3: `wrappers/python3/scripts/safe_run.py:126` - uses `os.execvp` (replaces process, automatic)
 - PowerShell: `wrappers/powershell/scripts/safe-run.ps1:140-146` - uses `& $binary` then `exit $LASTEXITCODE`
 
 **Potential Drift Vectors:**
@@ -143,7 +143,7 @@ $BINARY run "$@"
 **Implementation Locations:**
 - Bash: `wrappers/bash/scripts/safe-run.sh:87-108`
 - Perl: `wrappers/perl/scripts/safe-run.pl:108-129`
-- Python3: `wrappers/python3/scripts/safe-run.py:95-115`
+- Python3: `wrappers/python3/scripts/safe_run.py:95-115`
 - PowerShell: `wrappers/powershell/scripts/safe-run.ps1:107-128`
 
 **Potential Drift Vectors:**
@@ -260,7 +260,7 @@ $BINARY run "$@"
 **Implementation Locations:**
 - Bash: `wrappers/bash/scripts/safe-run.sh:32-49`
 - Perl: `wrappers/perl/scripts/safe-run.pl:42-66`
-- Python3: `wrappers/python3/scripts/safe-run.py:34-56`
+- Python3: `wrappers/python3/scripts/safe_run.py:34-56`
 - PowerShell: `wrappers/powershell/scripts/safe-run.ps1:46-61`
 
 **Potential Drift Vectors:**

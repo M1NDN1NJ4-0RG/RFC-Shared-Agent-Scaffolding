@@ -36,7 +36,7 @@ Each language uses its conventional file extension:
 |-------------|-----------|--------------------------|
 | Bash        | `.sh`     | `safe-run.sh`            |
 | Perl        | `.pl`     | `safe-run.pl`            |
-| Python 3    | `.py`     | `safe-run.py`            |
+| Python 3    | `.py`     | `safe_run.py`            |
 | PowerShell  | `.ps1`    | `safe-run.ps1`           |
 
 ### Naming Conventions
@@ -44,7 +44,7 @@ Each language uses its conventional file extension:
 - **All languages**: Use hyphens (kebab-case) for all script names for consistency
   - Bash example: `safe-run.sh`, `preflight-automerge-ruleset.sh`
   - Perl example: `safe-run.pl`, `preflight-automerge-ruleset.pl`
-  - Python 3 example: `safe-run.py`, `preflight-automerge-ruleset.py`
+  - Python 3 example: `safe_run.py`, `preflight_automerge_ruleset.py`
   - PowerShell example: `safe-run.ps1`, `preflight-automerge-ruleset.ps1`
 
 ## What Changed (Migration from Old Structure)

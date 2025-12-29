@@ -39,7 +39,7 @@ Thin wrapper scripts that discover and invoke the Rust canonical tool:
 
 - **Bash:** `wrappers/bash/scripts/safe-run.sh`
 - **Perl:** `wrappers/perl/scripts/safe-run.pl`
-- **Python3:** `wrappers/python3/scripts/safe-run.py`
+- **Python3:** `wrappers/python3/scripts/safe_run.py`
 - **PowerShell:** `wrappers/powershell/scripts/safe-run.ps1`
 
 Wrappers act as **invokers**, not independent implementations. They:
@@ -72,7 +72,7 @@ Contracts define required documentation sections (purpose, usage, examples, exit
 - **Rust** (`.rs`)
 - **YAML** (`.yml`, `.yaml` - workflows and configs)
 
-**Any new script added anywhere in the repository** will be validated against its language contract. Conformance is enforced by CI via `scripts/validate-docstrings.py`. See [docs/contributing/docstring-contracts/README.md](./docs/contributing/docstring-contracts/README.md) for details and templates.
+**Any new script added anywhere in the repository** will be validated against its language contract. Conformance is enforced by CI via `scripts/validate_docstrings.py`. See [docs/contributing/docstring-contracts/README.md](./docs/contributing/docstring-contracts/README.md) for details and templates.
 
 ## Contributing
 
