@@ -1,130 +1,138 @@
 #!/usr/bin/env python3
+# pylint: disable=too-many-lines
+# TODO(Phase 5.5+): Consider modularizing this validator into separate files
+# (e.g., validators/python.py, validators/bash.py) to stay under pylint's
+# 1000-line threshold. Current: ~1131 lines. Deferred to avoid refactor risk
+# during docstring contract rollout. See docs/future-work.md for details.
 """Docstring contract validator for RFC-Shared-Agent-Scaffolding.
 
 This script validates that all scripts, YAML files, and code symbols conform to their
 language-specific docstring contracts as defined in docs/contributing/docstring-contracts/.
 
-Purpose
--------
-Enforces consistent, discoverable documentation across all supported languages
-by validating the presence of required docstring sections at both file/module level
-and symbol level (functions, classes, methods). Supports pragma ignores for
-intentional omissions and basic content validation for exit codes.
+:Purpose:
+    Enforces consistent, discoverable documentation across all supported languages
+    by validating the presence of required docstring sections at both file/module level
+    and symbol level (functions, classes, methods). Supports pragma ignores for
+    intentional omissions and basic content validation for exit codes.
 
-Architecture
-------------
-The validator operates in several phases:
+:Architecture:
 
-**Phase 1: File Discovery**
-- Uses `git ls-files` to get all tracked files in the repository
-- Filters files based on IN_SCOPE_PATTERNS (by extension)
-- Excludes files matching EXCLUDE_PATTERNS (build artifacts, etc.)
+    The validator operates in several phases:
 
-**Phase 2: Language Classification**
-- Maps file extension to language (`.py` → Python, `.sh` → Bash, etc.)
-- Dispatches to appropriate validator class based on language
+    **Phase 1: File Discovery**
+        - Uses ``git ls-files`` to get all tracked files in the repository
+        - Filters files based on IN_SCOPE_PATTERNS (by extension)
+        - Excludes files matching EXCLUDE_PATTERNS (build artifacts, etc.)
 
-**Phase 3: File/Module-Level Validation**
-- Extracts documentation block from file (module docstring, header comments, POD, etc.)
-- Validates presence of required sections per language contract
-- Checks basic content requirements (e.g., exit codes 0 and 1 documented)
+    **Phase 2: Language Classification**
+        - Maps file extension to language (``.py`` → Python, ``.sh`` → Bash, etc.)
+        - Dispatches to appropriate validator class based on language
 
-**Phase 4: Symbol-Level Validation** (Phase 5.5 expansion)
-- Parses source file to extract symbols (functions, classes, methods, subs)
-- For each symbol, validates presence of documentation
-- Checks for required doc sections (Args, Returns, etc.) per language
-- Currently validates public/exported symbols only
+    **Phase 3: File/Module-Level Validation**
+        - Extracts documentation block from file (module docstring, header comments, POD, etc.)
+        - Validates presence of required sections per language contract
+        - Checks basic content requirements (e.g., exit codes 0 and 1 documented)
 
-**Symbol Discovery Mechanisms:**
-- **Python:** Uses AST module to parse syntax tree and extract FunctionDef, AsyncFunctionDef,
-  ClassDef nodes. Validates presence of docstrings and required sections (Args, Returns, etc.)
-- **Bash:** Uses regex patterns to detect function definitions (function name() or name())
-  and checks for comment blocks immediately preceding the definition
-- **Perl:** Uses regex to detect 'sub name' declarations and checks for POD documentation
-  (=head2, =item, etc.) or inline comments preceding the sub
-- **PowerShell:** Uses regex to detect 'function Name' declarations and checks for
-  comment-based help blocks (<# .SYNOPSIS ... #>) preceding or within the function
-- **Rust:** Uses regex to detect 'pub fn', 'pub struct', 'pub enum', etc. and checks
-  for rustdoc comments (///) preceding the item. Uses basic parsing to avoid false
-  positives in comments/strings
+    **Phase 4: Symbol-Level Validation** (Phase 5.5 expansion)
+        - Parses source file to extract symbols (functions, classes, methods, subs)
+        - For each symbol, validates presence of documentation
+        - Checks for required doc sections (Args, Returns, etc.) per language
+        - Currently validates public/exported symbols only
 
-**Phase 5: Reporting**
-- Collects all violations (file path, symbol name if applicable, missing sections)
-- Outputs actionable error messages with line numbers where possible
-- Returns exit code 0 (pass) or 1 (fail)
+:Symbol Discovery Mechanisms:
 
-**Validator Classes:**
-- BashValidator: Validates Bash scripts (comment blocks above functions)
-- PowerShellValidator: Validates PowerShell scripts (comment-based help)
-- PythonValidator: Validates Python modules (docstrings, uses AST for symbol parsing)
-- PerlValidator: Validates Perl scripts (POD documentation)
-- RustValidator: Validates Rust modules (rustdoc comments)
-- YAMLValidator: Validates YAML config files (header comments)
+    - **Python:** Uses AST module to parse syntax tree and extract FunctionDef, AsyncFunctionDef,
+      ClassDef nodes. Validates presence of docstrings and required sections (Args, Returns, etc.)
+    - **Bash:** Uses regex patterns to detect function definitions (function name() or name())
+      and checks for comment blocks immediately preceding the definition
+    - **Perl:** Uses regex to detect 'sub name' declarations and checks for POD documentation
+      (=head2, =item, etc.) or inline comments preceding the sub
+    - **PowerShell:** Uses regex to detect 'function Name' declarations and checks for
+      comment-based help blocks (<# .SYNOPSIS ... #>) preceding or within the function
+    - **Rust:** Uses regex to detect 'pub fn', 'pub struct', 'pub enum', etc. and checks
+      for rustdoc comments (///) preceding the item. Uses basic parsing to avoid false
+      positives in comments/strings
 
-CLI Interface
--------------
-Run from repository root::
+:Reporting (Phase 5):
 
-    python3 scripts/validate_docstrings.py
+    - Collects all violations (file path, symbol name if applicable, missing sections)
+    - Outputs actionable error messages with line numbers where possible
+    - Returns exit code 0 (pass) or 1 (fail)
 
-Validate specific files (single-file mode for fast iteration)::
+:Validator Classes:
 
-    python3 scripts/validate_docstrings.py --file scripts/my-script.sh
-    python3 scripts/validate_docstrings.py -f script1.py -f script2.sh
+    - BashValidator: Validates Bash scripts (comment blocks above functions)
+    - PowerShellValidator: Validates PowerShell scripts (comment-based help)
+    - PythonValidator: Validates Python modules (docstrings, uses AST for symbol parsing)
+    - PerlValidator: Validates Perl scripts (POD documentation)
+    - RustValidator: Validates Rust modules (rustdoc comments)
+    - YAMLValidator: Validates YAML config files (header comments)
 
-Skip content validation (only check section presence)::
+:CLI Interface:
 
-    python3 scripts/validate_docstrings.py --no-content-checks
+    Run from repository root::
 
-Pragma Support
---------------
-Scripts can use pragma comments to intentionally skip specific section checks::
+        python3 scripts/validate_docstrings.py
 
-    # noqa: SECTION_NAME
+    Validate specific files (single-file mode for fast iteration)::
 
-The validator will skip checking for SECTION_NAME in files containing this pragma.
+        python3 scripts/validate_docstrings.py --file scripts/my-script.sh
+        python3 scripts/validate_docstrings.py -f script1.py -f script2.sh
 
-Examples::
+    Skip content validation (only check section presence)::
 
-    # noqa: OUTPUTS    - Skip OUTPUTS section check
-    # noqa: EXITCODES  - Skip exit codes content validation
-    # noqa: D102       - Skip function docstring requirement (Python)
+        python3 scripts/validate_docstrings.py --no-content-checks
 
-Content Validation
-------------------
-The validator performs basic content checks on exit code sections:
-- Checks for presence of exit codes 0 and 1
-- Lenient pattern matching for exit code documentation
-- Can be disabled with --no-content-checks or pragma comments
+:Pragma Support:
 
-Exit Codes
-----------
-0
-    All files conform to contracts
-1
-    One or more files failed validation
+    Scripts can use pragma comments to intentionally skip specific section checks::
 
-Environment Variables
----------------------
-None. Operates on current repository state.
+        # noqa: SECTION_NAME
 
-Examples
---------
-Validate all files::
+    The validator will skip checking for SECTION_NAME in files containing this pragma.
 
-    python3 scripts/validate_docstrings.py
+    Examples::
 
-Validate specific files::
+        # noqa: OUTPUTS    - Skip OUTPUTS section check
+        # noqa: EXITCODES  - Skip exit codes content validation
+        # noqa: D102       - Skip function docstring requirement (Python)
 
-    python3 scripts/validate_docstrings.py --file script.sh --file tool.py
+:Content Validation:
 
-Notes
------
-- File-level validation checks presence of sections, not content quality
-- Symbol-level validation enforces documentation on public/exported symbols
-- Pragma ignores should be used sparingly for legitimate exceptions
-- See docs/contributing/docstring-contracts/README.md for file-level contracts
-- See docs/contributing/docstring-contracts/symbol-level-contracts.md for symbol contracts
+    The validator performs basic content checks on exit code sections:
+
+    - Checks for presence of exit codes 0 and 1
+    - Lenient pattern matching for exit code documentation
+    - Can be disabled with --no-content-checks or pragma comments
+
+:Exit Codes:
+
+    0
+        All files conform to contracts
+    1
+        One or more files failed validation
+
+:Environment Variables:
+
+    None. Operates on current repository state.
+
+:Examples:
+
+    Validate all files::
+
+        python3 scripts/validate_docstrings.py
+
+    Validate specific files::
+
+        python3 scripts/validate_docstrings.py --file script.sh --file tool.py
+
+:Notes:
+
+    - File-level validation checks presence of sections, not content quality
+    - Symbol-level validation enforces documentation on public/exported symbols
+    - Pragma ignores should be used sparingly for legitimate exceptions
+    - See docs/contributing/docstring-contracts/README.md for file-level contracts
+    - See docs/contributing/docstring-contracts/symbol-level-contracts.md for symbol contracts
 """
 
 import argparse
@@ -278,11 +286,15 @@ class ValidationError:
         line_number: Optional line number where symbol is defined
     """
 
+    # pylint: disable=too-many-arguments
+    # Note: 6 arguments needed to provide full context for validation errors.
+    # symbol_name and line_number are keyword-only to encourage explicit usage.
     def __init__(
         self,
         file_path: str,
         missing_sections: List[str],
         message: str = "",
+        *,
         symbol_name: Optional[str] = None,
         line_number: Optional[int] = None,
     ):
