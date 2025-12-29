@@ -25,7 +25,7 @@ wrappers/scripts/<language>/
   ├── tests/            # Test files
   │   └── ...
   ├── run-tests.*       # Test runner (executable)
-  └── readme-tests.md   # Optional: per-language test documentation
+  └── README.md   # Optional: per-language test documentation
 ```
 
 ### Language-Specific Extensions

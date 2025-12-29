@@ -1,21 +1,26 @@
 # Workflow: Structure Validation
 #
 # Purpose: Validates that all language bundles follow the canonical directory
-# structure defined in the RFC. Ensures each language bundle contains the
-# required directories and files:
+# structure defined in the RFC and checks for obsolete repository path references.
+# Ensures each language bundle contains the required directories and files:
 # - scripts/       (implementation files)
 # - tests/         (test files)
 # - run-tests.*    (test runner script)
-# - README_TESTS.md (optional documentation)
+# - README.md (optional documentation)
+#
+# Also verifies that obsolete paths from repository restructure have been
+# properly migrated (e.g., 'documents/' -> 'docs/',
+# 'RFC-Shared-Agent-Scaffolding-Example/' -> 'wrappers/')
 #
 # Triggers:
-# - Pull requests modifying language bundles, validation script, or this workflow
+# - Pull requests modifying language bundles, validation scripts, or this workflow
 # - Pushes to main branch affecting the same paths
 # - Manual workflow dispatch
 #
 # Dependencies:
-# - Bash (validate-structure.sh script)
+# - Bash (validate-structure.sh and verify-repo-references.sh scripts)
 # - git ls-files
+# - ripgrep (rg) for fast reference verification
 #
 # Outputs:
 # - Status check: "Structure Validation"
@@ -33,6 +38,7 @@ on:
     paths:
       - 'wrappers/scripts/**'
       - 'scripts/validate-structure.sh'
+      - 'scripts/verify-repo-references.sh'
       - '.github/workflows/structure-validation.yml'
   push:
     branches:
@@ -40,6 +46,7 @@ on:
     paths:
       - 'wrappers/scripts/**'
       - 'scripts/validate-structure.sh'
+      - 'scripts/verify-repo-references.sh'
       - '.github/workflows/structure-validation.yml'
   workflow_dispatch:
 
@@ -60,14 +67,31 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Run structure validation script
+      # Step 2: Install ripgrep for improved reference verification performance
+      # Ripgrep (rg) is faster and more efficient than grep for repository-wide searches
+      - name: Install ripgrep
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y ripgrep
+          rg --version
+
+      # Step 3: Run structure validation script
       # Makes script executable and executes it; script exits non-zero on validation failure
       - name: Run structure validation
         run: |
           chmod +x scripts/validate-structure.sh
           ./scripts/validate-structure.sh
 
-      # Step 3: Report success with expected structure documentation
+      # Step 4: Verify repository references (obsolete path detection)
+      # Runs verify-repo-references.sh in non-strict mode to report findings
+      # This helps track migration progress for obsolete paths like 'documents/'
+      # and 'RFC-Shared-Agent-Scaffolding-Example/' after repository restructure
+      - name: Verify repository references
+        run: |
+          chmod +x scripts/verify-repo-references.sh
+          ./scripts/verify-repo-references.sh
+
+      # Step 5: Report success with expected structure documentation
       # Only runs if validation script succeeds (exit 0)
       - name: Report success
         if: success()
