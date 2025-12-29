@@ -150,8 +150,8 @@ API_VERSION_DEFAULT = "2022-11-28"
 def eprint(*args: object) -> None:
     """Print to stderr for status and error messages.
 
-    :param args: Variable arguments to print (passed to print())
-    :returns: None
+    Args:
+        *args: Variable arguments to print (passed to print())
 
     All output is sent to stderr to avoid interfering with stdout,
     which may be captured by CI/CD pipelines.
@@ -162,7 +162,8 @@ def eprint(*args: object) -> None:
 def usage() -> int:
     """Print usage message and return exit code 3.
 
-    :returns: 3 (usage error exit code)
+    Returns:
+        3 (usage error exit code)
 
     Displays command-line syntax. Caller is expected to exit with
     the returned code.
@@ -178,8 +179,11 @@ def usage() -> int:
 def have_cmd(cmd: str) -> bool:
     """Check if a command is available in PATH.
 
-    :param cmd: Command name to search for (e.g., "gh")
-    :returns: True if command exists and is executable, False otherwise
+    Args:
+        cmd: Command name to search for (e.g., "gh")
+    
+    Returns:
+        True if command exists and is executable, False otherwise
 
     Used to detect if 'gh' CLI is available for GitHub API calls.
     The 'gh' CLI handles authentication automatically and is preferred
@@ -195,8 +199,11 @@ def have_cmd(cmd: str) -> bool:
 def classify_auth(obj: object) -> bool:
     """Detect if a GitHub API error response indicates an authentication issue.
 
-    :param obj: Response object (should be dict from parsed JSON)
-    :returns: True if error message indicates auth/permission problem, False otherwise
+    Args:
+        obj: Response object (should be dict from parsed JSON)
+    
+    Returns:
+        True if error message indicates auth/permission problem, False otherwise
 
     Detection Logic
     ---------------
@@ -236,9 +243,12 @@ def classify_auth(obj: object) -> bool:
 def gh_api(endpoint: str, api_version: str) -> Optional[str]:
     """Call GitHub API using the 'gh' CLI tool.
 
-    :param endpoint: API endpoint path (e.g., "repos/owner/repo/rulesets")
-    :param api_version: GitHub API version (e.g., "2022-11-28")
-    :returns: Response body as string, or None on failure
+    Args:
+        endpoint: API endpoint path (e.g., "repos/owner/repo/rulesets")
+        api_version: GitHub API version (e.g., "2022-11-28")
+    
+    Returns:
+        Response body as string, or None on failure
 
     Uses 'gh api' command with appropriate headers:
     - Accept: application/vnd.github+json
@@ -276,10 +286,15 @@ def gh_api(endpoint: str, api_version: str) -> Optional[str]:
 def http_get(url: str, api_version: str) -> Tuple[int, str]:
     """Perform HTTP GET request to GitHub API with M0-P2-I1 Bearer token auth.
 
-    :param url: Full GitHub API URL (e.g., "https://api.github.com/repos/...")
-    :param api_version: GitHub API version header value
-    :returns: Tuple of (status_code, response_body)
-    :raises RuntimeError: If TOKEN/GITHUB_TOKEN environment variable not set
+    Args:
+        url: Full GitHub API URL (e.g., "https://api.github.com/repos/...")
+        api_version: GitHub API version header value
+    
+    Returns:
+        Tuple of (status_code, response_body)
+    
+    Raises:
+        RuntimeError: If TOKEN/GITHUB_TOKEN environment variable not set
 
     Headers Set
     -----------
@@ -339,9 +354,14 @@ def parse_args(
 ) -> Optional[Tuple[str, Optional[str], Optional[str], str, str]]:
     """Parse command-line arguments for ruleset verification.
 
-    :param argv: Command-line arguments (sys.argv[1:])
-    :returns: Tuple of (repo, ruleset_id, ruleset_name, want, api_version) or None for help
-    :raises ValueError: If arguments are missing, invalid, or conflicting
+    Args:
+        argv: Command-line arguments (sys.argv[1:])
+    
+    Returns:
+        Tuple of (repo, ruleset_id, ruleset_name, want, api_version) or None for help
+    
+    Raises:
+        ValueError: If arguments are missing, invalid, or conflicting
 
     Required Arguments
     ------------------
@@ -421,8 +441,11 @@ def parse_args(
 def main(argv: List[str]) -> int:
     """Execute GitHub Ruleset verification workflow.
 
-    :param argv: Command-line arguments (sys.argv[1:])
-    :returns: Exit code (0=pass, 1=precheck fail, 2=auth error, 3=usage error)
+    Args:
+        argv: Command-line arguments (sys.argv[1:])
+    
+    Returns:
+        Exit code (0=pass, 1=precheck fail, 2=auth error, 3=usage error)
 
     Verification Workflow
     ---------------------

@@ -84,7 +84,11 @@ except ImportError:
 
 
 class TestBashValidator(unittest.TestCase):
-    """Test Bash script validation."""
+    """Test Bash script validation.
+    
+    Tests for BashValidator class including file-level header validation
+    and function-level comment block validation.
+    """
 
     def test_valid_bash_script(self):
         """Test that a valid Bash script passes validation."""
@@ -147,7 +151,11 @@ echo "test"
 
 
 class TestPythonValidator(unittest.TestCase):
-    """Test Python script validation."""
+    """Test Python script validation.
+    
+    Tests for PythonValidator class including module docstring validation
+    and symbol-level validation using AST parsing.
+    """
 
     def test_valid_python_script(self):
         """Test that a valid Python script passes validation."""
@@ -191,7 +199,11 @@ print("test")
 
 
 class TestYAMLValidator(unittest.TestCase):
-    """Test YAML file validation."""
+    """Test YAML file validation.
+    
+    Tests for YAMLValidator class including workflow and config file
+    header documentation validation.
+    """
 
     def test_valid_yaml_workflow(self):
         """Test that a valid YAML workflow passes validation."""
@@ -219,7 +231,11 @@ on: [pull_request]
 
 
 class TestExitCodeContentValidation(unittest.TestCase):
-    """Test exit code content validation."""
+    """Test exit code content validation.
+    
+    Tests for exit code content validation logic across Bash and Python
+    validators to ensure scripts document minimum required exit codes.
+    """
 
     def test_bash_with_valid_exit_codes(self):
         """Test that Bash script with valid exit codes passes."""
@@ -249,7 +265,11 @@ echo "test"
 
 
 def run_tests():
-    """Run tests when executed as script."""
+    """Run tests when executed as script.
+    
+    Returns:
+        Exit code from unittest.main()
+    """
     # Try to use pytest if available
     try:
         import pytest

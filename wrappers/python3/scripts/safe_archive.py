@@ -135,7 +135,8 @@ def eprint(*args: object) -> None:
 def usage() -> int:
     """Print usage message and return exit code 2.
 
-    :returns: 2 (usage error exit code)
+    Returns:
+        2 (usage error exit code)
 
     Displays comprehensive help including options, environment variables,
     and examples. Caller is expected to exit with the returned code.
@@ -156,8 +157,11 @@ def usage() -> int:
 def have_cmd(cmd: str) -> bool:
     """Check if a command is available in PATH.
 
-    :param cmd: Command name to search for (e.g., "xz", "zstd")
-    :returns: True if command exists and is executable, False otherwise
+    Args:
+        cmd: Command name to search for (e.g., "xz", "zstd")
+    
+    Returns:
+        True if command exists and is executable, False otherwise
 
     Used to verify compression tool availability before attempting to
     invoke external commands for xz or zstd compression.
@@ -178,10 +182,12 @@ def have_cmd(cmd: str) -> bool:
 def compress_file(method: str, path: str) -> None:
     """Compress a file in-place using the specified method.
 
-    :param method: Compression method: "none" | "gzip" | "xz" | "zstd"
-    :param path: Path to file to compress (will be replaced with compressed version)
-    :returns: None
-    :raises RuntimeError: If method is invalid or compression tool not found
+    Args:
+        method: Compression method: "none" | "gzip" | "xz" | "zstd"
+        path: Path to file to compress (will be replaced with compressed version)
+    
+    Raises:
+        RuntimeError: If method is invalid or compression tool not found
 
     Compression Methods
     -------------------
@@ -272,9 +278,14 @@ def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bo
 def main(argv: List[str]) -> int:
     """Execute archival operation with M0-P1-I3 no-clobber semantics.
 
-    :param argv: Command-line arguments (--no-clobber, --all, or file paths)
-    :returns: Exit code (0 on success, 2 on error)
-    :raises SystemExit: Via usage() on help request or missing arguments
+    Args:
+        argv: Command-line arguments (--no-clobber, --all, or file paths)
+    
+    Returns:
+        Exit code (0 on success, 2 on error)
+    
+    Raises:
+        SystemExit: Via usage() on help request or missing arguments
 
     Argument Parsing
     ----------------
