@@ -30,7 +30,7 @@ ability to correctly identify and validate function and class documentation.
 """
 
 import asyncio
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 
 class SimpleClass:
@@ -183,16 +183,14 @@ def function_with_special_chars_λ(param_with_émoji: str) -> str:
     return param_with_émoji.upper()
 
 
-# noqa: D103
-def exempted_function():
-    """This function is exempted from missing param/returns validation."""
+def exempted_function():  # noqa: D103
     pass
 
 
 def _private_function(value: int) -> int:
     """Private function (leading underscore).
 
-    Per Phase 5.5 policy, private functions MUST still be documented
+    Per Phase 3 Sub-Item 3.7.3, private functions MUST still be documented
     unless explicitly exempted via pragma.
 
     :param value: Input value
@@ -240,7 +238,7 @@ def function_no_params() -> int:
 class _PrivateClass:
     """Private class (leading underscore).
 
-    Per Phase 5.5 policy, private classes MUST be documented unless
+    Per Phase 3 Sub-Item 3.7.3, private classes MUST be documented unless
     explicitly exempted via pragma.
     """
 

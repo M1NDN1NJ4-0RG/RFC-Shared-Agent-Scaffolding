@@ -77,9 +77,6 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
         # Parse and collect all validation errors
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
 
-        # Extract class-related errors (if any)
-        class_errors = [e for e in errors if "class" in str(e).lower()]
-
         # Expected classes: SimpleClass, ComplexClass, _PrivateClass
         # All should be found and validated
         # Since our fixture has proper docs, we expect no class errors
@@ -104,10 +101,7 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
         function_errors = [e for e in errors if "outer_function" in str(e) or "inner_function" in str(e)]
 
         # Our fixture should have proper docs, so these should not error
-        # (unless we intentionally made them incomplete)
-        for error in function_errors:
-            # If there are errors, print them for debugging
-            print(f"Function error: {error}")
+        self.assertEqual(len(function_errors), 0, f"Unexpected errors: {function_errors}")
 
     def test_handles_multiline_signatures(self):
         """Test that parser handles functions with multiline signatures."""
@@ -168,7 +162,7 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
 
     def test_enforces_private_function_documentation(self):
         """Test that private functions (leading underscore) are still validated."""
-        # Per Phase 5.5 policy, _private_function must be documented
+        # Per Phase 3 Sub-Item 3.7.3, _private_function must be documented
 
         self.assertIn("def _private_function(", self.fixture_content)
 
@@ -179,8 +173,8 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
         self.assertEqual(len(private_errors), 0, f"Unexpected errors: {private_errors}")
 
     def test_respects_pragma_exemptions(self):
-        """Test that # noqa: D103 pragma exempts functions from documentation."""
-        # exempted_function has # noqa: D103
+        """Test that # noqa: D103 exempts functions from missing docstring checks."""
+        # exempted_function has # noqa: D103 to exempt from docstring requirement
 
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
 
@@ -235,8 +229,6 @@ class TestBashSymbolDiscovery(unittest.TestCase):
         """Test parser handles different Bash function declaration styles."""
         # Fixture has: simple_function(), function keyword_function, function both_styles_function()
 
-        errors = BashValidator.validate(self.fixture_path, self.fixture_content)
-
         # All styles should be found
         self.assertIn("simple_function()", self.fixture_content)
         self.assertIn("function keyword_function", self.fixture_content)
@@ -264,9 +256,8 @@ class TestBashSymbolDiscovery(unittest.TestCase):
         # Both should be validated
         nested_errors = [e for e in errors if "inner_function" in str(e) or "outer_function" in str(e)]
 
-        # Print any errors for debugging
-        for error in nested_errors:
-            print(f"Nested function error: {error}")
+        # Our fixture should have proper docs
+        self.assertEqual(len(nested_errors), 0, f"Unexpected errors: {nested_errors}")
 
     def test_handles_special_characters_in_names(self):
         """Test parser handles underscores and numbers in function names."""
@@ -361,8 +352,8 @@ class TestPowerShellSymbolDiscovery(unittest.TestCase):
 
         nested_errors = [e for e in errors if "Inner-Function" in str(e) or "Outer-Function" in str(e)]
 
-        for error in nested_errors:
-            print(f"Nested function error: {error}")
+        # Our fixture should have proper docs
+        self.assertEqual(len(nested_errors), 0, f"Unexpected errors: {nested_errors}")
 
     def test_handles_special_characters_in_names(self):
         """Test parser handles hyphens and numbers in function names."""
@@ -403,12 +394,12 @@ class TestPowerShellSymbolDiscovery(unittest.TestCase):
                 print(f"  {error}")
 
         # We expect 1 error: Undocumented-Function (no help block)
-        # Filter out any syntax errors from the error list
-        non_syntax_errors = [e for e in errors if "syntax" not in str(e).lower()]
+        # Filter to only errors for Undocumented-Function
+        undoc_errors = [e for e in errors if "Undocumented-Function" in str(e)]
         self.assertEqual(
-            len(non_syntax_errors),
+            len(undoc_errors),
             1,
-            f"PowerShell fixture should have exactly 1 non-syntax error (Undocumented-Function), got {len(non_syntax_errors)}",
+            f"PowerShell fixture should have exactly 1 error for Undocumented-Function, got {len(undoc_errors)}",
         )
 
 
@@ -517,13 +508,20 @@ class TestPerlSymbolDiscovery(unittest.TestCase):
 
         undoc_errors = [e for e in errors if "undocumented_subroutine" in str(e)]
 
-        # Should have at least one error for this subroutine
-        # Note: PPI may associate nearby POD blocks, so this test may be fragile
-        # The key is that the validator runs and checks symbols
+        # Note: PPI may associate nearby POD blocks, so this test may be fragile.
+        # If PPI associates nearby POD and no error is reported, skip this test.
         if len(undoc_errors) == 0:
-            print("Note: undocumented_subroutine may have been associated with nearby POD by PPI")
-            # Don't fail the test - the important thing is the parser ran
-            self.assertTrue(True, "Parser executed successfully")
+            self.skipTest(
+                "undocumented_subroutine may have been associated with nearby POD by PPI; "
+                "validator did not report it as undocumented"
+            )
+
+        # When PPI does not associate nearby POD, we expect at least one error.
+        self.assertGreaterEqual(
+            len(undoc_errors),
+            1,
+            "Expected at least one validation error for undocumented_subroutine",
+        )
 
     def test_overall_fixture_validation(self):
         """Test overall validation of Perl edge cases fixture."""
@@ -538,9 +536,21 @@ class TestPerlSymbolDiscovery(unittest.TestCase):
             for error in errors:
                 print(f"  {error}")
 
-        # We expect 0-1 errors depending on whether PPI associates the __END__ POD
-        # with undocumented_subroutine. The fixture is designed to be mostly compliant.
-        self.assertLessEqual(len(errors), 1, "Perl fixture should have at most 1 error (undocumented_subroutine)")
+        # We expect either:
+        #   - 0 errors, if PPI associates the __END__ POD with undocumented_subroutine, or
+        #   - exactly 1 error, and it should be for undocumented_subroutine.
+        if len(errors) == 0:
+            return
+
+        self.assertEqual(
+            len(errors),
+            1,
+            "Perl fixture should have exactly 1 error when present (undocumented_subroutine)",
+        )
+        self.assertTrue(
+            any("undocumented_subroutine" in str(e) for e in errors),
+            "If there is an error, it should be for undocumented_subroutine",
+        )
 
 
 def run_tests():
