@@ -495,6 +495,40 @@ Rationale:
 
 ---
 
+## Phase 6.5 — Rust Runner Implementation (Future Work)
+
+### Item 6.5.1 — Complete Rust Runner Implementation (Medium)
+
+**Status:** Stub implementation created. Basic structure in place.
+
+**Implemented:**
+- [x] Basic runner structure following naming conventions
+- [x] File detection (checks for `**/*.rs` files)
+- [x] Tool checking (cargo, rustfmt, clippy)
+- [x] rustfmt integration (check mode and fix mode)
+- [x] clippy integration (basic linting)
+- [x] Integrated into CLI with `--only rust` support
+
+**TODO:**
+- [ ] **Sub-Item 6.5.1.1:** Enhance clippy output parsing for better violation reporting
+- [ ] **Sub-Item 6.5.1.2:** Add Rust docstring validation integration
+  - Requires integration with `scripts/validate_docstrings.py`
+  - Requires `scripts/docstring_validators/rust_validator.py` to be fully implemented
+- [ ] **Sub-Item 6.5.1.3:** Add Rust job to umbrella workflow (`.github/workflows/repo-lint-and-docstring-enforcement.yml`)
+  - Conditional execution based on `*.rs` file changes
+  - Install Rust toolchain (rustup, rustfmt, clippy)
+  - Run `python -m tools.repo_lint check --ci --only rust`
+- [ ] **Sub-Item 6.5.1.4:** Update Detect Changed Files job to detect Rust changes
+- [ ] **Sub-Item 6.5.1.5:** Add tests for RustRunner in `tools/repo_lint/tests/`
+
+**Notes:**
+- Current implementation is a working stub that can detect Rust files and run basic checks
+- Located at `tools/repo_lint/runners/rust_runner.py`
+- Follows the same pattern as other language runners (Python, Bash, PowerShell, Perl, YAML)
+- Runs cargo commands in `rust/` subdirectory (not repo root)
+
+---
+
 ## Phase 7 — Tests, Determinism, and Output Guarantees
 
 ### Item 7.1 — Unit tests for dispatch + reporting (High)
