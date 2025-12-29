@@ -67,7 +67,7 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
         fixture_path = Path(__file__).parent / "fixtures" / "python" / "edge_cases.py"
         if not fixture_path.exists():
             raise FileNotFoundError(f"Fixture not found: {fixture_path}")
-        
+
         with open(fixture_path, "r", encoding="utf-8") as f:
             cls.fixture_content = f.read()
         cls.fixture_path = fixture_path
@@ -76,15 +76,15 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
         """Test that parser identifies all class definitions."""
         # Parse and collect all validation errors
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Extract class-related errors (if any)
         class_errors = [e for e in errors if "class" in str(e).lower()]
-        
+
         # Expected classes: SimpleClass, ComplexClass, _PrivateClass
         # All should be found and validated
         # Since our fixture has proper docs, we expect no class errors
         # But we verify the parser processed them by checking fixture content
-        
+
         self.assertIn("class SimpleClass:", self.fixture_content)
         self.assertIn("class ComplexClass:", self.fixture_content)
         self.assertIn("class _PrivateClass:", self.fixture_content)
@@ -93,16 +93,16 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
         """Test that parser identifies nested functions."""
         # The fixture has outer_function with inner_function
         # Both should be validated
-        
+
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Check that both functions exist in content
         self.assertIn("def outer_function(", self.fixture_content)
         self.assertIn("def inner_function(", self.fixture_content)
-        
+
         # If there are errors related to these functions, they should mention the names
         function_errors = [e for e in errors if "outer_function" in str(e) or "inner_function" in str(e)]
-        
+
         # Our fixture should have proper docs, so these should not error
         # (unless we intentionally made them incomplete)
         for error in function_errors:
@@ -113,53 +113,55 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
         """Test that parser handles functions with multiline signatures."""
         # Check that function_with_multiline_signature is found
         self.assertIn("def function_with_multiline_signature(", self.fixture_content)
-        
+
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Check if this function has errors
         multiline_errors = [e for e in errors if "function_with_multiline_signature" in str(e)]
-        
+
         # Should have no errors (properly documented in fixture)
         self.assertEqual(len(multiline_errors), 0, f"Unexpected errors: {multiline_errors}")
 
     def test_identifies_async_functions(self):
         """Test that parser identifies async functions."""
         self.assertIn("async def async_function(", self.fixture_content)
-        
+
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Check for errors related to async_function
         async_errors = [e for e in errors if "async_function" in str(e)]
-        
+
         # Should be properly documented
         self.assertEqual(len(async_errors), 0, f"Unexpected errors: {async_errors}")
 
     def test_identifies_class_methods(self):
         """Test that parser identifies class methods, static methods, properties."""
         # ComplexClass has instance_method, class_method, static_method, computed_value property
-        
+
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Check that these exist in content
         self.assertIn("def instance_method(", self.fixture_content)
         self.assertIn("def class_method(", self.fixture_content)
         self.assertIn("def static_method(", self.fixture_content)
         self.assertIn("def computed_value(", self.fixture_content)
-        
+
         # All should be properly documented
-        method_errors = [e for e in errors if any(m in str(e) for m in [
-            "instance_method", "class_method", "static_method", "computed_value"
-        ])]
-        
+        method_errors = [
+            e
+            for e in errors
+            if any(m in str(e) for m in ["instance_method", "class_method", "static_method", "computed_value"])
+        ]
+
         self.assertEqual(len(method_errors), 0, f"Unexpected method errors: {method_errors}")
 
     def test_handles_special_characters_in_names(self):
         """Test that parser handles unicode and special characters in function names."""
         # function_with_special_chars_λ
         self.assertIn("def function_with_special_chars_λ(", self.fixture_content)
-        
+
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Should handle unicode properly
         special_errors = [e for e in errors if "special_chars" in str(e).lower()]
         self.assertEqual(len(special_errors), 0, f"Unexpected errors: {special_errors}")
@@ -167,11 +169,11 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
     def test_enforces_private_function_documentation(self):
         """Test that private functions (leading underscore) are still validated."""
         # Per Phase 5.5 policy, _private_function must be documented
-        
+
         self.assertIn("def _private_function(", self.fixture_content)
-        
+
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # _private_function is documented in fixture, should have no errors
         private_errors = [e for e in errors if "_private_function" in str(e)]
         self.assertEqual(len(private_errors), 0, f"Unexpected errors: {private_errors}")
@@ -179,29 +181,29 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
     def test_respects_pragma_exemptions(self):
         """Test that # noqa: D103 pragma exempts functions from documentation."""
         # exempted_function has # noqa: D103
-        
+
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # exempted_function should not appear in errors
         exempted_errors = [e for e in errors if "exempted_function" in str(e)]
         self.assertEqual(len(exempted_errors), 0, "Exempted function should not have errors")
 
     def test_overall_fixture_validation(self):
         """Test overall validation of edge cases fixture.
-        
+
         The fixture is designed to be fully compliant, except for:
         - exempted_function (has pragma)
-        
+
         This test ensures the fixture itself is a good baseline.
         """
         errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Print all errors for debugging
         if errors:
             print(f"\nPython fixture validation errors ({len(errors)}):")
             for error in errors:
                 print(f"  {error}")
-        
+
         # The fixture should be clean (all symbols documented)
         # We allow 0 errors since it's designed to be compliant
         self.assertEqual(len(errors), 0, "Edge cases fixture should be fully documented")
@@ -224,7 +226,7 @@ class TestBashSymbolDiscovery(unittest.TestCase):
         fixture_path = Path(__file__).parent / "fixtures" / "bash" / "edge-cases.sh"
         if not fixture_path.exists():
             raise FileNotFoundError(f"Fixture not found: {fixture_path}")
-        
+
         with open(fixture_path, "r", encoding="utf-8") as f:
             cls.fixture_content = f.read()
         cls.fixture_path = fixture_path
@@ -232,9 +234,9 @@ class TestBashSymbolDiscovery(unittest.TestCase):
     def test_identifies_different_function_styles(self):
         """Test parser handles different Bash function declaration styles."""
         # Fixture has: simple_function(), function keyword_function, function both_styles_function()
-        
+
         errors = BashValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # All styles should be found
         self.assertIn("simple_function()", self.fixture_content)
         self.assertIn("function keyword_function", self.fixture_content)
@@ -243,9 +245,9 @@ class TestBashSymbolDiscovery(unittest.TestCase):
     def test_identifies_multiline_function_definitions(self):
         """Test parser handles functions with opening brace on new line."""
         self.assertIn("multiline_function()\n{", self.fixture_content)
-        
+
         errors = BashValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Should not have errors for properly documented function
         multiline_errors = [e for e in errors if "multiline_function" in str(e)]
         self.assertEqual(len(multiline_errors), 0, f"Unexpected errors: {multiline_errors}")
@@ -253,15 +255,15 @@ class TestBashSymbolDiscovery(unittest.TestCase):
     def test_identifies_nested_functions(self):
         """Test parser identifies nested function definitions."""
         # outer_function contains inner_function
-        
+
         self.assertIn("outer_function()", self.fixture_content)
         self.assertIn("inner_function()", self.fixture_content)
-        
+
         errors = BashValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Both should be validated
         nested_errors = [e for e in errors if "inner_function" in str(e) or "outer_function" in str(e)]
-        
+
         # Print any errors for debugging
         for error in nested_errors:
             print(f"Nested function error: {error}")
@@ -269,18 +271,18 @@ class TestBashSymbolDiscovery(unittest.TestCase):
     def test_handles_special_characters_in_names(self):
         """Test parser handles underscores and numbers in function names."""
         self.assertIn("function_with_underscores_123()", self.fixture_content)
-        
+
         errors = BashValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         special_errors = [e for e in errors if "underscores_123" in str(e)]
         self.assertEqual(len(special_errors), 0, f"Unexpected errors: {special_errors}")
 
     def test_enforces_private_function_documentation(self):
         """Test that private functions (leading underscore) are still validated."""
         self.assertIn("_private_helper()", self.fixture_content)
-        
+
         errors = BashValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # Should be documented in fixture
         private_errors = [e for e in errors if "_private_helper" in str(e)]
         self.assertEqual(len(private_errors), 0, f"Unexpected errors: {private_errors}")
@@ -288,21 +290,21 @@ class TestBashSymbolDiscovery(unittest.TestCase):
     def test_respects_pragma_exemptions(self):
         """Test that # noqa: FUNCTION pragma exempts functions."""
         # exempted_function has # noqa: FUNCTION
-        
+
         errors = BashValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         exempted_errors = [e for e in errors if "exempted_function" in str(e)]
         self.assertEqual(len(exempted_errors), 0, "Exempted function should not have errors")
 
     def test_overall_fixture_validation(self):
         """Test overall validation of Bash edge cases fixture."""
         errors = BashValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         if errors:
             print(f"\nBash fixture validation errors ({len(errors)}):")
             for error in errors:
                 print(f"  {error}")
-        
+
         # Fixture should be clean
         self.assertEqual(len(errors), 0, "Bash edge cases fixture should be fully documented")
 
@@ -323,7 +325,7 @@ class TestPowerShellSymbolDiscovery(unittest.TestCase):
         fixture_path = Path(__file__).parent / "fixtures" / "powershell" / "EdgeCases.ps1"
         if not fixture_path.exists():
             raise FileNotFoundError(f"Fixture not found: {fixture_path}")
-        
+
         with open(fixture_path, "r", encoding="utf-8") as f:
             cls.fixture_content = f.read()
         cls.fixture_path = fixture_path
@@ -331,79 +333,83 @@ class TestPowerShellSymbolDiscovery(unittest.TestCase):
     def test_identifies_functions_with_advanced_parameters(self):
         """Test parser handles advanced parameter attributes."""
         # Advanced-Parameters has ValidateSet, ValidateNotNullOrEmpty, ValueFromPipeline
-        
+
         self.assertIn("function Advanced-Parameters", self.fixture_content)
-        
+
         errors = PowerShellValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         adv_errors = [e for e in errors if "Advanced-Parameters" in str(e)]
         self.assertEqual(len(adv_errors), 0, f"Unexpected errors: {adv_errors}")
 
     def test_identifies_multiline_signatures(self):
         """Test parser handles multiline parameter blocks."""
         self.assertIn("function Multiline-Signature", self.fixture_content)
-        
+
         errors = PowerShellValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         multiline_errors = [e for e in errors if "Multiline-Signature" in str(e)]
         self.assertEqual(len(multiline_errors), 0, f"Unexpected errors: {multiline_errors}")
 
     def test_identifies_nested_functions(self):
         """Test parser identifies nested functions."""
         # Outer-Function contains Inner-Function
-        
+
         self.assertIn("function Outer-Function", self.fixture_content)
         self.assertIn("function Inner-Function", self.fixture_content)
-        
+
         errors = PowerShellValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         nested_errors = [e for e in errors if "Inner-Function" in str(e) or "Outer-Function" in str(e)]
-        
+
         for error in nested_errors:
             print(f"Nested function error: {error}")
 
     def test_handles_special_characters_in_names(self):
         """Test parser handles hyphens and numbers in function names."""
         self.assertIn("function Function-With-Special-Chars123", self.fixture_content)
-        
+
         errors = PowerShellValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         special_errors = [e for e in errors if "Special-Chars123" in str(e)]
         self.assertEqual(len(special_errors), 0, f"Unexpected errors: {special_errors}")
 
     def test_identifies_pipeline_functions(self):
         """Test parser handles begin/process/end blocks."""
         self.assertIn("function Begin-Process-End-Blocks", self.fixture_content)
-        
+
         errors = PowerShellValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         pipeline_errors = [e for e in errors if "Begin-Process-End-Blocks" in str(e)]
         self.assertEqual(len(pipeline_errors), 0, f"Unexpected errors: {pipeline_errors}")
 
     def test_catches_undocumented_function(self):
         """Test parser catches functions without help blocks."""
         # Undocumented-Function intentionally has no help block
-        
+
         errors = PowerShellValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         undoc_errors = [e for e in errors if "Undocumented-Function" in str(e)]
-        
+
         # Should have at least one error for this function
         self.assertGreater(len(undoc_errors), 0, "Undocumented function should be caught")
 
     def test_overall_fixture_validation(self):
         """Test overall validation of PowerShell edge cases fixture."""
         errors = PowerShellValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         if errors:
             print(f"\nPowerShell fixture validation errors ({len(errors)}):")
             for error in errors:
                 print(f"  {error}")
-        
+
         # We expect 1 error: Undocumented-Function (no help block)
         # Filter out any syntax errors from the error list
         non_syntax_errors = [e for e in errors if "syntax" not in str(e).lower()]
-        self.assertEqual(len(non_syntax_errors), 1, f"PowerShell fixture should have exactly 1 non-syntax error (Undocumented-Function), got {len(non_syntax_errors)}")
+        self.assertEqual(
+            len(non_syntax_errors),
+            1,
+            f"PowerShell fixture should have exactly 1 non-syntax error (Undocumented-Function), got {len(non_syntax_errors)}",
+        )
 
 
 class TestPerlSymbolDiscovery(unittest.TestCase):
@@ -423,7 +429,7 @@ class TestPerlSymbolDiscovery(unittest.TestCase):
         fixture_path = Path(__file__).parent / "fixtures" / "perl" / "edge_cases.pl"
         if not fixture_path.exists():
             raise FileNotFoundError(f"Fixture not found: {fixture_path}")
-        
+
         with open(fixture_path, "r", encoding="utf-8") as f:
             cls.fixture_content = f.read()
         cls.fixture_path = fixture_path
@@ -431,86 +437,86 @@ class TestPerlSymbolDiscovery(unittest.TestCase):
     def test_identifies_subroutines_with_prototypes(self):
         """Test parser handles subroutine prototypes."""
         self.assertIn("sub subroutine_with_prototype ($$@)", self.fixture_content)
-        
+
         errors = PerlValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         proto_errors = [e for e in errors if "subroutine_with_prototype" in str(e)]
-        
+
         # Should be properly documented
         # Note: If PPI is not installed, skip this test
         if any("PPI" in str(e) for e in errors):
             self.skipTest("PPI module not installed")
-        
+
         self.assertEqual(len(proto_errors), 0, f"Unexpected errors: {proto_errors}")
 
     def test_identifies_multiline_signatures(self):
         """Test parser handles multiline parameter lists."""
         self.assertIn("sub multiline_signature", self.fixture_content)
-        
+
         errors = PerlValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         if any("PPI" in str(e) for e in errors):
             self.skipTest("PPI module not installed")
-        
+
         multiline_errors = [e for e in errors if "multiline_signature" in str(e)]
         self.assertEqual(len(multiline_errors), 0, f"Unexpected errors: {multiline_errors}")
 
     def test_identifies_nested_subroutines(self):
         """Test parser identifies nested subroutines (closures)."""
         self.assertIn("sub outer_subroutine", self.fixture_content)
-        
+
         errors = PerlValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         if any("PPI" in str(e) for e in errors):
             self.skipTest("PPI module not installed")
 
     def test_handles_special_characters_in_names(self):
         """Test parser handles underscores and numbers in subroutine names."""
         self.assertIn("sub subroutine_with_special_chars_123", self.fixture_content)
-        
+
         errors = PerlValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         if any("PPI" in str(e) for e in errors):
             self.skipTest("PPI module not installed")
-        
+
         special_errors = [e for e in errors if "special_chars_123" in str(e)]
         self.assertEqual(len(special_errors), 0, f"Unexpected errors: {special_errors}")
 
     def test_enforces_private_subroutine_documentation(self):
         """Test that private subroutines (leading underscore) are still validated."""
         self.assertIn("sub _private_helper", self.fixture_content)
-        
+
         errors = PerlValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         if any("PPI" in str(e) for e in errors):
             self.skipTest("PPI module not installed")
-        
+
         private_errors = [e for e in errors if "_private_helper" in str(e)]
         self.assertEqual(len(private_errors), 0, f"Unexpected errors: {private_errors}")
 
     def test_identifies_object_oriented_methods(self):
         """Test parser identifies methods in package blocks."""
         # MyClass::new and MyClass::get_name
-        
+
         self.assertIn("sub new", self.fixture_content)
         self.assertIn("sub get_name", self.fixture_content)
-        
+
         errors = PerlValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         if any("PPI" in str(e) for e in errors):
             self.skipTest("PPI module not installed")
 
     def test_catches_undocumented_subroutine(self):
         """Test parser catches subroutines without POD."""
         # undocumented_subroutine intentionally lacks POD
-        
+
         errors = PerlValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         if any("PPI" in str(e) for e in errors):
             self.skipTest("PPI module not installed")
-        
+
         undoc_errors = [e for e in errors if "undocumented_subroutine" in str(e)]
-        
+
         # Should have at least one error for this subroutine
         # Note: PPI may associate nearby POD blocks, so this test may be fragile
         # The key is that the validator runs and checks symbols
@@ -522,16 +528,16 @@ class TestPerlSymbolDiscovery(unittest.TestCase):
     def test_overall_fixture_validation(self):
         """Test overall validation of Perl edge cases fixture."""
         errors = PerlValidator.validate(self.fixture_path, self.fixture_content)
-        
+
         # If PPI not installed, expect specific error
         if any("PPI" in str(e) for e in errors):
             self.skipTest("PPI module not installed - skipping Perl validation tests")
-        
+
         if errors:
             print(f"\nPerl fixture validation errors ({len(errors)}):")
             for error in errors:
                 print(f"  {error}")
-        
+
         # We expect 0-1 errors depending on whether PPI associates the __END__ POD
         # with undocumented_subroutine. The fixture is designed to be mostly compliant.
         self.assertLessEqual(len(errors), 1, "Perl fixture should have at most 1 error (undocumented_subroutine)")
