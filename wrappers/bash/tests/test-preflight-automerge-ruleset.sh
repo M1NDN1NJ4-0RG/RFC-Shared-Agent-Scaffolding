@@ -121,6 +121,9 @@ test_preflight_missing_ctx() {
   )
 }
 
+# Test: inactive enforcement returns exit code 1
+# Args: none
+# Returns: exit code from test assertions
 test_preflight_inactive() {
   local tmp mockbin rc
   tmp="$(mktemp_dir)"
@@ -136,6 +139,9 @@ test_preflight_inactive() {
   )
 }
 
+# Test: missing default branch returns exit code 1
+# Args: none
+# Returns: exit code from test assertions
 test_preflight_no_default() {
   local tmp mockbin rc
   tmp="$(mktemp_dir)"
@@ -151,6 +157,9 @@ test_preflight_no_default() {
   )
 }
 
+# Test: authentication error returns exit code 2
+# Args: none
+# Returns: exit code from test assertions
 test_preflight_auth_error() {
   local tmp mockbin rc
   tmp="$(mktemp_dir)"
