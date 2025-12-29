@@ -74,7 +74,7 @@ class RustRunner(Runner):
 
         :Note:
             Stub implementation. Returns placeholder results.
-            Full implementation tracked in Phase 6 Item 6.4 future work.
+            Full implementation tracked in Phase 6.5 future work.
         """
         self._ensure_tools(["cargo"])
 
@@ -94,7 +94,7 @@ class RustRunner(Runner):
 
         :Note:
             Stub implementation. Runs rustfmt in fix mode, then re-checks.
-            Full implementation tracked in Phase 6 Item 6.4 future work.
+            Full implementation tracked in Phase 6.5 future work.
         """
         self._ensure_tools(["cargo"])
 
@@ -102,16 +102,10 @@ class RustRunner(Runner):
 
         rust_dir = self.repo_root / "rust"
         if not rust_dir.exists():
-            results.append(
-                LintResult(
-                    tool="rustfmt",
-                    passed=True,
-                    violations=[
-                        Violation(tool="rustfmt", file=".", line=None, message="No rust/ directory found, skipping")
-                    ],
-                )
-            )
-            return results
+            # No rust directory - skip silently
+            if self.verbose:
+                print("  No rust/ directory found, skipping rustfmt fix")
+            return [LintResult(tool="rustfmt", passed=True, violations=[])]
 
         # Run rustfmt to format code
         rustfmt_result = subprocess.run(
@@ -152,13 +146,10 @@ class RustRunner(Runner):
         """
         rust_dir = self.repo_root / "rust"
         if not rust_dir.exists():
-            return LintResult(
-                tool="rustfmt",
-                passed=True,
-                violations=[
-                    Violation(tool="rustfmt", file=".", line=None, message="No rust/ directory found, skipping")
-                ],
-            )
+            # No rust directory - skip silently
+            if self.verbose:
+                print("  No rust/ directory found, skipping rustfmt check")
+            return LintResult(tool="rustfmt", passed=True, violations=[])
 
         result = subprocess.run(
             ["cargo", "fmt", "--", "--check"], cwd=rust_dir, capture_output=True, text=True, check=False
@@ -186,13 +177,10 @@ class RustRunner(Runner):
         """
         rust_dir = self.repo_root / "rust"
         if not rust_dir.exists():
-            return LintResult(
-                tool="clippy",
-                passed=True,
-                violations=[
-                    Violation(tool="clippy", file=".", line=None, message="No rust/ directory found, skipping")
-                ],
-            )
+            # No rust directory - skip silently
+            if self.verbose:
+                print("  No rust/ directory found, skipping clippy check")
+            return LintResult(tool="clippy", passed=True, violations=[])
 
         result = subprocess.run(
             ["cargo", "clippy", "--all-targets", "--all-features", "--", "-D", "warnings"],
@@ -224,15 +212,6 @@ class RustRunner(Runner):
             scripts/validate_docstrings.py for Rust files.
         """
         # Placeholder - docstring validation not yet implemented for Rust
-        return LintResult(
-            tool="rust-docstrings",
-            passed=True,
-            violations=[
-                Violation(
-                    tool="rust-docstrings",
-                    file=".",
-                    line=None,
-                    message="Rust docstring validation not yet implemented (TODO)",
-                )
-            ],
-        )
+        if self.verbose:
+            print("  Rust docstring validation not yet implemented (TODO)")
+        return LintResult(tool="rust-docstrings", passed=True, violations=[])
