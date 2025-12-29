@@ -110,8 +110,8 @@ Describe "safe-check.ps1" {
         Copy-Item -Path $_.FullName -Destination $scriptsDir
       }
       
-      # Run safe-check.ps1 from the temp directory
-      $safeCheckScript = Join-Path $scriptsDir "safe-check.ps1"
+      # Run SafeCheck.ps1 from the temp directory
+      $safeCheckScript = Join-Path $scriptsDir "SafeCheck.ps1"
       & pwsh -NoProfile -File $safeCheckScript
       $LASTEXITCODE | Should -Be 0
     } finally {

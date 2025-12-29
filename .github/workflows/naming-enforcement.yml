@@ -72,31 +72,31 @@ jobs:
             p = PurePosixPath(path)
             suffix = p.suffix.lower()
             stem = p.stem
-            
+
             # Skip special files
             if stem.startswith("__") and stem.endswith("__"):
               continue
-            
+
             # Python files should be snake_case
             if suffix == ".py":
               if not SNAKE_CASE.match(stem):
                 violations.append(f"{path} - Expected snake_case, got: {stem}")
-            
+
             # PowerShell files should be PascalCase
             elif suffix == ".ps1":
               if not PASCAL_CASE.match(stem):
                 violations.append(f"{path} - Expected PascalCase, got: {stem}")
-            
+
             # Bash files should be kebab-case
             elif suffix in {".sh", ".bash", ".zsh"}:
               if not KEBAB_CASE.match(stem):
                 violations.append(f"{path} - Expected kebab-case, got: {stem}")
-            
+
             # Perl scripts should be kebab-case
             elif suffix == ".pl":
               if not KEBAB_CASE.match(stem):
                 violations.append(f"{path} - Expected kebab-case, got: {stem}")
-            
+
             # Perl modules should be PascalCase
             elif suffix == ".pm":
               if not PASCAL_CASE.match(stem):
