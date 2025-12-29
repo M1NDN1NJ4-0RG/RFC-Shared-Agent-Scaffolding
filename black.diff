@@ -1,44 +1,49 @@
 diff --git a/black.diff b/black.diff
-index f06c78d..e69de29 100644
+index 876375a..e69de29 100644
 --- a/black.diff
 +++ b/black.diff
-@@ -1,39 +0,0 @@
+@@ -1,44 +0,0 @@
 -diff --git a/black.diff b/black.diff
--index 1d255d4..e69de29 100644
+-index f06c78d..e69de29 100644
 ---- a/black.diff
 -+++ b/black.diff
--@@ -1,19 +0,0 @@
+-@@ -1,39 +0,0 @@
 --diff --git a/black.diff b/black.diff
---index 6d8c909..e69de29 100644
+--index 1d255d4..e69de29 100644
 ----- a/black.diff
 --+++ b/black.diff
---@@ -1,14 +0,0 @@
----diff --git a/tools/repo_lint/cli.py b/tools/repo_lint/cli.py
----index 64107e5..8049c8d 100644
------- a/tools/repo_lint/cli.py
----+++ b/tools/repo_lint/cli.py
----@@ -137,8 +137,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
----             return ExitCode.ERROR
----         if not any(runner.has_files() for _, _, runner in runners):
----             print(
-----                f"Error: No files found for language '{only_language}'. "
-----                f"Nothing to {mode.lower()}.",
----+                f"Error: No files found for language '{only_language}'. " f"Nothing to {mode.lower()}.",
----                 file=sys.stderr,
----             )
----             return ExitCode.ERROR
--diff --git a/tools/repo_lint/runners/rust_runner.py b/tools/repo_lint/runners/rust_runner.py
--index df52708..cce3fce 100644
----- a/tools/repo_lint/runners/rust_runner.py
--+++ b/tools/repo_lint/runners/rust_runner.py
--@@ -108,9 +108,7 @@ class RustRunner(Runner):
--             return [LintResult(tool="rustfmt", passed=True, violations=[])]
-- 
--         # Run rustfmt to format code
---        rustfmt_result = subprocess.run(
---            ["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False
---        )
--+        rustfmt_result = subprocess.run(["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False)
-- 
--         if rustfmt_result.returncode != 0:
--             results.append(
+--@@ -1,19 +0,0 @@
+---diff --git a/black.diff b/black.diff
+---index 6d8c909..e69de29 100644
+------ a/black.diff
+---+++ b/black.diff
+---@@ -1,14 +0,0 @@
+----diff --git a/tools/repo_lint/cli.py b/tools/repo_lint/cli.py
+----index 64107e5..8049c8d 100644
+------- a/tools/repo_lint/cli.py
+----+++ b/tools/repo_lint/cli.py
+----@@ -137,8 +137,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
+----             return ExitCode.ERROR
+----         if not any(runner.has_files() for _, _, runner in runners):
+----             print(
+-----                f"Error: No files found for language '{only_language}'. "
+-----                f"Nothing to {mode.lower()}.",
+----+                f"Error: No files found for language '{only_language}'. " f"Nothing to {mode.lower()}.",
+----                 file=sys.stderr,
+----             )
+----             return ExitCode.ERROR
+--diff --git a/tools/repo_lint/runners/rust_runner.py b/tools/repo_lint/runners/rust_runner.py
+--index df52708..cce3fce 100644
+----- a/tools/repo_lint/runners/rust_runner.py
+--+++ b/tools/repo_lint/runners/rust_runner.py
+--@@ -108,9 +108,7 @@ class RustRunner(Runner):
+--             return [LintResult(tool="rustfmt", passed=True, violations=[])]
+-- 
+--         # Run rustfmt to format code
+---        rustfmt_result = subprocess.run(
+---            ["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False
+---        )
+--+        rustfmt_result = subprocess.run(["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False)
+-- 
+--         if rustfmt_result.returncode != 0:
+--             results.append(
