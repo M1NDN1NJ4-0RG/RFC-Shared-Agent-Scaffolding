@@ -5,7 +5,7 @@ Your job is to **load only the shards you need**, and to **resume deterministica
 
 ---
 
-## 0) Non‑negotiables (Always apply)
+## 0) Non-negotiables (Always apply)
 
 1) **No destructive commands** (no deletes/resets/overwrites) unless the user explicitly approves.  
 2) **Follow the repo’s PR workflow** (including auto-merge rules when applicable).
