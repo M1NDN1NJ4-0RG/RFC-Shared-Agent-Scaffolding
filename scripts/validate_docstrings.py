@@ -143,14 +143,20 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
 """
 
 import argparse
-import os
 import subprocess
 import sys
 from pathlib import Path
 from typing import List
 
 # Add scripts directory to path for imports
-sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
+try:
+    scripts_dir = Path(__file__).resolve().parent
+except NameError:
+    # __file__ may not be defined in some interactive contexts
+    scripts_dir = Path.cwd()
+
+if str(scripts_dir) not in sys.path:
+    sys.path.insert(0, str(scripts_dir))
 
 # Import validator classes from modular package
 # pylint: disable=wrong-import-position
@@ -161,7 +167,9 @@ from docstring_validators.powershell_validator import PowerShellValidator  # noq
 from docstring_validators.python_validator import PythonValidator  # noqa: E402
 from docstring_validators.rust_validator import RustValidator  # noqa: E402
 from docstring_validators.yaml_validator import YAMLValidator  # noqa: E402
-import docstring_validators.common as common_module  # noqa: E402
+
+# Access common module for SKIP_CONTENT_CHECKS flag
+common_module = sys.modules["docstring_validators.common"]  # noqa: E402
 
 
 # In-scope directory patterns for validation

@@ -106,22 +106,22 @@ All code must adhere to language-specific standards:
 # Or run tools individually by language:
 
 # Python
-black .                    # Auto-format
-flake8 .                   # Style check
-pylint **/*.py             # Static analysis
+black .                                   # Auto-format
+flake8 .                                  # Style check
+git ls-files '*.py' | xargs pylint        # Static analysis
 
 # Bash
-shellcheck **/*.sh         # Shell script analysis
-shfmt -d -i 2 -ci **/*.sh  # Format check
+git ls-files '*.sh' | xargs shellcheck          # Shell script analysis
+git ls-files '*.sh' | xargs shfmt -d -i 2 -ci   # Format check
 
 # PowerShell
 pwsh -Command "Invoke-ScriptAnalyzer -Path script.ps1 -Severity Error"
 
 # Perl
-perlcritic --severity 5 **/*.pl
+git ls-files '*.pl' | xargs -r perlcritic --severity 5
 
 # YAML
-yamllint .                 # Linting
+yamllint .                                # Linting
 
 # All languages
 python3 scripts/validate_docstrings.py  # Docstring validation

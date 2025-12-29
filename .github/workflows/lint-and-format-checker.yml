@@ -34,7 +34,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # Allow auto-commit for formatting fixes
+  contents: write  # Allow auto-commit for formatting fixes (only for lint-python job)
   pull-requests: read
 
 jobs:
@@ -43,6 +43,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0  # Fetch full history for proper git operations
 
       - name: Check for Python files
         id: check-python
@@ -76,14 +80,19 @@ jobs:
         if: |
           steps.check-python.outputs.has_files == 'true' &&
           steps.black-check.outcome == 'failure' &&
-          github.event.pull_request.head.repo.full_name == github.repository
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.actor != 'github-actions[bot]'
         run: |
           black .
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add -A
-          git diff --cached --quiet || git commit -m "Auto-format Python code with Black [skip ci]"
-          git push
+          if git diff --cached --quiet; then
+            echo "No formatting changes to commit"
+          else
+            git commit -m "Auto-format Python code with Black [autoformat][skip ci]"
+            git push
+          fi
 
       - name: Create formatting patch artifact (for fork PRs)
         if: |
@@ -108,7 +117,8 @@ jobs:
       - name: Fail if black formatting needed and not fixed
         if: |
           steps.check-python.outputs.has_files == 'true' &&
-          steps.black-check.outcome == 'failure'
+          steps.black-check.outcome == 'failure' &&
+          (github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'github-actions[bot]')
         run: |
           echo "Black formatting check failed. See above for details."
           exit 1

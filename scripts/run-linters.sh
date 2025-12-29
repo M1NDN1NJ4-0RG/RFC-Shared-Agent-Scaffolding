@@ -265,7 +265,7 @@ if git ls-files '**/*.sh' | grep -q .; then
   echo "📝 Running Bash docstring validation..."
   bash_files_with_errors=0
   while IFS= read -r -d '' bash_file; do
-    if ! python3 scripts/validate_docstrings.py --file "$bash_file" 2>&1 | grep -q "✅"; then
+    if ! python3 scripts/validate_docstrings.py --file "$bash_file"; then
       ((bash_files_with_errors++)) || true
     fi
   done < <(git ls-files -z '**/*.sh')
@@ -296,7 +296,7 @@ if git ls-files '**/*.ps1' | grep -q .; then
     echo "⚡ Running PSScriptAnalyzer..."
     ps_files_with_errors=0
     while IFS= read -r ps_file; do
-      if ! pwsh -Command "Invoke-ScriptAnalyzer -Path '$ps_file' -Severity Error -EnableExit" 2>&1; then
+      if ! pwsh -Command 'Invoke-ScriptAnalyzer -Path $args[0] -Severity Error -EnableExit' -- "$ps_file" 2>&1; then
         ((ps_files_with_errors++)) || true
       fi
     done < <(git ls-files '**/*.ps1')
@@ -314,7 +314,7 @@ if git ls-files '**/*.ps1' | grep -q .; then
     echo "📝 Running PowerShell docstring validation..."
     ps_docstring_errors=0
     while IFS= read -r -d '' ps_file; do
-      if ! python3 scripts/validate_docstrings.py --file "$ps_file" 2>&1 | grep -q "✅"; then
+      if ! python3 scripts/validate_docstrings.py --file "$ps_file"; then
         ((ps_docstring_errors++)) || true
       fi
     done < <(git ls-files -z '**/*.ps1')
@@ -357,7 +357,7 @@ if git ls-files '**/*.pl' '**/*.pm' | grep -q .; then
     echo "📝 Running Perl docstring validation..."
     perl_docstring_errors=0
     while IFS= read -r -d '' perl_file; do
-      if ! python3 scripts/validate_docstrings.py --file "$perl_file" 2>&1 | grep -q "✅"; then
+      if ! python3 scripts/validate_docstrings.py --file "$perl_file"; then
         ((perl_docstring_errors++)) || true
       fi
     done < <(git ls-files -z '**/*.pl' '**/*.pm')
