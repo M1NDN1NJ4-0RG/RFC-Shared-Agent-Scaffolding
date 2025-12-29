@@ -175,21 +175,35 @@ This tool must be:
 
 > Why this is here: `repo_lint` is the orchestrator, but symbol-level docstring enforcement lives in `scripts/validate_docstrings.py`. The older Repo Cleanup EPIC (paused mid-Phase 5.5) defines the missing work (per-language validators and real parsers). To avoid drift, we track that dependency here too.
 
-- [ ] **Sub-Item 3.7.1:** Split `scripts/validate_docstrings.py` into per-language Python validator modules (keep a single CLI entrypoint and preserve output format)
+- [x] **Sub-Item 3.7.1:** Split `scripts/validate_docstrings.py` into per-language Python validator modules (keep a single CLI entrypoint and preserve output format)
   - Recommended layout:
-    - `scripts/docstring_validators/common.py`
-    - `scripts/docstring_validators/python_validator.py`
-    - `scripts/docstring_validators/bash_validator.py`
-    - `scripts/docstring_validators/perl_validator.py`
-    - `scripts/docstring_validators/powershell_validator.py`
-    - `scripts/docstring_validators/rust_validator.py`
-- [ ] **Sub-Item 3.7.2:** Implement **structure-aware** symbol discovery per language (no regex-only “wishful thinking”):
-  - Bash: Tree-sitter Bash grammar parsing (pinned grammar version; no execution)
-  - Perl: PPI-based parsing via `perl` subprocess → JSON → Python errors, with a structure-aware fallback strategy for edge cases (no execution)
-  - PowerShell: `pwsh` AST via `[System.Management.Automation.Language.Parser]::ParseFile` → JSON (no execution)
-- [ ] **Sub-Item 3.7.3:** Enforce doc requirements for **ALL symbols in scope** (no implicit skipping of “private” helpers); exemptions must be explicit via existing `# noqa` / pragma mechanisms.
-- [ ] **Sub-Item 3.7.4:** Ensure `repo_lint`’s language runners call the docstring validator in a way that remains stable as it modularizes (prefer importing modules over shelling out once the split is done).
-- [ ] **Sub-Item 3.7.5:** Add/expand fixtures + unit tests for each language’s symbol discovery path so future refactors don’t silently regress enforcement.
+    - `scripts/docstring_validators/common.py` ✅
+    - `scripts/docstring_validators/python_validator.py` ✅
+    - `scripts/docstring_validators/bash_validator.py` ✅
+    - `scripts/docstring_validators/perl_validator.py` ✅
+    - `scripts/docstring_validators/powershell_validator.py` ✅
+    - `scripts/docstring_validators/rust_validator.py` ✅
+- [x] **Sub-Item 3.7.2:** Implement **structure-aware** symbol discovery per language (no regex-only "wishful thinking"):
+  - Bash: Tree-sitter Bash grammar parsing (pinned grammar version; no execution) ✅
+    - Implemented in `scripts/docstring_validators/helpers/bash_treesitter.py`
+    - Uses tree-sitter-bash 0.25.1 with proper byte handling for UTF-8 files
+    - Regex fallback when tree-sitter not available
+  - Perl: PPI-based parsing via `perl` subprocess → JSON → Python errors, with a structure-aware fallback strategy for edge cases (no execution) ✅
+    - Implemented in `scripts/docstring_validators/helpers/parse_perl_ppi.pl`
+    - Graceful fallback when PPI module not installed
+  - PowerShell: `pwsh` AST via `[System.Management.Automation.Language.Parser]::ParseFile` → JSON (no execution) ✅
+    - Implemented in `scripts/docstring_validators/helpers/parse_powershell_ast.ps1`
+    - Per Phase 0 Item 0.9.3: uses ParseFile (C1), not ParseInput
+- [x] **Sub-Item 3.7.3:** Enforce doc requirements for **ALL symbols in scope** (no implicit skipping of "private" helpers); exemptions must be explicit via existing `# noqa` / pragma mechanisms.
+  - ✅ All validators enforce documentation on all symbols (public and private)
+  - ✅ Pragma-based exemptions supported via `# noqa: FUNCTION` and similar
+- [x] **Sub-Item 3.7.4:** Ensure `repo_lint`'s language runners call the docstring validator in a way that remains stable as it modularizes (prefer importing modules over shelling out once the split is done).
+  - ✅ Runners call `scripts/validate_docstrings.py` which imports modular validators
+  - ✅ Integration tested and working for Python, Bash, PowerShell, and Perl
+- [ ] **Sub-Item 3.7.5:** Add/expand fixtures + unit tests for each language's symbol discovery path so future refactors don't silently regress enforcement.
+  - Deferred: Requires comprehensive test fixtures and unit tests
+  - Should include edge cases: multiline signatures, nested functions, special characters
+  - Should verify parser outputs match expected symbols
 
 **Phase 3 Success Criteria**
 - ✅ Python runner complete and functional
@@ -197,7 +211,8 @@ This tool must be:
 - ✅ PowerShell runner complete and functional
 - ✅ Perl runner complete and functional
 - ✅ YAML runner complete and functional
-- ⏸️ Docstring validator modularization (Item 3.7) deferred to follow-up PRs
+- ✅ Docstring validator modularization (Item 3.7.1-3.7.4) complete
+- ⏸️ Docstring validator test fixtures and unit tests (Item 3.7.5) deferred to follow-up PRs
 
 ---
 
