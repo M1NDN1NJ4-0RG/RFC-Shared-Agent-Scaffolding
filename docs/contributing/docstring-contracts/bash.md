@@ -207,7 +207,7 @@ set -euo pipefail
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
-**File:** `wrappers/scripts/bash/scripts/safe-run.sh`
+**File:** `wrappers/bash/scripts/safe-run.sh`
 
 This file demonstrates:
 - Full docstring with all required sections
@@ -217,7 +217,7 @@ This file demonstrates:
 - Multiple examples with environment overrides
 
 ### Example 2: Test Script
-**File:** `wrappers/scripts/bash/tests/test-safe-run.sh`
+**File:** `wrappers/bash/tests/test-safe-run.sh`
 
 This file demonstrates:
 - Minimal docstring for test scripts
@@ -226,7 +226,7 @@ This file demonstrates:
 - Exit code documentation
 
 ### Example 3: Utility Script
-**File:** `wrappers/scripts/bash/scripts/safe-check.sh`
+**File:** `wrappers/bash/scripts/safe-check.sh`
 
 This file demonstrates:
 - DESCRIPTION that states what it does NOT do

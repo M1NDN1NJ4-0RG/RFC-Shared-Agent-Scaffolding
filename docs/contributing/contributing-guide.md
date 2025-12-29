@@ -117,8 +117,8 @@ Naming conventions are enforced by CI via `.github/workflows/naming-kebab-case.y
 ### Adding Files
 
 - **Documentation**: Add to appropriate `docs/` subdirectory
-- **Scripts**: Add to `scripts/` (repo-wide) or `wrappers/scripts/<language>/scripts/` (language-specific)
-- **Tests**: Add to `rust/tests/` (Rust) or `wrappers/scripts/<language>/tests/` (wrapper tests)
+- **Scripts**: Add to `scripts/` (repo-wide) or `wrappers/<language>/scripts/` (language-specific)
+- **Tests**: Add to `rust/tests/` (Rust) or `wrappers/<language>/tests/` (wrapper tests)
 
 ---
 
@@ -187,7 +187,7 @@ cargo test --test conformance
 
 ```bash
 # Test all wrappers
-cd wrappers/scripts/bash/
+cd wrappers/bash/
 ./run-tests.sh
 
 cd ../perl/
@@ -213,8 +213,8 @@ To add a new language wrapper:
 ### 1. Create Language Directory
 
 ```bash
-mkdir -p wrappers/scripts/<language>/scripts
-mkdir -p wrappers/scripts/<language>/tests
+mkdir -p wrappers/<language>/scripts
+mkdir -p wrappers/<language>/tests
 ```
 
 ### 2. Follow Canonical Structure
@@ -222,7 +222,7 @@ mkdir -p wrappers/scripts/<language>/tests
 See [docs/architecture/canonical-structure.md](../architecture/canonical-structure.md) for required layout:
 
 ```
-wrappers/scripts/<language>/
+wrappers/<language>/
   ├── scripts/          # Implementation scripts
   │   ├── safe-run.*
   │   ├── safe-check.*
@@ -280,7 +280,7 @@ cargo test
 cargo test --test conformance
 
 # Run wrapper tests
-cd wrappers/scripts/bash/
+cd wrappers/bash/
 ./run-tests.sh
 ```
 
@@ -341,7 +341,7 @@ See templates in:
    
    # Tests
    cd rust/ && cargo test
-   cd ../wrappers/scripts/bash/ && ./run-tests.sh
+   cd ../wrappers/bash/ && ./run-tests.sh
    ```
 
 2. **Use `git mv` for renames** - Preserve history

@@ -31,14 +31,14 @@ name: Test PowerShell Bundle
 on:
   pull_request:
     paths:
-      - 'wrappers/scripts/powershell/**'
+      - 'wrappers/powershell/**'
       - 'conformance/**'
       - '.github/workflows/test-powershell.yml'
   push:
     branches:
       - main
     paths:
-      - 'wrappers/scripts/powershell/**'
+      - 'wrappers/powershell/**'
       - 'conformance/**'
       - '.github/workflows/test-powershell.yml'
   workflow_dispatch:
@@ -98,7 +98,7 @@ jobs:
       # Test runner sets $env:SAFE_RUN_BIN to point to staged Rust binary
       - name: Run PowerShell tests
         shell: pwsh
-        working-directory: wrappers/scripts/powershell
+        working-directory: wrappers/powershell
         run: |
           pwsh -NoProfile -File ./run-tests.ps1
 
@@ -110,5 +110,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: powershell-test-failures
-          path: wrappers/scripts/powershell/.agent/FAIL-LOGS/
+          path: wrappers/powershell/.agent/FAIL-LOGS/
           if-no-files-found: ignore

@@ -32,7 +32,7 @@ name: Multi-Language Conformance Validation
 on:
   pull_request:
     paths:
-      - 'wrappers/scripts/**'
+      - 'wrappers/**'
       - 'conformance/**'
       - '.github/workflows/conformance.yml'
   push:
@@ -95,7 +95,7 @@ jobs:
           missing=0
 
           for bundle in "${bundles[@]}"; do
-            path="wrappers/scripts/$bundle"
+            path="wrappers/$bundle"
             if [ ! -d "$path" ]; then
               echo "ERROR: Bundle not found: $bundle"
               missing=1

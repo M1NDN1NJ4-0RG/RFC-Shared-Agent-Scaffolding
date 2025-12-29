@@ -28,14 +28,14 @@ name: Test Bash Bundle
 on:
   pull_request:
     paths:
-      - 'wrappers/scripts/bash/**'
+      - 'wrappers/bash/**'
       - 'conformance/**'
       - '.github/workflows/test-bash.yml'
   push:
     branches:
       - main
     paths:
-      - 'wrappers/scripts/bash/**'
+      - 'wrappers/bash/**'
       - 'conformance/**'
       - '.github/workflows/test-bash.yml'
   workflow_dispatch:
@@ -92,7 +92,7 @@ jobs:
       # Executes run-tests.sh which runs all tests in tests/ directory
       # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
       - name: Run Bash tests
-        working-directory: wrappers/scripts/bash
+        working-directory: wrappers/bash
         run: |
           chmod +x run-tests.sh
           ./run-tests.sh
@@ -105,5 +105,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bash-test-failures
-          path: wrappers/scripts/bash/.agent/FAIL-LOGS/
+          path: wrappers/bash/.agent/FAIL-LOGS/
           if-no-files-found: ignore

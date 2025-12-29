@@ -422,7 +422,7 @@ on:
 # Workflow: Bash Unit Tests
 #
 # Purpose: Runs unit tests for Bash wrapper scripts in
-# wrappers/scripts/bash/tests/.
+# wrappers/bash/tests/.
 # Does NOT run integration tests or other language tests.
 ```
 

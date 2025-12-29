@@ -43,7 +43,7 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # For thin wrapper tests: point to Rust canonical binary
-REPO_ROOT="$(cd "$ROOT_DIR/../../.." && pwd)"
+REPO_ROOT="$(cd "$ROOT_DIR/../.." && pwd)"
 export SAFE_RUN_BIN="${SAFE_RUN_BIN:-$REPO_ROOT/rust/target/release/safe-run}"
 
 # Ensure we run from repo root for relative paths

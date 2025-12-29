@@ -412,7 +412,7 @@ Wrapper failure fallback remains mandatory.
 Script files in this repository MUST use kebab-case naming (lowercase letters and digits separated by hyphens only). This rule applies **only to script surfaces** (executable entrypoints), not to language-specific source files.
 
 **Scope — Script Surfaces (kebab-case REQUIRED):**
-- Script surfaces in `wrappers/scripts/*`
+- Script surfaces in `wrappers/*`
 - Wrapper scripts in `wrappers/*`
 - Applies to executable/script file extensions: `.sh`, `.bash`, `.zsh`, `.pl`, `.py`, `.ps1`
 

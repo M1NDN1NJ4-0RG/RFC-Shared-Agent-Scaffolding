@@ -107,16 +107,16 @@ Each language wrapper has its own test suite:
 
 ```bash
 # Bash
-cd wrappers/scripts/bash && bash run-tests.sh
+cd wrappers/bash && bash run-tests.sh
 
 # Perl
-cd wrappers/scripts/perl && bash run-tests.sh
+cd wrappers/perl && bash run-tests.sh
 
 # Python
-cd wrappers/scripts/python3 && bash run-tests.sh
+cd wrappers/python3 && bash run-tests.sh
 
 # PowerShell
-cd wrappers/scripts/powershell && pwsh run-tests.ps1
+cd wrappers/powershell && pwsh run-tests.ps1
 ```
 
 ### Run Conformance Tests

@@ -31,10 +31,10 @@
 5. **Fail with exit 127** and actionable error message
 
 **Implementation Locations:**
-- Bash: `wrappers/scripts/bash/scripts/safe-run.sh:54-84`
-- Perl: `wrappers/scripts/perl/scripts/safe-run.pl:71-103`
-- Python3: `wrappers/scripts/python3/scripts/safe-run.py:58-89`
-- PowerShell: `wrappers/scripts/powershell/scripts/safe-run.ps1:63-102`
+- Bash: `wrappers/bash/scripts/safe-run.sh:54-84`
+- Perl: `wrappers/perl/scripts/safe-run.pl:71-103`
+- Python3: `wrappers/python3/scripts/safe-run.py:58-89`
+- PowerShell: `wrappers/powershell/scripts/safe-run.ps1:63-102`
 
 **Potential Drift Vectors:**
 - **P0: Path resolution relative to script vs working directory** - If wrapper is invoked from outside repo, repo root detection may fail
@@ -57,10 +57,10 @@
 3. Stopping at filesystem root if not found
 
 **Implementation Locations:**
-- Bash: `wrappers/scripts/bash/scripts/safe-run.sh:18-30`
-- Perl: `wrappers/scripts/perl/scripts/safe-run.pl:21-37`
-- Python3: `wrappers/scripts/python3/scripts/safe-run.py:21-32`
-- PowerShell: `wrappers/scripts/powershell/scripts/safe-run.ps1:23-44`
+- Bash: `wrappers/bash/scripts/safe-run.sh:18-30`
+- Perl: `wrappers/perl/scripts/safe-run.pl:21-37`
+- Python3: `wrappers/python3/scripts/safe-run.py:21-32`
+- PowerShell: `wrappers/powershell/scripts/safe-run.ps1:23-44`
 
 **Potential Drift Vectors:**
 - **P0: Working directory vs script location** - PowerShell uses `Get-Location` (working dir), others use script location
@@ -87,10 +87,10 @@ $BINARY run "$@"
 ```
 
 **Implementation Locations:**
-- Bash: `wrappers/scripts/bash/scripts/safe-run.sh:113` - uses `exec "$BINARY" run "$@"`
-- Perl: `wrappers/scripts/perl/scripts/safe-run.pl:140` - uses `exec($binary, 'run', @args)`
-- Python3: `wrappers/scripts/python3/scripts/safe-run.py:126` - uses `os.execvp(binary, [binary, "run"] + args)`
-- PowerShell: `wrappers/scripts/powershell/scripts/safe-run.ps1:140` - uses `& $binary run @invokeArgs`
+- Bash: `wrappers/bash/scripts/safe-run.sh:113` - uses `exec "$BINARY" run "$@"`
+- Perl: `wrappers/perl/scripts/safe-run.pl:140` - uses `exec($binary, 'run', @args)`
+- Python3: `wrappers/python3/scripts/safe-run.py:126` - uses `os.execvp(binary, [binary, "run"] + args)`
+- PowerShell: `wrappers/powershell/scripts/safe-run.ps1:140` - uses `& $binary run @invokeArgs`
 
 **Potential Drift Vectors:**
 - **P0: Quoting/escaping edge cases** - Complex args with spaces, quotes, backslashes may differ
@@ -114,10 +114,10 @@ $BINARY run "$@"
 - **Windows termination:** preserve Windows exit codes as-is
 
 **Implementation Locations:**
-- Bash: `wrappers/scripts/bash/scripts/safe-run.sh:113` - uses `exec` (replaces process, automatic)
-- Perl: `wrappers/scripts/perl/scripts/safe-run.pl:140` - uses `exec` (replaces process, automatic)
-- Python3: `wrappers/scripts/python3/scripts/safe-run.py:126` - uses `os.execvp` (replaces process, automatic)
-- PowerShell: `wrappers/scripts/powershell/scripts/safe-run.ps1:140-146` - uses `& $binary` then `exit $LASTEXITCODE`
+- Bash: `wrappers/bash/scripts/safe-run.sh:113` - uses `exec` (replaces process, automatic)
+- Perl: `wrappers/perl/scripts/safe-run.pl:140` - uses `exec` (replaces process, automatic)
+- Python3: `wrappers/python3/scripts/safe-run.py:126` - uses `os.execvp` (replaces process, automatic)
+- PowerShell: `wrappers/powershell/scripts/safe-run.ps1:140-146` - uses `& $binary` then `exit $LASTEXITCODE`
 
 **Potential Drift Vectors:**
 - **P0: PowerShell exit code capture** - $LASTEXITCODE may be null or incorrect if command fails to execute
@@ -141,10 +141,10 @@ $BINARY run "$@"
    - Link to documentation
 
 **Implementation Locations:**
-- Bash: `wrappers/scripts/bash/scripts/safe-run.sh:87-108`
-- Perl: `wrappers/scripts/perl/scripts/safe-run.pl:108-129`
-- Python3: `wrappers/scripts/python3/scripts/safe-run.py:95-115`
-- PowerShell: `wrappers/scripts/powershell/scripts/safe-run.ps1:107-128`
+- Bash: `wrappers/bash/scripts/safe-run.sh:87-108`
+- Perl: `wrappers/perl/scripts/safe-run.pl:108-129`
+- Python3: `wrappers/python3/scripts/safe-run.py:95-115`
+- PowerShell: `wrappers/powershell/scripts/safe-run.ps1:107-128`
 
 **Potential Drift Vectors:**
 - **P1: Error message format consistency** - Messages should be identical across wrappers
@@ -233,8 +233,8 @@ $BINARY run "$@"
 4. Clean up artifacts after tests
 
 **Implementation Locations:**
-- Bash tests: `wrappers/scripts/bash/tests/test-safe-run.sh:11-20`
-- PowerShell tests: `wrappers/scripts/powershell/tests/safe-run-tests.ps1:14-15`
+- Bash tests: `wrappers/bash/tests/test-safe-run.sh:11-20`
+- PowerShell tests: `wrappers/powershell/tests/safe-run-tests.ps1:14-15`
 
 **Potential Drift Vectors:**
 - **P0: Working directory for PowerShell tests** - PowerShell wrapper uses Get-Location, tests must be in repo
@@ -258,10 +258,10 @@ $BINARY run "$@"
   - aarch64/arm64 → `aarch64`
 
 **Implementation Locations:**
-- Bash: `wrappers/scripts/bash/scripts/safe-run.sh:32-49`
-- Perl: `wrappers/scripts/perl/scripts/safe-run.pl:42-66`
-- Python3: `wrappers/scripts/python3/scripts/safe-run.py:34-56`
-- PowerShell: `wrappers/scripts/powershell/scripts/safe-run.ps1:46-61`
+- Bash: `wrappers/bash/scripts/safe-run.sh:32-49`
+- Perl: `wrappers/perl/scripts/safe-run.pl:42-66`
+- Python3: `wrappers/python3/scripts/safe-run.py:34-56`
+- PowerShell: `wrappers/powershell/scripts/safe-run.ps1:46-61`
 
 **Potential Drift Vectors:**
 - **P1: Architecture naming** - `amd64` vs `x86_64`, `arm64` vs `aarch64` may differ

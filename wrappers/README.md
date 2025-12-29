@@ -16,7 +16,7 @@ The wrappers act as **invokers**, not independent implementations. They provide:
 
 ### Bash
 
-**Location:** `wrappers/scripts/bash/scripts/`
+**Location:** `wrappers/bash/scripts/`
 
 - `safe-run.sh` - Execute commands with event logging
 - `safe-check.sh` - Check for existing artifacts
@@ -26,12 +26,12 @@ The wrappers act as **invokers**, not independent implementations. They provide:
 
 **Usage:**
 ```bash
-./wrappers/scripts/bash/scripts/safe-run.sh echo "Hello, World!"
+./wrappers/bash/scripts/safe-run.sh echo "Hello, World!"
 ```
 
 ### Perl
 
-**Location:** `wrappers/scripts/perl/scripts/`
+**Location:** `wrappers/perl/scripts/`
 
 - `safe-run.pl` - Execute commands with event logging
 - `safe-check.pl` - Check for existing artifacts
@@ -41,12 +41,12 @@ The wrappers act as **invokers**, not independent implementations. They provide:
 
 **Usage:**
 ```bash
-perl ./wrappers/scripts/perl/scripts/safe-run.pl echo "Hello, World!"
+perl ./wrappers/perl/scripts/safe-run.pl echo "Hello, World!"
 ```
 
 ### Python 3
 
-**Location:** `wrappers/scripts/python3/scripts/`
+**Location:** `wrappers/python3/scripts/`
 
 - `safe-run.py` - Execute commands with event logging
 - `safe-check.py` - Check for existing artifacts
@@ -56,12 +56,12 @@ perl ./wrappers/scripts/perl/scripts/safe-run.pl echo "Hello, World!"
 
 **Usage:**
 ```bash
-python3 ./wrappers/scripts/python3/scripts/safe-run.py echo "Hello, World!"
+python3 ./wrappers/python3/scripts/safe-run.py echo "Hello, World!"
 ```
 
 ### PowerShell
 
-**Location:** `wrappers/scripts/powershell/scripts/`
+**Location:** `wrappers/powershell/scripts/`
 
 - `safe-run.ps1` - Execute commands with event logging
 - `safe-check.ps1` - Check for existing artifacts
@@ -71,7 +71,7 @@ python3 ./wrappers/scripts/python3/scripts/safe-run.py echo "Hello, World!"
 
 **Usage:**
 ```powershell
-pwsh ./wrappers/scripts/powershell/scripts/safe-run.ps1 echo "Hello, World!"
+pwsh ./wrappers/powershell/scripts/safe-run.ps1 echo "Hello, World!"
 ```
 
 ## How Wrappers Locate the Rust Binary
@@ -97,25 +97,25 @@ If none of these locations contain the binary, the wrapper exits with an actiona
 
 Each language wrapper has its own test suite documented in its `README.md`:
 
-- **Bash:** `wrappers/scripts/bash/README.md` - Test documentation
-- **Perl:** `wrappers/scripts/perl/README.md` - Test documentation and examples
-- **Python 3:** `wrappers/scripts/python3/README.md` - Test documentation
-- **PowerShell:** `wrappers/scripts/powershell/README.md` - Test documentation
+- **Bash:** `wrappers/bash/README.md` - Test documentation
+- **Perl:** `wrappers/perl/README.md` - Test documentation and examples
+- **Python 3:** `wrappers/python3/README.md` - Test documentation
+- **PowerShell:** `wrappers/powershell/README.md` - Test documentation
 
 To run tests for a specific language:
 
 ```bash
 # Bash
-cd wrappers/scripts/bash && bash run-tests.sh
+cd wrappers/bash && bash run-tests.sh
 
 # Perl
-cd wrappers/scripts/perl && bash run-tests.sh
+cd wrappers/perl && bash run-tests.sh
 
 # Python 3
-cd wrappers/scripts/python3 && bash run-tests.sh
+cd wrappers/python3 && bash run-tests.sh
 
 # PowerShell
-cd wrappers/scripts/powershell && pwsh run-tests.ps1
+cd wrappers/powershell && pwsh run-tests.ps1
 ```
 
 ## Conformance Testing
@@ -131,7 +131,7 @@ See:
 Wrappers follow a canonical structure:
 
 ```
-wrappers/scripts/<language>/
+wrappers/<language>/
 ├── scripts/              # Implementation files (safe-run.*, safe-check.*, safe-archive.*)
 ├── tests/                # Test files
 ├── run-tests.*           # Test runner script

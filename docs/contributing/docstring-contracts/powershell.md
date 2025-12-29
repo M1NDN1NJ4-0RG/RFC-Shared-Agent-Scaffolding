@@ -252,7 +252,7 @@ param(
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
-**File:** `wrappers/scripts/powershell/scripts/safe-run.ps1`
+**File:** `wrappers/powershell/scripts/safe-run.ps1`
 
 This file demonstrates:
 - Full comment-based help with all required sections
@@ -262,7 +262,7 @@ This file demonstrates:
 - `.NOTES` with platform and version info
 
 ### Example 2: Test Script
-**File:** `wrappers/scripts/powershell/tests/safe-run-tests.ps1`
+**File:** `wrappers/powershell/tests/safe-run-tests.ps1`
 
 This file demonstrates:
 - Minimal docstring for test scripts
@@ -271,7 +271,7 @@ This file demonstrates:
 - `.NOTES` with test framework info
 
 ### Example 3: Utility Script
-**File:** `wrappers/scripts/powershell/scripts/safe-check.ps1`
+**File:** `wrappers/powershell/scripts/safe-check.ps1`
 
 This file demonstrates:
 - `.DESCRIPTION` that states what it does NOT do

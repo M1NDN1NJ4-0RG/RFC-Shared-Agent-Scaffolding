@@ -29,14 +29,14 @@ name: Test Perl Bundle
 on:
   pull_request:
     paths:
-      - 'wrappers/scripts/perl/**'
+      - 'wrappers/perl/**'
       - 'conformance/**'
       - '.github/workflows/test-perl.yml'
   push:
     branches:
       - main
     paths:
-      - 'wrappers/scripts/perl/**'
+      - 'wrappers/perl/**'
       - 'conformance/**'
       - '.github/workflows/test-perl.yml'
   workflow_dispatch:
@@ -100,7 +100,7 @@ jobs:
       # Executes run-tests.sh which runs all tests in tests/ directory
       # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
       - name: Run Perl tests
-        working-directory: wrappers/scripts/perl
+        working-directory: wrappers/perl
         run: |
           chmod +x run-tests.sh
           ./run-tests.sh
@@ -113,5 +113,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: perl-test-failures
-          path: wrappers/scripts/perl/.agent/FAIL-LOGS/
+          path: wrappers/perl/.agent/FAIL-LOGS/
           if-no-files-found: ignore

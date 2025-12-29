@@ -32,14 +32,14 @@ name: Test Python 3 Bundle
 on:
   pull_request:
     paths:
-      - 'wrappers/scripts/python3/**'
+      - 'wrappers/python3/**'
       - 'conformance/**'
       - '.github/workflows/test-python3.yml'
   push:
     branches:
       - main
     paths:
-      - 'wrappers/scripts/python3/**'
+      - 'wrappers/python3/**'
       - 'conformance/**'
       - '.github/workflows/test-python3.yml'
   workflow_dispatch:
@@ -104,7 +104,7 @@ jobs:
       # Test runner sets SAFE_RUN_BIN to point to staged Rust binary
       # Conformance tests parse JSON-based test vectors via the Python test harness
       - name: Run Python 3 tests
-        working-directory: wrappers/scripts/python3
+        working-directory: wrappers/python3
         run: |
           ./run-tests.sh
 
@@ -117,5 +117,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: python3-test-failures-${{ matrix.python-version }}
-          path: wrappers/scripts/python3/.agent/FAIL-LOGS/
+          path: wrappers/python3/.agent/FAIL-LOGS/
           if-no-files-found: ignore

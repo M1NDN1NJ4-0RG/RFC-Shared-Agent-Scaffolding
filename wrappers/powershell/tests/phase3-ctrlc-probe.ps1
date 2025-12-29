@@ -49,7 +49,7 @@
   Requires:
     - PowerShell 5.1+ or pwsh 6+
     - Rust canonical tool built at rust/target/release/safe-run.exe
-    - safe-run.ps1 wrapper at wrappers/scripts/powershell/scripts/safe-run.ps1
+    - safe-run.ps1 wrapper at wrappers/powershell/scripts/safe-run.ps1
   
   Design Notes:
     - Uses GenerateConsoleCtrlEvent for native Windows Ctrl-C simulation
