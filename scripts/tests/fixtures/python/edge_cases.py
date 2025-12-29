@@ -202,7 +202,7 @@ def _private_function(value: int) -> int:
 def __dunder_function__(item: Any) -> str:
     """Dunder function (double underscore).
 
-    Per Phase 5.5 policy, dunder functions MUST still be documented.
+    Per Phase 3 Sub-Item 3.7.3, dunder functions MUST still be documented.
 
     :param item: Item to process
     :returns: String representation

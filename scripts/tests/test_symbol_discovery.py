@@ -75,7 +75,7 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
     def test_identifies_all_classes(self):
         """Test that parser identifies all class definitions."""
         # Parse and collect all validation errors
-        errors = PythonValidator.validate(self.fixture_path, self.fixture_content)
+        PythonValidator.validate(self.fixture_path, self.fixture_content)
 
         # Expected classes: SimpleClass, ComplexClass, _PrivateClass
         # All should be found and validated

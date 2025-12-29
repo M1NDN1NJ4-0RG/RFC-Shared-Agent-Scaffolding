@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# edge_cases.sh - Test fixture with Bash edge cases for symbol discovery
+# edge-cases.sh - Test fixture with Bash edge cases for symbol discovery
 #
 # DESCRIPTION:
 #   This script contains various edge cases to test the Bash tree-sitter parser's

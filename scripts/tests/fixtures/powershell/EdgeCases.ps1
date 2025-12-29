@@ -201,7 +201,7 @@ function Private-Helper {
     Private/helper function (private by convention).
     
     .DESCRIPTION
-    Per Phase 5.5 policy, private functions must still be documented
+    Per Phase 3 Sub-Item 3.7.3, private functions must still be documented
     unless explicitly exempted via pragma.
     
     .PARAMETER Value

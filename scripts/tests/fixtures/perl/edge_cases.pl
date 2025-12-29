@@ -238,7 +238,7 @@ sub subroutine_with_special_chars_123 {
 
 Private/helper subroutine (leading underscore).
 
-Per Phase 5.5 policy, private subroutines must still be documented
+Per Phase 3 Sub-Item 3.7.3, private subroutines must still be documented
 unless explicitly exempted via pragma.
 
 =over 4
@@ -268,7 +268,7 @@ sub _private_helper {
 
 Internal subroutine (double underscore).
 
-Per Phase 5.5 policy, internal subroutines must be documented.
+Per Phase 3 Sub-Item 3.7.3, internal subroutines must be documented.
 
 =over 4
 
