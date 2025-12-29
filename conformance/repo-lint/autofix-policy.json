@@ -57,7 +57,7 @@
     }
   ],
   "notes": [
-    "This policy is enforced by repo_lint.cli when running 'repo-lint fix'",
+    "This policy is enforced when running 'repo-lint fix'",
     "Only categories in 'allowed_categories' may execute auto-fixes",
     "Denied categories must be skipped with a clear message",
     "Policy updates require human review and approval"

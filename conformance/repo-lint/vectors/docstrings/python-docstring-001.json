@@ -35,7 +35,7 @@
   ],
   "expected_passes": [
     {
-      "symbol": "missing_docstring",
+      "symbol": "function_with_doc",
       "symbol_kind": "function",
       "reason": "Has proper docstring"
     },

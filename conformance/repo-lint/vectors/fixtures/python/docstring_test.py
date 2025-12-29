@@ -5,7 +5,7 @@ and edge cases for Python symbol discovery and validation.
 """
 
 
-def missing_docstring():
+def function_with_doc():
     """This function has a docstring (should pass)."""
     return "ok"
 

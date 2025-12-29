@@ -10,8 +10,8 @@ function_with_doc() {
     echo "ok"
 }
 
-# Missing docstring - should be detected
 function_without_doc() {
+    # Missing docstring - should be detected
     echo "missing"
 }
 

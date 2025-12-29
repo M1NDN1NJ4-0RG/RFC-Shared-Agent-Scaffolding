@@ -13,8 +13,8 @@ function FunctionWithDoc {
     Write-Output "ok"
 }
 
-# Missing docstring - should be detected
 function FunctionWithoutDoc {
+    # Missing docstring - should be detected
     Write-Output "missing"
 }
 

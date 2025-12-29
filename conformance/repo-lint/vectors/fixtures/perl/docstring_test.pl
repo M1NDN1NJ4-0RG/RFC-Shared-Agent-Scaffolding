@@ -13,8 +13,8 @@ sub function_with_doc {
     return "ok";
 }
 
-# Missing docstring - should be detected
 sub function_without_doc {
+    # Missing docstring - should be detected
     return "missing";
 }
 
