@@ -456,38 +456,52 @@ Rationale:
 - Auto-fix is **deny-by-default**. Only explicitly allowlisted fix categories may run under `repo-lint fix`.
 - `repo-lint check` remains **non-mutating** and MUST NOT apply fixes.
 
-**Proposed Layout (Align with existing `conformance/` pattern)**
-- `conformance/repo_lint/vectors/docstrings/` (JSON vector files)
-- `conformance/repo_lint/vectors/fixtures/` (fixture source files per language)
+**Actual Layout (Aligned with kebab-case naming standards)**
+- `conformance/repo-lint/vectors/docstrings/` (JSON vector files in kebab-case)
+- `conformance/repo-lint/vectors/fixtures/` (fixture source files per language, following language-specific naming)
 - Shared policy file (runtime-owned; referenced by vectors):
-  - `conformance/repo_lint/autofix_policy.json`
+  - `conformance/repo-lint/autofix-policy.json`
 
-- [ ] **Sub-Item 6.5.1:** Define and document the normalized violation schema used by vectors (include: `rule_id`, `path`, `symbol`, `symbol_kind`, `line`, `severity`, `message`).
-- [ ] **Sub-Item 6.5.2:** Add initial fixtures per language under `conformance/repo_lint/vectors/fixtures/` covering:
-  - Missing doc requirements (minimum required sections)
-  - Correctly documented symbols
-  - Explicit exemptions (existing `# noqa` / pragma mechanisms)
-  - Edge cases (multiline signatures, nested functions where applicable)
-- [ ] **Sub-Item 6.5.3:** Create initial vector suites per language under `conformance/repo_lint/vectors/docstrings/` (one JSON per scenario; keep cases small and focused):
-  - `python_*.json`, `bash_*.json`, `powershell_*.json`, `perl_*.json`, `yaml_*.json`
+- [x] **Sub-Item 6.5.1:** Define and document the normalized violation schema used by vectors (include: `rule_id`, `path`, `symbol`, `symbol_kind`, `line`, `severity`, `message`).
+  - ✅ **Implemented** in `conformance/repo-lint/README.md`
+  - Schema defines stable fields for violation objects and pass objects
+  - Documented fixture naming conventions per language
+- [x] **Sub-Item 6.5.2:** Add initial fixtures per language under `conformance/repo-lint/vectors/fixtures/` covering:
+  - ✅ Python: `docstring_test.py` (snake_case) - missing docs, proper docs, pragma exemptions, multiline signatures
+  - ✅ Bash: `docstring-test.sh` (kebab-case) - missing docs, proper docs, pragma exemptions, nested functions
+  - ✅ PowerShell: `DocstringTest.ps1` (PascalCase) - missing docs, proper docs, pragma exemptions
+  - ✅ Perl: `docstring_test.pl` (snake_case) - missing docs, proper docs, pragma exemptions, package-scoped subs
+  - All fixtures follow naming conventions per `docs/contributing/naming-and-style.md`
+- [x] **Sub-Item 6.5.3:** Create initial vector suites per language under `conformance/repo-lint/vectors/docstrings/` (one JSON per scenario; keep cases small and focused):
+  - ✅ `python-docstring-001.json` (kebab-case) - 3 violations, 7 passes
+  - ✅ `bash-docstring-001.json` (kebab-case) - 1 violation, 5 passes
+  - ✅ `powershell-docstring-001.json` (kebab-case) - 1 violation, 3 passes
+  - ✅ `perl-docstring-001.json` (kebab-case) - 1 violation, 4 passes
 - [ ] **Sub-Item 6.5.4:** Implement a vector runner in Python tests that:
   - Executes the relevant `repo_lint` runner(s) against fixtures
   - Captures results
   - Normalizes output into the schema
   - Compares against expected vectors deterministically
-- [ ] **Sub-Item 6.5.5:** Add an auto-fix allow/deny policy (deny-by-default) with explicit categories, for example:
-  - Allow: `FORMAT.BLACK`, `FORMAT.SHFMT`, `LINT.RUFF.SAFE`
-  - Deny: `LINT.RUFF.UNSAFE`, `REWRITE.DOCSTRING_CONTENT`, `MODIFY_LOGIC`, `REORDER_IMPORTS` (unless explicitly approved later)
+- [x] **Sub-Item 6.5.5:** Add an auto-fix allow/deny policy (deny-by-default) with explicit categories:
+  - ✅ **Implemented** in `conformance/repo-lint/autofix-policy.json`
+  - Allowed: `FORMAT.BLACK`, `FORMAT.SHFMT`, `LINT.RUFF.SAFE`
+  - Denied: `LINT.RUFF.UNSAFE`, `REWRITE.DOCSTRING_CONTENT`, `MODIFY_LOGIC`, `REORDER_IMPORTS`
+  - Policy is deny-by-default with clear rationale for each category
 - [ ] **Sub-Item 6.5.6:** Wire `repo-lint fix` to consult the allow/deny policy:
   - Only allowlisted fix categories may run
   - Denied categories MUST be skipped with a clear message
   - Add a deterministic summary of which fix categories ran
 - [ ] **Sub-Item 6.5.7:** Add CI coverage for vectors (umbrella workflow should run vectors when relevant tooling or validator code changes).
-- [ ] **Sub-Item 6.5.8:** Document how to add new vectors/fixtures and how to update expected outputs safely (no casual baseline rewrites). **Expected outputs MUST be regenerated via a dedicated command** (e.g., `repo-lint vectors update --case <case_id>` or similar) so changes are reproducible and auditable (no hand-editing expected outputs).
+- [x] **Sub-Item 6.5.8:** Document how to add new vectors/fixtures and how to update expected outputs safely (no casual baseline rewrites).
+  - ✅ **Documented** in `conformance/repo-lint/README.md`
+  - Documented vector regeneration command: `python -m tools.repo_lint vectors update --case <case_id>`
+  - Clear guidelines for adding new vectors with stable IDs
+  - Fixture naming conventions documented per language
+  - Expected outputs MUST be regenerated via dedicated command (reproducible and auditable)
 
 **Success Criteria**
-- ✅ Parser swaps (e.g., bashlex → Tree-sitter, PPI fallback tweaks, PowerShell AST changes) do not silently change expected outputs.
-- ✅ Auto-fix behavior is governed by explicit policy and is auditable.
+- 🔜 Parser swaps (e.g., bashlex → Tree-sitter, PPI fallback tweaks, PowerShell AST changes) do not silently change expected outputs.
+- 🔜 Auto-fix behavior is governed by explicit policy and is auditable.
 
 **Phase 6 Success Criteria**
 - ✅ CI executes the same single entrypoint as local dev.
