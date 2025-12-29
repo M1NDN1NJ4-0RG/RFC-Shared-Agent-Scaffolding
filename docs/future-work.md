@@ -27,6 +27,7 @@ This document tracks **explicitly-marked future work** found in the repository. 
 | [FW-010](#fw-010-canonical-epic-tracker-placeholder) | Low | Governance | Canonical Epic Tracker placeholder |
 | [FW-011](#fw-011-migrate-test-runners-to-fully-native-implementations) | Low | Testing | Migrate test runners to fully native implementations |
 | [FW-012](#fw-012-optimize-ci-runtime-with-scheduled-bash-runners) | Low | CI/CD | Optimize CI runtime with scheduled Bash runners |
+| [FW-013](#fw-013-make-repo-lint-installable-package) | Low | Tooling | Make repo_lint installable via pip install -e . |
 
 ---
 
@@ -507,6 +508,38 @@ rg -n \
 - Update all source files to remove TODO/deferred markers
 - Ensure conformance tests pass
 - Update relevant documentation (README, docs/, RFC, etc.)
+
+---
+
+### FW-013: Make repo_lint installable package
+
+**Severity:** Low  
+**Area:** Tooling  
+**Status:** 🔮 DEFERRED
+
+**Description:**
+
+Currently, `repo_lint` is run in-place using `python -m tools.repo_lint`. Future work should make it installable as a proper Python package with console script entry points.
+
+**Proposed Changes:**
+
+1. Add `setup.py` or update `pyproject.toml` with package metadata
+2. Define console script entry point: `repo-lint` → `tools.repo_lint.cli:main`
+3. Support `pip install -e .` for local development
+4. Document installation in CONTRIBUTING.md
+
+**Current Workaround:**
+
+Run in-place from repo root:
+```bash
+python -m tools.repo_lint check
+python -m tools.repo_lint fix
+python -m tools.repo_lint install
+```
+
+**Source:**
+- Decision Item 0.2.2 in EPIC issue (Phase 0 - Execution Model)
+- Added during Phase 1 implementation
 
 ---
 

@@ -2,6 +2,30 @@
 line-length = 120
 target-version = ['py38']
 
+[tool.ruff]
+# Match line length with Black
+line-length = 120
+
+# Target Python 3.8+ (matching Black target-version)
+target-version = "py38"
+
+[tool.ruff.lint]
+# Select default rules plus additional checks
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "W",   # pycodestyle warnings
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+]
+
+# Ignore rules that conflict with Black or are disabled in current Flake8 config
+ignore = [
+    "E203",  # whitespace before ':' (conflicts with Black)
+    "W503",  # line break before binary operator (deprecated, conflicts with Black)
+]
+
 [tool.pylint.format]
 max-line-length = 120
 
