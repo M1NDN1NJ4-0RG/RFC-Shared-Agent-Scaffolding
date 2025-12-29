@@ -43,6 +43,7 @@ import json
 import os
 import re
 import subprocess
+import sys
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -157,18 +158,20 @@ def parse_docstring_validator_output(output: str, fixture_path: str) -> List[Dic
 
         # Parse details for current violation
         if current_violation:
-            # Extract symbol name and kind
-            symbol_match = re.match(r"\s+Symbol:\s+(def|class)\s+(\w+)", line)
+            # Extract symbol name and kind (supports 'def', 'class', and potentially other keywords)
+            symbol_match = re.match(r"\s+Symbol:\s+(def|class|sub|function)\s+([\w.]+)", line)
             if symbol_match:
                 kind_keyword = symbol_match.group(1)
                 symbol_name = symbol_match.group(2)
 
-                # Determine symbol kind
-                if kind_keyword == "def":
-                    # Could be function or method - default to function
-                    current_violation["symbol_kind"] = "function"
-                elif kind_keyword == "class":
-                    current_violation["symbol_kind"] = "class"
+                # Determine symbol kind based on keyword
+                symbol_kind_map = {
+                    "def": "function",
+                    "class": "class",
+                    "sub": "sub",
+                    "function": "function",
+                }
+                current_violation["symbol_kind"] = symbol_kind_map.get(kind_keyword, "function")
 
                 current_violation["symbol"] = symbol_name
                 continue
@@ -209,7 +212,7 @@ def run_docstring_validator(fixture_path: Path) -> List[Dict]:
 
     # Run validator with minimal checks (just docstring presence, not content)
     result = subprocess.run(
-        ["python3", str(validator_script), "--file", str(fixture_path), "--no-content-checks"],
+        [sys.executable, str(validator_script), "--file", str(fixture_path), "--no-content-checks"],
         capture_output=True,
         text=True,
         cwd=REPO_ROOT,

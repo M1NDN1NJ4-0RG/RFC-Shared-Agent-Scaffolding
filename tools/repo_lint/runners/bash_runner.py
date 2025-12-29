@@ -72,7 +72,8 @@ class BashRunner(Runner):
 
         results = []
 
-        # Default policy if none provided
+        # Default policy if none provided (backwards compatibility)
+        # Note: Empty policy denies all fixes. This is intentional during transition.
         if policy is None:
             policy = {"allowed_categories": []}
 

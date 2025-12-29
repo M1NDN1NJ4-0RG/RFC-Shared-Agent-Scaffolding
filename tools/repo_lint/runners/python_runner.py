@@ -75,7 +75,9 @@ class PythonRunner(Runner):
 
         results = []
 
-        # Default policy if none provided (for backwards compatibility during transition)
+        # Default policy if none provided (backwards compatibility)
+        # Note: Empty policy denies all fixes. This is intentional during transition
+        # to ensure fixes are only run when policy is explicitly loaded.
         if policy is None:
             policy = {"allowed_categories": []}
 
