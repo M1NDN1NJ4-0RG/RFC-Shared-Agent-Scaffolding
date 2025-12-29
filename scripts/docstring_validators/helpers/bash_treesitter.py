@@ -61,7 +61,7 @@ def parse_bash_functions(file_path: Path) -> Dict[str, Any]:
         # Handle both tree-sitter < 0.25 and >= 0.25 API versions
         parser = Parser()
         lang_obj = Language(tsbash.language())
-        
+
         # Try newer API first (0.25+), fallback to older API
         if hasattr(parser, "language"):
             parser.language = lang_obj
