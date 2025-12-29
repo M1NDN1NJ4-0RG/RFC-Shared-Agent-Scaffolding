@@ -2,18 +2,18 @@
 
 =head1 NAME
 
-safe-archive.pl - Non-destructive archival of failure logs with optional compression
+safe_archive.pl - Non-destructive archival of failure logs with optional compression
 
 =head1 SYNOPSIS
 
   # Archive all failure logs
-  safe-archive.pl --all
+  safe_archive.pl --all
   
   # Archive specific files
-  safe-archive.pl <file1> [file2 ...]
+  safe_archive.pl <file1> [file2 ...]
   
   # Show help
-  safe-archive.pl --help
+  safe_archive.pl --help
 
 =head1 DESCRIPTION
 
@@ -210,20 +210,20 @@ overwrites temp file (C<-f>).
 
 =head2 Archive All Logs (No Compression)
 
-  $ safe-archive.pl --all
+  $ safe_archive.pl --all
   ARCHIVED: .agent/FAIL-LOGS/fail-001.log -> .agent/FAIL-ARCHIVE/fail-001.log
   ARCHIVED: .agent/FAIL-LOGS/fail-002.log -> .agent/FAIL-ARCHIVE/fail-002.log
 
 =head2 Archive with gzip Compression
 
   $ export SAFE_ARCHIVE_COMPRESS=gzip
-  $ safe-archive.pl --all
+  $ safe_archive.pl --all
   ARCHIVED: .agent/FAIL-LOGS/fail-001.log -> .agent/FAIL-ARCHIVE/fail-001.log
   # Compresses to: .agent/FAIL-ARCHIVE/fail-001.log.gz
 
 =head2 Archive Specific File
 
-  $ safe-archive.pl .agent/FAIL-LOGS/specific-fail.log
+  $ safe_archive.pl .agent/FAIL-LOGS/specific-fail.log
   ARCHIVED: .agent/FAIL-LOGS/specific-fail.log -> .agent/FAIL-ARCHIVE/specific-fail.log
 
 =head2 Collision Handling
@@ -231,7 +231,7 @@ overwrites temp file (C<-f>).
   $ ls .agent/FAIL-ARCHIVE/
   my-log.log
   
-  $ safe-archive.pl .agent/FAIL-LOGS/my-log.log
+  $ safe_archive.pl .agent/FAIL-LOGS/my-log.log
   INFO: destination exists, using suffix: .agent/FAIL-ARCHIVE/my-log.1.log
   ARCHIVED: .agent/FAIL-LOGS/my-log.log -> .agent/FAIL-ARCHIVE/my-log.1.log
 
@@ -239,12 +239,12 @@ overwrites temp file (C<-f>).
 
   $ export SAFE_FAIL_DIR=/var/log/failures
   $ export SAFE_ARCHIVE_DIR=/archive/failures
-  $ safe-archive.pl --all
+  $ safe_archive.pl --all
 
 =head2 xz Compression
 
   $ export SAFE_ARCHIVE_COMPRESS=xz
-  $ safe-archive.pl --all
+  $ safe_archive.pl --all
   # Creates .log.xz files with multi-threaded compression
 
 =head1 CONTRACT REFERENCES
@@ -324,7 +324,7 @@ sub die_msg { print STDERR "ERROR: $_[0]\n"; exit 1; }
 sub usage {
   print STDERR <<"USAGE";
 Usage:
-  scripts/perl/safe-archive.pl [--all | <file> ...]
+  scripts/perl/safe_archive.pl [--all | <file> ...]
 
 Options:
   --all            Archive all files in the FAIL-LOGS directory.

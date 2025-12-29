@@ -425,6 +425,7 @@ Script files in this repository MUST use kebab-case naming (lowercase letters an
 - Filename stem (excluding extension) MUST match: `^[a-z0-9]+(?:-[a-z0-9]+)*$`
 - ✅ Valid: `safe-run.sh`, `test-helpers.ps1`, `preflight-automerge-ruleset.pl`
 - ❌ Invalid: `safe_run.sh`, `SafeRun.ps1`, `testHelpers.py`
+- **Note:** As of Phase 5.5, Perl scripts use snake_case (e.g., `safe_run.pl`), not kebab-case. This document reflects historical conventions.
 
 **Format (Rust sources):**
 - Filename stem MUST use snake_case per Rust conventions

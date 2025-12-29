@@ -373,7 +373,7 @@ This test should be run in CI matrix and requires wrapper debug output or inspec
 
 **Add to Bash test suite:** `wrappers/bash/tests/test-safe-run.sh`
 
-**Add to Perl test suite:** Create `wrappers/perl/tests/test-safe-run.pl`
+**Add to Perl test suite:** Create `wrappers/perl/tests/test-safe_run.pl`
 
 **Add to Python3 test suite:** `wrappers/python3/tests/test-safe-run.py`
 

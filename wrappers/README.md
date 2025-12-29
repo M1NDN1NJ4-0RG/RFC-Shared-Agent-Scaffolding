@@ -33,15 +33,15 @@ The wrappers act as **invokers**, not independent implementations. They provide:
 
 **Location:** `wrappers/perl/scripts/`
 
-- `safe-run.pl` - Execute commands with event logging
-- `safe-check.pl` - Check for existing artifacts
-- `safe-archive.pl` - Archive artifacts to timestamped directories
+- `safe_run.pl` - Execute commands with event logging
+- `safe_check.pl` - Check for existing artifacts
+- `safe_archive.pl` - Archive artifacts to timestamped directories
 
 **Requirements:** Perl 5.10+
 
 **Usage:**
 ```bash
-perl ./wrappers/perl/scripts/safe-run.pl echo "Hello, World!"
+perl ./wrappers/perl/scripts/safe_run.pl echo "Hello, World!"
 ```
 
 ### Python 3
@@ -111,7 +111,7 @@ Each wrapper provides a language-native test runner for convenience:
 cd wrappers/python3 && python3 run_tests.py
 
 # Perl (native runner)
-cd wrappers/perl && perl run-tests.pl
+cd wrappers/perl && perl run_tests.pl
 
 # PowerShell (native runner)
 cd wrappers/powershell && pwsh RunTests.ps1

@@ -47,7 +47,7 @@ Applies to:
 
 **Rationale:** Python's PEP 8 style guide specifies snake_case for module names.
 
-**Current Transition:** Files currently use kebab-case (`safe-run.py`). Will transition in Phase 4.3.
+**Status:** Transitioned in Phase 4.3 (complete).
 
 Examples:
 - ✅ `safe_run.py`
@@ -68,7 +68,7 @@ Applies to:
 
 **Rationale:** PowerShell community convention for script files, matches function naming.
 
-**Current Transition:** Files currently use kebab-case (`safe-run.ps1`). Will transition in Phase 4.3.
+**Status:** Transitioned in Phase 4.3 (complete).
 
 Examples:
 - ✅ `SafeRun.ps1`
@@ -98,21 +98,22 @@ Examples:
 
 ### Perl Scripts
 
-**Convention:** `kebab-case.pl`
+**Convention:** `snake_case.pl`
 
 Applies to:
-- Perl scripts: `safe-run.pl`, `test-helpers.pl`
+- Perl scripts: `safe_run.pl`, `test_helpers.pl`, `run_tests.pl`
 - Perl modules: Use standard Perl module naming (`TestUtil.pm` → `CamelCase.pm`)
 
-**Pattern (scripts):** `^[a-z0-9]+(-[a-z0-9]+)*\.pl$`  
+**Pattern (scripts):** `^[a-z0-9]+(_[a-z0-9]+)*\.pl$`  
 **Pattern (modules):** `^[A-Z][a-zA-Z0-9]*\.pm$`
 
-**Rationale:** Perl scripts commonly use kebab-case; modules use CamelCase per Perl conventions.
+**Rationale:** Snake_case provides consistency with Python naming and aligns with the test runner naming established in Phase 5. Perl modules continue to use CamelCase per standard Perl conventions.
 
 Examples (scripts):
-- ✅ `safe-run.pl`
-- ✅ `preflight-automerge-ruleset.pl`
-- ❌ `safe_run.pl` (underscore)
+- ✅ `safe_run.pl`
+- ✅ `preflight_automerge_ruleset.pl`
+- ✅ `run_tests.pl`
+- ❌ `safe-run.pl` (kebab-case, legacy)
 
 Examples (modules):
 - ✅ `TestUtil.pm`
@@ -328,7 +329,13 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 **Bash:** No changes (already kebab-case compliant)
 
-**Perl:** No changes (already kebab-case compliant)
+**Perl:**
+- `run-tests.pl` → `run_tests.pl`
+- `safe-run.pl` → `safe_run.pl`
+- `safe-check.pl` → `safe_check.pl`
+- `safe-archive.pl` → `safe_archive.pl`
+- `preflight-automerge-ruleset.pl` → `preflight_automerge_ruleset.pl`
+- Status: **Complete** (Phase 5.5 Item 5.5.0)
 
 ### Item 4.4: Symbol Renaming
 

@@ -433,7 +433,7 @@ test_env_var_inheritance() {
 
 **Evidence:**
 ```perl
-# Perl (safe-run.pl:133-136)
+# Perl (safe_run.pl:133-136)
 my @args = @ARGV;
 if (@args > 0 && $args[0] eq '--') {
     shift @args;  # Strip --

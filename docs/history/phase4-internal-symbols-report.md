@@ -26,16 +26,16 @@ Checking Perl conventions (to be finalized)...
 
 Perl subroutines found:
 ```
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:458:sub die_usage { print STDERR $_[0] . "\n"; exit 3; }
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:459:sub warn_msg { print STDERR "WARN: $_[0]\n"; }
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:460:sub info { print STDERR "INFO: $_[0]\n"; }
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:465:sub usage {
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:476:sub have_cmd {
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:482:sub gh_api {
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:493:sub http_get {
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:509:sub parse_json {
-wrappers/perl/scripts/preflight-automerge-ruleset.pl:515:sub classify_auth {
-wrappers/perl/scripts/safe-archive.pl:322:sub die_msg { print STDERR "ERROR: $_[0]\n"; exit 1; }
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:458:sub die_usage { print STDERR $_[0] . "\n"; exit 3; }
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:459:sub warn_msg { print STDERR "WARN: $_[0]\n"; }
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:460:sub info { print STDERR "INFO: $_[0]\n"; }
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:465:sub usage {
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:476:sub have_cmd {
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:482:sub gh_api {
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:493:sub http_get {
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:509:sub parse_json {
+wrappers/perl/scripts/preflight_automerge_ruleset.pl:515:sub classify_auth {
+wrappers/perl/scripts/safe_archive.pl:322:sub die_msg { print STDERR "ERROR: $_[0]\n"; exit 1; }
 ```
 
 *Manual review needed to determine conventions.*

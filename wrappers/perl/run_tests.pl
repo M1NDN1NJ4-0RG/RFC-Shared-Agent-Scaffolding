@@ -19,7 +19,7 @@ run_tests.pl - Language-native test runner for Perl wrappers
 =head1 DESCRIPTION
 
 Language-native test runner that executes all Perl tests for the
-safe-run/safe-check/safe-archive wrapper implementations. This runner is
+safe_run/safe_check/safe_archive wrapper implementations. This runner is
 functionally equivalent to run-tests.sh but provides a native Perl
 interface.
 

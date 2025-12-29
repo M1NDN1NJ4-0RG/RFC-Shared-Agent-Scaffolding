@@ -8,7 +8,7 @@
 # - Python: snake_case.py (PEP 8)
 # - PowerShell: PascalCase.ps1 (PowerShell community)
 # - Bash: kebab-case.sh (Unix/Linux tradition)
-# - Perl: kebab-case.pl, PascalCase.pm (Perl conventions)
+# - Perl: snake_case.pl, PascalCase.pm (aligned with test runners, Phase 5.5)
 # - Non-script files: kebab-case (docs, configs, general files)
 #
 # Scope:
@@ -91,10 +91,10 @@ jobs:
               if not KEBAB_CASE.match(stem):
                 violations.append(f"{path} - Expected kebab-case, got: {stem}")
 
-            # Perl scripts should be kebab-case
+            # Perl scripts should be snake_case (Phase 5.5)
             elif suffix == ".pl":
-              if not KEBAB_CASE.match(stem):
-                violations.append(f"{path} - Expected kebab-case, got: {stem}")
+              if not SNAKE_CASE.match(stem):
+                violations.append(f"{path} - Expected snake_case, got: {stem}")
 
             # Perl modules should be PascalCase
             elif suffix == ".pm":

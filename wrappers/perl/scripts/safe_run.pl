@@ -2,20 +2,20 @@
 
 =head1 NAME
 
-safe-run.pl - Thin invoker for Rust canonical safe-run tool
+safe_run.pl - Thin invoker for Rust canonical safe-run tool
 
 =head1 SYNOPSIS
 
   # Basic usage - execute a command with failure logging
-  safe-run.pl -- <command> [args...]
+  safe_run.pl -- <command> [args...]
   
   # Optional leading "--" separator
-  safe-run.pl <command> [args...]
+  safe_run.pl <command> [args...]
   
   # Examples
-  safe-run.pl -- echo "Hello, world!"
-  safe-run.pl -- perl my-script.pl
-  safe-run.pl npm test
+  safe_run.pl -- echo "Hello, world!"
+  safe_run.pl -- perl my-script.pl
+  safe_run.pl npm test
 
 =head1 DESCRIPTION
 
@@ -77,7 +77,7 @@ tool without further searching.
 Example:
 
   export SAFE_RUN_BIN=/custom/path/to/safe-run
-  safe-run.pl -- echo "test"
+  safe_run.pl -- echo "test"
 
 =back
 
@@ -106,7 +106,7 @@ Note: Extremely large values may produce noisy stderr.
 Example:
 
   export SAFE_SNIPPET_LINES=10
-  safe-run.pl -- failing-command
+  safe_run.pl -- failing-command
 
 =item B<SAFE_RUN_VIEW>
 
@@ -194,7 +194,7 @@ Conformance test vectors: conformance/vectors.json
 
 =head2 Basic Success Case
 
-  $ safe-run.pl -- echo "Hello"
+  $ safe_run.pl -- echo "Hello"
   Hello
   $ echo $?
   0
@@ -203,7 +203,7 @@ No artifacts created.
 
 =head2 Basic Failure Case
 
-  $ safe-run.pl -- perl -e 'exit 42'
+  $ safe_run.pl -- perl -e 'exit 42'
   $ echo $?
   42
   $ ls .agent/FAIL-LOGS/
@@ -212,23 +212,23 @@ No artifacts created.
 =head2 Custom Binary Location
 
   $ export SAFE_RUN_BIN=/opt/safe-run/bin/safe-run
-  $ safe-run.pl -- npm test
+  $ safe_run.pl -- npm test
 
 =head2 Custom Log Directory
 
   $ export SAFE_LOG_DIR=/var/log/agent-failures
-  $ safe-run.pl -- make test
+  $ safe_run.pl -- make test
 
 =head2 Snippet Lines Configuration
 
   $ export SAFE_SNIPPET_LINES=5
-  $ safe-run.pl -- ./long-failing-script.sh
+  $ safe_run.pl -- ./long-failing-script.sh
   # Last 5 lines of output printed to stderr for quick diagnosis
 
 =head2 Merged View Mode
 
   $ export SAFE_RUN_VIEW=merged
-  $ safe-run.pl -- ./script-with-interleaved-output.sh
+  $ safe_run.pl -- ./script-with-interleaved-output.sh
   # Failure log shows stdout/stderr in temporal order
 
 =head1 SEE ALSO
