@@ -32,7 +32,7 @@
 #
 # CI INTEGRATION:
 #   Called by: .github/workflows/test-bash.yml
-#   Working directory: wrappers/scripts/bash
+#   Working directory: wrappers/bash
 #   Environment: GitHub Actions Ubuntu runner
 #
 # EXAMPLES:
@@ -41,7 +41,7 @@
 #
 #   # CI usage (GitHub Actions)
 #   - name: Run Bash tests
-#     working-directory: wrappers/scripts/bash
+#     working-directory: wrappers/bash
 #     run: ./run-tests.sh
 #
 # SEE ALSO:

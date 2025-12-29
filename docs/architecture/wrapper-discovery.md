@@ -28,7 +28,7 @@ Check if `./target/release/<tool>` exists relative to the wrapper's repository r
 ```bash
 cd /path/to/repo
 cargo build --release
-./wrappers/scripts/bash/scripts/safe-run.sh arg1 arg2
+./wrappers/bash/scripts/safe-run.sh arg1 arg2
 # Uses ./target/release/safe-run
 ```
 

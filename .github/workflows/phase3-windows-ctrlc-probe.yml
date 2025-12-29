@@ -13,7 +13,7 @@
 # Dependencies:
 # - Rust stable toolchain (for building safe-run.exe)
 # - PowerShell (built into Windows)
-# - Probe script: wrappers/scripts/powershell/tests/phase3-ctrlc-probe.ps1
+# - Probe script: wrappers/powershell/tests/phase3-ctrlc-probe.ps1
 #
 # Status: DISABLED
 # - Workflow preserved for future testing on actual Windows machines
@@ -43,13 +43,13 @@ on:
   workflow_dispatch:
   # pull_request:
   #   paths:
-  #     - 'wrappers/scripts/powershell/**'
+  #     - 'wrappers/powershell/**'
   #     - '.github/workflows/phase3-windows-ctrlc-probe.yml'
   # push:
   #   branches:
   #     - main
   #   paths:
-  #     - 'wrappers/scripts/powershell/**'
+  #     - 'wrappers/powershell/**'
   #     - '.github/workflows/phase3-windows-ctrlc-probe.yml'
 
 # Permissions: Read-only access to repository contents
@@ -99,24 +99,24 @@ jobs:
         run: |
           Write-Host "=== Repository Structure ==="
           Write-Host "Checking for probe script..."
-          $probePath = "wrappers/scripts/powershell/tests/phase3-ctrlc-probe.ps1"
+          $probePath = "wrappers/powershell/tests/phase3-ctrlc-probe.ps1"
           Write-Host "Probe script exists: $(Test-Path $probePath)"
 
           Write-Host ""
           Write-Host "Checking for wrapper script..."
-          $wrapperPath = "wrappers/scripts/powershell/scripts/safe-run.ps1"
+          $wrapperPath = "wrappers/powershell/scripts/safe-run.ps1"
           Write-Host "Wrapper script exists: $(Test-Path $wrapperPath)"
 
           Write-Host ""
-          Write-Host "Directory: wrappers/scripts/powershell/"
-          Get-ChildItem "wrappers/scripts/powershell/" | ForEach-Object {
+          Write-Host "Directory: wrappers/powershell/"
+          Get-ChildItem "wrappers/powershell/" | ForEach-Object {
             Write-Host "  $($_.Name) $(if ($_.PSIsContainer) { '[DIR]' } else { '' })"
           }
 
           Write-Host ""
-          Write-Host "Directory: wrappers/scripts/powershell/scripts/"
-          if (Test-Path "wrappers/scripts/powershell/scripts/") {
-            Get-ChildItem "wrappers/scripts/powershell/scripts/" | ForEach-Object {
+          Write-Host "Directory: wrappers/powershell/scripts/"
+          if (Test-Path "wrappers/powershell/scripts/") {
+            Get-ChildItem "wrappers/powershell/scripts/" | ForEach-Object {
               Write-Host "  $($_.Name)"
             }
           } else {
@@ -124,9 +124,9 @@ jobs:
           }
 
           Write-Host ""
-          Write-Host "Directory: wrappers/scripts/powershell/tests/"
-          if (Test-Path "wrappers/scripts/powershell/tests/") {
-            Get-ChildItem "wrappers/scripts/powershell/tests/" | ForEach-Object {
+          Write-Host "Directory: wrappers/powershell/tests/"
+          if (Test-Path "wrappers/powershell/tests/") {
+            Get-ChildItem "wrappers/powershell/tests/" | ForEach-Object {
               Write-Host "  $($_.Name)"
             }
           } else {
@@ -136,7 +136,7 @@ jobs:
       - name: Run Ctrl-C probe
         shell: pwsh
         run: |
-          $probeScript = "wrappers/scripts/powershell/tests/phase3-ctrlc-probe.ps1"
+          $probeScript = "wrappers/powershell/tests/phase3-ctrlc-probe.ps1"
 
           if (-not (Test-Path $probeScript)) {
             Write-Error "Probe script not found: $probeScript"

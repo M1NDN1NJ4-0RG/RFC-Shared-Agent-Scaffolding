@@ -25,8 +25,8 @@ $ bash scripts/verify-repo-references.sh
 - ✅ **PowerShell test files:** Fixed 2 remaining references that were in comments
 
 **Fixed Files:**
-- `wrappers/scripts/powershell/tests/phase3-ctrlc-probe.ps1` - Updated path reference in docstring
-- `wrappers/scripts/powershell/tests/safe-check-tests.ps1` - Updated path reference in comment
+- `wrappers/powershell/tests/phase3-ctrlc-probe.ps1` - Updated path reference in docstring
+- `wrappers/powershell/tests/safe-check-tests.ps1` - Updated path reference in comment
 
 **Conclusion:** All active references updated. Historical documentation appropriately preserved with old paths for context.
 
@@ -44,7 +44,7 @@ $ cd rust/ && cargo test --all
 
 #### Bash Wrappers
 ```bash
-$ cd wrappers/scripts/bash && bash run-tests.sh
+$ cd wrappers/bash && bash run-tests.sh
 ```
 - ✅ **Preflight tests:** 5 passed
 - ✅ **safe-archive tests:** 4 passed
@@ -54,14 +54,14 @@ $ cd wrappers/scripts/bash && bash run-tests.sh
 
 #### Python3 Wrappers
 ```bash
-$ cd wrappers/scripts/python3 && bash run-tests.sh
+$ cd wrappers/python3 && bash run-tests.sh
 ```
 - ✅ **All tests:** 20 passed, 0 failed
 - ✅ Tests include: preflight, safe-archive, safe-check, safe-run
 
 #### Perl Wrappers
 ```bash
-$ cd wrappers/scripts/perl && bash run-tests.sh
+$ cd wrappers/perl && bash run-tests.sh
 ```
 - ✅ **All tests:** 46 passed, 0 failed
 - ✅ Files tested: 5 test files
@@ -69,7 +69,7 @@ $ cd wrappers/scripts/perl && bash run-tests.sh
 
 #### PowerShell Wrappers
 ```bash
-$ cd wrappers/scripts/powershell && pwsh -File run-tests.ps1
+$ cd wrappers/powershell && pwsh -File run-tests.ps1
 ```
 - ✅ **All tests:** 17 passed, 0 failed, 0 skipped
 - ✅ Tests include: preflight, safe-archive, safe-check, safe-run
@@ -143,10 +143,10 @@ All 13 GitHub Actions workflow files validated:
 ## Changes Made in M5
 
 ### Files Modified:
-1. `wrappers/scripts/powershell/tests/phase3-ctrlc-probe.ps1`
+1. `wrappers/powershell/tests/phase3-ctrlc-probe.ps1`
    - Updated path reference from `RFC-Shared-Agent-Scaffolding-Example/` to `wrappers/`
    
-2. `wrappers/scripts/powershell/tests/safe-check-tests.ps1`
+2. `wrappers/powershell/tests/safe-check-tests.ps1`
    - Updated path reference from `RFC-Shared-Agent-Scaffolding-Example/` to `wrappers/`
 
 ### Files Created:

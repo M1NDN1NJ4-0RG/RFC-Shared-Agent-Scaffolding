@@ -10,13 +10,13 @@ To ensure consistency, maintainability, and prevent path drift across language i
 
 All language bundles are located under:
 ```
-wrappers/scripts/<language>/
+wrappers/<language>/
 ```
 
 Each language bundle **MUST** have the following structure:
 
 ```
-wrappers/scripts/<language>/
+wrappers/<language>/
   ├── scripts/          # Actual implementation scripts
   │   ├── safe-run.*
   │   ├── safe-check.*
@@ -107,7 +107,7 @@ To run locally:
 ### CI Enforcement
 
 The workflow `.github/workflows/structure-validation.yml` runs on every PR that modifies:
-- `wrappers/scripts/**`
+- `wrappers/**`
 - `scripts/validate-structure.sh`
 - The workflow file itself
 
