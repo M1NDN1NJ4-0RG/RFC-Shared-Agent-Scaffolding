@@ -261,21 +261,39 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 ## Existing Enforcement
 
-### Kebab-Case Filename Validation (Pre-Phase 4)
+### Language-Specific Naming Validation (Phase 4+)
 
-**Workflow:** `.github/workflows/naming-kebab-case.yml`
+**Workflow:** `.github/workflows/naming-enforcement.yml`
 
 **Scope:**
-- `wrappers/**`
-- `scripts/**`
+- All tracked files in repository
+- Language-specific rules applied per file extension
 
-**Pattern:** `^[a-z0-9]+(-[a-z0-9]+)*$` (stem only, without extension)
+**Validation Rules:**
+- Python (`.py`): `snake_case` pattern
+- PowerShell (`.ps1`): `PascalCase` pattern
+- Bash (`.sh`, `.bash`, `.zsh`): `kebab-case` pattern
+- Perl scripts (`.pl`): `kebab-case` pattern
+- Perl modules (`.pm`): `PascalCase` pattern
 
-**Exclusions:**
-- `.rs` files (Rust uses `snake_case`)
-- Non-script files (docs, data files)
+**Current Status (Phase 4):** WARN mode
+- Violations are reported in CI output
+- Build passes even with violations
+- Gives contributors time to fix violations
 
-**Status:** Currently enforced, will be updated in Phase 4.6 to align with new standards.
+**Future Status (Phase 4.5):** ENFORCE mode
+- Violations will fail CI
+- Blocks merge until violations are fixed
+- Conversion will happen one language at a time
+
+### Legacy Kebab-Case Enforcement (Pre-Phase 4)
+
+**Status:** Replaced by `naming-enforcement.yml` in Phase 4
+
+**Historical scope:**
+- Applied uniform kebab-case to all script files
+- Did not respect language-specific conventions
+- Removed in favor of language-aware validation
 
 ### Language-Specific Linters
 
