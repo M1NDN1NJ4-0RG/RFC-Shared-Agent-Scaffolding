@@ -71,14 +71,10 @@ from pathlib import Path
 
 
 def find_repo_root(start_path: Path) -> Path:
-    """
-    Find repository root (2 levels up from wrapper directory).
+    """Find repository root (2 levels up from wrapper directory).
 
-    Args:
-        start_path: Starting directory (wrapper directory)
-
-    Returns:
-        Path to repository root
+    :param start_path: Starting directory (wrapper directory)
+    :returns: Path to repository root
     """
     # Wrapper directory structure: repo_root/wrappers/python3/
     # So repo root is 2 levels up
@@ -86,11 +82,9 @@ def find_repo_root(start_path: Path) -> Path:
 
 
 def setup_environment() -> dict:
-    """
-    Set up test environment variables.
+    """Set up test environment variables.
 
-    Returns:
-        Environment dictionary with SAFE_RUN_BIN set
+    :returns: Environment dictionary with SAFE_RUN_BIN set
     """
     # Get wrapper directory (where this script lives)
     wrapper_dir = Path(__file__).resolve().parent
@@ -110,11 +104,9 @@ def setup_environment() -> dict:
 
 
 def check_prerequisites() -> bool:
-    """
-    Check if bash is available.
+    """Check if bash is available.
 
-    Returns:
-        True if bash is found, False otherwise
+    :returns: True if bash is found, False otherwise
     """
     try:
         subprocess.run(
@@ -129,11 +121,9 @@ def check_prerequisites() -> bool:
 
 
 def run_tests() -> int:
-    """
-    Execute the test suite via run-tests.sh.
+    """Execute the test suite via run-tests.sh.
 
-    Returns:
-        Exit code (0=pass, 1=fail, 2=error)
+    :returns: Exit code (0=pass, 1=fail, 2=error)
     """
     # Get wrapper directory
     wrapper_dir = Path(__file__).resolve().parent
@@ -180,11 +170,9 @@ def run_tests() -> int:
 
 
 def main() -> int:
-    """
-    Main entry point.
+    """Main entry point.
 
-    Returns:
-        Exit code
+    :returns: Exit code
     """
     return run_tests()
 

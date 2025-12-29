@@ -223,6 +223,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertIn("line4", proc.stderr)
 
     def test_sigint_creates_aborted_log(self):
+        """Test that SIGINT creates an aborted log file."""
         # Run a long-ish process via safe-run, then SIGINT safe-run itself.
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)

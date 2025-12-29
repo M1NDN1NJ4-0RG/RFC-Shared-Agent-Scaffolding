@@ -241,11 +241,10 @@ def compress_file(method: str, path: str) -> None:
 def archive_one(src: str, archive_dir: str, compress: str, strict_no_clobber: bool = False) -> None:
     """Archive a single file with M0-P1-I3 no-clobber semantics.
 
-    Args:
-        src: Source file path
-        archive_dir: Destination directory
-        compress: Compression method
-        strict_no_clobber: If True, fail if destination exists. If False (default), auto-suffix.
+    :param src: Source file path
+    :param archive_dir: Destination directory
+    :param compress: Compression method
+    :param strict_no_clobber: If True, fail if destination exists. If False (default), auto-suffix.
     """
     if not os.path.exists(src):
         raise RuntimeError(f"File not found: {src}")
