@@ -108,12 +108,9 @@ def eprint(*args: object) -> None:
 def die(msg: str, rc: int = 1) -> None:
     """Print error message to stderr and exit immediately.
 
-    Args:
-        msg: Error message to print (prefixed with "ERROR: ")
-        rc: Exit code (default: 1)
-    
-    Raises:
-        SystemExit: Always raises to terminate the program
+    :param msg: Error message to print (prefixed with "ERROR: ")
+    :param rc: Exit code (default: 1)
+    :raises SystemExit: Always raises to terminate the program
 
     This is a convenience function for fatal errors during verification.
     """
@@ -133,11 +130,8 @@ def usage() -> None:
 def count_files(d: str) -> int:
     """Count regular files in a directory (non-recursive).
 
-    Args:
-        d: Directory path to count files in
-    
-    Returns:
-        Number of regular files (not directories or symlinks)
+    :param d: Directory path to count files in
+    :returns: Number of regular files (not directories or symlinks)
 
     Used to verify that safe-run creates exactly one artifact per failure
     and no artifacts on success.
@@ -148,14 +142,9 @@ def count_files(d: str) -> int:
 def main(argv: List[str]) -> int:
     """Execute contract verification tests.
 
-    Args:
-        argv: Command-line arguments (expected to be empty)
-    
-    Returns:
-        Exit code (0 on success, 1 on verification failure, 2 on usage error)
-    
-    Raises:
-        SystemExit: Via die() or usage() on fatal errors
+    :param argv: Command-line arguments (expected to be empty)
+    :returns: Exit code (0 on success, 1 on verification failure, 2 on usage error)
+    :raises SystemExit: Via die() or usage() on fatal errors
 
     Test Sequence
     -------------

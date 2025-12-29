@@ -731,34 +731,42 @@ class PythonValidator:
                 line_number=node.lineno,
             )
         
-        # Check for required sections (Args and Returns)
-        # Be lenient about format - accept "Args:", "Arguments:", "Parameters:" etc.
-        has_args = bool(re.search(r'^(Args|Arguments|Parameters)\s*(:|\n)', docstring, re.MULTILINE | re.IGNORECASE))
-        has_returns = bool(re.search(r'^Returns?\s*(:|\n)', docstring, re.MULTILINE | re.IGNORECASE))
+        # Check for required sections (:param and :returns in reST/Sphinx style)
+        # Accept :param, :type, :returns, :rtype per PEP 287
+        has_param = bool(re.search(r':param\s+\w+:', docstring, re.MULTILINE))
+        has_returns = bool(re.search(r':(returns?|rtype):', docstring, re.MULTILINE))
         
         missing = []
         
-        # Only require Args section if function has parameters (excluding self/cls)
+        # Only require :param if function has parameters (excluding self/cls)
         params = [arg.arg for arg in node.args.args if arg.arg not in ('self', 'cls')]
-        if params and not has_args:
-            missing.append("Args/Parameters")
+        if params and not has_param:
+            missing.append(":param")
         
-        # Only require Returns section if function doesn't return None explicitly
-        # or has no return statement
+        # Only require :returns if function has a return statement with a value  
+        # Check only direct body, skip nested function definitions
         if not has_returns:
-            # Check if function has a return statement with a value
-            has_return_value = any(
-                isinstance(n, ast.Return) and n.value is not None
-                for n in ast.walk(node)
-            )
+            has_return_value = False
+            for child in node.body:
+                # Skip nested function definitions entirely
+                if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                    continue
+                # Walk this child node
+                for n in ast.walk(child):
+                    if isinstance(n, ast.Return) and n.value is not None:
+                        has_return_value = True
+                        break
+                if has_return_value:
+                    break
+            
             if has_return_value:
-                missing.append("Returns")
+                missing.append(":returns")
         
         if missing:
             return ValidationError(
                 str(file_path),
                 missing,
-                f"Function docstring must include {', '.join(missing)} section(s)",
+                f"Function docstring must include {', '.join(missing)} field(s) per PEP 287 reST style",
                 symbol_name=f"def {node.name}()",
                 line_number=node.lineno,
             )
@@ -800,15 +808,15 @@ class PythonValidator:
             )
         
         # Basic check: docstring should have some content beyond just a one-liner
-        # (at least 2 lines or has "Attributes:" section)
+        # (at least 2 lines or has ":ivar" fields for attributes in reST style)
         lines_in_doc = docstring.strip().split('\n')
-        has_attributes = bool(re.search(r'^Attributes\s*(:|\n)', docstring, re.MULTILINE | re.IGNORECASE))
+        has_attributes = bool(re.search(r':ivar\s+\w+:', docstring, re.MULTILINE))
         
         if len(lines_in_doc) < 2 and not has_attributes:
             return ValidationError(
                 str(file_path),
                 ["class documentation"],
-                "Class docstring should describe purpose and optionally list Attributes",
+                "Class docstring should describe purpose and optionally list :ivar attributes",
                 symbol_name=f"class {node.name}",
                 line_number=node.lineno,
             )

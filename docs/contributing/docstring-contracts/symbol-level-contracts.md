@@ -38,13 +38,13 @@ Document all symbols including private helpers for maximum clarity.
 Every function and method must have a docstring with:
 
 1. **Summary line** - One-line description of what it does
-2. **Args** - All parameters with types and descriptions
-3. **Returns** - Return type and description
-4. **Raises** (if applicable) - Exceptions that may be raised
+2. **:param** - All parameters with types and descriptions
+3. **:returns** or **:rtype** - Return type and description
+4. **:raises** (if applicable) - Exceptions that may be raised
 
-**Format:** Google-style or NumPy-style docstrings (consistent within a file)
+**Format:** reST/Sphinx-style docstrings per PEP 287
 
-#### Google-Style Template
+#### reST/Sphinx-Style Template
 
 ```python
 def function_name(arg1: str, arg2: int = 0) -> bool:
@@ -53,56 +53,40 @@ def function_name(arg1: str, arg2: int = 0) -> bool:
     More detailed description if needed. Can span multiple lines
     and paragraphs.
     
-    Args:
-        arg1: Description of first argument
-        arg2: Description of second argument. Defaults to 0.
+    :param arg1: Description of first argument
+    :type arg1: str
+    :param arg2: Description of second argument. Defaults to 0.
+    :type arg2: int
+    :returns: True if successful, False otherwise
+    :rtype: bool
+    :raises ValueError: If arg1 is empty
+    :raises IOError: If file cannot be read
     
-    Returns:
-        True if successful, False otherwise.
+    Example::
     
-    Raises:
-        ValueError: If arg1 is empty
-        IOError: If file cannot be read
-    
-    Examples:
         >>> function_name("test", 5)
         True
     """
     pass
 ```
 
-#### NumPy-Style Template
+#### Compact reST/Sphinx-Style (Preferred)
+
+When types are in annotations, you can use the compact form:
 
 ```python
 def function_name(arg1: str, arg2: int = 0) -> bool:
     """Brief summary of what this function does.
     
-    More detailed description if needed. Can span multiple lines
-    and paragraphs.
+    :param arg1: Description of first argument
+    :param arg2: Description of second argument. Defaults to 0.
+    :returns: True if successful, False otherwise
+    :raises ValueError: If arg1 is empty
     
-    Parameters
-    ----------
-    arg1 : str
-        Description of first argument
-    arg2 : int, optional
-        Description of second argument (default is 0)
+    Example::
     
-    Returns
-    -------
-    bool
-        True if successful, False otherwise
-    
-    Raises
-    ------
-    ValueError
-        If arg1 is empty
-    IOError
-        If file cannot be read
-    
-    Examples
-    --------
-    >>> function_name("test", 5)
-    True
+        >>> function_name("test", 5)
+        True
     """
     pass
 ```
@@ -116,11 +100,11 @@ class ClassName:
     More detailed description of the class purpose, behavior,
     and usage patterns.
     
-    Attributes:
-        attribute1: Description of public attribute
-        attribute2: Description of another attribute
+    :ivar attribute1: Description of public attribute
+    :ivar attribute2: Description of another attribute
     
-    Examples:
+    Example::
+    
         >>> obj = ClassName()
         >>> obj.method()
         result
@@ -129,8 +113,7 @@ class ClassName:
     def __init__(self, param: str):
         """Initialize ClassName.
         
-        Args:
-            param: Description of initialization parameter
+        :param param: Description of initialization parameter
         """
         pass
 ```

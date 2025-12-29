@@ -86,8 +86,7 @@ MODULE_PATH = SCRIPTS / "preflight_automerge_ruleset.py"
 def load_module():
     """Dynamically load preflight_automerge_ruleset.py as a Python module.
 
-    Returns:
-        Loaded module object
+    :returns: Loaded module object
 
     Uses importlib to load the script even though it has hyphens in the
     filename (which aren't valid in Python module names). This allows
@@ -114,8 +113,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
     def _rulesets_list(self):
         """Generate test ruleset list fixture.
         
-        Returns:
-            List of ruleset dicts for testing
+        :returns: List of ruleset dicts for testing
         """
         return [
             {"id": 111, "name": "Main - PR Only + Green CI"},
@@ -125,11 +123,8 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
     def _ruleset_detail(self, required_contexts):
         """Generate test ruleset detail fixture.
         
-        Args:
-            required_contexts: List of required status check contexts
-            
-        Returns:
-            Dict representing a GitHub ruleset configuration
+        :param required_contexts: List of required status check contexts
+        :returns: Dict representing a GitHub ruleset configuration
         """
         return {
             "id": 111,
@@ -172,9 +167,6 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
     def test_success_path_via_http(self):
         """Test successful ruleset verification via HTTP API.
         
-        Returns:
-            None (unittest test method)
-        
         Verifies that the script correctly validates required contexts when
         accessing GitHub API via HTTP (gh CLI not available).
         """
@@ -183,12 +175,9 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         def fake_http_get(url, api_version):
             """Mock HTTP GET for ruleset API calls.
             
-            Args:
-                url: API endpoint URL
-                api_version: GitHub API version string
-                
-            Returns:
-                Tuple of (status_code, json_body)
+            :param url: API endpoint URL
+            :param api_version: GitHub API version string
+            :returns: Tuple of (status_code, json_body)
             """
             if url.endswith("/rulesets"):
                 return 200, json.dumps(self._rulesets_list())
@@ -214,9 +203,6 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
     def test_missing_required_context_fails(self):
         """Test that missing required status contexts causes failure.
         
-        Returns:
-            None (unittest test method)
-        
         Verifies that the script exits with non-zero when the ruleset
         is missing one of the required status check contexts.
         """
@@ -226,12 +212,9 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         def fake_http_get(url, api_version):
             """Mock HTTP GET missing one required context.
             
-            Args:
-                url: API endpoint URL
-                api_version: GitHub API version string
-                
-            Returns:
-                Tuple of (status_code, json_body)
+            :param url: API endpoint URL
+            :param api_version: GitHub API version string
+            :returns: Tuple of (status_code, json_body)
             """
             if url.endswith("/rulesets"):
                 return 200, json.dumps(self._rulesets_list())
@@ -257,21 +240,15 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
     def test_ruleset_not_found_returns_3(self):
         """Test that non-existent ruleset returns exit code 3.
         
-        Returns:
-            None (unittest test method)
-        
         Verifies that the script returns exit code 3 when the specified
         ruleset name is not found in the repository's rulesets.
         """
         def fake_http_get(url, api_version):
             """Mock HTTP GET with no matching ruleset.
             
-            Args:
-                url: API endpoint URL
-                api_version: GitHub API version string
-                
-            Returns:
-                Tuple of (status_code, json_body)
+            :param url: API endpoint URL
+            :param api_version: GitHub API version string
+            :returns: Tuple of (status_code, json_body)
             """
             if url.endswith("/rulesets"):
                 return 200, json.dumps([{"id": 999, "name": "nope"}])
@@ -295,21 +272,15 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
     def test_auth_failure_returns_2(self):
         """Test that authentication failure returns exit code 2.
         
-        Returns:
-            None (unittest test method)
-        
         Verifies that the script returns exit code 2 when GitHub API
         returns a 401 authentication error.
         """
         def fake_http_get(url, api_version):
             """Mock HTTP GET with auth error.
             
-            Args:
-                url: API endpoint URL
-                api_version: GitHub API version string
-                
-            Returns:
-                Tuple of (status_code, json_body)
+            :param url: API endpoint URL
+            :param api_version: GitHub API version string
+            :returns: Tuple of (status_code, json_body)
             """
             if url.endswith("/rulesets"):
                 return 401, json.dumps({"message": "Bad credentials"})

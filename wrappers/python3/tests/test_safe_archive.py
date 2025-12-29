@@ -85,8 +85,7 @@ SAFE_ARCHIVE = SCRIPTS / "safe_archive.py"
 def _py():
     """Get path to current Python interpreter.
 
-    Returns:
-        sys.executable path
+    :returns: sys.executable path
 
     Used to ensure safe_archive.py uses the same Python interpreter
     as the test runner, avoiding version mismatches.
@@ -97,14 +96,11 @@ def _py():
 def run_archive(args, workdir: Path, env=None, timeout=25):
     """Run safe_archive.py as a subprocess with specified arguments.
 
-    Args:
-        args: Arguments to pass to safe_archive.py (list[str])
-        workdir: Working directory for subprocess execution
-        env: Optional environment variable overrides (dict)
-        timeout: Timeout in seconds (default: 25)
-    
-    Returns:
-        subprocess.CompletedProcess instance with returncode, stdout, stderr
+    :param args: Arguments to pass to safe_archive.py (list[str])
+    :param workdir: Working directory for subprocess execution
+    :param env: Optional environment variable overrides (dict)
+    :param timeout: Timeout in seconds (default: 25)
+    :returns: subprocess.CompletedProcess instance with returncode, stdout, stderr
 
     This helper function invokes safe_archive.py with the specified arguments,
     capturing stdout and stderr for verification. The working directory is set
