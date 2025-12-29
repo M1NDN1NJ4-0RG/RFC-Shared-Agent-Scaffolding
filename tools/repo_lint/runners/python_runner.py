@@ -59,7 +59,9 @@ class PythonRunner(Runner):
         return results
 
     def fix(self) -> List[LintResult]:
-        """Apply Python formatters (Black only).
+        """Apply Python formatters and safe auto-fixes.
+
+        Per Phase 0 Item 0.9.1: Apply Black formatting and Ruff safe fixes.
 
         :Returns:
             List of results after applying fixes
@@ -72,9 +74,12 @@ class PythonRunner(Runner):
         black_result = self._run_black_fix()
         results.append(black_result)
 
-        # Re-run checks after formatting only if Black succeeded
-        if black_result.passed:
-            results.append(self._run_ruff_check())
+        # Apply Ruff safe fixes
+        ruff_result = self._run_ruff_fix()
+        results.append(ruff_result)
+
+        # Re-run checks only if both Black and Ruff succeeded
+        if black_result.passed and ruff_result.passed:
             results.append(self._run_pylint())
             results.append(self._run_docstring_validation())
 
@@ -124,22 +129,16 @@ class PythonRunner(Runner):
         )
 
     def _run_ruff_check(self) -> LintResult:
-        """Run Ruff linter with auto-fix for safe fixes.
+        """Run Ruff linter in check-only mode (non-mutating).
+
+        Per Phase 0 Item 0.9.1: repo-lint check MUST be non-mutating.
 
         :Returns:
             LintResult for Ruff check
         """
-        # First, auto-fix safe fixes
-        subprocess.run(
-            ["ruff", "check", ".", "--fix"],
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,
+        result = subprocess.run(
+            ["ruff", "check", ".", "--no-fix"], cwd=self.repo_root, capture_output=True, text=True, check=False
         )
-
-        # Then check for remaining issues (including unsafe fixes)
-        result = subprocess.run(["ruff", "check", "."], cwd=self.repo_root, capture_output=True, text=True, check=False)
 
         if result.returncode == 0:
             return LintResult(tool="ruff", passed=True, violations=[])
@@ -160,6 +159,41 @@ class PythonRunner(Runner):
                     )
                 elif not line.startswith("Found"):
                     # Ruff output format: path:line:col: code message
+                    violations.append(Violation(tool="ruff", file=".", line=None, message=line.strip()))
+
+        return LintResult(tool="ruff", passed=False, violations=violations)
+
+    def _run_ruff_fix(self) -> LintResult:
+        """Run Ruff linter with safe auto-fixes.
+
+        Per Phase 0 Item 0.9.1: repo-lint fix may apply SAFE fixes only.
+
+        :Returns:
+            LintResult for Ruff fix operation
+        """
+        # Apply safe fixes only (no --unsafe-fixes flag)
+        result = subprocess.run(
+            ["ruff", "check", ".", "--fix"], cwd=self.repo_root, capture_output=True, text=True, check=False
+        )
+
+        if result.returncode == 0:
+            return LintResult(tool="ruff", passed=True, violations=[])
+
+        # Parse Ruff output for remaining unfixable issues
+        violations = []
+
+        for line in result.stdout.splitlines():
+            if line.strip():
+                if "hidden fixes can be enabled with the `--unsafe-fixes` option" in line:
+                    violations.append(
+                        Violation(
+                            tool="ruff",
+                            file=".",
+                            line=None,
+                            message=f"⚠️  {line.strip()} (unsafe fixes not applied automatically)",
+                        )
+                    )
+                elif not line.startswith("Found"):
                     violations.append(Violation(tool="ruff", file=".", line=None, message=line.strip()))
 
         return LintResult(tool="ruff", passed=False, violations=violations)
