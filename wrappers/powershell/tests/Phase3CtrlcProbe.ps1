@@ -115,7 +115,7 @@ function Invoke-CtrlCProbe {
     Write-ProbeLog "Current location: $(Get-Location)"
     Write-ProbeLog "`$PSScriptRoot: $PSScriptRoot"
     
-    $wrapperScript = Join-Path $PSScriptRoot "..\scripts\safe-run.ps1"
+    $wrapperScript = Join-Path $PSScriptRoot "..\scripts\SafeRun.ps1"
     Write-ProbeLog "Wrapper script (relative): $wrapperScript"
     
     # Test if the path exists before resolving
