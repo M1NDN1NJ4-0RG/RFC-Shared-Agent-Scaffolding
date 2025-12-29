@@ -23,7 +23,7 @@ and extract function definitions WITHOUT executing the script (per Phase 0 Item 
 """
 
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict
 
 try:
     import tree_sitter_bash as tsbash
@@ -34,7 +34,7 @@ except ImportError:
     TREE_SITTER_AVAILABLE = False
 
 
-def parse_bash_functions(file_path: Path) -> Dict[str, any]:
+def parse_bash_functions(file_path: Path) -> Dict[str, Any]:
     """Parse Bash script and extract function definitions using tree-sitter.
 
     :param file_path: Path to Bash script file
@@ -52,12 +52,23 @@ def parse_bash_functions(file_path: Path) -> Dict[str, any]:
             content_bytes = f.read()
 
         # Also read as text for display/comment checking
-        content_text = content_bytes.decode("utf-8")
+        try:
+            content_text = content_bytes.decode("utf-8")
+        except UnicodeDecodeError as e:
+            return {"functions": [], "errors": [f"File contains invalid UTF-8 encoding: {e}"]}
 
         # Initialize parser with Bash language
-        # tree-sitter 0.25+ uses a different API
+        # Handle both tree-sitter < 0.25 and >= 0.25 API versions
         parser = Parser()
-        parser.language = Language(tsbash.language())
+        lang_obj = Language(tsbash.language())
+        
+        # Try newer API first (0.25+), fallback to older API
+        if hasattr(parser, "language"):
+            parser.language = lang_obj
+        elif hasattr(parser, "set_language"):
+            parser.set_language(lang_obj)
+        else:
+            return {"functions": [], "errors": ["Unsupported tree-sitter API version"]}
 
         # Parse the file (pass bytes directly)
         tree = parser.parse(content_bytes)
@@ -90,7 +101,7 @@ def parse_bash_functions(file_path: Path) -> Dict[str, any]:
                 func_line = node.start_point[0] + 1  # 0-indexed to 1-indexed
 
                 # Check for comment block immediately preceding the function
-                has_doc = _check_for_doc_comment(node, content_text, root_node)
+                has_doc = _check_for_doc_comment(node, content_text)
 
                 functions.append(
                     {
@@ -112,14 +123,13 @@ def parse_bash_functions(file_path: Path) -> Dict[str, any]:
         return {"functions": [], "errors": [f"Failed to parse Bash script: {str(e)}"]}
 
 
-def _check_for_doc_comment(func_node, content: str, root_node) -> bool:
+def _check_for_doc_comment(func_node, content: str) -> bool:
     """Check if a function has a documentation comment preceding it.
 
     Looks for comment lines immediately before the function definition.
 
     :param func_node: tree-sitter node for the function_definition
     :param content: File content as string
-    :param root_node: Root node of the tree
 
     :returns: True if doc comment found, False otherwise
     """
@@ -130,14 +140,12 @@ def _check_for_doc_comment(func_node, content: str, root_node) -> bool:
         return False  # Function at start of file
 
     # Look for comments in the lines immediately before the function
-    # Strategy: scan backwards from func_start_line to find comment nodes
-    # This is a simplified approach - a more robust one would traverse the tree
-
     lines = content.split("\n")
 
-    # Check lines immediately before function (up to 20 lines back)
+    # Check lines immediately before function (up to 10 lines back)
+    # Reduced from 20 to avoid incorrectly associating comments from previous functions
     comment_lines = []
-    for i in range(max(0, func_start_line - 20), func_start_line):
+    for i in range(max(0, func_start_line - 10), func_start_line):
         line = lines[i].strip()
         if line.startswith("#"):
             comment_lines.append(line)

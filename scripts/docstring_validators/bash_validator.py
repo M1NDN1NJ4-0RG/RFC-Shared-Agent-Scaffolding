@@ -170,13 +170,20 @@ class BashValidator:
                 func_line = func.get("line")
                 has_doc = func.get("has_doc_comment", False)
 
-                # Check for pragma ignore
-                # Look in the content around the function line
+                # Check for pragma ignore on or near the function
+                # Look at the function line and a few lines before
                 lines = content.split("\n")
+                pragma_exempt = False
                 if func_line > 0 and func_line <= len(lines):
-                    func_line_content = lines[func_line - 1]
-                    if re.search(r"#\s*noqa:\s*FUNCTION", func_line_content):
-                        continue
+                    # Check the function line and up to 5 lines before
+                    for i in range(max(0, func_line - 5), min(func_line + 1, len(lines))):
+                        if re.search(r"#\s*noqa:\s*FUNCTION", lines[i], re.IGNORECASE):
+                            pragma_exempt = True
+                            break
+
+                # Skip validation if explicitly exempted via pragma
+                if pragma_exempt:
+                    continue
 
                 # Per Phase 5.5 policy: Do NOT skip private/internal functions
                 # All functions must have documentation unless explicitly exempted via pragma

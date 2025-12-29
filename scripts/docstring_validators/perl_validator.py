@@ -75,7 +75,7 @@ class PerlValidator:
             errors.append(file_error)
 
         # Symbol-level validation using PPI parser
-        symbol_errors = PerlValidator._validate_subroutines(file_path)
+        symbol_errors = PerlValidator._validate_subroutines(file_path, content)
         errors.extend(symbol_errors)
 
         return errors
@@ -107,13 +107,14 @@ class PerlValidator:
         return None
 
     @staticmethod
-    def _validate_subroutines(file_path: Path) -> List[ValidationError]:
+    def _validate_subroutines(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Perl subroutine documentation using PPI parser.
 
         Uses PPI via helper script (per Phase 0 Item 0.9.5).
         Detects subroutine definitions and checks for POD documentation.
 
         :param file_path: Path to Perl file
+        :param content: File content as string (for pragma checking)
 
         :returns: List of validation errors for subroutines
         """
@@ -164,14 +165,28 @@ class PerlValidator:
                     )
 
             # Validate each subroutine
+            lines = content.split("\n")
             for sub in parse_result.get("subs", []):
                 sub_name = sub.get("name")
                 sub_line = sub.get("line")
                 has_pod = sub.get("has_pod", False)
-                pod_sections = sub.get("pod_sections", [])
 
                 # Per Phase 5.5 policy: Do NOT skip private/internal subs
                 # All subs must have documentation unless explicitly exempted via pragma
+
+                # Check for pragma ignore on or near the subroutine
+                # Look at the sub line and a few lines before
+                pragma_exempt = False
+                if sub_line > 0 and sub_line <= len(lines):
+                    # Check the sub line and up to 5 lines before
+                    for i in range(max(0, sub_line - 5), min(sub_line + 1, len(lines))):
+                        if re.search(r"#\s*noqa:\s*FUNCTION", lines[i], re.IGNORECASE):
+                            pragma_exempt = True
+                            break
+
+                # Skip validation if explicitly exempted via pragma
+                if pragma_exempt:
+                    continue
 
                 if not has_pod:
                     errors.append(

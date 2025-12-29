@@ -74,7 +74,7 @@ class PowerShellValidator:
             errors.append(file_error)
 
         # Symbol-level validation using AST parser
-        symbol_errors = PowerShellValidator._validate_functions(file_path)
+        symbol_errors = PowerShellValidator._validate_functions(file_path, content)
         errors.extend(symbol_errors)
 
         return errors
@@ -117,20 +117,21 @@ class PowerShellValidator:
         return None
 
     @staticmethod
-    def _validate_functions(file_path: Path) -> List[ValidationError]:
+    def _validate_functions(file_path: Path, content: str) -> List[ValidationError]:
         """Validate PowerShell function documentation using native AST parser.
 
         Uses Parser::ParseFile via helper script (per Phase 0 Item 0.9.3).
         Detects function definitions and checks for comment-based help blocks.
 
         :param file_path: Path to PowerShell file
+        :param content: File content as string (for pragma checking)
 
         :returns: List of validation errors for functions
         """
         errors = []
 
-        # Find the helper script
-        helper_script = Path(__file__).parent / "helpers" / "parse_powershell_ast.ps1"
+        # Find the helper script (renamed to PascalCase)
+        helper_script = Path(__file__).parent / "helpers" / "ParsePowershellAst.ps1"
         if not helper_script.exists():
             # Fallback: skip symbol-level validation if helper not available
             # (This allows incremental migration)
@@ -170,15 +171,26 @@ class PowerShellValidator:
                     )
 
             # Validate each function
+            lines = content.split("\n")
             for func in parse_result.get("functions", []):
                 func_name = func.get("name")
                 func_line = func.get("line")
                 has_help = func.get("has_help", False)
                 help_sections = func.get("help_sections", [])
 
-                # Check for pragma ignore on the function
-                # (This would need to be in the file content - we'd need to read it)
-                # For now, enforce all functions must have help
+                # Check for pragma ignore on or near the function
+                # Look at the function line and a few lines before
+                pragma_exempt = False
+                if func_line > 0 and func_line <= len(lines):
+                    # Check the function line and up to 5 lines before
+                    for i in range(max(0, func_line - 5), min(func_line + 1, len(lines))):
+                        if re.search(r"#\s*noqa:\s*FUNCTION", lines[i], re.IGNORECASE):
+                            pragma_exempt = True
+                            break
+
+                # Skip validation if explicitly exempted via pragma
+                if pragma_exempt:
+                    continue
 
                 if not has_help:
                     errors.append(
