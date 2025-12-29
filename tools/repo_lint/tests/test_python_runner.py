@@ -54,7 +54,6 @@ from unittest.mock import MagicMock, patch
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.common import LintResult, Violation
 from tools.repo_lint.runners.python_runner import PythonRunner
 
 
@@ -216,7 +215,7 @@ Found 1 error."""
         # Mock tool checks
         with patch("tools.repo_lint.runners.python_runner.command_exists", return_value=True):
             # Run fix
-            results = self.runner.fix()
+            self.runner.fix()
 
         # Verify Black was called
         black_calls = [call for call in mock_run.call_args_list if "black" in str(call)]
