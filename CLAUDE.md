@@ -28,22 +28,22 @@ Read `.docs/agent/00_INDEX.md` to decide which shard(s) to load for the current 
 
 Whenever you start, restart, or regain context:
 
-1) Read `.docs/journal/CURRENT.md`
-2) Identify the **Active Chunk ID**
-3) Load the minimum relevant shard(s) from `.docs/agent/` using the routing table
-4) Validate reality (git status / PR state / last verification notes)
-5) Continue at the next unchecked item in the active chunk
+1) Re-establish the current task from the user request, issue, or PR description.
+2) Load the minimum relevant shard(s) from `.docs/agent/` using the routing table in `00_INDEX.md`.
+3) Validate reality (e.g., `git status`, PR state, and any verification notes available in the repo or PR).
+4) Continue at the next clearly defined, unchecked item for the active task.
 
-If the journal appears stale, update it immediately before proceeding.
+> Note: A previous journal system based on `.docs/journal/CURRENT.md` and `.docs/journal/PR-LOG/*` was archived and is **not** currently used by this repository. Do not attempt to read or write those paths.
 
 ---
 
 ## 3) Work tracking (Journaled)
 
-- **Hot state:** `.docs/journal/CURRENT.md` (small; always readable)
-- **Append-only history:** `.docs/journal/PR-LOG/*` (one entry per PR or milestone)
+The earlier, journaled work-tracking system has been archived under:
 
-Never allow a single tracker file to grow without bound. Keep CURRENT small and authoritative.
+- `docs/history/ai-agent-guidelines/journal/`
+
+You may consult this history for background, but you **must not** assume any `.docs/journal/*` files exist or are authoritative in the current repository state.
 
 ---
 
@@ -51,13 +51,13 @@ Never allow a single tracker file to grow without bound. Keep CURRENT small and 
 
 - Mandatory **Mode Detection** preflight in `20_GIT_WORKFLOW.md`
 - A single constant **AUTO_MERGE_MAX_WAIT_SECONDS = 600** in `21_AUTO_MERGE_WAITING.md`
-- Tracker rewritten as **CURRENT.md + PR-LOG** (journaled), not a monolithic document
+- Legacy tracker design (CURRENT.md + PR-LOG, journaled) is preserved only as historical reference under `docs/history/ai-agent-guidelines/journal/`, not as an active monolithic document.
 - Approval-gated dependency/tooling actions preserved in `40_BUILD_AND_VERIFICATION.md`
 
 ---
 
 ## 5) If you need “the old monolith”
 
-The previous monolithic rules have been redistributed into `.docs/agent/*` shards and journal templates.  
-Follow the routing index rather than searching ad-hoc.
+The previous monolithic rules and their journal templates have been archived under `docs/history/ai-agent-guidelines/journal/` and redistributed into `.docs/agent/*` shards.  
+Follow the routing index rather than searching ad-hoc or relying on `.docs/journal/*` paths.
 
