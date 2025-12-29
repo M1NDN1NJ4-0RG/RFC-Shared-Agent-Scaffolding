@@ -218,7 +218,7 @@ def main() -> None:
 
     except MissingToolError as e:
         print(f"❌ Error: {e}", file=sys.stderr)
-        if args.ci:
+        if getattr(args, "ci", False):
             sys.exit(ExitCode.MISSING_TOOLS)
         print("\nRun 'python -m tools.repo_lint install' to install missing tools", file=sys.stderr)
         sys.exit(ExitCode.MISSING_TOOLS)
