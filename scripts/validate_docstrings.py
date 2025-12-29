@@ -154,14 +154,14 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 
 # Import validator classes from modular package
 # pylint: disable=wrong-import-position
-from docstring_validators.bash_validator import BashValidator
-from docstring_validators.common import ValidationError
-from docstring_validators.perl_validator import PerlValidator
-from docstring_validators.powershell_validator import PowerShellValidator
-from docstring_validators.python_validator import PythonValidator
-from docstring_validators.rust_validator import RustValidator
-from docstring_validators.yaml_validator import YAMLValidator
-import docstring_validators.common as common_module
+from docstring_validators.bash_validator import BashValidator  # noqa: E402
+from docstring_validators.common import ValidationError  # noqa: E402
+from docstring_validators.perl_validator import PerlValidator  # noqa: E402
+from docstring_validators.powershell_validator import PowerShellValidator  # noqa: E402
+from docstring_validators.python_validator import PythonValidator  # noqa: E402
+from docstring_validators.rust_validator import RustValidator  # noqa: E402
+from docstring_validators.yaml_validator import YAMLValidator  # noqa: E402
+import docstring_validators.common as common_module  # noqa: E402
 
 
 # In-scope directory patterns for validation

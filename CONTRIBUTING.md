@@ -77,11 +77,52 @@ Enforced by CI via `.github/workflows/docstring-contract.yml`
 
 Before submitting a PR:
 
-1. **Run linters** - `make lint` (or language-specific linters)
+1. **Run linters** - See "Code Quality and Linting" section below
 2. **Run tests** - Language-specific test suites must pass
 3. **Run conformance** - For wrapper changes: `make conformance`
 4. **Verify structure** - `scripts/validate-structure.sh`
 5. **Check docstrings** - `scripts/validate_docstrings.py`
+
+### Code Quality and Linting
+
+**Code Standards:**
+
+All code must adhere to language-specific standards:
+- **Python**: 120-character lines, Black formatting, Flake8 + Pylint compliance
+- **Bash**: ShellCheck warnings addressed, shfmt formatting
+- **YAML**: yamllint compliance
+
+**Quick linting commands:**
+
+```bash
+# Run all linters (Python, Bash, YAML)
+./scripts/run-linters.sh
+
+# Auto-format code where possible
+./scripts/run-linters.sh --fix
+
+# Or run tools individually:
+black .                    # Python: Auto-format
+flake8 .                   # Python: Style check
+pylint **/*.py             # Python: Static analysis
+shellcheck **/*.sh         # Bash: Shell script analysis
+shfmt -d -i 2 -ci **/*.sh  # Bash: Format check
+yamllint .                 # YAML: Linting
+python3 scripts/validate_docstrings.py  # All: Docstring validation
+```
+
+**Configuration files:**
+- Python Black: `pyproject.toml` (`[tool.black]`)
+- Python Flake8: `.flake8`
+- Python Pylint: `pyproject.toml` (`[tool.pylint.*]`)
+- YAML: `.yamllint`
+
+All tools are configured for 120-character line length (Python) and compatible rule sets.
+
+**CI behavior:**
+- Black formatting is **automatically applied** for same-repo PRs
+- For fork PRs, a patch artifact is provided if formatting is needed
+- All other linters must pass without errors
 
 ### Pull Request Guidelines
 
