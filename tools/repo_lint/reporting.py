@@ -92,6 +92,6 @@ def print_install_instructions(missing_tools: List[str]) -> None:
     for tool in missing_tools:
         print(f"  - {tool}")
     print("\nTo install missing tools, run:")
-    print("  python -m tools.repo_lint install")
+    print("  python3 -m tools.repo_lint install")
     print("\nOr install manually following the instructions in CONTRIBUTING.md")
     print("━" * 80)

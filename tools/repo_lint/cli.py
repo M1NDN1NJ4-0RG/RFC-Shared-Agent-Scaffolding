@@ -26,15 +26,15 @@
 :Examples:
     Run checks in local mode::
 
-        python -m tools.repo_lint check
+        python3 -m tools.repo_lint check
 
     Run checks in CI mode::
 
-        python -m tools.repo_lint check --ci
+        python3 -m tools.repo_lint check --ci
 
     Apply fixes::
 
-        python -m tools.repo_lint fix
+        python3 -m tools.repo_lint fix
 """
 
 import argparse
@@ -125,7 +125,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                     print_install_instructions(missing_tools)
                     return ExitCode.MISSING_TOOLS
                 print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
-                print("   Run 'python -m tools.repo_lint install' to install them")
+                print("   Run 'python3 -m tools.repo_lint install' to install them")
                 print("")
                 return ExitCode.MISSING_TOOLS
 
@@ -237,7 +237,7 @@ def cmd_install(args: argparse.Namespace) -> int:
         print("")
         print("Next steps:")
         print("  1. Follow the manual installation instructions above")
-        print("  2. Run 'python -m tools.repo_lint check' to verify")
+        print("  2. Run 'python3 -m tools.repo_lint check' to verify")
         return ExitCode.SUCCESS
     else:
         return ExitCode.INTERNAL_ERROR
@@ -275,7 +275,7 @@ def main() -> None:
         print(f"❌ Error: {e}", file=sys.stderr)
         if getattr(args, "ci", False):
             sys.exit(ExitCode.MISSING_TOOLS)
-        print("\nRun 'python -m tools.repo_lint install' to install missing tools", file=sys.stderr)
+        print("\nRun 'python3 -m tools.repo_lint install' to install missing tools", file=sys.stderr)
         sys.exit(ExitCode.MISSING_TOOLS)
 
     except Exception as e:

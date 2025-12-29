@@ -1,4 +1,4 @@
-"""Entry point for python -m tools.repo_lint."""
+"""Entry point for python3 -m tools.repo_lint."""
 
 from tools.repo_lint.cli import main
 

@@ -109,7 +109,7 @@ class PythonRunner(Runner):
                     line=None,
                     message=(
                         "Code formatting does not match Black style. "
-                        "Run 'python -m tools.repo_lint fix' to auto-format."
+                        "Run 'python3 -m tools.repo_lint fix' to auto-format."
                     ),
                 )
             )

@@ -20,9 +20,9 @@ validation across all supported languages (Python, Bash, PowerShell, Perl, YAML)
 :CLI Interface:
     Run in-place from repo root::
 
-        python -m tools.repo_lint check
-        python -m tools.repo_lint fix
-        python -m tools.repo_lint install
+        python3 -m tools.repo_lint check
+        python3 -m tools.repo_lint fix
+        python3 -m tools.repo_lint install
 
 :Exit Codes:
     - 0: All checks passed

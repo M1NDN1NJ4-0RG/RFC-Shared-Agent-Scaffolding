@@ -25,7 +25,7 @@ This tool must be:
 - [x] **Sub-Item 0.1.3:** Package location: `tools/repo_lint/` (repo tooling, not PyPI)
 
 ### Item 0.2 — Execution Model (Locked)
-- [x] **Sub-Item 0.2.1:** Run in-place first (CI runs `python -m tools.repo_lint ...`)
+- [x] **Sub-Item 0.2.1:** Run in-place first (CI runs `python3 -m tools.repo_lint ...`)
 - [x] **Sub-Item 0.2.2:** Add TODOs in `docs/future-work.md` for:
   - Making `repo_lint` installable later (`pip install -e .`, console script, etc.)
   - Future repo-local tool isolation ideas (`.psmodules/`, `.cpan-local/`, etc.) and cleanup implications
@@ -72,7 +72,7 @@ This tool must be:
 - [x] **Sub-Item 0.9.1:** Ruff fix policy (Option A2):
   - `repo-lint check` is **non-mutating** and MUST run Ruff without fixes (e.g., `ruff check --no-fix`).
   - `repo-lint fix` may apply **safe** Ruff fixes only (e.g., `ruff check --fix` WITHOUT enabling unsafe fixes).
-- [x] **Sub-Item 0.9.2:** Canonical run-in-place invocation is `python -m tools.repo_lint check` (and corresponding `fix`/`install`). Do not standardize on `tools.repo_lint.cli` in docs.
+- [x] **Sub-Item 0.9.2:** Canonical run-in-place invocation is `python3 -m tools.repo_lint check` (and corresponding `fix`/`install`). Do not standardize on `tools.repo_lint.cli` in docs.
 - [x] **Sub-Item 0.9.3:** PowerShell symbol discovery/doc enforcement MUST use native AST parse **from files** via `Parser::ParseFile` (C1). `Parser::ParseInput` (C2) may be used in unit tests/fixtures only.
 - [x] **Sub-Item 0.9.4:** Bash symbol discovery MUST use Tree-sitter (D2) with a pinned Bash grammar (no execution).
 - [x] **Sub-Item 0.9.5:** Perl symbol discovery MUST use PPI plus a structure-aware fallback strategy (E2) for edge cases (no regex-only parsing).
@@ -94,8 +94,8 @@ This tool must be:
   - `runners/` (per-language runners)
   - `install/` (bootstrap/install helpers)
 - [x] **Sub-Item 1.1.2:** Implement module execution path:
-  - `python -m tools.repo_lint check` (standardized)
-  - Ensure `python -m tools.repo_lint fix` and `python -m tools.repo_lint install` work equivalently
+  - `python3 -m tools.repo_lint check` (standardized)
+  - Ensure `python3 -m tools.repo_lint fix` and `python3 -m tools.repo_lint install` work equivalently
 
 ### Item 1.2 — Implement CLI contract (High)
 - [x] **Sub-Item 1.2.1:** Implement `repo-lint check`
@@ -273,13 +273,13 @@ This tool must be:
 - [x] **Sub-Item 5.1.1:** Keep/rename bash wrapper as kebab-case:
   - ✅ `scripts/run-linters.sh` kept (kebab-case compliant)
 - [x] **Sub-Item 5.1.2:** Convert it into a thin wrapper that calls:
-  - ✅ Wrapper delegates to `python -m tools.repo_lint check` / `fix` / `install`
+  - ✅ Wrapper delegates to `python3 -m tools.repo_lint check` / `fix` / `install`
   - ✅ Supports `--fix` → `repo-lint fix`
   - ✅ Supports `--install` → `repo-lint install`
   - ✅ Default (no args) → `repo-lint check`
 - [x] **Sub-Item 5.1.3:** Ensure Global Rules reference **one canonical command path** (repo-lint + wrapper)
   - ✅ Updated in CONTRIBUTING.md Quick Start section
-  - ✅ All references point to `python -m tools.repo_lint` as canonical
+  - ✅ All references point to `python3 -m tools.repo_lint` as canonical
 
 ### Item 5.2 — Documentation updates (High)
 - [x] **Sub-Item 5.2.1:** Update `CONTRIBUTING.md` to make repo-lint the canonical entrypoint
@@ -294,13 +294,13 @@ This tool must be:
 - [x] **Sub-Item 5.2.4:** Update repo Global Rules / CONTRIBUTING policy text to make it explicit and **required** that before every commit you run:
   - ✅ Added "REQUIRED Before Every Commit" section in Code Quality and Linting
   - ✅ Explicit 3-step requirement in Quick Start (lines 11-14):
-    1. Run `python -m tools.repo_lint check` to lint all code
+    1. Run `python3 -m tools.repo_lint check` to lint all code
     2. Run relevant test suites for code you changed
     3. Verify all CI checks pass
   - ✅ No "commit first, lint later" allowed
 
 **Phase 5 Success Criteria**
-- ✅ Contributors have exactly one obvious way to run checks: `python -m tools.repo_lint check`
+- ✅ Contributors have exactly one obvious way to run checks: `python3 -m tools.repo_lint check`
 - ✅ Bash wrapper is a thin delegation layer (63 lines vs. 413 lines before)
 - ✅ Documentation is updated and consistent across all files
 
@@ -363,7 +363,7 @@ This tool must be:
   - YAML checks run only when YAML files change (including workflow YAML), or when `shared_tooling` is true
   - Markdown-only changes do **not** trigger PowerShell/Perl/Bash runners (unless docs tooling is added later)
 - [ ] **Sub-Item 6.4.4:** Each conditional language job MUST run `repo_lint` (run-in-place) as the canonical enforcement mechanism:
-  - `python -m tools.repo_lint check --ci --only <language>`
+  - `python3 -m tools.repo_lint check --ci --only <language>`
   - The `--only` selector MUST be implemented if it does not exist yet (see Sub-Item 6.4.6).
 - [ ] **Sub-Item 6.4.5:** Ensure docstring enforcement is included automatically by the relevant language runner(s) (no separate docstring-only workflow once this is in place).
 - [ ] **Sub-Item 6.4.6:** Implement `repo-lint changed` and/or a `--only <language>` selector in `repo_lint` so the umbrella workflow can target exactly the needed runners. Requirements:
