@@ -1,0 +1,454 @@
+# Workflow: Repo Lint and Docstring Enforcement
+#
+# Purpose: Unified linting and docstring validation across all languages.
+# Runs only the checks relevant to changed files, using repo_lint as the
+# canonical enforcement mechanism.
+#
+# Jobs:
+# 1. Auto-Fix: Black - Runs Black formatter in auto-fix mode (same-repo PRs only)
+# 2. Detect Changed Files - Determines which language buckets have changes
+# 3. Repo Lint: Python - Python linting + docstring validation
+# 4. Repo Lint: Bash - Bash linting + docstring validation
+# 5. Repo Lint: PowerShell - PowerShell linting + docstring validation
+# 6. Repo Lint: Perl - Perl linting + docstring validation
+# 7. Repo Lint: YAML - YAML linting
+#
+# Triggers:
+# - Pushes to main branch
+# - Pull requests to main branch
+#
+# Dependencies:
+# - repo_lint Python package (tools/repo_lint/)
+# - Language-specific linters (installed in each job)
+#
+# Outputs:
+# - Status checks for each language with changes
+# - Auto-fix commit (same-repo PRs) or patch artifact (fork PRs)
+# - Forensic artifacts when Black makes changes
+#
+# Notes:
+# - Auto-Fix job runs FIRST and skips all other jobs if changes are made
+# - Conditional jobs run based on changed file detection
+# - All third-party actions pinned by commit SHA
+---
+name: Repo Lint and Docstring Enforcement
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write  # Allow auto-commit for Black formatting (Auto-Fix job only)
+  pull-requests: write  # Allow PR comments for Auto-Fix job
+
+jobs:
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Auto-Fix: Black
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # MANDATORY: Runs FIRST. If it changes files, all other jobs are skipped
+  # to ensure subsequent checks run on the post-fix state.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  auto-fix-black:
+    name: "Auto-Fix: Black"
+    runs-on: ubuntu-latest
+    # Bot-loop guard: Skip if actor is a bot OR commit message contains autoformat marker
+    if: |
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.head_commit.message, '[auto-format]')
+    outputs:
+      autofix_applied: ${{ steps.check_changes.outputs.changes_made }}
+      run_url: ${{ steps.set_run_url.outputs.url }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          # Same-repo PRs: use PR head ref for commit capability
+          # Fork PRs: use default ref (read-only)
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          fetch-depth: 0  # Full history for proper git operations
+          # Same-repo PRs: use default token (write access)
+          # Fork PRs: use default token (read-only, no push capability)
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Install Black
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install black==24.10.0
+
+      - name: Run Black formatter
+        id: black_run
+        run: |
+          echo "Running Black formatter..."
+          black --line-length 120 --check --diff . > black_check.log 2>&1 || true
+          black --line-length 120 . > black_fix.log 2>&1 || true
+          echo "Black formatting complete."
+
+      - name: Generate forensic artifacts
+        id: generate_artifacts
+        run: |
+          # Create diff of changes
+          git diff > black.diff
+          
+          # Create detailed log
+          {
+            echo "Black Auto-Fix Forensics"
+            echo "========================"
+            echo ""
+            echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+            echo "Workflow Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            echo "Black Version: $(black --version)"
+            echo ""
+            echo "Files Modified:"
+            git diff --name-only | sed 's/^/  - /'
+            echo ""
+            echo "Full Diff:"
+            cat black.diff
+          } > black.log
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          if [ -s black.diff ]; then
+            echo "changes_made=true" >> $GITHUB_OUTPUT
+            echo "Changes detected after Black formatting"
+          else
+            echo "changes_made=false" >> $GITHUB_OUTPUT
+            echo "No changes needed"
+          fi
+
+      - name: Upload forensic artifacts
+        if: steps.check_changes.outputs.changes_made == 'true'
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: black-autofix-forensics
+          path: |
+            black.diff
+            black.log
+          retention-days: 30
+
+      - name: Set run URL output
+        id: set_run_url
+        run: |
+          echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+
+      - name: Write job summary
+        if: steps.check_changes.outputs.changes_made == 'true'
+        run: |
+          {
+            echo "## Black Auto-Fix Applied"
+            echo ""
+            echo "Black formatter made changes to the following files:"
+            echo ""
+            git diff --name-only | sed 's/^/- `/' | sed 's/$/`/'
+            echo ""
+            echo "### Forensic Artifacts"
+            echo "- \`black.diff\`: Unified diff of all changes"
+            echo "- \`black.log\`: Detailed log with timestamps and file list"
+            echo ""
+            echo "### Reproduce Locally"
+            echo "\`\`\`bash"
+            echo "black --line-length 120 ."
+            echo "\`\`\`"
+          } >> $GITHUB_STEP_SUMMARY
+
+      # Same-repo PR: commit and push changes
+      - name: Commit and push changes (same-repo only)
+        if: |
+          steps.check_changes.outputs.changes_made == 'true' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Auto-format: Apply Black formatting [auto-format]"
+          git push
+
+      # Same-repo PR: leave PR comment
+      - name: Comment on PR (same-repo only)
+        if: |
+          steps.check_changes.outputs.changes_made == 'true' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.event_name == 'pull_request'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea  # v7.0.1
+        with:
+          script: |
+            const body = `## 🔧 Black Auto-Fix Applied
+
+            Black formatter has automatically formatted your code and pushed a commit.
+
+            **Workflow Run:** ${{ steps.set_run_url.outputs.url }}
+
+            **Forensic Artifacts:** Download the \`black-autofix-forensics\` artifact from the workflow run to review the exact changes.
+
+            **Next Steps:**
+            - Pull the changes: \`git pull\`
+            - Lint checks will run on the next workflow run for the updated commit.
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+      # Fork PR: produce patch artifact and fail with instructions
+      - name: Fail with patch instructions (fork PRs only)
+        if: |
+          steps.check_changes.outputs.changes_made == 'true' &&
+          github.event.pull_request.head.repo.full_name != github.repository
+        run: |
+          echo "❌ Black formatting changes required, but cannot auto-commit to fork."
+          echo ""
+          echo "Please download the 'black-autofix-forensics' artifact and apply the patch:"
+          echo "  1. Download black.diff from workflow artifacts"
+          echo "  2. Apply patch: git apply black.diff"
+          echo "  3. Commit and push: git commit -am 'Apply Black formatting' && git push"
+          echo ""
+          echo "Or run Black locally:"
+          echo "  black --line-length 120 ."
+          exit 1
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Detect Changed Files
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Determines which language buckets have changes and sets output flags.
+  # Includes special "shared_tooling" flag for changes to lint infrastructure.
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  detect-changed-files:
+    name: "Detect Changed Files"
+    runs-on: ubuntu-latest
+    needs: auto-fix-black
+    if: needs.auto-fix-black.outputs.autofix_applied != 'true'
+    outputs:
+      python: ${{ steps.detect.outputs.python }}
+      bash: ${{ steps.detect.outputs.bash }}
+      powershell: ${{ steps.detect.outputs.powershell }}
+      perl: ${{ steps.detect.outputs.perl }}
+      yaml: ${{ steps.detect.outputs.yaml }}
+      shared_tooling: ${{ steps.detect.outputs.shared_tooling }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Detect changed files
+        id: detect
+        run: |
+          # Get base ref for comparison
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            BASE_REF="${{ github.event.pull_request.base.sha }}"
+          else
+            # For push events, compare with previous commit
+            BASE_REF="HEAD^"
+          fi
+          
+          # Get changed files
+          CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD)
+          
+          # Initialize all outputs to false
+          echo "python=false" >> $GITHUB_OUTPUT
+          echo "bash=false" >> $GITHUB_OUTPUT
+          echo "powershell=false" >> $GITHUB_OUTPUT
+          echo "perl=false" >> $GITHUB_OUTPUT
+          echo "yaml=false" >> $GITHUB_OUTPUT
+          echo "shared_tooling=false" >> $GITHUB_OUTPUT
+          
+          # Check for Python files
+          if echo "$CHANGED_FILES" | grep -qE '\.py$'; then
+            echo "python=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Check for Bash files
+          if echo "$CHANGED_FILES" | grep -qE '\.(sh|bash|zsh)$'; then
+            echo "bash=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Check for PowerShell files
+          if echo "$CHANGED_FILES" | grep -qE '\.ps1$'; then
+            echo "powershell=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Check for Perl files
+          if echo "$CHANGED_FILES" | grep -qE '\.(pl|pm)$'; then
+            echo "perl=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Check for YAML files
+          if echo "$CHANGED_FILES" | grep -qE '\.(ya?ml)$'; then
+            echo "yaml=true" >> $GITHUB_OUTPUT
+          fi
+          
+          # Check for shared tooling changes
+          if echo "$CHANGED_FILES" | grep -qE '^(tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/|pyproject\.toml|\.github/workflows/|docs/contributing/)'; then
+            echo "shared_tooling=true" >> $GITHUB_OUTPUT
+          fi
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Repo Lint: Python
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  repo-lint-python:
+    name: "Repo Lint: Python"
+    runs-on: ubuntu-latest
+    needs: [auto-fix-black, detect-changed-files]
+    if: |
+      needs.auto-fix-black.outputs.autofix_applied != 'true' &&
+      (needs.detect-changed-files.outputs.python == 'true' || 
+       needs.detect-changed-files.outputs.shared_tooling == 'true')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Install Python linting tools
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1
+
+      - name: Run repo_lint for Python
+        run: |
+          python3 -m tools.repo_lint check --ci --only python
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Repo Lint: Bash
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  repo-lint-bash:
+    name: "Repo Lint: Bash"
+    runs-on: ubuntu-latest
+    needs: [auto-fix-black, detect-changed-files]
+    if: |
+      needs.auto-fix-black.outputs.autofix_applied != 'true' &&
+      (needs.detect-changed-files.outputs.bash == 'true' || 
+       needs.detect-changed-files.outputs.shared_tooling == 'true')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Install Python tools (for repo_lint)
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install tree-sitter==0.25.1 tree-sitter-bash==0.25.1
+
+      - name: Install shellcheck
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Install shfmt
+        run: |
+          wget -qO /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64
+          chmod +x /tmp/shfmt
+          sudo mv /tmp/shfmt /usr/local/bin/shfmt
+
+      - name: Run repo_lint for Bash
+        run: |
+          python3 -m tools.repo_lint check --ci --only bash
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Repo Lint: PowerShell
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  repo-lint-powershell:
+    name: "Repo Lint: PowerShell"
+    runs-on: ubuntu-latest
+    needs: [auto-fix-black, detect-changed-files]
+    if: |
+      needs.auto-fix-black.outputs.autofix_applied != 'true' &&
+      (needs.detect-changed-files.outputs.powershell == 'true' || 
+       needs.detect-changed-files.outputs.shared_tooling == 'true')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.23.0 -Force -Scope CurrentUser
+
+      - name: Run repo_lint for PowerShell
+        run: |
+          python3 -m tools.repo_lint check --ci --only powershell
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Repo Lint: Perl
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  repo-lint-perl:
+    name: "Repo Lint: Perl"
+    runs-on: ubuntu-latest
+    needs: [auto-fix-black, detect-changed-files]
+    if: |
+      needs.auto-fix-black.outputs.autofix_applied != 'true' &&
+      (needs.detect-changed-files.outputs.perl == 'true' || 
+       needs.detect-changed-files.outputs.shared_tooling == 'true')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Set up Perl
+        uses: shogo82148/actions-setup-perl@9c1eca9952ccc07f9ca4a2097b63df93d9d138e9  # v1.31.3
+        with:
+          perl-version: "5.38"
+
+      - name: Install Perl::Critic and PPI
+        run: |
+          cpanm --notest Perl::Critic PPI
+
+      - name: Run repo_lint for Perl
+        run: |
+          python3 -m tools.repo_lint check --ci --only perl
+
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  # Repo Lint: YAML
+  # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  repo-lint-yaml:
+    name: "Repo Lint: YAML"
+    runs-on: ubuntu-latest
+    needs: [auto-fix-black, detect-changed-files]
+    if: |
+      needs.auto-fix-black.outputs.autofix_applied != 'true' &&
+      (needs.detect-changed-files.outputs.yaml == 'true' || 
+       needs.detect-changed-files.outputs.shared_tooling == 'true')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b  # v5.3.0
+        with:
+          python-version: "3.11"
+
+      - name: Install yamllint
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install yamllint==1.35.1
+
+      - name: Run repo_lint for YAML
+        run: |
+          python3 -m tools.repo_lint check --ci --only yaml

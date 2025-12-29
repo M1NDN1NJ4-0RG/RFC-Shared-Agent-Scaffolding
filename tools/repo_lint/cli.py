@@ -12,6 +12,7 @@
 :Flags:
     - --ci/--no-install: CI mode - fail if tools are missing instead of installing
     - --verbose: Show verbose output including passed checks
+    - --only <language>: Run checks for only the specified language
     - --json: Output results in JSON format (future)
 
 :Environment Variables:
@@ -76,11 +77,21 @@ def create_parser() -> argparse.ArgumentParser:
     check_parser = subparsers.add_parser("check", help="Run linting checks without modifying files")
     check_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
     check_parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
+    check_parser.add_argument(
+        "--only",
+        choices=["python", "bash", "powershell", "perl", "yaml", "rust"],
+        help="Run checks for only the specified language",
+    )
 
     # fix command
     fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
     fix_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
     fix_parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
+    fix_parser.add_argument(
+        "--only",
+        choices=["python", "bash", "powershell", "perl", "yaml", "rust"],
+        help="Run fixes for only the specified language",
+    )
 
     # install command
     install_parser = subparsers.add_parser("install", help="Install/bootstrap required linting tools")
@@ -104,16 +115,26 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     all_results = []
 
     # Define all runners
-    runners = [
-        ("Python", PythonRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("Bash", BashRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("PowerShell", PowerShellRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("Perl", PerlRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
+    all_runners = [
+        ("python", "Python", PythonRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("bash", "Bash", BashRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("powershell", "PowerShell", PowerShellRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("perl", "Perl", PerlRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("yaml", "YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
     ]
 
+    # Filter runners based on --only flag
+    only_language = getattr(args, "only", None)
+    if only_language:
+        runners = [(key, name, runner) for key, name, runner in all_runners if key == only_language]
+        if not runners:
+            print(f"❌ Error: Unknown language '{only_language}'", file=sys.stderr)
+            return ExitCode.INTERNAL_ERROR
+    else:
+        runners = all_runners
+
     # Run each runner if it has files
-    for name, runner in runners:
+    for key, name, runner in runners:
         if runner.has_files():
             print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
             print(f"  {name} {mode}")
