@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # DESCRIPTION:
-#   Thin wrapper for repo-lint tool - delegates to Python implementation
-#   Run all repository linters and formatters locally
-#   Supports Python, Bash, PowerShell, Perl, and YAML files
+#   Thin wrapper for repo-lint - delegates to Python implementation
+#   Supports Python, Bash, PowerShell, Perl, and YAML linting
 #
 # USAGE:
 #   ./scripts/run-linters.sh [--fix]
@@ -14,7 +13,8 @@
 #
 # OUTPUTS:
 #   Lint results printed to stdout/stderr
-#   Exit code 0 if all checks pass, 1 if any fail, 2 if tools missing in CI mode
+#   Exit code 0 if all checks pass, 1 if any fail
+#   Exit code 2 if tools missing (when repo-lint runs in CI mode)
 #
 # EXAMPLES:
 #   # Check code without modifying
