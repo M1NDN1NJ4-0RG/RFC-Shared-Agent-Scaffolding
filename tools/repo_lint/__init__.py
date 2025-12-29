@@ -1,0 +1,34 @@
+"""repo_lint - Unified multi-language lint and docstring validation tool.
+
+This package provides a single source of truth for repository linting and docstring
+validation across all supported languages (Python, Bash, PowerShell, Perl, YAML).
+
+:Purpose:
+    Replaces ad-hoc bash linter scripts with a proper Python package + CLI that is:
+    - Deterministic and strict in CI
+    - Helpful locally (optional bootstrap + fix mode)
+    - Modular per-language (one runner per language)
+    - Aligned with repo contracts (naming, docstrings, exit codes, output format)
+
+:Package Structure:
+    - cli.py: Argument parsing and command dispatch
+    - common.py: Shared types, errors, and utilities
+    - reporting.py: Stable output formatting and exit codes
+    - runners/: Per-language runner modules
+    - install/: Bootstrap and installation helpers
+
+:CLI Interface:
+    Run in-place from repo root::
+
+        python -m tools.repo_lint check
+        python -m tools.repo_lint fix
+        python -m tools.repo_lint install
+
+:Exit Codes:
+    - 0: All checks passed
+    - 1: Linting/formatting violations found
+    - 2: Missing tools (CI mode only)
+    - 3: Internal error
+"""
+
+__version__ = "0.1.0"

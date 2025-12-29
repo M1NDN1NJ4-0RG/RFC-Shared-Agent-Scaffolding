@@ -124,14 +124,14 @@ Using with TOKEN environment variable::
 - GitHub Rulesets API: https://docs.github.com/en/rest/repos/rules
 - GitHub API Authentication: https://docs.github.com/en/rest/authentication
 """
-import os
-import sys
 import json
-import subprocess
+import os
 import re
+import subprocess
+import sys
 from typing import List, Optional, Tuple
-from urllib.request import Request, urlopen
 from urllib.error import HTTPError
+from urllib.request import Request, urlopen
 
 API_VERSION_DEFAULT = "2022-11-28"
 

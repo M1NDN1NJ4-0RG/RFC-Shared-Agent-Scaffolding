@@ -76,10 +76,10 @@ This script verifies conformance with:
 - scripts/python3/safe_archive.py: Archival tool under test
 - docs/rust-canonical-tool.md: Canonical contract specification
 """
-import os
-import sys
 import glob
+import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import List
 
@@ -251,7 +251,7 @@ def main(argv: List[str]) -> int:
     )
     if rc != 0:
         die(f"safe_archive no-clobber failed ({rc})")
-    with open(dest, "r", encoding="utf-8", errors="replace") as fh:
+    with open(dest, encoding="utf-8", errors="replace") as fh:
         contents = fh.read()
     if "hello" not in contents:
         die("Archive content changed unexpectedly (no-clobber violation suspected)")

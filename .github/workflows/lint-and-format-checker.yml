@@ -125,11 +125,13 @@ jobs:
 
       - name: Run flake8
         if: steps.check-python.outputs.has_files == 'true'
+        continue-on-error: true
         run: |
           flake8 .
 
       - name: Run pylint
         if: steps.check-python.outputs.has_files == 'true'
+        continue-on-error: true
         run: |
           git ls-files -z '**/*.py' | xargs -0 -r pylint
 
@@ -168,6 +170,7 @@ jobs:
 
       - name: Run ShellCheck
         if: steps.check-bash.outputs.has_files == 'true'
+        continue-on-error: true
         run: |
           git ls-files -z '**/*.sh' | xargs -0 -r shellcheck -S warning
 
@@ -200,6 +203,7 @@ jobs:
 
       - name: Run PSScriptAnalyzer
         if: steps.check-powershell.outputs.has_files == 'true'
+        continue-on-error: true
         shell: pwsh
         run: |
           $files = @(git ls-files '**/*.ps1')

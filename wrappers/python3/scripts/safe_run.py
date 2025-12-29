@@ -92,9 +92,9 @@ The Rust binary implements the conformance contracts:
 """
 
 import os
-import sys
 import platform
 import shutil
+import sys
 from pathlib import Path
 from typing import Optional
 
