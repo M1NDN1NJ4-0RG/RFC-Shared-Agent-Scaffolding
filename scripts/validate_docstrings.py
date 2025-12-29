@@ -1,29 +1,67 @@
 #!/usr/bin/env python3
 """Docstring contract validator for RFC-Shared-Agent-Scaffolding.
 
-This script validates that all scripts and YAML files conform to their
+This script validates that all scripts, YAML files, and code symbols conform to their
 language-specific docstring contracts as defined in docs/contributing/docstring-contracts/.
 
 Purpose
 -------
 Enforces consistent, discoverable documentation across all supported languages
-by validating the presence of required docstring sections. Supports pragma
-ignores for intentional omissions and basic content validation for exit codes.
+by validating the presence of required docstring sections at both file/module level
+and symbol level (functions, classes, methods). Supports pragma ignores for
+intentional omissions and basic content validation for exit codes.
+
+Architecture
+------------
+The validator operates in several phases:
+
+**Phase 1: File Discovery**
+- Uses `git ls-files` to get all tracked files in the repository
+- Filters files based on IN_SCOPE_PATTERNS (by extension)
+- Excludes files matching EXCLUDE_PATTERNS (build artifacts, etc.)
+
+**Phase 2: Language Classification**
+- Maps file extension to language (`.py` → Python, `.sh` → Bash, etc.)
+- Dispatches to appropriate validator class based on language
+
+**Phase 3: File/Module-Level Validation**
+- Extracts documentation block from file (module docstring, header comments, POD, etc.)
+- Validates presence of required sections per language contract
+- Checks basic content requirements (e.g., exit codes 0 and 1 documented)
+
+**Phase 4: Symbol-Level Validation** (Phase 5.5 expansion)
+- Parses source file to extract symbols (functions, classes, methods, subs)
+- For each symbol, validates presence of documentation
+- Checks for required doc sections (Args, Returns, etc.) per language
+- Currently validates public/exported symbols only
+
+**Phase 5: Reporting**
+- Collects all violations (file path, symbol name if applicable, missing sections)
+- Outputs actionable error messages with line numbers where possible
+- Returns exit code 0 (pass) or 1 (fail)
+
+**Validator Classes:**
+- BashValidator: Validates Bash scripts (comment blocks above functions)
+- PowerShellValidator: Validates PowerShell scripts (comment-based help)
+- PythonValidator: Validates Python modules (docstrings, uses AST for symbol parsing)
+- PerlValidator: Validates Perl scripts (POD documentation)
+- RustValidator: Validates Rust modules (rustdoc comments)
+- YAMLValidator: Validates YAML config files (header comments)
 
 CLI Interface
 -------------
 Run from repository root::
 
-    python3 scripts/validate-docstrings.py
+    python3 scripts/validate_docstrings.py
 
 Validate specific files (single-file mode for fast iteration)::
 
-    python3 scripts/validate-docstrings.py --file scripts/my-script.sh
-    python3 scripts/validate-docstrings.py -f script1.py -f script2.sh
+    python3 scripts/validate_docstrings.py --file scripts/my-script.sh
+    python3 scripts/validate_docstrings.py -f script1.py -f script2.sh
 
 Skip content validation (only check section presence)::
 
-    python3 scripts/validate-docstrings.py --no-content-checks
+    python3 scripts/validate_docstrings.py --no-content-checks
 
 Pragma Support
 --------------
@@ -37,6 +75,7 @@ Examples::
 
     # noqa: OUTPUTS    - Skip OUTPUTS section check
     # noqa: EXITCODES  - Skip exit codes content validation
+    # noqa: D102       - Skip function docstring requirement (Python)
 
 Content Validation
 ------------------
@@ -60,17 +99,19 @@ Examples
 --------
 Validate all files::
 
-    python3 scripts/validate-docstrings.py
+    python3 scripts/validate_docstrings.py
 
 Validate specific files::
 
-    python3 scripts/validate-docstrings.py --file script.sh --file tool.py
+    python3 scripts/validate_docstrings.py --file script.sh --file tool.py
 
 Notes
 -----
-- Validation is lightweight: checks presence of sections, not content quality
+- File-level validation checks presence of sections, not content quality
+- Symbol-level validation enforces documentation on public/exported symbols
 - Pragma ignores should be used sparingly for legitimate exceptions
-- See docs/contributing/docstring-contracts/README.md for detailed contract specifications
+- See docs/contributing/docstring-contracts/README.md for file-level contracts
+- See docs/contributing/docstring-contracts/symbol-level-contracts.md for symbol contracts
 """
 
 import argparse
