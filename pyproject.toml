@@ -15,16 +15,10 @@ select = [
     "E",   # pycodestyle errors
     "F",   # pyflakes
     "W",   # pycodestyle warnings
-    "I",   # isort
+"I",   # isort
     "N",   # pep8-naming
     "UP",  # pyupgrade
 ]
-
-# Ignore rules that conflict with Black or are disabled in current Flake8 config
-# Note: E203 was removed from Ruff (obsolete in pycodestyle). Array kept for
-# future ignore rules that may be needed as Ruff evolves.
-ignore = []
-
 [tool.pylint.format]
 max-line-length = 120
 
