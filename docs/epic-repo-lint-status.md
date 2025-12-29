@@ -224,29 +224,46 @@ This tool must be:
 
 ---
 
-## Phase 4 — Install / Bootstrap + Repo-Local Tools
+## Phase 4 — Install / Bootstrap + Repo-Local Tools ✅ COMPLETE
 
 ### Item 4.1 — CI-safe mode enforcement (High)
-- [ ] **Sub-Item 4.1.1:** Ensure `repo-lint check --ci` refuses to install tools
-- [ ] **Sub-Item 4.1.2:** If tools are missing, fail with exit code `2` and print exact install instructions
+- [x] **Sub-Item 4.1.1:** Ensure `repo-lint check --ci` refuses to install tools
+  - ✅ Already implemented in `cli.py:114-121`
+  - CI mode returns exit code 2 when tools are missing
+- [x] **Sub-Item 4.1.2:** If tools are missing, fail with exit code `2` and print exact install instructions
+  - ✅ Implemented via `reporting.py:print_install_instructions()`
+  - Clear instructions printed for manual installation
 
 ### Item 4.2 — Local install support (High)
-- [ ] **Sub-Item 4.2.1:** Implement `repo-lint install` for supported installs:
-  - Only install what is safe/deterministic
-  - Print clear manual steps for anything not auto-installable
-- [ ] **Sub-Item 4.2.2:** Add pinned versions for installs where possible
+- [x] **Sub-Item 4.2.1:** Implement `repo-lint install` for supported installs:
+  - ✅ Python tools auto-installed in `.venv-lint/` virtual environment
+  - ✅ Manual instructions printed for: shellcheck, shfmt, PSScriptAnalyzer, Perl::Critic
+  - ✅ Only installs what is safe/deterministic (Python tools via pip)
+  - Implementation: `tools/repo_lint/install/install_helpers.py`
+- [x] **Sub-Item 4.2.2:** Add pinned versions for installs where possible
+  - ✅ Added `lint` optional-dependency group to `pyproject.toml` per Phase 0 Item 0.9.6
+  - ✅ Pinned versions: black==24.10.0, ruff==0.8.4, pylint==3.3.2, yamllint==1.35.1
+  - ✅ Version pins centralized in `tools/repo_lint/install/version_pins.py`
+  - ✅ Non-Python tool versions documented (shfmt v3.12.0, PSScriptAnalyzer 1.23.0)
 
 ### Item 4.3 — Repo-local installation path + cleanup (Medium)
-- [ ] **Sub-Item 4.3.1:** Introduce repo-local tool directories (as feasible):
-  - `.venv-lint/` for Python tooling
-  - `.tools/` for standalone binaries if needed
-  - (Optional) `.psmodules/`, `.cpan-local/` if you decide to go that far
-- [ ] **Sub-Item 4.3.2:** Implement `--cleanup`:
-  - Remove only repo-local installs created by repo-lint
-  - Never uninstall system packages
+- [x] **Sub-Item 4.3.1:** Introduce repo-local tool directories (as feasible):
+  - ✅ `.venv-lint/` for Python tooling (fully implemented)
+  - ✅ `.tools/`, `.psmodules/`, `.cpan-local/` placeholders added to `.gitignore`
+  - ✅ Advanced isolation ideas documented in `docs/future-work.md` (FW-014)
+  - Helper functions: `get_venv_path()`, `get_tools_path()`, `create_venv()`
+- [x] **Sub-Item 4.3.2:** Implement `--cleanup`:
+  - ✅ Added `--cleanup` flag to `install` command
+  - ✅ Removes only repo-local installs: `.venv-lint/`, `.tools/`, `.psmodules/`, `.cpan-local/`
+  - ✅ Never uninstalls system packages (enforced by design)
+  - ✅ Prints confirmation of what was removed
+  - Implementation: `cleanup_repo_local()` in `install_helpers.py`
 
 **Phase 4 Success Criteria**
 - ✅ CI is deterministic, local is convenient, cleanup is safe.
+- ✅ Python tools installable with pinned versions in repo-local venv
+- ✅ Cleanup removes only repo-local installations
+- ✅ Manual instructions provided for non-Python tools
 
 ---
 
