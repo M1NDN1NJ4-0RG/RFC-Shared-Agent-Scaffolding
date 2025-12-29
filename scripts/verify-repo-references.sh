@@ -12,7 +12,9 @@
 #   - documents/ (replaced by docs/)
 #   - RFC-Shared-Agent-Scaffolding-Example/ (replaced by wrappers/)
 #
-#   The script excludes the .git directory and binary files from searches.
+#   The script prefers ripgrep (rg) for performance and better defaults,
+#   falling back to git grep or regular grep if unavailable.
+#   It excludes the .git directory and binary files from searches.
 #   It reports line numbers and context for any found references.
 #
 # USAGE:
@@ -49,10 +51,11 @@
 #
 # NOTES:
 #   - Runs from repository root (automatically changes directory)
-#   - Uses git grep when available for better performance
+#   - Prefers ripgrep (rg), falls back to git grep, then regular grep
 #   - Only searches text files (md, yml, yaml, sh, py, pl, ps1, rs, toml)
 #   - After M1: 'documents/' should be eliminated
 #   - After M2: 'RFC-Shared-Agent-Scaffolding-Example' should be eliminated
+#   - Install ripgrep for best performance: apt-get install ripgrep
 
 set -euo pipefail
 
@@ -93,9 +96,13 @@ search_pattern() {
     echo ""
     
     # Search for the pattern, excluding .git and binary files
-    # Use git grep if available (respects .gitignore), fallback to regular grep
+    # Prefer ripgrep (rg) for performance and better defaults
+    # Fallback to git grep, then regular grep if needed
     local results=""
-    if command -v git &> /dev/null && git rev-parse --git-dir &> /dev/null; then
+    if command -v rg &> /dev/null; then
+        # Use ripgrep with file type filters
+        results=$(rg -n "${pattern}" --type md --type yaml --type sh --type python --type perl --type rust --type toml 2>/dev/null || true)
+    elif command -v git &> /dev/null && git rev-parse --git-dir &> /dev/null; then
         results=$(git grep -n "${pattern}" -- '*.md' '*.yml' '*.yaml' '*.sh' '*.py' '*.pl' '*.ps1' '*.rs' '*.toml' 2>/dev/null || true)
     else
         results=$(grep -rn --include='*.md' --include='*.yml' --include='*.yaml' --include='*.sh' --include='*.py' --include='*.pl' --include='*.ps1' --include='*.rs' --include='*.toml' "${pattern}" . 2>/dev/null || true)
