@@ -7,7 +7,12 @@ Thank you for your interest in contributing! This repository implements the RFC-
 1. **Read the documentation** - Start with [docs/README.md](./docs/README.md) for an overview
 2. **Review the RFC** - [rfc-shared-agent-scaffolding-v0.1.0.md](./rfc-shared-agent-scaffolding-v0.1.0.md) defines the contract
 3. **Check the roadmap** - [EPIC #33](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) tracks the Rust canonical tool implementation
-4. **Follow the guidelines** - See detailed contributing guide below
+4. **Install linting tools** - Run `python -m tools.repo_lint install` (or `./scripts/run-linters.sh --install`)
+5. **Before every commit:**
+   - Run `python -m tools.repo_lint check` to lint all code
+   - Run relevant test suites for code you changed
+   - Verify all CI checks pass
+6. **Follow the guidelines** - See detailed contributing guide below
 
 ## Essential Documentation
 
@@ -45,14 +50,33 @@ Thank you for your interest in contributing! This repository implements the RFC-
 
 ### File Naming Conventions
 
-**ALL files in this repository must follow kebab-case naming:**
+**Language-specific script files follow their ecosystem conventions:**
 
 ```bash
-✅ Good: safe-run.sh, test-helpers.py, my-script.pl
-❌ Bad: SafeRun.sh, test_helpers.py, MyScript.pl
+# Python scripts (snake_case)
+✅ Good: safe_run.py, test_helpers.py, validate_docstrings.py
+❌ Bad: safe-run.py, SafeRun.py
+
+# PowerShell scripts (PascalCase)
+✅ Good: SafeRun.ps1, TestHelpers.ps1
+❌ Bad: safe-run.ps1, safe_run.ps1
+
+# Bash scripts (kebab-case)
+✅ Good: safe-run.sh, test-helpers.sh, run-linters.sh
+❌ Bad: safe_run.sh, SafeRun.sh
+
+# Perl scripts (snake_case)
+✅ Good: safe_run.pl, test_helpers.pl, run_tests.pl
+❌ Bad: safe-run.pl, SafeRun.pl
+
+# Non-script files (kebab-case)
+✅ Good: contributing-guide.md, vectors.json
+❌ Bad: contributing_guide.md, ContributingGuide.md
 ```
 
-Enforced by CI via `.github/workflows/naming-kebab-case.yml`
+See [docs/contributing/naming-and-style.md](./docs/contributing/naming-and-style.md) for complete naming standards.
+
+Enforced by CI via `.github/workflows/naming-enforcement.yml`
 
 ### Docstring Contracts (CRITICAL)
 
@@ -77,61 +101,52 @@ Enforced by CI via `.github/workflows/docstring-contract.yml`
 
 Before submitting a PR:
 
-1. **Run linters** - See "Code Quality and Linting" section below
+1. **Run linters** - `python -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
 2. **Run tests** - Language-specific test suites must pass
 3. **Run conformance** - For wrapper changes: `make conformance`
 4. **Verify structure** - `scripts/validate-structure.sh`
-5. **Check docstrings** - `scripts/validate_docstrings.py`
+5. **Check docstrings** - Automatically included in `repo-lint check`
 
 ### Code Quality and Linting
 
 **Code Standards:**
 
 All code must adhere to language-specific standards:
-- **Python**: 120-character lines, Black formatting, Flake8 + Pylint compliance
+- **Python**: 120-character lines, Black formatting, Ruff + Pylint compliance
 - **Bash**: ShellCheck warnings addressed, shfmt formatting
 - **PowerShell**: PSScriptAnalyzer error-level compliance
 - **Perl**: Perl::Critic severity 5 compliance
 - **YAML**: yamllint compliance
 
-**Quick linting commands:**
+**Canonical Linting Tool: `repo-lint`**
+
+This repository uses `repo-lint` as the **single source of truth** for all linting and docstring validation:
 
 ```bash
-# Run all linters (Python, Bash, PowerShell, Perl, YAML)
-./scripts/run-linters.sh
+# Quick start - Check all code (recommended before every commit)
+python -m tools.repo_lint check
 
-# Auto-format code where possible (Python, Bash)
-./scripts/run-linters.sh --fix
+# Auto-format code and apply safe fixes
+python -m tools.repo_lint fix
 
-# Or run tools individually by language:
+# Install/bootstrap required linting tools locally
+python -m tools.repo_lint install
 
-# Python
-black .                                   # Auto-format
-flake8 .                                  # Style check
-git ls-files '*.py' | xargs pylint        # Static analysis
-
-# Bash
-git ls-files '*.sh' | xargs shellcheck          # Shell script analysis
-git ls-files '*.sh' | xargs shfmt -d -i 2 -ci   # Format check
-
-# PowerShell
-pwsh -Command "Invoke-ScriptAnalyzer -Path script.ps1 -Severity Error"
-
-# Perl
-git ls-files '*.pl' | xargs -r perlcritic --severity 5
-
-# YAML
-yamllint .                                # Linting
-
-# All languages
-python3 scripts/validate_docstrings.py  # Docstring validation
+# Thin wrapper alternative (delegates to repo-lint)
+./scripts/run-linters.sh          # Runs: python -m tools.repo_lint check
+./scripts/run-linters.sh --fix     # Runs: python -m tools.repo_lint fix
+./scripts/run-linters.sh --install # Runs: python -m tools.repo_lint install
 ```
 
+**REQUIRED Before Every Commit:**
+1. Run `python -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
+2. Run the full relevant test suite(s) for impacted code
+3. Ensure CI remains green (no "commit first, lint later")
+
 **Configuration files:**
-- Python Black: `pyproject.toml` (`[tool.black]`)
-- Python Flake8: `.flake8`
-- Python Pylint: `pyproject.toml` (`[tool.pylint.*]`)
+- Python tools (Black, Ruff, Pylint): `pyproject.toml`
 - YAML: `.yamllint`
+- Perl: `.perlcriticrc`
 
 All Python tools are configured for 120-character line length and compatible rule sets.
 
@@ -140,13 +155,10 @@ All Python tools are configured for 120-character line length and compatible rul
 - For fork PRs, a patch artifact is provided if formatting is needed
 - All other linters must pass without errors
 
-**Automatic linter installation:**
-The `./scripts/run-linters.sh` script automatically installs missing linters:
-- Python: black, flake8, pylint (via pip)
-- Bash: shellcheck (via apt/brew), shfmt (via go install)
-- PowerShell: pwsh, PSScriptAnalyzer (via apt/brew + PowerShell Gallery)
-- Perl: perlcritic (via cpanm)
-- YAML: yamllint (via pip)
+**Tool installation:**
+- `python -m tools.repo_lint install` installs Python tools in a local virtual environment (`.venv-lint/`)
+- Manual installation instructions are provided for non-Python tools (shellcheck, shfmt, PSScriptAnalyzer, Perl::Critic)
+- CI installs all tools explicitly (no auto-install in CI mode)
 
 ### Pull Request Guidelines
 
