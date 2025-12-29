@@ -416,9 +416,7 @@ def test_vector_schema_validation():
         if "expected_violations" in vector:
             for i, violation in enumerate(vector["expected_violations"]):
                 for field in required_violation_fields:
-                    assert field in violation, (
-                        f"{vector_file.name}: Violation {i} missing field '{field}'"
-                    )
+                    assert field in violation, f"{vector_file.name}: Violation {i} missing field '{field}'"
 
         # Validate expected_passes (if present)
         if "expected_passes" in vector:
