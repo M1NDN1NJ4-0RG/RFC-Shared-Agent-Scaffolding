@@ -131,6 +131,40 @@ class PythonRunner(Runner):
             tool="black", passed=False, violations=[], error=f"Black failed with exit code {result.returncode}"
         )
 
+    def _parse_ruff_output(self, stdout: str, context: str = "check") -> List[Violation]:
+        """Parse Ruff output into violations.
+
+        :Parameters:
+            - stdout: Ruff command stdout output
+            - context: Context for unsafe fixes message ('check' or 'fix')
+
+        :Returns:
+            List of parsed violations
+        """
+        violations = []
+        unsafe_msg = (
+            "(Review before applying with --unsafe-fixes)"
+            if context == "check"
+            else "(unsafe fixes not applied automatically)"
+        )
+
+        for line in stdout.splitlines():
+            if line.strip():
+                if "hidden fixes can be enabled with the `--unsafe-fixes` option" in line:
+                    violations.append(
+                        Violation(
+                            tool="ruff",
+                            file=".",
+                            line=None,
+                            message=f"⚠️  {line.strip()} {unsafe_msg}",
+                        )
+                    )
+                elif not line.startswith("Found"):
+                    # Ruff output format: path:line:col: code message
+                    violations.append(Violation(tool="ruff", file=".", line=None, message=line.strip()))
+
+        return violations
+
     def _run_ruff_check(self) -> LintResult:
         """Run Ruff linter in check-only mode (non-mutating).
 
@@ -146,24 +180,7 @@ class PythonRunner(Runner):
         if result.returncode == 0:
             return LintResult(tool="ruff", passed=True, violations=[])
 
-        # Parse Ruff output
-        violations = []
-
-        for line in result.stdout.splitlines():
-            if line.strip():
-                if "hidden fixes can be enabled with the `--unsafe-fixes` option" in line:
-                    violations.append(
-                        Violation(
-                            tool="ruff",
-                            file=".",
-                            line=None,
-                            message=f"⚠️  {line.strip()} (Review before applying with --unsafe-fixes)",
-                        )
-                    )
-                elif not line.startswith("Found"):
-                    # Ruff output format: path:line:col: code message
-                    violations.append(Violation(tool="ruff", file=".", line=None, message=line.strip()))
-
+        violations = self._parse_ruff_output(result.stdout, context="check")
         return LintResult(tool="ruff", passed=False, violations=violations)
 
     def _run_ruff_fix(self) -> LintResult:
@@ -182,23 +199,7 @@ class PythonRunner(Runner):
         if result.returncode == 0:
             return LintResult(tool="ruff", passed=True, violations=[])
 
-        # Parse Ruff output for remaining unfixable issues
-        violations = []
-
-        for line in result.stdout.splitlines():
-            if line.strip():
-                if "hidden fixes can be enabled with the `--unsafe-fixes` option" in line:
-                    violations.append(
-                        Violation(
-                            tool="ruff",
-                            file=".",
-                            line=None,
-                            message=f"⚠️  {line.strip()} (unsafe fixes not applied automatically)",
-                        )
-                    )
-                elif not line.startswith("Found"):
-                    violations.append(Violation(tool="ruff", file=".", line=None, message=line.strip()))
-
+        violations = self._parse_ruff_output(result.stdout, context="fix")
         return LintResult(tool="ruff", passed=False, violations=violations)
 
     def _run_pylint(self) -> LintResult:
