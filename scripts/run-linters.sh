@@ -60,4 +60,4 @@ fi
 # Delegate to repo_lint Python module
 # Using exec to replace this shell process with the Python process,
 # which correctly propagates exit codes and signals
-exec python -m tools.repo_lint "$COMMAND"
+exec python3 -m tools.repo_lint "$COMMAND"
