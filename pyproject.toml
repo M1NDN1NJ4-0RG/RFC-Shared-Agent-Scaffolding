@@ -10,6 +10,13 @@ test = [
     "pytest>=7.0.0",
 ]
 
+# Docstring validation dependencies
+# tree-sitter and tree-sitter-bash for structure-aware Bash parsing
+docstring = [
+    "tree-sitter>=0.20.0",
+    "tree-sitter-bash>=0.20.0",
+]
+
 [tool.black]
 line-length = 120
 target-version = ['py38']

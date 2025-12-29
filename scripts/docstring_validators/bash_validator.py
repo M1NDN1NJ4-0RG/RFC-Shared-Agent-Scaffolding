@@ -5,6 +5,9 @@
 This module validates Bash script documentation, including file-level header
 comments and individual function documentation blocks.
 
+Uses tree-sitter with pinned Bash grammar for structure-aware parsing
+(per Phase 0 Item 0.9.4).
+
 :Purpose:
     Enforce Bash docstring contracts as defined in
     docs/contributing/docstring-contracts/bash.md
@@ -23,10 +26,24 @@ comments and individual function documentation blocks.
 """
 
 import re
+import sys
 from pathlib import Path
 from typing import List, Optional
 
 from .common import ValidationError, check_pragma_ignore, validate_exit_codes_content
+
+# Import tree-sitter helper if available
+try:
+    # Add helpers directory to path
+    helpers_dir = Path(__file__).parent / "helpers"
+    if str(helpers_dir) not in sys.path:
+        sys.path.insert(0, str(helpers_dir))
+
+    from bash_treesitter import parse_bash_functions
+
+    TREE_SITTER_AVAILABLE = True
+except ImportError:
+    TREE_SITTER_AVAILABLE = False
 
 
 class BashValidator:
@@ -128,7 +145,64 @@ class BashValidator:
     def _validate_functions(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Bash function documentation.
 
-        Detects function definitions and checks for comment blocks preceding them.
+        Uses tree-sitter parser if available (per Phase 0 Item 0.9.4).
+        Falls back to regex-based detection if tree-sitter is not installed.
+
+        :param file_path: Path to Bash file
+        :param content: File content
+
+        :returns: List of validation errors for functions
+        """
+        errors = []
+
+        # Try tree-sitter first (preferred)
+        if TREE_SITTER_AVAILABLE:
+            parse_result = parse_bash_functions(file_path)
+
+            # Check for parse errors
+            if parse_result.get("errors"):
+                # If tree-sitter fails, fall back to regex
+                return BashValidator._validate_functions_regex(file_path, content)
+
+            # Validate each function
+            for func in parse_result.get("functions", []):
+                func_name = func.get("name")
+                func_line = func.get("line")
+                has_doc = func.get("has_doc_comment", False)
+
+                # Check for pragma ignore
+                # Look in the content around the function line
+                lines = content.split("\n")
+                if func_line > 0 and func_line <= len(lines):
+                    func_line_content = lines[func_line - 1]
+                    if re.search(r"#\s*noqa:\s*FUNCTION", func_line_content):
+                        continue
+
+                # Per Phase 5.5 policy: Do NOT skip private/internal functions
+                # All functions must have documentation unless explicitly exempted via pragma
+
+                if not has_doc:
+                    errors.append(
+                        ValidationError(
+                            str(file_path),
+                            ["function documentation"],
+                            "Function must have comment block with description, args, returns",
+                            symbol_name=f"{func_name}()",
+                            line_number=func_line,
+                        )
+                    )
+
+            return errors
+
+        # Fallback to regex-based parsing
+        return BashValidator._validate_functions_regex(file_path, content)
+
+    @staticmethod
+    def _validate_functions_regex(file_path: Path, content: str) -> List[ValidationError]:
+        """Fallback regex-based function validation.
+
+        Used when tree-sitter is not available.
+        This is the original implementation - kept for compatibility.
 
         :param file_path: Path to Bash file
         :param content: File content
