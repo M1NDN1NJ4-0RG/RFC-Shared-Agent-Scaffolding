@@ -77,11 +77,76 @@ Enforced by CI via `.github/workflows/docstring-contract.yml`
 
 Before submitting a PR:
 
-1. **Run linters** - `make lint` (or language-specific linters)
+1. **Run linters** - See "Code Quality and Linting" section below
 2. **Run tests** - Language-specific test suites must pass
 3. **Run conformance** - For wrapper changes: `make conformance`
 4. **Verify structure** - `scripts/validate-structure.sh`
 5. **Check docstrings** - `scripts/validate_docstrings.py`
+
+### Code Quality and Linting
+
+**Code Standards:**
+
+All code must adhere to language-specific standards:
+- **Python**: 120-character lines, Black formatting, Flake8 + Pylint compliance
+- **Bash**: ShellCheck warnings addressed, shfmt formatting
+- **PowerShell**: PSScriptAnalyzer error-level compliance
+- **Perl**: Perl::Critic severity 5 compliance
+- **YAML**: yamllint compliance
+
+**Quick linting commands:**
+
+```bash
+# Run all linters (Python, Bash, PowerShell, Perl, YAML)
+./scripts/run-linters.sh
+
+# Auto-format code where possible (Python, Bash)
+./scripts/run-linters.sh --fix
+
+# Or run tools individually by language:
+
+# Python
+black .                                   # Auto-format
+flake8 .                                  # Style check
+git ls-files '*.py' | xargs pylint        # Static analysis
+
+# Bash
+git ls-files '*.sh' | xargs shellcheck          # Shell script analysis
+git ls-files '*.sh' | xargs shfmt -d -i 2 -ci   # Format check
+
+# PowerShell
+pwsh -Command "Invoke-ScriptAnalyzer -Path script.ps1 -Severity Error"
+
+# Perl
+git ls-files '*.pl' | xargs -r perlcritic --severity 5
+
+# YAML
+yamllint .                                # Linting
+
+# All languages
+python3 scripts/validate_docstrings.py  # Docstring validation
+```
+
+**Configuration files:**
+- Python Black: `pyproject.toml` (`[tool.black]`)
+- Python Flake8: `.flake8`
+- Python Pylint: `pyproject.toml` (`[tool.pylint.*]`)
+- YAML: `.yamllint`
+
+All Python tools are configured for 120-character line length and compatible rule sets.
+
+**CI behavior:**
+- Black formatting is **automatically applied** for same-repo PRs
+- For fork PRs, a patch artifact is provided if formatting is needed
+- All other linters must pass without errors
+
+**Automatic linter installation:**
+The `./scripts/run-linters.sh` script automatically installs missing linters:
+- Python: black, flake8, pylint (via pip)
+- Bash: shellcheck (via apt/brew), shfmt (via go install)
+- PowerShell: pwsh, PSScriptAnalyzer (via apt/brew + PowerShell Gallery)
+- Perl: perlcritic (via cpanm)
+- YAML: yamllint (via pip)
 
 ### Pull Request Guidelines
 
