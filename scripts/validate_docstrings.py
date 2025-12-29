@@ -215,12 +215,10 @@ def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
     Checks that at least exit codes 0 and 1 are documented.
     This is a soft check - we look for patterns like "0" near "success" etc.
 
-    Args:
-        content: The exit codes section content
+    :param content: The exit codes section content
         language: Language name for context
 
-    Returns:
-        Error message if validation fails, None if valid
+    :returns: Error message if validation fails, None if valid
     """
     if SKIP_CONTENT_CHECKS:
         return None
@@ -334,8 +332,7 @@ class BashValidator:
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Bash script header and function docstrings.
 
-        Args:
-            file_path: Path to Bash file to validate
+        :param file_path: Path to Bash file to validate
             content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)"""
@@ -356,8 +353,7 @@ class BashValidator:
     def _validate_header(file_path: Path, content: str) -> Optional[ValidationError]:
         """Validate Bash script header documentation.
 
-        Args:
-            file_path: Path to Bash file
+        :param file_path: Path to Bash file
             content: File content as string
 
         :returns: ValidationError if header is missing required sections, None otherwise"""
@@ -414,8 +410,7 @@ class BashValidator:
 
         Detects function definitions and checks for comment blocks preceding them.
 
-        Args:
-            file_path: Path to Bash file
+        :param file_path: Path to Bash file
             content: File content
 
         :returns: List of validation errors for functions"""
@@ -516,8 +511,7 @@ class PowerShellValidator:
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate PowerShell script docstring.
 
-        Args:
-            file_path: Path to PowerShell file to validate
+        :param file_path: Path to PowerShell file to validate
             content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)"""
@@ -574,8 +568,7 @@ class PythonValidator:
     def validate(file_path: Path, content: str) -> List[ValidationError]:
         """Validate Python module and symbol docstrings.
 
-        Args:
-            file_path: Path to Python file to validate
+        :param file_path: Path to Python file to validate
             content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)"""
@@ -596,8 +589,7 @@ class PythonValidator:
     def _validate_module_docstring(file_path: Path, content: str) -> Optional[ValidationError]:
         """Validate module-level docstring.
 
-        Args:
-            file_path: Path to Python file
+        :param file_path: Path to Python file
             content: File content as string
 
         :returns: ValidationError if module docstring is missing required sections, None otherwise"""
@@ -660,8 +652,7 @@ class PythonValidator:
     def _validate_symbols(file_path: Path, content: str) -> List[ValidationError]:
         """Validate function and class docstrings using AST parsing.
 
-        Args:
-            file_path: Path to Python file
+        :param file_path: Path to Python file
             content: File content
 
         :returns: List of validation errors for symbols"""
@@ -692,8 +683,7 @@ class PythonValidator:
     def _validate_function(file_path: Path, node: ast.FunctionDef, content: str) -> Optional[ValidationError]:
         """Validate a function or method docstring.
 
-        Args:
-            file_path: Path to Python file
+        :param file_path: Path to Python file
             node: AST FunctionDef node
             content: File content (for pragma checking)
 

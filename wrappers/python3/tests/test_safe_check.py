@@ -100,7 +100,10 @@ def run_safe_check(workdir: Path, env=None, timeout=60):
 
 
 class TestSafeCheck(unittest.TestCase):
+    """Test safe_check.py wrapper script functionality."""
+
     def test_safe_check_passes_in_clean_repo(self):
+        """Test that safe-check passes in a clean repository."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             # Provide the scripts in cwd, since safe_check expects relative paths.

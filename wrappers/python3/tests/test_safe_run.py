@@ -144,7 +144,10 @@ def list_fail_logs(log_dir: Path):
 
 
 class TestSafeRun(unittest.TestCase):
+    """Test safe_run.py wrapper script functionality."""
+
     def test_success_creates_no_artifacts(self):
+        """Test that successful runs don't create FAIL-LOGS artifacts."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             log_dir = wd / ".agent" / "FAIL-LOGS"
@@ -156,6 +159,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertFalse(log_dir.exists(), "FAIL-LOGS directory should not be created on success")
 
     def test_failure_creates_log_and_preserves_exit_code(self):
+        """Test that failures create FAIL-LOGS and preserve exit code."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             log_dir = wd / ".agent" / "FAIL-LOGS"
@@ -179,6 +183,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertIn("ERR", content)
 
     def test_custom_log_dir_env(self):
+        """Test that AGENT_FAIL_LOG_DIR environment variable works."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             custom = wd / "custom_logs"
@@ -192,6 +197,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertEqual(len(list_fail_logs(custom)), 1)
 
     def test_snippet_lines_printed_to_stderr(self):
+        """Test that snippet lines are printed to stderr."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
             proc = run_safe_run(
