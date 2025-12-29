@@ -200,10 +200,18 @@ This tool must be:
 - [x] **Sub-Item 3.7.4:** Ensure `repo_lint`'s language runners call the docstring validator in a way that remains stable as it modularizes (prefer importing modules over shelling out once the split is done).
   - ✅ Runners call `scripts/validate_docstrings.py` which imports modular validators
   - ✅ Integration tested and working for Python, Bash, PowerShell, and Perl
-- [ ] **Sub-Item 3.7.5:** Add/expand fixtures + unit tests for each language's symbol discovery path so future refactors don't silently regress enforcement.
-  - Deferred: Requires comprehensive test fixtures and unit tests
-  - Should include edge cases: multiline signatures, nested functions, special characters
-  - Should verify parser outputs match expected symbols
+- [x] **Sub-Item 3.7.5:** Add/expand fixtures + unit tests for each language's symbol discovery path so future refactors don't silently regress enforcement.
+  - ✅ Created comprehensive test fixtures for Python, Bash, PowerShell, and Perl
+    - `scripts/tests/fixtures/python/edge_cases.py` - Python edge cases
+    - `scripts/tests/fixtures/bash/edge-cases.sh` - Bash edge cases
+    - `scripts/tests/fixtures/powershell/EdgeCases.ps1` - PowerShell edge cases
+    - `scripts/tests/fixtures/perl/edge_cases.pl` - Perl edge cases
+  - ✅ Created comprehensive unit test suite: `scripts/tests/test_symbol_discovery.py`
+    - 31 tests covering all languages (Python: 9, Bash: 7, PowerShell: 7, Perl: 8)
+    - All tests passing
+  - ✅ Edge cases covered: multiline signatures, nested functions, special characters, private symbols, pragma exemptions
+  - ✅ Fixtures follow naming conventions per `docs/contributing/naming-and-style.md`
+  - ✅ Tests verify parser outputs match expected symbols
 
 **Phase 3 Success Criteria**
 - ✅ Python runner complete and functional
@@ -212,7 +220,7 @@ This tool must be:
 - ✅ Perl runner complete and functional
 - ✅ YAML runner complete and functional
 - ✅ Docstring validator modularization (Item 3.7.1-3.7.4) complete
-- ⏸️ Docstring validator test fixtures and unit tests (Item 3.7.5) deferred to follow-up PRs
+- ✅ Docstring validator test fixtures and unit tests (Item 3.7.5) complete
 
 ---
 
