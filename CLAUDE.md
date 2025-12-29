@@ -47,12 +47,12 @@ You may consult this history for background, but you **must not** assume any `.d
 
 ---
 
-## 4) Key improvements baked into this setup
+## 4) Key expectations baked into this setup
 
-- Mandatory **Mode Detection** preflight in `20_GIT_WORKFLOW.md`
-- A single constant **AUTO_MERGE_MAX_WAIT_SECONDS = 600** in `21_AUTO_MERGE_WAITING.md`
-- Legacy tracker design (CURRENT.md + PR-LOG, journaled) is preserved only as historical reference under `docs/history/ai-agent-guidelines/journal/`, not as an active monolithic document.
-- Approval-gated dependency/tooling actions preserved in `40_BUILD_AND_VERIFICATION.md`
+- Use an appropriate Git/PR workflow consistent with the current repository instructions (see `.github/copilot-instructions.md` or other active governance docs, not archived history files).
+- Treat auto-merge timing and similar operational limits as configuration owned by humans or CI, not as hard-coded constants in this repository.
+- Prefer a **journaled tracker** (e.g., a small CURRENT file plus per-PR or per-milestone log entries) over a single ever-growing document.
+- Perform dependency/tooling changes only with explicit human approval; do not introduce or modify tools unilaterally.
 
 ---
 
