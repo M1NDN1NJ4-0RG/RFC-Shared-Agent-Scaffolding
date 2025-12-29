@@ -543,4 +543,52 @@ python -m tools.repo_lint install
 
 ---
 
+### FW-014: Advanced repo-local tool isolation
+
+**Severity:** Low  
+**Area:** Tooling  
+**Status:** 🔮 DEFERRED
+
+**Description:**
+
+Phase 4 implements basic repo-local tool installation (`.venv-lint/` for Python tools). Future enhancements could extend this to other languages and add more sophisticated isolation mechanisms.
+
+**Proposed Enhancements:**
+
+1. **PowerShell module isolation (`.psmodules/`):**
+   - Install PSScriptAnalyzer to repo-local directory
+   - Use `Import-Module -Path .psmodules/...` instead of system-wide install
+   - Requires PowerShell module path manipulation
+
+2. **Perl CPAN local install (`.cpan-local/`):**
+   - Use `local::lib` to install Perl::Critic locally
+   - Set PERL5LIB to include `.cpan-local/lib/perl5`
+   - Avoids system-wide CPAN installs
+
+3. **Bash tool binaries (`.tools/`):**
+   - Download pre-built shellcheck binaries
+   - Build shfmt from source or download releases
+   - Add `.tools/bin` to PATH during linting
+
+4. **Version lock files:**
+   - Create `.tool-versions` or similar lock file
+   - Pin exact versions of all tools (including non-Python)
+   - Auto-verify and update on `repo-lint install`
+
+5. **Cleanup improvements:**
+   - Track what was installed where
+   - Add `repo-lint install --verify` to check tool integrity
+   - Add `repo-lint install --upgrade` to update tools
+
+**Current Implementation (Phase 4):**
+- Python tools: Installed in `.venv-lint/` with pinned versions
+- Other tools: Manual installation with printed instructions
+- Cleanup: `--cleanup` removes `.venv-lint/`, `.tools/`, `.psmodules/`, `.cpan-local/`
+
+**Source:**
+- Decision Item 0.2.2 in EPIC issue (Phase 0 - Execution Model)
+- Implemented during Phase 4
+
+---
+
 **End of Future Work Tracker**

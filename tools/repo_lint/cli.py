@@ -77,6 +77,7 @@ def create_parser() -> argparse.ArgumentParser:
     # install command
     install_parser = subparsers.add_parser("install", help="Install/bootstrap required linting tools")
     install_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
+    install_parser.add_argument("--cleanup", action="store_true", help="Remove repo-local tool installations")
 
     return parser
 
@@ -170,33 +171,77 @@ def cmd_install(args: argparse.Namespace) -> int:
     :Returns:
         Exit code (0=success, 3=error)
     """
+    from tools.repo_lint.install.install_helpers import (
+        cleanup_repo_local,
+        get_venv_path,
+        install_python_tools,
+        print_bash_tool_instructions,
+        print_perl_tool_instructions,
+        print_powershell_tool_instructions,
+    )
+
+    # Handle cleanup mode
+    if args.cleanup:
+        print("🧹 Cleaning up repo-local tool installations...")
+        print("")
+
+        success, messages = cleanup_repo_local(verbose=args.verbose)
+
+        for msg in messages:
+            print(msg)
+
+        print("")
+        if success:
+            print("✓ Cleanup complete")
+            return ExitCode.SUCCESS
+        else:
+            print("✗ Cleanup completed with errors")
+            return ExitCode.INTERNAL_ERROR
+
+    # Normal install mode
     print("📦 Installing linting tools...")
     print("")
 
-    # Placeholder implementation
-    print("⚠️  repo-lint install is not yet fully implemented")
-    print("    This is a minimal stub implementation for Phase 1")
-    print("")
-    print("For now, please install tools manually:")
-    print("")
-    print("Python tools:")
-    print("  pip install black ruff pylint")
-    print("")
-    print("Bash tools:")
-    print("  apt-get install shellcheck  # or: brew install shellcheck")
-    print("  go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0")
-    print("")
-    print("PowerShell tools:")
-    print("  Install-Module -Name PSScriptAnalyzer")
-    print("")
-    print("Perl tools:")
-    print("  cpanm Perl::Critic")
-    print("")
-    print("YAML tools:")
-    print("  pip install yamllint")
+    # Install Python tools (auto-installable)
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print("  Python Tools - Auto-Install")
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
     print("")
 
-    return ExitCode.SUCCESS
+    success, errors = install_python_tools(verbose=args.verbose)
+
+    if success:
+        venv_path = get_venv_path()
+        print("")
+        print(f"✓ Python tools installed successfully in {venv_path}")
+        print("")
+        print("To use these tools in your shell:")
+        print(f"  source {venv_path}/bin/activate  # Linux/macOS")
+        print(f"  {venv_path}\\Scripts\\activate     # Windows")
+    else:
+        print("")
+        print("✗ Python tool installation failed:")
+        for error in errors:
+            print(f"  {error}")
+        print("")
+
+    # Print manual install instructions for other tools
+    print_bash_tool_instructions()
+    print_powershell_tool_instructions()
+    print_perl_tool_instructions()
+
+    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print("")
+
+    if success:
+        print("✓ Installation complete")
+        print("")
+        print("Next steps:")
+        print("  1. Follow the manual installation instructions above")
+        print("  2. Run 'python -m tools.repo_lint check' to verify")
+        return ExitCode.SUCCESS
+    else:
+        return ExitCode.INTERNAL_ERROR
 
 
 def main() -> None:

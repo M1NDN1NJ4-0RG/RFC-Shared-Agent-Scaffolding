@@ -17,6 +17,15 @@ docstring = [
     "tree-sitter-bash>=0.20.0,<0.30.0",
 ]
 
+# Linting tool dependencies (pinned per Phase 0 Item 0.9.6)
+# These are the Python-based linting tools used by repo_lint
+lint = [
+    "black==24.10.0",
+    "ruff==0.8.4",
+    "pylint==3.3.2",
+    "yamllint==1.35.1",
+]
+
 [tool.black]
 line-length = 120
 target-version = ['py38']
