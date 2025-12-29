@@ -1,12 +1,12 @@
-"""Unit tests for safe-check.py contract verification script.
+"""Unit tests for safe_check.py contract verification script.
 
-This test module validates that safe-check.py correctly verifies the
+This test module validates that safe_check.py correctly verifies the
 Python3 implementations of safe-run and safe-archive conform to their
 M0 specification contracts.
 
 Purpose
 -------
-Meta-test that validates the safe-check.py contract verification script
+Meta-test that validates the safe_check.py contract verification script
 works correctly in a clean, isolated environment.
 
 Test Coverage
@@ -26,7 +26,7 @@ Examples
 --------
 Run tests via pytest::
 
-    pytest test-safe-check.py
+    pytest test-safe_check.py
 
 Exit Codes
 ----------
@@ -37,7 +37,7 @@ Exit Codes
 
 Contract Validation
 -------------------
-The test validates that safe-check.py successfully verifies:
+The test validates that safe_check.py successfully verifies:
 - safe-run exit code preservation (contract safe-run-001)
 - safe-run failure artifact generation (contract safe-run-003)
 - safe-archive move semantics with no-clobber (contract M0-P1-I3)
@@ -45,13 +45,13 @@ The test validates that safe-check.py successfully verifies:
 Test Dependencies
 -----------------
 Requires the following scripts in relative paths:
-- scripts/python3/safe-run.py
-- scripts/python3/safe-archive.py
-- scripts/python3/safe-check.py
-- scripts/python3/preflight-automerge-ruleset.py
+- scripts/python3/safe_run.py
+- scripts/python3/safe_archive.py
+- scripts/python3/safe_check.py
+- scripts/python3/preflight_automerge_ruleset.py
 
 The test creates a temporary directory and copies all scripts to the
-expected relative paths before running safe-check.py.
+expected relative paths before running safe_check.py.
 
 Platform Notes
 --------------
@@ -69,18 +69,18 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SCRIPTS = ROOT / "scripts"
-SAFE_CHECK = SCRIPTS / "safe-check.py"
+SAFE_CHECK = SCRIPTS / "safe_check.py"
 
 
 def run_safe_check(workdir: Path, env=None, timeout=60):
-    """Run safe-check.py as a subprocess in the specified directory.
+    """Run safe_check.py as a subprocess in the specified directory.
 
     :param workdir: Working directory for subprocess execution
     :param env: Optional environment variable overrides (dict)
     :param timeout: Timeout in seconds (default: 60)
     :returns: subprocess.CompletedProcess instance with returncode, stdout, stderr
 
-    Executes safe-check.py which runs contract verification tests for
+    Executes safe_check.py which runs contract verification tests for
     safe-run and safe-archive. The working directory must contain the
     scripts in the expected relative paths.
     """
@@ -107,15 +107,15 @@ class TestSafeCheck(unittest.TestCase):
             scripts_dir = wd / "scripts" / "python3"
             scripts_dir.mkdir(parents=True)
             for name in [
-                "safe-run.py",
-                "safe-archive.py",
-                "safe-check.py",
-                "preflight-automerge-ruleset.py",
+                "safe_run.py",
+                "safe_archive.py",
+                "safe_check.py",
+                "preflight_automerge_ruleset.py",
             ]:
                 (scripts_dir / name).write_bytes((SCRIPTS / name).read_bytes())
 
             proc = subprocess.run(
-                [sys.executable, str(scripts_dir / "safe-check.py")],
+                [sys.executable, str(scripts_dir / "safe_check.py")],
                 cwd=str(wd),
                 env=os.environ.copy(),
                 text=True,

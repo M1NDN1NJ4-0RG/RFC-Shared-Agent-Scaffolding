@@ -1,12 +1,12 @@
-"""Unit tests for preflight-automerge-ruleset.py GitHub Ruleset verification tool.
+"""Unit tests for preflight_automerge_ruleset.py GitHub Ruleset verification tool.
 
-This test module validates the preflight-automerge-ruleset.py implementation,
+This test module validates the preflight_automerge_ruleset.py implementation,
 focusing on M0-P2-I1 Bearer token authentication, error classification, and
 GitHub Ruleset verification logic.
 
 Purpose
 -------
-Validates that the preflight-automerge-ruleset.py script correctly verifies
+Validates that the preflight_automerge_ruleset.py script correctly verifies
 GitHub Ruleset configuration and uses proper Bearer token authentication.
 
 Test Coverage
@@ -31,7 +31,7 @@ Examples
 --------
 Run tests via pytest::
 
-    pytest test-preflight-automerge-ruleset.py
+    pytest test-preflight_automerge_ruleset.py
 
 Exit Codes
 ----------
@@ -80,11 +80,11 @@ import importlib.util
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SCRIPTS = ROOT / "scripts"
-MODULE_PATH = SCRIPTS / "preflight-automerge-ruleset.py"
+MODULE_PATH = SCRIPTS / "preflight_automerge_ruleset.py"
 
 
 def load_module():
-    """Dynamically load preflight-automerge-ruleset.py as a Python module.
+    """Dynamically load preflight_automerge_ruleset.py as a Python module.
 
     :returns: Loaded module object
 

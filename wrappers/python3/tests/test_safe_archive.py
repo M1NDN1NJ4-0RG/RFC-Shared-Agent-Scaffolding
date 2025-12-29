@@ -1,6 +1,6 @@
-"""Unit tests for safe-archive.py archival tool.
+"""Unit tests for safe_archive.py archival tool.
 
-This test module validates the safe-archive.py implementation, focusing
+This test module validates the safe_archive.py implementation, focusing
 on M0-P1-I3 no-clobber semantics (both strict and auto-suffix modes),
 compression functionality, and move operations.
 
@@ -33,7 +33,7 @@ Examples
 --------
 Run tests via pytest::
 
-    pytest test-safe-archive.py
+    pytest test-safe_archive.py
 
 Exit Codes
 ----------
@@ -57,7 +57,7 @@ Contract Validation (M0-P1-I3)
 
 Test Dependencies
 -----------------
-Requires safe-archive.py in the expected relative path.
+Requires safe_archive.py in the expected relative path.
 All tests use temporary directories for isolation.
 
 Platform Notes
@@ -79,7 +79,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SCRIPTS = ROOT / "scripts"
-SAFE_ARCHIVE = SCRIPTS / "safe-archive.py"
+SAFE_ARCHIVE = SCRIPTS / "safe_archive.py"
 
 
 def _py():
@@ -87,22 +87,22 @@ def _py():
 
     :returns: sys.executable path
 
-    Used to ensure safe-archive.py uses the same Python interpreter
+    Used to ensure safe_archive.py uses the same Python interpreter
     as the test runner, avoiding version mismatches.
     """
     return sys.executable
 
 
 def run_archive(args, workdir: Path, env=None, timeout=25):
-    """Run safe-archive.py as a subprocess with specified arguments.
+    """Run safe_archive.py as a subprocess with specified arguments.
 
-    :param args: Arguments to pass to safe-archive.py (list[str])
+    :param args: Arguments to pass to safe_archive.py (list[str])
     :param workdir: Working directory for subprocess execution
     :param env: Optional environment variable overrides (dict)
     :param timeout: Timeout in seconds (default: 25)
     :returns: subprocess.CompletedProcess instance with returncode, stdout, stderr
 
-    This helper function invokes safe-archive.py with the specified arguments,
+    This helper function invokes safe_archive.py with the specified arguments,
     capturing stdout and stderr for verification. The working directory is set
     to workdir to isolate test artifacts.
     """
