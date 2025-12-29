@@ -10,7 +10,7 @@
       "path": "conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1",
       "symbol": "FunctionWithoutDoc",
       "symbol_kind": "function",
-      "line": 16,
+      "line": 17,
       "severity": "error",
       "message": "Function 'FunctionWithoutDoc' is missing a docstring"
     }
