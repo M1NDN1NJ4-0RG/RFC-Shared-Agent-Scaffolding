@@ -148,7 +148,7 @@ class BashRunner(Runner):
                     tool="shfmt",
                     file=".",
                     line=None,
-                    message="Shell scripts do not match shfmt style. Run 'python -m tools.repo_lint fix' to auto-format.",
+                    message="Shell scripts do not match shfmt style. Run 'python3 -m tools.repo_lint fix' to auto-format.",
                 )
             )
 

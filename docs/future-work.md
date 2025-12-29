@@ -519,7 +519,7 @@ rg -n \
 
 **Description:**
 
-Currently, `repo_lint` is run in-place using `python -m tools.repo_lint`. Future work should make it installable as a proper Python package with console script entry points.
+Currently, `repo_lint` is run in-place using `python3 -m tools.repo_lint`. Future work should make it installable as a proper Python package with console script entry points.
 
 **Proposed Changes:**
 
@@ -532,9 +532,9 @@ Currently, `repo_lint` is run in-place using `python -m tools.repo_lint`. Future
 
 Run in-place from repo root:
 ```bash
-python -m tools.repo_lint check
-python -m tools.repo_lint fix
-python -m tools.repo_lint install
+python3 -m tools.repo_lint check
+python3 -m tools.repo_lint fix
+python3 -m tools.repo_lint install
 ```
 
 **Source:**

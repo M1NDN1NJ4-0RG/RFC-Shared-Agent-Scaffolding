@@ -7,9 +7,9 @@ Thank you for your interest in contributing! This repository implements the RFC-
 1. **Read the documentation** - Start with [docs/README.md](./docs/README.md) for an overview
 2. **Review the RFC** - [rfc-shared-agent-scaffolding-v0.1.0.md](./rfc-shared-agent-scaffolding-v0.1.0.md) defines the contract
 3. **Check the roadmap** - [EPIC #33](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) tracks the Rust canonical tool implementation
-4. **Install linting tools** - Run `python -m tools.repo_lint install` (or `./scripts/run-linters.sh --install`)
+4. **Install linting tools** - Run `python3 -m tools.repo_lint install` (or `./scripts/run-linters.sh --install`)
 5. **Before every commit:**
-   - Run `python -m tools.repo_lint check` to lint all code
+   - Run `python3 -m tools.repo_lint check` to lint all code
    - Run relevant test suites for code you changed
    - Verify all CI checks pass
 6. **Follow the guidelines** - See detailed contributing guide below
@@ -101,7 +101,7 @@ Enforced by CI via `.github/workflows/docstring-contract.yml`
 
 Before submitting a PR:
 
-1. **Run linters** - `python -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
+1. **Run linters** - `python3 -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
 2. **Run tests** - Language-specific test suites must pass
 3. **Run conformance** - For wrapper changes: `make conformance`
 4. **Verify structure** - `scripts/validate-structure.sh`
@@ -124,22 +124,22 @@ This repository uses `repo-lint` as the **single source of truth** for all linti
 
 ```bash
 # Quick start - Check all code (recommended before every commit)
-python -m tools.repo_lint check
+python3 -m tools.repo_lint check
 
 # Auto-format code and apply safe fixes
-python -m tools.repo_lint fix
+python3 -m tools.repo_lint fix
 
 # Install/bootstrap required linting tools locally
-python -m tools.repo_lint install
+python3 -m tools.repo_lint install
 
 # Thin wrapper alternative (delegates to repo-lint)
-./scripts/run-linters.sh          # Runs: python -m tools.repo_lint check
-./scripts/run-linters.sh --fix     # Runs: python -m tools.repo_lint fix
-./scripts/run-linters.sh --install # Runs: python -m tools.repo_lint install
+./scripts/run-linters.sh          # Runs: python3 -m tools.repo_lint check
+./scripts/run-linters.sh --fix     # Runs: python3 -m tools.repo_lint fix
+./scripts/run-linters.sh --install # Runs: python3 -m tools.repo_lint install
 ```
 
 **REQUIRED Before Every Commit:**
-1. Run `python -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
+1. Run `python3 -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
 2. Run the full relevant test suite(s) for impacted code
 3. Ensure CI remains green (no "commit first, lint later")
 
@@ -156,7 +156,7 @@ All Python tools are configured for 120-character line length and compatible rul
 - All other linters must pass without errors
 
 **Tool installation:**
-- `python -m tools.repo_lint install` installs Python tools in a local virtual environment (`.venv-lint/`)
+- `python3 -m tools.repo_lint install` installs Python tools in a local virtual environment (`.venv-lint/`)
 - Manual installation instructions are provided for non-Python tools (shellcheck, shfmt, PSScriptAnalyzer, Perl::Critic)
 - CI installs all tools explicitly (no auto-install in CI mode)
 
