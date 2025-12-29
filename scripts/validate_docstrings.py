@@ -153,6 +153,7 @@ from typing import List
 sys.path.insert(0, os.path.join(os.path.dirname(__file__)))
 
 # Import validator classes from modular package
+# pylint: disable=wrong-import-position
 from docstring_validators.bash_validator import BashValidator
 from docstring_validators.common import ValidationError
 from docstring_validators.perl_validator import PerlValidator
