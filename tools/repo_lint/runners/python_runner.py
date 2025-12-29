@@ -172,17 +172,19 @@ class PythonRunner(Runner):
         """
         # Get all Python files
         py_files_result = subprocess.run(
-            ["git", "ls-files", "-z", "**/*.py"], cwd=self.repo_root, capture_output=True, text=True, check=False
+            ["git", "ls-files", "**/*.py"], cwd=self.repo_root, capture_output=True, text=True, check=False
         )
 
         if not py_files_result.stdout.strip():
             return LintResult(tool="pylint", passed=True, violations=[])
 
+        # Get list of files and run pylint directly (cross-platform)
+        py_files = py_files_result.stdout.strip().split("\n")
+
         # Run pylint
         result = subprocess.run(
-            ["xargs", "-0", "-r", "pylint"],
+            ["pylint"] + py_files,
             cwd=self.repo_root,
-            input=py_files_result.stdout,
             capture_output=True,
             text=True,
             check=False,

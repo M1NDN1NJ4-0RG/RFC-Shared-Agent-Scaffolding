@@ -11,7 +11,7 @@
     - check_tools(): Verify required tools are installed
 """
 
-import subprocess
+import shutil
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Optional
@@ -37,7 +37,7 @@ def find_repo_root() -> Path:
 
 
 def command_exists(command: str) -> bool:
-    """Check if a command exists in PATH.
+    """Check if a command exists in PATH (cross-platform).
 
     :Args:
         command: Command name to check
@@ -45,8 +45,7 @@ def command_exists(command: str) -> bool:
     :Returns:
         True if command exists, False otherwise
     """
-    result = subprocess.run(["which", command], capture_output=True, check=False)
-    return result.returncode == 0
+    return shutil.which(command) is not None
 
 
 class Runner(ABC):
