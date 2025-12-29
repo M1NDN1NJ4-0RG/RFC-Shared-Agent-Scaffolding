@@ -11,7 +11,7 @@ my $scripts_dir = File::Spec->catdir($sandbox, "scripts", "perl");
 make_path($scripts_dir);
 
 my $src = $ENV{SRC_SAFE_ARCHIVE} || die "SRC_SAFE_ARCHIVE not set";
-my $safe_archive = File::Spec->catfile($scripts_dir, "safe-archive.pl");
+my $safe_archive = File::Spec->catfile($scripts_dir, "safe_archive.pl");
 write_file($safe_archive, slurp($src));
 make_exe($safe_archive);
 

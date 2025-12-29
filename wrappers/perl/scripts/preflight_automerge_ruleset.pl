@@ -2,24 +2,24 @@
 
 =head1 NAME
 
-preflight-automerge-ruleset.pl - Verify GitHub Ruleset enforces required CI checks
+preflight_automerge_ruleset.pl - Verify GitHub Ruleset enforces required CI checks
 
 =head1 SYNOPSIS
 
   # Verify by ruleset name
-  preflight-automerge-ruleset.pl \
+  preflight_automerge_ruleset.pl \
     --repo OWNER/REPO \
     --ruleset-name "Main - PR Only + Green CI" \
     --want '["lint","test"]'
   
   # Verify by ruleset ID
-  preflight-automerge-ruleset.pl \
+  preflight_automerge_ruleset.pl \
     --repo OWNER/REPO \
     --ruleset-id 12345 \
     --want '["lint","test","build"]'
   
   # Custom API version
-  preflight-automerge-ruleset.pl \
+  preflight_automerge_ruleset.pl \
     --repo OWNER/REPO \
     --ruleset-name "Protected" \
     --want '["ci"]' \
@@ -101,7 +101,7 @@ If the C<gh> command is available in PATH, the script uses it for API calls.
 This leverages existing GitHub CLI authentication.
 
   $ gh auth login
-  $ preflight-automerge-ruleset.pl --repo OWNER/REPO ...
+  $ preflight_automerge_ruleset.pl --repo OWNER/REPO ...
 
 Advantages:
 
@@ -132,7 +132,7 @@ Tokens are read from environment variables in order:
 Example:
 
   $ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxx
-  $ preflight-automerge-ruleset.pl --repo OWNER/REPO ...
+  $ preflight_automerge_ruleset.pl --repo OWNER/REPO ...
 
 B<Required Permissions:> The token must have C<repo> or C<read:org> scope
 to read repository rulesets.
@@ -330,7 +330,7 @@ Invalid arguments or malformed input:
 =head2 Basic Check with gh CLI
 
   $ gh auth login
-  $ preflight-automerge-ruleset.pl \
+  $ preflight_automerge_ruleset.pl \
       --repo M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding \
       --ruleset-name "Main - PR Only + Green CI" \
       --want '["lint","test"]'
@@ -341,14 +341,14 @@ Invalid arguments or malformed input:
 =head2 Check with Token Authentication
 
   $ export GITHUB_TOKEN=ghp_xxxxxxxxxxxxx
-  $ preflight-automerge-ruleset.pl \
+  $ preflight_automerge_ruleset.pl \
       --repo myorg/myrepo \
       --ruleset-id 42 \
       --want '["build","test","deploy"]'
 
 =head2 Failure: Missing Required Check
 
-  $ preflight-automerge-ruleset.pl \
+  $ preflight_automerge_ruleset.pl \
       --repo myorg/myrepo \
       --ruleset-name "Protected" \
       --want '["lint","test","security"]'
@@ -360,7 +360,7 @@ Invalid arguments or malformed input:
 
 =head2 Failure: Ruleset Not Active
 
-  $ preflight-automerge-ruleset.pl \
+  $ preflight_automerge_ruleset.pl \
       --repo myorg/myrepo \
       --ruleset-name "Test" \
       --want '["test"]'
@@ -373,7 +373,7 @@ Invalid arguments or malformed input:
   # .github/workflows/preflight.yml
   - name: Verify auto-merge safety
     run: |
-      scripts/perl/preflight-automerge-ruleset.pl \
+      scripts/perl/preflight_automerge_ruleset.pl \
         --repo ${{ github.repository }} \
         --ruleset-name "Main - PR Only + Green CI" \
         --want '["lint","test","conformance"]'
@@ -465,7 +465,7 @@ $api_version = "2022-11-28";
 sub usage {
   print STDERR <<"USAGE";
 Usage:
-  scripts/perl/preflight-automerge-ruleset.pl --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want '["lint","test"]'
+  scripts/perl/preflight_automerge_ruleset.pl --repo OWNER/REPO [--ruleset-id ID | --ruleset-name NAME] --want '["lint","test"]'
 
 Auth:
   Prefers gh api if available. Otherwise uses TOKEN or GITHUB_TOKEN env vars.

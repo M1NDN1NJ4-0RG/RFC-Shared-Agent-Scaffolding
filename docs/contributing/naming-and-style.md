@@ -332,9 +332,9 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 **Perl:**
 - `run-tests.pl` → `run_tests.pl`
 - `safe-run.pl` → `safe_run.pl`
-- `safe_check.pl` → `safe_check.pl`
-- `safe_archive.pl` → `safe_archive.pl`
-- `preflight_automerge_ruleset.pl` → `preflight_automerge_ruleset.pl`
+- `safe-check.pl` → `safe_check.pl`
+- `safe-archive.pl` → `safe_archive.pl`
+- `preflight-automerge-ruleset.pl` → `preflight_automerge_ruleset.pl`
 - Status: **Complete** (Phase 5.5 Item 5.5.0)
 
 ### Item 4.4: Symbol Renaming

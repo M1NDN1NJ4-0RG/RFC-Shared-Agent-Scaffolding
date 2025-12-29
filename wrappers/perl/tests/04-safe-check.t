@@ -11,9 +11,9 @@ my $scripts_dir = File::Spec->catdir($sandbox, "scripts", "perl");
 make_path($scripts_dir);
 
 for my $pair (
-  ["safe-run.pl", $ENV{SRC_SAFE_RUN}],
-  ["safe-archive.pl", $ENV{SRC_SAFE_ARCHIVE}],
-  ["safe-check.pl", $ENV{SRC_SAFE_CHECK}],
+  ["safe_run.pl", $ENV{SRC_SAFE_RUN}],
+  ["safe_archive.pl", $ENV{SRC_SAFE_ARCHIVE}],
+  ["safe_check.pl", $ENV{SRC_SAFE_CHECK}],
 ) {
   my ($name,$src) = @$pair;
   die "missing env for $name" unless $src;
@@ -25,7 +25,7 @@ for my $pair (
 make_path(File::Spec->catdir($sandbox, ".agent", "FAIL-LOGS"));
 make_path(File::Spec->catdir($sandbox, ".agent", "FAIL-ARCHIVE"));
 
-my $safe_check = File::Spec->catfile($scripts_dir, "safe-check.pl");
+my $safe_check = File::Spec->catfile($scripts_dir, "safe_check.pl");
 my $r = run_cmd(["perl", $safe_check], cwd=>$sandbox);
 is($r->{exit}, 0, "safe-check passes in clean sandbox");
 like($r->{stdout}, qr/OK:/, "prints OK lines");

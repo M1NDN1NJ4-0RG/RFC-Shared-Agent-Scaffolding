@@ -10,15 +10,15 @@ my $sandbox = make_sandbox();
 my $scripts_dir = File::Spec->catdir($sandbox, "scripts", "perl");
 make_path($scripts_dir);
 
-# Copy safe-run.pl
+# Copy safe_run.pl
 {
   my $src = $ENV{SRC_SAFE_RUN} || die "SRC_SAFE_RUN not set";
-  my $dst = File::Spec->catfile($scripts_dir, "safe-run.pl");
+  my $dst = File::Spec->catfile($scripts_dir, "safe_run.pl");
   write_file($dst, slurp($src));
   make_exe($dst);
 }
 
-my $safe_run = File::Spec->catfile($scripts_dir, "safe-run.pl");
+my $safe_run = File::Spec->catfile($scripts_dir, "safe_run.pl");
 my $log_dir  = File::Spec->catdir($sandbox, ".agent", "FAIL-LOGS");
 make_path($log_dir);
 

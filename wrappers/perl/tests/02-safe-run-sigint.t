@@ -15,7 +15,7 @@ my $scripts_dir = File::Spec->catdir($sandbox, "scripts", "perl");
 make_path($scripts_dir);
 
 my $src = $ENV{SRC_SAFE_RUN} || die "SRC_SAFE_RUN not set";
-my $safe_run = File::Spec->catfile($scripts_dir, "safe-run.pl");
+my $safe_run = File::Spec->catfile($scripts_dir, "safe_run.pl");
 write_file($safe_run, slurp($src));
 make_exe($safe_run);
 

@@ -41,11 +41,12 @@ Each language uses its conventional file extension:
 
 ### Naming Conventions
 
-- **All languages**: Use hyphens (kebab-case) for all script names for consistency
-  - Bash example: `safe-run.sh`, `preflight-automerge-ruleset.sh`
-  - Perl example: `safe_run.pl`, `preflight_automerge_ruleset.pl`
-  - Python 3 example: `safe_run.py`, `preflight_automerge_ruleset.py`
-  - PowerShell example: `safe-run.ps1`, `preflight-automerge-ruleset.ps1`
+- **Language-specific conventions** (as of Phase 5.5):
+  - Bash: kebab-case (e.g., `safe-run.sh`, `preflight-automerge-ruleset.sh`)
+  - Perl: snake_case (e.g., `safe_run.pl`, `preflight_automerge_ruleset.pl`)
+  - Python 3: snake_case (e.g., `safe_run.py`, `preflight_automerge_ruleset.py`)
+  - PowerShell: PascalCase (e.g., `SafeRun.ps1`, `PreflightAutomergeRuleset.ps1`)
+- See docs/contributing/naming-and-style.md for current standards
 
 ## What Changed (Migration from Old Structure)
 

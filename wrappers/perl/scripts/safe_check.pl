@@ -2,12 +2,12 @@
 
 =head1 NAME
 
-safe-check.pl - Minimal self-test for safe-run contract compliance
+safe_check.pl - Minimal self-test for safe-run contract compliance
 
 =head1 SYNOPSIS
 
   # Run from repository root or any location with scripts/perl/safe-run.pl
-  safe-check.pl
+  safe_check.pl
 
 =head1 DESCRIPTION
 
@@ -125,7 +125,7 @@ For complete contract specification, see:
 
 Error messages follow the format:
 
-  safe-check.pl: <error description>
+  safe_check.pl: <error description>
 
 Common error scenarios:
 
@@ -163,15 +163,15 @@ when the command failed. The contract requires exactly one log per failure.
 =head2 Basic Usage
 
   $ cd /path/to/repo
-  $ perl scripts/perl/safe-check.pl
-  safe-check.pl: OK:
+  $ perl scripts/perl/safe_check.pl
+  safe_check.pl: OK:
   $ echo $?
   0
 
 =head2 Failure Case
 
-  $ perl scripts/perl/safe-check.pl
-  safe-check.pl: expected exit 0 on success, got 1
+  $ perl scripts/perl/safe_check.pl
+  safe_check.pl: expected exit 0 on success, got 1
   $ echo $?
   1
 
@@ -223,7 +223,7 @@ use File::Path qw(make_path remove_tree);
 use File::Spec;
 use Cwd qw(abs_path);
 
-sub die_bad { print STDERR "safe-check.pl: $_[0]\n"; exit 1; }
+sub die_bad { print STDERR "safe_check.pl: $_[0]\n"; exit 1; }
 
 my $root = File::Spec->catdir('.agent');
 my $logs = File::Spec->catdir($root, 'FAIL-LOGS');
@@ -232,7 +232,7 @@ my $logs = File::Spec->catdir($root, 'FAIL-LOGS');
 remove_tree($root, { error => \my $err });
 make_path($logs);
 
-my $safe_run = File::Spec->catfile('scripts','perl','safe-run.pl');
+my $safe_run = File::Spec->catfile('scripts','perl','safe_run.pl');
 -e $safe_run or die_bad("missing $safe_run");
 
 # 1) Success path -> no artifacts created
@@ -255,5 +255,5 @@ my $safe_run = File::Spec->catfile('scripts','perl','safe-run.pl');
   scalar(@after) == scalar(@before) + 1 or die_bad('failure should create exactly one fail log');
 }
 
-print "safe-check.pl: OK:\n";
+print "safe_check.pl: OK:\n";
 exit 0;
