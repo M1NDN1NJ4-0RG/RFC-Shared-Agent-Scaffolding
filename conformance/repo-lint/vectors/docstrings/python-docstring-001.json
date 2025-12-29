@@ -26,11 +26,11 @@
     {
       "rule_id": "DOCSTRING.MISSING",
       "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
-      "symbol": "MissingClassDoc.method_without_doc",
-      "symbol_kind": "method",
+      "symbol": "method_without_doc",
+      "symbol_kind": "function",
       "line": 22,
       "severity": "error",
-      "message": "Method 'method_without_doc' is missing a docstring"
+      "message": "Function 'method_without_doc' is missing a docstring"
     }
   ],
   "expected_passes": [
@@ -40,8 +40,8 @@
       "reason": "Has proper docstring"
     },
     {
-      "symbol": "MissingClassDoc.method_with_doc",
-      "symbol_kind": "method",
+      "symbol": "method_with_doc",
+      "symbol_kind": "function",
       "reason": "Has proper docstring"
     },
     {
@@ -50,19 +50,19 @@
       "reason": "Has proper docstring with Purpose section"
     },
     {
-      "symbol": "ProperlyDocumented.__init__",
-      "symbol_kind": "method",
+      "symbol": "__init__",
+      "symbol_kind": "function",
       "reason": "Has proper docstring"
     },
     {
-      "symbol": "ProperlyDocumented.public_method",
-      "symbol_kind": "method",
+      "symbol": "public_method",
+      "symbol_kind": "function",
       "reason": "Has proper docstring"
     },
     {
       "symbol": "exempted_function",
       "symbol_kind": "function",
-      "reason": "Exempted via # noqa: FUNCTION pragma"
+      "reason": "Exempted via # noqa: D103 pragma"
     },
     {
       "symbol": "multiline_signature",
