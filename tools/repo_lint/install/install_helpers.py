@@ -116,7 +116,9 @@ def create_venv(verbose: bool = False) -> Tuple[bool, Optional[str]]:
         # Upgrade pip to latest
         if verbose:
             print("Upgrading pip...")
-        subprocess.run([str(venv_python), "-m", "pip", "install", "--upgrade", "pip"], check=True, capture_output=not verbose)
+        subprocess.run(
+            [str(venv_python), "-m", "pip", "install", "--upgrade", "pip"], check=True, capture_output=not verbose
+        )
 
         if verbose:
             print(f"✓ Virtual environment created successfully")
