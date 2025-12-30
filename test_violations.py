@@ -15,6 +15,7 @@ VERY_LONG_STRING = "This is an extremely long string that exceeds the 120 charac
 # Ruff violation: E501 - line too long (comment)
 # This is a very long comment that exceeds the 120 character line length limit and will trigger a Ruff violation because it's way too long
 
+
 def test_function():
     """Function without proper docstring format (missing returns/params)."""
     x = 1
