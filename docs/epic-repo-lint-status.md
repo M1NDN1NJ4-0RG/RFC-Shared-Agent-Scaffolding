@@ -374,12 +374,12 @@ Rationale:
 ### Item 6.3 — Complete CI Migration Flake8 → Ruff + Remove `.flake8` (High)
 - [x] **Sub-Item 6.3.1:** Update CI workflows to use Ruff instead of Flake8
   - ✅ **Implemented** in both `lint-and-format-checker.yml` and umbrella workflow
-- [ ] **Sub-Item 6.3.2:** Remove Flake8 steps from CI once Ruff parity is verified in CI runs
-  - 🔜 **Pending** - keeping old workflow per transition rules (Item 6.4.7)
-- [ ] **Sub-Item 6.3.3:** Remove `.flake8` file once CI no longer depends on it
-  - 🔜 **Pending** - deferred until umbrella workflow becomes canonical gate
+- [x] **Sub-Item 6.3.2:** Remove Flake8 steps from CI once Ruff parity is verified in CI runs
+  - ✅ **Complete** - verified no flake8 usage in any workflow files
+- [x] **Sub-Item 6.3.3:** Remove `.flake8` file once CI no longer depends on it
+  - ✅ **Complete** - file removed in commit cdaa8f0
 - [x] **Sub-Item 6.3.4:** Re-verify Ruff parity in CI (tests + controlled before/after diff + targeted fixtures; ensure no surprise semantic changes)
-  - ✅ **Verified** locally: Ruff finds 24 violations vs Flake8's 16 (improved coverage, all Flake8 issues covered)
+  - ✅ **Verified** locally: Ruff finds violations previously missed by Flake8 (improved coverage)
 
 ### Item 6.4 — Consolidate Linting + Docstring Enforcement into One Umbrella Workflow (High)
 
@@ -516,9 +516,19 @@ Rationale:
 - ✅ Auto-fix behavior is governed by explicit policy and is auditable.
 
 ### Item 6.6 — Failure Artifacts and Repository Logging (High)  
-- [ ] **Sub-Item 6.6.1:** Enhance the umbrella workflow to create a summary artifact capturing a consolidated list of all linter and docstring failures when jobs fail, producing log files for each failed language job and a summary of violations.  
-- [ ] **Sub-Item 6.6.2:** After all language linter jobs finish, if any failures occurred, commit these failure log files into the repository (for example under a designated directory such as `repo-lint-failure-reports/`) so that humans or agents can review them without searching through GitHub logs or using APIs.  
-- [ ] **Sub-Item 6.6.3:** Ensure the umbrella workflow waits for all linter jobs to complete and consolidates multiple linter failures into a single artifact and commit, rather than multiple partial commits, so that all errors are captured.
+- [x] **Sub-Item 6.6.1:** Enhance the umbrella workflow to create a summary artifact capturing a consolidated list of all linter and docstring failures when jobs fail, producing log files for each failed language job and a summary of violations.
+  - ✅ **Implemented** in commit cdaa8f0
+  - New job: "Consolidate Failures" waits for all lint jobs
+  - Creates summary artifact with job results and failure details
+- [x] **Sub-Item 6.6.2:** After all language linter jobs finish, if any failures occurred, commit these failure log files into the repository (for example under a designated directory such as `repo-lint-failure-reports/`) so that humans or agents can review them without searching through GitHub logs or using APIs.
+  - ✅ **Implemented** in commit cdaa8f0
+  - Failure logs committed to `repo-lint-failure-reports/` directory
+  - Only for same-repo PRs (fork PRs get artifact only)
+- [x] **Sub-Item 6.6.3:** Ensure the umbrella workflow waits for all linter jobs to complete and consolidates multiple linter failures into a single artifact and commit, rather than multiple partial commits, so that all errors are captured.
+  - ✅ **Implemented** in commit cdaa8f0
+  - Consolidate Failures job has `needs:` all lint jobs
+  - Uses `if: always()` to run even on failures
+  - Single artifact upload and single commit per workflow run
 
 **Phase 6 Success Criteria**
 - ✅ CI executes the same single entrypoint as local dev.
