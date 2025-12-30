@@ -110,30 +110,87 @@ set -u
 __TESTS_TOTAL=0
 __TESTS_FAIL=0
 
-# _color - Apply ANSI color codes if output is a TTY
-# Args: $1 = color code, $2+ = text
-# Returns: Colored text if TTY, plain text otherwise
+# Apply ANSI color codes if output is a TTY
+#
+# Arguments:
+#   $1 - Color code (e.g., 32 for green, 31 for red)
+#   $2+ - Text to color
+#
+# Returns:
+#   0 (always succeeds)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Colored text if stdout is TTY, plain text otherwise
 _color() {
 	local code="$1"
 	shift
 	if [[ -t 1 ]]; then printf "\033[%sm%s\033[0m" "$code" "$*"; else printf "%s" "$*"; fi
 }
 
-# Logging helpers
-log() { printf "%s\n" "$*" >&2; } # Print to stderr
+# Print message to stderr
+#
+# Arguments:
+#   $* - Message to print
+#
+# Returns:
+#   0 (always succeeds)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Message to stderr
+log() { printf "%s\n" "$*" >&2; }
 
 # Print PASS message with green color
-# Args: $* = pass message
-pass() { log "$(_color '32' 'PASS') $*"; } # Green PASS
+#
+# Arguments:
+#   $* - Pass message
+#
+# Returns:
+#   0 (always succeeds)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   "PASS <message>" to stderr in green if TTY
+pass() { log "$(_color '32' 'PASS') $*"; }
 
 # Print FAIL message with red color
-# Args: $* = fail message
-fail() { log "$(_color '31' 'FAIL') $*"; } # Red FAIL
+#
+# Arguments:
+#   $* - Fail message
+#
+# Returns:
+#   0 (always succeeds)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   "FAIL <message>" to stderr in red if TTY
+fail() { log "$(_color '31' 'FAIL') $*"; }
 
-# t - Run a test and track results
-# Args: $1 = test name/description, $2+ = test command
-# Returns: 0 if test passes, 1 if test fails (non-blocking)
-# Side effect: Increments __TESTS_TOTAL and __TESTS_FAIL counters
+# Run a test and track results
+#
+# Arguments:
+#   $1 - Test name/description
+#   $2+ - Test command to execute
+#
+# Returns:
+#   0 if test passes
+#   1 if test fails (non-blocking)
+#
+# Globals:
+#   __TESTS_TOTAL - Incremented for each test
+#   __TESTS_FAIL - Incremented for each failure
+#
+# Outputs:
+#   PASS or FAIL message to stderr
 t() {
 	__TESTS_TOTAL=$((__TESTS_TOTAL + 1))
 	local name="$1"
@@ -153,8 +210,22 @@ t() {
 # All return 0 on success, 1 on failure (compatible with t() wrapper)
 #
 
-# assert_eq - Assert two values are equal
-# Args: $1 = got, $2 = want, $3 = optional message
+# Assert two values are equal
+#
+# Arguments:
+#   $1 - Got (actual value)
+#   $2 - Want (expected value)
+#   $3 - Optional message
+#
+# Returns:
+#   0 if values are equal
+#   1 if values differ
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Error message to stderr on failure
 assert_eq() {
 	local got="$1" want="$2" msg="${3:-}"
 	[[ "$got" == "$want" ]] || {
@@ -163,8 +234,22 @@ assert_eq() {
 	}
 }
 
-# assert_ne - Assert two values are not equal
-# Args: $1 = got, $2 = bad (value that should NOT match), $3 = optional message
+# Assert two values are not equal
+#
+# Arguments:
+#   $1 - Got (actual value)
+#   $2 - Bad (value that should NOT match)
+#   $3 - Optional message
+#
+# Returns:
+#   0 if values are different
+#   1 if values are equal
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Error message to stderr on failure
 assert_ne() {
 	local got="$1" bad="$2" msg="${3:-}"
 	[[ "$got" != "$bad" ]] || {
@@ -176,27 +261,79 @@ assert_ne() {
 # File existence assertions
 
 # Assert file exists
-# Args: $1 = file path
+#
+# Arguments:
+#   $1 - File path
+#
+# Returns:
+#   0 if file exists
+#   1 if file does not exist
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Error message to stderr on failure
 assert_file_exists() { [[ -e "$1" ]] || {
 	log "expected file to exist: $1"
 	return 1
 }; }
 
 # Assert directory exists
-# Args: $1 = directory path
+#
+# Arguments:
+#   $1 - Directory path
+#
+# Returns:
+#   0 if directory exists
+#   1 if directory does not exist
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Error message to stderr on failure
 assert_dir_exists() { [[ -d "$1" ]] || {
 	log "expected dir to exist: $1"
 	return 1
 }; }
 
 # Assert file does not exist
-# Args: $1 = file path
+#
+# Arguments:
+#   $1 - File path
+#
+# Returns:
+#   0 if file does not exist
+#   1 if file exists
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Error message to stderr on failure
 assert_file_not_exists() { [[ ! -e "$1" ]] || {
 	log "expected file to NOT exist: $1"
 	return 1
 }; }
 
 # String containment assertions
+# Assert string contains substring
+#
+# Arguments:
+#   $1 - Haystack (string to search in)
+#   $2 - Needle (substring to find)
+#   $3 - Optional message
+#
+# Returns:
+#   0 if substring found
+#   1 if substring not found
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Error message to stderr on failure
 assert_contains() {
 	local hay="$1" needle="$2" msg="${3:-}"
 	grep -F -- "$needle" <<<"$hay" >/dev/null 2>&1 || {
@@ -205,8 +342,22 @@ assert_contains() {
 	}
 }
 
-# Assert string not in content
-# Args: $1 = haystack, $2 = needle, $3 = optional message
+# Assert string does not contain substring
+#
+# Arguments:
+#   $1 - Haystack (string to search in)
+#   $2 - Needle (substring that should not be found)
+#   $3 - Optional message
+#
+# Returns:
+#   0 if substring not found
+#   1 if substring found
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Error message to stderr on failure
 assert_not_contains() {
 	local hay="$1" needle="$2" msg="${3:-}"
 	grep -F -- "$needle" <<<"$hay" >/dev/null 2>&1 && {
@@ -219,9 +370,23 @@ assert_not_contains() {
 # UTILITY FUNCTIONS
 #
 
-# mktemp_dir - Create temporary directory (cross-platform)
-# Returns: Absolute path to temp directory
-# Compatible with macOS (BSD mktemp) and Linux (GNU mktemp)
+# Create temporary directory (cross-platform)
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 on success
+#   Non-zero on failure
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Absolute path to temp directory to stdout
+#
+# Compatibility:
+#   Works with macOS (BSD mktemp) and Linux (GNU mktemp)
 mktemp_dir() {
 	local d
 	d="$(mktemp -d 2>/dev/null || mktemp -d -t agentops_tests)"
@@ -232,9 +397,21 @@ mktemp_dir() {
 # TEST SUMMARY
 #
 
-# summary - Print final test results and exit
-# Prints pass/fail counts and exits with appropriate code
-# Exit: 0 if all tests passed, 1 if any failed
+# Print final test results and exit
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if all tests passed
+#   1 if any test failed
+#
+# Globals:
+#   __TESTS_TOTAL - Total number of tests run
+#   __TESTS_FAIL - Number of failed tests
+#
+# Outputs:
+#   Test summary to stderr with colored pass/fail status
 summary() {
 	if [[ "$__TESTS_FAIL" -ne 0 ]]; then
 		log ""

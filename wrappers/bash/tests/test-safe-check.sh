@@ -65,8 +65,24 @@ else
 	exit 127
 fi
 
-# test_safe_check_ok - Verify safe-check passes in healthy environment
-# Creates temp dir, copies scripts, runs safe-check with binary override
+# Verify safe-check passes in healthy environment
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   ROOT - Path to wrappers/bash directory
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Creates temp dir, copies scripts, runs safe-check with binary override
 test_safe_check_ok() {
 	local tmp
 	tmp="$(mktemp_dir)"

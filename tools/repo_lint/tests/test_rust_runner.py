@@ -146,6 +146,7 @@ class TestRustRunnerToolChecking:
         :param mock_command_exists: Mock command_exists function
         :param rust_runner: RustRunner fixture
         """
+
         def command_exists_side_effect(cmd):
             """Return False for cargo, True for all other commands.
 

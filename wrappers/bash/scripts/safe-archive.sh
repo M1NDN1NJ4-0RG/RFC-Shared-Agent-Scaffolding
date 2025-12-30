@@ -112,8 +112,19 @@ SAFE_FAIL_DIR="${SAFE_FAIL_DIR:-.agent/FAIL-LOGS}"
 SAFE_ARCHIVE_DIR="${SAFE_ARCHIVE_DIR:-.agent/FAIL-ARCHIVE}"
 SAFE_ARCHIVE_COMPRESS="${SAFE_ARCHIVE_COMPRESS:-none}"
 
-# usage - Display usage message and exit
-# Called on invalid arguments
+# Display usage message and exit
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   Does not return (exits with code 2)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Usage message to stderr
 usage() {
 	echo "usage: safe-archive.sh [--all]" >&2
 	exit 2
@@ -140,11 +151,23 @@ if [ ! -d "$SAFE_FAIL_DIR" ]; then
 	exit 0
 fi
 
-# compress_one - Compress a single file in-place using configured tool
-# Args:
-#   $1 = path to file in archive dir
-# Returns: 0 on success, 1 on error (tool not found or compression failed)
-# Side effect: Replaces file with compressed version (.gz, .xz, or .zst)
+# Compress a single file in-place using configured tool
+#
+# Arguments:
+#   $1 - Path to file in archive directory
+#
+# Returns:
+#   0 on success
+#   1 on error (tool not found or compression failed)
+#
+# Globals:
+#   SAFE_ARCHIVE_COMPRESS - Compression tool (none/gzip/xz/zstd)
+#
+# Outputs:
+#   Error messages to stderr
+#
+# Side Effects:
+#   Replaces file with compressed version (.gz, .xz, or .zst)
 compress_one() {
 	# $1 = path to file in archive dir
 	local f="$1"

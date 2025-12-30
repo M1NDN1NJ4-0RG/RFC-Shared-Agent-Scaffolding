@@ -107,7 +107,24 @@ fi
 # Each function tests a specific aspect of safe-run contract compliance
 #
 
-# test_success_no_artifacts - Verify safe-run-001: success creates no FAIL-LOGs
+# Verify safe-run-001: success creates no FAIL-LOGs
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output captured and validated)
+#
+# Test Scenario:
+#   Successful command should not create failure logs
 test_success_no_artifacts() {
 	local tmp out
 	tmp="$(mktemp_dir)"
@@ -120,8 +137,24 @@ test_success_no_artifacts() {
 	)
 }
 
-# test_failure_captures_and_rc - Verify safe-run-002: failure creates log with stdout/stderr
-# Also validates safe-run-003: exit code preservation
+# Verify safe-run-002 and safe-run-003: failure creates log and preserves exit code
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output captured and validated)
+#
+# Test Scenario:
+#   Failed command should create log with stdout/stderr and preserve exit code
 test_failure_captures_and_rc() {
 	local tmp rc f c
 	tmp="$(mktemp_dir)"
@@ -142,8 +175,24 @@ test_failure_captures_and_rc() {
 	)
 }
 
-# test_snippet_lines - Verify safe-run-005: SAFE_SNIPPET_LINES controls stderr tail
-# Default is 0 (disabled), test with 2 lines to verify last 2 lines appear
+# Verify safe-run-005: SAFE_SNIPPET_LINES controls stderr tail
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output captured and validated)
+#
+# Test Scenario:
+#   Default is 0 (disabled), test with 2 lines to verify last 2 lines appear
 test_snippet_lines() {
 	local tmp rc err
 	tmp="$(mktemp_dir)"
@@ -161,7 +210,24 @@ test_snippet_lines() {
 	)
 }
 
-# test_safe_log_dir_override - Verify SAFE_LOG_DIR environment variable works
+# Verify SAFE_LOG_DIR environment variable works
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Custom log directory should be respected instead of default .agent/FAIL-LOGS
 test_safe_log_dir_override() {
 	local tmp rc
 	tmp="$(mktemp_dir)"
@@ -177,8 +243,24 @@ test_safe_log_dir_override() {
 	)
 }
 
-# test_sigint_aborted_log - Verify signal termination creates ABORTED.log
-# Tests that SIGTERM produces exit code 143 (or 130) and ABORTED log file
+# Verify signal termination creates ABORTED.log
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   SIGTERM should produce exit code 143 (or 130) and create ABORTED log
 test_sigint_aborted_log() {
 	local tmp rc f pid
 	tmp="$(mktemp_dir)"
@@ -202,8 +284,24 @@ test_sigint_aborted_log() {
 	)
 }
 
-# test_event_ledger - Verify event ledger format with sequence numbers
-# Checks for BEGIN/END EVENTS markers, SEQ numbers, and META events
+# Verify event ledger format with sequence numbers
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Log should contain BEGIN/END EVENTS markers, SEQ numbers, and META events
 test_event_ledger() {
 	local tmp rc f c
 	tmp="$(mktemp_dir)"
@@ -232,8 +330,24 @@ test_event_ledger() {
 	)
 }
 
-# test_merged_view - Verify SAFE_RUN_VIEW=merged produces merged output
-# Tests that merged view uses [#seq] format instead of [SEQ=seq]
+# Verify SAFE_RUN_VIEW=merged produces merged output
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Merged view should use [#seq] format instead of [SEQ=seq]
 test_merged_view() {
 	local tmp rc f c
 	tmp="$(mktemp_dir)"
@@ -263,7 +377,24 @@ test_merged_view() {
 # These tests validate contract hardening beyond basic functionality
 #
 
-# Conformance test: repo root detection from script location
+# Verify repo root detection from script location
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output captured and validated)
+#
+# Test Scenario:
+#   Wrapper should work when relocated outside repo if SAFE_RUN_BIN is set
 test_repo_root_from_script_location() {
 	local tmp wrapper rc output
 	tmp="$(mktemp_dir)"
@@ -287,8 +418,24 @@ test_repo_root_from_script_location() {
 	rm -rf "$tmp"
 }
 
-# Conformance test: argument quoting - empty string
-# Verifies empty string arguments are preserved (not dropped)
+# Verify empty string arguments are preserved (not dropped)
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output captured and validated)
+#
+# Test Scenario:
+#   Empty string argument should be passed to command, not dropped
 test_arg_quoting_empty_string() {
 	local tmp output
 	tmp="$(mktemp_dir)"
@@ -304,8 +451,24 @@ test_arg_quoting_empty_string() {
 	rm -rf "$tmp"
 }
 
-# Conformance test: argument quoting - spaces
-# Verifies arguments with spaces are passed as single argument (not split)
+# Verify arguments with spaces are passed as single argument (not split)
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output captured and validated)
+#
+# Test Scenario:
+#   Argument containing spaces should not be word-split
 test_arg_quoting_spaces() {
 	local tmp output
 	tmp="$(mktemp_dir)"
@@ -320,8 +483,24 @@ test_arg_quoting_spaces() {
 	rm -rf "$tmp"
 }
 
-# Conformance test: argument quoting - metacharacters not interpreted
-# Verifies shell metacharacters (;, |, etc.) are NOT executed
+# Verify shell metacharacters are NOT executed
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   None (test output captured and validated)
+#
+# Test Scenario:
+#   Semicolons, pipes, etc. should be passed literally, not interpreted
 test_arg_quoting_metacharacters() {
 	local tmp output
 	tmp="$(mktemp_dir)"
@@ -338,8 +517,24 @@ test_arg_quoting_metacharacters() {
 	rm -rf "$tmp"
 }
 
-# Conformance test: exit code propagation for multiple codes
-# Verifies all exit codes are preserved exactly (safe-run-003)
+# Verify all exit codes are preserved exactly (safe-run-003)
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#   SAFE_RUN_BIN_PATH - Path to safe-run binary
+#
+# Outputs:
+#   Error message to stderr if any exit code mismatch
+#
+# Test Scenario:
+#   Tests multiple exit codes (0, 1, 7, 42, 127, 255) for exact preservation
 test_exit_code_propagation_comprehensive() {
 	local tmp codes code rc
 	tmp="$(mktemp_dir)"
@@ -365,8 +560,23 @@ test_exit_code_propagation_comprehensive() {
 	rm -rf "$tmp"
 }
 
-# Conformance test: binary not found error handling
-# Verifies exit code 127 and helpful error message when binary missing
+# Verify exit code 127 and helpful error message when binary missing
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   SAFE_RUN - Path to safe-run wrapper script
+#
+# Outputs:
+#   None (test output captured and validated)
+#
+# Test Scenario:
+#   When SAFE_RUN_BIN not set and binary not found, should exit 127 with error
 test_binary_not_found_error() {
 	local tmp wrapper err rc
 	tmp="$(mktemp_dir)"

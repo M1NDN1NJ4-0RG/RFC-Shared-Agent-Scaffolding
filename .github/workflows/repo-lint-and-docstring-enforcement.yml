@@ -185,6 +185,17 @@ jobs:
           while [ $ATTEMPT -le $MAX_ATTEMPTS ] && [ "$SUCCESS" = "false" ]; do
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to commit and push auto-format changes..."
 
+            # Stash any uncommitted changes (from Black formatting) if there are any
+            echo "Checking for uncommitted changes..."
+            STASH_CREATED=0
+            if ! git diff --quiet || ! git diff --cached --quiet; then
+              echo "Stashing uncommitted changes..."
+              git stash push -u -m "Auto-format changes from Black"
+              STASH_CREATED=1
+            else
+              echo "No uncommitted changes to stash"
+            fi
+
             # Sync with remote branch
             echo "Fetching latest changes from remote..."
             git fetch origin "${{ github.event.pull_request.head.ref }}"
@@ -199,9 +210,23 @@ jobs:
             else
               echo "Rebase had conflicts, aborting and retrying..."
               git rebase --abort
+              if [ "$STASH_CREATED" -eq 1 ]; then
+                git stash pop || true
+              fi
               ATTEMPT=$((ATTEMPT + 1))
               sleep 2
               continue
+            fi
+
+            # Pop stashed changes if we created a stash
+            if [ "$STASH_CREATED" -eq 1 ]; then
+              echo "Applying stashed changes..."
+              if ! git stash pop; then
+                echo "Stash pop had conflicts, resolving by keeping formatted changes..."
+                # Keep the current working tree state (formatted changes), not the conflicted stash contents
+                git checkout --ours .
+                git add -A
+              fi
             fi
 
             # Re-run Black formatter in case new changes need formatting
@@ -415,7 +440,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Python lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: python-lint-results
@@ -466,7 +491,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Bash lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: bash-lint-results
@@ -506,7 +531,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload PowerShell lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: powershell-lint-results
@@ -550,7 +575,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Perl lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: perl-lint-results
@@ -590,7 +615,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload YAML lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: yaml-lint-results
@@ -643,7 +668,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Rust lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: rust-lint-results
@@ -685,9 +710,10 @@ jobs:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Consolidate and Archive Logs
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Waits for all lint jobs to complete and consolidates ALL logs (success + failure)
-  # into a summary artifact and commits logs to the repository for review.
-  # Runs always to ensure comprehensive logging regardless of job outcomes.
+  # Waits for all lint jobs to complete and collects results.
+  # Uploads artifacts and commits logs only when failures are detected.
+  # Always runs to ensure job completion, but conditional steps prevent
+  # unnecessary uploads when all checks pass.
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   consolidate-failures:
     name: "Consolidate and Archive Logs"
@@ -702,8 +728,8 @@ jobs:
       - repo-lint-yaml
       - repo-lint-rust
       - vector-tests
+    # Run always to collect results, but upload/commit only on failure
     # Bot-loop guard: Skip if actor is a bot OR commit message contains auto-generated marker
-    # Run even if previous jobs failed (always()) but not if triggered by bot
     if: |
       always() &&
       github.actor != 'github-actions[bot]' &&
@@ -1002,17 +1028,17 @@ jobs:
           # Display summary
           cat "$SUMMARY_FILE"
 
-      - name: Upload log summary artifact (always)
-        if: always()
+      - name: Upload log summary artifact
+        if: steps.collect_results.outputs.has_failures == 'true'
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: umbrella-ci-logs
           path: logs/umbrella-ci-logs-phase-6/
           retention-days: 30
 
-      - name: Commit logs to repository (always, same-repo PRs only)
+      - name: Commit logs to repository (same-repo PRs only)
         if: |
-          always() &&
+          steps.collect_results.outputs.has_failures == 'true' &&
           github.event.pull_request.head.repo.full_name == github.repository &&
           github.event_name == 'pull_request' &&
           github.actor != 'github-actions[bot]' &&
@@ -1038,7 +1064,7 @@ jobs:
           fi
 
       - name: Add job summary
-        if: always()
+        if: steps.collect_results.outputs.has_failures == 'true'
         run: |
           # Find the summary file in the log directory
           LOG_DIR="${{ steps.collect_results.outputs.log_dir }}"

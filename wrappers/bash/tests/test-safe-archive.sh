@@ -53,7 +53,23 @@ source "./lib.sh"
 ROOT="$(cd .. && pwd)"
 ARCH="${ROOT}/scripts/safe-archive.sh"
 
-# test_default_archives_one - Verify default (no --all) archives only one file
+# Verify default (no --all) archives only one file
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   ARCH - Path to safe-archive.sh script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Multiple files in FAIL-LOGS, without --all only one should be archived
 test_default_archives_one() {
 	local tmp
 	tmp="$(mktemp_dir)"
@@ -75,8 +91,23 @@ test_default_archives_one() {
 	)
 }
 
-# test_moves_all_with_spaces - Verify --all flag and space handling
-# Tests that filenames with spaces are handled correctly (no word splitting)
+# Verify --all flag and space handling
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   ARCH - Path to safe-archive.sh script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Filenames with spaces should be handled correctly (no word splitting)
 test_moves_all_with_spaces() {
 	local tmp
 	tmp="$(mktemp_dir)"
@@ -93,7 +124,23 @@ test_moves_all_with_spaces() {
 	)
 }
 
-# test_no_clobber - Verify existing archive files are not overwritten
+# Verify existing archive files are not overwritten
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   ARCH - Path to safe-archive.sh script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   If file exists in archive, should not clobber (skip and leave original)
 test_no_clobber() {
 	local tmp
 	tmp="$(mktemp_dir)"
@@ -109,8 +156,23 @@ test_no_clobber() {
 	)
 }
 
-# test_gzip_compression - Verify gzip compression works when gzip available
-# Skips gracefully if gzip not installed (returns 0)
+# Verify gzip compression works when gzip available
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes or gzip not available (graceful skip)
+#   Non-zero if test fails
+#
+# Globals:
+#   ARCH - Path to safe-archive.sh script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   With SAFE_ARCHIVE_COMPRESS=gzip, archived files should be gzipped
 test_gzip_compression() {
 	command -v gzip >/dev/null 2>&1 || return 0
 	local tmp
