@@ -21,6 +21,6 @@ VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARAC
 )
 
 
-def _private_function_missing_docs(x):
-    """Example of a private function that is correctly documented per repo contract."""
+def _private_function_with_docs(x):
+    """Example of a private function that IS documented (not a violation)."""
     return x * 2

@@ -232,7 +232,8 @@ jobs:
               SUCCESS=true
             else
               echo "Push failed (non-fast-forward), will retry..."
-              # Reset to before commit to try again
+              # Fetch latest and reset to clean state for retry
+              git fetch origin "${{ github.event.pull_request.head.ref }}"
               git reset --hard "origin/${{ github.event.pull_request.head.ref }}"
               ATTEMPT=$((ATTEMPT + 1))
               sleep 2
