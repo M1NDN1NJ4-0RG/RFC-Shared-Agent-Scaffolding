@@ -38,7 +38,8 @@
 
     Run specific test::
 
-        python3 -m pytest tools/repo_lint/tests/test_cli_dispatch.py::TestRunnerDispatch::test_only_flag_filters_runners -v
+        python3 -m pytest \\
+            tools/repo_lint/tests/test_cli_dispatch.py::TestRunnerDispatch::test_only_flag_filters_runners -v
 
 :Notes:
     - Tests use unittest.mock to avoid executing actual runners
@@ -85,7 +86,7 @@ class TestRunnerDispatch(unittest.TestCase):
     @patch("tools.repo_lint.cli.YAMLRunner")
     @patch("tools.repo_lint.cli.RustRunner")
     @patch("tools.repo_lint.cli.report_results")
-    def test_only_flag_filters_runners(
+    def test_only_flag_filters_runners(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         mock_report,
         mock_rust,
@@ -140,7 +141,7 @@ class TestRunnerDispatch(unittest.TestCase):
     @patch("tools.repo_lint.cli.YAMLRunner")
     @patch("tools.repo_lint.cli.RustRunner")
     @patch("tools.repo_lint.cli.report_results")
-    def test_all_runners_execute_without_only(
+    def test_all_runners_execute_without_only(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         mock_report,
         mock_rust,
@@ -194,7 +195,7 @@ class TestRunnerDispatch(unittest.TestCase):
     @patch("tools.repo_lint.cli.PerlRunner")
     @patch("tools.repo_lint.cli.YAMLRunner")
     @patch("tools.repo_lint.cli.RustRunner")
-    def test_runners_skip_when_no_files(
+    def test_runners_skip_when_no_files(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         mock_rust,
         mock_yaml,
@@ -261,7 +262,7 @@ class TestRunnerDispatch(unittest.TestCase):
     @patch("tools.repo_lint.cli.PerlRunner")
     @patch("tools.repo_lint.cli.YAMLRunner")
     @patch("tools.repo_lint.cli.RustRunner")
-    def test_no_files_for_only_language_returns_error(
+    def test_no_files_for_only_language_returns_error(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         mock_rust,
         mock_yaml,

@@ -53,14 +53,14 @@ import argparse
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 # Add repo_lint parent directory to path for imports
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
 from tools.repo_lint.cli import cmd_check, cmd_fix, cmd_install  # noqa: E402
-from tools.repo_lint.common import ExitCode, LintResult  # noqa: E402
+from tools.repo_lint.common import ExitCode  # noqa: E402
 
 
 class TestExitCodes(unittest.TestCase):

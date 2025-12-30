@@ -56,7 +56,7 @@ from pathlib import Path
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.common import ExitCode, LintResult, Violation  # noqa: E402
+from tools.repo_lint.common import LintResult, Violation  # noqa: E402
 from tools.repo_lint.reporting import report_results  # noqa: E402
 
 

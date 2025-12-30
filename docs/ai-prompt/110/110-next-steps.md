@@ -4,7 +4,8 @@ Last Updated: 2025-12-30
 Related: Issue #110, PRs #132, #137
 
 ## NEXT
-- Close out Issue #110 (all Phase 6 work complete)
+- Implement JSON output (Phase 7 Item 7.2.1 and 7.2.2)
+- Complete Phase 7 and close Issue #110
 
 ---
 
@@ -809,3 +810,103 @@ python3 -c "import yaml; yaml.safe_load(open('.github/workflows/repo-lint-and-do
 
 **Follow-ups:**
 - Execute the planned implementation steps
+
+## DONE (EXTREMELY DETAILED)
+
+### 2025-12-30 19:58 - Phase 7.1 COMPLETE: Added comprehensive test suite for dispatch, exit codes, and output format
+**Files Changed:**
+- `tools/repo_lint/tests/test_cli_dispatch.py`: Created (new file, 292 lines)
+- `tools/repo_lint/tests/test_exit_codes.py`: Created (new file, 302 lines)
+- `tools/repo_lint/tests/test_output_format.py`: Created (new file, 245 lines)
+
+**Changes Made:**
+- **Created test_cli_dispatch.py** (Phase 7 Item 7.1.1):
+  - 5 comprehensive tests for runner dispatch logic
+  - `test_only_flag_filters_runners`: Verifies --only flag filters to correct runner
+  - `test_all_runners_execute_without_only`: Verifies all runners execute when no --only flag
+  - `test_runners_skip_when_no_files`: Verifies runners skip when has_files() returns False
+  - `test_unknown_language_returns_error`: Verifies INTERNAL_ERROR for unknown language
+  - `test_no_files_for_only_language_returns_error`: Verifies INTERNAL_ERROR when --only language has no files
+  - Uses unittest.mock to avoid executing actual runners
+  - All 5 tests passing
+  
+- **Created test_exit_codes.py** (Phase 7 Item 7.1.2):
+  - 11 comprehensive tests for exit code behavior
+  - `test_success_when_no_violations`: Verifies ExitCode.SUCCESS (0)
+  - `test_violations_when_issues_found`: Verifies ExitCode.VIOLATIONS (1)
+  - `test_missing_tools_in_ci_mode`: Verifies ExitCode.MISSING_TOOLS (2)
+  - `test_fix_success_when_all_fixed`: Verifies fix command returns SUCCESS
+  - `test_fix_violations_when_issues_remain`: Verifies fix command returns VIOLATIONS
+  - `test_fix_internal_error_on_policy_failure`: Verifies INTERNAL_ERROR on policy validation failure
+  - `test_fix_internal_error_on_policy_not_found`: Verifies INTERNAL_ERROR when policy file missing
+  - `test_install_success`: Verifies install command returns SUCCESS
+  - `test_install_internal_error_on_failure`: Verifies install command returns INTERNAL_ERROR on failure
+  - `test_cleanup_success`: Verifies cleanup returns SUCCESS
+  - `test_cleanup_internal_error_on_failure`: Verifies cleanup returns INTERNAL_ERROR on failure
+  - Fixed mock return values to match actual function signatures (install_python_tools returns tuple)
+  - All 11 tests passing
+  
+- **Created test_output_format.py** (Phase 7 Item 7.1.3):
+  - 7 comprehensive tests for deterministic output format
+  - `test_violation_format_stable`: Verifies format_violation() produces deterministic output
+  - `test_no_violations_output`: Verifies success case output format
+  - `test_violations_output_format`: Verifies violations output format
+  - `test_summary_count_accuracy`: Verifies violation count accuracy
+  - `test_verbose_output_includes_passed`: Verifies verbose mode shows passed checks
+  - `test_output_contains_no_unstable_fields`: Verifies output is deterministic (no timestamps)
+  - `test_multiple_violations_same_file`: Verifies grouped violations format
+  - Updated to match actual Violation dataclass structure (no column or code fields)
+  - Updated to match actual reporting format from reporting.py
+  - All 7 tests passing
+
+- **Verified Sub-Item 7.2.3** (CI fail on error):
+  - Checked `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+  - Confirmed NO `continue-on-error` on any lint job steps
+  - `continue-on-error: true` only on artifact download steps in logging consolidation job (correct)
+  - All lint jobs (Python, Bash, PowerShell, Perl, YAML) will fail on violations
+  - ✅ Sub-Item 7.2.3 verified and COMPLETE
+
+**Verification:**
+```bash
+# Installed pytest
+python3 -m pip install pytest --quiet
+
+# Ran dispatch tests
+python3 -m pytest tools/repo_lint/tests/test_cli_dispatch.py -v
+# 5 passed in 0.07s
+
+# Ran exit code tests
+python3 -m pytest tools/repo_lint/tests/test_exit_codes.py -v
+# 11 passed in 0.05s
+
+# Ran output format tests
+python3 -m pytest tools/repo_lint/tests/test_output_format.py -v
+# 7 passed in 0.02s
+
+# Ran all Phase 7.1 tests together
+python3 -m pytest tools/repo_lint/tests/test_cli_dispatch.py tools/repo_lint/tests/test_exit_codes.py tools/repo_lint/tests/test_output_format.py -v
+# 23 passed in 0.07s
+
+# Verified CI fail on error
+/tmp/verify_ci_fail_on_error.sh
+# ✅ PASS for all 5 language jobs
+```
+
+**Results:**
+- Phase 7 Item 7.1 COMPLETE ✅
+  - Sub-Item 7.1.1: Test runner dispatch ✅ (5 tests)
+  - Sub-Item 7.1.2: Test exit codes ✅ (11 tests)
+  - Sub-Item 7.1.3: Test deterministic output ✅ (7 tests)
+- Phase 7 Item 7.2.3 COMPLETE ✅
+  - Verified umbrella workflow fails on violations
+  - No continue-on-error on lint jobs
+- Total: 23 new tests, all passing
+- Test coverage added for dispatch logic, exit codes, and output format stability
+
+**Known Issues:**
+- None
+
+**Follow-ups:**
+- Implement JSON output (Sub-Items 7.2.1 and 7.2.2)
+- Update epic status document to mark Phase 7.1 and 7.2.3 complete
+- Complete Phase 7 and close Issue #110
