@@ -54,9 +54,9 @@ export SAFE_RUN_BIN="${SAFE_RUN_BIN:-$REPO_ROOT/rust/target/release/safe-run}"
 cd "$ROOT"
 
 if command -v prove >/dev/null 2>&1; then
-  prove -v -I tests/lib tests/*.t
+	prove -v -I tests/lib tests/*.t
 else
-  for f in tests/*.t; do
-    perl -I tests/lib "$f"
-  done
+	for f in tests/*.t; do
+		perl -I tests/lib "$f"
+	done
 fi

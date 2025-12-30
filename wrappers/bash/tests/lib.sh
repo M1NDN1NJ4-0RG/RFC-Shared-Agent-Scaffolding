@@ -12,12 +12,12 @@
 # USAGE:
 #   # In test file
 #   source "./lib.sh"
-#   
+#
 #   test_something() {
 #     # test logic
 #     return 0  # pass
 #   }
-#   
+#
 #   t "description" test_something
 #   summary  # prints final results and exits
 #
@@ -114,36 +114,38 @@ __TESTS_FAIL=0
 # Args: $1 = color code, $2+ = text
 # Returns: Colored text if TTY, plain text otherwise
 _color() {
-  local code="$1"; shift
-  if [[ -t 1 ]]; then printf "\033[%sm%s\033[0m" "$code" "$*"; else printf "%s" "$*"; fi
+	local code="$1"
+	shift
+	if [[ -t 1 ]]; then printf "\033[%sm%s\033[0m" "$code" "$*"; else printf "%s" "$*"; fi
 }
 
 # Logging helpers
-log() { printf "%s\n" "$*" >&2; }  # Print to stderr
+log() { printf "%s\n" "$*" >&2; } # Print to stderr
 
 # Print PASS message with green color
 # Args: $* = pass message
-pass() { log "$(_color '32' 'PASS') $*"; }  # Green PASS
+pass() { log "$(_color '32' 'PASS') $*"; } # Green PASS
 
 # Print FAIL message with red color
 # Args: $* = fail message
-fail() { log "$(_color '31' 'FAIL') $*"; }  # Red FAIL
+fail() { log "$(_color '31' 'FAIL') $*"; } # Red FAIL
 
 # t - Run a test and track results
 # Args: $1 = test name/description, $2+ = test command
 # Returns: 0 if test passes, 1 if test fails (non-blocking)
 # Side effect: Increments __TESTS_TOTAL and __TESTS_FAIL counters
 t() {
-  __TESTS_TOTAL=$((__TESTS_TOTAL+1))
-  local name="$1"; shift
-  if "$@"; then
-    pass "$name"
-    return 0
-  else
-    __TESTS_FAIL=$((__TESTS_FAIL+1))
-    fail "$name"
-    return 1
-  fi
+	__TESTS_TOTAL=$((__TESTS_TOTAL + 1))
+	local name="$1"
+	shift
+	if "$@"; then
+		pass "$name"
+		return 0
+	else
+		__TESTS_FAIL=$((__TESTS_FAIL + 1))
+		fail "$name"
+		return 1
+	fi
 }
 
 #
@@ -154,42 +156,63 @@ t() {
 # assert_eq - Assert two values are equal
 # Args: $1 = got, $2 = want, $3 = optional message
 assert_eq() {
-  local got="$1" want="$2" msg="${3:-}"
-  [[ "$got" == "$want" ]] || { log "assert_eq failed: got=<$got> want=<$want> $msg"; return 1; }
+	local got="$1" want="$2" msg="${3:-}"
+	[[ "$got" == "$want" ]] || {
+		log "assert_eq failed: got=<$got> want=<$want> $msg"
+		return 1
+	}
 }
 
 # assert_ne - Assert two values are not equal
 # Args: $1 = got, $2 = bad (value that should NOT match), $3 = optional message
 assert_ne() {
-  local got="$1" bad="$2" msg="${3:-}"
-  [[ "$got" != "$bad" ]] || { log "assert_ne failed: got=<$got> bad=<$bad> $msg"; return 1; }
+	local got="$1" bad="$2" msg="${3:-}"
+	[[ "$got" != "$bad" ]] || {
+		log "assert_ne failed: got=<$got> bad=<$bad> $msg"
+		return 1
+	}
 }
 
 # File existence assertions
 
 # Assert file exists
 # Args: $1 = file path
-assert_file_exists() { [[ -e "$1" ]] || { log "expected file to exist: $1"; return 1; }; }
+assert_file_exists() { [[ -e "$1" ]] || {
+	log "expected file to exist: $1"
+	return 1
+}; }
 
 # Assert directory exists
 # Args: $1 = directory path
-assert_dir_exists() { [[ -d "$1" ]] || { log "expected dir to exist: $1"; return 1; }; }
+assert_dir_exists() { [[ -d "$1" ]] || {
+	log "expected dir to exist: $1"
+	return 1
+}; }
 
 # Assert file does not exist
 # Args: $1 = file path
-assert_file_not_exists() { [[ ! -e "$1" ]] || { log "expected file to NOT exist: $1"; return 1; }; }
+assert_file_not_exists() { [[ ! -e "$1" ]] || {
+	log "expected file to NOT exist: $1"
+	return 1
+}; }
 
 # String containment assertions
 assert_contains() {
-  local hay="$1" needle="$2" msg="${3:-}"
-  grep -F -- "$needle" <<<"$hay" >/dev/null 2>&1 || { log "expected output to contain: $needle $msg"; return 1; }
+	local hay="$1" needle="$2" msg="${3:-}"
+	grep -F -- "$needle" <<<"$hay" >/dev/null 2>&1 || {
+		log "expected output to contain: $needle $msg"
+		return 1
+	}
 }
 
 # Assert string not in content
 # Args: $1 = haystack, $2 = needle, $3 = optional message
 assert_not_contains() {
-  local hay="$1" needle="$2" msg="${3:-}"
-  grep -F -- "$needle" <<<"$hay" >/dev/null 2>&1 && { log "expected output NOT to contain: $needle $msg"; return 1; }
+	local hay="$1" needle="$2" msg="${3:-}"
+	grep -F -- "$needle" <<<"$hay" >/dev/null 2>&1 && {
+		log "expected output NOT to contain: $needle $msg"
+		return 1
+	}
 }
 
 #
@@ -200,9 +223,9 @@ assert_not_contains() {
 # Returns: Absolute path to temp directory
 # Compatible with macOS (BSD mktemp) and Linux (GNU mktemp)
 mktemp_dir() {
-  local d
-  d="$(mktemp -d 2>/dev/null || mktemp -d -t agentops_tests)"
-  printf "%s" "$d"
+	local d
+	d="$(mktemp -d 2>/dev/null || mktemp -d -t agentops_tests)"
+	printf "%s" "$d"
 }
 
 #
@@ -213,12 +236,12 @@ mktemp_dir() {
 # Prints pass/fail counts and exits with appropriate code
 # Exit: 0 if all tests passed, 1 if any failed
 summary() {
-  if [[ "$__TESTS_FAIL" -ne 0 ]]; then
-    log ""
-    log "$(_color '31' 'SOME TESTS FAILED')  total=$__TESTS_TOTAL failed=$__TESTS_FAIL"
-    return 1
-  fi
-  log ""
-  log "$(_color '32' 'ALL TESTS PASSED') total=$__TESTS_TOTAL"
-  return 0
+	if [[ "$__TESTS_FAIL" -ne 0 ]]; then
+		log ""
+		log "$(_color '31' 'SOME TESTS FAILED')  total=$__TESTS_TOTAL failed=$__TESTS_FAIL"
+		return 1
+	fi
+	log ""
+	log "$(_color '32' 'ALL TESTS PASSED') total=$__TESTS_TOTAL"
+	return 0
 }

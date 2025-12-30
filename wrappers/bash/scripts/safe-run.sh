@@ -97,15 +97,15 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Looks for RFC-Shared-Agent-Scaffolding-v0.1.0.md or .git directory
 # Returns: Absolute path to repo root, or empty string if not found
 find_repo_root() {
-  local dir="$SCRIPT_DIR"
-  while [ "$dir" != "/" ]; do
-    if [ -f "$dir/RFC-Shared-Agent-Scaffolding-v0.1.0.md" ] || [ -d "$dir/.git" ]; then
-      echo "$dir"
-      return 0
-    fi
-    dir="$(dirname "$dir")"
-  done
-  return 1
+	local dir="$SCRIPT_DIR"
+	while [ "$dir" != "/" ]; do
+		if [ -f "$dir/RFC-Shared-Agent-Scaffolding-v0.1.0.md" ] || [ -d "$dir/.git" ]; then
+			echo "$dir"
+			return 0
+		fi
+		dir="$(dirname "$dir")"
+	done
+	return 1
 }
 
 REPO_ROOT="$(find_repo_root)" || REPO_ROOT=""
@@ -115,21 +115,24 @@ REPO_ROOT="$(find_repo_root)" || REPO_ROOT=""
 # Used for step 3 of binary discovery (./dist/<os>/<arch>/safe-run)
 # Also sets IS_WINDOWS=1 for binary name determination (.exe suffix)
 detect_platform() {
-  local os arch
-  case "$(uname -s)" in
-    Linux*)  os="linux" ;;
-    Darwin*) os="macos" ;;
-    CYGWIN*|MINGW*|MSYS*) os="windows"; IS_WINDOWS=1 ;;
-    *) os="unknown" ;;
-  esac
-  
-  case "$(uname -m)" in
-    x86_64|amd64) arch="x86_64" ;;
-    aarch64|arm64) arch="aarch64" ;;
-    *) arch="unknown" ;;
-  esac
-  
-  echo "${os}/${arch}"
+	local os arch
+	case "$(uname -s)" in
+	Linux*) os="linux" ;;
+	Darwin*) os="macos" ;;
+	CYGWIN* | MINGW* | MSYS*)
+		os="windows"
+		IS_WINDOWS=1
+		;;
+	*) os="unknown" ;;
+	esac
+
+	case "$(uname -m)" in
+	x86_64 | amd64) arch="x86_64" ;;
+	aarch64 | arm64) arch="aarch64" ;;
+	*) arch="unknown" ;;
+	esac
+
+	echo "${os}/${arch}"
 }
 
 # Initialize IS_WINDOWS before calling detect_platform (function may override to 1)
@@ -142,50 +145,50 @@ PLATFORM="$(detect_platform)"
 # Exit: 0 if found, 1 if not found
 # Binary discovery cascade
 find_safe_run_binary() {
-  # 1. Environment override (highest priority)
-  if [ -n "${SAFE_RUN_BIN:-}" ]; then
-    echo "$SAFE_RUN_BIN"
-    return 0
-  fi
-  
-  # 2. Dev mode: ./rust/target/release/safe-run (relative to repo root)
-  # On Windows, check for both safe-run and safe-run.exe
-  if [ -n "$REPO_ROOT" ]; then
-    if [ -x "$REPO_ROOT/rust/target/release/safe-run" ]; then
-      echo "$REPO_ROOT/rust/target/release/safe-run"
-      return 0
-    fi
-    if [ "$IS_WINDOWS" -eq 1 ] && [ -x "$REPO_ROOT/rust/target/release/safe-run.exe" ]; then
-      echo "$REPO_ROOT/rust/target/release/safe-run.exe"
-      return 0
-    fi
-  fi
-  
-  # 3. CI artifact: ./dist/<os>/<arch>/safe-run (platform-specific)
-  # On Windows, check for both safe-run and safe-run.exe
-  if [ -n "$REPO_ROOT" ] && [ "$PLATFORM" != "unknown/unknown" ]; then
-    local ci_bin="$REPO_ROOT/dist/$PLATFORM/safe-run"
-    if [ -x "$ci_bin" ]; then
-      echo "$ci_bin"
-      return 0
-    fi
-    if [ "$IS_WINDOWS" -eq 1 ]; then
-      local ci_bin_exe="$REPO_ROOT/dist/$PLATFORM/safe-run.exe"
-      if [ -x "$ci_bin_exe" ]; then
-        echo "$ci_bin_exe"
-        return 0
-      fi
-    fi
-  fi
-  
-  # 4. PATH lookup (system-wide installation)
-  if command -v safe-run >/dev/null 2>&1; then
-    command -v safe-run
-    return 0
-  fi
-  
-  # 5. Not found - caller will display error
-  return 1
+	# 1. Environment override (highest priority)
+	if [ -n "${SAFE_RUN_BIN:-}" ]; then
+		echo "$SAFE_RUN_BIN"
+		return 0
+	fi
+
+	# 2. Dev mode: ./rust/target/release/safe-run (relative to repo root)
+	# On Windows, check for both safe-run and safe-run.exe
+	if [ -n "$REPO_ROOT" ]; then
+		if [ -x "$REPO_ROOT/rust/target/release/safe-run" ]; then
+			echo "$REPO_ROOT/rust/target/release/safe-run"
+			return 0
+		fi
+		if [ "$IS_WINDOWS" -eq 1 ] && [ -x "$REPO_ROOT/rust/target/release/safe-run.exe" ]; then
+			echo "$REPO_ROOT/rust/target/release/safe-run.exe"
+			return 0
+		fi
+	fi
+
+	# 3. CI artifact: ./dist/<os>/<arch>/safe-run (platform-specific)
+	# On Windows, check for both safe-run and safe-run.exe
+	if [ -n "$REPO_ROOT" ] && [ "$PLATFORM" != "unknown/unknown" ]; then
+		local ci_bin="$REPO_ROOT/dist/$PLATFORM/safe-run"
+		if [ -x "$ci_bin" ]; then
+			echo "$ci_bin"
+			return 0
+		fi
+		if [ "$IS_WINDOWS" -eq 1 ]; then
+			local ci_bin_exe="$REPO_ROOT/dist/$PLATFORM/safe-run.exe"
+			if [ -x "$ci_bin_exe" ]; then
+				echo "$ci_bin_exe"
+				return 0
+			fi
+		fi
+	fi
+
+	# 4. PATH lookup (system-wide installation)
+	if command -v safe-run >/dev/null 2>&1; then
+		command -v safe-run
+		return 0
+	fi
+
+	# 5. Not found - caller will display error
+	return 1
 }
 
 #
@@ -196,9 +199,9 @@ find_safe_run_binary() {
 
 # Main execution
 BINARY="$(find_safe_run_binary)" || {
-  # Print actionable error message on binary not found
-  # Exit code 127 follows shell convention for "command not found"
-  cat >&2 <<'EOF'
+	# Print actionable error message on binary not found
+	# Exit code 127 follows shell convention for "command not found"
+	cat >&2 <<'EOF'
 ERROR: Rust canonical tool not found.
 
 Searched locations:
@@ -218,7 +221,7 @@ Or download a pre-built binary from:
 For more information, see:
   https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/blob/main/docs/rust-canonical-tool.md
 EOF
-  exit 127
+	exit 127
 }
 
 # Invoke the Rust canonical tool with all arguments passed through

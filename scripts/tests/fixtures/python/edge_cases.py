@@ -199,10 +199,11 @@ def _private_function(value: int) -> int:
     return value * 2
 
 
-def __dunder_function__(item: Any) -> str:
+def __dunder_function__(item: Any) -> str:  # noqa: N807
     """Dunder function (double underscore).
 
     Per Phase 3 Sub-Item 3.7.3, dunder functions MUST still be documented.
+    This is an intentional test fixture for dunder-style naming.
 
     :param item: Item to process
     :returns: String representation

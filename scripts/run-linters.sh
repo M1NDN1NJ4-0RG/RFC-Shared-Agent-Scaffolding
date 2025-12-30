@@ -37,24 +37,24 @@ cd "$REPO_ROOT"
 # Note: This wrapper accepts only one command at a time
 COMMAND="check"
 if [[ "${1:-}" == "--fix" ]]; then
-  COMMAND="fix"
+	COMMAND="fix"
 elif [[ "${1:-}" == "--install" ]]; then
-  COMMAND="install"
+	COMMAND="install"
 elif [[ -n "${1:-}" ]]; then
-  echo "Error: Unknown argument '${1}'"
-  echo ""
-  echo "Usage: $0 [--fix|--install]"
-  echo "  (no args)   Run linting checks without modifying files"
-  echo "  --fix       Apply automatic fixes where possible"
-  echo "  --install   Install/bootstrap required linting tools"
-  exit 1
+	echo "Error: Unknown argument '${1}'"
+	echo ""
+	echo "Usage: $0 [--fix|--install]"
+	echo "  (no args)   Run linting checks without modifying files"
+	echo "  --fix       Apply automatic fixes where possible"
+	echo "  --install   Install/bootstrap required linting tools"
+	exit 1
 fi
 
 # Ensure only one argument is provided
 if [[ -n "${2:-}" ]]; then
-  echo "Error: Multiple arguments not supported"
-  echo "Usage: $0 [--fix|--install]"
-  exit 1
+	echo "Error: Multiple arguments not supported"
+	echo "Usage: $0 [--fix|--install]"
+	exit 1
 fi
 
 # Delegate to repo_lint Python module

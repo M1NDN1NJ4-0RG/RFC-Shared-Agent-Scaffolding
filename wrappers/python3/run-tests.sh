@@ -79,5 +79,3 @@ result = runner.run(suite)
 if not result.wasSuccessful():
     sys.exit(1)
 PYEOF
-
-

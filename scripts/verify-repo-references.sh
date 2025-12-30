@@ -66,7 +66,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 # Parse arguments
 STRICT_MODE=false
 if [[ "${1:-}" == "--strict" ]]; then
-    STRICT_MODE=true
+	STRICT_MODE=true
 fi
 
 # Change to repo root
@@ -88,40 +88,40 @@ echo ""
 
 # Function to search for a pattern
 search_pattern() {
-    local pattern="$1"
-    local description="$2"
-    
-    echo "Searching for: ${description}"
-    echo "Pattern: ${pattern}"
-    echo ""
-    
-    # Search for the pattern, excluding .git and binary files
-    # Prefer ripgrep (rg) for performance and better defaults
-    # Fallback to git grep, then regular grep if needed
-    local results=""
-    if command -v rg &> /dev/null; then
-        # Use ripgrep with file type filters (include PowerShell via glob)
-        results=$(rg -n "${pattern}" --type md --type yaml --type sh --type python --type perl --type rust --type toml --glob '*.ps1' 2>/dev/null || true)
-    elif command -v git &> /dev/null && git rev-parse --git-dir &> /dev/null; then
-        results=$(git grep -n "${pattern}" -- '*.md' '*.yml' '*.yaml' '*.sh' '*.py' '*.pl' '*.ps1' '*.rs' '*.toml' 2>/dev/null || true)
-    else
-        results=$(grep -rn --include='*.md' --include='*.yml' --include='*.yaml' --include='*.sh' --include='*.py' --include='*.pl' --include='*.ps1' --include='*.rs' --include='*.toml' "${pattern}" . 2>/dev/null || true)
-    fi
-    
-    if [[ -n "${results}" ]]; then
-        echo -e "${RED}✗ Found references:${NC}"
-        echo "${results}" | head -20
-        if [[ $(echo "${results}" | wc -l) -gt 20 ]]; then
-            echo "... (showing first 20 of $(echo "${results}" | wc -l) matches)"
-        fi
-        echo ""
-        FOUND_ISSUES=true
-        return 1
-    else
-        echo -e "${GREEN}✓ No references found${NC}"
-        echo ""
-        return 0
-    fi
+	local pattern="$1"
+	local description="$2"
+
+	echo "Searching for: ${description}"
+	echo "Pattern: ${pattern}"
+	echo ""
+
+	# Search for the pattern, excluding .git and binary files
+	# Prefer ripgrep (rg) for performance and better defaults
+	# Fallback to git grep, then regular grep if needed
+	local results=""
+	if command -v rg &>/dev/null; then
+		# Use ripgrep with file type filters (include PowerShell via glob)
+		results=$(rg -n "${pattern}" --type md --type yaml --type sh --type python --type perl --type rust --type toml --glob '*.ps1' 2>/dev/null || true)
+	elif command -v git &>/dev/null && git rev-parse --git-dir &>/dev/null; then
+		results=$(git grep -n "${pattern}" -- '*.md' '*.yml' '*.yaml' '*.sh' '*.py' '*.pl' '*.ps1' '*.rs' '*.toml' 2>/dev/null || true)
+	else
+		results=$(grep -rn --include='*.md' --include='*.yml' --include='*.yaml' --include='*.sh' --include='*.py' --include='*.pl' --include='*.ps1' --include='*.rs' --include='*.toml' "${pattern}" . 2>/dev/null || true)
+	fi
+
+	if [[ -n "${results}" ]]; then
+		echo -e "${RED}✗ Found references:${NC}"
+		echo "${results}" | head -20
+		if [[ $(echo "${results}" | wc -l) -gt 20 ]]; then
+			echo "... (showing first 20 of $(echo "${results}" | wc -l) matches)"
+		fi
+		echo ""
+		FOUND_ISSUES=true
+		return 1
+	else
+		echo -e "${GREEN}✓ No references found${NC}"
+		echo ""
+		return 0
+	fi
 }
 
 # Search for obsolete patterns
@@ -145,19 +145,19 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo ""
 
 if [[ "${FOUND_ISSUES}" == "true" ]]; then
-    echo -e "${YELLOW}⚠ Obsolete references found${NC}"
-    echo ""
-    echo "This is expected during the restructure process."
-    echo "After M1: 'documents/' should be eliminated"
-    echo "After M2: 'RFC-Shared-Agent-Scaffolding-Example' should be eliminated"
-    
-    if [[ "${STRICT_MODE}" == "true" ]]; then
-        echo ""
-        echo -e "${RED}Strict mode enabled: exiting with error${NC}"
-        exit 1
-    fi
+	echo -e "${YELLOW}⚠ Obsolete references found${NC}"
+	echo ""
+	echo "This is expected during the restructure process."
+	echo "After M1: 'documents/' should be eliminated"
+	echo "After M2: 'RFC-Shared-Agent-Scaffolding-Example' should be eliminated"
+
+	if [[ "${STRICT_MODE}" == "true" ]]; then
+		echo ""
+		echo -e "${RED}Strict mode enabled: exiting with error${NC}"
+		exit 1
+	fi
 else
-    echo -e "${GREEN}✓ All checks passed - no obsolete references found${NC}"
+	echo -e "${GREEN}✓ All checks passed - no obsolete references found${NC}"
 fi
 
 exit 0

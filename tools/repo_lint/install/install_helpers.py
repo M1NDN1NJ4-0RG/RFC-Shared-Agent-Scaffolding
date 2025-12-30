@@ -120,7 +120,7 @@ def create_venv(verbose: bool = False) -> Tuple[bool, Optional[str]]:
         )
 
         if verbose:
-            print(f"✓ Virtual environment created successfully")
+            print("✓ Virtual environment created successfully")
         return True, None
 
     except subprocess.CalledProcessError as e:

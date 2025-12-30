@@ -35,7 +35,8 @@
 
     Run specific test::
 
-        python3 -m pytest tools/repo_lint/tests/test_perl_runner.py::TestPerlRunner::test_perlcritic_uses_verbose_flag -v
+        python3 -m pytest tools/repo_lint/tests/test_perl_runner.py::TestPerlRunner \
+            ::test_perlcritic_uses_verbose_flag -v
 
 :Notes:
     - Tests use unittest.mock to avoid executing actual linters
@@ -52,7 +53,7 @@ from unittest.mock import MagicMock, patch
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.runners.perl_runner import PerlRunner
+from tools.repo_lint.runners.perl_runner import PerlRunner  # noqa: E402
 
 
 class TestPerlRunner(unittest.TestCase):

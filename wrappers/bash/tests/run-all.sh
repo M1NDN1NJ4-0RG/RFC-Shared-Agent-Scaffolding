@@ -70,11 +70,11 @@ source "./lib.sh"
 # Accumulate failures in status variable
 status=0
 for tf in ./test-*.sh; do
-  [[ -f "$tf" ]] || continue  # Skip if no test files match pattern
-  echo "==> Running $tf" >&2
-  if ! bash "$tf"; then
-    status=1  # Mark failure but continue running other tests
-  fi
+	[[ -f "$tf" ]] || continue # Skip if no test files match pattern
+	echo "==> Running $tf" >&2
+	if ! bash "$tf"; then
+		status=1 # Mark failure but continue running other tests
+	fi
 done
 
 # Each test file prints its own summary; this is a belt-and-suspenders exit.

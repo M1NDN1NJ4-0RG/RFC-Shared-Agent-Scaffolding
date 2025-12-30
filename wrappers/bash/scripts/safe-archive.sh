@@ -115,8 +115,8 @@ SAFE_ARCHIVE_COMPRESS="${SAFE_ARCHIVE_COMPRESS:-none}"
 # usage - Display usage message and exit
 # Called on invalid arguments
 usage() {
-  echo "usage: safe-archive.sh [--all]" >&2
-  exit 2
+	echo "usage: safe-archive.sh [--all]" >&2
+	exit 2
 }
 
 # Parse command-line arguments
@@ -124,9 +124,9 @@ usage() {
 # ALL=1: Archive all files (--all flag)
 ALL="0"
 case "${1-}" in
-  "" ) ;; 
-  --all) ALL="1" ;;
-  *) usage ;;
+"") ;;
+--all) ALL="1" ;;
+*) usage ;;
 esac
 
 # Create archive directory if it doesn't exist (mkdir -p is idempotent)
@@ -136,8 +136,8 @@ mkdir -p "$SAFE_ARCHIVE_DIR" 2>/dev/null || true
 
 # If source directory doesn't exist, nothing to do (not an error)
 if [ ! -d "$SAFE_FAIL_DIR" ]; then
-  # Nothing to do.
-  exit 0
+	# Nothing to do.
+	exit 0
 fi
 
 # compress_one - Compress a single file in-place using configured tool
@@ -146,30 +146,39 @@ fi
 # Returns: 0 on success, 1 on error (tool not found or compression failed)
 # Side effect: Replaces file with compressed version (.gz, .xz, or .zst)
 compress_one() {
-  # $1 = path to file in archive dir
-  local f="$1"
-  case "$SAFE_ARCHIVE_COMPRESS" in
-    none) return 0 ;;  # No compression
-    gzip)
-      # gzip: -n (no timestamp), -f (force overwrite .gz if exists)
-      command -v gzip >/dev/null 2>&1 || { echo "gzip not found" >&2; return 1; }
-      gzip -n -f "$f"
-      ;;
-    xz)
-      # xz: -T0 (use all CPU cores), -f (force overwrite)
-      command -v xz >/dev/null 2>&1 || { echo "xz not found" >&2; return 1; }
-      xz -T0 -f "$f"
-      ;;
-    zstd)
-      # zstd: -q (quiet), -T0 (multithreaded), -f (force overwrite)
-      command -v zstd >/dev/null 2>&1 || { echo "zstd not found" >&2; return 1; }
-      zstd -q -T0 -f "$f"
-      ;;
-    *)
-      echo "Unknown SAFE_ARCHIVE_COMPRESS=$SAFE_ARCHIVE_COMPRESS" >&2
-      return 1
-      ;;
-  esac
+	# $1 = path to file in archive dir
+	local f="$1"
+	case "$SAFE_ARCHIVE_COMPRESS" in
+	none) return 0 ;; # No compression
+	gzip)
+		# gzip: -n (no timestamp), -f (force overwrite .gz if exists)
+		command -v gzip >/dev/null 2>&1 || {
+			echo "gzip not found" >&2
+			return 1
+		}
+		gzip -n -f "$f"
+		;;
+	xz)
+		# xz: -T0 (use all CPU cores), -f (force overwrite)
+		command -v xz >/dev/null 2>&1 || {
+			echo "xz not found" >&2
+			return 1
+		}
+		xz -T0 -f "$f"
+		;;
+	zstd)
+		# zstd: -q (quiet), -T0 (multithreaded), -f (force overwrite)
+		command -v zstd >/dev/null 2>&1 || {
+			echo "zstd not found" >&2
+			return 1
+		}
+		zstd -q -T0 -f "$f"
+		;;
+	*)
+		echo "Unknown SAFE_ARCHIVE_COMPRESS=$SAFE_ARCHIVE_COMPRESS" >&2
+		return 1
+		;;
+	esac
 }
 
 #
@@ -181,26 +190,26 @@ compress_one() {
 # macOS Bash 3.2 compatible: no mapfile/readarray.
 # Use find -print0 + read -d '' to safely handle spaces.
 # M0-P1-I2: Match new log naming format *-{STATUS}.log
-find "$SAFE_FAIL_DIR" -type f \( -name '*-FAIL.log' -o -name '*-ABORTED.log' -o -name '*-ERROR.log' \) -print0 2>/dev/null | \
-while IFS= read -r -d '' SRC; do
-  BN="$(basename "$SRC")"
-  DST="$SAFE_ARCHIVE_DIR/$BN"
+find "$SAFE_FAIL_DIR" -type f \( -name '*-FAIL.log' -o -name '*-ABORTED.log' -o -name '*-ERROR.log' \) -print0 2>/dev/null |
+	while IFS= read -r -d '' SRC; do
+		BN="$(basename "$SRC")"
+		DST="$SAFE_ARCHIVE_DIR/$BN"
 
-  # no-clobber: check for existing file with any compression extension
-  if [ -e "$DST" ] || [ -e "$DST.gz" ] || [ -e "$DST.xz" ] || [ -e "$DST.zst" ]; then
-    echo "skip (exists): $BN" >&2
-    continue
-  fi
+		# no-clobber: check for existing file with any compression extension
+		if [ -e "$DST" ] || [ -e "$DST.gz" ] || [ -e "$DST.xz" ] || [ -e "$DST.zst" ]; then
+			echo "skip (exists): $BN" >&2
+			continue
+		fi
 
-  # Move first (atomic operation), then compress in-place in archive
-  # This ensures log is safely moved before compression (no data loss on compress failure)
-  mv "$SRC" "$DST"
-  compress_one "$DST"
+		# Move first (atomic operation), then compress in-place in archive
+		# This ensures log is safely moved before compression (no data loss on compress failure)
+		mv "$SRC" "$DST"
+		compress_one "$DST"
 
-  if [ "$ALL" = "0" ]; then
-    # archive just one by default (performance optimization for large log dirs)
-    exit 0
-  fi
-done
+		if [ "$ALL" = "0" ]; then
+			# archive just one by default (performance optimization for large log dirs)
+			exit 0
+		fi
+	done
 
 exit 0
