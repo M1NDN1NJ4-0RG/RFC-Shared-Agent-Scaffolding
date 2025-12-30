@@ -88,7 +88,7 @@ def get_tracked_files(patterns: List[str], repo_root: Optional[Path] = None) -> 
     """
     if repo_root is None:
         repo_root = find_repo_root()
-    
+
     excludes = get_git_pathspec_excludes()
     result = subprocess.run(
         ["git", "ls-files"] + patterns + excludes,
@@ -97,10 +97,10 @@ def get_tracked_files(patterns: List[str], repo_root: Optional[Path] = None) -> 
         text=True,
         check=False,
     )
-    
+
     if not result.stdout.strip():
         return []
-    
+
     return result.stdout.strip().split("\n")
 
 
