@@ -7,6 +7,21 @@
 :Tools:
     - PSScriptAnalyzer: PowerShell script analyzer (via pwsh)
     - validate_docstrings.py: Docstring contract validation
+
+:Environment Variables:
+    None
+
+:Examples:
+    Use this runner::
+
+        from tools.repo_lint.runners import SomeRunner
+        runner = SomeRunner()
+        results = runner.check()
+
+:Exit Codes:
+    Returns LintResult objects, not exit codes directly:
+    - 0: Success (LintResult.passed = True)
+    - 1: Violations found (LintResult.passed = False)
 """
 
 import subprocess
@@ -23,7 +38,7 @@ class PowerShellRunner(Runner):
     def has_files(self) -> bool:
         """Check if repository has PowerShell files.
 
-        :Returns:
+        :returns:
             True if PowerShell files exist, False otherwise
         """
         result = subprocess.run(
@@ -34,7 +49,7 @@ class PowerShellRunner(Runner):
     def check_tools(self) -> List[str]:
         """Check which PowerShell tools are missing.
 
-        :Returns:
+        :returns:
             List of missing tool names
         """
         missing = []
@@ -63,7 +78,7 @@ class PowerShellRunner(Runner):
     def check(self) -> List[LintResult]:
         """Run all PowerShell linting checks.
 
-        :Returns:
+        :returns:
             List of linting results from all PowerShell tools
         """
         self._ensure_tools(["pwsh"])
@@ -79,7 +94,9 @@ class PowerShellRunner(Runner):
 
         Note: PSScriptAnalyzer does not have a general auto-fix mode.
 
-        :Returns:
+        
+        :param policy: Auto-fix policy dictionary (unused)
+        :returns:
             List of results (runs checks only)
         """
         self._ensure_tools(["pwsh"])
@@ -94,7 +111,7 @@ class PowerShellRunner(Runner):
     def _get_powershell_files(self) -> List[str]:
         """Get list of PowerShell files in repository.
 
-        :Returns:
+        :returns:
             List of PowerShell file paths (empty list if none found)
         """
         result = subprocess.run(
@@ -107,7 +124,7 @@ class PowerShellRunner(Runner):
     def _run_psscriptanalyzer(self) -> LintResult:
         """Run PSScriptAnalyzer.
 
-        :Returns:
+        :returns:
             LintResult for PSScriptAnalyzer
         """
         ps_files = self._get_powershell_files()
@@ -149,7 +166,7 @@ class PowerShellRunner(Runner):
     def _run_docstring_validation(self) -> LintResult:
         """Run PowerShell docstring validation.
 
-        :Returns:
+        :returns:
             LintResult for docstring validation
         """
         validator_script = self.repo_root / "scripts" / "validate_docstrings.py"

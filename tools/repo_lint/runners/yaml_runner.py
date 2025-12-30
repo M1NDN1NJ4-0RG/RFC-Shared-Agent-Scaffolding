@@ -5,6 +5,21 @@
 
 :Tools:
     - yamllint: YAML linter
+
+:Environment Variables:
+    None
+
+:Examples:
+    Use this runner::
+
+        from tools.repo_lint.runners import SomeRunner
+        runner = SomeRunner()
+        results = runner.check()
+
+:Exit Codes:
+    Returns LintResult objects, not exit codes directly:
+    - 0: Success (LintResult.passed = True)
+    - 1: Violations found (LintResult.passed = False)
 """
 
 import subprocess
@@ -20,7 +35,7 @@ class YAMLRunner(Runner):
     def has_files(self) -> bool:
         """Check if repository has YAML files.
 
-        :Returns:
+        :returns:
             True if YAML files exist, False otherwise
         """
         result = subprocess.run(
@@ -35,7 +50,7 @@ class YAMLRunner(Runner):
     def check_tools(self) -> List[str]:
         """Check which YAML tools are missing.
 
-        :Returns:
+        :returns:
             List of missing tool names
         """
         required = ["yamllint"]
@@ -44,7 +59,7 @@ class YAMLRunner(Runner):
     def check(self) -> List[LintResult]:
         """Run all YAML linting checks.
 
-        :Returns:
+        :returns:
             List of linting results from all YAML tools
         """
         self._ensure_tools(["yamllint"])
@@ -59,7 +74,9 @@ class YAMLRunner(Runner):
 
         Note: yamllint does not have an auto-fix mode.
 
-        :Returns:
+        
+        :param policy: Auto-fix policy dictionary (unused)
+        :returns:
             List of results (runs checks only)
         """
         self._ensure_tools(["yamllint"])
@@ -73,7 +90,7 @@ class YAMLRunner(Runner):
     def _run_yamllint(self) -> LintResult:
         """Run yamllint.
 
-        :Returns:
+        :returns:
             LintResult for yamllint
         """
         # Get all YAML files

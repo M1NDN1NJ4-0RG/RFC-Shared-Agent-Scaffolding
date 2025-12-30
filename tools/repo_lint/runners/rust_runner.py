@@ -12,6 +12,21 @@
 :Status:
     STUB IMPLEMENTATION - Basic structure in place, full implementation pending.
     See docs/epic-repo-lint-status.md for tracking.
+
+:Environment Variables:
+    None
+
+:Examples:
+    Use this runner::
+
+        from tools.repo_lint.runners import SomeRunner
+        runner = SomeRunner()
+        results = runner.check()
+
+:Exit Codes:
+    Returns LintResult objects, not exit codes directly:
+    - 0: Success (LintResult.passed = True)
+    - 1: Violations found (LintResult.passed = False)
 """
 
 import subprocess
@@ -32,7 +47,7 @@ class RustRunner(Runner):
     def has_files(self) -> bool:
         """Check if repository has Rust files.
 
-        :Returns:
+        :returns:
             True if Rust files exist, False otherwise
         """
         result = subprocess.run(
@@ -43,7 +58,7 @@ class RustRunner(Runner):
     def check_tools(self) -> List[str]:
         """Check which Rust tools are missing.
 
-        :Returns:
+        :returns:
             List of missing tool names
         """
         required = ["cargo", "rustfmt", "clippy-driver"]
@@ -69,7 +84,7 @@ class RustRunner(Runner):
     def check(self) -> List[LintResult]:
         """Run all Rust linting checks.
 
-        :Returns:
+        :returns:
             List of linting results from all Rust tools
 
         :Note:
@@ -89,7 +104,9 @@ class RustRunner(Runner):
     def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply Rust auto-fixes where possible.
 
-        :Returns:
+        
+        :param policy: Auto-fix policy dictionary (unused)
+        :returns:
             List of linting results after fixes applied
 
         :Note:
@@ -136,7 +153,7 @@ class RustRunner(Runner):
     def _run_rustfmt_check(self) -> LintResult:
         """Run rustfmt in check mode.
 
-        :Returns:
+        :returns:
             LintResult for rustfmt
 
         :Note:
@@ -167,7 +184,7 @@ class RustRunner(Runner):
     def _run_clippy(self) -> LintResult:
         """Run clippy linter.
 
-        :Returns:
+        :returns:
             LintResult for clippy
 
         :Note:
@@ -202,7 +219,7 @@ class RustRunner(Runner):
     def _run_docstring_validation(self) -> LintResult:
         """Run Rust docstring validation.
 
-        :Returns:
+        :returns:
             LintResult for docstring validation
 
         :Note:

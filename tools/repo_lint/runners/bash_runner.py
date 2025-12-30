@@ -8,6 +8,21 @@
     - ShellCheck: Static analysis for shell scripts
     - shfmt: Shell script formatter
     - validate_docstrings.py: Docstring contract validation
+
+:Environment Variables:
+    None
+
+:Examples:
+    Use this runner::
+
+        from tools.repo_lint.runners import SomeRunner
+        runner = SomeRunner()
+        results = runner.check()
+
+:Exit Codes:
+    Returns LintResult objects, not exit codes directly:
+    - 0: Success (LintResult.passed = True)
+    - 1: Violations found (LintResult.passed = False)
 """
 
 import subprocess
@@ -25,7 +40,7 @@ class BashRunner(Runner):
     def has_files(self) -> bool:
         """Check if repository has Bash files.
 
-        :Returns:
+        :returns:
             True if Bash files exist, False otherwise
         """
         result = subprocess.run(
@@ -36,7 +51,7 @@ class BashRunner(Runner):
     def check_tools(self) -> List[str]:
         """Check which Bash tools are missing.
 
-        :Returns:
+        :returns:
             List of missing tool names
         """
         required = ["shellcheck", "shfmt"]
@@ -45,7 +60,7 @@ class BashRunner(Runner):
     def check(self) -> List[LintResult]:
         """Run all Bash linting checks.
 
-        :Returns:
+        :returns:
             List of linting results from all Bash tools
         """
         self._ensure_tools(["shellcheck", "shfmt"])
@@ -62,10 +77,10 @@ class BashRunner(Runner):
 
         Per Phase 6 Item 6.5.6: Consult auto-fix policy before running fixes.
 
-        :Args:
+        :param
             policy: Auto-fix policy dictionary (deny-by-default)
 
-        :Returns:
+        :returns:
             List of results after applying fixes
         """
         self._ensure_tools(["shellcheck", "shfmt"])
@@ -97,7 +112,7 @@ class BashRunner(Runner):
     def _get_bash_files(self) -> List[str]:
         """Get list of Bash files in repository.
 
-        :Returns:
+        :returns:
             List of Bash file paths (empty list if none found)
         """
         result = subprocess.run(
@@ -110,7 +125,7 @@ class BashRunner(Runner):
     def _run_shellcheck(self) -> LintResult:
         """Run ShellCheck.
 
-        :Returns:
+        :returns:
             LintResult for ShellCheck
         """
         bash_files = self._get_bash_files()
@@ -139,7 +154,7 @@ class BashRunner(Runner):
     def _run_shfmt_check(self) -> LintResult:
         """Run shfmt in check mode.
 
-        :Returns:
+        :returns:
             LintResult for shfmt check
         """
         bash_files = self._get_bash_files()
@@ -176,7 +191,7 @@ class BashRunner(Runner):
     def _run_shfmt_fix(self) -> LintResult:
         """Run shfmt to fix formatting.
 
-        :Returns:
+        :returns:
             LintResult for shfmt fix operation
         """
         bash_files = self._get_bash_files()
@@ -202,7 +217,7 @@ class BashRunner(Runner):
     def _run_docstring_validation(self) -> LintResult:
         """Run Bash docstring validation.
 
-        :Returns:
+        :returns:
             LintResult for docstring validation
         """
         validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
