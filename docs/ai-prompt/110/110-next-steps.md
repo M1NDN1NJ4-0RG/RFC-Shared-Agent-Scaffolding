@@ -15,6 +15,70 @@ Related: Issue #110, PRs #132, #137
 
 ## DONE (EXTREMELY DETAILED)
 
+### 2025-12-30 17:10 - Created workflow parity analysis document
+**Files Changed:**
+- `docs/ai-prompt/110/workflow-parity-analysis.md`: Created (new file, 7570 bytes)
+
+**Changes Made:**
+- **Analyzed legacy workflows**:
+  - `docstring-contract.yml`: Validates all docstrings repository-wide (continue-on-error)
+  - `lint-and-format-checker.yml`: Language-specific linting (Black, Ruff, Pylint, ShellCheck, shfmt, PSScriptAnalyzer, Perl::Critic)
+  - `yaml-lint.yml`: YAML linting with yamllint
+- **Analyzed umbrella workflow**:
+  - `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+  - 7 jobs: Auto-Fix: Black, Detect Changed Files, 5 language-specific lint jobs, Consolidate and Archive Logs
+  - Uses `python -m tools.repo_lint check --ci --only <language>` for each language
+  - Conditional execution based on changed files
+- **Parity findings**:
+  - ✅ **Linting coverage**: FULL PARITY - all linters present in umbrella workflow
+  - ✅ **Auto-fix behavior**: FULL PARITY - umbrella has better bot-loop guards
+  - ⚠️ **Docstring validation**: PARTIAL PARITY - scope difference:
+    - Legacy: validates ALL files on every run
+    - Umbrella: validates only changed languages (more efficient, different scope)
+- **Verified repo_lint includes docstring validation**:
+  - Confirmed `tools/repo_lint/runners/python_runner.py` calls `scripts/validate_docstrings.py --language python`
+  - Similar for bash_runner.py, powershell_runner.py, perl_runner.py
+  - Docstring validation IS included in umbrella workflow
+- **Documented migration options**:
+  - Option A: Keep both (transitional only)
+  - **Option B: Migrate fully + periodic full scan** (RECOMMENDED)
+  - Option C: Add `--all` flag to umbrella (viable alternative)
+- **Created detailed comparison tables**:
+  - Linting tool coverage table
+  - Docstring validation comparison
+  - Auto-fix behavior comparison
+
+**Verification:**
+```bash
+# Checked legacy workflows
+ls -la .github/workflows/ | grep -E "(lint|docstring)"
+# docstring-contract.yml, lint-and-format-checker.yml, repo-lint-and-docstring-enforcement.yml, yaml-lint.yml
+
+# Verified repo_lint calls docstring validation
+grep -n "validate_docstrings" tools/repo_lint/runners/python_runner.py
+# Line 280: validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
+
+# Verified file creation
+wc -l docs/ai-prompt/110/workflow-parity-analysis.md
+# 266 docs/ai-prompt/110/workflow-parity-analysis.md
+```
+
+**Results:**
+- Comprehensive parity analysis completed
+- Key difference identified: docstring validation scope
+- Migration recommendations documented with 3 options
+- Ready for human decision on migration strategy (Sub-Item 6.4.7)
+- Analysis supports Sub-Item 6.4.9 (CI verification) next steps
+
+**Known Issues:**
+- Docstring validation scope difference requires strategic decision
+- Need human approval on migration approach before proceeding
+
+**Follow-ups:**
+- Escalate for human decision on migration strategy (Option B vs. C)
+- Test umbrella workflow in CI (Sub-Item 6.4.9)
+- Verify vector system completeness (Sub-Item 6.5.1)
+
 ### 2025-12-30 17:00 - Reorganized journal structure per updated copilot-instructions.md
 **Files Changed:**
 - `docs/ai-prompt/110-next-steps.md`: Moved to `docs/ai-prompt/110/110-next-steps.md`
