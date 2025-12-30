@@ -58,14 +58,11 @@ DOCSTRINGS_DIR = VECTORS_DIR / "docstrings"
 def load_vector(vector_file: Path) -> dict:
     """Load a test vector from JSON file.
 
-    :param
-        vector_file: Path to vector JSON file
+    :param vector_file: Path to vector JSON file
 
-    :returns:
-        Parsed vector dictionary
+    :returns: Parsed vector dictionary
 
-    :raises
-        FileNotFoundError: If vector file doesn't exist
+    :raises FileNotFoundError: If vector file doesn't exist
         json.JSONDecodeError: If vector file is invalid JSON
     """
     with open(vector_file, encoding="utf-8") as f:
@@ -75,14 +72,11 @@ def load_vector(vector_file: Path) -> dict:
 def normalize_violation_from_docstring_output(line: str) -> Optional[Dict]:
     """Parse and normalize a violation from docstring validator output.
 
-    :param
-        line: Single line of output from validate_docstrings.py
+    :param line: Single line of output from validate_docstrings.py
 
-    :returns:
-        Normalized violation dict or None if line doesn't contain violation
+    :returns: Normalized violation dict or None if line doesn't contain violation
 
-    :note:
-        Expected format examples:
+    :note: Expected format examples:
         - "❌ /path/to/file.py:13"
         - "   Symbol: def no_doc()"
         - "   Missing: function docstring"
@@ -128,14 +122,11 @@ def normalize_violation_from_docstring_output(line: str) -> Optional[Dict]:
 def parse_docstring_validator_output(output: str) -> List[Dict]:
     """Parse docstring validator output into normalized violations.
 
-    :param
-        output: Raw output from validate_docstrings.py
+    :param output: Raw output from validate_docstrings.py
 
-    :returns:
-        List of normalized violation dictionaries
+    :returns: List of normalized violation dictionaries
 
-    :note:
-        Parser handles multi-line violation format:
+    :note: Parser handles multi-line violation format:
         ❌ /path/file.py:13
            Symbol: def no_doc()
            Missing: function docstring
@@ -197,14 +188,11 @@ def parse_docstring_validator_output(output: str) -> List[Dict]:
 def run_docstring_validator(fixture_path: Path) -> List[Dict]:
     """Run docstring validator on fixture and return normalized violations.
 
-    :param
-        fixture_path: Path to source file to validate
+    :param fixture_path: Path to source file to validate
 
-    :returns:
-        List of normalized violation dictionaries
+    :returns: List of normalized violation dictionaries
 
-    :raises
-        subprocess.CalledProcessError: If validator fails unexpectedly
+    :raises subprocess.CalledProcessError: If validator fails unexpectedly
     """
     validator_script = REPO_ROOT / "scripts" / "validate_docstrings.py"
 
@@ -225,16 +213,13 @@ def run_docstring_validator(fixture_path: Path) -> List[Dict]:
 def compare_violations(actual: List[Dict], expected: List[Dict], vector_id: str) -> None:
     """Compare actual vs expected violations and assert match.
 
-    :param
-        actual: List of actual violations from running validator
+    :param actual: List of actual violations from running validator
         expected: List of expected violations from vector file
         vector_id: ID of test vector (for error messages)
 
-    :raises
-        AssertionError: If violations don't match expected
+    :raises AssertionError: If violations don't match expected
 
-    :note:
-        Compares violations by normalized fields:
+    :note: Compares violations by normalized fields:
         - rule_id
         - symbol
         - symbol_kind
@@ -306,8 +291,7 @@ def test_python_docstring_vectors():
         Validates that Python docstring enforcement produces expected violations
         for missing docstrings, pragma exemptions, and edge cases.
 
-    :note:
-        Loads and runs all Python docstring vectors from:
+    :note: Loads and runs all Python docstring vectors from:
         conformance/repo-lint/vectors/docstrings/python-docstring-*.json
     """
     # Find all Python docstring vectors
@@ -332,8 +316,7 @@ def test_bash_docstring_vectors():
         Validates that Bash docstring enforcement produces expected violations
         using tree-sitter-based symbol discovery.
 
-    :note:
-        Loads and runs all Bash docstring vectors from:
+    :note: Loads and runs all Bash docstring vectors from:
         conformance/repo-lint/vectors/docstrings/bash-docstring-*.json
     """
     pytest.skip("Bash vector runner not yet implemented - requires bash-specific parser")
@@ -346,8 +329,7 @@ def test_powershell_docstring_vectors():
         Validates that PowerShell docstring enforcement produces expected violations
         using PowerShell AST-based symbol discovery.
 
-    :note:
-        Loads and runs all PowerShell docstring vectors from:
+    :note: Loads and runs all PowerShell docstring vectors from:
         conformance/repo-lint/vectors/docstrings/powershell-docstring-*.json
     """
     pytest.skip("PowerShell vector runner not yet implemented - requires pwsh AST parser")
@@ -360,8 +342,7 @@ def test_perl_docstring_vectors():
         Validates that Perl docstring enforcement produces expected violations
         using PPI-based symbol discovery.
 
-    :note:
-        Loads and runs all Perl docstring vectors from:
+    :note: Loads and runs all Perl docstring vectors from:
         conformance/repo-lint/vectors/docstrings/perl-docstring-*.json
     """
     pytest.skip("Perl vector runner not yet implemented - requires PPI parser")
@@ -374,8 +355,7 @@ def test_vector_fixtures_exist():
         Ensures test vectors point to existing fixture files and fixture
         paths are correct relative to repo root.
 
-    :note:
-        Validates all vectors in conformance/repo-lint/vectors/docstrings/
+    :note: Validates all vectors in conformance/repo-lint/vectors/docstrings/
     """
     vector_files = list(DOCSTRINGS_DIR.glob("*.json"))
     assert vector_files, "No vector files found"
@@ -394,8 +374,7 @@ def test_vector_schema_validation():
         Ensures all test vectors contain required fields and follow
         the normalized violation schema defined in README.
 
-    :note:
-        Checks for required fields:
+    :note: Checks for required fields:
         - id, name, description, language, fixture
         - expected_violations with proper violation objects
         - expected_passes (optional but validated if present)
