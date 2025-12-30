@@ -6,12 +6,11 @@
 
 :Tools:
     - rustfmt: Code formatter (official Rust style)
-    - clippy: Comprehensive linter for Rust
+    - clippy: Comprehensive linter for Rust (with JSON output parsing)
     - validate_docstrings.py: Docstring contract validation
 
 :Status:
-    STUB IMPLEMENTATION - Basic structure in place, full implementation pending.
-    See docs/epic-repo-lint-status.md for tracking.
+    COMPLETE - Full implementation with enhanced clippy parsing and docstring validation.
 
 :Environment Variables:
     None
@@ -29,6 +28,7 @@
     - 1: Violations found (LintResult.passed = False)
 """
 
+import json
 import subprocess
 from typing import List, Optional
 
@@ -40,8 +40,8 @@ class RustRunner(Runner):
     """Runner for Rust linting and formatting tools.
 
     :Status:
-        Stub implementation. Checks for tools and files, but linting logic
-        is not yet fully implemented.
+        Complete implementation with enhanced clippy JSON parsing
+        and integrated docstring validation.
     """
 
     def has_files(self) -> bool:
@@ -86,32 +86,22 @@ class RustRunner(Runner):
 
         :returns:
             List of linting results from all Rust tools
-
-        :Note:
-            Stub implementation. Returns placeholder results.
-            Full implementation tracked in Phase 6.5 future work.
         """
         self._ensure_tools(["cargo"])
 
         results = []
         results.append(self._run_rustfmt_check())
         results.append(self._run_clippy())
-        # TODO: Add docstring validation once Rust validator is integrated  # pylint: disable=fixme
-        # results.append(self._run_docstring_validation())
+        results.append(self._run_docstring_validation())
 
         return results
 
     def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply Rust auto-fixes where possible.
 
-
-        :param policy: Auto-fix policy dictionary (unused)
+        :param policy: Auto-fix policy dictionary (unused for Rust)
         :returns:
             List of linting results after fixes applied
-
-        :Note:
-            Stub implementation. Runs rustfmt in fix mode, then re-checks.
-            Full implementation tracked in Phase 6.5 future work.
         """
         self._ensure_tools(["cargo"])
 
@@ -155,9 +145,6 @@ class RustRunner(Runner):
 
         :returns:
             LintResult for rustfmt
-
-        :Note:
-            Stub implementation. Basic check only.
         """
         rust_dir = self.repo_root / "rust"
         if not rust_dir.exists():
@@ -182,13 +169,10 @@ class RustRunner(Runner):
         return LintResult(tool="rustfmt", passed=False, violations=violations[:20])  # Limit output
 
     def _run_clippy(self) -> LintResult:
-        """Run clippy linter.
+        """Run clippy linter with JSON output for structured parsing.
 
         :returns:
-            LintResult for clippy
-
-        :Note:
-            Stub implementation. Basic check only.
+            LintResult for clippy with detailed file, line, and message information
         """
         rust_dir = self.repo_root / "rust"
         if not rust_dir.exists():
@@ -197,8 +181,18 @@ class RustRunner(Runner):
                 print("  No rust/ directory found, skipping clippy check")
             return LintResult(tool="clippy", passed=True, violations=[])
 
+        # Run clippy with JSON output for structured parsing
         result = subprocess.run(
-            ["cargo", "clippy", "--all-targets", "--all-features", "--", "-D", "warnings"],
+            [
+                "cargo",
+                "clippy",
+                "--all-targets",
+                "--all-features",
+                "--message-format=json",
+                "--",
+                "-D",
+                "warnings",
+            ],
             cwd=rust_dir,
             capture_output=True,
             text=True,
@@ -209,24 +203,122 @@ class RustRunner(Runner):
             return LintResult(tool="clippy", passed=True, violations=[])
 
         violations = []
-        # Parse clippy output for violations
-        for line in result.stderr.splitlines():
-            if "warning:" in line or "error:" in line:
-                violations.append(Violation(tool="clippy", file=".", line=None, message=line.strip()))
+        # Parse JSON output for structured violations
+        for line in result.stdout.splitlines():
+            if not line.strip():
+                continue
+            try:
+                msg = json.loads(line)
+                # Only process compiler messages (not build artifacts)
+                if msg.get("reason") != "compiler-message":
+                    continue
 
-        return LintResult(tool="clippy", passed=False, violations=violations[:20])  # Limit output
+                message_obj = msg.get("message", {})
+                # Skip non-warning/non-error messages
+                level = message_obj.get("level", "")
+                if level not in ["warning", "error"]:
+                    continue
+
+                # Extract location information
+                spans = message_obj.get("spans", [])
+                primary_span = next((s for s in spans if s.get("is_primary")), None)
+
+                if primary_span:
+                    file_path = primary_span.get("file_name", "unknown")
+                    line_num = primary_span.get("line_start")
+                    # Make file path relative to rust/ directory
+                    if file_path.startswith(str(rust_dir)):
+                        file_path = file_path[len(str(rust_dir)) + 1 :]
+                else:
+                    file_path = "unknown"
+                    line_num = None
+
+                # Extract message text
+                msg_text = message_obj.get("message", "clippy warning")
+
+                # Add lint name if available
+                code = message_obj.get("code", {})
+                if code and "code" in code:
+                    lint_name = code["code"]
+                    msg_text = f"{lint_name}: {msg_text}"
+
+                violations.append(
+                    Violation(
+                        tool="clippy",
+                        file=file_path,
+                        line=line_num,
+                        message=msg_text,
+                    )
+                )
+
+            except (json.JSONDecodeError, KeyError, TypeError):
+                # Fallback to plain text parsing if JSON fails
+                if "warning:" in line or "error:" in line:
+                    violations.append(Violation(tool="clippy", file=".", line=None, message=line.strip()))
+
+        return LintResult(tool="clippy", passed=False, violations=violations[:50])  # Limit output
 
     def _run_docstring_validation(self) -> LintResult:
-        """Run Rust docstring validation.
+        """Run Rust docstring validation using validate_docstrings.py.
 
         :returns:
             LintResult for docstring validation
-
-        :Note:
-            TODO: Not yet implemented. Requires integration with
-            scripts/validate_docstrings.py for Rust files.
         """
-        # Placeholder - docstring validation not yet implemented for Rust
-        if self.verbose:
-            print("  Rust docstring validation not yet implemented (TODO)")
-        return LintResult(tool="rust-docstrings", passed=True, violations=[])
+        # Check if rust directory exists
+        rust_dir = self.repo_root / "rust"
+        if not rust_dir.exists():
+            if self.verbose:
+                print("  No rust/ directory found, skipping Rust docstring validation")
+            return LintResult(tool="rust-docstrings", passed=True, violations=[])
+
+        # Call validate_docstrings.py with --language rust
+        validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
+        if not validator_script.exists():
+            if self.verbose:
+                print("  Docstring validator script not found, skipping")
+            return LintResult(tool="rust-docstrings", passed=True, violations=[])
+
+        result = subprocess.run(
+            ["python3", str(validator_script), "--language", "rust"],
+            cwd=self.repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        if result.returncode == 0:
+            return LintResult(tool="rust-docstrings", passed=True, violations=[])
+
+        violations = []
+        # Parse validator output (format: "FILE: Missing docstring for SYMBOL")
+        for line in result.stdout.splitlines():
+            line = line.strip()
+            if not line or line.startswith("===") or line.startswith("Checking"):
+                continue
+
+            # Parse violation format
+            # Example: "rust/src/main.rs: Missing docstring for function 'helper'"
+            if ":" in line:
+                parts = line.split(":", 1)
+                file_path = parts[0].strip()
+                message = parts[1].strip() if len(parts) > 1 else line
+
+                violations.append(
+                    Violation(
+                        tool="rust-docstrings",
+                        file=file_path,
+                        line=None,
+                        message=message,
+                    )
+                )
+            else:
+                violations.append(
+                    Violation(
+                        tool="rust-docstrings",
+                        file="unknown",
+                        line=None,
+                        message=line,
+                    )
+                )
+
+        return LintResult(tool="rust-docstrings", passed=False, violations=violations)
