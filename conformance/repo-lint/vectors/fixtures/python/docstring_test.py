@@ -47,8 +47,7 @@ class ProperlyDocumented:
         pass
 
 
-# noqa: FUNCTION
-def exempted_function():
+def exempted_function():  # noqa: D103
     return "pragma exemption"
 
 

@@ -99,8 +99,11 @@ class Runner(ABC):
         pass
 
     @abstractmethod
-    def fix(self) -> List[LintResult]:
+    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply automatic fixes where possible (formatters only).
+
+        :Args:
+            policy: Auto-fix policy dictionary (deny-by-default)
 
         :Returns:
             List of linting results after fixes applied

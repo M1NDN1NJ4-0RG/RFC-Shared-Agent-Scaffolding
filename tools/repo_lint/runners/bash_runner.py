@@ -12,9 +12,10 @@
 
 import subprocess
 import sys
-from typing import List
+from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.policy import is_category_allowed
 from tools.repo_lint.runners.base import Runner, command_exists
 
 
@@ -56,8 +57,13 @@ class BashRunner(Runner):
 
         return results
 
-    def fix(self) -> List[LintResult]:
+    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply Bash formatters and safe auto-fixes.
+
+        Per Phase 6 Item 6.5.6: Consult auto-fix policy before running fixes.
+
+        :Args:
+            policy: Auto-fix policy dictionary (deny-by-default)
 
         :Returns:
             List of results after applying fixes
@@ -66,9 +72,20 @@ class BashRunner(Runner):
 
         results = []
 
-        # Apply shfmt formatting
-        shfmt_result = self._run_shfmt_fix()
-        results.append(shfmt_result)
+        # Default policy if none provided (backwards compatibility)
+        # Note: Empty policy denies all fixes. This is intentional during transition.
+        if policy is None:
+            policy = {"allowed_categories": []}
+
+        # Apply shfmt formatting (if allowed by policy)
+        if is_category_allowed(policy, "FORMAT.SHFMT"):
+            shfmt_result = self._run_shfmt_fix()
+            results.append(shfmt_result)
+        else:
+            if self.verbose:
+                print("  ⊘ Skipping shfmt (denied by policy)")
+            shfmt_result = LintResult(tool="shfmt", passed=True, violations=[])
+            results.append(shfmt_result)
 
         # Re-run checks only if shfmt succeeded
         if shfmt_result.passed:
