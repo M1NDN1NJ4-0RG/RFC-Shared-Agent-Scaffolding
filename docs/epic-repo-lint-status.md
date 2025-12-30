@@ -361,6 +361,15 @@ Rationale:
   - ✅ **Implemented** in `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 58-60, 142-180, 195-226)
   - Bot-loop guard checks commit message for `[auto-format]` marker (line 60); commit uses marker (line 150); PR comment via github-script (lines 195-226)
 
+- [x] **Sub-Item 6.0.5:** Auto-format commit and push must handle non-fast-forward scenarios:
+  - Sync with remote branch before committing (fetch + rebase)
+  - Add retry loop (2-3 attempts) for push failures
+  - Re-apply Black after sync in case new changes need formatting
+  - Handle merge conflicts gracefully (abort and retry)
+  - ✅ **Implemented** in `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 169-247)
+  - Added 3-attempt retry loop with fetch, rebase, re-format, commit, and push
+  - Handles non-fast-forward push errors by syncing and retrying
+
 ### Item 6.1 — Replace CI steps with repo-lint (High)
 - [x] **Sub-Item 6.1.1:** Update workflows to run:
   - `repo-lint check --ci` (or wrapper equivalent)
@@ -596,6 +605,20 @@ Following canonical instructions in `docs/epic-repo-lint-copilot-prompt.md` (PR 
 - Consolidate Failures still runs via `if: always()`
 
 **Files Changed**: `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 313-655)
+
+### ✅ B.1) Fixed Auto-Format Push Sync (this commit)
+**Problem**: Auto-format commit/push failed with non-fast-forward error when remote branch moved
+
+**Root Cause**: No sync with remote before pushing; no retry logic for race conditions
+
+**Fixed**:
+- Added 3-attempt retry loop for commit and push
+- Fetch and rebase on remote branch before each attempt
+- Re-run Black formatter after sync (new changes may need formatting)
+- Handle merge conflicts gracefully (abort and retry)
+- Exit with error if all 3 attempts fail
+
+**Files Changed**: `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 169-247)
 
 ### ✅ C) Added CI Validation Mode (commit bb33926)
 **Implemented**: `workflow_dispatch` input `force_all` (boolean, default: false)
