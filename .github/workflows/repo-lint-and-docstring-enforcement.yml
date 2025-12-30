@@ -440,7 +440,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Python lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: python-lint-results
@@ -491,7 +491,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Bash lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: bash-lint-results
@@ -531,7 +531,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload PowerShell lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: powershell-lint-results
@@ -575,7 +575,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Perl lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: perl-lint-results
@@ -615,7 +615,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload YAML lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: yaml-lint-results
@@ -668,7 +668,7 @@ jobs:
           exit ${PIPESTATUS[0]}
 
       - name: Upload Rust lint results
-        if: always()
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: rust-lint-results
@@ -1027,17 +1027,17 @@ jobs:
           # Display summary
           cat "$SUMMARY_FILE"
 
-      - name: Upload log summary artifact (always)
-        if: always()
+      - name: Upload log summary artifact (on failure only)
+        if: failure()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: umbrella-ci-logs
           path: logs/umbrella-ci-logs-phase-6/
           retention-days: 30
 
-      - name: Commit logs to repository (always, same-repo PRs only)
+      - name: Commit logs to repository (on failure, same-repo PRs only)
         if: |
-          always() &&
+          failure() &&
           github.event.pull_request.head.repo.full_name == github.repository &&
           github.event_name == 'pull_request' &&
           github.actor != 'github-actions[bot]' &&
@@ -1063,7 +1063,7 @@ jobs:
           fi
 
       - name: Add job summary
-        if: always()
+        if: failure()
         run: |
           # Find the summary file in the log directory
           LOG_DIR="${{ steps.collect_results.outputs.log_dir }}"
