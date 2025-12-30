@@ -94,7 +94,7 @@ class PowerShellRunner(Runner):
 
         Note: PSScriptAnalyzer does not have a general auto-fix mode.
 
-        
+
         :param policy: Auto-fix policy dictionary (unused)
         :returns:
             List of results (runs checks only)

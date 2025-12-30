@@ -74,7 +74,7 @@ class YAMLRunner(Runner):
 
         Note: yamllint does not have an auto-fix mode.
 
-        
+
         :param policy: Auto-fix policy dictionary (unused)
         :returns:
             List of results (runs checks only)

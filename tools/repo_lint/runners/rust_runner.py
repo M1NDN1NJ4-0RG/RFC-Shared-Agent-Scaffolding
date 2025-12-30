@@ -104,7 +104,7 @@ class RustRunner(Runner):
     def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply Rust auto-fixes where possible.
 
-        
+
         :param policy: Auto-fix policy dictionary (unused)
         :returns:
             List of linting results after fixes applied
