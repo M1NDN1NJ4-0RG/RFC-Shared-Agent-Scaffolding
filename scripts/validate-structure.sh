@@ -111,8 +111,22 @@ for lang in "${languages[@]}"; do
 	esac
 
 	for script in "${expected_scripts[@]}"; do
-		# All languages now use kebab-case (hyphens)
-		script_name="$script"
+		# Apply language-specific naming conventions per docs/contributing/naming-and-style.md
+		case "$lang" in
+		bash)
+			# Bash uses kebab-case
+			script_name="$script"
+			;;
+		perl | python3)
+			# Perl and Python use snake_case
+			script_name="$(echo "$script" | tr '-' '_')"
+			;;
+		powershell)
+			# PowerShell uses PascalCase
+			# Convert kebab-case to PascalCase: safe-run -> SafeRun
+			script_name="$(echo "$script" | sed 's/-\([a-z]\)/\U\1/g' | sed 's/^\([a-z]\)/\U\1/')"
+			;;
+		esac
 
 		script_path="$bundle_dir/scripts/${script_name}${ext}"
 		if [ ! -f "$script_path" ]; then
