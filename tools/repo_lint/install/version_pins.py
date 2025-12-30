@@ -63,7 +63,6 @@ def get_all_versions():
     """Get all tool versions as a flat dictionary.
 
     :returns: Dictionary mapping tool name to version string (or None if not pinned)
-    :rtype: dict
     """
     all_versions = {}
     all_versions.update(PYTHON_TOOLS)
