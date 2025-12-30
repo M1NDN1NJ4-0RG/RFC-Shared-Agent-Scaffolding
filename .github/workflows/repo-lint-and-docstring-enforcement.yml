@@ -708,10 +708,9 @@ jobs:
         id: collect_results
         run: |
           # Create log directory with required path format
-          # Format: /logs/umbrella-ci-logs-phase-6/YYYY-MM-DD-RUN_ID/
-          RUN_DATE=$(date -u +%Y-%m-%d)
+          # Format: /logs/umbrella-ci-logs-phase-6/RUN_ID/
           RUN_ID="${{ github.run_id }}"
-          LOG_DIR="logs/umbrella-ci-logs-phase-6/${RUN_DATE}-${RUN_ID}"
+          LOG_DIR="logs/umbrella-ci-logs-phase-6/${RUN_ID}"
           mkdir -p "$LOG_DIR"
 
           # Check job statuses (now using job.result since continue-on-error is removed)
@@ -735,7 +734,7 @@ jobs:
           # Create summary file
           SUMMARY_FILE="${LOG_DIR}/summary.md"
           {
-            echo "# Repo Lint Failure Summary"
+            echo "# Repo Lint Summary"
             echo ""
             echo "**Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             echo "**Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
@@ -922,7 +921,9 @@ jobs:
         if: |
           always() &&
           github.event.pull_request.head.repo.full_name == github.repository &&
-          github.event_name == 'pull_request'
+          github.event_name == 'pull_request' &&
+          github.actor != 'github-actions[bot]' &&
+          !contains(github.event.pull_request.title, '[auto-generated]')
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

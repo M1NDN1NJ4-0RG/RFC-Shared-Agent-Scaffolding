@@ -15,6 +15,69 @@ Related: Issue #110, PRs #132
 
 ## DONE (EXTREMELY DETAILED)
 
+### 2025-12-30 16:27 - Fix PR review issues: bot-loop guards, log path, documentation
+**Files Changed:**
+- `.github/workflows/repo-lint-and-docstring-enforcement.yml`: Lines 921-926 (commit step condition), 710-715 (log directory format), 738 (summary header)
+- `docs/epic-repo-lint-status.md`: Lines 714-723 (documentation corrections)
+
+**Changes Made:**
+- **Bot-loop guards added to commit step** (lines 921-926):
+  - Added `github.actor != 'github-actions[bot]'` guard to prevent bot triggers
+  - Added `!contains(github.event.pull_request.title, '[auto-generated]')` guard to prevent marker-based loops
+  - Previously used `always()` without guards, bypassing job-level protection
+  - Now includes both guards explicitly at step level per Phase 0 Item 0.4.2 requirements
+  
+- **Simplified log directory path** (lines 710-715):
+  - Changed from `logs/umbrella-ci-logs-phase-6/${RUN_DATE}-${RUN_ID}` to `logs/umbrella-ci-logs-phase-6/${RUN_ID}`
+  - Removed date prefix to avoid re-run confusion
+  - GitHub run_id is already unique and sufficient for identification
+  - Prevents issues when workflows are re-run on different days
+  
+- **Fixed summary file header** (line 738):
+  - Changed from "# Repo Lint Failure Summary" to "# Repo Lint Summary"
+  - Header now matches job's always-on purpose (not just failures)
+  - Consistent with renamed job "Consolidate and Archive Logs"
+  
+- **Documentation corrections** (lines 714-723):
+  - Updated bot-loop guard description to be accurate: "Uses bot-loop guards (actor guard + commit message marker)"
+  - Added missing `.diff` exception to gitignore documentation: `!logs/**/*.log`, `!logs/**/*.txt`, and `!logs/**/*.diff`
+  - Documentation now matches actual implementation
+
+**Verification:**
+```bash
+# Verify workflow YAML syntax
+python3 -c "import yaml; yaml.safe_load(open('.github/workflows/repo-lint-and-docstring-enforcement.yml'))"
+# ✅ YAML valid
+
+# Check commit step condition includes guards
+grep -A 5 "Commit logs to repository" .github/workflows/repo-lint-and-docstring-enforcement.yml | grep "github-actions\[bot\]"
+# ✅ Found actor guard
+
+grep -A 5 "Commit logs to repository" .github/workflows/repo-lint-and-docstring-enforcement.yml | grep "auto-generated"
+# ✅ Found message marker guard
+
+# Verify log path simplification
+grep "LOG_DIR=" .github/workflows/repo-lint-and-docstring-enforcement.yml | grep -v "RUN_DATE"
+# ✅ No date variable used
+
+# Verify summary header change
+grep "# Repo Lint Summary" .github/workflows/repo-lint-and-docstring-enforcement.yml
+# ✅ Header updated
+```
+
+**Results:**
+- All PR review comments addressed
+- Bot-loop protection now properly enforced at step level
+- Log directory path simplified and consistent across re-runs
+- Summary header matches job purpose
+- Documentation accurate and complete
+
+**Known Issues:**
+- None
+
+**Follow-ups:**
+- Run required validation checks (repo lint, code review, CodeQL) per PR instructions
+
 ### 2025-12-30 16:15 - Add AI Next-Steps Journals enforcement to copilot instructions
 **Files Changed:**
 - `.github/copilot-instructions.md`: Replaced "AI Handoff Journals" section (lines 163-230) with new "AI Next-Steps Journals (MANDATORY)" section

@@ -713,13 +713,13 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
    
 5. **Log commit:** Now runs with `if: always()` (not just on failure)
    - Commits all logs regardless of job outcome
-   - Uses bot-loop guard to prevent infinite loops
+   - Uses bot-loop guards (actor guard + commit message marker) to prevent infinite loops
    - Same-repo PRs only (forks get artifact only)
    - Commit message: `CI: Add umbrella workflow logs [auto-generated]`
    
 6. **`.gitignore` updated:**
    - Removed: `repo-lint-failure-reports/`
-   - Added exceptions: `!logs/**/*.log` and `!logs/**/*.txt`
+   - Added exceptions: `!logs/**/*.log`, `!logs/**/*.txt`, and `!logs/**/*.diff`
    - Allows CI logs to be committed for traceability
 
 **Files Changed:**
