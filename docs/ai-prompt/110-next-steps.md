@@ -15,6 +15,38 @@ Related: Issue #110, PRs #132
 
 ## DONE (EXTREMELY DETAILED)
 
+### 2025-12-30 16:29 - Fix guard consistency: use head_commit.message in step-level condition
+**Files Changed:**
+- `.github/workflows/repo-lint-and-docstring-enforcement.yml`: Line 926 (commit step guard)
+
+**Changes Made:**
+- **Fixed guard consistency issue** (line 926):
+  - Changed step-level guard from `!contains(github.event.pull_request.title, '[auto-generated]')` 
+  - To `!contains(github.event.head_commit.message, '[auto-generated]')`
+  - Now matches job-level guard pattern (line 649)
+  - Ensures consistent behavior: job and step use same guard logic
+  - Prevents scenarios where job runs but step skips (or vice versa)
+
+**Verification:**
+```bash
+# Verify both guards now use head_commit.message
+grep -n "head_commit.message" .github/workflows/repo-lint-and-docstring-enforcement.yml
+# 649:      !contains(github.event.head_commit.message, '[auto-generated]')
+# 926:      !contains(github.event.head_commit.message, '[auto-generated]')
+# ✅ Both use same pattern
+```
+
+**Results:**
+- Guard patterns now consistent between job and step levels
+- Both check commit message (not PR title) for '[auto-generated]' marker
+- Prevents inconsistent execution behavior
+
+**Known Issues:**
+- None
+
+**Follow-ups:**
+- Complete code review and CodeQL checks
+
 ### 2025-12-30 16:27 - Fix PR review issues: bot-loop guards, log path, documentation
 **Files Changed:**
 - `.github/workflows/repo-lint-and-docstring-enforcement.yml`: Lines 921-926 (commit step condition), 710-715 (log directory format), 738 (summary header)
