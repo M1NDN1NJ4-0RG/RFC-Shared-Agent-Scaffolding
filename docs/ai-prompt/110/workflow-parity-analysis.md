@@ -2,7 +2,7 @@
 
 **Purpose:** Document parity between new umbrella workflow and legacy workflows to support Sub-Item 6.4.7 (migration) and Sub-Item 6.4.9 (CI verification).
 
-**Date:** 2025-12-30
+**Date:** 2025-12-30 17:10
 
 ---
 
@@ -162,7 +162,9 @@ Changes to:
 **Approach:**
 1. Disable legacy workflows (`docstring-contract.yml`, `lint-and-format-checker.yml`, `yaml-lint.yml`)
 2. Use umbrella workflow as canonical gate
-3. Add weekly/monthly scheduled full-scan job that runs `repo-lint check --ci` (all languages, no conditional)
+3. Add weekly scheduled full-scan job that runs `repo-lint check --ci` (all languages, no conditional)
+   - Recommended frequency: Weekly (every Monday at 00:00 UTC)
+   - Covers cross-language docstring drift without slowing PR workflow
 
 **Pros:**
 - Single source of truth (umbrella)

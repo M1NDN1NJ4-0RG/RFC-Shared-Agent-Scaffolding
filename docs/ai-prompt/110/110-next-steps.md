@@ -5,7 +5,8 @@ Related: Issue #110, PRs #132, #137
 
 ## NEXT
 - **ESCALATION**: Need human decision on migration strategy for Sub-Item 6.4.7
-  - Option B: Migrate fully + add periodic scheduled full scan (RECOMMENDED)
+  - Option A: Keep both workflows (ruled out as not sustainable long-term)
+  - Option B: Migrate fully + add weekly scheduled full scan (RECOMMENDED)
   - Option C: Add --all flag to umbrella for main branch merges
 - After decision: Execute chosen migration strategy
 - Continue with Sub-Item 6.4.9: Test umbrella workflow in CI
@@ -14,6 +15,48 @@ Related: Issue #110, PRs #132, #137
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-30 17:20 - Addressed code review feedback
+**Files Changed:**
+- `docs/ai-prompt/110/workflow-parity-analysis.md`: Updated timestamp and frequency recommendation
+- `docs/ai-prompt/110/110-next-steps.md`: Added note about Option A being ruled out
+
+**Changes Made:**
+- **Ran code review** per session-exit requirements
+  - Tool: `code_review` with PR title and description
+  - Result: 4 review comments (all nitpicks)
+- **Addressed actionable feedback**:
+  - Added specific timestamp (17:10) to parity analysis document
+  - Changed "weekly/monthly" to "weekly" with specific recommendation (Monday 00:00 UTC)
+  - Added note about Option A being ruled out in NEXT section
+  - **NOT addressed**: copilot-instructions.md duplication (came from PR #138, out of scope)
+- **Noted for human**:
+  - `.github/copilot-instructions.md` has duplicated content starting at line 378
+  - This came from PR #138 merge (not introduced by this PR)
+  - Recommend fixing in separate PR
+
+**Verification:**
+```bash
+# Verified changes
+git diff docs/ai-prompt/110/workflow-parity-analysis.md
+# Timestamp updated to 17:10
+# Frequency changed to "weekly" with specific time
+
+git diff docs/ai-prompt/110/110-next-steps.md  
+# Added Option A note in NEXT section
+```
+
+**Results:**
+- Code review feedback addressed (3 of 4 comments)
+- 1 comment noted for human (out of scope for this PR)
+- Ready for final validation steps
+
+**Known Issues:**
+- copilot-instructions.md duplication (from PR #138, human to fix separately)
+
+**Follow-ups:**
+- Run CodeQL check (if configured)
+- Prepare final escalation for migration decision
 
 ### 2025-12-30 17:15 - Verified vector system completeness (Sub-Item 6.5.1)
 **Files Changed:**
