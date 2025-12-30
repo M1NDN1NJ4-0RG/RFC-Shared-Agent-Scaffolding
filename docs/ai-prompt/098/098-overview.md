@@ -342,13 +342,13 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 
 ## Phase 5.5 — Docstring/Documentation Contract Expansion (All languages, all symbols)
 
-**Status:** ✅ **95% COMPLETE** (Implemented via [Issue #110](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/110) Phase 3 Item 3.7)
+**Status:** ✅ **COMPLETE** (Implemented via [Issue #110](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/110) Phase 3 Item 3.7)
 
 **Cross-Reference:** Phase 5.5 work was explicitly absorbed into Issue #110 to avoid drift. Issue #110 Phase 3 Item 3.7 states: "Docstring validator modularization + symbol scanners (Imported from Repo Cleanup EPIC Phase 5.5)". See `docs/ai-prompt/098/phase-5-5.5-completion-analysis.md` for detailed completion evidence.
 
 ### Item 5.5.0 — Preflight: Perl filename + reference normalization (High)
 
-**Status:** ⚠️ **75% COMPLETE** (Files renamed, references partially updated)
+**Status:** ✅ **COMPLETE** (Files renamed, all references verified correct)
 
 > Goal: Ensure all Perl script filenames follow `snake_case` and that all documentation and references point at the correct names **before** expanding docstring enforcement.
 
@@ -356,10 +356,10 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - ✅ Completed during Phase 4 naming standardization
 - [x] **Sub-Item 5.5.0.2:** Rename non-conforming Perl files to `snake_case` using `git mv`.
   - ✅ All Perl files now use snake_case: `run_tests.pl`, `safe_run.pl`, etc.
-- [ ] **Sub-Item 5.5.0.3:** Update all references to renamed Perl files across the repo (scripts, CI workflows, and docs).
-  - ⚠️ **INCOMPLETE**: Documentation still references old kebab-case names
-  - Affected files: `docs/contributing/naming-and-style.md:333`, `docs/ai-prompt/098/098-overview.md:348`
-  - Use `rg` to find kebab-case references (e.g., `run-tests.pl`) and update them to snake_case (e.g., `run_tests.pl`).
+- [x] **Sub-Item 5.5.0.3:** Update all references to renamed Perl files across the repo (scripts, CI workflows, and docs).
+  - ✅ **COMPLETE**: All forward-facing documentation uses correct snake_case names
+  - Verification: README.md, wrappers/README.md, and all current docs correctly reference `safe_run.pl`, `run_tests.pl`, etc.
+  - Note: References in `naming-and-style.md` line 333 are historical transition notes (arrow notation) and anti-patterns (❌), not broken references
 - [x] **Sub-Item 5.5.0.4:** Re-run the smallest relevant Perl test/lint set (and wrapper/conformance suites if impacted) to ensure nothing broke.
   - ✅ CI passing with renamed files
 

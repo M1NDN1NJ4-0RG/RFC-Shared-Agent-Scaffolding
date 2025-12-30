@@ -7,11 +7,55 @@ Last Updated: 2025-12-30
 Related: Issue #098, PRs (various)
 
 ## NEXT
-- Fix remaining Sub-Item 5.5.0.3: Update Perl runner references in documentation
+- Start Phase 6: Final Polish & Long-Term Maintenance
+  - Decide on Item 6.1 (rename scripts/ to tools/ - optional)
+  - Complete Item 6.2 (docs index "start-here")
+  - Complete Item 6.3 (structure map in root README)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-30 23:58 - Verify and complete Sub-Item 5.5.0.3
+**Files Changed:**
+- `docs/ai-prompt/098/098-overview.md`: Updated Phase 5.5.0 status to COMPLETE
+- `docs/ai-prompt/098/098-next-steps.md`: Updated NEXT section for Phase 6
+
+**Changes Made:**
+- Verified all Perl script references in forward-facing documentation
+- Confirmed all Perl files use correct snake_case names:
+  - `wrappers/perl/run_tests.pl` ✅
+  - `wrappers/perl/scripts/safe_run.pl` ✅
+  - `wrappers/perl/scripts/safe_check.pl` ✅
+  - `wrappers/perl/scripts/safe_archive.pl` ✅
+  - `wrappers/perl/scripts/preflight_automerge_ruleset.pl` ✅
+- Verified forward-facing docs use correct names:
+  - `README.md` line 41: References `safe_run.pl` ✅
+  - `wrappers/README.md` line 44, 114: References `safe_run.pl` and `run_tests.pl` ✅
+- Confirmed references in `naming-and-style.md` line 333 are:
+  - Historical transition notes (arrow notation `old → new`) - correct documentation of past changes
+  - Anti-pattern examples (❌ markers) - showing what NOT to do
+  - NOT broken references that need fixing
+- Updated Phase 5.5 status from 95% to 100% COMPLETE
+- Updated Phase 5.5.0 status from "75% COMPLETE" to "COMPLETE"
+- Sub-Item 5.5.0.3 marked complete with verification notes
+
+**Verification:**
+- Ran: `find wrappers/perl -name "*.pl" -type f` - all files snake_case ✅
+- Ran: `rg "perl.*\.pl" README.md wrappers/README.md` - all references correct ✅
+- Ran: `rg "perl.*run-tests\.pl|perl.*safe-run\.pl" --type md | grep -v "→" | grep -v "❌" | grep -v "docs/history/" | grep -v "docs/ai-prompt/"` - no broken references found ✅
+- Historical documents in `docs/history/` correctly preserve old names for historical accuracy
+- No action needed on anti-pattern examples or historical transition documentation
+
+**Known Issues:**
+- None remaining for Phase 5.5
+
+**Next Steps:**
+- Begin Phase 6: Final Polish & Long-Term Maintenance
+- Decide whether to proceed with optional Item 6.1 (rename scripts/ to tools/)
+- Complete Items 6.2 and 6.3
+
+---
+
 ### 2025-12-30 23:50 - Update 098-overview.md with Phase 5/5.5 completion status
 **Files Changed:**
 - `docs/ai-prompt/098/098-overview.md`: Updated Phase 5 and Phase 5.5 sections with completion status and cross-references to Issue #110
