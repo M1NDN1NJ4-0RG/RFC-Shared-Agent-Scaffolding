@@ -75,7 +75,7 @@ class Runner(ABC):
         :Returns:
             True if language has files to lint, False otherwise
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass  # Abstract method
 
     @abstractmethod
     def check_tools(self) -> List[str]:
@@ -84,7 +84,7 @@ class Runner(ABC):
         :Returns:
             List of missing tool names (empty if all tools present)
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass  # Abstract method
 
     @abstractmethod
     def check(self) -> List[LintResult]:
@@ -96,7 +96,7 @@ class Runner(ABC):
         :Raises:
             MissingToolError: If required tools are not installed (CI mode only)
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass  # Abstract method
 
     @abstractmethod
     def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
@@ -111,7 +111,7 @@ class Runner(ABC):
         :Raises:
             MissingToolError: If required tools are not installed (CI mode only)
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass  # Abstract method
 
     def _ensure_tools(self, required_tools: List[str]) -> None:
         """Ensure required tools are installed.

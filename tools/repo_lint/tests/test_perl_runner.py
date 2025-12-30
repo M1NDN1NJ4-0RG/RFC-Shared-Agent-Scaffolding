@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
 """Unit tests for Perl runner (Perl::Critic, docstring validation).
 
 :Purpose:

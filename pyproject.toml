@@ -50,6 +50,10 @@ select = [
 [tool.pylint.format]
 max-line-length = 120
 
+[tool.pylint.master]
+# Add repository root to sys.path to allow imports of tools.repo_lint
+init-hook = 'import sys; sys.path.insert(0, ".")'
+
 [tool.pylint.messages_control]
 disable = [
     "duplicate-code",

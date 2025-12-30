@@ -137,13 +137,13 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     if only_language:
         if not runners:
             print(f"Error: unknown language '{only_language}' for --only flag.", file=sys.stderr)
-            return ExitCode.ERROR
+            return ExitCode.INTERNAL_ERROR
         if not any(runner.has_files() for _, _, runner in runners):
             print(
                 f"Error: No files found for language '{only_language}'. " f"Nothing to {mode.lower()}.",
                 file=sys.stderr,
             )
-            return ExitCode.ERROR
+            return ExitCode.INTERNAL_ERROR
     # Run each runner if it has files
     for key, name, runner in runners:
         if runner.has_files():
