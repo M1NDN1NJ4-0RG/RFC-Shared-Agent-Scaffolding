@@ -536,7 +536,7 @@ jobs:
           VECTORS="${{ needs.vector-tests.result }}"
           
           # Create summary file
-          SUMMARY_FILE="repo-lint-failure-reports/summary-$(date +%Y%m%d-%H%M%S).md"
+          SUMMARY_FILE="repo-lint-failure-reports/summary-$(date -u +%Y%m%d-%H%M%S).md"
           {
             echo "# Repo Lint Failure Summary"
             echo ""
@@ -642,9 +642,26 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add repo-lint-failure-reports/
-          git commit -m "CI: Add repo-lint failure report [auto-generated]" || echo "No changes to commit"
-          git push || echo "Push failed or no changes"
+          
+          # Commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit (logs may already exist)"
+          else
+            git commit -m "CI: Add repo-lint failure report [auto-generated]"
+            
+            # Push with error handling
+            if ! git push; then
+              echo "::warning::Failed to push failure report to repository"
+              exit 1
+            fi
+          fi
 
       - name: Add job summary
         run: |
-          cat repo-lint-failure-reports/summary-*.md >> $GITHUB_STEP_SUMMARY
+          # Find the most recent summary file created in this run
+          SUMMARY_FILE=$(ls -t repo-lint-failure-reports/summary-*.md 2>/dev/null | head -n 1)
+          if [ -n "$SUMMARY_FILE" ] && [ -f "$SUMMARY_FILE" ]; then
+            cat "$SUMMARY_FILE" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "::error::No summary file found"
+          fi
