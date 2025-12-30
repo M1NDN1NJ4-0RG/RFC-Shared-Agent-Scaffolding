@@ -16,7 +16,9 @@ import sys
 
 
 # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
-VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = "value"
+VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+    "value"
+)
 
 
 def _private_function_missing_docs(x):
