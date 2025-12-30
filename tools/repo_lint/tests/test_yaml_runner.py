@@ -52,7 +52,7 @@ from unittest.mock import MagicMock, patch
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.runners.yaml_runner import YAMLRunner  # noqa: E402
+from tools.repo_lint.runners.yaml_runner import YAMLRunner  # noqa: E402  # pylint: disable=wrong-import-position
 
 
 class TestYAMLRunner(unittest.TestCase):
@@ -127,7 +127,7 @@ class TestYAMLRunner(unittest.TestCase):
             MagicMock(returncode=0, stdout="", stderr=""),  # yamllint
         ]
 
-        result = self.runner._run_yamllint()
+        result = self.runner._run_yamllint()  # pylint: disable=protected-access
 
         # Check yamllint call (second call)
         self.assertEqual(mock_run.call_count, 2)
@@ -153,7 +153,7 @@ test.yml:20:5: [warning] line too long (120 > 80 characters)"""
             MagicMock(returncode=1, stdout=mock_output, stderr=""),  # yamllint
         ]
 
-        result = self.runner._run_yamllint()
+        result = self.runner._run_yamllint()  # pylint: disable=protected-access
 
         self.assertFalse(result.passed)
         self.assertEqual(result.tool, "yamllint")
@@ -171,7 +171,7 @@ test.yml:20:5: [warning] line too long (120 > 80 characters)"""
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
-        self.assertTrue(self.runner._run_yamllint().passed)
+        self.assertTrue(self.runner._run_yamllint().passed)  # pylint: disable=protected-access
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
     def test_check_tools_detects_missing_yamllint(self, mock_run):

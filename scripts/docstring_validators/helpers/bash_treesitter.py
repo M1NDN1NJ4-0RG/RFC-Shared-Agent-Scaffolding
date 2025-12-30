@@ -82,7 +82,11 @@ def parse_bash_functions(file_path: Path) -> Dict[str, Any]:
         root_node = tree.root_node
 
         def find_functions(node):
-            """Recursively find all function_definition nodes."""
+            """Recursively find all function_definition nodes.
+
+            :param node: Tree-sitter node to search
+            :type node: tree_sitter.Node
+            """
             if node.type == "function_definition":
                 # Extract function name - it's a "word" child node, not a named field
                 func_name = None

@@ -68,7 +68,7 @@ def load_vector(vector_file: Path) -> dict:
         FileNotFoundError: If vector file doesn't exist
         json.JSONDecodeError: If vector file is invalid JSON
     """
-    with open(vector_file) as f:
+    with open(vector_file, encoding="utf-8") as f:
         return json.load(f)
 
 

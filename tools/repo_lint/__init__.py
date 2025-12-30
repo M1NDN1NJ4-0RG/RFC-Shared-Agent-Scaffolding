@@ -17,11 +17,27 @@ validation across all supported languages (Python, Bash, PowerShell, Perl, YAML)
     - runners/: Per-language runner modules
     - install/: Bootstrap and installation helpers
 
+:Environment Variables:
+    None - all configuration via command-line arguments or pyproject.toml
+
 :CLI Interface:
     Run in-place from repo root::
 
         python3 -m tools.repo_lint check
         python3 -m tools.repo_lint fix
+        python3 -m tools.repo_lint install
+
+:Examples:
+    Check all files for lint violations::
+
+        python3 -m tools.repo_lint check
+
+    Apply automatic formatting fixes::
+
+        python3 -m tools.repo_lint fix
+
+    Install linting tools to repo-local venv::
+
         python3 -m tools.repo_lint install
 
 :Exit Codes:
