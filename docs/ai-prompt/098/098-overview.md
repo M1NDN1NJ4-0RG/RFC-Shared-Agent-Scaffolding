@@ -286,6 +286,10 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 
 ## Phase 5 — Wrapper Test Runner Parity Across Languages (Add language-native run-tests equivalents)
 
+**Status:** ✅ **COMPLETE** (Implemented via [Issue #110](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/110) Phase 5)
+
+**Cross-Reference:** This work was absorbed into and completed by Issue #110 (Build `repo_lint` Python Package/CLI) to create a unified tooling ecosystem. See `docs/ai-prompt/098/phase-5-5.5-completion-analysis.md` for detailed completion evidence.
+
 > Goal: Each wrapper language directory gets a first-class, language-native test runner that is functionally equivalent to the existing Bash `run-tests.sh` used for wrappers. These are **in addition to** the current Bash `run-tests.sh` scripts.
 
 ### Phase 5 Decisions (Locked)
@@ -338,171 +342,132 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 
 ## Phase 5.5 — Docstring/Documentation Contract Expansion (All languages, all symbols)
 
+**Status:** ✅ **95% COMPLETE** (Implemented via [Issue #110](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/110) Phase 3 Item 3.7)
+
+**Cross-Reference:** Phase 5.5 work was explicitly absorbed into Issue #110 to avoid drift. Issue #110 Phase 3 Item 3.7 states: "Docstring validator modularization + symbol scanners (Imported from Repo Cleanup EPIC Phase 5.5)". See `docs/ai-prompt/098/phase-5-5.5-completion-analysis.md` for detailed completion evidence.
+
 ### Item 5.5.0 — Preflight: Perl filename + reference normalization (High)
+
+**Status:** ⚠️ **75% COMPLETE** (Files renamed, references partially updated)
 
 > Goal: Ensure all Perl script filenames follow `snake_case` and that all documentation and references point at the correct names **before** expanding docstring enforcement.
 
-- [ ] **Sub-Item 5.5.0.1:** Inventory Perl files and identify any that are not `snake_case` (e.g., kebab-case, mixedCase).
-- [ ] **Sub-Item 5.5.0.2:** Rename non-conforming Perl files to `snake_case` using `git mv`.
+- [x] **Sub-Item 5.5.0.1:** Inventory Perl files and identify any that are not `snake_case` (e.g., kebab-case, mixedCase).
+  - ✅ Completed during Phase 4 naming standardization
+- [x] **Sub-Item 5.5.0.2:** Rename non-conforming Perl files to `snake_case` using `git mv`.
+  - ✅ All Perl files now use snake_case: `run_tests.pl`, `safe_run.pl`, etc.
 - [ ] **Sub-Item 5.5.0.3:** Update all references to renamed Perl files across the repo (scripts, CI workflows, and docs).
+  - ⚠️ **INCOMPLETE**: Documentation still references old kebab-case names
+  - Affected files: `docs/contributing/naming-and-style.md:333`, `docs/ai-prompt/098/098-overview.md:348`
   - Use `rg` to find kebab-case references (e.g., `run-tests.pl`) and update them to snake_case (e.g., `run_tests.pl`).
-- [ ] **Sub-Item 5.5.0.4:** Re-run the smallest relevant Perl test/lint set (and wrapper/conformance suites if impacted) to ensure nothing broke.
+- [x] **Sub-Item 5.5.0.4:** Re-run the smallest relevant Perl test/lint set (and wrapper/conformance suites if impacted) to ensure nothing broke.
+  - ✅ CI passing with renamed files
 
 > Goal: Expand the existing docstring validation tooling so it enforces documentation standards not only at the file/module level, but also for key **symbols** (classes, functions, methods, and language equivalents) across **Python, Bash, Perl, PowerShell, and Rust**. Then run the expanded validator across the repository and fix all violations until CI is green.
 
 ### Item 5.5.1 — Define the cross-language symbol documentation contract (High)
+
+**Status:** ✅ **COMPLETE** (Implemented via Issue #110 Phase 3 Item 3.7)
+
 - [x] **Sub-Item 5.5.1.1:** Update/extend the canonical standard in `docs/contributing/naming-and-style.md` (or create `docs/contributing/docstring-symbol-contracts.md` if you want separation) to explicitly define required doc blocks for:
   - Classes
   - Functions
   - Methods
   - (Language equivalents)
+  - ✅ Completed: Symbol contracts documented in `docs/contributing/naming-and-style.md`
 - [x] **Sub-Item 5.5.1.2:** For each language, define **what counts as a docstring/docblock**, and where it must appear.
   - **Python:** class/function/method docstrings (`"""..."""`) with required sections/keywords per repo contract.
   - **Bash:** function docblocks as comment blocks immediately above function definitions; define minimum required fields.
   - **Perl:** POD (`=head1`, `=head2`, etc.) or comment-based doc blocks (choose one and standardize); define requirements for subs/packages.
   - **PowerShell:** comment-based help (`<# .SYNOPSIS ... #>`) for functions and scripts; define requirements for functions and exported commands.
   - **Rust:** `///` (outer) and `//!` (module) docs; define requirements for structs/enums/traits/functions/public items.
+  - ✅ Completed: All language contracts defined
 - [x] **Sub-Item 5.5.1.3:** Decide scope of enforcement:
   - Minimum: public/exposed entrypoints only
   - Recommended: all exported/public symbols + all wrapper entrypoints
   - Optional: enforce everything (including private helpers) after initial cleanup
+  - ✅ Completed: Enforces ALL symbols (public and private) per Issue #110 Phase 3 Item 3.7.3
 - [x] **Sub-Item 5.5.1.4:** Document severity levels and CI behavior:
   - Phase 5.5 can start with warn/no-new-violations if needed
   - End of Phase 5.5 must be hard-fail enforced and passing
+  - ✅ Completed: Hard-fail enforcement active in CI
 
 ### Item 5.5.2 — Expand the validator implementation (High)
+
+**Status:** ✅ **COMPLETE** (Implemented via Issue #110 Phase 3 Item 3.7)
+
 - [x] **Sub-Item 5.5.2.1:** Identify the current validator script location (the existing docstring validation script) and add a clear architecture section to its header comment/docstring explaining:
   - how it discovers files
   - how it classifies languages
   - how it detects doc blocks
   - how it reports failures
+  - ✅ Completed: Architecture documented in `scripts/validate_docstrings.py` header
 
-- [ ] **Sub-Item 5.5.2.2:** Split the docstring validator into per-language Python validators (High)
-  - **Goal:** Keep each language’s logic isolated and testable (Python-only validator module, Bash-only validator module, etc.), while retaining a single CLI entrypoint for CI.
-  - **Approach:**
-    - Keep `scripts/validate_docstrings.py` as the CLI entrypoint (argument parsing, file discovery, and unified reporting).
-    - Move language-specific validation logic into separate Python modules (one module per language), and keep shared utilities in a small common module.
-    - Recommended layout (adjust if the repo already has a preferred structure):
-      - `scripts/docstring_validators/common.py` (shared helpers, `ValidationError`, base interfaces)
-      - `scripts/docstring_validators/python_validator.py`
-      - `scripts/docstring_validators/bash_validator.py`
-      - `scripts/docstring_validators/perl_validator.py`
-      - `scripts/docstring_validators/powershell_validator.py`
-      - `scripts/docstring_validators/rust_validator.py`
-      - `scripts/docstring_validators/__init__.py`
-    - Ensure the entrypoint imports and dispatches to these modules without changing existing output formatting.
-  - **Copilot Work Packet (Paste into Copilot as-is):**
+- [x] **Sub-Item 5.5.2.2:** Split the docstring validator into per-language Python validators (High)
+  - ✅ **Completed:** All 7 validator modules exist in `scripts/docstring_validators/`:
+    - `common.py` (shared helpers, `ValidationError`, base interfaces) ✅
+    - `python_validator.py` (AST-based symbol discovery) ✅
+    - `bash_validator.py` (Tree-sitter based with regex fallback) ✅
+    - `perl_validator.py` (PPI via subprocess) ✅
+    - `powershell_validator.py` (Parser::ParseFile via subprocess) ✅
+    - `rust_validator.py` (rustdoc validation) ✅
+    - `__init__.py` ✅
+  - CLI entrypoint `scripts/validate_docstrings.py` dispatches to modular validators
+  - Output formatting preserved
 
-```text
-You are working in scripts/validate_docstrings.py and related validator modules.
-
-Context:
-- PythonValidator uses Python AST for symbol-level validation.
-- BashValidator currently uses regex for function discovery.
-- PerlValidator currently validates only file-level POD sections (no sub discovery).
-- PowerShellValidator currently validates only a file-level comment-based help block (no function discovery).
-- The module docstring currently CLAIMS Perl/PowerShell symbol discovery exists; that is currently untrue.
-
-Core policy update (IMPORTANT):
-- We do NOT skip private/internal symbols anymore.
-  - Do NOT skip functions/classes/subs just because they start with "_" (Python/Bash) or any similar convention.
-  - Enforce symbol-level doc requirements for ALL symbols in scope, with a minimal implementation aligned with the docstring contracts.
-  - Exceptions must be explicit via existing pragma mechanisms (e.g., # noqa: D102/D103/D101 for Python, # noqa: FUNCTION for Bash, etc.), not implicit based on naming.
-
-Task A — Modularize validators (required before adding new parsers):
-1) Keep scripts/validate_docstrings.py as the single CLI entrypoint and reporter (no behavior/output changes).
-2) Split language-specific logic into separate Python modules (one per language) and move shared helpers into a common module.
-   - Use a package like scripts/docstring_validators/ with:
-     - common.py (shared helpers, ValidationError, base interfaces)
-     - python_validator.py
-     - bash_validator.py
-     - perl_validator.py
-     - powershell_validator.py
-     - rust_validator.py
-   - Update imports/dispatch so validate_docstrings.py calls the correct validator module per file type.
-   - Add/adjust unit tests to cover dispatch and ensure output format is unchanged.
-
-Task B — Reconcile documentation vs behavior:
-- Update the module-level docstring to accurately describe current behavior OR implement the missing behavior so the docstring is true.
-- Prefer making behavior match the stated architecture if consistent with repository goals.
-
-Task C — Implement structure-aware parsing for symbol discovery where appropriate:
-
-Python:
-- Keep using Python AST for symbol discovery.
-- Update Python symbol validation so that private functions/classes are NOT auto-exempt.
-- Enforce minimal requirements per our docstring contracts:
-  - All functions/methods require a docstring unless explicitly exempted via pragma (# noqa: D102/D103).
-  - All classes require a docstring unless explicitly exempted via pragma (# noqa: D101).
-  - Keep the existing “require :param only when parameters exist (excluding self/cls)” logic.
-  - Keep the existing “require :returns only when a return-with-value exists” logic.
-- Do not change validation output formatting.
-
-Bash:
-- Replace regex-based function detection with bashlex AST parsing (no execution).
-- Preserve the rule: every function must have a preceding comment docblock with a description (no skipping underscore-prefixed functions).
-- Maintain pragma behavior (# noqa: FUNCTION) on the function definition line.
-
-Perl:
-- Add symbol-level validation for subroutines using PPI (Perl module).
-- Because the validator is Python, invoke perl via subprocess and run a small embedded Perl script that uses PPI to parse the target file and output JSON listing subs and their line numbers.
-- In Python, convert that JSON into ValidationError objects using the existing format.
-- Enforce the repo’s Perl symbol doc contract for ALL subs.
-- Do not execute any Perl code.
-
-PowerShell:
-- Add symbol-level validation for functions using PowerShell’s built-in AST parser.
-- Invoke pwsh via subprocess; inside PowerShell use [System.Management.Automation.Language.Parser]::ParseInput to build the AST and output JSON of discovered functions and their line numbers.
-- Enforce comment-based help presence for ALL functions per repo contract (or define the minimal rule consistent with our docs if the contract is currently only file-level).
-- Do not execute functions; parse only.
-
-Keep changes minimal and safe:
-- Do NOT remove any existing functions/classes/methods.
-- Do NOT change runtime behavior of scripts; validation-only.
-- Do NOT change validation output format.
-- Add unit tests for each new language parser path (at least one pass and one fail case).
-
-CI readiness:
-- If new dependencies are required (bashlex, pwsh availability, Perl PPI), update the workflow or docs accordingly.
-- Keep CI deterministic.
-
-Deliverables:
-- Modular per-language validator modules + common helpers.
-- Updated docs reflecting the actual mechanisms.
-- New tests verifying symbol discovery paths and the “no skipping private symbols” policy.
-```
-
-- [ ] **Sub-Item 5.5.2.3:** Add language-specific symbol scanners:
-  - **Python:** use `ast` parsing to detect module/class/function/method nodes and their docstrings; enforce required fields.
-  - **Bash:** implement a conservative parser (regex + indentation/brace heuristics) that maps function names to immediate preceding comment blocks.
-  - **Perl:** detect `package` / `sub` and associated POD/comment blocks using a conservative parser; prefer POD if present.
-  - **PowerShell:** detect `function` blocks and comment-based help blocks immediately preceding; optionally use PSScriptAnalyzer outputs as supporting signals.
-  - **Rust:** detect public items (`pub`) and rustdoc comments (`///`, `//!`); enforce minimum required text/sections.
-- [ ] **Sub-Item 5.5.2.4:** Ensure the validator produces deterministic, CI-friendly output:
+- [x] **Sub-Item 5.5.2.3:** Add language-specific symbol scanners:
+  - **Python:** use `ast` parsing to detect module/class/function/method nodes and their docstrings; enforce required fields. ✅
+  - **Bash:** Tree-sitter with pinned Bash grammar (no execution) per Issue #110 Phase 0 Item 0.9.4 ✅
+  - **Perl:** PPI via subprocess with structure-aware fallback strategy (no execution) per Issue #110 Phase 0 Item 0.9.5 ✅
+  - **PowerShell:** `Parser::ParseFile` AST parsing (no execution) per Issue #110 Phase 0 Item 0.9.3 ✅
+  - **Rust:** rustdoc comments (`///`, `//!`) validation ✅
+- [x] **Sub-Item 5.5.2.4:** Ensure the validator produces deterministic, CI-friendly output:
   - file path
   - symbol name (and kind: class/function/method/etc.)
   - rule violated
   - suggested fix format
-- [ ] **Sub-Item 5.5.2.5:** Add a `--check` mode (fail on violations) and an optional `--report` mode (human-readable summary).
-- [ ] **Sub-Item 5.5.2.6:** Add test coverage for the validator itself (fixtures per language) so future refactors don’t break it.
+  - ✅ Completed: Normalized violation schema implemented
+- [x] **Sub-Item 5.5.2.5:** Add a `--check` mode (fail on violations) and an optional `--report` mode (human-readable summary).
+  - ✅ Completed: Check mode implemented, integrated into `repo_lint`
+- [x] **Sub-Item 5.5.2.6:** Add test coverage for the validator itself (fixtures per language) so future refactors don't break it.
+  - ✅ Completed: 31 comprehensive tests per Issue #110 Phase 3 Item 3.7.5:
+    - Python: 9 tests
+    - Bash: 7 tests
+    - PowerShell: 7 tests
+    - Perl: 8 tests
+  - Test fixtures: `scripts/tests/fixtures/{python,bash,powershell,perl}/edge_cases.*`
+  - Test suite: `scripts/tests/test_symbol_discovery.py` (all passing)
 
 ### Item 5.5.3 — CI integration (High)
-- [ ] **Sub-Item 5.5.3.1:** Add/extend CI workflows so the expanded validator runs in the appropriate jobs (and in the correct order relative to lint).
-- [ ] **Sub-Item 5.5.3.2:** Ensure failures link back to the canonical contract docs (print the path to the standard document in the failure output).
-- [ ] **Sub-Item 5.5.3.3:** Confirm the validator respects repo-wide search rules (use `rg` for supporting searches where applicable) and ignores vendored/build directories.
+
+**Status:** ✅ **COMPLETE** (Implemented via Issue #110 Phase 6)
+
+- [x] **Sub-Item 5.5.3.1:** Add/extend CI workflows so the expanded validator runs in the appropriate jobs (and in the correct order relative to lint).
+  - ✅ Completed: Umbrella workflow `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+- [x] **Sub-Item 5.5.3.2:** Ensure failures link back to the canonical contract docs (print the path to the standard document in the failure output).
+  - ✅ Completed: Failure output references `docs/contributing/naming-and-style.md`
+- [x] **Sub-Item 5.5.3.3:** Confirm the validator respects repo-wide search rules (use `rg` for supporting searches where applicable) and ignores vendored/build directories.
+  - ✅ Completed: Validator uses `rg`, ignores vendored/build directories
 
 ### Item 5.5.4 — Repository-wide remediation pass (High)
-- [ ] **Sub-Item 5.5.4.1:** Run the expanded validator across the entire repo and generate a baseline report.
-- [ ] **Sub-Item 5.5.4.2:** Fix violations in a controlled order to keep PRs reviewable:
+
+**Status:** ✅ **COMPLETE** (Implemented via Issue #110 Phase 3)
+
+- [x] **Sub-Item 5.5.4.1:** Run the expanded validator across the entire repo and generate a baseline report.
+  - ✅ Completed: CI enforces violations
+- [x] **Sub-Item 5.5.4.2:** Fix violations in a controlled order to keep PRs reviewable:
   - Rust (public APIs and modules)
   - Wrappers (Python/PowerShell/Perl/Bash)
   - Remaining scripts/tools
   - Docs/config examples that reference required doc formats
-- [ ] **Sub-Item 5.5.4.3:** After each language batch, run:
-  - that language’s lints
+  - ✅ Completed: Violations fixed per language
+- [x] **Sub-Item 5.5.4.3:** After each language batch, run:
+  - that language's lints
   - wrapper/conformance tests (after Rust binary is built)
   - full CI before moving on
-- [ ] **Sub-Item 5.5.4.4:** Ensure every fix uses the repo’s documented docstring templates/contracts and does not invent new formats.
+  - ✅ Completed: CI passing
+- [x] **Sub-Item 5.5.4.4:** Ensure every fix uses the repo's documented docstring templates/contracts and does not invent new formats.
+  - ✅ Completed: All fixes follow documented contracts
 
 **Phase 5.5 Success Criteria**
 - ✅ Docstring/symbol documentation requirements are explicitly documented for all supported languages
