@@ -1,0 +1,32 @@
+﻿2025-12-30T14:51:49.4080679Z Current runner version: '2.330.0'
+2025-12-30T14:51:49.4106541Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:49.4107480Z Hosted Compute Agent
+2025-12-30T14:51:49.4108058Z Version: 20251211.462
+2025-12-30T14:51:49.4109015Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:49.4109789Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:49.4110421Z Worker ID: {547c8fbb-f505-4b77-bae3-a8d9d7d15d72}
+2025-12-30T14:51:49.4111132Z ##[endgroup]
+2025-12-30T14:51:49.4111644Z ##[group]Operating System
+2025-12-30T14:51:49.4112266Z Ubuntu
+2025-12-30T14:51:49.4112728Z 24.04.3
+2025-12-30T14:51:49.4113156Z LTS
+2025-12-30T14:51:49.4113635Z ##[endgroup]
+2025-12-30T14:51:49.4114152Z ##[group]Runner Image
+2025-12-30T14:51:49.4114663Z Image: ubuntu-24.04
+2025-12-30T14:51:49.4115202Z Version: 20251215.174.1
+2025-12-30T14:51:49.4116186Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:49.4117481Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:49.4118907Z ##[endgroup]
+2025-12-30T14:51:49.4120045Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:49.4121855Z Contents: write
+2025-12-30T14:51:49.4122409Z Metadata: read
+2025-12-30T14:51:49.4122970Z PullRequests: write
+2025-12-30T14:51:49.4123525Z ##[endgroup]
+2025-12-30T14:51:49.4125497Z Secret source: Actions
+2025-12-30T14:51:49.4126296Z Prepare workflow directory
+2025-12-30T14:51:49.4455411Z Prepare all required actions
+2025-12-30T14:51:49.4494815Z Getting action download info
+2025-12-30T14:51:49.8915793Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:50.0003342Z Download action repository 'actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16' (SHA:fa0a91b85d4f404e444e00e005971372dc801d16)
+2025-12-30T14:51:50.9273346Z Download action repository 'actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882' (SHA:b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882)
+2025-12-30T14:51:51.3699150Z Complete job name: Consolidate Failures

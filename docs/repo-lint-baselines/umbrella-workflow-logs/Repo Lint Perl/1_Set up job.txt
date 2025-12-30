@@ -1,0 +1,33 @@
+﻿2025-12-30T14:51:03.3600277Z Current runner version: '2.330.0'
+2025-12-30T14:51:03.3625597Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:03.3626943Z Hosted Compute Agent
+2025-12-30T14:51:03.3627514Z Version: 20251211.462
+2025-12-30T14:51:03.3628241Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:03.3628961Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:03.3629632Z Worker ID: {f029eefb-eb8e-4a3b-bfb7-84973abc395e}
+2025-12-30T14:51:03.3630399Z ##[endgroup]
+2025-12-30T14:51:03.3630935Z ##[group]Operating System
+2025-12-30T14:51:03.3631512Z Ubuntu
+2025-12-30T14:51:03.3631944Z 24.04.3
+2025-12-30T14:51:03.3632477Z LTS
+2025-12-30T14:51:03.3632908Z ##[endgroup]
+2025-12-30T14:51:03.3633422Z ##[group]Runner Image
+2025-12-30T14:51:03.3634018Z Image: ubuntu-24.04
+2025-12-30T14:51:03.3634596Z Version: 20251215.174.1
+2025-12-30T14:51:03.3635598Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:03.3637384Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:03.3638538Z ##[endgroup]
+2025-12-30T14:51:03.3639737Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:03.3641580Z Contents: write
+2025-12-30T14:51:03.3642242Z Metadata: read
+2025-12-30T14:51:03.3642738Z PullRequests: write
+2025-12-30T14:51:03.3643302Z ##[endgroup]
+2025-12-30T14:51:03.3645407Z Secret source: Actions
+2025-12-30T14:51:03.3646353Z Prepare workflow directory
+2025-12-30T14:51:03.4038018Z Prepare all required actions
+2025-12-30T14:51:03.4077021Z Getting action download info
+2025-12-30T14:51:03.8539812Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:03.9665303Z Download action repository 'actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' (SHA:0b93645e9fea7318ecaed2b359559ac225c90a2b)
+2025-12-30T14:51:04.2304709Z Download action repository 'shogo82148/actions-setup-perl@9c1eca9952ccc07f9ca4a2097b63df93d9d138e9' (SHA:9c1eca9952ccc07f9ca4a2097b63df93d9d138e9)
+2025-12-30T14:51:05.2773677Z Download action repository 'actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882' (SHA:b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882)
+2025-12-30T14:51:05.6391638Z Complete job name: Repo Lint: Perl

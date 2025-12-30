@@ -1,0 +1,31 @@
+﻿2025-12-30T14:51:03.7707359Z Current runner version: '2.330.0'
+2025-12-30T14:51:03.7730596Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:03.7731405Z Hosted Compute Agent
+2025-12-30T14:51:03.7732078Z Version: 20251211.462
+2025-12-30T14:51:03.7732659Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:03.7733350Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:03.7734223Z Worker ID: {ac4074e2-01c6-421e-9430-95cedef3ed65}
+2025-12-30T14:51:03.7734932Z ##[endgroup]
+2025-12-30T14:51:03.7735417Z ##[group]Operating System
+2025-12-30T14:51:03.7736041Z Ubuntu
+2025-12-30T14:51:03.7736476Z 24.04.3
+2025-12-30T14:51:03.7736929Z LTS
+2025-12-30T14:51:03.7737428Z ##[endgroup]
+2025-12-30T14:51:03.7737919Z ##[group]Runner Image
+2025-12-30T14:51:03.7738466Z Image: ubuntu-24.04
+2025-12-30T14:51:03.7738966Z Version: 20251215.174.1
+2025-12-30T14:51:03.7739984Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:03.7741302Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:03.7742501Z ##[endgroup]
+2025-12-30T14:51:03.7743555Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:03.7745556Z Contents: write
+2025-12-30T14:51:03.7746116Z Metadata: read
+2025-12-30T14:51:03.7746576Z PullRequests: write
+2025-12-30T14:51:03.7747236Z ##[endgroup]
+2025-12-30T14:51:03.7749418Z Secret source: Actions
+2025-12-30T14:51:03.7750116Z Prepare workflow directory
+2025-12-30T14:51:03.8068205Z Prepare all required actions
+2025-12-30T14:51:03.8106317Z Getting action download info
+2025-12-30T14:51:04.2749225Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:04.4330044Z Download action repository 'actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' (SHA:0b93645e9fea7318ecaed2b359559ac225c90a2b)
+2025-12-30T14:51:04.6638037Z Complete job name: Vector Tests: Conformance

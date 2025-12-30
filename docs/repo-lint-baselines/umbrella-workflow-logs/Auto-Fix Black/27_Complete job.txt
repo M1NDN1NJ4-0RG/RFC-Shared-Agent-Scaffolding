@@ -1,0 +1,4 @@
+﻿2025-12-30T14:50:48.8569109Z Evaluate and set job outputs
+2025-12-30T14:50:48.8574483Z Set output 'autofix_applied'
+2025-12-30T14:50:48.8576645Z Set output 'run_url'
+2025-12-30T14:50:48.8577604Z Cleaning up orphan processes

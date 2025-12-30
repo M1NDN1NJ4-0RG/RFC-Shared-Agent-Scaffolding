@@ -1,0 +1,47 @@
+﻿2025-12-30T14:51:57.1089409Z ##[group]Run echo "=== Listing lint-artifacts directory ==="
+2025-12-30T14:51:57.1089938Z [36;1mecho "=== Listing lint-artifacts directory ==="[0m
+2025-12-30T14:51:57.1090370Z [36;1mls -laR lint-artifacts/ || echo "No lint-artifacts directory found"[0m
+2025-12-30T14:51:57.1090789Z [36;1mecho "========================================="[0m
+2025-12-30T14:51:57.1125985Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:57.1126240Z ##[endgroup]
+2025-12-30T14:51:57.1198936Z === Listing lint-artifacts directory ===
+2025-12-30T14:51:57.1214599Z lint-artifacts/:
+2025-12-30T14:51:57.1214954Z total 28
+2025-12-30T14:51:57.1215277Z drwxr-xr-x  7 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1215616Z drwxr-xr-x 13 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1216044Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 bash-lint-results
+2025-12-30T14:51:57.1216693Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 perl-lint-results
+2025-12-30T14:51:57.1217406Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 powershell-lint-results
+2025-12-30T14:51:57.1218246Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 python-lint-results
+2025-12-30T14:51:57.1219164Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 yaml-lint-results
+2025-12-30T14:51:57.1219573Z 
+2025-12-30T14:51:57.1219911Z lint-artifacts/bash-lint-results:
+2025-12-30T14:51:57.1220289Z total 16
+2025-12-30T14:51:57.1220602Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1220966Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1221370Z -rw-r--r-- 1 runner runner 4949 Dec 30 14:51 bash-lint-output.txt
+2025-12-30T14:51:57.1221714Z 
+2025-12-30T14:51:57.1221818Z lint-artifacts/perl-lint-results:
+2025-12-30T14:51:57.1222096Z total 12
+2025-12-30T14:51:57.1222387Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1222769Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1223149Z -rw-r--r-- 1 runner runner 3109 Dec 30 14:51 perl-lint-output.txt
+2025-12-30T14:51:57.1223436Z 
+2025-12-30T14:51:57.1223546Z lint-artifacts/powershell-lint-results:
+2025-12-30T14:51:57.1223825Z total 12
+2025-12-30T14:51:57.1224038Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1224358Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1224759Z -rw-r--r-- 1 runner runner 2820 Dec 30 14:51 powershell-lint-output.txt
+2025-12-30T14:51:57.1225064Z 
+2025-12-30T14:51:57.1225171Z lint-artifacts/python-lint-results:
+2025-12-30T14:51:57.1225431Z total 16
+2025-12-30T14:51:57.1225733Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1226086Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1226488Z -rw-r--r-- 1 runner runner 7054 Dec 30 14:51 python-lint-output.txt
+2025-12-30T14:51:57.1226779Z 
+2025-12-30T14:51:57.1226884Z lint-artifacts/yaml-lint-results:
+2025-12-30T14:51:57.1227144Z total 12
+2025-12-30T14:51:57.1227357Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1227683Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1228066Z -rw-r--r-- 1 runner runner 3866 Dec 30 14:51 yaml-lint-output.txt
+2025-12-30T14:51:57.1228423Z =========================================

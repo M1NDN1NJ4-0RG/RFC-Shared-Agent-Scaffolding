@@ -1,0 +1,28 @@
+﻿2025-12-30T14:50:48.3208419Z ##[group]Run # Create diff of changes
+2025-12-30T14:50:48.3208756Z [36;1m# Create diff of changes[0m
+2025-12-30T14:50:48.3209004Z [36;1mgit diff > black.diff[0m
+2025-12-30T14:50:48.3209219Z [36;1m[0m
+2025-12-30T14:50:48.3209382Z [36;1m# Create detailed log[0m
+2025-12-30T14:50:48.3209590Z [36;1m{[0m
+2025-12-30T14:50:48.3209783Z [36;1m  echo "Black Auto-Fix Forensics"[0m
+2025-12-30T14:50:48.3210046Z [36;1m  echo "========================"[0m
+2025-12-30T14:50:48.3210287Z [36;1m  echo ""[0m
+2025-12-30T14:50:48.3210554Z [36;1m  echo "Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"[0m
+2025-12-30T14:50:48.3211143Z [36;1m  echo "Workflow Run: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696"[0m
+2025-12-30T14:50:48.3211690Z [36;1m  echo "Black Version: $(black --version)"[0m
+2025-12-30T14:50:48.3211966Z [36;1m  echo ""[0m
+2025-12-30T14:50:48.3212157Z [36;1m  echo "Files Modified:"[0m
+2025-12-30T14:50:48.3212424Z [36;1m  git diff --name-only | sed 's/^/  - /'[0m
+2025-12-30T14:50:48.3212730Z [36;1m  echo ""[0m
+2025-12-30T14:50:48.3212924Z [36;1m  echo "Full Diff:"[0m
+2025-12-30T14:50:48.3213132Z [36;1m  cat black.diff[0m
+2025-12-30T14:50:48.3213342Z [36;1m} > black.log[0m
+2025-12-30T14:50:48.3246277Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:50:48.3246516Z env:
+2025-12-30T14:50:48.3246770Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.3247199Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:50:48.3247722Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.3248089Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.3248444Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.3248809Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:50:48.3249108Z ##[endgroup]

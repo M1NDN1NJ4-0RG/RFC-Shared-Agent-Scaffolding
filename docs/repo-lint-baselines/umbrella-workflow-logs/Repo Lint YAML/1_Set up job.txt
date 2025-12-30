@@ -1,0 +1,32 @@
+﻿2025-12-30T14:51:02.1828469Z Current runner version: '2.330.0'
+2025-12-30T14:51:02.1854101Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:02.1854984Z Hosted Compute Agent
+2025-12-30T14:51:02.1855533Z Version: 20251211.462
+2025-12-30T14:51:02.1856127Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:02.1856755Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:02.1857674Z Worker ID: {d1fc4dad-31a7-4a90-80da-d7976c7ed286}
+2025-12-30T14:51:02.1858355Z ##[endgroup]
+2025-12-30T14:51:02.1858859Z ##[group]Operating System
+2025-12-30T14:51:02.1859475Z Ubuntu
+2025-12-30T14:51:02.1859938Z 24.04.3
+2025-12-30T14:51:02.1860352Z LTS
+2025-12-30T14:51:02.1860920Z ##[endgroup]
+2025-12-30T14:51:02.1861434Z ##[group]Runner Image
+2025-12-30T14:51:02.1861896Z Image: ubuntu-24.04
+2025-12-30T14:51:02.1862532Z Version: 20251215.174.1
+2025-12-30T14:51:02.1863482Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:02.1864806Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:02.1866062Z ##[endgroup]
+2025-12-30T14:51:02.1867490Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:02.1869622Z Contents: write
+2025-12-30T14:51:02.1870183Z Metadata: read
+2025-12-30T14:51:02.1870808Z PullRequests: write
+2025-12-30T14:51:02.1871290Z ##[endgroup]
+2025-12-30T14:51:02.1873334Z Secret source: Actions
+2025-12-30T14:51:02.1874136Z Prepare workflow directory
+2025-12-30T14:51:02.2193969Z Prepare all required actions
+2025-12-30T14:51:02.2231346Z Getting action download info
+2025-12-30T14:51:02.5897774Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:02.6949183Z Download action repository 'actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' (SHA:0b93645e9fea7318ecaed2b359559ac225c90a2b)
+2025-12-30T14:51:02.8919390Z Download action repository 'actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882' (SHA:b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882)
+2025-12-30T14:51:03.2322532Z Complete job name: Repo Lint: YAML

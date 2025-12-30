@@ -1,0 +1,795 @@
+﻿2025-12-30T14:51:49.4081238Z Current runner version: '2.330.0'
+2025-12-30T14:51:49.4106563Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:49.4107487Z Hosted Compute Agent
+2025-12-30T14:51:49.4108062Z Version: 20251211.462
+2025-12-30T14:51:49.4109022Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:49.4109793Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:49.4110424Z Worker ID: {547c8fbb-f505-4b77-bae3-a8d9d7d15d72}
+2025-12-30T14:51:49.4111136Z ##[endgroup]
+2025-12-30T14:51:49.4111648Z ##[group]Operating System
+2025-12-30T14:51:49.4112271Z Ubuntu
+2025-12-30T14:51:49.4112731Z 24.04.3
+2025-12-30T14:51:49.4113159Z LTS
+2025-12-30T14:51:49.4113708Z ##[endgroup]
+2025-12-30T14:51:49.4114155Z ##[group]Runner Image
+2025-12-30T14:51:49.4114666Z Image: ubuntu-24.04
+2025-12-30T14:51:49.4115205Z Version: 20251215.174.1
+2025-12-30T14:51:49.4116191Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:49.4117730Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:49.4118914Z ##[endgroup]
+2025-12-30T14:51:49.4120050Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:49.4121873Z Contents: write
+2025-12-30T14:51:49.4122412Z Metadata: read
+2025-12-30T14:51:49.4122973Z PullRequests: write
+2025-12-30T14:51:49.4123528Z ##[endgroup]
+2025-12-30T14:51:49.4125515Z Secret source: Actions
+2025-12-30T14:51:49.4126302Z Prepare workflow directory
+2025-12-30T14:51:49.4455455Z Prepare all required actions
+2025-12-30T14:51:49.4494846Z Getting action download info
+2025-12-30T14:51:49.8915829Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:50.0003377Z Download action repository 'actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16' (SHA:fa0a91b85d4f404e444e00e005971372dc801d16)
+2025-12-30T14:51:50.9273411Z Download action repository 'actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882' (SHA:b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882)
+2025-12-30T14:51:51.3699199Z Complete job name: Consolidate Failures
+2025-12-30T14:51:51.4617178Z ##[group]Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+2025-12-30T14:51:51.4619250Z with:
+2025-12-30T14:51:51.4620556Z   ref: copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:51.4622096Z   fetch-depth: 0
+2025-12-30T14:51:51.4623340Z   token: ***
+2025-12-30T14:51:51.4624289Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.4625519Z   ssh-strict: true
+2025-12-30T14:51:51.4626289Z   ssh-user: git
+2025-12-30T14:51:51.4627078Z   persist-credentials: true
+2025-12-30T14:51:51.4627952Z   clean: true
+2025-12-30T14:51:51.4628875Z   sparse-checkout-cone-mode: true
+2025-12-30T14:51:51.4629843Z   fetch-tags: false
+2025-12-30T14:51:51.4630616Z   show-progress: true
+2025-12-30T14:51:51.4631402Z   lfs: false
+2025-12-30T14:51:51.4632120Z   submodules: false
+2025-12-30T14:51:51.4632937Z   set-safe-directory: true
+2025-12-30T14:51:51.4634145Z ##[endgroup]
+2025-12-30T14:51:51.5750617Z Syncing repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.5753374Z ##[group]Getting Git version info
+2025-12-30T14:51:51.5755122Z Working directory is '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:51.5757631Z [command]/usr/bin/git version
+2025-12-30T14:51:51.5853565Z git version 2.52.0
+2025-12-30T14:51:51.5880462Z ##[endgroup]
+2025-12-30T14:51:51.5895296Z Temporarily overriding HOME='/home/runner/work/_temp/85ad4315-93e1-483b-835d-058e39815735' before making global git config changes
+2025-12-30T14:51:51.5898702Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:51.5902560Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.5943480Z Deleting the contents of '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:51.5946666Z ##[group]Initializing the repository
+2025-12-30T14:51:51.5953193Z [command]/usr/bin/git init /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.6083794Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T14:51:51.6085794Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T14:51:51.6087764Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T14:51:51.6089729Z hint: call:
+2025-12-30T14:51:51.6090862Z hint:
+2025-12-30T14:51:51.6092293Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T14:51:51.6093636Z hint:
+2025-12-30T14:51:51.6094733Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T14:51:51.6096854Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T14:51:51.6098242Z hint:
+2025-12-30T14:51:51.6099299Z hint: 	git branch -m <name>
+2025-12-30T14:51:51.6100155Z hint:
+2025-12-30T14:51:51.6101338Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T14:51:51.6104241Z Initialized empty Git repository in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.git/
+2025-12-30T14:51:51.6108169Z [command]/usr/bin/git remote add origin https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.6143078Z ##[endgroup]
+2025-12-30T14:51:51.6144433Z ##[group]Disabling automatic garbage collection
+2025-12-30T14:51:51.6146549Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T14:51:51.6177170Z ##[endgroup]
+2025-12-30T14:51:51.6178442Z ##[group]Setting up auth
+2025-12-30T14:51:51.6184008Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:51.6216024Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:51.6605769Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:51.6637829Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:51.6866335Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T14:51:51.6902907Z ##[endgroup]
+2025-12-30T14:51:51.6905195Z ##[group]Fetching the repository
+2025-12-30T14:51:51.6914722Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2025-12-30T14:51:52.6142770Z From https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:52.6144359Z  * [new branch]      copilot/add-copilot-instructions-file -> origin/copilot/add-copilot-instructions-file
+2025-12-30T14:51:52.6146128Z  * [new branch]      copilot/add-documentation-bash-scripts -> origin/copilot/add-documentation-bash-scripts
+2025-12-30T14:51:52.6148085Z  * [new branch]      copilot/add-documentation-for-python-wrapper -> origin/copilot/add-documentation-for-python-wrapper
+2025-12-30T14:51:52.6150606Z  * [new branch]      copilot/add-documentation-powershell-wrapper-tests -> origin/copilot/add-documentation-powershell-wrapper-tests
+2025-12-30T14:51:52.6152795Z  * [new branch]      copilot/add-inline-documentation-to-yaml -> origin/copilot/add-inline-documentation-to-yaml
+2025-12-30T14:51:52.6154579Z  * [new branch]      copilot/add-perl-documentation-tests -> origin/copilot/add-perl-documentation-tests
+2025-12-30T14:51:52.6155793Z  * [new branch]      copilot/build-repo-lint-package-cli -> origin/copilot/build-repo-lint-package-cli
+2025-12-30T14:51:52.6157533Z  * [new branch]      copilot/build-repo-lint-package-cli-14f71bf4-6c4e-4779-ba9c-1b2ec890b338 -> origin/copilot/build-repo-lint-package-cli-14f71bf4-6c4e-4779-ba9c-1b2ec890b338
+2025-12-30T14:51:52.6160288Z  * [new branch]      copilot/build-repo-lint-package-cli-4189a7ce-e250-470d-b06c-807ab2249d55 -> origin/copilot/build-repo-lint-package-cli-4189a7ce-e250-470d-b06c-807ab2249d55
+2025-12-30T14:51:52.6162577Z  * [new branch]      copilot/build-repo-lint-package-cli-4bd55873-820e-4bdd-90e7-e984e356cd0c -> origin/copilot/build-repo-lint-package-cli-4bd55873-820e-4bdd-90e7-e984e356cd0c
+2025-12-30T14:51:52.6164832Z  * [new branch]      copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c -> origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:52.6167105Z  * [new branch]      copilot/build-repo-lint-package-cli-80cd8ac9-ae66-4c5d-8341-703e54c052c5 -> origin/copilot/build-repo-lint-package-cli-80cd8ac9-ae66-4c5d-8341-703e54c052c5
+2025-12-30T14:51:52.6169619Z  * [new branch]      copilot/build-repo-lint-package-cli-9b577e9f-2046-4079-a0aa-f5d6e8335750 -> origin/copilot/build-repo-lint-package-cli-9b577e9f-2046-4079-a0aa-f5d6e8335750
+2025-12-30T14:51:52.6172003Z  * [new branch]      copilot/build-repo-lint-package-cli-9fc10f3b-95c6-486a-b421-b91665117c12 -> origin/copilot/build-repo-lint-package-cli-9fc10f3b-95c6-486a-b421-b91665117c12
+2025-12-30T14:51:52.6174301Z  * [new branch]      copilot/build-repo-lint-package-cli-a1e257f0-980e-4008-9da5-6206d8f1f24a -> origin/copilot/build-repo-lint-package-cli-a1e257f0-980e-4008-9da5-6206d8f1f24a
+2025-12-30T14:51:52.6176107Z  * [new branch]      copilot/build-repo-lint-package-cli-again -> origin/copilot/build-repo-lint-package-cli-again
+2025-12-30T14:51:52.6177658Z  * [new branch]      copilot/build-repo-lint-package-cli-another-one -> origin/copilot/build-repo-lint-package-cli-another-one
+2025-12-30T14:51:52.6179775Z  * [new branch]      copilot/build-repo-lint-package-cli-fccdbca9-ce1d-4ecb-9296-9783910d6f47 -> origin/copilot/build-repo-lint-package-cli-fccdbca9-ce1d-4ecb-9296-9783910d6f47
+2025-12-30T14:51:52.6181965Z  * [new branch]      copilot/build-repo-lint-package-cli-one-more-time -> origin/copilot/build-repo-lint-package-cli-one-more-time
+2025-12-30T14:51:52.6183590Z  * [new branch]      copilot/build-repo-lint-package-cli-please-work -> origin/copilot/build-repo-lint-package-cli-please-work
+2025-12-30T14:51:52.6185102Z  * [new branch]      copilot/build-repo-lint-package-cli-yet-again -> origin/copilot/build-repo-lint-package-cli-yet-again
+2025-12-30T14:51:52.6186489Z  * [new branch]      copilot/build-repo-lint-python-package -> origin/copilot/build-repo-lint-python-package
+2025-12-30T14:51:52.6187804Z  * [new branch]      copilot/create-future-work-tracker-doc -> origin/copilot/create-future-work-tracker-doc
+2025-12-30T14:51:52.6189230Z  * [new branch]      copilot/enhance-safe-archive-command -> origin/copilot/enhance-safe-archive-command
+2025-12-30T14:51:52.6190417Z  * [new branch]      copilot/epic-rust-canonical-tool -> origin/copilot/epic-rust-canonical-tool
+2025-12-30T14:51:52.6191556Z  * [new branch]      copilot/epic-rust-tool-and-wrappers -> origin/copilot/epic-rust-tool-and-wrappers
+2025-12-30T14:51:52.6192924Z  * [new branch]      copilot/epic-rust-tool-compatibility-wrappers -> origin/copilot/epic-rust-tool-compatibility-wrappers
+2025-12-30T14:51:52.6194533Z  * [new branch]      copilot/epic-rust-tool-compatibility-wrappers-again -> origin/copilot/epic-rust-tool-compatibility-wrappers-again
+2025-12-30T14:51:52.6195967Z  * [new branch]      copilot/epic-rust-tool-wrappers -> origin/copilot/epic-rust-tool-wrappers
+2025-12-30T14:51:52.6197144Z  * [new branch]      copilot/epic-rust-tool-wrappers-again -> origin/copilot/epic-rust-tool-wrappers-again
+2025-12-30T14:51:52.6198463Z  * [new branch]      copilot/epic-rust-tool-wrappers-another-one -> origin/copilot/epic-rust-tool-wrappers-another-one
+2025-12-30T14:51:52.6200186Z  * [new branch]      copilot/epic-tracker-rfc-agent-scaffolding -> origin/copilot/epic-tracker-rfc-agent-scaffolding
+2025-12-30T14:51:52.6201504Z  * [new branch]      copilot/fix-action-workflow-issue -> origin/copilot/fix-action-workflow-issue
+2025-12-30T14:51:52.6202881Z  * [new branch]      copilot/fix-perl-automerge-test -> origin/copilot/fix-perl-automerge-test
+2025-12-30T14:51:52.6204086Z  * [new branch]      copilot/fix-pr-body-guardrails-nits -> origin/copilot/fix-pr-body-guardrails-nits
+2025-12-30T14:51:52.6205463Z  * [new branch]      copilot/fix-pr-body-guardrails-workflow -> origin/copilot/fix-pr-body-guardrails-workflow
+2025-12-30T14:51:52.6206940Z  * [new branch]      copilot/fix-preflight-automerge-test-failure -> origin/copilot/fix-preflight-automerge-test-failure
+2025-12-30T14:51:52.6208361Z  * [new branch]      copilot/harden-pr-body-normalization -> origin/copilot/harden-pr-body-normalization
+2025-12-30T14:51:52.6209978Z  * [new branch]      copilot/implement-hybrid-logging-contract -> origin/copilot/implement-hybrid-logging-contract
+2025-12-30T14:51:52.6211407Z  * [new branch]      copilot/implement-rust-canonical-tool -> origin/copilot/implement-rust-canonical-tool
+2025-12-30T14:51:52.6212886Z  * [new branch]      copilot/implement-rust-canonical-tool-again -> origin/copilot/implement-rust-canonical-tool-again
+2025-12-30T14:51:52.6214484Z  * [new branch]      copilot/implement-rust-canonical-tool-another-one -> origin/copilot/implement-rust-canonical-tool-another-one
+2025-12-30T14:51:52.6215994Z  * [new branch]      copilot/implement-safe-check-subcommand -> origin/copilot/implement-safe-check-subcommand
+2025-12-30T14:51:52.6217193Z  * [new branch]      copilot/phase-0-quick-wins -> origin/copilot/phase-0-quick-wins
+2025-12-30T14:51:52.6218353Z  * [new branch]      copilot/refactor-repository-structure -> origin/copilot/refactor-repository-structure
+2025-12-30T14:51:52.6220049Z  * [new branch]      copilot/refactor-repository-structure-again -> origin/copilot/refactor-repository-structure-again
+2025-12-30T14:51:52.6221672Z  * [new branch]      copilot/refactor-repository-structure-another-one -> origin/copilot/refactor-repository-structure-another-one
+2025-12-30T14:51:52.6223618Z  * [new branch]      copilot/refactor-repository-structure-yet-again -> origin/copilot/refactor-repository-structure-yet-again
+2025-12-30T14:51:52.6225155Z  * [new branch]      copilot/refactor-rust-tool-compatibility -> origin/copilot/refactor-rust-tool-compatibility
+2025-12-30T14:51:52.6226428Z  * [new branch]      copilot/repo-cleanup-follow-ups -> origin/copilot/repo-cleanup-follow-ups
+2025-12-30T14:51:52.6227666Z  * [new branch]      copilot/repo-cleanup-follow-ups-again -> origin/copilot/repo-cleanup-follow-ups-again
+2025-12-30T14:51:52.6229257Z  * [new branch]      copilot/repo-cleanup-follow-ups-another-one -> origin/copilot/repo-cleanup-follow-ups-another-one
+2025-12-30T14:51:52.6230629Z  * [new branch]      copilot/review-future-work-status -> origin/copilot/review-future-work-status
+2025-12-30T14:51:52.6231638Z  * [new branch]      copilot/sub-pr-39       -> origin/copilot/sub-pr-39
+2025-12-30T14:51:52.6232439Z  * [new branch]      copilot/sub-pr-82       -> origin/copilot/sub-pr-82
+2025-12-30T14:51:52.6233760Z  * [new branch]      copilot/sub-pr-82-38ef1eb9-b10b-45ef-a975-4f7ddc949f9b -> origin/copilot/sub-pr-82-38ef1eb9-b10b-45ef-a975-4f7ddc949f9b
+2025-12-30T14:51:52.6235063Z  * [new branch]      copilot/sub-pr-82-again -> origin/copilot/sub-pr-82-again
+2025-12-30T14:51:52.6236040Z  * [new branch]      copilot/sub-pr-82-another-one -> origin/copilot/sub-pr-82-another-one
+2025-12-30T14:51:52.6237105Z  * [new branch]      copilot/sub-pr-82-one-more-time -> origin/copilot/sub-pr-82-one-more-time
+2025-12-30T14:51:52.6238180Z  * [new branch]      copilot/sub-pr-82-please-work -> origin/copilot/sub-pr-82-please-work
+2025-12-30T14:51:52.6239376Z  * [new branch]      copilot/sub-pr-82-yet-again -> origin/copilot/sub-pr-82-yet-again
+2025-12-30T14:51:52.6240443Z  * [new branch]      copilot/update-docs-and-clarity -> origin/copilot/update-docs-and-clarity
+2025-12-30T14:51:52.6241756Z  * [new branch]      copilot/update-docs-for-safe-snippet-lines -> origin/copilot/update-docs-for-safe-snippet-lines
+2025-12-30T14:51:52.6243360Z  * [new branch]      copilot/update-epic-tracker-follow-ups -> origin/copilot/update-epic-tracker-follow-ups
+2025-12-30T14:51:52.6244848Z  * [new branch]      copilot/update-epic-tracker-follow-ups-again -> origin/copilot/update-epic-tracker-follow-ups-again
+2025-12-30T14:51:52.6246478Z  * [new branch]      copilot/update-epic-tracker-follow-ups-another-one -> origin/copilot/update-epic-tracker-follow-ups-another-one
+2025-12-30T14:51:52.6248169Z  * [new branch]      copilot/update-epic-tracker-follow-ups-yet-again -> origin/copilot/update-epic-tracker-follow-ups-yet-again
+2025-12-30T14:51:52.6249788Z  * [new branch]      copilot/update-epic-tracker-items -> origin/copilot/update-epic-tracker-items
+2025-12-30T14:51:52.6251072Z  * [new branch]      copilot/update-epic-tracker-milestones -> origin/copilot/update-epic-tracker-milestones
+2025-12-30T14:51:52.6252350Z  * [new branch]      copilot/update-epic-tracker-v0-1-0 -> origin/copilot/update-epic-tracker-v0-1-0
+2025-12-30T14:51:52.6253798Z  * [new branch]      copilot/update-logging-fidelity-hybrid-contract -> origin/copilot/update-logging-fidelity-hybrid-contract
+2025-12-30T14:51:52.6255198Z  * [new branch]      copilot/update-pr-body-guardrails -> origin/copilot/update-pr-body-guardrails
+2025-12-30T14:51:52.6256504Z  * [new branch]      copilot/update-pr-body-guardrails-workflow -> origin/copilot/update-pr-body-guardrails-workflow
+2025-12-30T14:51:52.6257981Z  * [new branch]      copilot/update-rfc-shared-agent-scaffolding -> origin/copilot/update-rfc-shared-agent-scaffolding
+2025-12-30T14:51:52.6259297Z  * [new branch]      m1ndn1nj4-patch-1       -> origin/m1ndn1nj4-patch-1
+2025-12-30T14:51:52.6260089Z  * [new branch]      m1ndn1nj4-patch-2       -> origin/m1ndn1nj4-patch-2
+2025-12-30T14:51:52.6260860Z  * [new branch]      m1ndn1nj4-patch-3       -> origin/m1ndn1nj4-patch-3
+2025-12-30T14:51:52.6261610Z  * [new branch]      m1ndn1nj4-patch-4       -> origin/m1ndn1nj4-patch-4
+2025-12-30T14:51:52.6262383Z  * [new branch]      m1ndn1nj4-patch-5       -> origin/m1ndn1nj4-patch-5
+2025-12-30T14:51:52.6263334Z  * [new branch]      m1ndn1nj4-patch-6       -> origin/m1ndn1nj4-patch-6
+2025-12-30T14:51:52.6264122Z  * [new branch]      m1ndn1nj4-patch-7       -> origin/m1ndn1nj4-patch-7
+2025-12-30T14:51:52.6264889Z  * [new branch]      m1ndn1nj4-patch-8       -> origin/m1ndn1nj4-patch-8
+2025-12-30T14:51:52.6265648Z  * [new branch]      m1ndn1nj4-patch-9       -> origin/m1ndn1nj4-patch-9
+2025-12-30T14:51:52.6266524Z  * [new branch]      m1ndn1nj4/add-initial-files -> origin/m1ndn1nj4/add-initial-files
+2025-12-30T14:51:52.6267315Z  * [new branch]      main                    -> origin/main
+2025-12-30T14:51:52.6335210Z ##[endgroup]
+2025-12-30T14:51:52.6335786Z ##[group]Determining the checkout info
+2025-12-30T14:51:52.6341887Z [command]/usr/bin/git branch --list --remote origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:52.6372940Z   origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:52.6377331Z ##[endgroup]
+2025-12-30T14:51:52.6381934Z [command]/usr/bin/git sparse-checkout disable
+2025-12-30T14:51:52.6424636Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-30T14:51:52.6450754Z ##[group]Checking out the ref
+2025-12-30T14:51:52.6455079Z [command]/usr/bin/git checkout --progress --force -B copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c refs/remotes/origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:52.6888872Z Switched to a new branch 'copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c'
+2025-12-30T14:51:52.6892080Z branch 'copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c' set up to track 'origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c'.
+2025-12-30T14:51:52.6906495Z ##[endgroup]
+2025-12-30T14:51:52.6946173Z [command]/usr/bin/git log -1 --format=%H
+2025-12-30T14:51:52.6968258Z 1260744479dfd1063e7b851fed4d0f27c11f5d51
+2025-12-30T14:51:52.7218118Z ##[group]Run actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+2025-12-30T14:51:52.7218737Z with:
+2025-12-30T14:51:52.7218938Z   name: python-lint-results
+2025-12-30T14:51:52.7219203Z   path: lint-artifacts/python-lint-results/
+2025-12-30T14:51:52.7219493Z   merge-multiple: false
+2025-12-30T14:51:52.7219767Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:52.7220068Z   run-id: 20599177696
+2025-12-30T14:51:52.7220260Z ##[endgroup]
+2025-12-30T14:51:52.9287018Z Downloading single artifact
+2025-12-30T14:51:53.1962843Z Preparing to download the following artifacts:
+2025-12-30T14:51:53.1963373Z - python-lint-results (ID: 4991798057, Size: 1213)
+2025-12-30T14:51:53.3753548Z Redirecting to blob download url: https://productionresultssa6.blob.core.windows.net/actions-results/1c67f884-5fc2-4783-9779-f6cb135a6a02/workflow-job-run-9915d267-f778-54d0-9742-f3ba5dda4e80/artifacts/52795d7a49fc3b74905a84aec698986d1d5dd6958be23da28fcf9ef9e31f0b48.zip
+2025-12-30T14:51:53.3756710Z Starting download of artifact to: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/lint-artifacts/python-lint-results
+2025-12-30T14:51:53.5753601Z (node:2098) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2025-12-30T14:51:53.5792444Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-12-30T14:51:53.5793196Z Artifact download completed successfully.
+2025-12-30T14:51:53.5793696Z Total of 1 artifact(s) downloaded
+2025-12-30T14:51:53.5798408Z Download artifact has finished successfully
+2025-12-30T14:51:53.5931652Z ##[group]Run actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+2025-12-30T14:51:53.5932070Z with:
+2025-12-30T14:51:53.5932275Z   name: bash-lint-results
+2025-12-30T14:51:53.5932510Z   path: lint-artifacts/bash-lint-results/
+2025-12-30T14:51:53.5932791Z   merge-multiple: false
+2025-12-30T14:51:53.5933045Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:53.5933341Z   run-id: 20599177696
+2025-12-30T14:51:53.5933522Z ##[endgroup]
+2025-12-30T14:51:53.7985390Z Downloading single artifact
+2025-12-30T14:51:54.0745415Z Preparing to download the following artifacts:
+2025-12-30T14:51:54.0745872Z - bash-lint-results (ID: 4991796399, Size: 790)
+2025-12-30T14:51:54.2431956Z Redirecting to blob download url: https://productionresultssa6.blob.core.windows.net/actions-results/1c67f884-5fc2-4783-9779-f6cb135a6a02/workflow-job-run-bd48962f-622a-5a74-95be-6180656ce3b6/artifacts/e4b2fd5a4a7ac7d9531ff119af602e70968144266de5db0d7adcf8d4940294dc.zip
+2025-12-30T14:51:54.2434450Z Starting download of artifact to: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/lint-artifacts/bash-lint-results
+2025-12-30T14:51:54.4465076Z (node:2110) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2025-12-30T14:51:54.4466720Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-12-30T14:51:54.4516822Z Artifact download completed successfully.
+2025-12-30T14:51:54.4517348Z Total of 1 artifact(s) downloaded
+2025-12-30T14:51:54.4523593Z Download artifact has finished successfully
+2025-12-30T14:51:54.4634836Z ##[group]Run actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+2025-12-30T14:51:54.4635272Z with:
+2025-12-30T14:51:54.4635494Z   name: powershell-lint-results
+2025-12-30T14:51:54.4635777Z   path: lint-artifacts/powershell-lint-results/
+2025-12-30T14:51:54.4636061Z   merge-multiple: false
+2025-12-30T14:51:54.4636324Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:54.4636634Z   run-id: 20599177696
+2025-12-30T14:51:54.4636819Z ##[endgroup]
+2025-12-30T14:51:54.6653938Z Downloading single artifact
+2025-12-30T14:51:54.9235883Z Preparing to download the following artifacts:
+2025-12-30T14:51:54.9236977Z - powershell-lint-results (ID: 4991798395, Size: 524)
+2025-12-30T14:51:55.1089609Z Redirecting to blob download url: https://productionresultssa6.blob.core.windows.net/actions-results/1c67f884-5fc2-4783-9779-f6cb135a6a02/workflow-job-run-165b9825-0a2f-554c-83de-33d4d4a1c82f/artifacts/2a5918e6a005e9bcb697a74cb920e0e6084039fc65bce64ae760ba5c6ee057b2.zip
+2025-12-30T14:51:55.1092094Z Starting download of artifact to: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/lint-artifacts/powershell-lint-results
+2025-12-30T14:51:55.3470307Z (node:2121) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2025-12-30T14:51:55.3471765Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-12-30T14:51:55.3519999Z Artifact download completed successfully.
+2025-12-30T14:51:55.3520627Z Total of 1 artifact(s) downloaded
+2025-12-30T14:51:55.3525840Z Download artifact has finished successfully
+2025-12-30T14:51:55.3658431Z ##[group]Run actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+2025-12-30T14:51:55.3659297Z with:
+2025-12-30T14:51:55.3659592Z   name: perl-lint-results
+2025-12-30T14:51:55.3659999Z   path: lint-artifacts/perl-lint-results/
+2025-12-30T14:51:55.3660446Z   merge-multiple: false
+2025-12-30T14:51:55.3660904Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:55.3661408Z   run-id: 20599177696
+2025-12-30T14:51:55.3661720Z ##[endgroup]
+2025-12-30T14:51:55.5644847Z Downloading single artifact
+2025-12-30T14:51:55.8223629Z Preparing to download the following artifacts:
+2025-12-30T14:51:55.8224225Z - perl-lint-results (ID: 4991798590, Size: 515)
+2025-12-30T14:51:55.9875364Z Redirecting to blob download url: https://productionresultssa6.blob.core.windows.net/actions-results/1c67f884-5fc2-4783-9779-f6cb135a6a02/workflow-job-run-75a91a41-cc7f-5969-b822-590c16543d19/artifacts/335ea67d2b6a762909388cce497aae3444e47f33c7cc4946bbd1f61901309f73.zip
+2025-12-30T14:51:55.9878040Z Starting download of artifact to: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/lint-artifacts/perl-lint-results
+2025-12-30T14:51:56.2039630Z (node:2132) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2025-12-30T14:51:56.2040581Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-12-30T14:51:56.2075876Z Artifact download completed successfully.
+2025-12-30T14:51:56.2076393Z Total of 1 artifact(s) downloaded
+2025-12-30T14:51:56.2083197Z Download artifact has finished successfully
+2025-12-30T14:51:56.2207793Z ##[group]Run actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+2025-12-30T14:51:56.2208172Z with:
+2025-12-30T14:51:56.2208347Z   name: yaml-lint-results
+2025-12-30T14:51:56.2208785Z   path: lint-artifacts/yaml-lint-results/
+2025-12-30T14:51:56.2209079Z   merge-multiple: false
+2025-12-30T14:51:56.2209331Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:56.2209616Z   run-id: 20599177696
+2025-12-30T14:51:56.2209793Z ##[endgroup]
+2025-12-30T14:51:56.4175897Z Downloading single artifact
+2025-12-30T14:51:56.6810230Z Preparing to download the following artifacts:
+2025-12-30T14:51:56.6810861Z - yaml-lint-results (ID: 4991794621, Size: 662)
+2025-12-30T14:51:56.8602590Z Redirecting to blob download url: https://productionresultssa6.blob.core.windows.net/actions-results/1c67f884-5fc2-4783-9779-f6cb135a6a02/workflow-job-run-e6c38446-1e32-5b5a-b8e0-d8116e0eb77d/artifacts/bd9f9a81d8d63ee991d4f557cc6980f1e833759954c30e90f1f01f5bc00303b4.zip
+2025-12-30T14:51:56.8604978Z Starting download of artifact to: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/lint-artifacts/yaml-lint-results
+2025-12-30T14:51:57.0937841Z (node:2143) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2025-12-30T14:51:57.0939638Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-12-30T14:51:57.0974711Z Artifact download completed successfully.
+2025-12-30T14:51:57.0975019Z Total of 1 artifact(s) downloaded
+2025-12-30T14:51:57.0981383Z Download artifact has finished successfully
+2025-12-30T14:51:57.1089423Z ##[group]Run echo "=== Listing lint-artifacts directory ==="
+2025-12-30T14:51:57.1089941Z [36;1mecho "=== Listing lint-artifacts directory ==="[0m
+2025-12-30T14:51:57.1090373Z [36;1mls -laR lint-artifacts/ || echo "No lint-artifacts directory found"[0m
+2025-12-30T14:51:57.1090791Z [36;1mecho "========================================="[0m
+2025-12-30T14:51:57.1126005Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:57.1126243Z ##[endgroup]
+2025-12-30T14:51:57.1198951Z === Listing lint-artifacts directory ===
+2025-12-30T14:51:57.1214621Z lint-artifacts/:
+2025-12-30T14:51:57.1214960Z total 28
+2025-12-30T14:51:57.1215280Z drwxr-xr-x  7 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1215618Z drwxr-xr-x 13 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1216060Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 bash-lint-results
+2025-12-30T14:51:57.1216701Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 perl-lint-results
+2025-12-30T14:51:57.1217450Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 powershell-lint-results
+2025-12-30T14:51:57.1218250Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 python-lint-results
+2025-12-30T14:51:57.1219171Z drwxr-xr-x  2 runner runner 4096 Dec 30 14:51 yaml-lint-results
+2025-12-30T14:51:57.1219577Z 
+2025-12-30T14:51:57.1219918Z lint-artifacts/bash-lint-results:
+2025-12-30T14:51:57.1220293Z total 16
+2025-12-30T14:51:57.1220609Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1220968Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1221373Z -rw-r--r-- 1 runner runner 4949 Dec 30 14:51 bash-lint-output.txt
+2025-12-30T14:51:57.1221717Z 
+2025-12-30T14:51:57.1221821Z lint-artifacts/perl-lint-results:
+2025-12-30T14:51:57.1222099Z total 12
+2025-12-30T14:51:57.1222392Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1222771Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1223152Z -rw-r--r-- 1 runner runner 3109 Dec 30 14:51 perl-lint-output.txt
+2025-12-30T14:51:57.1223438Z 
+2025-12-30T14:51:57.1223552Z lint-artifacts/powershell-lint-results:
+2025-12-30T14:51:57.1223827Z total 12
+2025-12-30T14:51:57.1224040Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1224367Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1224761Z -rw-r--r-- 1 runner runner 2820 Dec 30 14:51 powershell-lint-output.txt
+2025-12-30T14:51:57.1225066Z 
+2025-12-30T14:51:57.1225174Z lint-artifacts/python-lint-results:
+2025-12-30T14:51:57.1225433Z total 16
+2025-12-30T14:51:57.1225738Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1226089Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1226491Z -rw-r--r-- 1 runner runner 7054 Dec 30 14:51 python-lint-output.txt
+2025-12-30T14:51:57.1226781Z 
+2025-12-30T14:51:57.1226894Z lint-artifacts/yaml-lint-results:
+2025-12-30T14:51:57.1227146Z total 12
+2025-12-30T14:51:57.1227360Z drwxr-xr-x 2 runner runner 4096 Dec 30 14:51 .
+2025-12-30T14:51:57.1227685Z drwxr-xr-x 7 runner runner 4096 Dec 30 14:51 ..
+2025-12-30T14:51:57.1228072Z -rw-r--r-- 1 runner runner 3866 Dec 30 14:51 yaml-lint-output.txt
+2025-12-30T14:51:57.1228425Z =========================================
+2025-12-30T14:51:57.1279793Z ##[group]Run # Create failure report directory
+2025-12-30T14:51:57.1280622Z [36;1m# Create failure report directory[0m
+2025-12-30T14:51:57.1280927Z [36;1mmkdir -p repo-lint-failure-reports[0m
+2025-12-30T14:51:57.1281185Z [36;1m[0m
+2025-12-30T14:51:57.1281496Z [36;1m# Check job statuses (now using job.result since continue-on-error is removed)[0m
+2025-12-30T14:51:57.1282098Z [36;1mAUTO_FIX="success"[0m
+2025-12-30T14:51:57.1282319Z [36;1mDETECT="success"[0m
+2025-12-30T14:51:57.1282517Z [36;1mPYTHON="failure"[0m
+2025-12-30T14:51:57.1282715Z [36;1mBASH="failure"[0m
+2025-12-30T14:51:57.1282911Z [36;1mPOWERSHELL="failure"[0m
+2025-12-30T14:51:57.1283128Z [36;1mPERL="failure"[0m
+2025-12-30T14:51:57.1283316Z [36;1mYAML="failure"[0m
+2025-12-30T14:51:57.1283511Z [36;1mVECTORS="success"[0m
+2025-12-30T14:51:57.1283699Z [36;1m[0m
+2025-12-30T14:51:57.1283943Z [36;1m# Map empty results (skipped jobs) to "skipped" for display[0m
+2025-12-30T14:51:57.1284298Z [36;1mPYTHON="${PYTHON:-skipped}"[0m
+2025-12-30T14:51:57.1284533Z [36;1mBASH="${BASH:-skipped}"[0m
+2025-12-30T14:51:57.1284782Z [36;1mPOWERSHELL="${POWERSHELL:-skipped}"[0m
+2025-12-30T14:51:57.1285038Z [36;1mPERL="${PERL:-skipped}"[0m
+2025-12-30T14:51:57.1285253Z [36;1mYAML="${YAML:-skipped}"[0m
+2025-12-30T14:51:57.1285455Z [36;1m[0m
+2025-12-30T14:51:57.1285612Z [36;1m# Create summary file[0m
+2025-12-30T14:51:57.1285989Z [36;1mSUMMARY_FILE="repo-lint-failure-reports/summary-$(date -u +%Y%m%d-%H%M%S).md"[0m
+2025-12-30T14:51:57.1286368Z [36;1m{[0m
+2025-12-30T14:51:57.1286557Z [36;1m  echo "# Repo Lint Failure Summary"[0m
+2025-12-30T14:51:57.1286800Z [36;1m  echo ""[0m
+2025-12-30T14:51:57.1287255Z [36;1m  echo "**Workflow Run:** https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696"[0m
+2025-12-30T14:51:57.1287817Z [36;1m  echo "**Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")"[0m
+2025-12-30T14:51:57.1288123Z [36;1m  echo "**Branch:** 130/merge"[0m
+2025-12-30T14:51:57.1288444Z [36;1m  echo "**Commit:** d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2"[0m
+2025-12-30T14:51:57.1288990Z [36;1m  echo ""[0m
+2025-12-30T14:51:57.1289176Z [36;1m  echo "## Job Results"[0m
+2025-12-30T14:51:57.1289383Z [36;1m  echo ""[0m
+2025-12-30T14:51:57.1289556Z [36;1m  echo "| Job | Status |"[0m
+2025-12-30T14:51:57.1289777Z [36;1m  echo "|-----|--------|"[0m
+2025-12-30T14:51:57.1290021Z [36;1m  echo "| Auto-Fix: Black | $AUTO_FIX |"[0m
+2025-12-30T14:51:57.1290315Z [36;1m  echo "| Detect Changed Files | $DETECT |"[0m
+2025-12-30T14:51:57.1290605Z [36;1m  echo "| Repo Lint: Python | $PYTHON |"[0m
+2025-12-30T14:51:57.1290886Z [36;1m  echo "| Repo Lint: Bash | $BASH |"[0m
+2025-12-30T14:51:57.1291173Z [36;1m  echo "| Repo Lint: PowerShell | $POWERSHELL |"[0m
+2025-12-30T14:51:57.1291471Z [36;1m  echo "| Repo Lint: Perl | $PERL |"[0m
+2025-12-30T14:51:57.1291732Z [36;1m  echo "| Repo Lint: YAML | $YAML |"[0m
+2025-12-30T14:51:57.1292019Z [36;1m  echo "| Vector Tests: Conformance | $VECTORS |"[0m
+2025-12-30T14:51:57.1292288Z [36;1m  echo ""[0m
+2025-12-30T14:51:57.1292468Z [36;1m} > "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1292667Z [36;1m[0m
+2025-12-30T14:51:57.1292834Z [36;1m# Track if any failures occurred[0m
+2025-12-30T14:51:57.1293079Z [36;1mHAS_FAILURES=false[0m
+2025-12-30T14:51:57.1293267Z [36;1m[0m
+2025-12-30T14:51:57.1293453Z [36;1m# Add failure details for each failed job[0m
+2025-12-30T14:51:57.1293734Z [36;1mif [ "$PYTHON" = "failure" ]; then[0m
+2025-12-30T14:51:57.1293971Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1294236Z [36;1m  echo "## Python Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1294545Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1294937Z [36;1m  PYTHON_ARTIFACT="lint-artifacts/python-lint-results/python-lint-output.txt"[0m
+2025-12-30T14:51:57.1295352Z [36;1m  if [ -f "$PYTHON_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1295681Z [36;1m    echo "Found Python lint output at: $PYTHON_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1296188Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1296476Z [36;1m    tail -100 "$PYTHON_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1296762Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1296980Z [36;1m  else[0m
+2025-12-30T14:51:57.1297269Z [36;1m    echo "WARNING: Python lint artifact not found at: $PYTHON_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1297866Z [36;1m    echo "Python linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1298216Z [36;1m  fi[0m
+2025-12-30T14:51:57.1298386Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1298934Z [36;1mfi[0m
+2025-12-30T14:51:57.1299192Z [36;1m[0m
+2025-12-30T14:51:57.1299377Z [36;1mif [ "$BASH" = "failure" ]; then[0m
+2025-12-30T14:51:57.1299616Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1299866Z [36;1m  echo "## Bash Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1300156Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1300519Z [36;1m  BASH_ARTIFACT="lint-artifacts/bash-lint-results/bash-lint-output.txt"[0m
+2025-12-30T14:51:57.1300896Z [36;1m  if [ -f "$BASH_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1301210Z [36;1m    echo "Found Bash lint output at: $BASH_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1301511Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1301786Z [36;1m    tail -100 "$BASH_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1302069Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1302295Z [36;1m  else[0m
+2025-12-30T14:51:57.1302585Z [36;1m    echo "WARNING: Bash lint artifact not found at: $BASH_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1303041Z [36;1m    echo "Bash linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1303393Z [36;1m  fi[0m
+2025-12-30T14:51:57.1303560Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1303851Z [36;1mfi[0m
+2025-12-30T14:51:57.1304030Z [36;1m[0m
+2025-12-30T14:51:57.1304211Z [36;1mif [ "$POWERSHELL" = "failure" ]; then[0m
+2025-12-30T14:51:57.1304510Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1304782Z [36;1m  echo "## PowerShell Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1305078Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1305502Z [36;1m  POWERSHELL_ARTIFACT="lint-artifacts/powershell-lint-results/powershell-lint-output.txt"[0m
+2025-12-30T14:51:57.1305978Z [36;1m  if [ -f "$POWERSHELL_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1306337Z [36;1m    echo "Found PowerShell lint output at: $POWERSHELL_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1306684Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1306970Z [36;1m    tail -100 "$POWERSHELL_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1307267Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1307485Z [36;1m  else[0m
+2025-12-30T14:51:57.1307804Z [36;1m    echo "WARNING: PowerShell lint artifact not found at: $POWERSHELL_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1308328Z [36;1m    echo "PowerShell linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1308937Z [36;1m  fi[0m
+2025-12-30T14:51:57.1309109Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1309315Z [36;1mfi[0m
+2025-12-30T14:51:57.1309468Z [36;1m[0m
+2025-12-30T14:51:57.1309627Z [36;1mif [ "$PERL" = "failure" ]; then[0m
+2025-12-30T14:51:57.1309866Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1310128Z [36;1m  echo "## Perl Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1310418Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1310759Z [36;1m  PERL_ARTIFACT="lint-artifacts/perl-lint-results/perl-lint-output.txt"[0m
+2025-12-30T14:51:57.1311141Z [36;1m  if [ -f "$PERL_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1311449Z [36;1m    echo "Found Perl lint output at: $PERL_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1311744Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1312198Z [36;1m    tail -100 "$PERL_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1312478Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1312702Z [36;1m  else[0m
+2025-12-30T14:51:57.1312970Z [36;1m    echo "WARNING: Perl lint artifact not found at: $PERL_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1313431Z [36;1m    echo "Perl linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1313777Z [36;1m  fi[0m
+2025-12-30T14:51:57.1314054Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1314268Z [36;1mfi[0m
+2025-12-30T14:51:57.1314413Z [36;1m[0m
+2025-12-30T14:51:57.1314583Z [36;1mif [ "$YAML" = "failure" ]; then[0m
+2025-12-30T14:51:57.1314814Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1315073Z [36;1m  echo "## YAML Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1315362Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1315705Z [36;1m  YAML_ARTIFACT="lint-artifacts/yaml-lint-results/yaml-lint-output.txt"[0m
+2025-12-30T14:51:57.1316088Z [36;1m  if [ -f "$YAML_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1316385Z [36;1m    echo "Found YAML lint output at: $YAML_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1316693Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1316964Z [36;1m    tail -100 "$YAML_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1317248Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1317473Z [36;1m  else[0m
+2025-12-30T14:51:57.1317741Z [36;1m    echo "WARNING: YAML lint artifact not found at: $YAML_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1318191Z [36;1m    echo "YAML linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1318529Z [36;1m  fi[0m
+2025-12-30T14:51:57.1318912Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1319122Z [36;1mfi[0m
+2025-12-30T14:51:57.1319273Z [36;1m[0m
+2025-12-30T14:51:57.1319440Z [36;1mif [ "$VECTORS" = "failure" ]; then[0m
+2025-12-30T14:51:57.1319685Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1319944Z [36;1m  echo "## Vector Test Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1320219Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1320554Z [36;1m  echo "Vector tests failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1320900Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1321110Z [36;1mfi[0m
+2025-12-30T14:51:57.1321254Z [36;1m[0m
+2025-12-30T14:51:57.1321413Z [36;1m# Set output flag[0m
+2025-12-30T14:51:57.1321639Z [36;1mif [ "$HAS_FAILURES" = "true" ]; then[0m
+2025-12-30T14:51:57.1321922Z [36;1m  echo "has_failures=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:51:57.1322174Z [36;1melse[0m
+2025-12-30T14:51:57.1322380Z [36;1m  echo "has_failures=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:51:57.1322698Z [36;1m  echo "## All Checks Passed ✓" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1322976Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1323387Z [36;1m  echo "All linting and docstring enforcement checks passed successfully." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1323813Z [36;1mfi[0m
+2025-12-30T14:51:57.1323960Z [36;1m[0m
+2025-12-30T14:51:57.1324120Z [36;1m# Display summary[0m
+2025-12-30T14:51:57.1324323Z [36;1mcat "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1356287Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:57.1356519Z ##[endgroup]
+2025-12-30T14:51:57.1446705Z Found Python lint output at: lint-artifacts/python-lint-results/python-lint-output.txt
+2025-12-30T14:51:57.1459545Z Found Bash lint output at: lint-artifacts/bash-lint-results/bash-lint-output.txt
+2025-12-30T14:51:57.1471925Z Found PowerShell lint output at: lint-artifacts/powershell-lint-results/powershell-lint-output.txt
+2025-12-30T14:51:57.1483778Z Found Perl lint output at: lint-artifacts/perl-lint-results/perl-lint-output.txt
+2025-12-30T14:51:57.1496170Z Found YAML lint output at: lint-artifacts/yaml-lint-results/yaml-lint-output.txt
+2025-12-30T14:51:57.1517567Z # Repo Lint Failure Summary
+2025-12-30T14:51:57.1517872Z 
+2025-12-30T14:51:57.1518836Z **Workflow Run:** https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696
+2025-12-30T14:51:57.1519779Z **Timestamp:** 2025-12-30 14:51:57 UTC
+2025-12-30T14:51:57.1520173Z **Branch:** 130/merge
+2025-12-30T14:51:57.1520547Z **Commit:** d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2
+2025-12-30T14:51:57.1520886Z 
+2025-12-30T14:51:57.1520999Z ## Job Results
+2025-12-30T14:51:57.1521247Z 
+2025-12-30T14:51:57.1521615Z | Job | Status |
+2025-12-30T14:51:57.1522182Z |-----|--------|
+2025-12-30T14:51:57.1522606Z | Auto-Fix: Black | success |
+2025-12-30T14:51:57.1523175Z | Detect Changed Files | success |
+2025-12-30T14:51:57.1523715Z | Repo Lint: Python | failure |
+2025-12-30T14:51:57.1524003Z | Repo Lint: Bash | failure |
+2025-12-30T14:51:57.1524386Z | Repo Lint: PowerShell | failure |
+2025-12-30T14:51:57.1524686Z | Repo Lint: Perl | failure |
+2025-12-30T14:51:57.1524992Z | Repo Lint: YAML | failure |
+2025-12-30T14:51:57.1525353Z | Vector Tests: Conformance | success |
+2025-12-30T14:51:57.1525554Z 
+2025-12-30T14:51:57.1525703Z ## Python Linting Failures
+2025-12-30T14:51:57.1525867Z 
+2025-12-30T14:51:57.1525989Z ```
+2025-12-30T14:51:57.1526542Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1526833Z 
+2025-12-30T14:51:57.1527067Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1527409Z   Python Linting
+2025-12-30T14:51:57.1527832Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1528098Z 
+2025-12-30T14:51:57.1528432Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1529119Z   Linting Results
+2025-12-30T14:51:57.1529615Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1529905Z 
+2025-12-30T14:51:57.1530063Z ❌ ruff: FAILED (44 violation(s))
+2025-12-30T14:51:57.1530715Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: E402 Module level import not at top of file
+2025-12-30T14:51:57.1531395Z    .: [ruff] |
+2025-12-30T14:51:57.1531842Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:57.1532409Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:57.1532785Z    .: [ruff] | ^^^^^^^^^ E402
+2025-12-30T14:51:57.1533157Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:57.1533406Z    .: [ruff] |
+2025-12-30T14:51:57.1533986Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: I001 [*] Import block is un-sorted or un-formatted
+2025-12-30T14:51:57.1534705Z    .: [ruff] |
+2025-12-30T14:51:57.1535058Z    .: [ruff] 13 |   # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:57.1535599Z    .: [ruff] 14 | / import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:57.1536060Z    .: [ruff] 15 | | import sys
+2025-12-30T14:51:57.1536353Z    .: [ruff] 16 | |
+2025-12-30T14:51:57.1536578Z    .: [ruff] 17 | |
+2025-12-30T14:51:57.1537053Z    .: [ruff] 18 | | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+2025-12-30T14:51:57.1537499Z    .: [ruff] | |_^ I001
+2025-12-30T14:51:57.1538039Z    .: [ruff] 19 |   VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+2025-12-30T14:51:57.1538885Z    .: [ruff] 20 |       "value"
+2025-12-30T14:51:57.1539170Z    .: [ruff] |
+2025-12-30T14:51:57.1539447Z    .: [ruff] = help: Organize imports
+2025-12-30T14:51:57.1540082Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:1: E402 Module level import not at top of file
+2025-12-30T14:51:57.1540760Z    .: [ruff] |
+2025-12-30T14:51:57.1541147Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:57.1541698Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:57.1542137Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:57.1542545Z    .: [ruff] | ^^^^^^^^^^ E402
+2025-12-30T14:51:57.1542928Z    .: [ruff] |
+2025-12-30T14:51:57.1543433Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:8: F401 [*] `sys` imported but unused
+2025-12-30T14:51:57.1544022Z    .: [ruff] |
+2025-12-30T14:51:57.1544436Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:57.1545075Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:57.1545491Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:57.1545763Z    .: [ruff] |        ^^^ F401
+2025-12-30T14:51:57.1546114Z    .: [ruff] |
+2025-12-30T14:51:57.1546359Z    .: [ruff] = help: Remove unused import: `sys`
+2025-12-30T14:51:57.1546948Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:121: E501 Line too long (122 > 120)
+2025-12-30T14:51:57.1547586Z    .: [ruff] |
+2025-12-30T14:51:57.1547924Z    .: [ruff] 18 | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+2025-12-30T14:51:57.1548897Z    .: [ruff] 19 | VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+2025-12-30T14:51:57.1549677Z    .: [ruff] |                                                                                                                         ^^ E501
+2025-12-30T14:51:57.1550194Z    .: [ruff] 20 |     "value"
+2025-12-30T14:51:57.1550441Z    .: [ruff] 21 | )
+2025-12-30T14:51:57.1550760Z    .: [ruff] |
+2025-12-30T14:51:57.1551011Z    .: [ruff] [*] 2 fixable with the `--fix` option.
+2025-12-30T14:51:57.1551298Z 
+2025-12-30T14:51:57.1551464Z ❌ pylint: FAILED (6 violation(s))
+2025-12-30T14:51:57.1551847Z    .: [pylint] ************* Module missing_docstring
+2025-12-30T14:51:57.1552521Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:0: C0301: Line too long (122/120) (line-too-long)
+2025-12-30T14:51:57.1553597Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: C0413: Import "import os" should be placed at the top of the module (wrong-import-position)
+2025-12-30T14:51:57.1554853Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: C0413: Import "import sys" should be placed at the top of the module (wrong-import-position)
+2025-12-30T14:51:57.1555950Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: W0611: Unused import os (unused-import)
+2025-12-30T14:51:57.1556851Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: W0611: Unused import sys (unused-import)
+2025-12-30T14:51:57.1557384Z 
+2025-12-30T14:51:57.1557585Z ❌ validate_docstrings: FAILED (13 violation(s))
+2025-12-30T14:51:57.1558108Z    .: [validate_docstrings] ❌ Validation FAILED: 12 violation(s) in 4 file(s)
+2025-12-30T14:51:57.1559511Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+2025-12-30T14:51:57.1560942Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl
+2025-12-30T14:51:57.1562341Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1
+2025-12-30T14:51:57.1563714Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:4
+2025-12-30T14:51:57.1565176Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:14
+2025-12-30T14:51:57.1566748Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:20
+2025-12-30T14:51:57.1568138Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:25
+2025-12-30T14:51:57.1569826Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py
+2025-12-30T14:51:57.1571387Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:4
+2025-12-30T14:51:57.1572714Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:8
+2025-12-30T14:51:57.1574146Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:24
+2025-12-30T14:51:57.1575512Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:9
+2025-12-30T14:51:57.1576174Z 
+2025-12-30T14:51:57.1576440Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1576995Z ❌ Found 63 violation(s) across 3 tool(s)
+2025-12-30T14:51:57.1577313Z ```
+2025-12-30T14:51:57.1577427Z 
+2025-12-30T14:51:57.1577531Z ## Bash Linting Failures
+2025-12-30T14:51:57.1577672Z 
+2025-12-30T14:51:57.1577882Z ```
+2025-12-30T14:51:57.1578174Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1578433Z 
+2025-12-30T14:51:57.1579117Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1579545Z   Bash Linting
+2025-12-30T14:51:57.1580015Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1580263Z 
+2025-12-30T14:51:57.1580559Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1580969Z   Linting Results
+2025-12-30T14:51:57.1581448Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1581710Z 
+2025-12-30T14:51:57.1581867Z ❌ shellcheck: FAILED (2 violation(s))
+2025-12-30T14:51:57.1582723Z    .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:11:1: warning: UNUSED_VAR appears unused. Verify use (or export if used externally). [SC2034]
+2025-12-30T14:51:57.1583920Z    .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:16:7: note: Double quote to prevent globbing and word splitting. [SC2086]
+2025-12-30T14:51:57.1584498Z 
+2025-12-30T14:51:57.1584644Z ❌ shfmt: FAILED (1 violation(s))
+2025-12-30T14:51:57.1585334Z    .: [shfmt] Shell scripts do not match shfmt style. Run 'python -m tools.repo_lint fix' to auto-format.
+2025-12-30T14:51:57.1585745Z 
+2025-12-30T14:51:57.1586005Z ❌ validate_docstrings: FAILED (20 violation(s))
+2025-12-30T14:51:57.1586491Z    .: [validate_docstrings] ❌ Validation FAILED: 60 violation(s) in 11 file(s)
+2025-12-30T14:51:57.1587535Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+2025-12-30T14:51:57.1589676Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh
+2025-12-30T14:51:57.1591222Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh:22
+2025-12-30T14:51:57.1592589Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh:35
+2025-12-30T14:51:57.1593853Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:54
+2025-12-30T14:51:57.1595016Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:66
+2025-12-30T14:51:57.1596208Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:77
+2025-12-30T14:51:57.1597352Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:90
+2025-12-30T14:51:57.1598755Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:101
+2025-12-30T14:51:57.1600042Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:111
+2025-12-30T14:51:57.1601192Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:155
+2025-12-30T14:51:57.1602350Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:167
+2025-12-30T14:51:57.1603593Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:178
+2025-12-30T14:51:57.1604739Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:209
+2025-12-30T14:51:57.1605897Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:228
+2025-12-30T14:51:57.1607079Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:124
+2025-12-30T14:51:57.1608454Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:128
+2025-12-30T14:51:57.1609945Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:170
+2025-12-30T14:51:57.1611177Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:175
+2025-12-30T14:51:57.1611905Z 
+2025-12-30T14:51:57.1612171Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1612630Z ❌ Found 23 violation(s) across 3 tool(s)
+2025-12-30T14:51:57.1612927Z ```
+2025-12-30T14:51:57.1613136Z 
+2025-12-30T14:51:57.1613394Z ## PowerShell Linting Failures
+2025-12-30T14:51:57.1613587Z 
+2025-12-30T14:51:57.1613738Z ```
+2025-12-30T14:51:57.1614051Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1614344Z 
+2025-12-30T14:51:57.1614622Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1614965Z   PowerShell Linting
+2025-12-30T14:51:57.1615381Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1615788Z 
+2025-12-30T14:51:57.1616076Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1616505Z   Linting Results
+2025-12-30T14:51:57.1616921Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1617278Z 
+2025-12-30T14:51:57.1617472Z ❌ validate_docstrings: FAILED (9 violation(s))
+2025-12-30T14:51:57.1618020Z    .: [validate_docstrings] ❌ Validation FAILED: 8 violation(s) in 3 file(s)
+2025-12-30T14:51:57.1619256Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1
+2025-12-30T14:51:57.1620766Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:4
+2025-12-30T14:51:57.1622189Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:14
+2025-12-30T14:51:57.1623586Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:20
+2025-12-30T14:51:57.1625053Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:25
+2025-12-30T14:51:57.1626471Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1
+2025-12-30T14:51:57.1627789Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1:16
+2025-12-30T14:51:57.1629370Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/powershell/EdgeCases.ps1:312
+2025-12-30T14:51:57.1629992Z 
+2025-12-30T14:51:57.1630324Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1630772Z ❌ Found 9 violation(s) across 1 tool(s)
+2025-12-30T14:51:57.1631150Z ```
+2025-12-30T14:51:57.1631261Z 
+2025-12-30T14:51:57.1631397Z ## Perl Linting Failures
+2025-12-30T14:51:57.1631592Z 
+2025-12-30T14:51:57.1631678Z ```
+2025-12-30T14:51:57.1631992Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1632404Z 
+2025-12-30T14:51:57.1632672Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1633072Z   Perl Linting
+2025-12-30T14:51:57.1633489Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1633808Z 
+2025-12-30T14:51:57.1634140Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1634665Z   Linting Results
+2025-12-30T14:51:57.1635163Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1635475Z 
+2025-12-30T14:51:57.1635692Z ❌ validate_docstrings: FAILED (11 violation(s))
+2025-12-30T14:51:57.1636174Z    .: [validate_docstrings] ❌ Validation FAILED: 10 violation(s) in 3 file(s)
+2025-12-30T14:51:57.1637248Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl
+2025-12-30T14:51:57.1638800Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:8
+2025-12-30T14:51:57.1640205Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:14
+2025-12-30T14:51:57.1641611Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:21
+2025-12-30T14:51:57.1642936Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl
+2025-12-30T14:51:57.1644242Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:12
+2025-12-30T14:51:57.1645631Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:16
+2025-12-30T14:51:57.1646933Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:25
+2025-12-30T14:51:57.1648247Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:38
+2025-12-30T14:51:57.1649757Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/perl/edge_cases.pl:493
+2025-12-30T14:51:57.1650358Z 
+2025-12-30T14:51:57.1650654Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1651226Z ❌ Found 11 violation(s) across 1 tool(s)
+2025-12-30T14:51:57.1651632Z ```
+2025-12-30T14:51:57.1651748Z 
+2025-12-30T14:51:57.1651990Z ## YAML Linting Failures
+2025-12-30T14:51:57.1652158Z 
+2025-12-30T14:51:57.1652280Z ```
+2025-12-30T14:51:57.1652607Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1652882Z 
+2025-12-30T14:51:57.1653132Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1653516Z   YAML Linting
+2025-12-30T14:51:57.1653955Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1654356Z 
+2025-12-30T14:51:57.1654688Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1655071Z   Linting Results
+2025-12-30T14:51:57.1655562Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1655875Z 
+2025-12-30T14:51:57.1656028Z ❌ yamllint: FAILED (20 violation(s))
+2025-12-30T14:51:57.1656642Z    .: [yamllint] .github/workflows/drift-detection.yml:265:121: [warning] line too long (141 > 120 characters) (line-length)
+2025-12-30T14:51:57.1657521Z    .: [yamllint] .github/workflows/drift-detection.yml:266:121: [warning] line too long (149 > 120 characters) (line-length)
+2025-12-30T14:51:57.1658313Z    .: [yamllint] .github/workflows/drift-detection.yml:267:121: [warning] line too long (141 > 120 characters) (line-length)
+2025-12-30T14:51:57.1659417Z    .: [yamllint] .github/workflows/lint-and-format-checker.yml:105:121: [warning] line too long (168 > 120 characters) (line-length)
+2025-12-30T14:51:57.1660279Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:179:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1661234Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:184:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1662134Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:187:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1662948Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:191:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1663899Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:194:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1664764Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:206:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1665582Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:210:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1666360Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:217:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1667138Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:220:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1667926Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:227:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1668974Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:241:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1669748Z    .: [yamllint] .github/workflows/rust-conformance.yml:98:121: [warning] line too long (164 > 120 characters) (line-length)
+2025-12-30T14:51:57.1670574Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:1: [warning] missing document start "---" (document-start)
+2025-12-30T14:51:57.1671486Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:121: [warning] line too long (130 > 120 characters) (line-length)
+2025-12-30T14:51:57.1672361Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:7:12: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1673235Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:11:4: [error] wrong indentation: expected 2 but found 3 (indentation)
+2025-12-30T14:51:57.1673757Z 
+2025-12-30T14:51:57.1674189Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1674593Z ❌ Found 20 violation(s) across 1 tool(s)
+2025-12-30T14:51:57.1674827Z ```
+2025-12-30T14:51:57.1674906Z 
+2025-12-30T14:51:57.1748888Z ##[group]Run actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+2025-12-30T14:51:57.1749289Z with:
+2025-12-30T14:51:57.1749476Z   name: repo-lint-failure-summary
+2025-12-30T14:51:57.1749726Z   path: repo-lint-failure-reports/
+2025-12-30T14:51:57.1750129Z   retention-days: 30
+2025-12-30T14:51:57.1750320Z   if-no-files-found: warn
+2025-12-30T14:51:57.1750523Z   compression-level: 6
+2025-12-30T14:51:57.1750708Z   overwrite: false
+2025-12-30T14:51:57.1750893Z   include-hidden-files: false
+2025-12-30T14:51:57.1751101Z ##[endgroup]
+2025-12-30T14:51:57.3971679Z With the provided path, there will be 21 files uploaded
+2025-12-30T14:51:57.3976159Z Artifact name is valid!
+2025-12-30T14:51:57.3977240Z Root directory input is valid!
+2025-12-30T14:51:57.6443359Z Beginning upload of artifact content to blob storage
+2025-12-30T14:51:58.5154382Z Uploaded bytes 4970275
+2025-12-30T14:51:58.5736307Z Finished uploading artifact content to blob storage!
+2025-12-30T14:51:58.5739370Z SHA256 hash of uploaded artifact zip is fb6866c5940ead2c5ebaa6652ad1a8e5463780c56d60ad2154e522fe8deff777
+2025-12-30T14:51:58.5741334Z Finalizing artifact upload
+2025-12-30T14:51:58.7282390Z Artifact repo-lint-failure-summary.zip successfully finalized. Artifact ID 4991800160
+2025-12-30T14:51:58.7283544Z Artifact repo-lint-failure-summary has been successfully uploaded! Final size is 4970275 bytes. Artifact ID is 4991800160
+2025-12-30T14:51:58.7290915Z Artifact download URL: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696/artifacts/4991800160
+2025-12-30T14:51:58.7403963Z ##[group]Run git config user.name "github-actions[bot]"
+2025-12-30T14:51:58.7404356Z [36;1mgit config user.name "github-actions[bot]"[0m
+2025-12-30T14:51:58.7404750Z [36;1mgit config user.email "github-actions[bot]@users.noreply.github.com"[0m
+2025-12-30T14:51:58.7405144Z [36;1mgit add repo-lint-failure-reports/[0m
+2025-12-30T14:51:58.7405400Z [36;1m[0m
+2025-12-30T14:51:58.7405572Z [36;1m# Commit if there are changes[0m
+2025-12-30T14:51:58.7405840Z [36;1mif git diff --staged --quiet; then[0m
+2025-12-30T14:51:58.7406152Z [36;1m  echo "No changes to commit (logs may already exist)"[0m
+2025-12-30T14:51:58.7406445Z [36;1melse[0m
+2025-12-30T14:51:58.7406727Z [36;1m  git commit -m "CI: Add repo-lint failure report [auto-generated]"[0m
+2025-12-30T14:51:58.7407048Z [36;1m[0m
+2025-12-30T14:51:58.7407219Z [36;1m  # Push with error handling[0m
+2025-12-30T14:51:58.7407458Z [36;1m  if ! git push; then[0m
+2025-12-30T14:51:58.7407792Z [36;1m    echo "::warning::Failed to push failure report to repository"[0m
+2025-12-30T14:51:58.7408106Z [36;1m    exit 1[0m
+2025-12-30T14:51:58.7408283Z [36;1m  fi[0m
+2025-12-30T14:51:58.7408436Z [36;1mfi[0m
+2025-12-30T14:51:58.7440416Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:58.7440644Z ##[endgroup]
+2025-12-30T14:51:58.7672578Z The following paths are ignored by one of your .gitignore files:
+2025-12-30T14:51:58.7673179Z repo-lint-failure-reports
+2025-12-30T14:51:58.7673482Z hint: Use -f if you really want to add them.
+2025-12-30T14:51:58.7673923Z hint: Disable this message with "git config set advice.addIgnoredFile false"
+2025-12-30T14:51:58.7761402Z ##[error]Process completed with exit code 1.
+2025-12-30T14:51:58.7840831Z Post job cleanup.
+2025-12-30T14:51:58.8792563Z [command]/usr/bin/git version
+2025-12-30T14:51:58.8828913Z git version 2.52.0
+2025-12-30T14:51:58.8873208Z Temporarily overriding HOME='/home/runner/work/_temp/e90730cc-4e8b-4409-878a-f08387ce3efe' before making global git config changes
+2025-12-30T14:51:58.8874502Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:58.8879723Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:58.8914904Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:58.8947812Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:58.9180603Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:58.9202073Z http.https://github.com/.extraheader
+2025-12-30T14:51:58.9214358Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-12-30T14:51:58.9244639Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:58.9609179Z Cleaning up orphan processes

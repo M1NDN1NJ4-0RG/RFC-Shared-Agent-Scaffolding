@@ -1,0 +1,157 @@
+﻿2025-12-30T14:51:51.4617129Z ##[group]Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+2025-12-30T14:51:51.4619228Z with:
+2025-12-30T14:51:51.4620548Z   ref: copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:51.4622091Z   fetch-depth: 0
+2025-12-30T14:51:51.4623334Z   token: ***
+2025-12-30T14:51:51.4624283Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.4625513Z   ssh-strict: true
+2025-12-30T14:51:51.4626284Z   ssh-user: git
+2025-12-30T14:51:51.4627065Z   persist-credentials: true
+2025-12-30T14:51:51.4627948Z   clean: true
+2025-12-30T14:51:51.4628860Z   sparse-checkout-cone-mode: true
+2025-12-30T14:51:51.4629838Z   fetch-tags: false
+2025-12-30T14:51:51.4630612Z   show-progress: true
+2025-12-30T14:51:51.4631397Z   lfs: false
+2025-12-30T14:51:51.4632116Z   submodules: false
+2025-12-30T14:51:51.4632933Z   set-safe-directory: true
+2025-12-30T14:51:51.4634132Z ##[endgroup]
+2025-12-30T14:51:51.5750469Z Syncing repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.5753353Z ##[group]Getting Git version info
+2025-12-30T14:51:51.5755115Z Working directory is '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:51.5757622Z [command]/usr/bin/git version
+2025-12-30T14:51:51.5853533Z git version 2.52.0
+2025-12-30T14:51:51.5880442Z ##[endgroup]
+2025-12-30T14:51:51.5895266Z Temporarily overriding HOME='/home/runner/work/_temp/85ad4315-93e1-483b-835d-058e39815735' before making global git config changes
+2025-12-30T14:51:51.5898533Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:51.5902547Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.5943452Z Deleting the contents of '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:51.5946645Z ##[group]Initializing the repository
+2025-12-30T14:51:51.5953104Z [command]/usr/bin/git init /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.6083712Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T14:51:51.6085788Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T14:51:51.6087756Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T14:51:51.6089709Z hint: call:
+2025-12-30T14:51:51.6090855Z hint:
+2025-12-30T14:51:51.6092282Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T14:51:51.6093628Z hint:
+2025-12-30T14:51:51.6094727Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T14:51:51.6096835Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T14:51:51.6098238Z hint:
+2025-12-30T14:51:51.6099287Z hint: 	git branch -m <name>
+2025-12-30T14:51:51.6100148Z hint:
+2025-12-30T14:51:51.6101312Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T14:51:51.6104218Z Initialized empty Git repository in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.git/
+2025-12-30T14:51:51.6108161Z [command]/usr/bin/git remote add origin https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:51.6143059Z ##[endgroup]
+2025-12-30T14:51:51.6144427Z ##[group]Disabling automatic garbage collection
+2025-12-30T14:51:51.6146533Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T14:51:51.6177146Z ##[endgroup]
+2025-12-30T14:51:51.6178436Z ##[group]Setting up auth
+2025-12-30T14:51:51.6183985Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:51.6215976Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:51.6605282Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:51.6637777Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:51.6866218Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T14:51:51.6902868Z ##[endgroup]
+2025-12-30T14:51:51.6905167Z ##[group]Fetching the repository
+2025-12-30T14:51:51.6914684Z [command]/usr/bin/git -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2025-12-30T14:51:52.6142705Z From https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:52.6144348Z  * [new branch]      copilot/add-copilot-instructions-file -> origin/copilot/add-copilot-instructions-file
+2025-12-30T14:51:52.6146103Z  * [new branch]      copilot/add-documentation-bash-scripts -> origin/copilot/add-documentation-bash-scripts
+2025-12-30T14:51:52.6148074Z  * [new branch]      copilot/add-documentation-for-python-wrapper -> origin/copilot/add-documentation-for-python-wrapper
+2025-12-30T14:51:52.6150583Z  * [new branch]      copilot/add-documentation-powershell-wrapper-tests -> origin/copilot/add-documentation-powershell-wrapper-tests
+2025-12-30T14:51:52.6152785Z  * [new branch]      copilot/add-inline-documentation-to-yaml -> origin/copilot/add-inline-documentation-to-yaml
+2025-12-30T14:51:52.6154568Z  * [new branch]      copilot/add-perl-documentation-tests -> origin/copilot/add-perl-documentation-tests
+2025-12-30T14:51:52.6155784Z  * [new branch]      copilot/build-repo-lint-package-cli -> origin/copilot/build-repo-lint-package-cli
+2025-12-30T14:51:52.6157524Z  * [new branch]      copilot/build-repo-lint-package-cli-14f71bf4-6c4e-4779-ba9c-1b2ec890b338 -> origin/copilot/build-repo-lint-package-cli-14f71bf4-6c4e-4779-ba9c-1b2ec890b338
+2025-12-30T14:51:52.6160265Z  * [new branch]      copilot/build-repo-lint-package-cli-4189a7ce-e250-470d-b06c-807ab2249d55 -> origin/copilot/build-repo-lint-package-cli-4189a7ce-e250-470d-b06c-807ab2249d55
+2025-12-30T14:51:52.6162566Z  * [new branch]      copilot/build-repo-lint-package-cli-4bd55873-820e-4bdd-90e7-e984e356cd0c -> origin/copilot/build-repo-lint-package-cli-4bd55873-820e-4bdd-90e7-e984e356cd0c
+2025-12-30T14:51:52.6164817Z  * [new branch]      copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c -> origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:52.6167092Z  * [new branch]      copilot/build-repo-lint-package-cli-80cd8ac9-ae66-4c5d-8341-703e54c052c5 -> origin/copilot/build-repo-lint-package-cli-80cd8ac9-ae66-4c5d-8341-703e54c052c5
+2025-12-30T14:51:52.6169602Z  * [new branch]      copilot/build-repo-lint-package-cli-9b577e9f-2046-4079-a0aa-f5d6e8335750 -> origin/copilot/build-repo-lint-package-cli-9b577e9f-2046-4079-a0aa-f5d6e8335750
+2025-12-30T14:51:52.6171963Z  * [new branch]      copilot/build-repo-lint-package-cli-9fc10f3b-95c6-486a-b421-b91665117c12 -> origin/copilot/build-repo-lint-package-cli-9fc10f3b-95c6-486a-b421-b91665117c12
+2025-12-30T14:51:52.6174279Z  * [new branch]      copilot/build-repo-lint-package-cli-a1e257f0-980e-4008-9da5-6206d8f1f24a -> origin/copilot/build-repo-lint-package-cli-a1e257f0-980e-4008-9da5-6206d8f1f24a
+2025-12-30T14:51:52.6176093Z  * [new branch]      copilot/build-repo-lint-package-cli-again -> origin/copilot/build-repo-lint-package-cli-again
+2025-12-30T14:51:52.6177644Z  * [new branch]      copilot/build-repo-lint-package-cli-another-one -> origin/copilot/build-repo-lint-package-cli-another-one
+2025-12-30T14:51:52.6179761Z  * [new branch]      copilot/build-repo-lint-package-cli-fccdbca9-ce1d-4ecb-9296-9783910d6f47 -> origin/copilot/build-repo-lint-package-cli-fccdbca9-ce1d-4ecb-9296-9783910d6f47
+2025-12-30T14:51:52.6181745Z  * [new branch]      copilot/build-repo-lint-package-cli-one-more-time -> origin/copilot/build-repo-lint-package-cli-one-more-time
+2025-12-30T14:51:52.6183579Z  * [new branch]      copilot/build-repo-lint-package-cli-please-work -> origin/copilot/build-repo-lint-package-cli-please-work
+2025-12-30T14:51:52.6185090Z  * [new branch]      copilot/build-repo-lint-package-cli-yet-again -> origin/copilot/build-repo-lint-package-cli-yet-again
+2025-12-30T14:51:52.6186478Z  * [new branch]      copilot/build-repo-lint-python-package -> origin/copilot/build-repo-lint-python-package
+2025-12-30T14:51:52.6187784Z  * [new branch]      copilot/create-future-work-tracker-doc -> origin/copilot/create-future-work-tracker-doc
+2025-12-30T14:51:52.6189217Z  * [new branch]      copilot/enhance-safe-archive-command -> origin/copilot/enhance-safe-archive-command
+2025-12-30T14:51:52.6190406Z  * [new branch]      copilot/epic-rust-canonical-tool -> origin/copilot/epic-rust-canonical-tool
+2025-12-30T14:51:52.6191546Z  * [new branch]      copilot/epic-rust-tool-and-wrappers -> origin/copilot/epic-rust-tool-and-wrappers
+2025-12-30T14:51:52.6192903Z  * [new branch]      copilot/epic-rust-tool-compatibility-wrappers -> origin/copilot/epic-rust-tool-compatibility-wrappers
+2025-12-30T14:51:52.6194521Z  * [new branch]      copilot/epic-rust-tool-compatibility-wrappers-again -> origin/copilot/epic-rust-tool-compatibility-wrappers-again
+2025-12-30T14:51:52.6195954Z  * [new branch]      copilot/epic-rust-tool-wrappers -> origin/copilot/epic-rust-tool-wrappers
+2025-12-30T14:51:52.6197134Z  * [new branch]      copilot/epic-rust-tool-wrappers-again -> origin/copilot/epic-rust-tool-wrappers-again
+2025-12-30T14:51:52.6198451Z  * [new branch]      copilot/epic-rust-tool-wrappers-another-one -> origin/copilot/epic-rust-tool-wrappers-another-one
+2025-12-30T14:51:52.6200170Z  * [new branch]      copilot/epic-tracker-rfc-agent-scaffolding -> origin/copilot/epic-tracker-rfc-agent-scaffolding
+2025-12-30T14:51:52.6201494Z  * [new branch]      copilot/fix-action-workflow-issue -> origin/copilot/fix-action-workflow-issue
+2025-12-30T14:51:52.6202861Z  * [new branch]      copilot/fix-perl-automerge-test -> origin/copilot/fix-perl-automerge-test
+2025-12-30T14:51:52.6204075Z  * [new branch]      copilot/fix-pr-body-guardrails-nits -> origin/copilot/fix-pr-body-guardrails-nits
+2025-12-30T14:51:52.6205452Z  * [new branch]      copilot/fix-pr-body-guardrails-workflow -> origin/copilot/fix-pr-body-guardrails-workflow
+2025-12-30T14:51:52.6206928Z  * [new branch]      copilot/fix-preflight-automerge-test-failure -> origin/copilot/fix-preflight-automerge-test-failure
+2025-12-30T14:51:52.6208347Z  * [new branch]      copilot/harden-pr-body-normalization -> origin/copilot/harden-pr-body-normalization
+2025-12-30T14:51:52.6209955Z  * [new branch]      copilot/implement-hybrid-logging-contract -> origin/copilot/implement-hybrid-logging-contract
+2025-12-30T14:51:52.6211390Z  * [new branch]      copilot/implement-rust-canonical-tool -> origin/copilot/implement-rust-canonical-tool
+2025-12-30T14:51:52.6212858Z  * [new branch]      copilot/implement-rust-canonical-tool-again -> origin/copilot/implement-rust-canonical-tool-again
+2025-12-30T14:51:52.6214470Z  * [new branch]      copilot/implement-rust-canonical-tool-another-one -> origin/copilot/implement-rust-canonical-tool-another-one
+2025-12-30T14:51:52.6215981Z  * [new branch]      copilot/implement-safe-check-subcommand -> origin/copilot/implement-safe-check-subcommand
+2025-12-30T14:51:52.6217173Z  * [new branch]      copilot/phase-0-quick-wins -> origin/copilot/phase-0-quick-wins
+2025-12-30T14:51:52.6218341Z  * [new branch]      copilot/refactor-repository-structure -> origin/copilot/refactor-repository-structure
+2025-12-30T14:51:52.6220027Z  * [new branch]      copilot/refactor-repository-structure-again -> origin/copilot/refactor-repository-structure-again
+2025-12-30T14:51:52.6221657Z  * [new branch]      copilot/refactor-repository-structure-another-one -> origin/copilot/refactor-repository-structure-another-one
+2025-12-30T14:51:52.6223403Z  * [new branch]      copilot/refactor-repository-structure-yet-again -> origin/copilot/refactor-repository-structure-yet-again
+2025-12-30T14:51:52.6225143Z  * [new branch]      copilot/refactor-rust-tool-compatibility -> origin/copilot/refactor-rust-tool-compatibility
+2025-12-30T14:51:52.6226416Z  * [new branch]      copilot/repo-cleanup-follow-ups -> origin/copilot/repo-cleanup-follow-ups
+2025-12-30T14:51:52.6227655Z  * [new branch]      copilot/repo-cleanup-follow-ups-again -> origin/copilot/repo-cleanup-follow-ups-again
+2025-12-30T14:51:52.6229243Z  * [new branch]      copilot/repo-cleanup-follow-ups-another-one -> origin/copilot/repo-cleanup-follow-ups-another-one
+2025-12-30T14:51:52.6230615Z  * [new branch]      copilot/review-future-work-status -> origin/copilot/review-future-work-status
+2025-12-30T14:51:52.6231617Z  * [new branch]      copilot/sub-pr-39       -> origin/copilot/sub-pr-39
+2025-12-30T14:51:52.6232427Z  * [new branch]      copilot/sub-pr-82       -> origin/copilot/sub-pr-82
+2025-12-30T14:51:52.6233736Z  * [new branch]      copilot/sub-pr-82-38ef1eb9-b10b-45ef-a975-4f7ddc949f9b -> origin/copilot/sub-pr-82-38ef1eb9-b10b-45ef-a975-4f7ddc949f9b
+2025-12-30T14:51:52.6235052Z  * [new branch]      copilot/sub-pr-82-again -> origin/copilot/sub-pr-82-again
+2025-12-30T14:51:52.6236029Z  * [new branch]      copilot/sub-pr-82-another-one -> origin/copilot/sub-pr-82-another-one
+2025-12-30T14:51:52.6237093Z  * [new branch]      copilot/sub-pr-82-one-more-time -> origin/copilot/sub-pr-82-one-more-time
+2025-12-30T14:51:52.6238168Z  * [new branch]      copilot/sub-pr-82-please-work -> origin/copilot/sub-pr-82-please-work
+2025-12-30T14:51:52.6239362Z  * [new branch]      copilot/sub-pr-82-yet-again -> origin/copilot/sub-pr-82-yet-again
+2025-12-30T14:51:52.6240431Z  * [new branch]      copilot/update-docs-and-clarity -> origin/copilot/update-docs-and-clarity
+2025-12-30T14:51:52.6241744Z  * [new branch]      copilot/update-docs-for-safe-snippet-lines -> origin/copilot/update-docs-for-safe-snippet-lines
+2025-12-30T14:51:52.6243338Z  * [new branch]      copilot/update-epic-tracker-follow-ups -> origin/copilot/update-epic-tracker-follow-ups
+2025-12-30T14:51:52.6244837Z  * [new branch]      copilot/update-epic-tracker-follow-ups-again -> origin/copilot/update-epic-tracker-follow-ups-again
+2025-12-30T14:51:52.6246465Z  * [new branch]      copilot/update-epic-tracker-follow-ups-another-one -> origin/copilot/update-epic-tracker-follow-ups-another-one
+2025-12-30T14:51:52.6248157Z  * [new branch]      copilot/update-epic-tracker-follow-ups-yet-again -> origin/copilot/update-epic-tracker-follow-ups-yet-again
+2025-12-30T14:51:52.6249773Z  * [new branch]      copilot/update-epic-tracker-items -> origin/copilot/update-epic-tracker-items
+2025-12-30T14:51:52.6251060Z  * [new branch]      copilot/update-epic-tracker-milestones -> origin/copilot/update-epic-tracker-milestones
+2025-12-30T14:51:52.6252338Z  * [new branch]      copilot/update-epic-tracker-v0-1-0 -> origin/copilot/update-epic-tracker-v0-1-0
+2025-12-30T14:51:52.6253777Z  * [new branch]      copilot/update-logging-fidelity-hybrid-contract -> origin/copilot/update-logging-fidelity-hybrid-contract
+2025-12-30T14:51:52.6255187Z  * [new branch]      copilot/update-pr-body-guardrails -> origin/copilot/update-pr-body-guardrails
+2025-12-30T14:51:52.6256492Z  * [new branch]      copilot/update-pr-body-guardrails-workflow -> origin/copilot/update-pr-body-guardrails-workflow
+2025-12-30T14:51:52.6257968Z  * [new branch]      copilot/update-rfc-shared-agent-scaffolding -> origin/copilot/update-rfc-shared-agent-scaffolding
+2025-12-30T14:51:52.6259284Z  * [new branch]      m1ndn1nj4-patch-1       -> origin/m1ndn1nj4-patch-1
+2025-12-30T14:51:52.6260079Z  * [new branch]      m1ndn1nj4-patch-2       -> origin/m1ndn1nj4-patch-2
+2025-12-30T14:51:52.6260851Z  * [new branch]      m1ndn1nj4-patch-3       -> origin/m1ndn1nj4-patch-3
+2025-12-30T14:51:52.6261600Z  * [new branch]      m1ndn1nj4-patch-4       -> origin/m1ndn1nj4-patch-4
+2025-12-30T14:51:52.6262373Z  * [new branch]      m1ndn1nj4-patch-5       -> origin/m1ndn1nj4-patch-5
+2025-12-30T14:51:52.6263150Z  * [new branch]      m1ndn1nj4-patch-6       -> origin/m1ndn1nj4-patch-6
+2025-12-30T14:51:52.6264112Z  * [new branch]      m1ndn1nj4-patch-7       -> origin/m1ndn1nj4-patch-7
+2025-12-30T14:51:52.6264878Z  * [new branch]      m1ndn1nj4-patch-8       -> origin/m1ndn1nj4-patch-8
+2025-12-30T14:51:52.6265636Z  * [new branch]      m1ndn1nj4-patch-9       -> origin/m1ndn1nj4-patch-9
+2025-12-30T14:51:52.6266513Z  * [new branch]      m1ndn1nj4/add-initial-files -> origin/m1ndn1nj4/add-initial-files
+2025-12-30T14:51:52.6267306Z  * [new branch]      main                    -> origin/main
+2025-12-30T14:51:52.6335191Z ##[endgroup]
+2025-12-30T14:51:52.6335781Z ##[group]Determining the checkout info
+2025-12-30T14:51:52.6341871Z [command]/usr/bin/git branch --list --remote origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:52.6372919Z   origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:52.6377319Z ##[endgroup]
+2025-12-30T14:51:52.6381900Z [command]/usr/bin/git sparse-checkout disable
+2025-12-30T14:51:52.6424617Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-30T14:51:52.6450739Z ##[group]Checking out the ref
+2025-12-30T14:51:52.6455067Z [command]/usr/bin/git checkout --progress --force -B copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c refs/remotes/origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c
+2025-12-30T14:51:52.6888820Z Switched to a new branch 'copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c'
+2025-12-30T14:51:52.6892061Z branch 'copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c' set up to track 'origin/copilot/build-repo-lint-package-cli-4db5eac3-4207-4c06-b4ab-200ce8833b1c'.
+2025-12-30T14:51:52.6906478Z ##[endgroup]
+2025-12-30T14:51:52.6946153Z [command]/usr/bin/git log -1 --format=%H
+2025-12-30T14:51:52.6968238Z 1260744479dfd1063e7b851fed4d0f27c11f5d51

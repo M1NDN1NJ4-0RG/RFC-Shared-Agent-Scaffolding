@@ -1,0 +1,64 @@
+﻿2025-12-30T14:51:04.9073177Z ##[group]Run python3 -m pip install --upgrade pip
+2025-12-30T14:51:04.9073807Z [36;1mpython3 -m pip install --upgrade pip[0m
+2025-12-30T14:51:04.9074331Z [36;1mpython3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1[0m
+2025-12-30T14:51:04.9122054Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:04.9122442Z env:
+2025-12-30T14:51:04.9122752Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.9123253Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:04.9123731Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.9124182Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.9124600Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.9125037Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:04.9125385Z ##[endgroup]
+2025-12-30T14:51:05.6528042Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages (25.3)
+2025-12-30T14:51:06.3578679Z Collecting black==24.10.0
+2025-12-30T14:51:06.4632638Z   Downloading black-24.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+2025-12-30T14:51:06.8451717Z Collecting ruff==0.8.4
+2025-12-30T14:51:06.8656973Z   Downloading ruff-0.8.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (25 kB)
+2025-12-30T14:51:06.9034924Z Collecting pylint==3.3.2
+2025-12-30T14:51:06.9239222Z   Downloading pylint-3.3.2-py3-none-any.whl.metadata (12 kB)
+2025-12-30T14:51:06.9433386Z Collecting yamllint==1.35.1
+2025-12-30T14:51:06.9639395Z   Downloading yamllint-1.35.1-py3-none-any.whl.metadata (4.2 kB)
+2025-12-30T14:51:06.9832392Z Collecting click>=8.0.0 (from black==24.10.0)
+2025-12-30T14:51:07.0033714Z   Downloading click-8.3.1-py3-none-any.whl.metadata (2.6 kB)
+2025-12-30T14:51:07.0145767Z Collecting mypy-extensions>=0.4.3 (from black==24.10.0)
+2025-12-30T14:51:07.0346363Z   Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+2025-12-30T14:51:07.0510025Z Collecting packaging>=22.0 (from black==24.10.0)
+2025-12-30T14:51:07.0709961Z   Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+2025-12-30T14:51:07.0847724Z Collecting pathspec>=0.9.0 (from black==24.10.0)
+2025-12-30T14:51:07.1049712Z   Downloading pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+2025-12-30T14:51:07.1278317Z Collecting platformdirs>=2 (from black==24.10.0)
+2025-12-30T14:51:07.1479633Z   Downloading platformdirs-4.5.1-py3-none-any.whl.metadata (12 kB)
+2025-12-30T14:51:07.1657502Z Collecting dill>=0.3.6 (from pylint==3.3.2)
+2025-12-30T14:51:07.1866003Z   Downloading dill-0.4.0-py3-none-any.whl.metadata (10 kB)
+2025-12-30T14:51:07.2282223Z Collecting astroid<=3.4.0-dev0,>=3.3.5 (from pylint==3.3.2)
+2025-12-30T14:51:07.2486699Z   Downloading astroid-3.3.11-py3-none-any.whl.metadata (4.4 kB)
+2025-12-30T14:51:07.3062678Z Collecting isort!=5.13.0,<6,>=4.2.5 (from pylint==3.3.2)
+2025-12-30T14:51:07.3268541Z   Downloading isort-5.13.2-py3-none-any.whl.metadata (12 kB)
+2025-12-30T14:51:07.3404904Z Collecting mccabe<0.8,>=0.6 (from pylint==3.3.2)
+2025-12-30T14:51:07.3604726Z   Downloading mccabe-0.7.0-py2.py3-none-any.whl.metadata (5.0 kB)
+2025-12-30T14:51:07.3790757Z Collecting tomlkit>=0.10.1 (from pylint==3.3.2)
+2025-12-30T14:51:07.3990952Z   Downloading tomlkit-0.13.3-py3-none-any.whl.metadata (2.8 kB)
+2025-12-30T14:51:07.4393168Z Collecting pyyaml (from yamllint==1.35.1)
+2025-12-30T14:51:07.4634939Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2025-12-30T14:51:07.4927522Z Downloading black-24.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl (1.7 MB)
+2025-12-30T14:51:07.5619485Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 34.0 MB/s  0:00:00
+2025-12-30T14:51:07.5821652Z Downloading ruff-0.8.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.2 MB)
+2025-12-30T14:51:07.6674618Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.2/11.2 MB 133.3 MB/s  0:00:00
+2025-12-30T14:51:07.6875112Z Downloading pylint-3.3.2-py3-none-any.whl (521 kB)
+2025-12-30T14:51:07.7192780Z Downloading yamllint-1.35.1-py3-none-any.whl (66 kB)
+2025-12-30T14:51:07.7423921Z Downloading astroid-3.3.11-py3-none-any.whl (275 kB)
+2025-12-30T14:51:07.7679580Z Downloading isort-5.13.2-py3-none-any.whl (92 kB)
+2025-12-30T14:51:07.7901766Z Downloading mccabe-0.7.0-py2.py3-none-any.whl (7.3 kB)
+2025-12-30T14:51:07.8124301Z Downloading click-8.3.1-py3-none-any.whl (108 kB)
+2025-12-30T14:51:07.8367840Z Downloading dill-0.4.0-py3-none-any.whl (119 kB)
+2025-12-30T14:51:07.8597203Z Downloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+2025-12-30T14:51:07.8816084Z Downloading packaging-25.0-py3-none-any.whl (66 kB)
+2025-12-30T14:51:07.9043283Z Downloading pathspec-0.12.1-py3-none-any.whl (31 kB)
+2025-12-30T14:51:07.9276411Z Downloading platformdirs-4.5.1-py3-none-any.whl (18 kB)
+2025-12-30T14:51:07.9498560Z Downloading tomlkit-0.13.3-py3-none-any.whl (38 kB)
+2025-12-30T14:51:07.9724530Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+2025-12-30T14:51:07.9802961Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 114.1 MB/s  0:00:00
+2025-12-30T14:51:08.0354188Z Installing collected packages: tomlkit, ruff, pyyaml, platformdirs, pathspec, packaging, mypy-extensions, mccabe, isort, dill, click, astroid, yamllint, pylint, black
+2025-12-30T14:51:09.1510777Z 
+2025-12-30T14:51:09.1526873Z Successfully installed astroid-3.3.11 black-24.10.0 click-8.3.1 dill-0.4.0 isort-5.13.2 mccabe-0.7.0 mypy-extensions-1.1.0 packaging-25.0 pathspec-0.12.1 platformdirs-4.5.1 pylint-3.3.2 pyyaml-6.0.3 ruff-0.8.4 tomlkit-0.13.3 yamllint-1.35.1

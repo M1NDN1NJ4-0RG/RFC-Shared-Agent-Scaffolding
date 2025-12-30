@@ -1,0 +1,243 @@
+﻿2025-12-30T14:51:02.1829318Z Current runner version: '2.330.0'
+2025-12-30T14:51:02.1854125Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:02.1854990Z Hosted Compute Agent
+2025-12-30T14:51:02.1855536Z Version: 20251211.462
+2025-12-30T14:51:02.1856131Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:02.1856759Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:02.1857681Z Worker ID: {d1fc4dad-31a7-4a90-80da-d7976c7ed286}
+2025-12-30T14:51:02.1858358Z ##[endgroup]
+2025-12-30T14:51:02.1858863Z ##[group]Operating System
+2025-12-30T14:51:02.1859479Z Ubuntu
+2025-12-30T14:51:02.1859941Z 24.04.3
+2025-12-30T14:51:02.1860355Z LTS
+2025-12-30T14:51:02.1860922Z ##[endgroup]
+2025-12-30T14:51:02.1861436Z ##[group]Runner Image
+2025-12-30T14:51:02.1861899Z Image: ubuntu-24.04
+2025-12-30T14:51:02.1862537Z Version: 20251215.174.1
+2025-12-30T14:51:02.1863487Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:02.1865061Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:02.1866066Z ##[endgroup]
+2025-12-30T14:51:02.1867500Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:02.1869642Z Contents: write
+2025-12-30T14:51:02.1870187Z Metadata: read
+2025-12-30T14:51:02.1870812Z PullRequests: write
+2025-12-30T14:51:02.1871293Z ##[endgroup]
+2025-12-30T14:51:02.1873352Z Secret source: Actions
+2025-12-30T14:51:02.1874210Z Prepare workflow directory
+2025-12-30T14:51:02.2193999Z Prepare all required actions
+2025-12-30T14:51:02.2231374Z Getting action download info
+2025-12-30T14:51:02.5897816Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:02.6949211Z Download action repository 'actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' (SHA:0b93645e9fea7318ecaed2b359559ac225c90a2b)
+2025-12-30T14:51:02.8919447Z Download action repository 'actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882' (SHA:b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882)
+2025-12-30T14:51:03.2322564Z Complete job name: Repo Lint: YAML
+2025-12-30T14:51:03.3142908Z ##[group]Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+2025-12-30T14:51:03.3144752Z with:
+2025-12-30T14:51:03.3145719Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.3147494Z   token: ***
+2025-12-30T14:51:03.3148276Z   ssh-strict: true
+2025-12-30T14:51:03.3149060Z   ssh-user: git
+2025-12-30T14:51:03.3149849Z   persist-credentials: true
+2025-12-30T14:51:03.3150743Z   clean: true
+2025-12-30T14:51:03.3151541Z   sparse-checkout-cone-mode: true
+2025-12-30T14:51:03.3152514Z   fetch-depth: 1
+2025-12-30T14:51:03.3153280Z   fetch-tags: false
+2025-12-30T14:51:03.3154079Z   show-progress: true
+2025-12-30T14:51:03.3154878Z   lfs: false
+2025-12-30T14:51:03.3155595Z   submodules: false
+2025-12-30T14:51:03.3156395Z   set-safe-directory: true
+2025-12-30T14:51:03.3157673Z ##[endgroup]
+2025-12-30T14:51:03.4249447Z Syncing repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.4252536Z ##[group]Getting Git version info
+2025-12-30T14:51:03.4254449Z Working directory is '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:03.4256823Z [command]/usr/bin/git version
+2025-12-30T14:51:03.4330026Z git version 2.52.0
+2025-12-30T14:51:03.4355952Z ##[endgroup]
+2025-12-30T14:51:03.4370331Z Temporarily overriding HOME='/home/runner/work/_temp/461b3976-12bc-4819-a547-376c1af90fe5' before making global git config changes
+2025-12-30T14:51:03.4373260Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:03.4376479Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.4417638Z Deleting the contents of '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:03.4420541Z ##[group]Initializing the repository
+2025-12-30T14:51:03.4424204Z [command]/usr/bin/git init /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.4521697Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T14:51:03.4525443Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T14:51:03.4528488Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T14:51:03.4530123Z hint: call:
+2025-12-30T14:51:03.4530893Z hint:
+2025-12-30T14:51:03.4532326Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T14:51:03.4533482Z hint:
+2025-12-30T14:51:03.4534556Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T14:51:03.4536650Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T14:51:03.4538597Z hint:
+2025-12-30T14:51:03.4539369Z hint: 	git branch -m <name>
+2025-12-30T14:51:03.4540209Z hint:
+2025-12-30T14:51:03.4541370Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T14:51:03.4543884Z Initialized empty Git repository in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.git/
+2025-12-30T14:51:03.4547889Z [command]/usr/bin/git remote add origin https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.4572740Z ##[endgroup]
+2025-12-30T14:51:03.4574104Z ##[group]Disabling automatic garbage collection
+2025-12-30T14:51:03.4575856Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T14:51:03.4605104Z ##[endgroup]
+2025-12-30T14:51:03.4606371Z ##[group]Setting up auth
+2025-12-30T14:51:03.4611090Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:03.4642123Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:03.4981514Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:03.5019262Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:03.5236758Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T14:51:03.5271093Z ##[endgroup]
+2025-12-30T14:51:03.5279152Z ##[group]Fetching the repository
+2025-12-30T14:51:03.5281865Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2:refs/remotes/pull/130/merge
+2025-12-30T14:51:03.7112441Z From https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.7115301Z  * [new ref]         d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2 -> pull/130/merge
+2025-12-30T14:51:03.7147112Z ##[endgroup]
+2025-12-30T14:51:03.7149373Z ##[group]Determining the checkout info
+2025-12-30T14:51:03.7151876Z ##[endgroup]
+2025-12-30T14:51:03.7154752Z [command]/usr/bin/git sparse-checkout disable
+2025-12-30T14:51:03.7196192Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-30T14:51:03.7225969Z ##[group]Checking out the ref
+2025-12-30T14:51:03.7229484Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/130/merge
+2025-12-30T14:51:03.7624036Z Note: switching to 'refs/remotes/pull/130/merge'.
+2025-12-30T14:51:03.7625441Z 
+2025-12-30T14:51:03.7626482Z You are in 'detached HEAD' state. You can look around, make experimental
+2025-12-30T14:51:03.7629028Z changes and commit them, and you can discard any commits you make in this
+2025-12-30T14:51:03.7630732Z state without impacting any branches by switching back to a branch.
+2025-12-30T14:51:03.7632132Z 
+2025-12-30T14:51:03.7632890Z If you want to create a new branch to retain commits you create, you may
+2025-12-30T14:51:03.7634479Z do so (now or later) by using -c with the switch command. Example:
+2025-12-30T14:51:03.7635763Z 
+2025-12-30T14:51:03.7636236Z   git switch -c <new-branch-name>
+2025-12-30T14:51:03.7637216Z 
+2025-12-30T14:51:03.7637598Z Or undo this operation with:
+2025-12-30T14:51:03.7638178Z 
+2025-12-30T14:51:03.7638491Z   git switch -
+2025-12-30T14:51:03.7638933Z 
+2025-12-30T14:51:03.7639725Z Turn off this advice by setting config variable advice.detachedHead to false
+2025-12-30T14:51:03.7640801Z 
+2025-12-30T14:51:03.7641979Z HEAD is now at d13871f Merge 1260744479dfd1063e7b851fed4d0f27c11f5d51 into f227266c3f6463f0a986ee4d521673a34e0e8803
+2025-12-30T14:51:03.7645423Z ##[endgroup]
+2025-12-30T14:51:03.7671738Z [command]/usr/bin/git log -1 --format=%H
+2025-12-30T14:51:03.7694003Z d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2
+2025-12-30T14:51:03.8032732Z ##[group]Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+2025-12-30T14:51:03.8034109Z with:
+2025-12-30T14:51:03.8034778Z   python-version: 3.11
+2025-12-30T14:51:03.8035568Z   check-latest: false
+2025-12-30T14:51:03.8036567Z   token: ***
+2025-12-30T14:51:03.8037520Z   update-environment: true
+2025-12-30T14:51:03.8038359Z   allow-prereleases: false
+2025-12-30T14:51:03.8039165Z ##[endgroup]
+2025-12-30T14:51:03.9624016Z ##[group]Installed versions
+2025-12-30T14:51:03.9740272Z Successfully set up CPython (3.11.14)
+2025-12-30T14:51:03.9742772Z ##[endgroup]
+2025-12-30T14:51:03.9901077Z ##[group]Run python3 -m pip install --upgrade pip
+2025-12-30T14:51:03.9902409Z [36;1mpython3 -m pip install --upgrade pip[0m
+2025-12-30T14:51:03.9903563Z [36;1mpython3 -m pip install yamllint==1.35.1[0m
+2025-12-30T14:51:03.9954104Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:03.9954958Z env:
+2025-12-30T14:51:03.9955841Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:03.9957502Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:03.9959018Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:03.9960346Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:03.9961726Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:03.9963102Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:03.9964238Z ##[endgroup]
+2025-12-30T14:51:04.6863719Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages (25.3)
+2025-12-30T14:51:05.2911809Z Collecting yamllint==1.35.1
+2025-12-30T14:51:05.3471519Z   Downloading yamllint-1.35.1-py3-none-any.whl.metadata (4.2 kB)
+2025-12-30T14:51:05.3615818Z Collecting pathspec>=0.5.3 (from yamllint==1.35.1)
+2025-12-30T14:51:05.3652869Z   Downloading pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+2025-12-30T14:51:05.4187297Z Collecting pyyaml (from yamllint==1.35.1)
+2025-12-30T14:51:05.4232084Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2025-12-30T14:51:05.4306521Z Downloading yamllint-1.35.1-py3-none-any.whl (66 kB)
+2025-12-30T14:51:05.4447741Z Downloading pathspec-0.12.1-py3-none-any.whl (31 kB)
+2025-12-30T14:51:05.4504492Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+2025-12-30T14:51:05.4603557Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 98.5 MB/s  0:00:00
+2025-12-30T14:51:05.4781645Z Installing collected packages: pyyaml, pathspec, yamllint
+2025-12-30T14:51:05.5726096Z 
+2025-12-30T14:51:05.5735808Z Successfully installed pathspec-0.12.1 pyyaml-6.0.3 yamllint-1.35.1
+2025-12-30T14:51:05.6272499Z ##[group]Run python3 -m tools.repo_lint check --ci --only yaml 2>&1 | tee yaml-lint-output.txt
+2025-12-30T14:51:05.6273398Z [36;1mpython3 -m tools.repo_lint check --ci --only yaml 2>&1 | tee yaml-lint-output.txt[0m
+2025-12-30T14:51:05.6273982Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:05.6310059Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:05.6310401Z env:
+2025-12-30T14:51:05.6310753Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.6311560Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:05.6312091Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.6312563Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.6313035Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.6313575Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:05.6313978Z ##[endgroup]
+2025-12-30T14:51:06.0471868Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:06.0472464Z 
+2025-12-30T14:51:06.0472961Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0473695Z   YAML Linting
+2025-12-30T14:51:06.0474382Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0474875Z 
+2025-12-30T14:51:06.0475205Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0475705Z   Linting Results
+2025-12-30T14:51:06.0476217Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0476570Z 
+2025-12-30T14:51:06.0476763Z ❌ yamllint: FAILED (20 violation(s))
+2025-12-30T14:51:06.0477790Z    .: [yamllint] .github/workflows/drift-detection.yml:265:121: [warning] line too long (141 > 120 characters) (line-length)
+2025-12-30T14:51:06.0478935Z    .: [yamllint] .github/workflows/drift-detection.yml:266:121: [warning] line too long (149 > 120 characters) (line-length)
+2025-12-30T14:51:06.0480082Z    .: [yamllint] .github/workflows/drift-detection.yml:267:121: [warning] line too long (141 > 120 characters) (line-length)
+2025-12-30T14:51:06.0481236Z    .: [yamllint] .github/workflows/lint-and-format-checker.yml:105:121: [warning] line too long (168 > 120 characters) (line-length)
+2025-12-30T14:51:06.0482439Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:179:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0483654Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:184:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0484847Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:187:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0486038Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:191:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0487471Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:194:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0488671Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:206:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0489887Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:210:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0491069Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:217:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0492059Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:220:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0493018Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:227:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0493989Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:241:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0495194Z    .: [yamllint] .github/workflows/rust-conformance.yml:98:121: [warning] line too long (164 > 120 characters) (line-length)
+2025-12-30T14:51:06.0496278Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:1: [warning] missing document start "---" (document-start)
+2025-12-30T14:51:06.0497695Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:121: [warning] line too long (130 > 120 characters) (line-length)
+2025-12-30T14:51:06.0499061Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:7:12: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0500316Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:11:4: [error] wrong indentation: expected 2 but found 3 (indentation)
+2025-12-30T14:51:06.0500969Z 
+2025-12-30T14:51:06.0501297Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0501800Z ❌ Found 20 violation(s) across 1 tool(s)
+2025-12-30T14:51:06.0579798Z ##[error]Process completed with exit code 1.
+2025-12-30T14:51:06.0675970Z ##[group]Run actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+2025-12-30T14:51:06.0676474Z with:
+2025-12-30T14:51:06.0676731Z   name: yaml-lint-results
+2025-12-30T14:51:06.0677336Z   path: yaml-lint-output.txt
+2025-12-30T14:51:06.0677648Z   retention-days: 7
+2025-12-30T14:51:06.0677916Z   if-no-files-found: warn
+2025-12-30T14:51:06.0678210Z   compression-level: 6
+2025-12-30T14:51:06.0678506Z   overwrite: false
+2025-12-30T14:51:06.0678785Z   include-hidden-files: false
+2025-12-30T14:51:06.0679074Z env:
+2025-12-30T14:51:06.0679394Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.0679925Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:06.0680428Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.0680891Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.0681350Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.0681855Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:06.0682248Z ##[endgroup]
+2025-12-30T14:51:06.2844495Z With the provided path, there will be 1 file uploaded
+2025-12-30T14:51:06.2850366Z Artifact name is valid!
+2025-12-30T14:51:06.2851550Z Root directory input is valid!
+2025-12-30T14:51:06.3602106Z Beginning upload of artifact content to blob storage
+2025-12-30T14:51:06.4441314Z Uploaded bytes 662
+2025-12-30T14:51:06.4636335Z Finished uploading artifact content to blob storage!
+2025-12-30T14:51:06.4640836Z SHA256 hash of uploaded artifact zip is 6109bee4e9d285e24d9d481c9e639e05bd8a5266f21be9017afd9fc06adff35e
+2025-12-30T14:51:06.4642867Z Finalizing artifact upload
+2025-12-30T14:51:06.5515368Z Artifact yaml-lint-results.zip successfully finalized. Artifact ID 4991794621
+2025-12-30T14:51:06.5517347Z Artifact yaml-lint-results has been successfully uploaded! Final size is 662 bytes. Artifact ID is 4991794621
+2025-12-30T14:51:06.5526577Z Artifact download URL: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696/artifacts/4991794621
+2025-12-30T14:51:06.5730148Z Post job cleanup.
+2025-12-30T14:51:06.6686685Z [command]/usr/bin/git version
+2025-12-30T14:51:06.6724121Z git version 2.52.0
+2025-12-30T14:51:06.6767552Z Temporarily overriding HOME='/home/runner/work/_temp/dc09019b-9748-462a-8f19-aa778170e7ca' before making global git config changes
+2025-12-30T14:51:06.6769169Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:06.6772946Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:06.6807578Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:06.6839805Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:06.7071560Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:06.7092245Z http.https://github.com/.extraheader
+2025-12-30T14:51:06.7105441Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-12-30T14:51:06.7135750Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:06.7468315Z Cleaning up orphan processes

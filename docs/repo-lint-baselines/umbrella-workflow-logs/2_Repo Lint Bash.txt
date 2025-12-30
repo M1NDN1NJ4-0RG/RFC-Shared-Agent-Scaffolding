@@ -1,0 +1,320 @@
+﻿2025-12-30T14:51:02.7990586Z Current runner version: '2.330.0'
+2025-12-30T14:51:02.8013733Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:02.8014651Z Hosted Compute Agent
+2025-12-30T14:51:02.8015183Z Version: 20251211.462
+2025-12-30T14:51:02.8015767Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:02.8016504Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:02.8017490Z Worker ID: {77062f4e-30d3-41b0-a665-6f6a88e09063}
+2025-12-30T14:51:02.8018188Z ##[endgroup]
+2025-12-30T14:51:02.8018750Z ##[group]Operating System
+2025-12-30T14:51:02.8019307Z Ubuntu
+2025-12-30T14:51:02.8019734Z 24.04.3
+2025-12-30T14:51:02.8020232Z LTS
+2025-12-30T14:51:02.8020641Z ##[endgroup]
+2025-12-30T14:51:02.8021142Z ##[group]Runner Image
+2025-12-30T14:51:02.8021672Z Image: ubuntu-24.04
+2025-12-30T14:51:02.8022194Z Version: 20251215.174.1
+2025-12-30T14:51:02.8023189Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:02.8024733Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:02.8025712Z ##[endgroup]
+2025-12-30T14:51:02.8026966Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:02.8028763Z Contents: write
+2025-12-30T14:51:02.8029386Z Metadata: read
+2025-12-30T14:51:02.8029880Z PullRequests: write
+2025-12-30T14:51:02.8030429Z ##[endgroup]
+2025-12-30T14:51:02.8032335Z Secret source: Actions
+2025-12-30T14:51:02.8033135Z Prepare workflow directory
+2025-12-30T14:51:02.8367516Z Prepare all required actions
+2025-12-30T14:51:02.8404494Z Getting action download info
+2025-12-30T14:51:03.2741659Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:03.3865245Z Download action repository 'actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' (SHA:0b93645e9fea7318ecaed2b359559ac225c90a2b)
+2025-12-30T14:51:03.5856448Z Download action repository 'actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882' (SHA:b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882)
+2025-12-30T14:51:04.0531116Z Complete job name: Repo Lint: Bash
+2025-12-30T14:51:04.1363818Z ##[group]Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+2025-12-30T14:51:04.1365559Z with:
+2025-12-30T14:51:04.1366536Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.1368373Z   token: ***
+2025-12-30T14:51:04.1369140Z   ssh-strict: true
+2025-12-30T14:51:04.1369929Z   ssh-user: git
+2025-12-30T14:51:04.1370736Z   persist-credentials: true
+2025-12-30T14:51:04.1371621Z   clean: true
+2025-12-30T14:51:04.1372470Z   sparse-checkout-cone-mode: true
+2025-12-30T14:51:04.1373477Z   fetch-depth: 1
+2025-12-30T14:51:04.1374261Z   fetch-tags: false
+2025-12-30T14:51:04.1375093Z   show-progress: true
+2025-12-30T14:51:04.1375908Z   lfs: false
+2025-12-30T14:51:04.1376658Z   submodules: false
+2025-12-30T14:51:04.1377711Z   set-safe-directory: true
+2025-12-30T14:51:04.1378900Z ##[endgroup]
+2025-12-30T14:51:04.2458138Z Syncing repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.2461068Z ##[group]Getting Git version info
+2025-12-30T14:51:04.2462996Z Working directory is '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:04.2465429Z [command]/usr/bin/git version
+2025-12-30T14:51:04.2521541Z git version 2.52.0
+2025-12-30T14:51:04.2547571Z ##[endgroup]
+2025-12-30T14:51:04.2561355Z Temporarily overriding HOME='/home/runner/work/_temp/82047e4f-d792-440f-b4cb-7118d33f9d25' before making global git config changes
+2025-12-30T14:51:04.2564158Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:04.2567522Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.2605184Z Deleting the contents of '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:04.2608386Z ##[group]Initializing the repository
+2025-12-30T14:51:04.2612929Z [command]/usr/bin/git init /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.2715881Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T14:51:04.2718409Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T14:51:04.2721117Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T14:51:04.2723695Z hint: call:
+2025-12-30T14:51:04.2724972Z hint:
+2025-12-30T14:51:04.2726783Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T14:51:04.2729037Z hint:
+2025-12-30T14:51:04.2730929Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T14:51:04.2734260Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T14:51:04.2736772Z hint:
+2025-12-30T14:51:04.2738226Z hint: 	git branch -m <name>
+2025-12-30T14:51:04.2739679Z hint:
+2025-12-30T14:51:04.2741098Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T14:51:04.2743650Z Initialized empty Git repository in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.git/
+2025-12-30T14:51:04.2749864Z [command]/usr/bin/git remote add origin https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.2769357Z ##[endgroup]
+2025-12-30T14:51:04.2771862Z ##[group]Disabling automatic garbage collection
+2025-12-30T14:51:04.2774141Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T14:51:04.2802432Z ##[endgroup]
+2025-12-30T14:51:04.2803734Z ##[group]Setting up auth
+2025-12-30T14:51:04.2808799Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:04.2847296Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:04.3166391Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:04.3195378Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:04.3413725Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T14:51:04.3449318Z ##[endgroup]
+2025-12-30T14:51:04.3450869Z ##[group]Fetching the repository
+2025-12-30T14:51:04.3458884Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2:refs/remotes/pull/130/merge
+2025-12-30T14:51:04.9917356Z From https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.9918540Z  * [new ref]         d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2 -> pull/130/merge
+2025-12-30T14:51:04.9949155Z ##[endgroup]
+2025-12-30T14:51:04.9950018Z ##[group]Determining the checkout info
+2025-12-30T14:51:04.9952393Z ##[endgroup]
+2025-12-30T14:51:04.9957990Z [command]/usr/bin/git sparse-checkout disable
+2025-12-30T14:51:04.9998069Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-30T14:51:05.0026687Z ##[group]Checking out the ref
+2025-12-30T14:51:05.0031393Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/130/merge
+2025-12-30T14:51:05.0421915Z Note: switching to 'refs/remotes/pull/130/merge'.
+2025-12-30T14:51:05.0422476Z 
+2025-12-30T14:51:05.0422883Z You are in 'detached HEAD' state. You can look around, make experimental
+2025-12-30T14:51:05.0423794Z changes and commit them, and you can discard any commits you make in this
+2025-12-30T14:51:05.0424664Z state without impacting any branches by switching back to a branch.
+2025-12-30T14:51:05.0425170Z 
+2025-12-30T14:51:05.0425510Z If you want to create a new branch to retain commits you create, you may
+2025-12-30T14:51:05.0426317Z do so (now or later) by using -c with the switch command. Example:
+2025-12-30T14:51:05.0427438Z 
+2025-12-30T14:51:05.0427619Z   git switch -c <new-branch-name>
+2025-12-30T14:51:05.0427841Z 
+2025-12-30T14:51:05.0427957Z Or undo this operation with:
+2025-12-30T14:51:05.0428131Z 
+2025-12-30T14:51:05.0428232Z   git switch -
+2025-12-30T14:51:05.0428399Z 
+2025-12-30T14:51:05.0428638Z Turn off this advice by setting config variable advice.detachedHead to false
+2025-12-30T14:51:05.0428971Z 
+2025-12-30T14:51:05.0429324Z HEAD is now at d13871f Merge 1260744479dfd1063e7b851fed4d0f27c11f5d51 into f227266c3f6463f0a986ee4d521673a34e0e8803
+2025-12-30T14:51:05.0431186Z ##[endgroup]
+2025-12-30T14:51:05.0464963Z [command]/usr/bin/git log -1 --format=%H
+2025-12-30T14:51:05.0486273Z d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2
+2025-12-30T14:51:05.0720443Z ##[group]Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+2025-12-30T14:51:05.0720896Z with:
+2025-12-30T14:51:05.0721116Z   python-version: 3.11
+2025-12-30T14:51:05.0721382Z   check-latest: false
+2025-12-30T14:51:05.0721802Z   token: ***
+2025-12-30T14:51:05.0722041Z   update-environment: true
+2025-12-30T14:51:05.0722318Z   allow-prereleases: false
+2025-12-30T14:51:05.0722576Z ##[endgroup]
+2025-12-30T14:51:05.2329210Z ##[group]Installed versions
+2025-12-30T14:51:05.2437076Z Successfully set up CPython (3.11.14)
+2025-12-30T14:51:05.2438367Z ##[endgroup]
+2025-12-30T14:51:05.2634344Z ##[group]Run python3 -m pip install --upgrade pip
+2025-12-30T14:51:05.2634880Z [36;1mpython3 -m pip install --upgrade pip[0m
+2025-12-30T14:51:05.2635343Z [36;1mpython3 -m pip install tree-sitter==0.25.1 tree-sitter-bash==0.25.1[0m
+2025-12-30T14:51:05.2842970Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:05.2843276Z env:
+2025-12-30T14:51:05.2843586Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.2844072Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:05.2844548Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.2844980Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.2845407Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.2845849Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:05.2846195Z ##[endgroup]
+2025-12-30T14:51:07.8901495Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages (25.3)
+2025-12-30T14:51:08.7110762Z Collecting tree-sitter==0.25.1
+2025-12-30T14:51:08.8148286Z   Downloading tree_sitter-0.25.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (10.0 kB)
+2025-12-30T14:51:08.8477220Z Collecting tree-sitter-bash==0.25.1
+2025-12-30T14:51:08.8681617Z   Downloading tree_sitter_bash-0.25.1-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.2 kB)
+2025-12-30T14:51:08.9009593Z Downloading tree_sitter-0.25.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (631 kB)
+2025-12-30T14:51:08.9743240Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 631.6/631.6 kB 16.5 MB/s  0:00:00
+2025-12-30T14:51:09.0287885Z Downloading tree_sitter_bash-0.25.1-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (231 kB)
+2025-12-30T14:51:09.0485128Z Installing collected packages: tree-sitter-bash, tree-sitter
+2025-12-30T14:51:09.0721600Z 
+2025-12-30T14:51:09.0730155Z Successfully installed tree-sitter-0.25.1 tree-sitter-bash-0.25.1
+2025-12-30T14:51:09.1209350Z ##[group]Run sudo apt-get update
+2025-12-30T14:51:09.1209674Z [36;1msudo apt-get update[0m
+2025-12-30T14:51:09.1209938Z [36;1msudo apt-get install -y shellcheck[0m
+2025-12-30T14:51:09.1242699Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:09.1242964Z env:
+2025-12-30T14:51:09.1243236Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.1243653Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:09.1244050Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.1244582Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.1244937Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.1245300Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:09.1245595Z ##[endgroup]
+2025-12-30T14:51:09.2100094Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2025-12-30T14:51:09.2416331Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2025-12-30T14:51:09.2419560Z Hit:6 https://packages.microsoft.com/repos/azure-cli noble InRelease
+2025-12-30T14:51:09.2455523Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2025-12-30T14:51:09.2457422Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2025-12-30T14:51:09.2487930Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2025-12-30T14:51:09.2574214Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2025-12-30T14:51:09.4185620Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [11.4 kB]
+2025-12-30T14:51:09.4285857Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [58.9 kB]
+2025-12-30T14:51:09.4321604Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [76.9 kB]
+2025-12-30T14:51:09.4657639Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1684 kB]
+2025-12-30T14:51:09.4746209Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2025-12-30T14:51:09.4771888Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [175 kB]
+2025-12-30T14:51:09.4792237Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [15.8 kB]
+2025-12-30T14:51:09.4805365Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1506 kB]
+2025-12-30T14:51:09.4879115Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [306 kB]
+2025-12-30T14:51:09.4923761Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [377 kB]
+2025-12-30T14:51:09.4933201Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [31.4 kB]
+2025-12-30T14:51:09.4957730Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2413 kB]
+2025-12-30T14:51:09.5066673Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [550 kB]
+2025-12-30T14:51:09.5555033Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+2025-12-30T14:51:09.5562088Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 c-n-f Metadata [516 B]
+2025-12-30T14:51:09.5570993Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [30.3 kB]
+2025-12-30T14:51:09.5578893Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [6048 B]
+2025-12-30T14:51:09.5585673Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+2025-12-30T14:51:09.5593288Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 c-n-f Metadata [488 B]
+2025-12-30T14:51:09.5602093Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [40.4 kB]
+2025-12-30T14:51:09.5613880Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [7312 B]
+2025-12-30T14:51:09.5617386Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 c-n-f Metadata [368 B]
+2025-12-30T14:51:09.5625001Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [29.5 kB]
+2025-12-30T14:51:09.5632353Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe Translation-en [17.9 kB]
+2025-12-30T14:51:09.5638637Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [10.5 kB]
+2025-12-30T14:51:09.5648654Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 c-n-f Metadata [1444 B]
+2025-12-30T14:51:09.5652809Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [216 B]
+2025-12-30T14:51:09.6070742Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+2025-12-30T14:51:09.6083907Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [225 kB]
+2025-12-30T14:51:09.6102682Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [21.5 kB]
+2025-12-30T14:51:09.6110091Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 c-n-f Metadata [9504 B]
+2025-12-30T14:51:09.6118732Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [71.4 kB]
+2025-12-30T14:51:09.6128675Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+2025-12-30T14:51:09.6136136Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [208 B]
+2025-12-30T14:51:18.0332691Z Fetched 8374 kB in 1s (7409 kB/s)
+2025-12-30T14:51:18.8397349Z Reading package lists...
+2025-12-30T14:51:18.8723678Z Reading package lists...
+2025-12-30T14:51:19.0775340Z Building dependency tree...
+2025-12-30T14:51:19.0783212Z Reading state information...
+2025-12-30T14:51:19.2886514Z shellcheck is already the newest version (0.9.0-1).
+2025-12-30T14:51:19.2887258Z 0 upgraded, 0 newly installed, 0 to remove and 69 not upgraded.
+2025-12-30T14:51:19.2936069Z ##[group]Run wget -qO /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64
+2025-12-30T14:51:19.2937075Z [36;1mwget -qO /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64[0m
+2025-12-30T14:51:19.2937858Z [36;1mchmod +x /tmp/shfmt[0m
+2025-12-30T14:51:19.2938112Z [36;1msudo mv /tmp/shfmt /usr/local/bin/shfmt[0m
+2025-12-30T14:51:19.2970888Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:19.2971113Z env:
+2025-12-30T14:51:19.2971360Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.2971768Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:19.2972164Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.2972514Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.2972858Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.2973259Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:19.2973567Z ##[endgroup]
+2025-12-30T14:51:19.6360686Z ##[group]Run python3 -m tools.repo_lint check --ci --only bash 2>&1 | tee bash-lint-output.txt
+2025-12-30T14:51:19.6361346Z [36;1mpython3 -m tools.repo_lint check --ci --only bash 2>&1 | tee bash-lint-output.txt[0m
+2025-12-30T14:51:19.6361765Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:19.6395071Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:19.6395323Z env:
+2025-12-30T14:51:19.6395568Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.6395974Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:19.6396376Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.6396730Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.6397674Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.6398044Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:19.6398337Z ##[endgroup]
+2025-12-30T14:51:22.1243490Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:22.1243994Z 
+2025-12-30T14:51:22.1244250Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1244555Z   Bash Linting
+2025-12-30T14:51:22.1244870Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1245083Z 
+2025-12-30T14:51:22.1245613Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1245930Z   Linting Results
+2025-12-30T14:51:22.1246261Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1246495Z 
+2025-12-30T14:51:22.1246643Z ❌ shellcheck: FAILED (2 violation(s))
+2025-12-30T14:51:22.1247571Z    .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:11:1: warning: UNUSED_VAR appears unused. Verify use (or export if used externally). [SC2034]
+2025-12-30T14:51:22.1248670Z    .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:16:7: note: Double quote to prevent globbing and word splitting. [SC2086]
+2025-12-30T14:51:22.1249221Z 
+2025-12-30T14:51:22.1249353Z ❌ shfmt: FAILED (1 violation(s))
+2025-12-30T14:51:22.1249771Z    .: [shfmt] Shell scripts do not match shfmt style. Run 'python -m tools.repo_lint fix' to auto-format.
+2025-12-30T14:51:22.1250135Z 
+2025-12-30T14:51:22.1250305Z ❌ validate_docstrings: FAILED (20 violation(s))
+2025-12-30T14:51:22.1250744Z    .: [validate_docstrings] ❌ Validation FAILED: 60 violation(s) in 11 file(s)
+2025-12-30T14:51:22.1251661Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+2025-12-30T14:51:22.1252898Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh
+2025-12-30T14:51:22.1254129Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh:22
+2025-12-30T14:51:22.1255352Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh:35
+2025-12-30T14:51:22.1256504Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:54
+2025-12-30T14:51:22.1257765Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:66
+2025-12-30T14:51:22.1258836Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:77
+2025-12-30T14:51:22.1259918Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:90
+2025-12-30T14:51:22.1261207Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:101
+2025-12-30T14:51:22.1262306Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:111
+2025-12-30T14:51:22.1263396Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:155
+2025-12-30T14:51:22.1264478Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:167
+2025-12-30T14:51:22.1265553Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:178
+2025-12-30T14:51:22.1266651Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:209
+2025-12-30T14:51:22.1267913Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:228
+2025-12-30T14:51:22.1269061Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:124
+2025-12-30T14:51:22.1270479Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:128
+2025-12-30T14:51:22.1271664Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:170
+2025-12-30T14:51:22.1272842Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:175
+2025-12-30T14:51:22.1273438Z 
+2025-12-30T14:51:22.1273674Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1274038Z ❌ Found 23 violation(s) across 3 tool(s)
+2025-12-30T14:51:22.1346183Z ##[error]Process completed with exit code 1.
+2025-12-30T14:51:22.1427575Z ##[group]Run actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+2025-12-30T14:51:22.1428004Z with:
+2025-12-30T14:51:22.1428188Z   name: bash-lint-results
+2025-12-30T14:51:22.1428405Z   path: bash-lint-output.txt
+2025-12-30T14:51:22.1428623Z   retention-days: 7
+2025-12-30T14:51:22.1428814Z   if-no-files-found: warn
+2025-12-30T14:51:22.1429022Z   compression-level: 6
+2025-12-30T14:51:22.1429220Z   overwrite: false
+2025-12-30T14:51:22.1429411Z   include-hidden-files: false
+2025-12-30T14:51:22.1429620Z env:
+2025-12-30T14:51:22.1429842Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:22.1430253Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:22.1430644Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:22.1430997Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:22.1431345Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:22.1431748Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:22.1432049Z ##[endgroup]
+2025-12-30T14:51:22.3643231Z With the provided path, there will be 1 file uploaded
+2025-12-30T14:51:22.3650086Z Artifact name is valid!
+2025-12-30T14:51:22.3651281Z Root directory input is valid!
+2025-12-30T14:51:22.5855211Z Beginning upload of artifact content to blob storage
+2025-12-30T14:51:22.8245033Z Uploaded bytes 790
+2025-12-30T14:51:22.8832943Z Finished uploading artifact content to blob storage!
+2025-12-30T14:51:22.8835817Z SHA256 hash of uploaded artifact zip is 598857ea7567f52237d33223ca2bfbfd69207aff846be929e9d96f933749057c
+2025-12-30T14:51:22.8837823Z Finalizing artifact upload
+2025-12-30T14:51:23.0143371Z Artifact bash-lint-results.zip successfully finalized. Artifact ID 4991796399
+2025-12-30T14:51:23.0144591Z Artifact bash-lint-results has been successfully uploaded! Final size is 790 bytes. Artifact ID is 4991796399
+2025-12-30T14:51:23.0153681Z Artifact download URL: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696/artifacts/4991796399
+2025-12-30T14:51:23.0293653Z Post job cleanup.
+2025-12-30T14:51:23.1285626Z [command]/usr/bin/git version
+2025-12-30T14:51:23.1326001Z git version 2.52.0
+2025-12-30T14:51:23.1371534Z Temporarily overriding HOME='/home/runner/work/_temp/b41c931d-23c1-4408-b167-91a83f74ebf5' before making global git config changes
+2025-12-30T14:51:23.1372837Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:23.1378025Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:23.1415672Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:23.1450598Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:23.1699335Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:23.1723225Z http.https://github.com/.extraheader
+2025-12-30T14:51:23.1743903Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-12-30T14:51:23.1781969Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:23.2157704Z Cleaning up orphan processes

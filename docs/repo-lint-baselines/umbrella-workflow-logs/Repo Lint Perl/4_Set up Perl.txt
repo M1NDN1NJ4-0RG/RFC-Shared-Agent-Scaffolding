@@ -1,0 +1,119 @@
+﻿2025-12-30T14:51:06.8331780Z ##[group]Run shogo82148/actions-setup-perl@9c1eca9952ccc07f9ca4a2097b63df93d9d138e9
+2025-12-30T14:51:06.8333348Z with:
+2025-12-30T14:51:06.8334058Z   perl-version: 5.38
+2025-12-30T14:51:06.8334872Z   distribution: default
+2025-12-30T14:51:06.8335862Z   enable-modules-cache: true
+2025-12-30T14:51:06.8337751Z   working-directory: .
+2025-12-30T14:51:06.8340607Z env:
+2025-12-30T14:51:06.8342541Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.8344082Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:06.8346673Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.8348772Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.8350869Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.8353050Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:06.8354722Z ##[endgroup]
+2025-12-30T14:51:06.9832988Z ##[group]install perl
+2025-12-30T14:51:07.5906709Z [command]/usr/bin/tar --use-compress-program zstd -d --long=30 -x --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/657b7b12-0218-4e95-bc85-95c63d593854 -f /home/runner/work/_temp/ca213d76-9168-48f9-9dcd-a12d20f44c0e
+2025-12-30T14:51:08.6938157Z [command]/opt/hostedtoolcache/perl/5.38.2/x64/bin/perl -V
+2025-12-30T14:51:08.7016732Z Summary of my perl5 (revision 5 version 38 subversion 2) configuration:
+2025-12-30T14:51:08.7017842Z    
+2025-12-30T14:51:08.7018214Z   Platform:
+2025-12-30T14:51:08.7018570Z     osname=linux
+2025-12-30T14:51:08.7018956Z     osvers=5.15.0-1071-azure
+2025-12-30T14:51:08.7019404Z     archname=x86_64-linux
+2025-12-30T14:51:08.7020254Z     uname='linux fv-az1775-191 5.15.0-1071-azure #80~20.04.1-ubuntu smp wed aug 14 18:30:12 utc 2024 x86_64 x86_64 x86_64 gnulinux '
+2025-12-30T14:51:08.7022078Z     config_args='-Dprefix=/opt/hostedtoolcache/perl/5.38.2/x64 -de -Dman1dir=none -Dman3dir=none -Dcccdlflags=-fPIC -Duseshrplib -A'eval:scriptdir=/opt/hostedtoolcache/perl/5.38.2/x64/bin''
+2025-12-30T14:51:08.7023400Z     hint=recommended
+2025-12-30T14:51:08.7023768Z     useposix=true
+2025-12-30T14:51:08.7024083Z     d_sigaction=define
+2025-12-30T14:51:08.7024443Z     useithreads=undef
+2025-12-30T14:51:08.7024790Z     usemultiplicity=undef
+2025-12-30T14:51:08.7025170Z     use64bitint=define
+2025-12-30T14:51:08.7025564Z     use64bitall=define
+2025-12-30T14:51:08.7026170Z     uselongdouble=undef
+2025-12-30T14:51:08.7026929Z     usemymalloc=n
+2025-12-30T14:51:08.7027286Z     default_inc_excludes_dot=define
+2025-12-30T14:51:08.7027689Z   Compiler:
+2025-12-30T14:51:08.7027967Z     cc='cc'
+2025-12-30T14:51:08.7028899Z     ccflags ='-fwrapv -fno-strict-aliasing -pipe -fstack-protector-strong -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64'
+2025-12-30T14:51:08.7030043Z     optimize='-O2'
+2025-12-30T14:51:08.7030748Z     cppflags='-fwrapv -fno-strict-aliasing -pipe -fstack-protector-strong -I/usr/local/include'
+2025-12-30T14:51:08.7031530Z     ccversion=''
+2025-12-30T14:51:08.7031920Z     gccversion='9.4.0'
+2025-12-30T14:51:08.7032302Z     gccosandvers=''
+2025-12-30T14:51:08.7032674Z     intsize=4
+2025-12-30T14:51:08.7033011Z     longsize=8
+2025-12-30T14:51:08.7033388Z     ptrsize=8
+2025-12-30T14:51:08.7033788Z     doublesize=8
+2025-12-30T14:51:08.7034123Z     byteorder=12345678
+2025-12-30T14:51:08.7034473Z     doublekind=3
+2025-12-30T14:51:08.7034793Z     d_longlong=define
+2025-12-30T14:51:08.7035143Z     longlongsize=8
+2025-12-30T14:51:08.7035498Z     d_longdbl=define
+2025-12-30T14:51:08.7036035Z     longdblsize=16
+2025-12-30T14:51:08.7036357Z     longdblkind=3
+2025-12-30T14:51:08.7036679Z     ivtype='long'
+2025-12-30T14:51:08.7036992Z     ivsize=8
+2025-12-30T14:51:08.7037292Z     nvtype='double'
+2025-12-30T14:51:08.7037613Z     nvsize=8
+2025-12-30T14:51:08.7037917Z     Off_t='off_t'
+2025-12-30T14:51:08.7038256Z     lseeksize=8
+2025-12-30T14:51:08.7038573Z     alignbytes=8
+2025-12-30T14:51:08.7038907Z     prototype=define
+2025-12-30T14:51:08.7039264Z   Linker and Libraries:
+2025-12-30T14:51:08.7039980Z     ld='cc'
+2025-12-30T14:51:08.7040410Z     ldflags =' -fstack-protector-strong -L/usr/local/lib'
+2025-12-30T14:51:08.7041067Z     libpth=/usr/local/lib /usr/lib/x86_64-linux-gnu /usr/lib /usr/lib64
+2025-12-30T14:51:08.7041719Z     libs=-lpthread -ldl -lm -lcrypt -lutil -lc
+2025-12-30T14:51:08.7042240Z     perllibs=-lpthread -ldl -lm -lcrypt -lutil -lc
+2025-12-30T14:51:08.7042758Z     libc=libc-2.31.so
+2025-12-30T14:51:08.7043138Z     so=so
+2025-12-30T14:51:08.7043450Z     useshrplib=true
+2025-12-30T14:51:08.7043799Z     libperl=libperl.so
+2025-12-30T14:51:08.7044174Z     gnulibc_version='2.31'
+2025-12-30T14:51:08.7044548Z   Dynamic Linking:
+2025-12-30T14:51:08.7044887Z     dlsrc=dl_dlopen.xs
+2025-12-30T14:51:08.7045228Z     dlext=so
+2025-12-30T14:51:08.7045535Z     d_dlsymun=undef
+2025-12-30T14:51:08.7046433Z     ccdlflags='-Wl,-E -Wl,-rpath,/opt/hostedtoolcache/perl/5.38.2/x64/lib/5.38.2/x86_64-linux/CORE'
+2025-12-30T14:51:08.7047212Z     cccdlflags='-fPIC'
+2025-12-30T14:51:08.7047790Z     lddlflags='-shared -O2 -L/usr/local/lib -fstack-protector-strong'
+2025-12-30T14:51:08.7048278Z 
+2025-12-30T14:51:08.7048305Z 
+2025-12-30T14:51:08.7048551Z Characteristics of this binary (from libperl): 
+2025-12-30T14:51:08.7049151Z   Compile-time options:
+2025-12-30T14:51:08.7049556Z     HAS_LONG_DOUBLE
+2025-12-30T14:51:08.7049880Z     HAS_STRTOLD
+2025-12-30T14:51:08.7050195Z     HAS_TIMES
+2025-12-30T14:51:08.7050500Z     PERLIO_LAYERS
+2025-12-30T14:51:08.7050870Z     PERL_COPY_ON_WRITE
+2025-12-30T14:51:08.7051236Z     PERL_DONT_CREATE_GVSV
+2025-12-30T14:51:08.7051630Z     PERL_HASH_FUNC_SIPHASH13
+2025-12-30T14:51:08.7052025Z     PERL_HASH_USE_SBOX32
+2025-12-30T14:51:08.7052395Z     PERL_MALLOC_WRAP
+2025-12-30T14:51:08.7052745Z     PERL_OP_PARENT
+2025-12-30T14:51:08.7053084Z     PERL_PRESERVE_IVUV
+2025-12-30T14:51:08.7053467Z     PERL_USE_SAFE_PUTENV
+2025-12-30T14:51:08.7053832Z     USE_64_BIT_ALL
+2025-12-30T14:51:08.7054157Z     USE_64_BIT_INT
+2025-12-30T14:51:08.7054485Z     USE_LARGE_FILES
+2025-12-30T14:51:08.7054827Z     USE_LOCALE
+2025-12-30T14:51:08.7055162Z     USE_LOCALE_COLLATE
+2025-12-30T14:51:08.7055522Z     USE_LOCALE_CTYPE
+2025-12-30T14:51:08.7056122Z     USE_LOCALE_NUMERIC
+2025-12-30T14:51:08.7056487Z     USE_LOCALE_TIME
+2025-12-30T14:51:08.7056834Z     USE_PERLIO
+2025-12-30T14:51:08.7057150Z     USE_PERL_ATOF
+2025-12-30T14:51:08.7057487Z   Built under linux
+2025-12-30T14:51:08.7057841Z   Compiled at Sep  4 2024 16:59:25
+2025-12-30T14:51:08.7058567Z   @INC:
+2025-12-30T14:51:08.7059071Z     /opt/hostedtoolcache/perl/5.38.2/x64/lib/site_perl/5.38.2/x86_64-linux
+2025-12-30T14:51:08.7059821Z     /opt/hostedtoolcache/perl/5.38.2/x64/lib/site_perl/5.38.2
+2025-12-30T14:51:08.7060495Z     /opt/hostedtoolcache/perl/5.38.2/x64/lib/5.38.2/x86_64-linux
+2025-12-30T14:51:08.7061118Z     /opt/hostedtoolcache/perl/5.38.2/x64/lib/5.38.2
+2025-12-30T14:51:08.7072092Z ##[endgroup]
+2025-12-30T14:51:08.7072512Z ##[group]install CPAN modules
+2025-12-30T14:51:08.7839019Z ##[warning]Failed to restore: Cache service responded with 400
+2025-12-30T14:51:08.7850683Z cache not found for input keys: setup-perl-module-cache-v1-2a054c4409a48aeea2daef20315a49696a8a9e6f121f1f5a8fcd6a47c6d81810-unknown-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, setup-perl-module-cache-v1-2a054c4409a48aeea2daef20315a49696a8a9e6f121f1f5a8fcd6a47c6d81810-unknown-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-, setup-perl-module-cache-v1-2a054c4409a48aeea2daef20315a49696a8a9e6f121f1f5a8fcd6a47c6d81810-unknown-
+2025-12-30T14:51:08.7853398Z [command]/opt/hostedtoolcache/perl/5.38.2/x64/bin/perl -MConfig -e print $Config{archname}
+2025-12-30T14:51:08.7904416Z x86_64-linux::endgroup::

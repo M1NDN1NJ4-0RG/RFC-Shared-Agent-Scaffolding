@@ -1,0 +1,86 @@
+﻿2025-12-30T14:51:03.8483889Z ##[group]Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+2025-12-30T14:51:03.8485311Z with:
+2025-12-30T14:51:03.8486077Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.8487127Z   token: ***
+2025-12-30T14:51:03.8487767Z   ssh-strict: true
+2025-12-30T14:51:03.8488411Z   ssh-user: git
+2025-12-30T14:51:03.8489074Z   persist-credentials: true
+2025-12-30T14:51:03.8490133Z   clean: true
+2025-12-30T14:51:03.8490815Z   sparse-checkout-cone-mode: true
+2025-12-30T14:51:03.8492020Z   fetch-depth: 1
+2025-12-30T14:51:03.8492960Z   fetch-tags: false
+2025-12-30T14:51:03.8493948Z   show-progress: true
+2025-12-30T14:51:03.8494951Z   lfs: false
+2025-12-30T14:51:03.8495931Z   submodules: false
+2025-12-30T14:51:03.8497397Z   set-safe-directory: true
+2025-12-30T14:51:03.8499121Z ##[endgroup]
+2025-12-30T14:51:03.9569048Z Syncing repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.9571880Z ##[group]Getting Git version info
+2025-12-30T14:51:03.9573110Z Working directory is '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:03.9574722Z [command]/usr/bin/git version
+2025-12-30T14:51:03.9631566Z git version 2.52.0
+2025-12-30T14:51:03.9656741Z ##[endgroup]
+2025-12-30T14:51:03.9670164Z Temporarily overriding HOME='/home/runner/work/_temp/c41a6306-3d7e-42a5-8a7b-1bfdc7d014c9' before making global git config changes
+2025-12-30T14:51:03.9671943Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:03.9675647Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.9710883Z Deleting the contents of '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:03.9713499Z ##[group]Initializing the repository
+2025-12-30T14:51:03.9717917Z [command]/usr/bin/git init /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.9820089Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T14:51:03.9821911Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T14:51:03.9823739Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T14:51:03.9825065Z hint: call:
+2025-12-30T14:51:03.9826180Z hint:
+2025-12-30T14:51:03.9827484Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T14:51:03.9829068Z hint:
+2025-12-30T14:51:03.9830863Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T14:51:03.9833127Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T14:51:03.9834949Z hint:
+2025-12-30T14:51:03.9836066Z hint: 	git branch -m <name>
+2025-12-30T14:51:03.9837366Z hint:
+2025-12-30T14:51:03.9838895Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T14:51:03.9841895Z Initialized empty Git repository in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.git/
+2025-12-30T14:51:03.9845205Z [command]/usr/bin/git remote add origin https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.9870988Z ##[endgroup]
+2025-12-30T14:51:03.9872872Z ##[group]Disabling automatic garbage collection
+2025-12-30T14:51:03.9875002Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T14:51:03.9903773Z ##[endgroup]
+2025-12-30T14:51:03.9905669Z ##[group]Setting up auth
+2025-12-30T14:51:03.9911006Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:03.9941634Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:04.0253978Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:04.0283252Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:04.0496847Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T14:51:04.0529040Z ##[endgroup]
+2025-12-30T14:51:04.0530793Z ##[group]Fetching the repository
+2025-12-30T14:51:04.0537810Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2:refs/remotes/pull/130/merge
+2025-12-30T14:51:04.2414429Z From https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.2416319Z  * [new ref]         d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2 -> pull/130/merge
+2025-12-30T14:51:04.2445424Z ##[endgroup]
+2025-12-30T14:51:04.2446139Z ##[group]Determining the checkout info
+2025-12-30T14:51:04.2447262Z ##[endgroup]
+2025-12-30T14:51:04.2452502Z [command]/usr/bin/git sparse-checkout disable
+2025-12-30T14:51:04.2490708Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-30T14:51:04.2517560Z ##[group]Checking out the ref
+2025-12-30T14:51:04.2520899Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/130/merge
+2025-12-30T14:51:04.2905879Z Note: switching to 'refs/remotes/pull/130/merge'.
+2025-12-30T14:51:04.2906946Z 
+2025-12-30T14:51:04.2907816Z You are in 'detached HEAD' state. You can look around, make experimental
+2025-12-30T14:51:04.2910145Z changes and commit them, and you can discard any commits you make in this
+2025-12-30T14:51:04.2912009Z state without impacting any branches by switching back to a branch.
+2025-12-30T14:51:04.2912869Z 
+2025-12-30T14:51:04.2913361Z If you want to create a new branch to retain commits you create, you may
+2025-12-30T14:51:04.2914910Z do so (now or later) by using -c with the switch command. Example:
+2025-12-30T14:51:04.2916071Z 
+2025-12-30T14:51:04.2916298Z   git switch -c <new-branch-name>
+2025-12-30T14:51:04.2916805Z 
+2025-12-30T14:51:04.2917006Z Or undo this operation with:
+2025-12-30T14:51:04.2917415Z 
+2025-12-30T14:51:04.2917584Z   git switch -
+2025-12-30T14:51:04.2917884Z 
+2025-12-30T14:51:04.2918501Z Turn off this advice by setting config variable advice.detachedHead to false
+2025-12-30T14:51:04.2919858Z 
+2025-12-30T14:51:04.2921040Z HEAD is now at d13871f Merge 1260744479dfd1063e7b851fed4d0f27c11f5d51 into f227266c3f6463f0a986ee4d521673a34e0e8803
+2025-12-30T14:51:04.2924169Z ##[endgroup]
+2025-12-30T14:51:04.2951810Z [command]/usr/bin/git log -1 --format=%H
+2025-12-30T14:51:04.2974101Z d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2

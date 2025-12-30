@@ -1,0 +1,411 @@
+﻿2025-12-30T14:51:57.1279778Z ##[group]Run # Create failure report directory
+2025-12-30T14:51:57.1280617Z [36;1m# Create failure report directory[0m
+2025-12-30T14:51:57.1280925Z [36;1mmkdir -p repo-lint-failure-reports[0m
+2025-12-30T14:51:57.1281183Z [36;1m[0m
+2025-12-30T14:51:57.1281488Z [36;1m# Check job statuses (now using job.result since continue-on-error is removed)[0m
+2025-12-30T14:51:57.1282094Z [36;1mAUTO_FIX="success"[0m
+2025-12-30T14:51:57.1282317Z [36;1mDETECT="success"[0m
+2025-12-30T14:51:57.1282515Z [36;1mPYTHON="failure"[0m
+2025-12-30T14:51:57.1282713Z [36;1mBASH="failure"[0m
+2025-12-30T14:51:57.1282909Z [36;1mPOWERSHELL="failure"[0m
+2025-12-30T14:51:57.1283126Z [36;1mPERL="failure"[0m
+2025-12-30T14:51:57.1283315Z [36;1mYAML="failure"[0m
+2025-12-30T14:51:57.1283509Z [36;1mVECTORS="success"[0m
+2025-12-30T14:51:57.1283697Z [36;1m[0m
+2025-12-30T14:51:57.1283941Z [36;1m# Map empty results (skipped jobs) to "skipped" for display[0m
+2025-12-30T14:51:57.1284273Z [36;1mPYTHON="${PYTHON:-skipped}"[0m
+2025-12-30T14:51:57.1284531Z [36;1mBASH="${BASH:-skipped}"[0m
+2025-12-30T14:51:57.1284780Z [36;1mPOWERSHELL="${POWERSHELL:-skipped}"[0m
+2025-12-30T14:51:57.1285036Z [36;1mPERL="${PERL:-skipped}"[0m
+2025-12-30T14:51:57.1285251Z [36;1mYAML="${YAML:-skipped}"[0m
+2025-12-30T14:51:57.1285453Z [36;1m[0m
+2025-12-30T14:51:57.1285610Z [36;1m# Create summary file[0m
+2025-12-30T14:51:57.1285986Z [36;1mSUMMARY_FILE="repo-lint-failure-reports/summary-$(date -u +%Y%m%d-%H%M%S).md"[0m
+2025-12-30T14:51:57.1286365Z [36;1m{[0m
+2025-12-30T14:51:57.1286555Z [36;1m  echo "# Repo Lint Failure Summary"[0m
+2025-12-30T14:51:57.1286798Z [36;1m  echo ""[0m
+2025-12-30T14:51:57.1287252Z [36;1m  echo "**Workflow Run:** https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696"[0m
+2025-12-30T14:51:57.1287815Z [36;1m  echo "**Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")"[0m
+2025-12-30T14:51:57.1288121Z [36;1m  echo "**Branch:** 130/merge"[0m
+2025-12-30T14:51:57.1288437Z [36;1m  echo "**Commit:** d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2"[0m
+2025-12-30T14:51:57.1288986Z [36;1m  echo ""[0m
+2025-12-30T14:51:57.1289174Z [36;1m  echo "## Job Results"[0m
+2025-12-30T14:51:57.1289374Z [36;1m  echo ""[0m
+2025-12-30T14:51:57.1289554Z [36;1m  echo "| Job | Status |"[0m
+2025-12-30T14:51:57.1289775Z [36;1m  echo "|-----|--------|"[0m
+2025-12-30T14:51:57.1290019Z [36;1m  echo "| Auto-Fix: Black | $AUTO_FIX |"[0m
+2025-12-30T14:51:57.1290313Z [36;1m  echo "| Detect Changed Files | $DETECT |"[0m
+2025-12-30T14:51:57.1290603Z [36;1m  echo "| Repo Lint: Python | $PYTHON |"[0m
+2025-12-30T14:51:57.1290884Z [36;1m  echo "| Repo Lint: Bash | $BASH |"[0m
+2025-12-30T14:51:57.1291171Z [36;1m  echo "| Repo Lint: PowerShell | $POWERSHELL |"[0m
+2025-12-30T14:51:57.1291468Z [36;1m  echo "| Repo Lint: Perl | $PERL |"[0m
+2025-12-30T14:51:57.1291729Z [36;1m  echo "| Repo Lint: YAML | $YAML |"[0m
+2025-12-30T14:51:57.1292012Z [36;1m  echo "| Vector Tests: Conformance | $VECTORS |"[0m
+2025-12-30T14:51:57.1292286Z [36;1m  echo ""[0m
+2025-12-30T14:51:57.1292466Z [36;1m} > "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1292664Z [36;1m[0m
+2025-12-30T14:51:57.1292832Z [36;1m# Track if any failures occurred[0m
+2025-12-30T14:51:57.1293076Z [36;1mHAS_FAILURES=false[0m
+2025-12-30T14:51:57.1293265Z [36;1m[0m
+2025-12-30T14:51:57.1293451Z [36;1m# Add failure details for each failed job[0m
+2025-12-30T14:51:57.1293731Z [36;1mif [ "$PYTHON" = "failure" ]; then[0m
+2025-12-30T14:51:57.1293969Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1294234Z [36;1m  echo "## Python Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1294543Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1294934Z [36;1m  PYTHON_ARTIFACT="lint-artifacts/python-lint-results/python-lint-output.txt"[0m
+2025-12-30T14:51:57.1295350Z [36;1m  if [ -f "$PYTHON_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1295679Z [36;1m    echo "Found Python lint output at: $PYTHON_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1296009Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1296474Z [36;1m    tail -100 "$PYTHON_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1296760Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1296978Z [36;1m  else[0m
+2025-12-30T14:51:57.1297267Z [36;1m    echo "WARNING: Python lint artifact not found at: $PYTHON_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1297855Z [36;1m    echo "Python linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1298213Z [36;1m  fi[0m
+2025-12-30T14:51:57.1298384Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1298929Z [36;1mfi[0m
+2025-12-30T14:51:57.1299187Z [36;1m[0m
+2025-12-30T14:51:57.1299375Z [36;1mif [ "$BASH" = "failure" ]; then[0m
+2025-12-30T14:51:57.1299614Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1299863Z [36;1m  echo "## Bash Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1300154Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1300505Z [36;1m  BASH_ARTIFACT="lint-artifacts/bash-lint-results/bash-lint-output.txt"[0m
+2025-12-30T14:51:57.1300895Z [36;1m  if [ -f "$BASH_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1301208Z [36;1m    echo "Found Bash lint output at: $BASH_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1301509Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1301784Z [36;1m    tail -100 "$BASH_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1302067Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1302293Z [36;1m  else[0m
+2025-12-30T14:51:57.1302583Z [36;1m    echo "WARNING: Bash lint artifact not found at: $BASH_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1303039Z [36;1m    echo "Bash linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1303391Z [36;1m  fi[0m
+2025-12-30T14:51:57.1303558Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1303849Z [36;1mfi[0m
+2025-12-30T14:51:57.1304028Z [36;1m[0m
+2025-12-30T14:51:57.1304203Z [36;1mif [ "$POWERSHELL" = "failure" ]; then[0m
+2025-12-30T14:51:57.1304508Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1304779Z [36;1m  echo "## PowerShell Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1305075Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1305500Z [36;1m  POWERSHELL_ARTIFACT="lint-artifacts/powershell-lint-results/powershell-lint-output.txt"[0m
+2025-12-30T14:51:57.1305976Z [36;1m  if [ -f "$POWERSHELL_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1306335Z [36;1m    echo "Found PowerShell lint output at: $POWERSHELL_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1306682Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1306968Z [36;1m    tail -100 "$POWERSHELL_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1307265Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1307483Z [36;1m  else[0m
+2025-12-30T14:51:57.1307801Z [36;1m    echo "WARNING: PowerShell lint artifact not found at: $POWERSHELL_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1308322Z [36;1m    echo "PowerShell linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1308933Z [36;1m  fi[0m
+2025-12-30T14:51:57.1309107Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1309313Z [36;1mfi[0m
+2025-12-30T14:51:57.1309466Z [36;1m[0m
+2025-12-30T14:51:57.1309625Z [36;1mif [ "$PERL" = "failure" ]; then[0m
+2025-12-30T14:51:57.1309864Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1310126Z [36;1m  echo "## Perl Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1310416Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1310757Z [36;1m  PERL_ARTIFACT="lint-artifacts/perl-lint-results/perl-lint-output.txt"[0m
+2025-12-30T14:51:57.1311139Z [36;1m  if [ -f "$PERL_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1311446Z [36;1m    echo "Found Perl lint output at: $PERL_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1311742Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1312017Z [36;1m    tail -100 "$PERL_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1312477Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1312700Z [36;1m  else[0m
+2025-12-30T14:51:57.1312968Z [36;1m    echo "WARNING: Perl lint artifact not found at: $PERL_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1313429Z [36;1m    echo "Perl linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1313776Z [36;1m  fi[0m
+2025-12-30T14:51:57.1314052Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1314266Z [36;1mfi[0m
+2025-12-30T14:51:57.1314411Z [36;1m[0m
+2025-12-30T14:51:57.1314581Z [36;1mif [ "$YAML" = "failure" ]; then[0m
+2025-12-30T14:51:57.1314812Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1315071Z [36;1m  echo "## YAML Linting Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1315360Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1315703Z [36;1m  YAML_ARTIFACT="lint-artifacts/yaml-lint-results/yaml-lint-output.txt"[0m
+2025-12-30T14:51:57.1316080Z [36;1m  if [ -f "$YAML_ARTIFACT" ]; then[0m
+2025-12-30T14:51:57.1316383Z [36;1m    echo "Found YAML lint output at: $YAML_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1316690Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1316963Z [36;1m    tail -100 "$YAML_ARTIFACT" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1317246Z [36;1m    echo '```' >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1317471Z [36;1m  else[0m
+2025-12-30T14:51:57.1317739Z [36;1m    echo "WARNING: YAML lint artifact not found at: $YAML_ARTIFACT" >&2[0m
+2025-12-30T14:51:57.1318189Z [36;1m    echo "YAML linting failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1318527Z [36;1m  fi[0m
+2025-12-30T14:51:57.1318909Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1319120Z [36;1mfi[0m
+2025-12-30T14:51:57.1319271Z [36;1m[0m
+2025-12-30T14:51:57.1319438Z [36;1mif [ "$VECTORS" = "failure" ]; then[0m
+2025-12-30T14:51:57.1319683Z [36;1m  HAS_FAILURES=true[0m
+2025-12-30T14:51:57.1319937Z [36;1m  echo "## Vector Test Failures" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1320217Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1320551Z [36;1m  echo "Vector tests failed. See job logs for details." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1320898Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1321108Z [36;1mfi[0m
+2025-12-30T14:51:57.1321252Z [36;1m[0m
+2025-12-30T14:51:57.1321411Z [36;1m# Set output flag[0m
+2025-12-30T14:51:57.1321638Z [36;1mif [ "$HAS_FAILURES" = "true" ]; then[0m
+2025-12-30T14:51:57.1321920Z [36;1m  echo "has_failures=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:51:57.1322172Z [36;1melse[0m
+2025-12-30T14:51:57.1322378Z [36;1m  echo "has_failures=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:51:57.1322695Z [36;1m  echo "## All Checks Passed ✓" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1322974Z [36;1m  echo "" >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1323385Z [36;1m  echo "All linting and docstring enforcement checks passed successfully." >> "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1323804Z [36;1mfi[0m
+2025-12-30T14:51:57.1323958Z [36;1m[0m
+2025-12-30T14:51:57.1324118Z [36;1m# Display summary[0m
+2025-12-30T14:51:57.1324321Z [36;1mcat "$SUMMARY_FILE"[0m
+2025-12-30T14:51:57.1356280Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:57.1356517Z ##[endgroup]
+2025-12-30T14:51:57.1446686Z Found Python lint output at: lint-artifacts/python-lint-results/python-lint-output.txt
+2025-12-30T14:51:57.1459535Z Found Bash lint output at: lint-artifacts/bash-lint-results/bash-lint-output.txt
+2025-12-30T14:51:57.1471916Z Found PowerShell lint output at: lint-artifacts/powershell-lint-results/powershell-lint-output.txt
+2025-12-30T14:51:57.1483770Z Found Perl lint output at: lint-artifacts/perl-lint-results/perl-lint-output.txt
+2025-12-30T14:51:57.1496163Z Found YAML lint output at: lint-artifacts/yaml-lint-results/yaml-lint-output.txt
+2025-12-30T14:51:57.1517552Z # Repo Lint Failure Summary
+2025-12-30T14:51:57.1517867Z 
+2025-12-30T14:51:57.1518411Z **Workflow Run:** https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696
+2025-12-30T14:51:57.1519774Z **Timestamp:** 2025-12-30 14:51:57 UTC
+2025-12-30T14:51:57.1520169Z **Branch:** 130/merge
+2025-12-30T14:51:57.1520543Z **Commit:** d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2
+2025-12-30T14:51:57.1520883Z 
+2025-12-30T14:51:57.1520995Z ## Job Results
+2025-12-30T14:51:57.1521244Z 
+2025-12-30T14:51:57.1521610Z | Job | Status |
+2025-12-30T14:51:57.1522178Z |-----|--------|
+2025-12-30T14:51:57.1522602Z | Auto-Fix: Black | success |
+2025-12-30T14:51:57.1523171Z | Detect Changed Files | success |
+2025-12-30T14:51:57.1523712Z | Repo Lint: Python | failure |
+2025-12-30T14:51:57.1524002Z | Repo Lint: Bash | failure |
+2025-12-30T14:51:57.1524383Z | Repo Lint: PowerShell | failure |
+2025-12-30T14:51:57.1524683Z | Repo Lint: Perl | failure |
+2025-12-30T14:51:57.1524990Z | Repo Lint: YAML | failure |
+2025-12-30T14:51:57.1525351Z | Vector Tests: Conformance | success |
+2025-12-30T14:51:57.1525551Z 
+2025-12-30T14:51:57.1525691Z ## Python Linting Failures
+2025-12-30T14:51:57.1525865Z 
+2025-12-30T14:51:57.1525987Z ```
+2025-12-30T14:51:57.1526538Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1526831Z 
+2025-12-30T14:51:57.1527064Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1527406Z   Python Linting
+2025-12-30T14:51:57.1527829Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1528095Z 
+2025-12-30T14:51:57.1528429Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1529113Z   Linting Results
+2025-12-30T14:51:57.1529611Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1529903Z 
+2025-12-30T14:51:57.1530060Z ❌ ruff: FAILED (44 violation(s))
+2025-12-30T14:51:57.1530712Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: E402 Module level import not at top of file
+2025-12-30T14:51:57.1531392Z    .: [ruff] |
+2025-12-30T14:51:57.1531819Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:57.1532407Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:57.1532782Z    .: [ruff] | ^^^^^^^^^ E402
+2025-12-30T14:51:57.1533155Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:57.1533404Z    .: [ruff] |
+2025-12-30T14:51:57.1533983Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: I001 [*] Import block is un-sorted or un-formatted
+2025-12-30T14:51:57.1534702Z    .: [ruff] |
+2025-12-30T14:51:57.1535055Z    .: [ruff] 13 |   # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:57.1535597Z    .: [ruff] 14 | / import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:57.1536058Z    .: [ruff] 15 | | import sys
+2025-12-30T14:51:57.1536351Z    .: [ruff] 16 | |
+2025-12-30T14:51:57.1536575Z    .: [ruff] 17 | |
+2025-12-30T14:51:57.1537042Z    .: [ruff] 18 | | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+2025-12-30T14:51:57.1537496Z    .: [ruff] | |_^ I001
+2025-12-30T14:51:57.1538036Z    .: [ruff] 19 |   VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+2025-12-30T14:51:57.1538880Z    .: [ruff] 20 |       "value"
+2025-12-30T14:51:57.1539168Z    .: [ruff] |
+2025-12-30T14:51:57.1539445Z    .: [ruff] = help: Organize imports
+2025-12-30T14:51:57.1540080Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:1: E402 Module level import not at top of file
+2025-12-30T14:51:57.1540757Z    .: [ruff] |
+2025-12-30T14:51:57.1541145Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:57.1541695Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:57.1542134Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:57.1542395Z    .: [ruff] | ^^^^^^^^^^ E402
+2025-12-30T14:51:57.1542926Z    .: [ruff] |
+2025-12-30T14:51:57.1543430Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:8: F401 [*] `sys` imported but unused
+2025-12-30T14:51:57.1544020Z    .: [ruff] |
+2025-12-30T14:51:57.1544433Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:57.1545072Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:57.1545489Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:57.1545760Z    .: [ruff] |        ^^^ F401
+2025-12-30T14:51:57.1546111Z    .: [ruff] |
+2025-12-30T14:51:57.1546356Z    .: [ruff] = help: Remove unused import: `sys`
+2025-12-30T14:51:57.1546946Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:121: E501 Line too long (122 > 120)
+2025-12-30T14:51:57.1547583Z    .: [ruff] |
+2025-12-30T14:51:57.1547915Z    .: [ruff] 18 | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+2025-12-30T14:51:57.1548892Z    .: [ruff] 19 | VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+2025-12-30T14:51:57.1549674Z    .: [ruff] |                                                                                                                         ^^ E501
+2025-12-30T14:51:57.1550191Z    .: [ruff] 20 |     "value"
+2025-12-30T14:51:57.1550439Z    .: [ruff] 21 | )
+2025-12-30T14:51:57.1550758Z    .: [ruff] |
+2025-12-30T14:51:57.1551008Z    .: [ruff] [*] 2 fixable with the `--fix` option.
+2025-12-30T14:51:57.1551296Z 
+2025-12-30T14:51:57.1551461Z ❌ pylint: FAILED (6 violation(s))
+2025-12-30T14:51:57.1551844Z    .: [pylint] ************* Module missing_docstring
+2025-12-30T14:51:57.1552518Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:0: C0301: Line too long (122/120) (line-too-long)
+2025-12-30T14:51:57.1553586Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: C0413: Import "import os" should be placed at the top of the module (wrong-import-position)
+2025-12-30T14:51:57.1554850Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: C0413: Import "import sys" should be placed at the top of the module (wrong-import-position)
+2025-12-30T14:51:57.1555947Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: W0611: Unused import os (unused-import)
+2025-12-30T14:51:57.1556848Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: W0611: Unused import sys (unused-import)
+2025-12-30T14:51:57.1557381Z 
+2025-12-30T14:51:57.1557583Z ❌ validate_docstrings: FAILED (13 violation(s))
+2025-12-30T14:51:57.1558105Z    .: [validate_docstrings] ❌ Validation FAILED: 12 violation(s) in 4 file(s)
+2025-12-30T14:51:57.1559497Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+2025-12-30T14:51:57.1560939Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl
+2025-12-30T14:51:57.1562337Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1
+2025-12-30T14:51:57.1563711Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:4
+2025-12-30T14:51:57.1565173Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:14
+2025-12-30T14:51:57.1566593Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:20
+2025-12-30T14:51:57.1568135Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:25
+2025-12-30T14:51:57.1569817Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py
+2025-12-30T14:51:57.1571384Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:4
+2025-12-30T14:51:57.1572711Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:8
+2025-12-30T14:51:57.1574133Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:24
+2025-12-30T14:51:57.1575509Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:9
+2025-12-30T14:51:57.1576171Z 
+2025-12-30T14:51:57.1576438Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1576992Z ❌ Found 63 violation(s) across 3 tool(s)
+2025-12-30T14:51:57.1577311Z ```
+2025-12-30T14:51:57.1577425Z 
+2025-12-30T14:51:57.1577529Z ## Bash Linting Failures
+2025-12-30T14:51:57.1577671Z 
+2025-12-30T14:51:57.1577880Z ```
+2025-12-30T14:51:57.1578171Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1578431Z 
+2025-12-30T14:51:57.1579105Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1579542Z   Bash Linting
+2025-12-30T14:51:57.1579991Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1580261Z 
+2025-12-30T14:51:57.1580557Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1580966Z   Linting Results
+2025-12-30T14:51:57.1581445Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1581708Z 
+2025-12-30T14:51:57.1581864Z ❌ shellcheck: FAILED (2 violation(s))
+2025-12-30T14:51:57.1582720Z    .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:11:1: warning: UNUSED_VAR appears unused. Verify use (or export if used externally). [SC2034]
+2025-12-30T14:51:57.1583917Z    .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:16:7: note: Double quote to prevent globbing and word splitting. [SC2086]
+2025-12-30T14:51:57.1584496Z 
+2025-12-30T14:51:57.1584641Z ❌ shfmt: FAILED (1 violation(s))
+2025-12-30T14:51:57.1585178Z    .: [shfmt] Shell scripts do not match shfmt style. Run 'python -m tools.repo_lint fix' to auto-format.
+2025-12-30T14:51:57.1585743Z 
+2025-12-30T14:51:57.1586002Z ❌ validate_docstrings: FAILED (20 violation(s))
+2025-12-30T14:51:57.1586488Z    .: [validate_docstrings] ❌ Validation FAILED: 60 violation(s) in 11 file(s)
+2025-12-30T14:51:57.1587532Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+2025-12-30T14:51:57.1589667Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh
+2025-12-30T14:51:57.1591217Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh:22
+2025-12-30T14:51:57.1592586Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh:35
+2025-12-30T14:51:57.1593838Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:54
+2025-12-30T14:51:57.1595013Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:66
+2025-12-30T14:51:57.1596205Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:77
+2025-12-30T14:51:57.1597349Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:90
+2025-12-30T14:51:57.1598750Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:101
+2025-12-30T14:51:57.1600028Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:111
+2025-12-30T14:51:57.1601189Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:155
+2025-12-30T14:51:57.1602348Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:167
+2025-12-30T14:51:57.1603502Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:178
+2025-12-30T14:51:57.1604736Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:209
+2025-12-30T14:51:57.1605895Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:228
+2025-12-30T14:51:57.1607068Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:124
+2025-12-30T14:51:57.1608451Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:128
+2025-12-30T14:51:57.1609939Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:170
+2025-12-30T14:51:57.1611174Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:175
+2025-12-30T14:51:57.1611902Z 
+2025-12-30T14:51:57.1612168Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1612627Z ❌ Found 23 violation(s) across 3 tool(s)
+2025-12-30T14:51:57.1612925Z ```
+2025-12-30T14:51:57.1613133Z 
+2025-12-30T14:51:57.1613245Z ## PowerShell Linting Failures
+2025-12-30T14:51:57.1613584Z 
+2025-12-30T14:51:57.1613734Z ```
+2025-12-30T14:51:57.1614048Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1614342Z 
+2025-12-30T14:51:57.1614619Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1614963Z   PowerShell Linting
+2025-12-30T14:51:57.1615378Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1615786Z 
+2025-12-30T14:51:57.1616074Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1616503Z   Linting Results
+2025-12-30T14:51:57.1616918Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1617276Z 
+2025-12-30T14:51:57.1617469Z ❌ validate_docstrings: FAILED (9 violation(s))
+2025-12-30T14:51:57.1618017Z    .: [validate_docstrings] ❌ Validation FAILED: 8 violation(s) in 3 file(s)
+2025-12-30T14:51:57.1619227Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1
+2025-12-30T14:51:57.1620763Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:4
+2025-12-30T14:51:57.1622186Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:14
+2025-12-30T14:51:57.1623583Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:20
+2025-12-30T14:51:57.1625050Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:25
+2025-12-30T14:51:57.1626459Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1
+2025-12-30T14:51:57.1627786Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1:16
+2025-12-30T14:51:57.1629363Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/powershell/EdgeCases.ps1:312
+2025-12-30T14:51:57.1629989Z 
+2025-12-30T14:51:57.1630321Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1630769Z ❌ Found 9 violation(s) across 1 tool(s)
+2025-12-30T14:51:57.1631147Z ```
+2025-12-30T14:51:57.1631259Z 
+2025-12-30T14:51:57.1631394Z ## Perl Linting Failures
+2025-12-30T14:51:57.1631590Z 
+2025-12-30T14:51:57.1631676Z ```
+2025-12-30T14:51:57.1631988Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1632265Z 
+2025-12-30T14:51:57.1632669Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1633070Z   Perl Linting
+2025-12-30T14:51:57.1633487Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1633806Z 
+2025-12-30T14:51:57.1634138Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1634662Z   Linting Results
+2025-12-30T14:51:57.1635161Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1635472Z 
+2025-12-30T14:51:57.1635690Z ❌ validate_docstrings: FAILED (11 violation(s))
+2025-12-30T14:51:57.1636171Z    .: [validate_docstrings] ❌ Validation FAILED: 10 violation(s) in 3 file(s)
+2025-12-30T14:51:57.1637245Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl
+2025-12-30T14:51:57.1638776Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:8
+2025-12-30T14:51:57.1640202Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:14
+2025-12-30T14:51:57.1641607Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:21
+2025-12-30T14:51:57.1642932Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl
+2025-12-30T14:51:57.1644238Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:12
+2025-12-30T14:51:57.1645616Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:16
+2025-12-30T14:51:57.1646929Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:25
+2025-12-30T14:51:57.1648244Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:38
+2025-12-30T14:51:57.1649751Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/perl/edge_cases.pl:493
+2025-12-30T14:51:57.1650355Z 
+2025-12-30T14:51:57.1650652Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1651223Z ❌ Found 11 violation(s) across 1 tool(s)
+2025-12-30T14:51:57.1651579Z ```
+2025-12-30T14:51:57.1651746Z 
+2025-12-30T14:51:57.1651849Z ## YAML Linting Failures
+2025-12-30T14:51:57.1652156Z 
+2025-12-30T14:51:57.1652278Z ```
+2025-12-30T14:51:57.1652604Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:57.1652880Z 
+2025-12-30T14:51:57.1653129Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1653514Z   YAML Linting
+2025-12-30T14:51:57.1653953Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1654354Z 
+2025-12-30T14:51:57.1654685Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1655069Z   Linting Results
+2025-12-30T14:51:57.1655559Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1655873Z 
+2025-12-30T14:51:57.1656026Z ❌ yamllint: FAILED (20 violation(s))
+2025-12-30T14:51:57.1656639Z    .: [yamllint] .github/workflows/drift-detection.yml:265:121: [warning] line too long (141 > 120 characters) (line-length)
+2025-12-30T14:51:57.1657418Z    .: [yamllint] .github/workflows/drift-detection.yml:266:121: [warning] line too long (149 > 120 characters) (line-length)
+2025-12-30T14:51:57.1658310Z    .: [yamllint] .github/workflows/drift-detection.yml:267:121: [warning] line too long (141 > 120 characters) (line-length)
+2025-12-30T14:51:57.1659413Z    .: [yamllint] .github/workflows/lint-and-format-checker.yml:105:121: [warning] line too long (168 > 120 characters) (line-length)
+2025-12-30T14:51:57.1660277Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:179:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1661231Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:184:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1662131Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:187:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1662946Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:191:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1663889Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:194:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1664726Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:206:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1665580Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:210:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1666358Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:217:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1667136Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:220:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1667917Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:227:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1668964Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:241:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1669746Z    .: [yamllint] .github/workflows/rust-conformance.yml:98:121: [warning] line too long (164 > 120 characters) (line-length)
+2025-12-30T14:51:57.1670571Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:1: [warning] missing document start "---" (document-start)
+2025-12-30T14:51:57.1671483Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:121: [warning] line too long (130 > 120 characters) (line-length)
+2025-12-30T14:51:57.1672358Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:7:12: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:57.1673233Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:11:4: [error] wrong indentation: expected 2 but found 3 (indentation)
+2025-12-30T14:51:57.1673754Z 
+2025-12-30T14:51:57.1674038Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:57.1674590Z ❌ Found 20 violation(s) across 1 tool(s)
+2025-12-30T14:51:57.1674825Z ```
+2025-12-30T14:51:57.1674905Z 

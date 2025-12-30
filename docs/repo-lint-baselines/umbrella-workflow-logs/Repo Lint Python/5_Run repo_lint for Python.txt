@@ -1,0 +1,94 @@
+﻿2025-12-30T14:51:09.2658769Z ##[group]Run python3 -m tools.repo_lint check --ci --only python 2>&1 | tee python-lint-output.txt
+2025-12-30T14:51:09.2659485Z [36;1mpython3 -m tools.repo_lint check --ci --only python 2>&1 | tee python-lint-output.txt[0m
+2025-12-30T14:51:09.2659915Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:09.2693376Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:09.2693614Z env:
+2025-12-30T14:51:09.2693854Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.2694271Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:09.2694682Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.2695031Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.2695394Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.2695941Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:09.2696470Z ##[endgroup]
+2025-12-30T14:51:37.7469397Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:37.7470190Z 
+2025-12-30T14:51:37.7470512Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7470931Z   Python Linting
+2025-12-30T14:51:37.7471355Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7471666Z 
+2025-12-30T14:51:37.7471980Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7472407Z   Linting Results
+2025-12-30T14:51:37.7472861Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7473197Z 
+2025-12-30T14:51:37.7473369Z ❌ ruff: FAILED (44 violation(s))
+2025-12-30T14:51:37.7474565Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: E402 Module level import not at top of file
+2025-12-30T14:51:37.7475561Z    .: [ruff] |
+2025-12-30T14:51:37.7476495Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:37.7477715Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:37.7478498Z    .: [ruff] | ^^^^^^^^^ E402
+2025-12-30T14:51:37.7478983Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:37.7479436Z    .: [ruff] |
+2025-12-30T14:51:37.7480581Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: I001 [*] Import block is un-sorted or un-formatted
+2025-12-30T14:51:37.7481863Z    .: [ruff] |
+2025-12-30T14:51:37.7482374Z    .: [ruff] 13 |   # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:37.7483043Z    .: [ruff] 14 | / import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:37.7483406Z    .: [ruff] 15 | | import sys
+2025-12-30T14:51:37.7483625Z    .: [ruff] 16 | |
+2025-12-30T14:51:37.7483813Z    .: [ruff] 17 | |
+2025-12-30T14:51:37.7484120Z    .: [ruff] 18 | | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+2025-12-30T14:51:37.7484495Z    .: [ruff] | |_^ I001
+2025-12-30T14:51:37.7485030Z    .: [ruff] 19 |   VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+2025-12-30T14:51:37.7485615Z    .: [ruff] 20 |       "value"
+2025-12-30T14:51:37.7485818Z    .: [ruff] |
+2025-12-30T14:51:37.7486010Z    .: [ruff] = help: Organize imports
+2025-12-30T14:51:37.7486793Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:1: E402 Module level import not at top of file
+2025-12-30T14:51:37.7487367Z    .: [ruff] |
+2025-12-30T14:51:37.7487681Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:37.7488177Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:37.7488534Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:37.7488748Z    .: [ruff] | ^^^^^^^^^^ E402
+2025-12-30T14:51:37.7488953Z    .: [ruff] |
+2025-12-30T14:51:37.7489411Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:8: F401 [*] `sys` imported but unused
+2025-12-30T14:51:37.7490272Z    .: [ruff] |
+2025-12-30T14:51:37.7490594Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:37.7491100Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:37.7491452Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:37.7491671Z    .: [ruff] |        ^^^ F401
+2025-12-30T14:51:37.7491869Z    .: [ruff] |
+2025-12-30T14:51:37.7492057Z    .: [ruff] = help: Remove unused import: `sys`
+2025-12-30T14:51:37.7492598Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:121: E501 Line too long (122 > 120)
+2025-12-30T14:51:37.7493093Z    .: [ruff] |
+2025-12-30T14:51:37.7493388Z    .: [ruff] 18 | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+2025-12-30T14:51:37.7494217Z    .: [ruff] 19 | VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+2025-12-30T14:51:37.7494874Z    .: [ruff] |                                                                                                                         ^^ E501
+2025-12-30T14:51:37.7495236Z    .: [ruff] 20 |     "value"
+2025-12-30T14:51:37.7495433Z    .: [ruff] 21 | )
+2025-12-30T14:51:37.7495600Z    .: [ruff] |
+2025-12-30T14:51:37.7495791Z    .: [ruff] [*] 2 fixable with the `--fix` option.
+2025-12-30T14:51:37.7495985Z 
+2025-12-30T14:51:37.7496341Z ❌ pylint: FAILED (6 violation(s))
+2025-12-30T14:51:37.7496711Z    .: [pylint] ************* Module missing_docstring
+2025-12-30T14:51:37.7497306Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:0: C0301: Line too long (122/120) (line-too-long)
+2025-12-30T14:51:37.7498320Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: C0413: Import "import os" should be placed at the top of the module (wrong-import-position)
+2025-12-30T14:51:37.7499457Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: C0413: Import "import sys" should be placed at the top of the module (wrong-import-position)
+2025-12-30T14:51:37.7500476Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: W0611: Unused import os (unused-import)
+2025-12-30T14:51:37.7501336Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: W0611: Unused import sys (unused-import)
+2025-12-30T14:51:37.7501801Z 
+2025-12-30T14:51:37.7501969Z ❌ validate_docstrings: FAILED (13 violation(s))
+2025-12-30T14:51:37.7502411Z    .: [validate_docstrings] ❌ Validation FAILED: 12 violation(s) in 4 file(s)
+2025-12-30T14:51:37.7503336Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+2025-12-30T14:51:37.7504608Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl
+2025-12-30T14:51:37.7505906Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1
+2025-12-30T14:51:37.7507451Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:4
+2025-12-30T14:51:37.7508875Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:14
+2025-12-30T14:51:37.7510242Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:20
+2025-12-30T14:51:37.7511604Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:25
+2025-12-30T14:51:37.7513112Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py
+2025-12-30T14:51:37.7514415Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:4
+2025-12-30T14:51:37.7515714Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:8
+2025-12-30T14:51:37.7517377Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:24
+2025-12-30T14:51:37.7518839Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:9
+2025-12-30T14:51:37.7519485Z 
+2025-12-30T14:51:37.7519727Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7520082Z ❌ Found 63 violation(s) across 3 tool(s)
+2025-12-30T14:51:37.7566474Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,8 @@
+﻿2025-12-30T14:50:58.1402012Z Evaluate and set job outputs
+2025-12-30T14:50:58.1411696Z Set output 'python'
+2025-12-30T14:50:58.1413689Z Set output 'bash'
+2025-12-30T14:50:58.1414642Z Set output 'powershell'
+2025-12-30T14:50:58.1415313Z Set output 'perl'
+2025-12-30T14:50:58.1415899Z Set output 'yaml'
+2025-12-30T14:50:58.1416498Z Set output 'shared_tooling'
+2025-12-30T14:50:58.1417856Z Cleaning up orphan processes

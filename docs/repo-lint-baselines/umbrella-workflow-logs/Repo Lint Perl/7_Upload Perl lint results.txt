@@ -1,0 +1,29 @@
+﻿2025-12-30T14:51:42.8893128Z ##[group]Run actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+2025-12-30T14:51:42.8893538Z with:
+2025-12-30T14:51:42.8893737Z   name: perl-lint-results
+2025-12-30T14:51:42.8893963Z   path: perl-lint-output.txt
+2025-12-30T14:51:42.8894187Z   retention-days: 7
+2025-12-30T14:51:42.8894378Z   if-no-files-found: warn
+2025-12-30T14:51:42.8894593Z   compression-level: 6
+2025-12-30T14:51:42.8894800Z   overwrite: false
+2025-12-30T14:51:42.8894996Z   include-hidden-files: false
+2025-12-30T14:51:42.8895209Z env:
+2025-12-30T14:51:42.8895438Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:42.8896152Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:42.8896554Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:42.8896913Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:42.8897260Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:42.8897624Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:42.8899348Z   PERL5LIB: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5:/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5/x86_64-linux:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib/perl5
+2025-12-30T14:51:42.8900958Z ##[endgroup]
+2025-12-30T14:51:43.1099325Z With the provided path, there will be 1 file uploaded
+2025-12-30T14:51:43.1104365Z Artifact name is valid!
+2025-12-30T14:51:43.1105683Z Root directory input is valid!
+2025-12-30T14:51:43.3265239Z Beginning upload of artifact content to blob storage
+2025-12-30T14:51:43.5514652Z Uploaded bytes 515
+2025-12-30T14:51:43.6115376Z Finished uploading artifact content to blob storage!
+2025-12-30T14:51:43.6119229Z SHA256 hash of uploaded artifact zip is c499caef1e5d69d5157426daef42f055bfeeddc112f8fde69bb4258c56917950
+2025-12-30T14:51:43.6120889Z Finalizing artifact upload
+2025-12-30T14:51:43.7612598Z Artifact perl-lint-results.zip successfully finalized. Artifact ID 4991798590
+2025-12-30T14:51:43.7614120Z Artifact perl-lint-results has been successfully uploaded! Final size is 515 bytes. Artifact ID is 4991798590
+2025-12-30T14:51:43.7620641Z Artifact download URL: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696/artifacts/4991798590

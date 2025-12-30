@@ -1,0 +1,11 @@
+﻿2025-12-30T14:51:04.5101410Z ##[group]Run Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.23.0 -Force -Scope CurrentUser
+2025-12-30T14:51:04.5104121Z [36;1mInstall-Module -Name PSScriptAnalyzer -RequiredVersion 1.23.0 -Force -Scope CurrentUser[0m
+2025-12-30T14:51:04.5174580Z shell: /usr/bin/pwsh -command ". '{0}'"
+2025-12-30T14:51:04.5175372Z env:
+2025-12-30T14:51:04.5176019Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.5177478Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:04.5178906Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.5180383Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.5181629Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.5182937Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:04.5183948Z ##[endgroup]

@@ -1,0 +1,26 @@
+﻿2025-12-30T14:51:09.7636085Z ##[group]Run python3 -m pytest tools/repo_lint/tests/test_vectors.py -v
+2025-12-30T14:51:09.7636640Z [36;1mpython3 -m pytest tools/repo_lint/tests/test_vectors.py -v[0m
+2025-12-30T14:51:09.7670984Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:09.7671429Z env:
+2025-12-30T14:51:09.7671683Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.7672106Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:09.7672518Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.7672898Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.7673267Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.7673667Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:09.7674251Z ##[endgroup]
+2025-12-30T14:51:09.9973038Z ============================= test session starts ==============================
+2025-12-30T14:51:09.9974205Z platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0 -- /opt/hostedtoolcache/Python/3.11.14/x64/bin/python3
+2025-12-30T14:51:09.9975239Z cachedir: .pytest_cache
+2025-12-30T14:51:09.9975877Z rootdir: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:09.9976416Z configfile: pyproject.toml
+2025-12-30T14:51:10.0149567Z collecting ... collected 6 items
+2025-12-30T14:51:10.0149934Z 
+2025-12-30T14:51:10.0726876Z tools/repo_lint/tests/test_vectors.py::test_python_docstring_vectors PASSED [ 16%]
+2025-12-30T14:51:10.0738794Z tools/repo_lint/tests/test_vectors.py::test_bash_docstring_vectors SKIPPED [ 33%]
+2025-12-30T14:51:10.0750308Z tools/repo_lint/tests/test_vectors.py::test_powershell_docstring_vectors SKIPPED [ 50%]
+2025-12-30T14:51:10.0761182Z tools/repo_lint/tests/test_vectors.py::test_perl_docstring_vectors SKIPPED [ 66%]
+2025-12-30T14:51:10.0779363Z tools/repo_lint/tests/test_vectors.py::test_vector_fixtures_exist PASSED [ 83%]
+2025-12-30T14:51:10.1026010Z tools/repo_lint/tests/test_vectors.py::test_vector_schema_validation PASSED [100%]
+2025-12-30T14:51:10.1026765Z 
+2025-12-30T14:51:10.1027094Z ========================= 3 passed, 3 skipped in 0.08s =========================

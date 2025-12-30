@@ -1,0 +1,601 @@
+﻿2025-12-30T14:51:03.3600874Z Current runner version: '2.330.0'
+2025-12-30T14:51:03.3625620Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:03.3626965Z Hosted Compute Agent
+2025-12-30T14:51:03.3627518Z Version: 20251211.462
+2025-12-30T14:51:03.3628245Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:03.3629004Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:03.3629636Z Worker ID: {f029eefb-eb8e-4a3b-bfb7-84973abc395e}
+2025-12-30T14:51:03.3630403Z ##[endgroup]
+2025-12-30T14:51:03.3630938Z ##[group]Operating System
+2025-12-30T14:51:03.3631515Z Ubuntu
+2025-12-30T14:51:03.3631948Z 24.04.3
+2025-12-30T14:51:03.3632481Z LTS
+2025-12-30T14:51:03.3632911Z ##[endgroup]
+2025-12-30T14:51:03.3633426Z ##[group]Runner Image
+2025-12-30T14:51:03.3634059Z Image: ubuntu-24.04
+2025-12-30T14:51:03.3634600Z Version: 20251215.174.1
+2025-12-30T14:51:03.3635603Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:03.3637575Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:03.3638543Z ##[endgroup]
+2025-12-30T14:51:03.3639741Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:03.3641599Z Contents: write
+2025-12-30T14:51:03.3642246Z Metadata: read
+2025-12-30T14:51:03.3642742Z PullRequests: write
+2025-12-30T14:51:03.3643305Z ##[endgroup]
+2025-12-30T14:51:03.3645427Z Secret source: Actions
+2025-12-30T14:51:03.3646359Z Prepare workflow directory
+2025-12-30T14:51:03.4038057Z Prepare all required actions
+2025-12-30T14:51:03.4077057Z Getting action download info
+2025-12-30T14:51:03.8539893Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:03.9665346Z Download action repository 'actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' (SHA:0b93645e9fea7318ecaed2b359559ac225c90a2b)
+2025-12-30T14:51:04.2304770Z Download action repository 'shogo82148/actions-setup-perl@9c1eca9952ccc07f9ca4a2097b63df93d9d138e9' (SHA:9c1eca9952ccc07f9ca4a2097b63df93d9d138e9)
+2025-12-30T14:51:05.2773726Z Download action repository 'actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882' (SHA:b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882)
+2025-12-30T14:51:05.6391686Z Complete job name: Repo Lint: Perl
+2025-12-30T14:51:05.7348849Z ##[group]Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+2025-12-30T14:51:05.7350579Z with:
+2025-12-30T14:51:05.7351537Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:05.7353112Z   token: ***
+2025-12-30T14:51:05.7353868Z   ssh-strict: true
+2025-12-30T14:51:05.7354631Z   ssh-user: git
+2025-12-30T14:51:05.7355413Z   persist-credentials: true
+2025-12-30T14:51:05.7356479Z   clean: true
+2025-12-30T14:51:05.7357306Z   sparse-checkout-cone-mode: true
+2025-12-30T14:51:05.7358321Z   fetch-depth: 1
+2025-12-30T14:51:05.7359175Z   fetch-tags: false
+2025-12-30T14:51:05.7359957Z   show-progress: true
+2025-12-30T14:51:05.7360760Z   lfs: false
+2025-12-30T14:51:05.7361521Z   submodules: false
+2025-12-30T14:51:05.7362343Z   set-safe-directory: true
+2025-12-30T14:51:05.7363477Z ##[endgroup]
+2025-12-30T14:51:05.8494598Z Syncing repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:05.8498260Z ##[group]Getting Git version info
+2025-12-30T14:51:05.8500288Z Working directory is '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:05.8502712Z [command]/usr/bin/git version
+2025-12-30T14:51:05.8581036Z git version 2.52.0
+2025-12-30T14:51:05.8610867Z ##[endgroup]
+2025-12-30T14:51:05.8627168Z Temporarily overriding HOME='/home/runner/work/_temp/4274e404-8a8a-46a5-8578-3df1c1c25cf3' before making global git config changes
+2025-12-30T14:51:05.8631874Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:05.8636756Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:05.8677790Z Deleting the contents of '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:05.8682479Z ##[group]Initializing the repository
+2025-12-30T14:51:05.8686490Z [command]/usr/bin/git init /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:05.8804184Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T14:51:05.8806460Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T14:51:05.8808851Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T14:51:05.8810769Z hint: call:
+2025-12-30T14:51:05.8811931Z hint:
+2025-12-30T14:51:05.8813792Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T14:51:05.8815908Z hint:
+2025-12-30T14:51:05.8817731Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T14:51:05.8820692Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T14:51:05.8823208Z hint:
+2025-12-30T14:51:05.8824540Z hint: 	git branch -m <name>
+2025-12-30T14:51:05.8826254Z hint:
+2025-12-30T14:51:05.8828146Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T14:51:05.8832282Z Initialized empty Git repository in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.git/
+2025-12-30T14:51:05.8836558Z [command]/usr/bin/git remote add origin https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:05.8864903Z ##[endgroup]
+2025-12-30T14:51:05.8867501Z ##[group]Disabling automatic garbage collection
+2025-12-30T14:51:05.8869663Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T14:51:05.8901384Z ##[endgroup]
+2025-12-30T14:51:05.8903548Z ##[group]Setting up auth
+2025-12-30T14:51:05.8909580Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:05.8944975Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:05.9308900Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:05.9344680Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:05.9574499Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T14:51:05.9615275Z ##[endgroup]
+2025-12-30T14:51:05.9618592Z ##[group]Fetching the repository
+2025-12-30T14:51:05.9625546Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2:refs/remotes/pull/130/merge
+2025-12-30T14:51:06.4888991Z From https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:06.4890890Z  * [new ref]         d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2 -> pull/130/merge
+2025-12-30T14:51:06.4924316Z ##[endgroup]
+2025-12-30T14:51:06.4926763Z ##[group]Determining the checkout info
+2025-12-30T14:51:06.4929233Z ##[endgroup]
+2025-12-30T14:51:06.4932637Z [command]/usr/bin/git sparse-checkout disable
+2025-12-30T14:51:06.4980800Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-30T14:51:06.5014000Z ##[group]Checking out the ref
+2025-12-30T14:51:06.5018628Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/130/merge
+2025-12-30T14:51:06.5419053Z Note: switching to 'refs/remotes/pull/130/merge'.
+2025-12-30T14:51:06.5419982Z 
+2025-12-30T14:51:06.5420665Z You are in 'detached HEAD' state. You can look around, make experimental
+2025-12-30T14:51:06.5422390Z changes and commit them, and you can discard any commits you make in this
+2025-12-30T14:51:06.5425157Z state without impacting any branches by switching back to a branch.
+2025-12-30T14:51:06.5427565Z 
+2025-12-30T14:51:06.5428578Z If you want to create a new branch to retain commits you create, you may
+2025-12-30T14:51:06.5431291Z do so (now or later) by using -c with the switch command. Example:
+2025-12-30T14:51:06.5432781Z 
+2025-12-30T14:51:06.5433417Z   git switch -c <new-branch-name>
+2025-12-30T14:51:06.5434493Z 
+2025-12-30T14:51:06.5435102Z Or undo this operation with:
+2025-12-30T14:51:06.5436273Z 
+2025-12-30T14:51:06.5436782Z   git switch -
+2025-12-30T14:51:06.5437493Z 
+2025-12-30T14:51:06.5438724Z Turn off this advice by setting config variable advice.detachedHead to false
+2025-12-30T14:51:06.5440463Z 
+2025-12-30T14:51:06.5442397Z HEAD is now at d13871f Merge 1260744479dfd1063e7b851fed4d0f27c11f5d51 into f227266c3f6463f0a986ee4d521673a34e0e8803
+2025-12-30T14:51:06.5446325Z ##[endgroup]
+2025-12-30T14:51:06.5472222Z [command]/usr/bin/git log -1 --format=%H
+2025-12-30T14:51:06.5496145Z d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2
+2025-12-30T14:51:06.5843320Z ##[group]Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+2025-12-30T14:51:06.5844726Z with:
+2025-12-30T14:51:06.5845401Z   python-version: 3.11
+2025-12-30T14:51:06.5846494Z   check-latest: false
+2025-12-30T14:51:06.5847540Z   token: ***
+2025-12-30T14:51:06.5848269Z   update-environment: true
+2025-12-30T14:51:06.5849133Z   allow-prereleases: false
+2025-12-30T14:51:06.5849958Z ##[endgroup]
+2025-12-30T14:51:06.7566835Z ##[group]Installed versions
+2025-12-30T14:51:06.8096151Z Successfully set up CPython (3.11.14)
+2025-12-30T14:51:06.8098733Z ##[endgroup]
+2025-12-30T14:51:06.8331809Z ##[group]Run shogo82148/actions-setup-perl@9c1eca9952ccc07f9ca4a2097b63df93d9d138e9
+2025-12-30T14:51:06.8333353Z with:
+2025-12-30T14:51:06.8334064Z   perl-version: 5.38
+2025-12-30T14:51:06.8334876Z   distribution: default
+2025-12-30T14:51:06.8335867Z   enable-modules-cache: true
+2025-12-30T14:51:06.8337756Z   working-directory: .
+2025-12-30T14:51:06.8340612Z env:
+2025-12-30T14:51:06.8342547Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.8344087Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:06.8346678Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.8348778Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.8350876Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:06.8353054Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:06.8354728Z ##[endgroup]
+2025-12-30T14:51:06.9833147Z ##[group]install perl
+2025-12-30T14:51:07.5906784Z [command]/usr/bin/tar --use-compress-program zstd -d --long=30 -x --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/657b7b12-0218-4e95-bc85-95c63d593854 -f /home/runner/work/_temp/ca213d76-9168-48f9-9dcd-a12d20f44c0e
+2025-12-30T14:51:08.6938228Z [command]/opt/hostedtoolcache/perl/5.38.2/x64/bin/perl -V
+2025-12-30T14:51:08.7016795Z Summary of my perl5 (revision 5 version 38 subversion 2) configuration:
+2025-12-30T14:51:08.7017861Z    
+2025-12-30T14:51:08.7018244Z   Platform:
+2025-12-30T14:51:08.7018582Z     osname=linux
+2025-12-30T14:51:08.7018966Z     osvers=5.15.0-1071-azure
+2025-12-30T14:51:08.7019415Z     archname=x86_64-linux
+2025-12-30T14:51:08.7020267Z     uname='linux fv-az1775-191 5.15.0-1071-azure #80~20.04.1-ubuntu smp wed aug 14 18:30:12 utc 2024 x86_64 x86_64 x86_64 gnulinux '
+2025-12-30T14:51:08.7022125Z     config_args='-Dprefix=/opt/hostedtoolcache/perl/5.38.2/x64 -de -Dman1dir=none -Dman3dir=none -Dcccdlflags=-fPIC -Duseshrplib -A'eval:scriptdir=/opt/hostedtoolcache/perl/5.38.2/x64/bin''
+2025-12-30T14:51:08.7023416Z     hint=recommended
+2025-12-30T14:51:08.7023775Z     useposix=true
+2025-12-30T14:51:08.7024090Z     d_sigaction=define
+2025-12-30T14:51:08.7024449Z     useithreads=undef
+2025-12-30T14:51:08.7024797Z     usemultiplicity=undef
+2025-12-30T14:51:08.7025186Z     use64bitint=define
+2025-12-30T14:51:08.7025571Z     use64bitall=define
+2025-12-30T14:51:08.7026179Z     uselongdouble=undef
+2025-12-30T14:51:08.7026939Z     usemymalloc=n
+2025-12-30T14:51:08.7027294Z     default_inc_excludes_dot=define
+2025-12-30T14:51:08.7027698Z   Compiler:
+2025-12-30T14:51:08.7027973Z     cc='cc'
+2025-12-30T14:51:08.7028914Z     ccflags ='-fwrapv -fno-strict-aliasing -pipe -fstack-protector-strong -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64'
+2025-12-30T14:51:08.7030058Z     optimize='-O2'
+2025-12-30T14:51:08.7030761Z     cppflags='-fwrapv -fno-strict-aliasing -pipe -fstack-protector-strong -I/usr/local/include'
+2025-12-30T14:51:08.7031563Z     ccversion=''
+2025-12-30T14:51:08.7031930Z     gccversion='9.4.0'
+2025-12-30T14:51:08.7032311Z     gccosandvers=''
+2025-12-30T14:51:08.7032684Z     intsize=4
+2025-12-30T14:51:08.7033019Z     longsize=8
+2025-12-30T14:51:08.7033396Z     ptrsize=8
+2025-12-30T14:51:08.7033794Z     doublesize=8
+2025-12-30T14:51:08.7034129Z     byteorder=12345678
+2025-12-30T14:51:08.7034479Z     doublekind=3
+2025-12-30T14:51:08.7034799Z     d_longlong=define
+2025-12-30T14:51:08.7035150Z     longlongsize=8
+2025-12-30T14:51:08.7035506Z     d_longdbl=define
+2025-12-30T14:51:08.7036043Z     longdblsize=16
+2025-12-30T14:51:08.7036362Z     longdblkind=3
+2025-12-30T14:51:08.7036685Z     ivtype='long'
+2025-12-30T14:51:08.7036999Z     ivsize=8
+2025-12-30T14:51:08.7037298Z     nvtype='double'
+2025-12-30T14:51:08.7037619Z     nvsize=8
+2025-12-30T14:51:08.7037924Z     Off_t='off_t'
+2025-12-30T14:51:08.7038263Z     lseeksize=8
+2025-12-30T14:51:08.7038579Z     alignbytes=8
+2025-12-30T14:51:08.7038914Z     prototype=define
+2025-12-30T14:51:08.7039589Z   Linker and Libraries:
+2025-12-30T14:51:08.7039988Z     ld='cc'
+2025-12-30T14:51:08.7040421Z     ldflags =' -fstack-protector-strong -L/usr/local/lib'
+2025-12-30T14:51:08.7041077Z     libpth=/usr/local/lib /usr/lib/x86_64-linux-gnu /usr/lib /usr/lib64
+2025-12-30T14:51:08.7041729Z     libs=-lpthread -ldl -lm -lcrypt -lutil -lc
+2025-12-30T14:51:08.7042249Z     perllibs=-lpthread -ldl -lm -lcrypt -lutil -lc
+2025-12-30T14:51:08.7042769Z     libc=libc-2.31.so
+2025-12-30T14:51:08.7043147Z     so=so
+2025-12-30T14:51:08.7043458Z     useshrplib=true
+2025-12-30T14:51:08.7043806Z     libperl=libperl.so
+2025-12-30T14:51:08.7044181Z     gnulibc_version='2.31'
+2025-12-30T14:51:08.7044562Z   Dynamic Linking:
+2025-12-30T14:51:08.7044893Z     dlsrc=dl_dlopen.xs
+2025-12-30T14:51:08.7045234Z     dlext=so
+2025-12-30T14:51:08.7045542Z     d_dlsymun=undef
+2025-12-30T14:51:08.7046448Z     ccdlflags='-Wl,-E -Wl,-rpath,/opt/hostedtoolcache/perl/5.38.2/x64/lib/5.38.2/x86_64-linux/CORE'
+2025-12-30T14:51:08.7047242Z     cccdlflags='-fPIC'
+2025-12-30T14:51:08.7047802Z     lddlflags='-shared -O2 -L/usr/local/lib -fstack-protector-strong'
+2025-12-30T14:51:08.7048289Z 
+2025-12-30T14:51:08.7048310Z 
+2025-12-30T14:51:08.7048559Z Characteristics of this binary (from libperl): 
+2025-12-30T14:51:08.7049158Z   Compile-time options:
+2025-12-30T14:51:08.7049563Z     HAS_LONG_DOUBLE
+2025-12-30T14:51:08.7049887Z     HAS_STRTOLD
+2025-12-30T14:51:08.7050200Z     HAS_TIMES
+2025-12-30T14:51:08.7050506Z     PERLIO_LAYERS
+2025-12-30T14:51:08.7050877Z     PERL_COPY_ON_WRITE
+2025-12-30T14:51:08.7051242Z     PERL_DONT_CREATE_GVSV
+2025-12-30T14:51:08.7051637Z     PERL_HASH_FUNC_SIPHASH13
+2025-12-30T14:51:08.7052031Z     PERL_HASH_USE_SBOX32
+2025-12-30T14:51:08.7052402Z     PERL_MALLOC_WRAP
+2025-12-30T14:51:08.7052752Z     PERL_OP_PARENT
+2025-12-30T14:51:08.7053091Z     PERL_PRESERVE_IVUV
+2025-12-30T14:51:08.7053474Z     PERL_USE_SAFE_PUTENV
+2025-12-30T14:51:08.7053837Z     USE_64_BIT_ALL
+2025-12-30T14:51:08.7054163Z     USE_64_BIT_INT
+2025-12-30T14:51:08.7054506Z     USE_LARGE_FILES
+2025-12-30T14:51:08.7054833Z     USE_LOCALE
+2025-12-30T14:51:08.7055168Z     USE_LOCALE_COLLATE
+2025-12-30T14:51:08.7055529Z     USE_LOCALE_CTYPE
+2025-12-30T14:51:08.7056132Z     USE_LOCALE_NUMERIC
+2025-12-30T14:51:08.7056497Z     USE_LOCALE_TIME
+2025-12-30T14:51:08.7056844Z     USE_PERLIO
+2025-12-30T14:51:08.7057158Z     USE_PERL_ATOF
+2025-12-30T14:51:08.7057494Z   Built under linux
+2025-12-30T14:51:08.7057849Z   Compiled at Sep  4 2024 16:59:25
+2025-12-30T14:51:08.7058578Z   @INC:
+2025-12-30T14:51:08.7059081Z     /opt/hostedtoolcache/perl/5.38.2/x64/lib/site_perl/5.38.2/x86_64-linux
+2025-12-30T14:51:08.7059833Z     /opt/hostedtoolcache/perl/5.38.2/x64/lib/site_perl/5.38.2
+2025-12-30T14:51:08.7060510Z     /opt/hostedtoolcache/perl/5.38.2/x64/lib/5.38.2/x86_64-linux
+2025-12-30T14:51:08.7061129Z     /opt/hostedtoolcache/perl/5.38.2/x64/lib/5.38.2
+2025-12-30T14:51:08.7072109Z ##[endgroup]
+2025-12-30T14:51:08.7072515Z ##[group]install CPAN modules
+2025-12-30T14:51:08.7839103Z ##[warning]Failed to restore: Cache service responded with 400
+2025-12-30T14:51:08.7850718Z cache not found for input keys: setup-perl-module-cache-v1-2a054c4409a48aeea2daef20315a49696a8a9e6f121f1f5a8fcd6a47c6d81810-unknown-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855, setup-perl-module-cache-v1-2a054c4409a48aeea2daef20315a49696a8a9e6f121f1f5a8fcd6a47c6d81810-unknown-e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855-, setup-perl-module-cache-v1-2a054c4409a48aeea2daef20315a49696a8a9e6f121f1f5a8fcd6a47c6d81810-unknown-
+2025-12-30T14:51:08.7853402Z [command]/opt/hostedtoolcache/perl/5.38.2/x64/bin/perl -MConfig -e print $Config{archname}
+2025-12-30T14:51:08.7904455Z x86_64-linux::endgroup::
+2025-12-30T14:51:08.8113759Z ##[group]Run cpanm --notest Perl::Critic PPI
+2025-12-30T14:51:08.8114234Z [36;1mcpanm --notest Perl::Critic PPI[0m
+2025-12-30T14:51:08.8194509Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:08.8194800Z env:
+2025-12-30T14:51:08.8195067Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:08.8195520Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:08.8196134Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:08.8196527Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:08.8196912Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:08.8197326Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:08.8199216Z   PERL5LIB: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5:/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5/x86_64-linux:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib/perl5
+2025-12-30T14:51:08.8200877Z ##[endgroup]
+2025-12-30T14:51:09.2816395Z --> Working on Perl::Critic
+2025-12-30T14:51:09.7116875Z Fetching https://www.cpan.org/authors/id/P/PE/PETDANCE/Perl-Critic-1.156.tar.gz ... OK
+2025-12-30T14:51:09.9983543Z ==> Found dependencies: List::SomeUtils, B::Keywords, Module::Build
+2025-12-30T14:51:09.9984225Z --> Working on List::SomeUtils
+2025-12-30T14:51:10.0919650Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/List-SomeUtils-0.59.tar.gz ... OK
+2025-12-30T14:51:12.0569036Z Configuring List-SomeUtils-0.59 ... OK
+2025-12-30T14:51:12.0569968Z ==> Found dependencies: Module::Implementation, List::SomeUtils::XS
+2025-12-30T14:51:12.0570656Z --> Working on Module::Implementation
+2025-12-30T14:51:12.1294727Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/Module-Implementation-0.09.tar.gz ... OK
+2025-12-30T14:51:12.4398930Z Configuring Module-Implementation-0.09 ... OK
+2025-12-30T14:51:12.4399765Z ==> Found dependencies: Module::Runtime, Try::Tiny
+2025-12-30T14:51:12.4400378Z --> Working on Module::Runtime
+2025-12-30T14:51:12.5139230Z Fetching https://www.cpan.org/authors/id/H/HA/HAARG/Module-Runtime-0.018.tar.gz ... OK
+2025-12-30T14:51:12.5513966Z Configuring Module-Runtime-0.018 ... OK
+2025-12-30T14:51:12.5610232Z Building Module-Runtime-0.018 ... OK
+2025-12-30T14:51:12.5610933Z Successfully installed Module-Runtime-0.018
+2025-12-30T14:51:12.6786165Z --> Working on Try::Tiny
+2025-12-30T14:51:12.7560339Z Fetching https://www.cpan.org/authors/id/E/ET/ETHER/Try-Tiny-0.32.tar.gz ... OK
+2025-12-30T14:51:13.0484224Z Configuring Try-Tiny-0.32 ... OK
+2025-12-30T14:51:13.2772950Z Building Try-Tiny-0.32 ... OK
+2025-12-30T14:51:13.2773468Z Successfully installed Try-Tiny-0.32
+2025-12-30T14:51:13.5560003Z Building Module-Implementation-0.09 ... OK
+2025-12-30T14:51:13.5560714Z Successfully installed Module-Implementation-0.09
+2025-12-30T14:51:13.6921969Z --> Working on List::SomeUtils::XS
+2025-12-30T14:51:13.7853843Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/List-SomeUtils-XS-0.58.tar.gz ... OK
+2025-12-30T14:51:14.0393527Z Configuring List-SomeUtils-XS-0.58 ... OK
+2025-12-30T14:51:16.2554328Z Building List-SomeUtils-XS-0.58 ... OK
+2025-12-30T14:51:16.2555171Z Successfully installed List-SomeUtils-XS-0.58
+2025-12-30T14:51:16.5704272Z Building List-SomeUtils-0.59 ... OK
+2025-12-30T14:51:16.5704880Z Successfully installed List-SomeUtils-0.59
+2025-12-30T14:51:16.6899154Z --> Working on B::Keywords
+2025-12-30T14:51:16.7624769Z Fetching https://www.cpan.org/authors/id/R/RU/RURBAN/B-Keywords-1.29.tar.gz ... OK
+2025-12-30T14:51:16.9317064Z Configuring B-Keywords-1.29 ... OK
+2025-12-30T14:51:17.1807941Z Building B-Keywords-1.29 ... OK
+2025-12-30T14:51:17.1808474Z Successfully installed B-Keywords-1.29
+2025-12-30T14:51:17.2994036Z --> Working on Module::Build
+2025-12-30T14:51:17.4220678Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/Module-Build-0.4234.tar.gz ... OK
+2025-12-30T14:51:17.6686473Z Configuring Module-Build-0.4234 ... OK
+2025-12-30T14:51:17.9260333Z Building Module-Build-0.4234 ... OK
+2025-12-30T14:51:17.9260911Z Successfully installed Module-Build-0.4234
+2025-12-30T14:51:18.3177135Z Configuring Perl-Critic-1.156 ... OK
+2025-12-30T14:51:18.3179361Z ==> Found dependencies: Exception::Class, Pod::Select, PPIx::Regexp::Util, PPIx::Utils::Traversal, Readonly, PPI::Token::Whitespace, Config::Tiny, PPIx::Regexp, PPI::Document::File, Module::Pluggable, PPI, PPI::Token::Quote::Single, Pod::PlainText, PPI::Node, String::Format, Perl::Tidy, PPIx::QuoteLike, PPI::Document, Pod::Spell, File::Which
+2025-12-30T14:51:18.3181219Z --> Working on Exception::Class
+2025-12-30T14:51:18.4050279Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/Exception-Class-1.45.tar.gz ... OK
+2025-12-30T14:51:18.7493981Z Configuring Exception-Class-1.45 ... OK
+2025-12-30T14:51:18.7494920Z ==> Found dependencies: Devel::StackTrace, Class::Data::Inheritable
+2025-12-30T14:51:18.7496091Z --> Working on Devel::StackTrace
+2025-12-30T14:51:18.8340907Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/Devel-StackTrace-2.05.tar.gz ... OK
+2025-12-30T14:51:19.0882624Z Configuring Devel-StackTrace-2.05 ... OK
+2025-12-30T14:51:19.3347165Z Building Devel-StackTrace-2.05 ... OK
+2025-12-30T14:51:19.3348014Z Successfully installed Devel-StackTrace-2.05
+2025-12-30T14:51:19.4544329Z --> Working on Class::Data::Inheritable
+2025-12-30T14:51:19.5251033Z Fetching https://www.cpan.org/authors/id/R/RS/RSHERER/Class-Data-Inheritable-0.10.tar.gz ... OK
+2025-12-30T14:51:19.5301456Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.lastuseddate#PS'
+2025-12-30T14:51:19.6759092Z Configuring Class-Data-Inheritable-0.10 ... OK
+2025-12-30T14:51:19.9096533Z Building Class-Data-Inheritable-0.10 ... OK
+2025-12-30T14:51:19.9097376Z Successfully installed Class-Data-Inheritable-0.10
+2025-12-30T14:51:20.1845534Z Building Exception-Class-1.45 ... OK
+2025-12-30T14:51:20.1846582Z Successfully installed Exception-Class-1.45
+2025-12-30T14:51:20.3024391Z --> Working on Pod::Select
+2025-12-30T14:51:20.3971476Z Fetching https://www.cpan.org/authors/id/M/MA/MAREKR/Pod-Parser-1.67.tar.gz ... OK
+2025-12-30T14:51:20.5735096Z Configuring Pod-Parser-1.67 ... OK
+2025-12-30T14:51:20.9046524Z Building Pod-Parser-1.67 ... OK
+2025-12-30T14:51:20.9046918Z Successfully installed Pod-Parser-1.67
+2025-12-30T14:51:21.0446521Z --> Working on PPIx::Regexp::Util
+2025-12-30T14:51:21.1609635Z Fetching https://www.cpan.org/authors/id/W/WY/WYANT/PPIx-Regexp-0.091.tar.gz ... OK
+2025-12-30T14:51:21.4870955Z Configuring PPIx-Regexp-0.091 ... OK
+2025-12-30T14:51:21.4871940Z ==> Found dependencies: Task::Weaken, PPI::Dumper, PPI::Document
+2025-12-30T14:51:21.4872455Z --> Working on Task::Weaken
+2025-12-30T14:51:21.5644418Z Fetching https://www.cpan.org/authors/id/E/ET/ETHER/Task-Weaken-1.06.tar.gz ... OK
+2025-12-30T14:51:21.8318931Z Configuring Task-Weaken-1.06 ... OK
+2025-12-30T14:51:22.0672998Z Building Task-Weaken-1.06 ... OK
+2025-12-30T14:51:22.0673656Z Successfully installed Task-Weaken-1.06
+2025-12-30T14:51:22.1868075Z --> Working on PPI::Dumper
+2025-12-30T14:51:22.2999627Z Fetching https://www.cpan.org/authors/id/O/OA/OALDERS/PPI-1.284.tar.gz ... OK
+2025-12-30T14:51:22.6978408Z Configuring PPI-1.284 ... OK
+2025-12-30T14:51:22.6979102Z ==> Found dependencies: YAML::PP, Params::Util, Clone, Safe::Isa
+2025-12-30T14:51:22.6979572Z --> Working on YAML::PP
+2025-12-30T14:51:22.8095059Z Fetching https://www.cpan.org/authors/id/T/TI/TINITA/YAML-PP-v0.39.0.tar.gz ... OK
+2025-12-30T14:51:23.1560824Z Configuring YAML-PP-v0.39.0 ... OK
+2025-12-30T14:51:23.7579396Z Building YAML-PP-v0.39.0 ... OK
+2025-12-30T14:51:23.7580126Z Successfully installed YAML-PP-v0.39.0
+2025-12-30T14:51:23.8754015Z --> Working on Params::Util
+2025-12-30T14:51:23.9859768Z Fetching https://www.cpan.org/authors/id/R/RE/REHSACK/Params-Util-1.102.tar.gz ... OK
+2025-12-30T14:51:24.4235070Z Configuring Params-Util-1.102 ... OK
+2025-12-30T14:51:25.0847499Z Building Params-Util-1.102 ... OK
+2025-12-30T14:51:25.0847995Z Successfully installed Params-Util-1.102
+2025-12-30T14:51:25.2030400Z --> Working on Clone
+2025-12-30T14:51:25.3059019Z Fetching https://www.cpan.org/authors/id/A/AT/ATOOMIC/Clone-0.47.tar.gz ... OK
+2025-12-30T14:51:25.4635392Z Configuring Clone-0.47 ... OK
+2025-12-30T14:51:26.0789126Z Building Clone-0.47 ... OK
+2025-12-30T14:51:26.0789479Z Successfully installed Clone-0.47
+2025-12-30T14:51:26.1947309Z --> Working on Safe::Isa
+2025-12-30T14:51:26.2647272Z Fetching https://www.cpan.org/authors/id/E/ET/ETHER/Safe-Isa-1.000010.tar.gz ... OK
+2025-12-30T14:51:26.4201420Z Configuring Safe-Isa-1.000010 ... OK
+2025-12-30T14:51:26.6539889Z Building Safe-Isa-1.000010 ... OK
+2025-12-30T14:51:26.6540508Z Successfully installed Safe-Isa-1.000010
+2025-12-30T14:51:27.0689487Z Building PPI-1.284 ... OK
+2025-12-30T14:51:27.0690021Z Successfully installed PPI-1.284
+2025-12-30T14:51:27.4768605Z Building PPIx-Regexp-0.091 ... OK
+2025-12-30T14:51:27.5971600Z Successfully installed PPIx-Regexp-0.091
+2025-12-30T14:51:27.5972320Z --> Working on PPIx::Utils::Traversal
+2025-12-30T14:51:27.6739919Z Fetching https://www.cpan.org/authors/id/D/DB/DBOOK/PPIx-Utils-0.004.tar.gz ... OK
+2025-12-30T14:51:27.8531033Z Configuring PPIx-Utils-0.004 ... OK
+2025-12-30T14:51:28.0983575Z Building PPIx-Utils-0.004 ... OK
+2025-12-30T14:51:28.0984054Z Successfully installed PPIx-Utils-0.004
+2025-12-30T14:51:28.2158584Z --> Working on Readonly
+2025-12-30T14:51:28.2920072Z Fetching https://www.cpan.org/authors/id/S/SA/SANKO/Readonly-2.05.tar.gz ... OK
+2025-12-30T14:51:28.4023295Z ==> Found dependencies: Module::Build::Tiny
+2025-12-30T14:51:28.4023991Z --> Working on Module::Build::Tiny
+2025-12-30T14:51:28.4774776Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/Module-Build-Tiny-0.052.tar.gz ... OK
+2025-12-30T14:51:28.6123894Z ==> Found dependencies: ExtUtils::Helpers, ExtUtils::Config, ExtUtils::InstallPaths
+2025-12-30T14:51:28.6124822Z --> Working on ExtUtils::Helpers
+2025-12-30T14:51:28.6864937Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/ExtUtils-Helpers-0.028.tar.gz ... OK
+2025-12-30T14:51:28.8671390Z Configuring ExtUtils-Helpers-0.028 ... OK
+2025-12-30T14:51:29.1065447Z Building ExtUtils-Helpers-0.028 ... OK
+2025-12-30T14:51:29.1066186Z Successfully installed ExtUtils-Helpers-0.028
+2025-12-30T14:51:29.2342358Z --> Working on ExtUtils::Config
+2025-12-30T14:51:29.3070758Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/ExtUtils-Config-0.010.tar.gz ... OK
+2025-12-30T14:51:29.4781238Z Configuring ExtUtils-Config-0.010 ... OK
+2025-12-30T14:51:29.7203101Z Building ExtUtils-Config-0.010 ... OK
+2025-12-30T14:51:29.7203843Z Successfully installed ExtUtils-Config-0.010
+2025-12-30T14:51:29.8396765Z --> Working on ExtUtils::InstallPaths
+2025-12-30T14:51:29.9131268Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/ExtUtils-InstallPaths-0.015.tar.gz ... OK
+2025-12-30T14:51:30.0851783Z Configuring ExtUtils-InstallPaths-0.015 ... OK
+2025-12-30T14:51:30.3215506Z Building ExtUtils-InstallPaths-0.015 ... OK
+2025-12-30T14:51:30.3216526Z Successfully installed ExtUtils-InstallPaths-0.015
+2025-12-30T14:51:30.5082508Z Configuring Module-Build-Tiny-0.052 ... OK
+2025-12-30T14:51:30.6525528Z Building Module-Build-Tiny-0.052 ... OK
+2025-12-30T14:51:30.6526358Z Successfully installed Module-Build-Tiny-0.052
+2025-12-30T14:51:30.7579471Z Configuring Readonly-2.05 ... OK
+2025-12-30T14:51:30.8970607Z Building Readonly-2.05 ... OK
+2025-12-30T14:51:30.8970980Z Successfully installed Readonly-2.05
+2025-12-30T14:51:31.1025515Z --> Working on Config::Tiny
+2025-12-30T14:51:31.1763550Z Fetching https://www.cpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.30.tgz ... OK
+2025-12-30T14:51:31.3515400Z Configuring Config-Tiny-2.30 ... OK
+2025-12-30T14:51:31.5865926Z Building Config-Tiny-2.30 ... OK
+2025-12-30T14:51:31.5866529Z Successfully installed Config-Tiny-2.30
+2025-12-30T14:51:31.8748706Z --> Working on Module::Pluggable
+2025-12-30T14:51:31.9491109Z Fetching https://www.cpan.org/authors/id/S/SI/SIMONW/Module-Pluggable-6.3.tar.gz ... OK
+2025-12-30T14:51:31.9544653Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemTextContentLanguage'
+2025-12-30T14:51:31.9546627Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseVersion'
+2025-12-30T14:51:31.9548240Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseLabels'
+2025-12-30T14:51:31.9549856Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseConfidences'
+2025-12-30T14:51:31.9551167Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9552506Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9554263Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemTextContentLanguage'
+2025-12-30T14:51:31.9556000Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseVersion'
+2025-12-30T14:51:31.9557450Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseLabels'
+2025-12-30T14:51:31.9558881Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseConfidences'
+2025-12-30T14:51:31.9560276Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9561641Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9563005Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9564427Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9565678Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9567108Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9568309Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9569404Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9570093Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9570734Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9571639Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9572273Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9572943Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9573677Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9574388Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9575112Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9576069Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9576734Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9577412Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9578266Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9578946Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9579601Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9580305Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9581005Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9581700Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9582373Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9583005Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9583797Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9584530Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9585216Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9586190Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9586964Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9587780Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9588585Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9589361Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9590137Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9590864Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9591736Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9592497Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9593221Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9594012Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9594906Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9595697Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9596731Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9597472Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9598270Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9599071Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9599830Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9600641Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9601453Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:32.1382769Z Configuring Module-Pluggable-6.3 ... OK
+2025-12-30T14:51:32.3682553Z Building Module-Pluggable-6.3 ... OK
+2025-12-30T14:51:32.3683892Z Successfully installed Module-Pluggable-6.3
+2025-12-30T14:51:32.8389397Z --> Working on String::Format
+2025-12-30T14:51:32.9095207Z Fetching https://www.cpan.org/authors/id/S/SR/SREZIC/String-Format-1.18.tar.gz ... OK
+2025-12-30T14:51:33.0648870Z Configuring String-Format-1.18 ... OK
+2025-12-30T14:51:33.2943614Z Building String-Format-1.18 ... OK
+2025-12-30T14:51:33.2944352Z Successfully installed String-Format-1.18
+2025-12-30T14:51:33.4116934Z --> Working on Perl::Tidy
+2025-12-30T14:51:33.5683551Z Fetching https://www.cpan.org/authors/id/S/SH/SHANCOCK/Perl-Tidy-20250912.tar.gz ... OK
+2025-12-30T14:51:33.8078970Z Configuring Perl-Tidy-20250912 ... OK
+2025-12-30T14:51:34.1687949Z Building Perl-Tidy-20250912 ... OK
+2025-12-30T14:51:34.1688704Z Successfully installed Perl-Tidy-20250912
+2025-12-30T14:51:34.2893317Z --> Working on PPIx::QuoteLike
+2025-12-30T14:51:34.3812213Z Fetching https://www.cpan.org/authors/id/W/WY/WYANT/PPIx-QuoteLike-0.023.tar.gz ... OK
+2025-12-30T14:51:34.6578693Z Configuring PPIx-QuoteLike-0.023 ... OK
+2025-12-30T14:51:34.9087283Z Building PPIx-QuoteLike-0.023 ... OK
+2025-12-30T14:51:34.9087914Z Successfully installed PPIx-QuoteLike-0.023
+2025-12-30T14:51:35.0261655Z --> Working on Pod::Spell
+2025-12-30T14:51:35.1021667Z Fetching https://www.cpan.org/authors/id/H/HA/HAARG/Pod-Spell-1.27.tar.gz ... OK
+2025-12-30T14:51:35.2150227Z ==> Found dependencies: File::ShareDir::Install
+2025-12-30T14:51:35.2151162Z --> Working on File::ShareDir::Install
+2025-12-30T14:51:35.2916145Z Fetching https://www.cpan.org/authors/id/E/ET/ETHER/File-ShareDir-Install-0.14.tar.gz ... OK
+2025-12-30T14:51:35.5744463Z Configuring File-ShareDir-Install-0.14 ... OK
+2025-12-30T14:51:35.8001993Z Building File-ShareDir-Install-0.14 ... OK
+2025-12-30T14:51:35.8002845Z Successfully installed File-ShareDir-Install-0.14
+2025-12-30T14:51:36.0788554Z Configuring Pod-Spell-1.27 ... OK
+2025-12-30T14:51:36.0789277Z ==> Found dependencies: File::ShareDir, Lingua::EN::Inflect, Class::Tiny
+2025-12-30T14:51:36.0789822Z --> Working on File::ShareDir
+2025-12-30T14:51:36.1540939Z Fetching https://www.cpan.org/authors/id/R/RE/REHSACK/File-ShareDir-1.118.tar.gz ... OK
+2025-12-30T14:51:36.4239155Z Configuring File-ShareDir-1.118 ... OK
+2025-12-30T14:51:36.4239751Z ==> Found dependencies: Class::Inspector
+2025-12-30T14:51:36.4240420Z --> Working on Class::Inspector
+2025-12-30T14:51:36.4988485Z Fetching https://www.cpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.36.tar.gz ... OK
+2025-12-30T14:51:36.6623813Z Configuring Class-Inspector-1.36 ... OK
+2025-12-30T14:51:36.8907439Z Building Class-Inspector-1.36 ... OK
+2025-12-30T14:51:36.8908304Z Successfully installed Class-Inspector-1.36
+2025-12-30T14:51:37.2543081Z Building File-ShareDir-1.118 ... OK
+2025-12-30T14:51:37.2543958Z Successfully installed File-ShareDir-1.118
+2025-12-30T14:51:37.3713987Z --> Working on Lingua::EN::Inflect
+2025-12-30T14:51:37.4606175Z Fetching https://www.cpan.org/authors/id/D/DC/DCONWAY/Lingua-EN-Inflect-1.905.tar.gz ... OK
+2025-12-30T14:51:37.6176598Z Configuring Lingua-EN-Inflect-1.905 ... OK
+2025-12-30T14:51:37.8443522Z Building Lingua-EN-Inflect-1.905 ... OK
+2025-12-30T14:51:37.8444219Z Successfully installed Lingua-EN-Inflect-1.905
+2025-12-30T14:51:37.9647802Z --> Working on Class::Tiny
+2025-12-30T14:51:38.0391013Z Fetching https://www.cpan.org/authors/id/D/DA/DAGOLDEN/Class-Tiny-1.008.tar.gz ... OK
+2025-12-30T14:51:38.2150188Z Configuring Class-Tiny-1.008 ... OK
+2025-12-30T14:51:38.4443426Z Building Class-Tiny-1.008 ... OK
+2025-12-30T14:51:38.4444017Z Successfully installed Class-Tiny-1.008
+2025-12-30T14:51:38.8357323Z Building Pod-Spell-1.27 ... OK
+2025-12-30T14:51:38.8358282Z Successfully installed Pod-Spell-1.27
+2025-12-30T14:51:38.9538966Z --> Working on File::Which
+2025-12-30T14:51:39.0280150Z Fetching https://www.cpan.org/authors/id/P/PL/PLICEASE/File-Which-1.27.tar.gz ... OK
+2025-12-30T14:51:39.1934884Z Configuring File-Which-1.27 ... OK
+2025-12-30T14:51:39.4447781Z Building File-Which-1.27 ... OK
+2025-12-30T14:51:39.4448436Z Successfully installed File-Which-1.27
+2025-12-30T14:51:39.9028963Z Building Perl-Critic-1.156 ... OK
+2025-12-30T14:51:39.9030000Z Successfully installed Perl-Critic-1.156
+2025-12-30T14:51:39.9349844Z 37 distributions installed
+2025-12-30T14:51:39.9513376Z ##[group]Run python3 -m tools.repo_lint check --ci --only perl 2>&1 | tee perl-lint-output.txt
+2025-12-30T14:51:39.9514086Z [36;1mpython3 -m tools.repo_lint check --ci --only perl 2>&1 | tee perl-lint-output.txt[0m
+2025-12-30T14:51:39.9514542Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:39.9550681Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:39.9550930Z env:
+2025-12-30T14:51:39.9551196Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:39.9551645Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:39.9552139Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:39.9552529Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:39.9552929Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:39.9553326Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:39.9555271Z   PERL5LIB: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5:/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5/x86_64-linux:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib/perl5
+2025-12-30T14:51:39.9557252Z ##[endgroup]
+2025-12-30T14:51:42.8721176Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:42.8721652Z 
+2025-12-30T14:51:42.8722236Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8722733Z   Perl Linting
+2025-12-30T14:51:42.8723317Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8723655Z 
+2025-12-30T14:51:42.8724129Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8724650Z   Linting Results
+2025-12-30T14:51:42.8725477Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8726191Z 
+2025-12-30T14:51:42.8726611Z ❌ validate_docstrings: FAILED (11 violation(s))
+2025-12-30T14:51:42.8727570Z    .: [validate_docstrings] ❌ Validation FAILED: 10 violation(s) in 3 file(s)
+2025-12-30T14:51:42.8729592Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl
+2025-12-30T14:51:42.8731719Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:8
+2025-12-30T14:51:42.8734478Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:14
+2025-12-30T14:51:42.8736865Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:21
+2025-12-30T14:51:42.8738943Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl
+2025-12-30T14:51:42.8741188Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:12
+2025-12-30T14:51:42.8743260Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:16
+2025-12-30T14:51:42.8745340Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:25
+2025-12-30T14:51:42.8747907Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:38
+2025-12-30T14:51:42.8749872Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/perl/edge_cases.pl:493
+2025-12-30T14:51:42.8750710Z 
+2025-12-30T14:51:42.8751153Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8751789Z ❌ Found 11 violation(s) across 1 tool(s)
+2025-12-30T14:51:42.8830056Z ##[error]Process completed with exit code 1.
+2025-12-30T14:51:42.8893136Z ##[group]Run actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+2025-12-30T14:51:42.8893541Z with:
+2025-12-30T14:51:42.8893740Z   name: perl-lint-results
+2025-12-30T14:51:42.8893965Z   path: perl-lint-output.txt
+2025-12-30T14:51:42.8894189Z   retention-days: 7
+2025-12-30T14:51:42.8894380Z   if-no-files-found: warn
+2025-12-30T14:51:42.8894595Z   compression-level: 6
+2025-12-30T14:51:42.8894802Z   overwrite: false
+2025-12-30T14:51:42.8894998Z   include-hidden-files: false
+2025-12-30T14:51:42.8895211Z env:
+2025-12-30T14:51:42.8895441Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:42.8896156Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:42.8896557Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:42.8896915Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:42.8897269Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:42.8897661Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:42.8899358Z   PERL5LIB: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5:/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5/x86_64-linux:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib/perl5
+2025-12-30T14:51:42.8900961Z ##[endgroup]
+2025-12-30T14:51:43.1099363Z With the provided path, there will be 1 file uploaded
+2025-12-30T14:51:43.1104380Z Artifact name is valid!
+2025-12-30T14:51:43.1105690Z Root directory input is valid!
+2025-12-30T14:51:43.3265273Z Beginning upload of artifact content to blob storage
+2025-12-30T14:51:43.5514696Z Uploaded bytes 515
+2025-12-30T14:51:43.6115409Z Finished uploading artifact content to blob storage!
+2025-12-30T14:51:43.6119274Z SHA256 hash of uploaded artifact zip is c499caef1e5d69d5157426daef42f055bfeeddc112f8fde69bb4258c56917950
+2025-12-30T14:51:43.6120899Z Finalizing artifact upload
+2025-12-30T14:51:43.7612632Z Artifact perl-lint-results.zip successfully finalized. Artifact ID 4991798590
+2025-12-30T14:51:43.7614124Z Artifact perl-lint-results has been successfully uploaded! Final size is 515 bytes. Artifact ID is 4991798590
+2025-12-30T14:51:43.7620650Z Artifact download URL: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696/artifacts/4991798590
+2025-12-30T14:51:43.7768363Z Post job cleanup.
+2025-12-30T14:51:43.8742449Z [command]/usr/bin/git version
+2025-12-30T14:51:43.8781248Z git version 2.52.0
+2025-12-30T14:51:43.8826186Z Temporarily overriding HOME='/home/runner/work/_temp/a3f05827-92fb-4c28-ace4-6d5b71310da0' before making global git config changes
+2025-12-30T14:51:43.8827605Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:43.8832925Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:43.8868946Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:43.8901627Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:43.9137607Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:43.9159096Z http.https://github.com/.extraheader
+2025-12-30T14:51:43.9171836Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-12-30T14:51:43.9204321Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:43.9542632Z Cleaning up orphan processes

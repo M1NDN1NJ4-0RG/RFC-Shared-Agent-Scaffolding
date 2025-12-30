@@ -1,0 +1,18 @@
+﻿2025-12-30T14:51:56.2207781Z ##[group]Run actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+2025-12-30T14:51:56.2208169Z with:
+2025-12-30T14:51:56.2208344Z   name: yaml-lint-results
+2025-12-30T14:51:56.2208779Z   path: lint-artifacts/yaml-lint-results/
+2025-12-30T14:51:56.2209076Z   merge-multiple: false
+2025-12-30T14:51:56.2209329Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:56.2209614Z   run-id: 20599177696
+2025-12-30T14:51:56.2209791Z ##[endgroup]
+2025-12-30T14:51:56.4175859Z Downloading single artifact
+2025-12-30T14:51:56.6810185Z Preparing to download the following artifacts:
+2025-12-30T14:51:56.6810853Z - yaml-lint-results (ID: 4991794621, Size: 662)
+2025-12-30T14:51:56.8602549Z Redirecting to blob download url: https://productionresultssa6.blob.core.windows.net/actions-results/1c67f884-5fc2-4783-9779-f6cb135a6a02/workflow-job-run-e6c38446-1e32-5b5a-b8e0-d8116e0eb77d/artifacts/bd9f9a81d8d63ee991d4f557cc6980f1e833759954c30e90f1f01f5bc00303b4.zip
+2025-12-30T14:51:56.8604874Z Starting download of artifact to: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/lint-artifacts/yaml-lint-results
+2025-12-30T14:51:57.0937794Z (node:2143) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2025-12-30T14:51:57.0939631Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-12-30T14:51:57.0974688Z Artifact download completed successfully.
+2025-12-30T14:51:57.0975016Z Total of 1 artifact(s) downloaded
+2025-12-30T14:51:57.0981372Z Download artifact has finished successfully

@@ -1,0 +1,39 @@
+﻿2025-12-30T14:51:39.9513361Z ##[group]Run python3 -m tools.repo_lint check --ci --only perl 2>&1 | tee perl-lint-output.txt
+2025-12-30T14:51:39.9514083Z [36;1mpython3 -m tools.repo_lint check --ci --only perl 2>&1 | tee perl-lint-output.txt[0m
+2025-12-30T14:51:39.9514539Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:39.9550673Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:39.9550927Z env:
+2025-12-30T14:51:39.9551186Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:39.9551643Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:39.9552136Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:39.9552527Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:39.9552927Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:39.9553324Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:39.9555235Z   PERL5LIB: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5:/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5/x86_64-linux:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib/perl5
+2025-12-30T14:51:39.9557247Z ##[endgroup]
+2025-12-30T14:51:42.8721118Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:42.8721646Z 
+2025-12-30T14:51:42.8722230Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8722730Z   Perl Linting
+2025-12-30T14:51:42.8723309Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8723651Z 
+2025-12-30T14:51:42.8724123Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8724646Z   Linting Results
+2025-12-30T14:51:42.8725438Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8726187Z 
+2025-12-30T14:51:42.8726597Z ❌ validate_docstrings: FAILED (11 violation(s))
+2025-12-30T14:51:42.8727565Z    .: [validate_docstrings] ❌ Validation FAILED: 10 violation(s) in 3 file(s)
+2025-12-30T14:51:42.8729586Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl
+2025-12-30T14:51:42.8731713Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:8
+2025-12-30T14:51:42.8734471Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:14
+2025-12-30T14:51:42.8736837Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl:21
+2025-12-30T14:51:42.8738938Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl
+2025-12-30T14:51:42.8741183Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:12
+2025-12-30T14:51:42.8743254Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:16
+2025-12-30T14:51:42.8745333Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:25
+2025-12-30T14:51:42.8747625Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl:38
+2025-12-30T14:51:42.8749866Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/perl/edge_cases.pl:493
+2025-12-30T14:51:42.8750705Z 
+2025-12-30T14:51:42.8751149Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:42.8751784Z ❌ Found 11 violation(s) across 1 tool(s)
+2025-12-30T14:51:42.8830045Z ##[error]Process completed with exit code 1.

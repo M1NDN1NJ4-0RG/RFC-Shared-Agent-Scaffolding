@@ -1,0 +1,18 @@
+﻿2025-12-30T14:51:55.3658417Z ##[group]Run actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+2025-12-30T14:51:55.3659290Z with:
+2025-12-30T14:51:55.3659588Z   name: perl-lint-results
+2025-12-30T14:51:55.3659994Z   path: lint-artifacts/perl-lint-results/
+2025-12-30T14:51:55.3660441Z   merge-multiple: false
+2025-12-30T14:51:55.3660899Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:55.3661394Z   run-id: 20599177696
+2025-12-30T14:51:55.3661715Z ##[endgroup]
+2025-12-30T14:51:55.5644803Z Downloading single artifact
+2025-12-30T14:51:55.8223587Z Preparing to download the following artifacts:
+2025-12-30T14:51:55.8224218Z - perl-lint-results (ID: 4991798590, Size: 515)
+2025-12-30T14:51:55.9875325Z Redirecting to blob download url: https://productionresultssa6.blob.core.windows.net/actions-results/1c67f884-5fc2-4783-9779-f6cb135a6a02/workflow-job-run-75a91a41-cc7f-5969-b822-590c16543d19/artifacts/335ea67d2b6a762909388cce497aae3444e47f33c7cc4946bbd1f61901309f73.zip
+2025-12-30T14:51:55.9877987Z Starting download of artifact to: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/lint-artifacts/perl-lint-results
+2025-12-30T14:51:56.2039601Z (node:2132) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2025-12-30T14:51:56.2040577Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-12-30T14:51:56.2075862Z Artifact download completed successfully.
+2025-12-30T14:51:56.2076386Z Total of 1 artifact(s) downloaded
+2025-12-30T14:51:56.2083182Z Download artifact has finished successfully
