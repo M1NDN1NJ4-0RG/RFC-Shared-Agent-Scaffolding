@@ -185,6 +185,10 @@ jobs:
           while [ $ATTEMPT -le $MAX_ATTEMPTS ] && [ "$SUCCESS" = "false" ]; do
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to commit and push auto-format changes..."
 
+            # Stash any uncommitted changes (from Black formatting)
+            echo "Stashing uncommitted changes..."
+            git stash push -u -m "Auto-format changes from Black"
+
             # Sync with remote branch
             echo "Fetching latest changes from remote..."
             git fetch origin "${{ github.event.pull_request.head.ref }}"
@@ -199,9 +203,19 @@ jobs:
             else
               echo "Rebase had conflicts, aborting and retrying..."
               git rebase --abort
+              git stash pop || true
               ATTEMPT=$((ATTEMPT + 1))
               sleep 2
               continue
+            fi
+
+            # Pop stashed changes
+            echo "Applying stashed changes..."
+            if ! git stash pop; then
+              echo "Stash pop had conflicts, resolving by keeping formatted changes..."
+              # Keep the stashed changes (formatted version)
+              git checkout --theirs .
+              git add -A
             fi
 
             # Re-run Black formatter in case new changes need formatting
