@@ -10,4 +10,19 @@
     - powershell_runner.py: PowerShell linting (PSScriptAnalyzer, docstrings)
     - perl_runner.py: Perl linting (Perl::Critic, docstrings)
     - yaml_runner.py: YAML linting (yamllint)
+
+:Environment Variables:
+    None
+
+:Examples:
+    Import runners from this package::
+
+        from tools.repo_lint.runners.python_runner import PythonRunner
+        runner = PythonRunner()
+        results = runner.check()
+
+:Exit Codes:
+    Runners don't exit directly but return LintResult objects:
+    - 0: Implied success (when LintResult.passed = True)
+    - 1: Implied violations (when LintResult.passed = False)
 """

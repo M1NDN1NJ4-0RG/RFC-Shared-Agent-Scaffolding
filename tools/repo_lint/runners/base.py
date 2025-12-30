@@ -9,6 +9,24 @@
     - fix(): Apply automatic fixes where possible (formatters only)
     - has_files(): Check if language has relevant files in repository
     - check_tools(): Verify required tools are installed
+
+:Environment Variables:
+    None
+
+:Examples:
+    Implement a custom runner::
+
+        from tools.repo_lint.runners.base import Runner
+
+        class MyRunner(Runner):
+            def check(self):
+                # Implementation
+                pass
+
+:Exit Codes:
+    Runners don't exit directly but return LintResult objects:
+    - 0: Implied success (when LintResult.passed = True)
+    - 1: Implied violations (when LintResult.passed = False)
 """
 
 import shutil
@@ -22,11 +40,8 @@ from tools.repo_lint.common import LintResult, MissingToolError
 def find_repo_root() -> Path:
     """Find the repository root directory.
 
-    :Returns:
-        Path to repository root
-
-    :Raises:
-        RuntimeError: If repository root cannot be found
+    :returns: Path to repository root
+    :raises RuntimeError: If repository root cannot be found
     """
     current = Path.cwd().resolve()
     while current != current.parent:
@@ -39,11 +54,8 @@ def find_repo_root() -> Path:
 def command_exists(command: str) -> bool:
     """Check if a command exists in PATH (cross-platform).
 
-    :Args:
-        command: Command name to check
-
-    :Returns:
-        True if command exists, False otherwise
+    :param command: Command name to check
+    :returns: True if command exists, False otherwise
     """
     return shutil.which(command) is not None
 
@@ -59,10 +71,9 @@ class Runner(ABC):
     def __init__(self, repo_root: Optional[Path] = None, ci_mode: bool = False, verbose: bool = False):
         """Initialize runner.
 
-        :Args:
-            repo_root: Path to repository root (auto-detected if None)
-            ci_mode: Whether running in CI mode (fail if tools missing)
-            verbose: Whether to show verbose output
+        :param repo_root: Path to repository root (auto-detected if None)
+        :param ci_mode: Whether running in CI mode (fail if tools missing)
+        :param verbose: Whether to show verbose output
         """
         self.repo_root = repo_root or find_repo_root()
         self.ci_mode = ci_mode
@@ -102,25 +113,17 @@ class Runner(ABC):
     def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply automatic fixes where possible (formatters only).
 
-        :Args:
-            policy: Auto-fix policy dictionary (deny-by-default)
-
-        :Returns:
-            List of linting results after fixes applied
-
-        :Raises:
-            MissingToolError: If required tools are not installed (CI mode only)
+        :param policy: Auto-fix policy dictionary (deny-by-default)
+        :returns: List of linting results after fixes applied
+        :raises MissingToolError: If required tools are not installed (CI mode only)
         """
         pass  # pylint: disable=unnecessary-pass  # Abstract method
 
     def _ensure_tools(self, required_tools: List[str]) -> None:
         """Ensure required tools are installed.
 
-        :Args:
-            required_tools: List of required tool names
-
-        :Raises:
-            MissingToolError: If any required tools are missing and CI mode is enabled
+        :param required_tools: List of required tool names
+        :raises MissingToolError: If any required tools are missing and CI mode is enabled
         """
         missing = [tool for tool in required_tools if not command_exists(tool)]
         if missing and self.ci_mode:
