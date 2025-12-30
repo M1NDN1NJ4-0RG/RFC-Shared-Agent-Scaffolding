@@ -203,7 +203,18 @@ Definitions:
 
 Rules:
 - Copilot Code Review is a required final quality gate:
-  - If Copilot reports actionable issues (bugs, logic errors, missing docs/tests, contract violations), the agent MUST fix them or explicitly justify why they are false positives.
+  - Treat **every** Copilot Code Review comment as a **required action** — including items labeled “nit”, “code quality”, “maintainability”, “consistency”, or “suggestion”.
+  - Do **not** classify review feedback as “non-blocking” or “nice-to-have”. **Nits are not optional.**
+  - You may skip or partially implement a review comment **only** if implementing it would:
+    - break existing behavior, conformance, or CI/contracts, OR
+    - violate repo contracts/naming rules, OR
+    - exceed explicitly-approved scope constraints for the current PR.
+  - If you skip or partially implement any review comment, you MUST:
+    - Leave a **nearby, durable** note explaining why, located at one of:
+      - the relevant function/class docstring
+      - the module-level docstring/header comment
+      - an inline comment immediately above the impacted code
+    - Mention it explicitly in the PR update comment (see `### 5) Output required in your PR update comment`), including **what was skipped** and **why**, plus where the local note was left.
   - If the agent cannot resolve an issue without human direction, escalate using the exact escalation format below.
 - Agents cannot always directly “run” GitHub Actions in all environments. The agent MUST instead:
   - Verify the latest workflow/check runs exist and are passing for the PR’s HEAD commit, OR
