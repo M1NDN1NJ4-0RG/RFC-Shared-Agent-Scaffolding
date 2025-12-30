@@ -247,6 +247,7 @@ def get_tracked_files() -> List[Path]:
     # Directories to exclude (test fixtures with intentional violations)
     exclude_dirs = [
         Path("conformance/repo-lint/vectors/fixtures"),
+        Path("conformance/repo-lint/fixtures/violations"),
         Path("scripts/tests/fixtures"),
     ]
 

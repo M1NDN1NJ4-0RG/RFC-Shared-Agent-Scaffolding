@@ -227,13 +227,18 @@ class RustRunner(Runner):
                     file_path = primary_span.get("file_name", "unknown")
                     line_num = primary_span.get("line_start")
                     # Make file path relative to rust/ directory if it's absolute
-                    if file_path.startswith("/") or file_path.startswith(str(rust_dir)):
-                        # Try to make it relative to rust/ directory
+                    # Note: Clippy may return absolute paths; we normalize them to be relative to rust/
+                    if file_path.startswith(str(rust_dir)):
+                        # Path is absolute and within rust_dir - make it relative
                         try:
-                            if file_path.startswith(str(rust_dir)):
-                                file_path = file_path[len(str(rust_dir)) + 1 :]
+                            file_path = file_path[len(str(rust_dir)) + 1 :]
                         except (ValueError, IndexError):
                             pass  # Keep original path if relativization fails
+                    elif file_path.startswith("/"):
+                        # Path is absolute but not within rust_dir
+                        # This shouldn't normally happen, but keep the path as-is for debugging
+                        # The absolute path will help developers locate the issue
+                        pass
                 else:
                     file_path = "unknown"
                     line_num = None
