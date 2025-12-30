@@ -213,6 +213,38 @@ All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is 
 
 ## Session Notes (newest first)
 
+### 2025-12-30 21:19 - Phase 7-2 COMPLETE: CI Scope + Unsafe Fixture Coverage
+- **Merged main** — ✅ COMPLETE
+  - Fetched and merged latest main (commit 0b4bc33)
+  - Pulled in new requirement: `docs/ai-prompt/110/new-requirement-2-phase-7.md`
+- **Phase 7-2 Requirement 1: CI Exclusions** — ✅ COMPLETE
+  - Added `paths-ignore` to umbrella workflow for unsafe-fix-fixtures/**
+  - Updated Detect Changed Files job to filter out fixtures
+  - Created centralized `EXCLUDED_PATHS` + `get_tracked_files()` helper in base.py
+  - Updated all 5 language runners to use new helper (reduced duplication ~50 lines)
+  - Updated validate_docstrings.py exclusion patterns
+  - Commits: 024cfeb, 6e9ff51
+- **Phase 7-2 Requirement 2: Fixture Scaffolding** — ✅ COMPLETE
+  - Created fixture directories for Bash, Perl, PowerShell, YAML, Rust
+  - Added README.md to each (intentional non-conformance, CI exclusion, test-only usage)
+  - Added placeholder fixture files (unsafe fixers not yet implemented for most languages)
+  - All fixtures properly excluded from linting (verified)
+- **Phase 7-2 Requirement 3: Test Validation** — ✅ COMPLETE
+  - Verified existing tests use temporary workspaces only
+  - Confirmed no unsafe mode on real repository code
+  - Validated fixtures excluded from `repo_lint check --ci`
+- **Phase 7-2 Requirement 4: Reporting** — ✅ COMPLETE
+  - Documented all workflow/runner/validator changes
+  - Provided proof of exclusion (no violations from fixtures)
+  - Replied to PR comment with comprehensive report
+- **Human feedback addressed**:
+  - Created `get_tracked_files()` helper per suggestion to reduce code duplication
+  - Applied DRY principle across all language runners
+- **Validation**:
+  - `python3 -m tools.repo_lint check --ci` → Python PASSING
+  - No violations from unsafe-fix-fixtures (properly excluded)
+- **Status**: Phase 7-2 COMPLETE, all requirements satisfied
+
 ### 2025-12-30 20:30 - Phase 7 COMPLETE: All tests, JSON output, CI enforcement
 - **Phase 7 Item 7.1: Unit tests** — ✅ COMPLETE
   - Created 3 comprehensive test files (23 tests total)
