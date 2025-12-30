@@ -288,7 +288,11 @@ class PythonRunner(Runner):
             )
 
         result = subprocess.run(
-            [sys.executable, str(validator_script)], cwd=self.repo_root, capture_output=True, text=True, check=False
+            [sys.executable, str(validator_script), "--language", "python"],
+            cwd=self.repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
         )
 
         if result.returncode == 0:

@@ -85,6 +85,14 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
         python3 scripts/validate_docstrings.py --file scripts/my-script.sh
         python3 scripts/validate_docstrings.py -f script1.py -f script2.sh
 
+    Validate only Python files::
+
+        python3 scripts/validate_docstrings.py --language python
+
+    Validate only Bash files::
+
+        python3 scripts/validate_docstrings.py --language bash
+
     Skip content validation (only check section presence)::
 
         python3 scripts/validate_docstrings.py --no-content-checks
@@ -275,6 +283,41 @@ def get_tracked_files() -> List[Path]:
     return matched_files
 
 
+def get_language_from_extension(file_path: Path) -> str:
+    """Determine language from file extension.
+
+    :param file_path: Path to file
+    :returns: Language name (python, bash, perl, powershell, yaml, rust) or empty string if unknown"""
+    suffix = file_path.suffix.lower()
+
+    if suffix in [".sh", ".bash", ".zsh"]:
+        return "bash"
+    elif suffix == ".ps1":
+        return "powershell"
+    elif suffix == ".py":
+        return "python"
+    elif suffix in [".pl", ".pm"]:
+        return "perl"
+    elif suffix == ".rs":
+        return "rust"
+    elif suffix in [".yml", ".yaml"]:
+        return "yaml"
+    else:
+        return ""
+
+
+def filter_files_by_language(files: List[Path], language: str) -> List[Path]:
+    """Filter files to only those matching specified language.
+
+    :param files: List of file paths to filter
+    :param language: Language to filter by (python, bash, perl, powershell, yaml, rust, all)
+    :returns: Filtered list of file paths"""
+    if language == "all":
+        return files
+
+    return [f for f in files if get_language_from_extension(f) == language]
+
+
 def validate_file(file_path: Path) -> List[ValidationError]:
     """Validate a single file based on its extension.
 
@@ -337,6 +380,13 @@ Examples:
         action="store_true",
         help="Skip content validation (e.g., exit code completeness checks). Only check section presence.",
     )
+    parser.add_argument(
+        "--language",
+        "-l",
+        choices=["python", "bash", "perl", "powershell", "yaml", "rust", "all"],
+        default="all",
+        help="Restrict validation to specific language files only. Default: all",
+    )
 
     args = parser.parse_args()
 
@@ -359,6 +409,12 @@ Examples:
         # Full repository scan
         files = get_tracked_files()
         print(f"Found {len(files)} files in scope\n")
+
+    # Apply language filter
+    original_count = len(files)
+    files = filter_files_by_language(files, args.language)
+    if args.language != "all":
+        print(f"Filtered to {len(files)} {args.language} file(s) (from {original_count} total)\n")
 
     # Validate each file
     errors: List[ValidationError] = []
