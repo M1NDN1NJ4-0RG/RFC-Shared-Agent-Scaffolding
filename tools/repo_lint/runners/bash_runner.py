@@ -31,7 +31,7 @@ from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
 from tools.repo_lint.policy import is_category_allowed
-from tools.repo_lint.runners.base import Runner, command_exists
+from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
 class BashRunner(Runner):
@@ -43,10 +43,8 @@ class BashRunner(Runner):
         :returns:
             True if Bash files exist, False otherwise
         """
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.sh"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-        return bool(result.stdout.strip())
+        files = get_tracked_files(["**/*.sh"], self.repo_root)
+        return len(files) > 0
 
     def check_tools(self) -> List[str]:
         """Check which Bash tools are missing.
@@ -112,13 +110,7 @@ class BashRunner(Runner):
         :returns:
             List of Bash file paths (empty list if none found)
         """
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.sh"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-        if not result.stdout.strip():
-            return []
-
-        all_files = result.stdout.strip().split("\n")
+        all_files = get_tracked_files(["**/*.sh"], self.repo_root)
         return filter_excluded_paths(all_files)
 
     def _run_shellcheck(self) -> LintResult:

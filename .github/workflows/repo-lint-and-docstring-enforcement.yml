@@ -36,8 +36,12 @@ name: Repo Lint and Docstring Enforcement
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'conformance/repo-lint/unsafe-fix-fixtures/**'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'conformance/repo-lint/unsafe-fix-fixtures/**'
   workflow_dispatch:
     inputs:
       force_all:
@@ -357,8 +361,8 @@ jobs:
             BASE_REF=$(git rev-parse --verify HEAD^ 2>/dev/null || echo "4b825dc642cb6eb9a060e54bf8d69288fbee4904")
           fi
 
-          # Get changed files
-          CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD)
+          # Get changed files, excluding unsafe-fix fixtures
+          CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD | grep -v '^conformance/repo-lint/unsafe-fix-fixtures/' || true)
 
           # Initialize all outputs to false
           echo "python=false" >> $GITHUB_OUTPUT

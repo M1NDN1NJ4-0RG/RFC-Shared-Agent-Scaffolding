@@ -30,6 +30,12 @@ Thank you for your interest in contributing! This repository implements the RFC-
 - Examples and validation
 - **All scripts must follow their language contract**
 
+🤖 **[AI Agent Constraints](./docs/contributing/ai-constraints.md)** - Safety rules for AI agents
+- Prohibited dangerous commands (unsafe fixes, destructive operations)
+- Required escalation procedures
+- Human-only vs AI-allowed operations
+- **AI agents must follow these constraints**
+
 ### For Testing
 
 🧪 **[Testing Documentation](./docs/testing/)** - How to run and write tests

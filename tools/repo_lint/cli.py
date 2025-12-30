@@ -95,6 +95,22 @@ def create_parser() -> argparse.ArgumentParser:
         help="Run fixes for only the specified language",
     )
     fix_parser.add_argument("--json", action="store_true", help="Output results in JSON format for CI debugging")
+    fix_parser.add_argument(
+        "--unsafe",
+        action="store_true",
+        help=(
+            "DANGER: Enable unsafe fixers "
+            "(REQUIRES --yes-i-know, FORBIDDEN in CI, see docs/contributing/ai-constraints.md)"
+        ),
+    )
+    fix_parser.add_argument(
+        "--yes-i-know",
+        action="store_true",
+        help=(
+            "DANGER: Confirm unsafe mode execution "
+            "(REQUIRED with --unsafe, review generated patch before committing)"
+        ),
+    )
 
     # install command
     install_parser = subparsers.add_parser("install", help="Install/bootstrap required linting tools")
@@ -201,10 +217,46 @@ def cmd_fix(args: argparse.Namespace) -> int:
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=violations remain, 2=missing tools, 3=error)
     """
+    import os
+
     use_json = getattr(args, "json", False)
-    if not use_json:
-        print("🔧 Running formatters in fix mode...")
+    unsafe_mode = getattr(args, "unsafe", False)
+    yes_i_know = getattr(args, "yes_i_know", False)
+
+    # Detect CI environment
+    is_ci = args.ci or os.getenv("CI", "").lower() in ("true", "1", "yes")
+
+    # Guard: Unsafe mode is forbidden in CI
+    if unsafe_mode and is_ci:
+        print("❌ UNSAFE MODE FORBIDDEN IN CI")
         print("")
+        print("Unsafe fixes are not allowed in CI environments.")
+        print("See: docs/contributing/ai-constraints.md")
+        print("")
+        return ExitCode.MISSING_TOOLS  # Exit code 2 per requirements
+
+    # Guard: --unsafe requires --yes-i-know
+    if unsafe_mode and not yes_i_know:
+        print("❌ UNSAFE MODE BLOCKED FOR SAFETY")
+        print("")
+        print("The --unsafe flag requires --yes-i-know to actually execute.")
+        print("Unsafe fixes can change behavior and MUST be reviewed before committing.")
+        print("")
+        print("To proceed (LOCAL ONLY, AFTER READING THE WARNINGS):")
+        print("  python3 -m tools.repo_lint fix --unsafe --yes-i-know")
+        print("")
+        print("See: docs/contributing/ai-constraints.md")
+        print("")
+        return ExitCode.MISSING_TOOLS  # Exit code 2 per requirements
+
+    if not use_json:
+        if unsafe_mode:
+            print("⚠️  DANGER: Running in UNSAFE FIX MODE")
+            print("⚠️  Review the generated patch/log before committing!")
+            print("")
+        else:
+            print("🔧 Running formatters in fix mode...")
+            print("")
 
     # Load and validate auto-fix policy
     try:
@@ -231,6 +283,47 @@ def cmd_fix(args: argparse.Namespace) -> int:
         print(f"❌ Failed to load auto-fix policy: {e}")
         print("")
         return ExitCode.INTERNAL_ERROR
+
+    # If unsafe mode is enabled, run unsafe fixers
+    if unsafe_mode:
+        from datetime import datetime
+        from pathlib import Path
+
+        from tools.repo_lint.forensics import print_forensics_summary, save_forensics
+        from tools.repo_lint.unsafe_fixers import apply_unsafe_fixes
+
+        # Collect all files to process
+        repo_root = Path.cwd()
+        all_files = []
+
+        # Only process files for the specified language if --only is used
+        only_language = getattr(args, "only", None)
+        if only_language == "python" or only_language is None:
+            all_files.extend(repo_root.rglob("*.py"))
+
+        # Filter out common non-source directories and test fixtures
+        all_files = [
+            f
+            for f in all_files
+            if not any(
+                part in f.parts
+                for part in [".venv", ".venv-lint", "venv", "__pycache__", ".git", "dist", "conformance"]
+            )
+        ]
+
+        start_time = datetime.now()
+        results = apply_unsafe_fixes(all_files)
+        end_time = datetime.now()
+
+        # Generate forensics
+        patch_path, log_path = save_forensics(results, start_time, end_time)
+        print_forensics_summary(patch_path, log_path, results)
+
+        # After unsafe fixes, run normal fix to clean up formatting
+        if results:
+            if not use_json:
+                print("Running safe formatters to clean up after unsafe fixes...")
+                print("")
 
     # Pass policy to runners via callback
     return _run_all_runners(args, "Formatting", lambda runner: runner.fix(policy=policy))
