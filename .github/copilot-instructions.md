@@ -154,11 +154,23 @@ When CI, tests, or build steps are **not present**, the agent must:
 - ✅ Good: `npm install && npm run test:unit`
 - ❌ Bad: "Run the tests"
 
+
 **Stop and Escalate if Human Action Required:**
 - If you encounter ambiguity, missing requirements, or need approval: **STOP**
 - Do NOT guess or invent solutions
 - Follow the escalation policy below
 - **When blocked:** Add a comment to the PR AND stop — no further commits or pushes until unblocked
+
+## SESSION EXIT REQUIREMENTS (MANDATORY)
+
+Before ending **EVERY session** (including pausing, handing off, or saying work is complete), the agent MUST ensure the following have been run and reviewed:
+- Code review checks
+- CodeQL checks
+
+Rules:
+- If these checks are available as GitHub PR/Checks (Actions/Checks), the agent MUST run them and confirm results.
+- If any check fails, the agent MUST either fix the failures or escalate as **BLOCKED — HUMAN ACTION REQUIRED** with references to the failing checks/logs.
+- If the repository does not yet have these checks configured, the agent MUST explicitly state they cannot be run because they are not configured (do NOT claim they ran), and escalate to the human to decide whether to add/enable them.
 
 ## AI Next-Steps Journals (MANDATORY)
 
