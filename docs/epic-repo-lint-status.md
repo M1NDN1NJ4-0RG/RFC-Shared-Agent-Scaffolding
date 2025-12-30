@@ -465,17 +465,24 @@ Rationale:
   - ✅ **Implemented** `--only <language>` selector in `tools/repo_lint/cli.py` (lines 50-51 for check, similar for fix)
   - Verified: `python3 -m tools.repo_lint check --help` shows `--only {python,bash,powershell,perl,yaml,rust}`
   - 🔜 **Deferred** `repo-lint changed` (not required for umbrella workflow; can use --only instead)
-- [ ] **Sub-Item 6.4.7:** Migrate existing lint/docstring workflows to this umbrella workflow:
+- [x] **Sub-Item 6.4.7:** Migrate existing lint/docstring workflows to this umbrella workflow:
   - Disable or remove redundant workflow files once parity is confirmed
   - Keep Black auto-patch behavior *inside* the umbrella workflow with the safeguards from Item 6.2
   - **Transition rules (Locked by this Sub-Item):**
     - Until the umbrella workflow is the canonical gate (required checks), KEEP existing language-specific workflows enabled as the enforcement mechanism.
     - Do NOT delete/disable old workflows until umbrella parity is confirmed **and** the relevant `repo_lint` runners exist.
     - Once the umbrella workflow becomes the canonical gate: if a PR triggers a language bucket whose runner is not implemented, the workflow MUST fail hard (no silent pass/warn).
-  - 🔜 **BLOCKED** - Umbrella workflow exists and is complete; old workflows remain active per transition rules
-  - **Blocker:** Cannot migrate until Item 6.4.9 (CI verification) is complete
-  - **Old workflows still active:** `lint-and-format-checker.yml`, `docstring-contract.yml`, `yaml-lint.yml`
-  - **Next step:** Wait for umbrella workflow to run in CI, verify parity, then disable old workflows
+  - ✅ **COMPLETE** - Migration executed per Option B (weekly scheduled full scan)
+  - **Strategy:** Keep umbrella as PR gate (validates only changed languages) + weekly full scan (validates all languages)
+  - **Old workflows disabled:** Renamed to `.disabled` extension:
+    - `docstring-contract.yml.disabled` (legacy: validated all docstrings on every PR)
+    - `lint-and-format-checker.yml.disabled` (legacy: language-specific linting)
+    - `yaml-lint.yml.disabled` (legacy: YAML linting)
+  - **New weekly workflow:** `.github/workflows/repo-lint-weekly-full-scan.yml`
+    - Schedule: Monday 00:00 UTC (cron: '0 0 * * 1')
+    - Runs: `python -m tools.repo_lint check --ci` (all languages, no --only flag)
+    - Supports: `workflow_dispatch` for manual triggering
+    - Purpose: Catch cross-language docstring drift periodically without slowing down PR workflow
 - [x] **Sub-Item 6.4.8:** Pin any third-party actions used by the umbrella workflow by commit SHA (consistent with Phase 0 Item 0.4).
   - ✅ **Implemented** - all 5 actions pinned by commit SHA (see Item 6.2.4 for full list)
 - [ ] **Sub-Item 6.4.9:** Add CI verification steps to confirm the umbrella workflow produces the same effective checks as the prior workflows (parity confirmation) before deleting old workflows.

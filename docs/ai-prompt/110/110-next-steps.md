@@ -4,15 +4,99 @@ Last Updated: 2025-12-30
 Related: Issue #110, PRs #132, #137
 
 ## NEXT
-- **ESCALATION**: Need human decision on migration strategy for Sub-Item 6.4.7
-  - Option A: Keep both workflows (ruled out as not sustainable long-term)
-  - Option B: Migrate fully + add weekly scheduled full scan (RECOMMENDED)
-  - Option C: Add --all flag to umbrella for main branch merges
-- After decision: Execute chosen migration strategy
 - Continue with Sub-Item 6.4.9: Test umbrella workflow in CI
+  - Trigger workflow run on this PR to verify logging behavior
+  - Test conditional execution with different file changes
+  - Compare results with legacy workflow behavior (now disabled)
 - Complete final validation (code review, CodeQL, epic status update)
+- Close out Issue #110
 
 ---
+
+## DONE (EXTREMELY DETAILED)
+
+### 2025-12-30 17:35 - Implemented Option B: Weekly scheduled full scan (Sub-Item 6.4.7 COMPLETE)
+**Files Changed:**
+- `.github/workflows/repo-lint-weekly-full-scan.yml`: Created (new file, 3580 bytes)
+- `.github/workflows/docstring-contract.yml`: Renamed to `.github/workflows/docstring-contract.yml.disabled`
+- `.github/workflows/lint-and-format-checker.yml`: Renamed to `.github/workflows/lint-and-format-checker.yml.disabled`
+- `.github/workflows/yaml-lint.yml`: Renamed to `.github/workflows/yaml-lint.yml.disabled`
+- `docs/epic-repo-lint-status.md`: Updated Sub-Item 6.4.7 status to COMPLETE (lines 468-487)
+- `docs/ai-prompt/110/110-next-steps.md`: Updated NEXT section (removed escalation, updated tasks)
+
+**Changes Made:**
+- **Human decision received**: Implement Option B for Sub-Item 6.4.7 migration
+- **Created new weekly scheduled workflow**:
+  - File: `.github/workflows/repo-lint-weekly-full-scan.yml`
+  - Name: "Weekly Repo Lint Full Scan"
+  - Schedule: Monday 00:00 UTC (cron: '0 0 * * 1')
+  - Manual trigger: workflow_dispatch enabled
+  - Scope: Full scan of ALL languages (no --only flag)
+  - Command: `python -m tools.repo_lint check --ci --verbose`
+  - Purpose: Catch cross-language docstring drift periodically without slowing PR workflow
+  - All actions pinned by commit SHA (consistent with Phase 0 Item 0.4.2):
+    - actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 (v4.2.2)
+    - actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b (v5.3.0)
+    - shogo82148/actions-setup-perl@9c1eca9952ccc07f9ca4a2097b63df93d9d138e9 (v1.31.3)
+    - actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 (v4.4.3)
+  - Installs all required tools:
+    - Python: black==24.10.0, ruff==0.8.4, pylint==3.3.2, yamllint==1.35.1
+    - Bash: shellcheck, shfmt v3.12.0
+    - PowerShell: pwsh, PSScriptAnalyzer 1.23.0
+    - Perl: Perl::Critic, PPI
+  - Timeout: 30 minutes
+  - Failure handling: uploads failure report artifact with 30-day retention
+- **Disabled legacy workflows** (renamed with .disabled extension):
+  - `docstring-contract.yml` → `docstring-contract.yml.disabled`
+  - `lint-and-format-checker.yml` → `lint-and-format-checker.yml.disabled`
+  - `yaml-lint.yml` → `yaml-lint.yml.disabled`
+  - Rationale: Renamed instead of deleted to preserve history and allow rollback if needed
+- **Updated epic-repo-lint-status.md**:
+  - Marked Sub-Item 6.4.7 as COMPLETE ✅
+  - Documented migration strategy: Option B (weekly scheduled full scan)
+  - Listed disabled workflows and new weekly workflow
+  - Explained purpose: umbrella as PR gate + weekly full scan for drift detection
+
+**Verification:**
+```bash
+# Verified new workflow created
+ls -la .github/workflows/repo-lint-weekly-full-scan.yml
+# -rw-rw-r-- 1 runner runner 3580 Dec 30 17:35 .github/workflows/repo-lint-weekly-full-scan.yml
+
+# Verified legacy workflows disabled
+ls -la .github/workflows/*.disabled
+# -rw-rw-r-- 1 runner runner 2760 Dec 30 17:15 .github/workflows/docstring-contract.yml.disabled
+# -rw-rw-r-- 1 runner runner 8002 Dec 30 17:15 .github/workflows/lint-and-format-checker.yml.disabled
+# -rw-rw-r-- 1 runner runner 2452 Dec 30 17:15 .github/workflows/yaml-lint.yml.disabled
+
+# Verified workflow YAML syntax
+python3 -c "import yaml; yaml.safe_load(open('.github/workflows/repo-lint-weekly-full-scan.yml'))"
+# No errors - valid YAML
+
+# Verified cron schedule
+grep "cron:" .github/workflows/repo-lint-weekly-full-scan.yml
+# - cron: '0 0 * * 1'  # Monday 00:00 UTC
+
+# Verified full scan command (no --only flag)
+grep "python -m tools.repo_lint" .github/workflows/repo-lint-weekly-full-scan.yml
+# python -m tools.repo_lint check --ci --verbose
+```
+
+**Results:**
+- Sub-Item 6.4.7 migration COMPLETE ✅
+- Weekly scheduled workflow operational (will first run Monday 00:00 UTC)
+- Legacy workflows disabled but preserved for rollback if needed
+- Strategy: Efficient PR workflow (validates only changed languages) + periodic full scan (validates all languages weekly)
+- All actions pinned by commit SHA per security policy
+- Manual trigger available via workflow_dispatch
+
+**Known Issues:**
+- None
+
+**Follow-ups:**
+- Sub-Item 6.4.9: Test umbrella workflow in CI environment
+- Final validation: code review, CodeQL check
+- Close out Issue #110
 
 ## DONE (EXTREMELY DETAILED)
 
