@@ -515,6 +515,11 @@ Rationale:
 - ✅ Parser swaps (e.g., bashlex → Tree-sitter, PPI fallback tweaks, PowerShell AST changes) do not silently change expected outputs.
 - ✅ Auto-fix behavior is governed by explicit policy and is auditable.
 
+### Item 6.6 — Failure Artifacts and Repository Logging (High)  
+- [ ] **Sub-Item 6.6.1:** Enhance the umbrella workflow to create a summary artifact capturing a consolidated list of all linter and docstring failures when jobs fail, producing log files for each failed language job and a summary of violations.  
+- [ ] **Sub-Item 6.6.2:** After all language linter jobs finish, if any failures occurred, commit these failure log files into the repository (for example under a designated directory such as `repo-lint-failure-reports/`) so that humans or agents can review them without searching through GitHub logs or using APIs.  
+- [ ] **Sub-Item 6.6.3:** Ensure the umbrella workflow waits for all linter jobs to complete and consolidates multiple linter failures into a single artifact and commit, rather than multiple partial commits, so that all errors are captured.
+
 **Phase 6 Success Criteria**
 - ✅ CI executes the same single entrypoint as local dev.
 - ✅ No drift between workflow YAML and repo tooling.
