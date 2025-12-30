@@ -176,16 +176,43 @@ param(
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+<#
+.SYNOPSIS
+Writes an error message to stderr.
+.PARAMETER Msg
+The error message to write.
+#>
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
+<#
+.SYNOPSIS
+Displays usage information and exits with code 3.
+#>
 function Usage {
   Write-Err "Usage:"
   Write-Err "  scripts/preflight-automerge-ruleset.ps1 -Repo OWNER/REPO (-RulesetId ID | -RulesetName NAME) -Want '[\"lint\",\"test\"]'"
   exit 3
 }
 
+<#
+.SYNOPSIS
+Checks if a command is available in the PATH.
+.PARAMETER cmd
+The command name to check for.
+.OUTPUTS
+Boolean indicating whether the command exists.
+#>
 function Have-Cmd([string]$cmd) { return $null -ne (Get-Command $cmd -ErrorAction SilentlyContinue) }
 
+<#
+.SYNOPSIS
+Determines if an API error response indicates an authentication or permission issue.
+.PARAMETER obj
+The error response object to classify.
+.OUTPUTS
+Boolean indicating whether this is an auth/permission error.
+#>
 function Classify-Auth($obj) {
   if ($null -eq $obj) { return $false }
   $msg = $obj.message
@@ -193,6 +220,14 @@ function Classify-Auth($obj) {
   return $msg -match '(?i)(Bad credentials|Requires authentication|Resource not accessible|Forbidden|Must have admin rights|Not Found)'
 }
 
+<#
+.SYNOPSIS
+Calls the GitHub API using gh CLI.
+.PARAMETER endpoint
+The API endpoint path to call.
+.OUTPUTS
+The raw JSON response or null on error.
+#>
 function Gh-Api([string]$endpoint) {
   try {
     $out = & gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: $ApiVersion" $endpoint 2>$null
@@ -200,6 +235,14 @@ function Gh-Api([string]$endpoint) {
   } catch { return $null }
 }
 
+<#
+.SYNOPSIS
+Makes an HTTP GET request with GitHub API authentication.
+.PARAMETER url
+The URL to request.
+.OUTPUTS
+Object with status code and body properties.
+#>
 function Http-Get([string]$url) {
   $token = $env:TOKEN
   if ([string]::IsNullOrWhiteSpace($token)) { $token = $env:GITHUB_TOKEN }
@@ -247,6 +290,12 @@ try {
   exit 3
 }
 
+<#
+.SYNOPSIS
+Fetches all rulesets for the repository using GitHub API.
+.OUTPUTS
+Array of ruleset objects.
+#>
 function Get-Rulesets {
   if (Have-Cmd "gh") {
     $raw = Gh-Api "repos/$Repo/rulesets"
@@ -266,6 +315,14 @@ function Get-Rulesets {
   }
 }
 
+<#
+.SYNOPSIS
+Fetches a specific ruleset by ID using GitHub API.
+.PARAMETER id
+The ruleset ID to fetch.
+.OUTPUTS
+The ruleset object.
+#>
 function Get-Ruleset([string]$id) {
   if (Have-Cmd "gh") {
     $raw = Gh-Api "repos/$Repo/rulesets/$id"

@@ -259,6 +259,15 @@ use File::Basename qw(dirname);
 use File::Spec;
 use Cwd qw(abs_path);
 
+=head2 find_repo_root
+
+Determines repository root by walking up from script location.
+
+Returns:
+    Path to the repository root directory
+
+=cut
+
 # Determine repository root (walk up from script location)
 sub find_repo_root {
     my $script_dir = dirname(abs_path(__FILE__));

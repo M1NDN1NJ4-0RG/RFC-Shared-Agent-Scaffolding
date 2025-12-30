@@ -456,11 +456,37 @@ use HTTP::Tiny;
 use Getopt::Long qw(GetOptions);
 
 sub die_usage { print STDERR $_[0] . "\n"; exit 3; }
+
+=head2 warn_msg
+
+Prints a warning message to stderr.
+
+Args:
+    $_[0]: Warning message to display
+
+=cut
+
 sub warn_msg { print STDERR "WARN: $_[0]\n"; }
+
+=head2 info
+
+Prints an info message to stderr.
+
+Args:
+    $_[0]: Info message to display
+
+=cut
+
 sub info { print STDERR "INFO: $_[0]\n"; }
 
 my ($repo, $ruleset_id, $ruleset_name, $want_json, $api_version);
 $api_version = "2022-11-28";
+
+=head2 usage
+
+Displays usage information and exits with code 3.
+
+=cut
 
 sub usage {
   print STDERR <<"USAGE";
@@ -473,11 +499,35 @@ USAGE
   exit 3;
 }
 
+=head2 have_cmd
+
+Checks if a command is available in PATH.
+
+Args:
+    $cmd: Command name to check for
+
+Returns:
+    1 if command exists, 0 otherwise
+
+=cut
+
 sub have_cmd {
   my ($cmd) = @_;
   for my $p (split(/:/, $ENV{PATH} // "")) { return 1 if -x "$p/$cmd"; }
   return 0;
 }
+
+=head2 gh_api
+
+Calls the GitHub API using the gh CLI tool.
+
+Args:
+    $endpoint: API endpoint path to call
+
+Returns:
+    JSON response string or undef on error
+
+=cut
 
 sub gh_api {
   my ($endpoint) = @_;
@@ -489,6 +539,18 @@ sub gh_api {
   close($fh);
   return $json;
 }
+
+=head2 http_get
+
+Makes an HTTP GET request with GitHub API authentication.
+
+Args:
+    $url: URL to request
+
+Returns:
+    HTTP::Tiny response object
+
+=cut
 
 sub http_get {
   my ($url) = @_;
@@ -506,11 +568,35 @@ sub http_get {
   return $res;
 }
 
+=head2 parse_json
+
+Parses a JSON string.
+
+Args:
+    $s: JSON string to parse
+
+Returns:
+    Decoded JSON structure
+
+=cut
+
 sub parse_json {
   my ($s) = @_;
   my $json = JSON::PP->new->utf8->decode($s);
   return $json;
 }
+
+=head2 classify_auth
+
+Determines if an error indicates an authentication/permission issue.
+
+Args:
+    $obj: Error object to classify
+
+Returns:
+    1 if auth error, 0 otherwise
+
+=cut
 
 sub classify_auth {
   my ($obj) = @_;

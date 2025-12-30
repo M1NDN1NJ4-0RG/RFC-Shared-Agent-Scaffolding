@@ -223,6 +223,15 @@ use File::Path qw(make_path remove_tree);
 use File::Spec;
 use Cwd qw(abs_path);
 
+=head2 die_bad
+
+Dies with an error message prefixed with script name and exit code 1.
+
+Args:
+    $_[0]: Error message to display
+
+=cut
+
 sub die_bad { print STDERR "safe_check.pl: $_[0]\n"; exit 1; }
 
 my $root = File::Spec->catdir('.agent');

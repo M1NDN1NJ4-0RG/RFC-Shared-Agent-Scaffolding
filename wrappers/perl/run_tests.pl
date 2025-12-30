@@ -133,12 +133,34 @@ use File::Spec;
 use Cwd qw(abs_path);
 
 # Find repository root (2 levels up from wrapper directory)
+
+=head2 find_repo_root
+
+Finds the repository root by navigating 2 levels up from the wrapper directory.
+
+Args:
+    $wrapper_dir: Path to the wrapper directory
+
+Returns:
+    Path to the repository root
+
+=cut
+
 sub find_repo_root {
     my ($wrapper_dir) = @_;
     # Wrapper directory structure: repo_root/wrappers/perl/
     # So repo root is 2 levels up
     return File::Spec->catdir($wrapper_dir, '..', '..');
 }
+
+=head2 setup_environment
+
+Sets up test environment variables including SAFE_RUN_BIN path.
+
+Args:
+    $wrapper_dir: Path to the wrapper directory
+
+=cut
 
 # Set up test environment variables
 sub setup_environment {
@@ -154,12 +176,33 @@ sub setup_environment {
     }
 }
 
+=head2 check_prerequisites
+
+Checks if bash is available in the system.
+
+Returns:
+    Boolean indicating whether bash is available
+
+=cut
+
 # Check if bash is available
 sub check_prerequisites {
     # Try to run bash --version
     my $output = `bash --version 2>/dev/null`;
     return $? == 0;
 }
+
+=head2 run_tests
+
+Executes the test suite via run-tests.sh script.
+
+Args:
+    $repo_root: Path to the repository root
+
+Returns:
+    Exit code from the test suite
+
+=cut
 
 # Execute the test suite via run-tests.sh
 sub run_tests {
