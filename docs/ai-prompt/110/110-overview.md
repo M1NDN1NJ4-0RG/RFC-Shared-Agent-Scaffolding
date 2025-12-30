@@ -48,7 +48,7 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
 ### Item 6.4 — Consolidate Linting + Docstring Enforcement into One Umbrella Workflow (High)
 
 - [x] **Sub-Item 6.4.1-6.4.6:** Umbrella workflow implemented — ✅ COMPLETE
-- [ ] **Sub-Item 6.4.7:** Migrate existing lint/docstring workflows to this umbrella workflow — 🔜 IN PROGRESS
+- [x] **Sub-Item 6.4.7:** Migrate existing lint/docstring workflows to this umbrella workflow — ✅ COMPLETE
 - [x] **Sub-Item 6.4.8:** Pin third-party actions by commit SHA — ✅ COMPLETE
 - [ ] **Sub-Item 6.4.9:** Add CI verification steps for parity confirmation — 🔜 PENDING
 
@@ -62,15 +62,18 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
 ## Progress Tracker
 
 ### Phase 6 Remaining Work
-- [ ] Sub-Item 6.4.7: Migrate old workflows to umbrella
-  - [x] **DONE**: Verify umbrella workflow parity with existing workflows
-  - [x] **DONE**: Document transition plan and migration options
-  - [ ] **BLOCKED**: Need human decision on migration strategy (Option B vs. C)
-  - [ ] **PENDING**: Disable/remove redundant workflow files (after decision)
+- [x] **COMPLETE**: Sub-Item 6.4.7: Migrate old workflows to umbrella ✅
+  - [x] Verify umbrella workflow parity with existing workflows
+  - [x] Document transition plan and migration options
+  - [x] **Human decision received**: Implement Option B (weekly scheduled full scan)
+  - [x] Create weekly scheduled workflow (`repo-lint-weekly-full-scan.yml`)
+  - [x] Disable legacy workflows (renamed to `.disabled`)
+  - [x] Update documentation (`epic-repo-lint-status.md`)
 - [ ] Sub-Item 6.4.9: CI verification and parity confirmation
-  - [ ] Test with different file change scenarios
-  - [ ] Compare results with old workflow behavior
-  - [ ] Document any gaps or differences
+  - [ ] Trigger umbrella workflow on this PR
+  - [ ] Test conditional execution with different file changes
+  - [ ] Verify logging, artifacts, and commit behavior
+  - [ ] Compare results with legacy workflow behavior (now disabled)
 - [x] **COMPLETE**: Sub-Item 6.5: Vector system verification ✅
   - [x] Verified all required vector files exist
   - [x] Verified autofix-policy.json is enforced
@@ -84,6 +87,26 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
 ---
 
 ## Session Notes (newest first)
+
+### 2025-12-30 17:35 - Implemented Option B migration (Sub-Item 6.4.7 COMPLETE)
+- **Human direction received**: Implement Option B for Sub-Item 6.4.7
+- **Created weekly scheduled workflow**:
+  - File: `.github/workflows/repo-lint-weekly-full-scan.yml`
+  - Schedule: Monday 00:00 UTC
+  - Runs full scan: `python -m tools.repo_lint check --ci` (all languages)
+  - Manual trigger available via workflow_dispatch
+- **Disabled legacy workflows**:
+  - Renamed to `.disabled` extension (preserves history for rollback)
+  - `docstring-contract.yml.disabled`
+  - `lint-and-format-checker.yml.disabled`
+  - `yaml-lint.yml.disabled`
+- **Updated documentation**:
+  - `epic-repo-lint-status.md`: Sub-Item 6.4.7 marked COMPLETE
+  - Documented migration strategy and workflow names
+- **Strategy implemented**:
+  - Umbrella workflow: PR gate (validates only changed languages)
+  - Weekly full scan: Drift detection (validates all languages)
+- **Next**: Sub-Item 6.4.9 (CI verification), final validation, close Issue #110
 
 ### 2025-12-30 17:15 - Completed vector system verification + workflow parity analysis
 - **Workflow parity analysis** (Sub-Items 6.4.7, 6.4.9):

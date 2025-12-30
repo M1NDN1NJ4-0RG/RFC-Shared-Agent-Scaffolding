@@ -56,6 +56,17 @@ Related: Issue #110, PRs #132, #137
   - Documented migration strategy: Option B (weekly scheduled full scan)
   - Listed disabled workflows and new weekly workflow
   - Explained purpose: umbrella as PR gate + weekly full scan for drift detection
+- **Ran code review** (per session-exit requirements):
+  - Tool: `code_review` with updated PR title and description
+  - Result: 3 review comments (all security hardening suggestions)
+  - Analysis: All 3 comments apply to installation patterns that match existing umbrella workflow
+  - Decision: Document as future work (FW-015) rather than blocking this PR
+  - Rationale: This PR implements Option B migration; security hardening of installation scripts is a separate concern that applies repository-wide
+- **Checked CodeQL configuration**:
+  - CodeQL workflow not found in `.github/workflows/`
+  - CodeQL not configured for this repository
+  - Per copilot instructions: only run CodeQL if configured
+  - Conclusion: Skip CodeQL check (not applicable)
 
 **Verification:**
 ```bash
@@ -80,6 +91,13 @@ grep "cron:" .github/workflows/repo-lint-weekly-full-scan.yml
 # Verified full scan command (no --only flag)
 grep "python -m tools.repo_lint" .github/workflows/repo-lint-weekly-full-scan.yml
 # python -m tools.repo_lint check --ci --verbose
+
+# Ran code review
+# 3 comments about security hardening (checksum verification, signature checks)
+
+# Checked CodeQL configuration
+ls -la .github/workflows/codeql*.yml
+# Not found - CodeQL not configured
 ```
 
 **Results:**
@@ -89,13 +107,18 @@ grep "python -m tools.repo_lint" .github/workflows/repo-lint-weekly-full-scan.ym
 - Strategy: Efficient PR workflow (validates only changed languages) + periodic full scan (validates all languages weekly)
 - All actions pinned by commit SHA per security policy
 - Manual trigger available via workflow_dispatch
+- Code review completed: 3 security hardening suggestions noted for future work
+- CodeQL not applicable (not configured)
 
 **Known Issues:**
-- None
+- Code review identified 3 security hardening opportunities (checksum verification, signature checks)
+- These apply to both weekly workflow AND existing umbrella workflow
+- Documented as future work item FW-015 (see below)
 
 **Follow-ups:**
+- FW-015: Add checksum/signature verification to tool installation steps (both weekly and umbrella workflows)
 - Sub-Item 6.4.9: Test umbrella workflow in CI environment
-- Final validation: code review, CodeQL check
+- Final validation: verify all Phase 6 acceptance criteria met
 - Close out Issue #110
 
 ## DONE (EXTREMELY DETAILED)

@@ -1,6 +1,6 @@
 # Future Work / Deferred Ideas Tracker
 
-**Last Updated:** 2025-12-29
+**Last Updated:** 2025-12-30
 
 This document tracks **explicitly-marked future work** found in the repository. All items are sourced from in-repo TODO comments, deferred work notes, ignored tests, or documented future enhancement sections.
 
@@ -28,6 +28,8 @@ This document tracks **explicitly-marked future work** found in the repository. 
 | [FW-011](#fw-011-migrate-test-runners-to-fully-native-implementations) | Low | Testing | Migrate test runners to fully native implementations |
 | [FW-012](#fw-012-optimize-ci-runtime-with-scheduled-bash-runners) | Low | CI/CD | Optimize CI runtime with scheduled Bash runners |
 | [FW-013](#fw-013-make-repo-lint-installable-package) | Low | Tooling | Make repo_lint installable via pip install -e . |
+| [FW-014](#fw-014-advanced-repo-local-tool-isolation) | Low | Tooling | Advanced repo-local tool isolation |
+| [FW-015](#fw-015-ci-workflow-tool-installation-security-hardening) | Medium | CI/CD | Add checksum/signature verification to tool installation steps |
 
 ---
 
@@ -588,6 +590,66 @@ Phase 4 implements basic repo-local tool installation (`.venv-lint/` for Python 
 **Source:**
 - Decision Item 0.2.2 in EPIC issue (Phase 0 - Execution Model)
 - Implemented during Phase 4
+
+---
+
+### FW-015: CI workflow tool installation security hardening
+
+**Severity:** Medium  
+**Area:** CI/CD  
+**Status:** 🔮 DEFERRED
+
+**Description:**
+
+Code review identified security hardening opportunities in GitHub Actions workflow tool installation steps. Currently, workflows download and install tools without checksum verification or signature validation.
+
+**Affected Workflows:**
+- `.github/workflows/repo-lint-weekly-full-scan.yml`
+- `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+
+**Proposed Security Hardening:**
+
+1. **shfmt binary download (lines 79-82 in weekly workflow, ~449-453 in umbrella):**
+   - Add SHA256 checksum verification after download
+   - Verify checksum matches known-good value before installation
+   - Example:
+     ```bash
+     wget -qO /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64
+     echo "EXPECTED_SHA256  /tmp/shfmt" | sha256sum -c -
+     chmod +x /tmp/shfmt
+     sudo mv /tmp/shfmt /usr/local/bin/shfmt
+     ```
+
+2. **PowerShell repository setup (lines 85-88 in weekly workflow):**
+   - Add GPG key verification for Microsoft APT repository
+   - Verify package signatures before installation
+   - Example:
+     ```bash
+     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+     sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+     ```
+
+3. **PSScriptAnalyzer installation (line 95 in weekly workflow):**
+   - Consider adding `-SkipPublisherCheck` only when necessary
+   - Verify module publisher/signature when possible
+   - Document why signature checks are skipped if needed
+
+**Current Implementation:**
+- All workflows download tools over HTTPS (transport-level security)
+- All third-party actions pinned by commit SHA (per Phase 0 Item 0.4.2)
+- No checksum or signature verification for downloaded binaries
+
+**Impact:**
+- Low immediate risk (HTTPS + pinned versions provide basic protection)
+- Hardening would provide defense-in-depth
+
+**Source:**
+- Code review feedback on PR #137 (2025-12-30)
+- Applies to both weekly full scan workflow and umbrella workflow
+
+**Related:**
+- Phase 0 Item 0.4.2: Pin third-party actions by commit SHA (COMPLETE)
+- Phase 0 Item 0.7.1: Pin tool versions in CI (COMPLETE)
 
 ---
 
