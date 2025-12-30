@@ -49,11 +49,10 @@ class ExitCode(IntEnum):
 class Violation:
     """Represents a single linting violation.
 
-    :Args:
-        tool: Name of the tool that reported the violation (e.g., "black", "ruff")
-        file: File path relative to repo root
-        line: Line number (if applicable)
-        message: Human-readable violation message
+    :param tool: Name of the tool that reported the violation (e.g., "black", "ruff")
+    :param file: File path relative to repo root
+    :param line: Line number (if applicable)
+    :param message: Human-readable violation message
     """
 
     tool: str
@@ -66,11 +65,10 @@ class Violation:
 class LintResult:
     """Result from running a linter or formatter.
 
-    :Args:
-        tool: Name of the tool that ran
-        passed: Whether the check passed (no violations)
-        violations: List of violations found
-        error: Error message if the tool failed to run
+    :param tool: Name of the tool that ran
+    :param passed: Whether the check passed (no violations)
+    :param violations: List of violations found
+    :param error: Error message if the tool failed to run
     """
 
     tool: str

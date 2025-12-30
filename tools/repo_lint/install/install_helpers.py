@@ -42,11 +42,8 @@ from tools.repo_lint.install.version_pins import BASH_TOOLS, PIP_VERSION, POWERS
 def get_repo_root() -> Path:
     """Get the repository root directory.
 
-    :returns:
-        Path to repository root
-
-    :raises
-        RuntimeError: If repository root cannot be determined
+    :returns: Path to repository root
+    :raises RuntimeError: If repository root cannot be determined
     """
     # Start from current file's directory
     current = Path(__file__).resolve().parent
@@ -100,11 +97,8 @@ def venv_exists() -> bool:
 def create_venv(verbose: bool = False) -> Tuple[bool, Optional[str]]:
     """Create repo-local virtual environment.
 
-    :param
-        verbose: If True, print detailed output
-
-    :returns:
-        Tuple of (success, error_message)
+    :param verbose: If True, print detailed output
+    :returns: Tuple of (success, error_message)
     """
     venv_path = get_venv_path()
 
@@ -146,11 +140,8 @@ def create_venv(verbose: bool = False) -> Tuple[bool, Optional[str]]:
 def install_python_tools(verbose: bool = False) -> Tuple[bool, List[str]]:
     """Install Python linting tools in repo-local venv.
 
-    :param
-        verbose: If True, print detailed output
-
-    :returns:
-        Tuple of (success, list of error messages)
+    :param verbose: If True, print detailed output
+    :returns: Tuple of (success, list of error messages)
     """
     errors = []
 
@@ -245,11 +236,8 @@ def print_perl_tool_instructions():
 def cleanup_repo_local(verbose: bool = False) -> Tuple[bool, List[str]]:
     """Remove repo-local tool installations.
 
-    :param
-        verbose: If True, print detailed output
-
-    :returns:
-        Tuple of (success, list of messages)
+    :param verbose: If True, print detailed output
+    :returns: Tuple of (success, list of messages)
 
     :Notes:
         Only removes directories created by repo-lint install.

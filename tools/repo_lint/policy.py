@@ -66,12 +66,9 @@ def get_policy_path() -> Path:
 def load_policy() -> Dict:
     """Load auto-fix policy from JSON file.
 
-    :returns:
-        Policy dictionary
-
-    :raises
-        FileNotFoundError: If policy file doesn't exist
-        json.JSONDecodeError: If policy file is invalid JSON
+    :returns: Policy dictionary
+    :raises FileNotFoundError: If policy file doesn't exist
+    :raises json.JSONDecodeError: If policy file is invalid JSON
     """
     policy_path = get_policy_path()
     with open(policy_path, encoding="utf-8") as f:
@@ -81,12 +78,9 @@ def load_policy() -> Dict:
 def is_category_allowed(policy: Dict, category: str) -> bool:
     """Check if an auto-fix category is allowed by policy.
 
-    :param
-        policy: Loaded policy dictionary
-        category: Category to check (e.g., "FORMAT.BLACK", "LINT.RUFF.SAFE")
-
-    :returns:
-        True if category is allowed, False otherwise
+    :param policy: Loaded policy dictionary
+    :param category: Category to check (e.g., "FORMAT.BLACK", "LINT.RUFF.SAFE")
+    :returns: True if category is allowed, False otherwise
 
     :Notes:
         Policy is deny-by-default. A category must be explicitly listed
@@ -99,11 +93,8 @@ def is_category_allowed(policy: Dict, category: str) -> bool:
 def get_allowed_categories(policy: Dict) -> List[str]:
     """Get list of all allowed auto-fix categories.
 
-    :param
-        policy: Loaded policy dictionary
-
-    :returns:
-        List of allowed category names
+    :param policy: Loaded policy dictionary
+    :returns: List of allowed category names
     """
     allowed = policy.get("allowed_categories", [])
     return [cat.get("category") for cat in allowed if cat.get("category")]
@@ -112,12 +103,9 @@ def get_allowed_categories(policy: Dict) -> List[str]:
 def get_category_info(policy: Dict, category: str) -> Optional[Dict]:
     """Get full information about a category.
 
-    :param
-        policy: Loaded policy dictionary
-        category: Category name
-
-    :returns:
-        Category info dictionary or None if not found
+    :param policy: Loaded policy dictionary
+    :param category: Category name
+    :returns: Category info dictionary or None if not found
     """
     allowed = policy.get("allowed_categories", [])
     for cat in allowed:
@@ -159,11 +147,8 @@ def get_policy_summary(policy: Dict) -> str:
 def validate_policy(policy: Dict) -> List[str]:
     """Validate policy structure and return any errors.
 
-    :param
-        policy: Policy dictionary to validate
-
-    :returns:
-        List of error messages (empty if valid)
+    :param policy: Policy dictionary to validate
+    :returns: List of error messages (empty if valid)
 
     :Notes:
         Checks for:

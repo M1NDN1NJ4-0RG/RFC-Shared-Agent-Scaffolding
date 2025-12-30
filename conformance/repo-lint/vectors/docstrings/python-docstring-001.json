@@ -10,7 +10,7 @@
       "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
       "symbol": "no_doc",
       "symbol_kind": "function",
-      "line": 13,
+      "line": 25,
       "severity": "error",
       "message": "Function 'no_doc' is missing a docstring"
     },
@@ -19,7 +19,7 @@
       "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
       "symbol": "MissingClassDoc",
       "symbol_kind": "class",
-      "line": 17,
+      "line": 29,
       "severity": "error",
       "message": "Class 'MissingClassDoc' is missing a docstring"
     },
@@ -28,7 +28,7 @@
       "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
       "symbol": "method_without_doc",
       "symbol_kind": "function",
-      "line": 22,
+      "line": 34,
       "severity": "error",
       "message": "Function 'method_without_doc' is missing a docstring"
     }
