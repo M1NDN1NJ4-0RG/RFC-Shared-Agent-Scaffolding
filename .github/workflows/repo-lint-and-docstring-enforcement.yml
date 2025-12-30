@@ -176,22 +176,22 @@ jobs:
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           # Retry loop: attempt up to 3 times to sync, format, commit, and push
           MAX_ATTEMPTS=3
           ATTEMPT=1
           SUCCESS=false
-          
+
           while [ $ATTEMPT -le $MAX_ATTEMPTS ] && [ "$SUCCESS" = "false" ]; do
             echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to commit and push auto-format changes..."
-            
+
             # Sync with remote branch
             echo "Fetching latest changes from remote..."
             git fetch origin "${{ github.event.pull_request.head.ref }}"
-            
+
             # Ensure we're on the correct branch
             git checkout "${{ github.event.pull_request.head.ref }}" || true
-            
+
             # Rebase on top of the latest remote changes
             echo "Rebasing on latest remote changes..."
             if git rebase "origin/${{ github.event.pull_request.head.ref }}"; then
@@ -203,28 +203,28 @@ jobs:
               sleep 2
               continue
             fi
-            
+
             # Re-run Black formatter in case new changes need formatting
             echo "Re-running Black formatter..."
             black --line-length 120 . > /dev/null 2>&1 || true
-            
+
             # Check if there are still changes after rebase
             if git diff --quiet && git diff --cached --quiet; then
               echo "No changes to commit after sync (formatting already applied or no longer needed)"
               SUCCESS=true
               break
             fi
-            
+
             # Stage all changes
             git add -A
-            
+
             # Commit with auto-format marker
             git commit -m "Auto-format: Apply Black formatting [auto-format]" || {
               echo "Commit failed, no changes to commit"
               SUCCESS=true
               break
             }
-            
+
             # Try to push
             echo "Pushing changes..."
             if git push origin "${{ github.event.pull_request.head.ref }}"; then
@@ -239,7 +239,7 @@ jobs:
               sleep 2
             fi
           done
-          
+
           if [ "$SUCCESS" = "false" ]; then
             echo "::error::Failed to push auto-format changes after $MAX_ATTEMPTS attempts"
             exit 1
@@ -773,14 +773,14 @@ jobs:
             cp "$AUTOFIX_LOG" "${LOG_DIR}/black.log"
             echo "Captured Black log" >&2
           fi
-          
+
           # Python logs
           PYTHON_ARTIFACT="lint-artifacts/python-lint-results/python-lint-output.txt"
           if [ -f "$PYTHON_ARTIFACT" ]; then
             cp "$PYTHON_ARTIFACT" "${LOG_DIR}/python-lint-output.txt"
             echo "Captured Python lint output" >&2
           fi
-          
+
           # Add failure details for each failed job
           if [ "$PYTHON" = "failure" ]; then
             HAS_FAILURES=true
@@ -927,7 +927,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          
+
           # Add all logs (success and failure)
           git add logs/umbrella-ci-logs-phase-6/
 
