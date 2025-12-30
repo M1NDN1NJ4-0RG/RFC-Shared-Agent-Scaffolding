@@ -1,19 +1,114 @@
 # Issue 110 AI Journal
 Status: In Progress
 Last Updated: 2025-12-30
-Related: Issue #110, PRs #132
+Related: Issue #110, PRs #132, #137
 
 ## NEXT
-- Verify umbrella workflow logging behavior when it runs in CI
-- Test that logs are captured on both success and failure
-- Test that Auto-Fix artifacts are included in log archive
-- Test that logs are committed to repository (same-repo PRs)
-- Test that artifacts are uploaded (all PRs)
-- Monitor CI for proper enforcement of new AI Next-Steps Journal requirement
+- Investigate Phase 6 remaining work: Sub-Items 6.4.7, 6.4.9, 6.5.1
+- Verify umbrella workflow provides parity with existing workflows
+- Test conditional job execution with different file change scenarios
+- Verify vector system and autofix-policy.json completeness
+- Document transition plan for deprecating old workflows
+- Complete AI Next-Steps Journal updates per new mandatory policy
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-30 17:00 - Reorganized journal structure per updated copilot-instructions.md
+**Files Changed:**
+- `docs/ai-prompt/110-next-steps.md`: Moved to `docs/ai-prompt/110/110-next-steps.md`
+- `docs/ai-prompt/110/110-overview.md`: Created (new file, 3509 bytes)
+- `.github/copilot-instructions.md`: Merged from PR #138
+
+**Changes Made:**
+- **Acknowledged new requirement**: Updated copilot-instructions.md from PR #138
+- **Journal directory structure**:
+  - Created `docs/ai-prompt/110/` directory
+  - Moved existing next-steps journal from `docs/ai-prompt/110-next-steps.md` to `docs/ai-prompt/110/110-next-steps.md`
+  - Created new `docs/ai-prompt/110/110-overview.md` file per mandatory requirements
+- **Overview file contents**:
+  - Copied original GitHub issue #110 text verbatim into "Original Issue" section
+  - Added Progress Tracker with Phase 6 remaining work checklist
+  - Added Session Notes section with initial entry
+  - Documented current state: Phases 1-5 complete, Phase 6 partially complete
+- **Merged PR #138 changes**:
+  - Fetched: `git fetch origin pull/138/head:pr-138`
+  - Merged: `git merge pr-138 --no-edit`
+  - Result: 420 lines added to `.github/copilot-instructions.md`
+
+**Verification:**
+```bash
+# Verified directory structure
+ls -la docs/ai-prompt/110/
+# total 20
+# drwxrwxr-x 2 runner runner 4096 Dec 30 17:00 .
+# drwxrwxr-x 3 runner runner 4096 Dec 30 17:00 ..
+# -rw-rw-r-- 1 runner runner 3509 Dec 30 17:00 110-overview.md
+# -rw-rw-r-- 1 runner runner 9999 Dec 30 17:00 110-next-steps.md
+
+# Verified merge from PR #138
+git log --oneline -3
+# Shows merge commit from pr-138
+
+# Verified overview file created
+wc -l docs/ai-prompt/110/110-overview.md
+# 91 docs/ai-prompt/110/110-overview.md
+```
+
+**Results:**
+- Journal structure now compliant with updated copilot-instructions.md
+- Two required files exist: `110-next-steps.md` and `110-overview.md`
+- Overview file includes original issue + progress tracker + session notes
+- Next-steps file maintains per-commit detailed log
+- Ready to continue with Phase 6 remaining work
+
+**Known Issues:**
+- None
+
+**Follow-ups:**
+- Update next-steps journal on EVERY future commit
+- Update overview journal before EVERY session end
+- Continue with Phase 6 verification tasks
+
+### 2025-12-30 16:54 - Created initial plan for Phase 6 remaining work (PR #137)
+**Files Changed:**
+- None (progress report only, updated PR #137 description)
+
+**Changes Made:**
+- Reviewed current repository state and journal from previous session (PR #132)
+- Identified that PR #132 completed Phase 6 logging enhancements and was merged to main
+- Determined PR #137 is a new session to address remaining Phase 6 work
+- Created comprehensive plan covering remaining Sub-Items:
+  - 6.4.7: Migrate old lint/docstring workflows to umbrella
+  - 6.4.9: CI verification and parity confirmation
+  - 6.5.1: Lint/Docstring Vectors + Auto-Fix Policy verification
+- Updated NEXT section to reflect accurate remaining work
+- Added PR #137 to Related PRs list
+
+**Verification:**
+```bash
+# Checked repository state
+git status  # Clean working tree
+git log --oneline -10  # Verified at commit d0f657a (Initial plan)
+
+# Confirmed PR #137 exists
+# Confirmed PR #132 was merged to main with logging changes
+```
+
+**Results:**
+- Clear understanding of remaining work established
+- Plan documented in PR #137 description
+- Journal updated with correct NEXT steps
+- Ready to proceed with Phase 6 completion tasks
+
+**Known Issues:**
+- None
+
+**Follow-ups:**
+- Begin verification of umbrella workflow parity with existing workflows
+- Check completeness of vector system and autofix-policy.json
+- Test conditional job execution
 
 ### 2025-12-30 16:29 - Fix guard consistency: use head_commit.message in step-level condition
 **Files Changed:**
