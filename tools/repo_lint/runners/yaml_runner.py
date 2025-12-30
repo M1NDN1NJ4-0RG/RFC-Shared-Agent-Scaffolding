@@ -12,8 +12,8 @@
 :Examples:
     Use this runner::
 
-        from tools.repo_lint.runners import SomeRunner
-        runner = SomeRunner()
+        from tools.repo_lint.runners.yaml_runner import YAMLRunner
+        runner = YAMLRunner()
         results = runner.check()
 
 :Exit Codes:

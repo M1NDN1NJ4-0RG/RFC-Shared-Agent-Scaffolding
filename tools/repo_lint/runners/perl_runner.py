@@ -14,8 +14,8 @@
 :Examples:
     Use this runner::
 
-        from tools.repo_lint.runners import SomeRunner
-        runner = SomeRunner()
+        from tools.repo_lint.runners.perl_runner import PerlRunner
+        runner = PerlRunner()
         results = runner.check()
 
 :Exit Codes:

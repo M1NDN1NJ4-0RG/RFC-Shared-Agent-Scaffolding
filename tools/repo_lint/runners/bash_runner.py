@@ -15,8 +15,8 @@
 :Examples:
     Use this runner::
 
-        from tools.repo_lint.runners import SomeRunner
-        runner = SomeRunner()
+        from tools.repo_lint.runners.bash_runner import BashRunner
+        runner = BashRunner()
         results = runner.check()
 
 :Exit Codes:
@@ -77,11 +77,8 @@ class BashRunner(Runner):
 
         Per Phase 6 Item 6.5.6: Consult auto-fix policy before running fixes.
 
-        :param
-            policy: Auto-fix policy dictionary (deny-by-default)
-
-        :returns:
-            List of results after applying fixes
+        :param policy: Auto-fix policy dictionary (deny-by-default)
+        :returns: List of results after applying fixes
         """
         self._ensure_tools(["shellcheck", "shfmt"])
 

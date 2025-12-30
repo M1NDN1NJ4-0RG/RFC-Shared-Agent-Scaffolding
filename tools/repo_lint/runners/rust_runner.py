@@ -19,8 +19,8 @@
 :Examples:
     Use this runner::
 
-        from tools.repo_lint.runners import SomeRunner
-        runner = SomeRunner()
+        from tools.repo_lint.runners.rust_runner import RustRunner
+        runner = RustRunner()
         results = runner.check()
 
 :Exit Codes:

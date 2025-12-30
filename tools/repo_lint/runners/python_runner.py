@@ -16,8 +16,8 @@
 :Examples:
     Use this runner::
 
-        from tools.repo_lint.runners import SomeRunner
-        runner = SomeRunner()
+        from tools.repo_lint.runners.python_runner import PythonRunner
+        runner = PythonRunner()
         results = runner.check()
 
 :Exit Codes:
@@ -80,11 +80,8 @@ class PythonRunner(Runner):
         Per Phase 0 Item 0.9.1: Apply Black formatting and Ruff safe fixes.
         Per Phase 6 Item 6.5.6: Consult auto-fix policy before running fixes.
 
-        :param
-            policy: Auto-fix policy dictionary (deny-by-default)
-
-        :returns:
-            List of results after applying fixes
+        :param policy: Auto-fix policy dictionary (deny-by-default)
+        :returns: List of results after applying fixes
         """
         self._ensure_tools(["black", "ruff", "pylint"])
 
