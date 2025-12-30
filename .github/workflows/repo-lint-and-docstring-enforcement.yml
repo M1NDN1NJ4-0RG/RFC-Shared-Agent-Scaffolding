@@ -590,6 +590,12 @@ jobs:
         with:
           path: lint-artifacts/
 
+      - name: "Debug: List downloaded artifacts"
+        run: |
+          echo "=== Listing lint-artifacts directory ==="
+          ls -laR lint-artifacts/ || echo "No lint-artifacts directory found"
+          echo "========================================="
+
       - name: Collect job results
         id: collect_results
         run: |
@@ -639,11 +645,14 @@ jobs:
             HAS_FAILURES=true
             echo "## Python Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            if [ -f "lint-artifacts/python-lint-results/python-lint-output.txt" ]; then
+            PYTHON_ARTIFACT="lint-artifacts/python-lint-results/python-lint-output.txt"
+            if [ -f "$PYTHON_ARTIFACT" ]; then
+              echo "Found Python lint output at: $PYTHON_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
-              tail -100 "lint-artifacts/python-lint-results/python-lint-output.txt" >> "$SUMMARY_FILE"
+              tail -100 "$PYTHON_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
             else
+              echo "WARNING: Python lint artifact not found at: $PYTHON_ARTIFACT" >&2
               echo "Python linting failed. See job logs for details." >> "$SUMMARY_FILE"
             fi
             echo "" >> "$SUMMARY_FILE"
@@ -653,11 +662,14 @@ jobs:
             HAS_FAILURES=true
             echo "## Bash Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            if [ -f "lint-artifacts/bash-lint-results/bash-lint-output.txt" ]; then
+            BASH_ARTIFACT="lint-artifacts/bash-lint-results/bash-lint-output.txt"
+            if [ -f "$BASH_ARTIFACT" ]; then
+              echo "Found Bash lint output at: $BASH_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
-              tail -100 "lint-artifacts/bash-lint-results/bash-lint-output.txt" >> "$SUMMARY_FILE"
+              tail -100 "$BASH_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
             else
+              echo "WARNING: Bash lint artifact not found at: $BASH_ARTIFACT" >&2
               echo "Bash linting failed. See job logs for details." >> "$SUMMARY_FILE"
             fi
             echo "" >> "$SUMMARY_FILE"
@@ -667,11 +679,14 @@ jobs:
             HAS_FAILURES=true
             echo "## PowerShell Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            if [ -f "lint-artifacts/powershell-lint-results/powershell-lint-output.txt" ]; then
+            POWERSHELL_ARTIFACT="lint-artifacts/powershell-lint-results/powershell-lint-output.txt"
+            if [ -f "$POWERSHELL_ARTIFACT" ]; then
+              echo "Found PowerShell lint output at: $POWERSHELL_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
-              tail -100 "lint-artifacts/powershell-lint-results/powershell-lint-output.txt" >> "$SUMMARY_FILE"
+              tail -100 "$POWERSHELL_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
             else
+              echo "WARNING: PowerShell lint artifact not found at: $POWERSHELL_ARTIFACT" >&2
               echo "PowerShell linting failed. See job logs for details." >> "$SUMMARY_FILE"
             fi
             echo "" >> "$SUMMARY_FILE"
@@ -681,11 +696,14 @@ jobs:
             HAS_FAILURES=true
             echo "## Perl Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            if [ -f "lint-artifacts/perl-lint-results/perl-lint-output.txt" ]; then
+            PERL_ARTIFACT="lint-artifacts/perl-lint-results/perl-lint-output.txt"
+            if [ -f "$PERL_ARTIFACT" ]; then
+              echo "Found Perl lint output at: $PERL_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
-              tail -100 "lint-artifacts/perl-lint-results/perl-lint-output.txt" >> "$SUMMARY_FILE"
+              tail -100 "$PERL_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
             else
+              echo "WARNING: Perl lint artifact not found at: $PERL_ARTIFACT" >&2
               echo "Perl linting failed. See job logs for details." >> "$SUMMARY_FILE"
             fi
             echo "" >> "$SUMMARY_FILE"
@@ -695,11 +713,14 @@ jobs:
             HAS_FAILURES=true
             echo "## YAML Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            if [ -f "lint-artifacts/yaml-lint-results/yaml-lint-output.txt" ]; then
+            YAML_ARTIFACT="lint-artifacts/yaml-lint-results/yaml-lint-output.txt"
+            if [ -f "$YAML_ARTIFACT" ]; then
+              echo "Found YAML lint output at: $YAML_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
-              tail -100 "lint-artifacts/yaml-lint-results/yaml-lint-output.txt" >> "$SUMMARY_FILE"
+              tail -100 "$YAML_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
             else
+              echo "WARNING: YAML lint artifact not found at: $YAML_ARTIFACT" >&2
               echo "YAML linting failed. See job logs for details." >> "$SUMMARY_FILE"
             fi
             echo "" >> "$SUMMARY_FILE"
