@@ -46,6 +46,7 @@
 
 set -euo pipefail
 cd "$(dirname "$0")"
+# shellcheck disable=SC1091  # lib.sh is sourced at runtime
 source "./lib.sh"
 
 # Discover paths
@@ -64,9 +65,11 @@ test_default_archives_one() {
 		bash "$ARCH" >/dev/null 2>&1
 		# By default, it moves ONE file then exits (either one of the two)
 		local n
+		# shellcheck disable=SC2012  # ls is acceptable here for counting files
 		n="$(ls -1 .agent/FAIL-ARCHIVE/*-FAIL.log 2>/dev/null | wc -l | tr -d " ")"
 		[[ "$n" -eq 1 ]]
 		# And one file remains in FAIL-LOGS
+		# shellcheck disable=SC2012  # ls is acceptable here for counting files
 		n="$(ls -1 .agent/FAIL-LOGS/*-FAIL.log 2>/dev/null | wc -l | tr -d " ")"
 		[[ "$n" -eq 1 ]]
 	)

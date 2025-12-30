@@ -115,6 +115,7 @@ fi
 
 # 2) Failure run: must create a FAIL-LOG file
 "$ROOT_DIR/scripts/safe-run.sh" bash -c 'echo out; echo err 1>&2; exit 42' >/dev/null || true
+# shellcheck disable=SC2012  # ls is acceptable here for sorting by time
 newest=$(ls -1t "$FAIL_DIR" 2>/dev/null | head -n 1 || true)
 if [ -z "$newest" ]; then
 	echo "FAIL: safe-run did not create failure log" >&2
