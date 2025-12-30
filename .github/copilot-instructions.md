@@ -125,12 +125,34 @@ When CI, tests, or build steps are **not present**, the agent must:
 - Don't mix refactoring with feature additions
 - Don't combine dependency updates with code changes
 
+
 **No Drive-By Refactors / Formatting:**
 - **DO NOT** make cosmetic changes, formatting fixes, or refactors unless explicitly requested
 - Avoid "while I'm here..." improvements
 - Stick to the scope of the task
 - If you notice issues, note them in PR comments for future work, but don't fix them now
 - Exception: If a linter/formatter is already configured and running in CI, apply its fixes
+
+## Rule of Three (MANDATORY) — Repo Tooling / Scripts / CI Only
+
+This rule applies to **repository automation and tooling**, including:
+- `tools/` code (repo tooling packages like `repo_lint`)
+- `scripts/` (bash/python/perl/ps1 utilities)
+- CI/workflows (`.github/workflows/`)
+- test harnesses, fixtures, validators, conformance runners
+- build/lint orchestration, log/forensics generation, plumbing code
+
+It does **NOT** automatically apply to product/runtime/business logic unless a human explicitly says so.
+
+### Requirement
+If you implement the same logic **3+ times** within the scope above (copy/paste or near-identical patterns), you MUST refactor it into a shared helper.
+
+### Rules
+- Create a single helper in the most appropriate shared location (prefer existing shared modules; don’t invent new structure unnecessarily).
+- Update all call sites to use the helper (don’t leave duplicate variants unless there is a real behavioral difference).
+- Add/extend tests to lock behavior so the refactor does not change semantics.
+- If refactoring would break existing behavior/contracts, STOP and document why using the repo’s “durable note” rule.
+- If two implementations must remain separate, explicitly document the reason and the behavioral difference (durable note).
 
 **Explicit Claims in PR Body:**
 - State what changed and why
@@ -250,6 +272,8 @@ Escalation format (MUST match the policy below):
 Path: `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-next-steps.md`
 
 ```markdown
+MUST READ: `.github/copilot-instructions.md` FIRST!
+<!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue <ISSUE_NUMBER> AI Journal
 Status: In Progress | Paused | Complete
 Last Updated: YYYY-MM-DD
@@ -277,7 +301,11 @@ Related: Issue <ISSUE_NUMBER>, PRs <list>
 - <commands run>
 - <results>
 
-[Previous entries below, newest first...]
+---
+
+<!-- PREVIOUS ENTRIES DELIMITER -->
+
+---
 ```
 
 **Required Overview File Format (MANDATORY):**
