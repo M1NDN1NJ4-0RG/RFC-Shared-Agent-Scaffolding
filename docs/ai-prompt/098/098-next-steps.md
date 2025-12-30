@@ -7,14 +7,58 @@ Last Updated: 2025-12-30
 Related: Issue #098, PRs (various)
 
 ## NEXT
-- Start Phase 6: Final Polish & Long-Term Maintenance
-  - Decide on Item 6.1 (rename scripts/ to tools/ - optional)
-  - Complete Item 6.2 (docs index "start-here")
-  - Complete Item 6.3 (structure map in root README)
+- Complete remaining Phase 6 items (all low-priority polish)
+- Run full verification checklist
+- Request code review
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 00:10 - Complete Phase 6 Items 6.2 and 6.3
+**Files Changed:**
+- `README.md`: Added "Repository Structure" section with directory tree and key directories explanation
+- `docs/README.md`: Replaced generic "Quick Start" with persona-based "Start Here" section (Users, Contributors, Maintainers)
+- `docs/ai-prompt/098/098-next-steps.md`: Updated NEXT section
+
+**Changes Made:**
+- **Item 6.3 (Structure Map):** Added comprehensive repository structure to root README
+  - Directory tree showing rust/, wrappers/, conformance/, docs/, scripts/, tools/, .github/workflows/
+  - "Key Directories" section explaining purpose of each major directory
+  - Clear indication that rust/ is canonical and wrappers invoke it
+- **Item 6.2 (Docs Index Start-Here):** Enhanced docs/README.md with persona-based navigation
+  - **Users section:** For people using the tools
+    - Links to RFC, Usage Guide, Wrapper Discovery
+    - Quick example showing build and run
+  - **Contributors section:** For people contributing code
+    - Links to CONTRIBUTING.md, Contributing Guide, Docstring Contracts, Testing
+    - Pre-PR checklist (naming, lint check, tests)
+  - **Maintainers section:** For architecture and design work
+    - Links to Canonical Structure, Contract Extraction, Risk Analysis, Rust Tool
+    - Decision logs and history index
+  - Each persona has "You want to:" and "Start with:" sections for clarity
+- **Item 6.1 (Rename scripts/):** SKIPPED (optional, not needed)
+  - Repository has both `scripts/` (validation scripts) and `tools/` (Python packages)
+  - Current structure makes sense; renaming would create churn without benefit
+  - Documented decision in next-steps
+
+**Verification:**
+- Ran: `python3 -m tools.repo_lint check --ci` - all linting checks passed ✅
+- Verified README.md structure map is accurate and complete
+- Verified docs/README.md persona paths are correct and helpful
+- All documentation links are valid
+
+**Phase 6 Status:**
+- Item 6.1: SKIPPED (optional, not needed - current structure is clear)
+- Item 6.2: COMPLETE ✅
+- Item 6.3: COMPLETE ✅
+
+**Next Steps:**
+- Run reference verification checklist from Phase 6 success criteria
+- Ensure CI is green
+- Request code review
+
+---
+
 ### 2025-12-30 23:58 - Verify and complete Sub-Item 5.5.0.3
 **Files Changed:**
 - `docs/ai-prompt/098/098-overview.md`: Updated Phase 5.5.0 status to COMPLETE
