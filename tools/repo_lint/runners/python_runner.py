@@ -32,7 +32,7 @@ from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
 from tools.repo_lint.policy import is_category_allowed
-from tools.repo_lint.runners.base import Runner, command_exists
+from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
 class PythonRunner(Runner):
@@ -44,10 +44,8 @@ class PythonRunner(Runner):
         :returns:
             True if Python files exist, False otherwise
         """
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.py"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-        return bool(result.stdout.strip())
+        files = get_tracked_files(["**/*.py"], self.repo_root)
+        return len(files) > 0
 
     def check_tools(self) -> List[str]:
         """Check which Python tools are missing.
@@ -240,16 +238,11 @@ class PythonRunner(Runner):
         :returns:
             LintResult for Pylint check
         """
-        # Get all Python files
-        py_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.py"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
+        # Get all Python files, excluding test fixtures
+        py_files = get_tracked_files(["**/*.py"], self.repo_root)
 
-        if not py_files_result.stdout.strip():
+        if not py_files:
             return LintResult(tool="pylint", passed=True, violations=[])
-
-        # Get list of files and run pylint directly (cross-platform)
-        py_files = py_files_result.stdout.strip().split("\n")
 
         # Run pylint
         result = subprocess.run(

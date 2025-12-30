@@ -221,6 +221,8 @@ EXCLUDE_PATTERNS = [
     # Test fixtures (intentionally have violations for conformance testing)
     "conformance/repo-lint/vectors/fixtures/**",
     "scripts/tests/fixtures/**",
+    # Unsafe fix fixtures (intentionally non-conformant for unsafe mode testing)
+    "conformance/repo-lint/unsafe-fix-fixtures/**",
 ]
 
 
@@ -249,6 +251,7 @@ def get_tracked_files() -> List[Path]:
         Path("conformance/repo-lint/vectors/fixtures"),
         Path("conformance/repo-lint/fixtures/violations"),
         Path("scripts/tests/fixtures"),
+        Path("conformance/repo-lint/unsafe-fix-fixtures"),
     ]
 
     for file_path in all_files:

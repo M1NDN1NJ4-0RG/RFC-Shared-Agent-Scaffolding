@@ -26,7 +26,7 @@ import subprocess
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
-from tools.repo_lint.runners.base import Runner, command_exists
+from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
 class YAMLRunner(Runner):
@@ -38,14 +38,8 @@ class YAMLRunner(Runner):
         :returns:
             True if YAML files exist, False otherwise
         """
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.yml", "**/*.yaml"],
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        return bool(result.stdout.strip())
+        files = get_tracked_files(["**/*.yml", "**/*.yaml"], self.repo_root)
+        return len(files) > 0
 
     def check_tools(self) -> List[str]:
         """Check which YAML tools are missing.
@@ -93,19 +87,11 @@ class YAMLRunner(Runner):
         :returns:
             LintResult for yamllint
         """
-        # Get all YAML files
-        yaml_files_result = subprocess.run(
-            ["git", "ls-files", "**/*.yml", "**/*.yaml"],
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        # Get all YAML files, excluding test fixtures
+        yaml_files = get_tracked_files(["**/*.yml", "**/*.yaml"], self.repo_root)
 
-        if not yaml_files_result.stdout.strip():
+        if not yaml_files:
             return LintResult(tool="yamllint", passed=True, violations=[])
-
-        yaml_files = yaml_files_result.stdout.strip().split("\n")
 
         # Run yamllint
         result = subprocess.run(

@@ -29,7 +29,8 @@ import sys
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
-from tools.repo_lint.runners.base import Runner, command_exists
+from tools.repo_lint.policy import is_category_allowed
+from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
 class PowerShellRunner(Runner):
@@ -42,7 +43,7 @@ class PowerShellRunner(Runner):
             True if PowerShell files exist, False otherwise
         """
         result = subprocess.run(
-            ["git", "ls-files", "**/*.ps1"], cwd=self.repo_root, capture_output=True, text=True, check=False
+            ["git", "ls-files", "**/*.ps1"] + get_git_pathspec_excludes()], cwd=self.repo_root, capture_output=True, text=True, check=False
         )
         return bool(result.stdout.strip())
 
@@ -114,13 +115,7 @@ class PowerShellRunner(Runner):
         :returns:
             List of PowerShell file paths (empty list if none found)
         """
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.ps1"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-        if not result.stdout.strip():
-            return []
-
-        all_files = result.stdout.strip().split("\n")
+        all_files = get_tracked_files(["**/*.ps1"], self.repo_root)
         return filter_excluded_paths(all_files)
 
     def _run_psscriptanalyzer(self) -> LintResult:

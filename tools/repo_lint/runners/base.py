@@ -30,11 +30,18 @@
 """
 
 import shutil
+import subprocess
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, MissingToolError
+
+# Paths to exclude from linting/docstring validation
+# These are test fixtures that are intentionally non-conformant
+EXCLUDED_PATHS = [
+    "conformance/repo-lint/unsafe-fix-fixtures/",
+]
 
 
 def find_repo_root() -> Path:
@@ -58,6 +65,43 @@ def command_exists(command: str) -> bool:
     :returns: True if command exists, False otherwise
     """
     return shutil.which(command) is not None
+
+
+def get_git_pathspec_excludes() -> List[str]:
+    """Get git pathspec exclude patterns for linting.
+
+    :returns: List of exclude patterns for git ls-files
+    """
+    excludes = []
+    for path in EXCLUDED_PATHS:
+        # Git pathspec format: ':(exclude)pattern'
+        excludes.append(f":(exclude){path}")
+    return excludes
+
+
+def get_tracked_files(patterns: List[str], repo_root: Optional[Path] = None) -> List[str]:
+    """Get tracked files matching patterns, excluding lint test fixtures.
+
+    :param patterns: List of file patterns (e.g., ["**/*.py", "**/*.sh"])
+    :param repo_root: Repository root path (auto-detected if None)
+    :returns: List of file paths (empty list if none found)
+    """
+    if repo_root is None:
+        repo_root = find_repo_root()
+    
+    excludes = get_git_pathspec_excludes()
+    result = subprocess.run(
+        ["git", "ls-files"] + patterns + excludes,
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    
+    if not result.stdout.strip():
+        return []
+    
+    return result.stdout.strip().split("\n")
 
 
 class Runner(ABC):
