@@ -801,11 +801,11 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 
 ---
 
-## Phase 6.5 — Rust Runner Implementation (Future Work)
+## Phase 6.5 — Rust Runner Implementation (Complete)
 
 ### Item 6.5.1 — Complete Rust Runner Implementation (Medium)
 
-**Status:** Stub implementation created. Basic structure in place.
+**Status:** ✅ COMPLETE
 
 **Implemented:**
 - [x] Basic runner structure following naming conventions
@@ -814,21 +814,36 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 - [x] rustfmt integration (check mode and fix mode)
 - [x] clippy integration (basic linting)
 - [x] Integrated into CLI with `--only rust` support
-
-**TODO:**
-- [ ] **Sub-Item 6.5.1.1:** Enhance clippy output parsing for better violation reporting
-- [ ] **Sub-Item 6.5.1.2:** Add Rust docstring validation integration
-  - Requires integration with `scripts/validate_docstrings.py`
-  - Requires `scripts/docstring_validators/rust_validator.py` to be fully implemented
-- [ ] **Sub-Item 6.5.1.3:** Add Rust job to umbrella workflow (`.github/workflows/repo-lint-and-docstring-enforcement.yml`)
-  - Conditional execution based on `*.rs` file changes
-  - Install Rust toolchain (rustup, rustfmt, clippy)
-  - Run `python -m tools.repo_lint check --ci --only rust`
-- [ ] **Sub-Item 6.5.1.4:** Update Detect Changed Files job to detect Rust changes
-- [ ] **Sub-Item 6.5.1.5:** Add tests for RustRunner in `tools/repo_lint/tests/`
+- [x] **Sub-Item 6.5.1.1:** Enhance clippy output parsing for better violation reporting
+  - ✅ Implemented JSON output parsing with structured file, line, and message extraction
+  - ✅ Fallback to text parsing when JSON fails
+  - ✅ Lint names included in violation messages
+- [x] **Sub-Item 6.5.1.2:** Add Rust docstring validation integration
+  - ✅ Integrated with `scripts/validate_docstrings.py --language rust`
+  - ✅ Validation results included in RustRunner.check()
+  - ✅ Tested with existing Rust source files
+- [x] **Sub-Item 6.5.1.3:** Add Rust job to umbrella workflow (`.github/workflows/repo-lint-and-docstring-enforcement.yml`)
+  - ✅ Conditional execution based on `*.rs` file changes
+  - ✅ Install Rust toolchain (rustup, rustfmt, clippy)
+  - ✅ Run `python -m tools.repo_lint check --ci --only rust`
+  - ✅ Cargo dependency caching for faster builds
+  - ✅ Upload Rust lint results as artifacts
+  - ✅ Integrated into consolidate-failures job
+- [x] **Sub-Item 6.5.1.4:** Update Detect Changed Files job to detect Rust changes
+  - ✅ Added `rust_files_changed` output
+  - ✅ Detection pattern: `\.rs$|^rust/|Cargo\.(toml|lock)$`
+  - ✅ Includes Rust files, rust/ directory, and Cargo manifest changes
+- [x] **Sub-Item 6.5.1.5:** Add tests for RustRunner in `tools/repo_lint/tests/`
+  - ✅ Created `tools/repo_lint/tests/test_rust_runner.py` with 17 tests
+  - ✅ Test coverage: file detection, tool checking, rustfmt (check/fix), clippy (JSON/text parsing), docstring validation, integration tests
+  - ✅ All tests passing (17/17)
+  - ✅ Edge cases covered: no rust directory, missing tools, JSON parse errors
 
 **Notes:**
-- Current implementation is a working stub that can detect Rust files and run basic checks
+- Rust runner fully functional and integrated into umbrella workflow
+- Enhanced clippy parsing provides actionable file/line information
+- Docstring validation uses existing `scripts/validate_docstrings.py` infrastructure
+- CI job includes Rust toolchain installation and dependency caching
 - Located at `tools/repo_lint/runners/rust_runner.py`
 - Follows the same pattern as other language runners (Python, Bash, PowerShell, Perl, YAML)
 - Runs cargo commands in `rust/` subdirectory (not repo root)

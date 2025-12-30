@@ -28,7 +28,7 @@ import subprocess
 import sys
 from typing import List, Optional
 
-from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
 from tools.repo_lint.runners.base import Runner, command_exists
 
 
@@ -87,7 +87,7 @@ class PerlRunner(Runner):
         return results
 
     def _get_perl_files(self) -> List[str]:
-        """Get list of Perl files in repository.
+        """Get list of Perl files in repository, excluding test fixtures.
 
         :returns:
             List of Perl file paths (empty list if none found)
@@ -97,7 +97,9 @@ class PerlRunner(Runner):
         )
         if not result.stdout.strip():
             return []
-        return result.stdout.strip().split("\n")
+
+        all_files = result.stdout.strip().split("\n")
+        return filter_excluded_paths(all_files)
 
     def _run_perlcritic(self) -> LintResult:
         """Run Perl::Critic.

@@ -1,0 +1,93 @@
+🔍 Running repository linters and formatters...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Python Linting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Linting Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ ruff: FAILED (53 violation(s))
+   .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: E402 Module level import not at top of file
+   .: [ruff] |
+   .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+   .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+   .: [ruff] | ^^^^^^^^^ E402
+   .: [ruff] 15 | import sys
+   .: [ruff] |
+   .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: I001 [*] Import block is un-sorted or un-formatted
+   .: [ruff] |
+   .: [ruff] 13 |   # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+   .: [ruff] 14 | / import os  # noqa: F401 - Remove this noqa to trigger violation
+   .: [ruff] 15 | | import sys
+   .: [ruff] 16 | |
+   .: [ruff] 17 | |
+   .: [ruff] 18 | | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+   .: [ruff] | |_^ I001
+   .: [ruff] 19 |   VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+   .: [ruff] 20 |       "value"
+   .: [ruff] |
+   .: [ruff] = help: Organize imports
+   .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:1: E402 Module level import not at top of file
+   .: [ruff] |
+   .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+   .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+   .: [ruff] 15 | import sys
+   .: [ruff] | ^^^^^^^^^^ E402
+   .: [ruff] |
+   .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:8: F401 [*] `sys` imported but unused
+   .: [ruff] |
+   .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+   .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+   .: [ruff] 15 | import sys
+   .: [ruff] |        ^^^ F401
+   .: [ruff] |
+   .: [ruff] = help: Remove unused import: `sys`
+   .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:121: E501 Line too long (122 > 120)
+   .: [ruff] |
+   .: [ruff] 18 | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+   .: [ruff] 19 | VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+   .: [ruff] |                                                                                                                         ^^ E501
+   .: [ruff] 20 |     "value"
+   .: [ruff] 21 | )
+   .: [ruff] |
+   .: [ruff] tools/repo_lint/tests/test_rust_runner.py:275:121: E501 Line too long (594 > 120)
+   .: [ruff] |
+   .: [ruff] 273 |         :param rust_runner: RustRunner fixture
+   .: [ruff] 274 |         """
+   .: [ruff] 275 |         json_output = """{"reason":"compiler-message","package_id":"test 0.1.0","target":{},"message":{"message":"unused variable: `x`","code":{"code":"unused_variables","explanation":""},"level":"warning","spans":[{"file_name":"src/main.rs","byte_start":100,"byte_end":101,"line_start":5,"line_end":5,"column_start":9,"column_end":10,"is_primary":true,"text":[{"text":"    let x = 5;","highlight_start":9,"highlight_end":10}],"label":"unused variable","suggested_replacement":null,"suggestion_applicability":null,"expansion":null}],"children":[],"rendered":"warning: unused variable: `x`\\n"}}
+   .: [ruff] |                                                                                                                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ E501
+   .: [ruff] 276 | """
+   .: [ruff] 277 |         mock_run.return_value = MagicMock(returncode=1, stdout=json_output, stderr="")
+   .: [ruff] |
+   .: [ruff] [*] 2 fixable with the `--fix` option.
+
+❌ pylint: FAILED (20 violation(s))
+   .: [pylint] ************* Module missing_docstring
+   .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:0: C0301: Line too long (122/120) (line-too-long)
+   .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: C0413: Import "import os" should be placed at the top of the module (wrong-import-position)
+   .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: C0413: Import "import sys" should be placed at the top of the module (wrong-import-position)
+   .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: W0611: Unused import os (unused-import)
+   .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: W0611: Unused import sys (unused-import)
+   .: [pylint] ************* Module repo_lint.tests.test_rust_runner
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:275:0: C0301: Line too long (594/120) (line-too-long)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:81:16: W0621: Redefining name 'mock_repo_root' from outer scope (line 30) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:93:45: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:93:58: W0621: Redefining name 'mock_repo_root' from outer scope (line 30) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:125:74: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:141:76: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:162:77: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:181:50: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:197:49: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:215:49: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:253:43: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:269:56: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+   .: [pylint] tools/repo_lint/tests/test_rust_runner.py:293:58: W0621: Redefining name 'rust_runner' from outer scope (line 81) (redefined-outer-name)
+
+❌ validate_docstrings: FAILED (2 violation(s))
+   .: [validate_docstrings] ❌ Validation FAILED: 1 violation(s) in 1 file(s)
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/tests/test_rust_runner.py:149
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ Found 75 violation(s) across 3 tool(s)

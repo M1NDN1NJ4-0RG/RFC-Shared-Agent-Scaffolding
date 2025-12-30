@@ -73,3 +73,6 @@ ignore: |
   dist/
   target/
   node_modules/
+  conformance/repo-lint/fixtures/violations/
+  conformance/repo-lint/vectors/fixtures/
+  scripts/tests/fixtures/
