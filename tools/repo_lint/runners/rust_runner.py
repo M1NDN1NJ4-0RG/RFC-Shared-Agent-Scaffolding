@@ -226,9 +226,14 @@ class RustRunner(Runner):
                 if primary_span:
                     file_path = primary_span.get("file_name", "unknown")
                     line_num = primary_span.get("line_start")
-                    # Make file path relative to rust/ directory
-                    if file_path.startswith(str(rust_dir)):
-                        file_path = file_path[len(str(rust_dir)) + 1 :]
+                    # Make file path relative to rust/ directory if it's absolute
+                    if file_path.startswith("/") or file_path.startswith(str(rust_dir)):
+                        # Try to make it relative to rust/ directory
+                        try:
+                            if file_path.startswith(str(rust_dir)):
+                                file_path = file_path[len(str(rust_dir)) + 1 :]
+                        except (ValueError, IndexError):
+                            pass  # Keep original path if relativization fails
                 else:
                     file_path = "unknown"
                     line_num = None
@@ -254,7 +259,14 @@ class RustRunner(Runner):
             except (json.JSONDecodeError, KeyError, TypeError):
                 # Fallback to plain text parsing if JSON fails
                 if "warning:" in line or "error:" in line:
-                    violations.append(Violation(tool="clippy", file=".", line=None, message=line.strip()))
+                    # Try to extract file information from text format
+                    # Format typically: "warning: message\n  --> file.rs:line:col"
+                    file_info = "unknown"
+                    if "-->" in line:
+                        parts = line.split("-->")
+                        if len(parts) > 1:
+                            file_info = parts[1].strip().split(":")[0]
+                    violations.append(Violation(tool="clippy", file=file_info, line=None, message=line.strip()))
 
         return LintResult(tool="clippy", passed=False, violations=violations[:50])  # Limit output
 
