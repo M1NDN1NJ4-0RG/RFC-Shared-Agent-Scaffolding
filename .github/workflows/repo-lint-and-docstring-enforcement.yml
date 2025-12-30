@@ -214,7 +214,7 @@ jobs:
             if ! git stash pop; then
               echo "Stash pop had conflicts, resolving by keeping formatted changes..."
               # Keep the stashed changes (formatted version)
-              git checkout --theirs .
+              git checkout --ours .
               git add -A
             fi
 
