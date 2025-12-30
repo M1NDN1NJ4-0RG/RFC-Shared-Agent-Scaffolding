@@ -63,8 +63,7 @@ from tools.repo_lint.runners.yaml_runner import YAMLRunner
 def create_parser() -> argparse.ArgumentParser:
     """Create argument parser for repo_lint CLI.
 
-    :Returns:
-        Configured ArgumentParser instance
+    :returns: Configured ArgumentParser instance
     """
     parser = argparse.ArgumentParser(
         prog="repo-lint",
@@ -106,13 +105,10 @@ def create_parser() -> argparse.ArgumentParser:
 def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> int:
     """Run all language runners with common logic.
 
-    :Args:
-        args: Parsed command-line arguments
-        mode: Mode description for output ("Linting" or "Formatting")
-        action_callback: Callable that takes a runner and returns results
-
-    :Returns:
-        Exit code (0=success, 1=violations, 2=missing tools, 3=error)
+    :param args: Parsed command-line arguments
+    :param mode: Mode description for output ("Linting" or "Formatting")
+    :param action_callback: Callable that takes a runner and returns results
+    :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
     all_results = []
 
@@ -175,11 +171,8 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 def cmd_check(args: argparse.Namespace) -> int:
     """Run linting checks without modifying files.
 
-    :Args:
-        args: Parsed command-line arguments
-
-    :Returns:
-        Exit code (0=success, 1=violations, 2=missing tools, 3=error)
+    :param args: Parsed command-line arguments
+    :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
     print("🔍 Running repository linters and formatters...")
     print("")
@@ -190,11 +183,8 @@ def cmd_check(args: argparse.Namespace) -> int:
 def cmd_fix(args: argparse.Namespace) -> int:
     """Apply automatic fixes where possible (formatters only).
 
-    :Args:
-        args: Parsed command-line arguments
-
-    :Returns:
-        Exit code (0=success, 1=violations remain, 2=missing tools, 3=error)
+    :param args: Parsed command-line arguments
+    :returns: Exit code (0=success, 1=violations remain, 2=missing tools, 3=error)
     """
     print("🔧 Running formatters in fix mode...")
     print("")
@@ -232,11 +222,8 @@ def cmd_fix(args: argparse.Namespace) -> int:
 def cmd_install(args: argparse.Namespace) -> int:
     """Install/bootstrap required linting tools.
 
-    :Args:
-        args: Parsed command-line arguments
-
-    :Returns:
-        Exit code (0=success, 3=error)
+    :param args: Parsed command-line arguments
+    :returns: Exit code (0=success, 3=error)
     """
     # Handle cleanup mode
     if args.cleanup:
@@ -305,8 +292,7 @@ def cmd_install(args: argparse.Namespace) -> int:
 def main() -> None:
     """Main entry point for repo_lint CLI.
 
-    :Returns:
-        None (exits with appropriate code)
+    :returns: None (exits with appropriate code)
     """
     parser = create_parser()
     args = parser.parse_args()

@@ -98,7 +98,25 @@
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+<#
+.SYNOPSIS
+Writes an error message to stderr.
+.DESCRIPTION
+Outputs the provided message to the standard error stream.
+.PARAMETER Msg
+The error message to write.
+#>
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
+
+<#
+.SYNOPSIS
+Writes an error message and exits with code 1.
+.DESCRIPTION
+Outputs an error message prefixed with "ERROR:" and terminates the script with exit code 1.
+.PARAMETER Msg
+The error message to write.
+#>
 function Die([string]$Msg) { Write-Err "ERROR: $Msg"; exit 1 }
 
 if ($args.Count -ne 0) { Write-Err "Usage: scripts/SafeCheck.ps1"; exit 2 }

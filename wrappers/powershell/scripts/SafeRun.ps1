@@ -128,8 +128,24 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+<#
+.SYNOPSIS
+Writes an error message to stderr.
+.DESCRIPTION
+Outputs the provided message to the standard error stream.
+.PARAMETER Msg
+The error message to write.
+#>
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
+<#
+.SYNOPSIS
+Finds the repository root by walking up the directory tree.
+.DESCRIPTION
+Searches for repository markers (.git directory or RFC document) by traversing up from the script location.
+.OUTPUTS
+String path to the repository root directory.
+#>
 function Find-RepoRoot {
     # Walk up from script location to find repository root
     # This matches the behavior of bash/perl/python3 wrappers
@@ -167,6 +183,14 @@ function Find-RepoRoot {
     return $null
 }
 
+<#
+.SYNOPSIS
+Detects the current platform OS and architecture.
+.DESCRIPTION
+Determines the operating system and CPU architecture for platform-specific binary selection.
+.OUTPUTS
+Platform string in format "os/arch" (e.g., "linux/x86_64", "windows/x86_64", "macos/aarch64").
+#>
 function Detect-Platform {
     # Detect OS
     # Note: $IsLinux, $IsMacOS, $IsWindows are only available in PowerShell 6.0+
@@ -193,6 +217,14 @@ function Detect-Platform {
     return "$os/$arch"
 }
 
+<#
+.SYNOPSIS
+Finds the safe-run binary using a discovery cascade.
+.DESCRIPTION
+Searches for the safe-run binary in multiple locations: environment override, dev build, CI artifact, and fallback to 'safe-run' command.
+.OUTPUTS
+Path to the safe-run binary or exits with error if not found.
+#>
 function Find-SafeRunBinary {
     # 1. Environment override
     if ($env:SAFE_RUN_BIN) {

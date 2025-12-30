@@ -8,6 +8,21 @@
     - report_results: Format and print linting results
     - format_violation: Format a single violation for display
     - print_summary: Print summary statistics
+
+:Environment Variables:
+    None
+
+:Examples:
+    Format linting results::
+
+        from tools.repo_lint.reporting import report_results
+        exit_code = report_results(all_results, verbose=True)
+
+:Exit Codes:
+    Functions return exit codes defined in common.ExitCode:
+    - 0: All checks passed
+    - 1: Violations found
+    - 2: Missing tools
 """
 
 from typing import List
@@ -18,11 +33,8 @@ from tools.repo_lint.common import LintResult, Violation
 def format_violation(violation: Violation) -> str:
     """Format a single violation for display.
 
-    :Args:
-        violation: Violation to format
-
-    :Returns:
-        Formatted violation string
+    :param violation: Violation to format
+    :returns: Formatted violation string
     """
     if violation.line:
         return f"{violation.file}:{violation.line}: [{violation.tool}] {violation.message}"
@@ -32,12 +44,9 @@ def format_violation(violation: Violation) -> str:
 def report_results(results: List[LintResult], verbose: bool = False) -> int:
     """Report linting results and return appropriate exit code.
 
-    :Args:
-        results: List of linting results from all runners
-        verbose: Whether to print verbose output
-
-    :Returns:
-        Exit code (0 for success, 1 for violations, 3 for errors)
+    :param results: List of linting results from all runners
+    :param verbose: Whether to print verbose output
+    :returns: Exit code (0 for success, 1 for violations, 3 for errors)
     """
     all_passed = True
     has_errors = False
@@ -82,8 +91,7 @@ def report_results(results: List[LintResult], verbose: bool = False) -> int:
 def print_install_instructions(missing_tools: List[str]) -> None:
     """Print installation instructions for missing tools.
 
-    :Args:
-        missing_tools: List of missing tool names
+    :param missing_tools: List of missing tool names
     """
     print("━" * 80)
     print("  Missing Tools")

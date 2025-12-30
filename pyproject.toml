@@ -74,3 +74,7 @@ disable = [
     "too-many-branches",
     "too-many-statements"
 ]
+
+[tool.pylint.typecheck]
+# Ignore imports that are optional test dependencies
+ignored-modules = ["pytest"]

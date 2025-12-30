@@ -14,6 +14,20 @@
     - print_powershell_tool_instructions: Print instructions for PowerShell tools
     - print_perl_tool_instructions: Print instructions for Perl tools
     - cleanup_repo_local: Remove repo-local tool installations
+
+:Environment Variables:
+    None
+
+:Examples:
+    Install Python tools::
+
+        from tools.repo_lint.install.install_helpers import install_python_tools
+        success, msg = install_python_tools(verbose=True)
+
+:Exit Codes:
+    Functions return (success, message) tuples - not direct exit codes:
+    - 0: Success (when functions return (True, ...))
+    - 1: Error (when functions return (False, ...))
 """
 
 import shutil
@@ -28,11 +42,8 @@ from tools.repo_lint.install.version_pins import BASH_TOOLS, PIP_VERSION, POWERS
 def get_repo_root() -> Path:
     """Get the repository root directory.
 
-    :Returns:
-        Path to repository root
-
-    :Raises:
-        RuntimeError: If repository root cannot be determined
+    :returns: Path to repository root
+    :raises RuntimeError: If repository root cannot be determined
     """
     # Start from current file's directory
     current = Path(__file__).resolve().parent
@@ -49,7 +60,7 @@ def get_repo_root() -> Path:
 def get_venv_path() -> Path:
     """Get the path to the repo-local Python virtual environment.
 
-    :Returns:
+    :returns:
         Path to .venv-lint directory
     """
     return get_repo_root() / ".venv-lint"
@@ -58,7 +69,7 @@ def get_venv_path() -> Path:
 def get_tools_path() -> Path:
     """Get the path to the repo-local tools directory.
 
-    :Returns:
+    :returns:
         Path to .tools directory
     """
     return get_repo_root() / ".tools"
@@ -67,7 +78,7 @@ def get_tools_path() -> Path:
 def venv_exists() -> bool:
     """Check if repo-local venv exists.
 
-    :Returns:
+    :returns:
         True if .venv-lint exists and appears valid
     """
     venv_path = get_venv_path()
@@ -86,11 +97,8 @@ def venv_exists() -> bool:
 def create_venv(verbose: bool = False) -> Tuple[bool, Optional[str]]:
     """Create repo-local virtual environment.
 
-    :Args:
-        verbose: If True, print detailed output
-
-    :Returns:
-        Tuple of (success, error_message)
+    :param verbose: If True, print detailed output
+    :returns: Tuple of (success, error_message)
     """
     venv_path = get_venv_path()
 
@@ -132,11 +140,8 @@ def create_venv(verbose: bool = False) -> Tuple[bool, Optional[str]]:
 def install_python_tools(verbose: bool = False) -> Tuple[bool, List[str]]:
     """Install Python linting tools in repo-local venv.
 
-    :Args:
-        verbose: If True, print detailed output
-
-    :Returns:
-        Tuple of (success, list of error messages)
+    :param verbose: If True, print detailed output
+    :returns: Tuple of (success, list of error messages)
     """
     errors = []
 
@@ -173,7 +178,7 @@ def install_python_tools(verbose: bool = False) -> Tuple[bool, List[str]]:
 def print_bash_tool_instructions():
     """Print manual installation instructions for Bash tools.
 
-    :Returns:
+    :returns:
         None
     """
     print("")
@@ -195,7 +200,7 @@ def print_bash_tool_instructions():
 def print_powershell_tool_instructions():
     """Print manual installation instructions for PowerShell tools.
 
-    :Returns:
+    :returns:
         None
     """
     print("")
@@ -213,7 +218,7 @@ def print_powershell_tool_instructions():
 def print_perl_tool_instructions():
     """Print manual installation instructions for Perl tools.
 
-    :Returns:
+    :returns:
         None
     """
     print("")
@@ -231,11 +236,8 @@ def print_perl_tool_instructions():
 def cleanup_repo_local(verbose: bool = False) -> Tuple[bool, List[str]]:
     """Remove repo-local tool installations.
 
-    :Args:
-        verbose: If True, print detailed output
-
-    :Returns:
-        Tuple of (success, list of messages)
+    :param verbose: If True, print detailed output
+    :returns: Tuple of (success, list of messages)
 
     :Notes:
         Only removes directories created by repo-lint install.

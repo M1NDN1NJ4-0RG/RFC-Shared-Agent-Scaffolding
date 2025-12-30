@@ -42,7 +42,9 @@
         print(summary)
 
 :Exit Codes:
-    N/A - module provides utility functions, doesn't exit
+    Module provides utility functions and doesn't exit directly:
+    - 0: Success (returned by calling code)
+    - 1: Error (returned by calling code)
 """
 
 import json
@@ -53,7 +55,7 @@ from typing import Dict, List, Optional
 def get_policy_path() -> Path:
     """Get path to auto-fix policy file.
 
-    :Returns:
+    :returns:
         Path to conformance/repo-lint/autofix-policy.json
     """
     # Detect repo root (this file is in tools/repo_lint/policy.py)
@@ -64,12 +66,9 @@ def get_policy_path() -> Path:
 def load_policy() -> Dict:
     """Load auto-fix policy from JSON file.
 
-    :Returns:
-        Policy dictionary
-
-    :Raises:
-        FileNotFoundError: If policy file doesn't exist
-        json.JSONDecodeError: If policy file is invalid JSON
+    :returns: Policy dictionary
+    :raises FileNotFoundError: If policy file doesn't exist
+    :raises json.JSONDecodeError: If policy file is invalid JSON
     """
     policy_path = get_policy_path()
     with open(policy_path, encoding="utf-8") as f:
@@ -79,12 +78,9 @@ def load_policy() -> Dict:
 def is_category_allowed(policy: Dict, category: str) -> bool:
     """Check if an auto-fix category is allowed by policy.
 
-    :Args:
-        policy: Loaded policy dictionary
-        category: Category to check (e.g., "FORMAT.BLACK", "LINT.RUFF.SAFE")
-
-    :Returns:
-        True if category is allowed, False otherwise
+    :param policy: Loaded policy dictionary
+    :param category: Category to check (e.g., "FORMAT.BLACK", "LINT.RUFF.SAFE")
+    :returns: True if category is allowed, False otherwise
 
     :Notes:
         Policy is deny-by-default. A category must be explicitly listed
@@ -97,11 +93,8 @@ def is_category_allowed(policy: Dict, category: str) -> bool:
 def get_allowed_categories(policy: Dict) -> List[str]:
     """Get list of all allowed auto-fix categories.
 
-    :Args:
-        policy: Loaded policy dictionary
-
-    :Returns:
-        List of allowed category names
+    :param policy: Loaded policy dictionary
+    :returns: List of allowed category names
     """
     allowed = policy.get("allowed_categories", [])
     return [cat.get("category") for cat in allowed if cat.get("category")]
@@ -110,12 +103,9 @@ def get_allowed_categories(policy: Dict) -> List[str]:
 def get_category_info(policy: Dict, category: str) -> Optional[Dict]:
     """Get full information about a category.
 
-    :Args:
-        policy: Loaded policy dictionary
-        category: Category name
-
-    :Returns:
-        Category info dictionary or None if not found
+    :param policy: Loaded policy dictionary
+    :param category: Category name
+    :returns: Category info dictionary or None if not found
     """
     allowed = policy.get("allowed_categories", [])
     for cat in allowed:
@@ -127,11 +117,8 @@ def get_category_info(policy: Dict, category: str) -> Optional[Dict]:
 def get_policy_summary(policy: Dict) -> str:
     """Generate human-readable policy summary.
 
-    :Args:
-        policy: Loaded policy dictionary
-
-    :Returns:
-        Multi-line string summarizing policy
+    :param policy: Loaded policy dictionary
+    :returns: Multi-line string summarizing policy
 
     :Examples:
         Auto-fix policy (deny-by-default):
@@ -157,11 +144,8 @@ def get_policy_summary(policy: Dict) -> str:
 def validate_policy(policy: Dict) -> List[str]:
     """Validate policy structure and return any errors.
 
-    :Args:
-        policy: Policy dictionary to validate
-
-    :Returns:
-        List of error messages (empty if valid)
+    :param policy: Policy dictionary to validate
+    :returns: List of error messages (empty if valid)
 
     :Notes:
         Checks for:

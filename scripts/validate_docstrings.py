@@ -210,6 +210,9 @@ EXCLUDE_PATTERNS = [
     # Temporary files
     "tmp/**",
     ".tmp/**",
+    # Test fixtures (intentionally have violations for conformance testing)
+    "conformance/repo-lint/vectors/fixtures/**",
+    "scripts/tests/fixtures/**",
 ]
 
 
@@ -233,11 +236,28 @@ def get_tracked_files() -> List[Path]:
     repo_root = Path.cwd()
     matched_files = []
 
+    # Directories to exclude (test fixtures with intentional violations)
+    exclude_dirs = [
+        Path("conformance/repo-lint/vectors/fixtures"),
+        Path("scripts/tests/fixtures"),
+    ]
+
     for file_path in all_files:
         p = Path(file_path)
 
-        # Check if file matches any exclude pattern first
+        # Check if file is in an excluded directory
+        # Compatibility-friendly check: treat file as excluded if it is the
+        # directory itself or is located within that directory.
         excluded = False
+        for exclude_dir in exclude_dirs:
+            if p == exclude_dir or exclude_dir in p.parents:
+                excluded = True
+                break
+
+        if excluded:
+            continue
+
+        # Check if file matches any exclude pattern
         for exclude_pattern in EXCLUDE_PATTERNS:
             if p.match(exclude_pattern):
                 excluded = True

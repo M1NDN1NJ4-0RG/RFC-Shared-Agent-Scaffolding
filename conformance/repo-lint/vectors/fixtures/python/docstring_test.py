@@ -1,7 +1,19 @@
 """Python test fixtures for repo_lint docstring validation.
 
-Purpose: Test missing docstrings, correct docstrings, pragma exemptions,
-and edge cases for Python symbol discovery and validation.
+:Purpose:
+    Test missing docstrings, correct docstrings, pragma exemptions,
+    and edge cases for Python symbol discovery and validation.
+
+:Environment Variables:
+    None
+
+:Examples:
+    This file is used by test_vectors.py for conformance testing::
+
+        python3 -m tools.repo_lint.tests.test_vectors
+
+:Exit Codes:
+    N/A - This is a test fixture file, not executable
 """
 
 

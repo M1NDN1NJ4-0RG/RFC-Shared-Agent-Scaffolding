@@ -28,6 +28,6 @@ node_modules/
 .DS_Store
 Thumbs.db
 black.diff
-# Extracted debug logs
-repo-lint-failure-reports/*-debug-logs/
-repo-lint-failure-reports/*-debug-log/
+
+# CI-generated repo-lint failure reports
+repo-lint-failure-reports/

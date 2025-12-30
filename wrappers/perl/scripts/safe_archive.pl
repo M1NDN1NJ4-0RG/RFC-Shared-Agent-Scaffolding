@@ -319,7 +319,22 @@ use File::Path qw(make_path);
 use File::Basename qw(basename);
 use File::Copy qw(move copy);
 
+=head2 die_msg
+
+Dies with an error message and exit code 1.
+
+Args:
+    $_[0]: Error message to display
+
+=cut
+
 sub die_msg { print STDERR "ERROR: $_[0]\n"; exit 1; }
+
+=head2 usage
+
+Displays usage information and exits with code 2.
+
+=cut
 
 sub usage {
   print STDERR <<"USAGE";
@@ -342,6 +357,18 @@ USAGE
   exit 2;
 }
 
+=head2 have_cmd
+
+Checks if a command is available in PATH.
+
+Args:
+    $cmd: Command name to check for
+
+Returns:
+    1 if command exists, 0 otherwise
+
+=cut
+
 sub have_cmd {
   my ($cmd) = @_;
   for my $p (split(/:/, $ENV{PATH} // "")) {
@@ -349,6 +376,16 @@ sub have_cmd {
   }
   return 0;
 }
+
+=head2 compress_file
+
+Compresses a file using the specified method.
+
+Args:
+    $method: Compression method (none, gzip, xz, zstd)
+    $path: Path to the file to compress
+
+=cut
 
 sub compress_file {
   my ($method, $path) = @_;
@@ -387,6 +424,15 @@ my $compress = $ENV{SAFE_ARCHIVE_COMPRESS} // "none";
 
 make_path($fail_dir) if !-d $fail_dir;
 make_path($archive_dir) if !-d $archive_dir;
+
+=head2 archive_one
+
+Archives a single file by moving it to the archive directory and optionally compressing it.
+
+Args:
+    $src: Source file path
+
+=cut
 
 sub archive_one {
   my ($src) = @_;

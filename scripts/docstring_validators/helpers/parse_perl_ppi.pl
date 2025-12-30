@@ -145,6 +145,20 @@ my $result = {
 print encode_json($result), "\n";
 exit 0;
 
+=head2 check_pod_for_sub
+
+Checks for POD documentation associated with a subroutine.
+
+Args:
+    $document: PPI::Document object
+    $sub_node: PPI node for the subroutine
+    $sub_name: Name of the subroutine
+
+Returns:
+    Hash reference with has_pod boolean and sections array
+
+=cut
+
 # Helper: Check for POD documentation associated with a subroutine
 sub check_pod_for_sub {
     my ($document, $sub_node, $sub_name) = @_;

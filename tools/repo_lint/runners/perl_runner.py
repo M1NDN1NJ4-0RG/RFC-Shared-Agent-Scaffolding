@@ -7,6 +7,21 @@
 :Tools:
     - Perl::Critic: Perl source code analyzer
     - validate_docstrings.py: Docstring contract validation
+
+:Environment Variables:
+    None
+
+:Examples:
+    Use this runner::
+
+        from tools.repo_lint.runners.perl_runner import PerlRunner
+        runner = PerlRunner()
+        results = runner.check()
+
+:Exit Codes:
+    Returns LintResult objects, not exit codes directly:
+    - 0: Success (LintResult.passed = True)
+    - 1: Violations found (LintResult.passed = False)
 """
 
 import subprocess
@@ -23,7 +38,7 @@ class PerlRunner(Runner):
     def has_files(self) -> bool:
         """Check if repository has Perl files.
 
-        :Returns:
+        :returns:
             True if Perl files exist, False otherwise
         """
         result = subprocess.run(
@@ -34,7 +49,7 @@ class PerlRunner(Runner):
     def check_tools(self) -> List[str]:
         """Check which Perl tools are missing.
 
-        :Returns:
+        :returns:
             List of missing tool names
         """
         required = ["perlcritic"]
@@ -43,7 +58,7 @@ class PerlRunner(Runner):
     def check(self) -> List[LintResult]:
         """Run all Perl linting checks.
 
-        :Returns:
+        :returns:
             List of linting results from all Perl tools
         """
         self._ensure_tools(["perlcritic"])
@@ -59,8 +74,8 @@ class PerlRunner(Runner):
 
         Note: Perl::Critic does not have an auto-fix mode.
 
-        :Returns:
-            List of results (runs checks only)
+        :param policy: Auto-fix policy dictionary (unused for Perl)
+        :returns: List of results (runs checks only)
         """
         self._ensure_tools(["perlcritic"])
 
@@ -74,7 +89,7 @@ class PerlRunner(Runner):
     def _get_perl_files(self) -> List[str]:
         """Get list of Perl files in repository.
 
-        :Returns:
+        :returns:
             List of Perl file paths (empty list if none found)
         """
         result = subprocess.run(
@@ -87,7 +102,7 @@ class PerlRunner(Runner):
     def _run_perlcritic(self) -> LintResult:
         """Run Perl::Critic.
 
-        :Returns:
+        :returns:
             LintResult for Perl::Critic
         """
         perl_files = self._get_perl_files()
@@ -117,7 +132,7 @@ class PerlRunner(Runner):
     def _run_docstring_validation(self) -> LintResult:
         """Run Perl docstring validation.
 
-        :Returns:
+        :returns:
             LintResult for docstring validation
         """
         validator_script = self.repo_root / "scripts" / "validate_docstrings.py"

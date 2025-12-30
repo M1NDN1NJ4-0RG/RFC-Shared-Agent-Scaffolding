@@ -13,6 +13,22 @@
     - RepoLintError: Base exception for all repo_lint errors
     - MissingToolError: Raised when required tools are not installed
     - RunnerError: Raised when a runner encounters an error
+
+:Environment Variables:
+    None
+
+:Examples:
+    Create a violation::
+
+        from tools.repo_lint.common import Violation
+        v = Violation(tool="ruff", file="test.py", line=10, message="Line too long")
+
+:Exit Codes:
+    This module defines exit codes (see ExitCode class) but doesn't exit:
+    - 0: SUCCESS - All checks passed
+    - 1: VIOLATIONS - Linting/formatting violations found
+    - 2: MISSING_TOOLS - Required tools not installed (CI mode)
+    - 3: INTERNAL_ERROR - Internal error or exception
 """
 
 from dataclasses import dataclass
@@ -33,11 +49,10 @@ class ExitCode(IntEnum):
 class Violation:
     """Represents a single linting violation.
 
-    :Args:
-        tool: Name of the tool that reported the violation (e.g., "black", "ruff")
-        file: File path relative to repo root
-        line: Line number (if applicable)
-        message: Human-readable violation message
+    :param tool: Name of the tool that reported the violation (e.g., "black", "ruff")
+    :param file: File path relative to repo root
+    :param line: Line number (if applicable)
+    :param message: Human-readable violation message
     """
 
     tool: str
@@ -50,11 +65,10 @@ class Violation:
 class LintResult:
     """Result from running a linter or formatter.
 
-    :Args:
-        tool: Name of the tool that ran
-        passed: Whether the check passed (no violations)
-        violations: List of violations found
-        error: Error message if the tool failed to run
+    :param tool: Name of the tool that ran
+    :param passed: Whether the check passed (no violations)
+    :param violations: List of violations found
+    :param error: Error message if the tool failed to run
     """
 
     tool: str
@@ -73,9 +87,8 @@ class MissingToolError(RepoLintError):
     def __init__(self, tool: str, install_hint: Optional[str] = None):
         """Initialize MissingToolError.
 
-        :Args:
-            tool: Name of the missing tool
-            install_hint: Optional installation hint for the user
+        :param tool: Name of the missing tool
+        :param install_hint: Optional installation hint for the user
         """
         self.tool = tool
         self.install_hint = install_hint

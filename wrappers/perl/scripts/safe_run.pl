@@ -259,6 +259,15 @@ use File::Basename qw(dirname);
 use File::Spec;
 use Cwd qw(abs_path);
 
+=head2 find_repo_root
+
+Determines repository root by walking up from script location.
+
+Returns:
+    Path to the repository root directory
+
+=cut
+
 # Determine repository root (walk up from script location)
 sub find_repo_root {
     my $script_dir = dirname(abs_path(__FILE__));
@@ -279,6 +288,15 @@ sub find_repo_root {
 }
 
 my $REPO_ROOT = find_repo_root();
+
+=head2 detect_platform
+
+Detects the current OS and architecture.
+
+Returns:
+    Platform string in format "os/arch" (e.g., "linux/x86_64")
+
+=cut
 
 # Detect OS and architecture for CI artifact path
 sub detect_platform {
@@ -308,6 +326,15 @@ sub detect_platform {
 }
 
 my $PLATFORM = detect_platform();
+
+=head2 find_safe_run_binary
+
+Finds the safe-run binary using a discovery cascade.
+
+Returns:
+    Path to the safe-run binary
+
+=cut
 
 # Binary discovery cascade
 sub find_safe_run_binary {

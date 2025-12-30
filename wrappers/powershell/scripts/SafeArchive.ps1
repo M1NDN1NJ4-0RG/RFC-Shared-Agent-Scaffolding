@@ -137,13 +137,42 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
+<#
+.SYNOPSIS
+Writes an error message to stderr.
+.DESCRIPTION
+Outputs the provided message to the standard error stream.
+.PARAMETER Msg
+The error message to write.
+#>
 function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 
+<#
+.SYNOPSIS
+Checks if a command is available in the PATH.
+.DESCRIPTION
+Attempts to retrieve a command using Get-Command and returns true if found.
+.PARAMETER cmd
+The command name to check for.
+.OUTPUTS
+Boolean indicating whether the command exists.
+#>
 function Have-Cmd([string]$cmd) {
   $p = Get-Command $cmd -ErrorAction SilentlyContinue
   return $null -ne $p
 }
 
+<#
+.SYNOPSIS
+Compresses a file using the specified method.
+.DESCRIPTION
+Applies compression to a file using gzip, xz, or zstd. The none method performs no compression.
+Removes the original file after compression.
+.PARAMETER method
+The compression method: none, gzip, xz, or zstd.
+.PARAMETER path
+The path to the file to compress.
+#>
 function Compress-File([string]$method, [string]$path) {
   if ([string]::IsNullOrWhiteSpace($method)) { $method = "none" }
   switch ($method) {
@@ -177,6 +206,19 @@ function Compress-File([string]$method, [string]$path) {
   }
 }
 
+<#
+.SYNOPSIS
+Archives a single file by moving it to the archive directory and optionally compressing it.
+.DESCRIPTION
+Moves a file from the source location to the archive directory without overwriting existing files.
+Applies compression after moving if specified. Never deletes destination files.
+.PARAMETER src
+The source file path.
+.PARAMETER archiveDir
+The target archive directory.
+.PARAMETER compress
+The compression method to use.
+#>
 function Archive-One([string]$src, [string]$archiveDir, [string]$compress) {
   if (-not (Test-Path $src)) { throw "File not found: $src" }
   

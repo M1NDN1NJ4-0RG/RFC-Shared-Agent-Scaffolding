@@ -9,6 +9,21 @@
     - Ruff: Fast Python linter (replaces Flake8)
     - Pylint: Comprehensive static analysis
     - validate_docstrings.py: Docstring contract validation
+
+:Environment Variables:
+    None
+
+:Examples:
+    Use this runner::
+
+        from tools.repo_lint.runners.python_runner import PythonRunner
+        runner = PythonRunner()
+        results = runner.check()
+
+:Exit Codes:
+    Returns LintResult objects, not exit codes directly:
+    - 0: Success (LintResult.passed = True)
+    - 1: Violations found (LintResult.passed = False)
 """
 
 import subprocess
@@ -26,7 +41,7 @@ class PythonRunner(Runner):
     def has_files(self) -> bool:
         """Check if repository has Python files.
 
-        :Returns:
+        :returns:
             True if Python files exist, False otherwise
         """
         result = subprocess.run(
@@ -37,7 +52,7 @@ class PythonRunner(Runner):
     def check_tools(self) -> List[str]:
         """Check which Python tools are missing.
 
-        :Returns:
+        :returns:
             List of missing tool names
         """
         required = ["black", "ruff", "pylint"]
@@ -46,7 +61,7 @@ class PythonRunner(Runner):
     def check(self) -> List[LintResult]:
         """Run all Python linting checks.
 
-        :Returns:
+        :returns:
             List of linting results from all Python tools
         """
         self._ensure_tools(["black", "ruff", "pylint"])
@@ -65,11 +80,8 @@ class PythonRunner(Runner):
         Per Phase 0 Item 0.9.1: Apply Black formatting and Ruff safe fixes.
         Per Phase 6 Item 6.5.6: Consult auto-fix policy before running fixes.
 
-        :Args:
-            policy: Auto-fix policy dictionary (deny-by-default)
-
-        :Returns:
-            List of results after applying fixes
+        :param policy: Auto-fix policy dictionary (deny-by-default)
+        :returns: List of results after applying fixes
         """
         self._ensure_tools(["black", "ruff", "pylint"])
 
@@ -111,7 +123,7 @@ class PythonRunner(Runner):
     def _run_black_check(self) -> LintResult:
         """Run Black in check mode.
 
-        :Returns:
+        :returns:
             LintResult for Black check
         """
         result = subprocess.run(
@@ -142,7 +154,7 @@ class PythonRunner(Runner):
     def _run_black_fix(self) -> LintResult:
         """Run Black to fix formatting.
 
-        :Returns:
+        :returns:
             LintResult for Black fix operation
         """
         result = subprocess.run(["black", "."], cwd=self.repo_root, capture_output=True, text=True, check=False)
@@ -157,12 +169,9 @@ class PythonRunner(Runner):
     def _parse_ruff_output(self, stdout: str, context: str = "check") -> List[Violation]:
         """Parse Ruff output into violations.
 
-        :Parameters:
-            - stdout: Ruff command stdout output
-            - context: Context for unsafe fixes message ('check' or 'fix')
-
-        :Returns:
-            List of parsed violations
+        :param stdout: Ruff command stdout output
+        :param context: Context for unsafe fixes message ('check' or 'fix')
+        :returns: List of parsed violations
         """
         violations = []
         unsafe_msg = (
@@ -193,7 +202,7 @@ class PythonRunner(Runner):
 
         Per Phase 0 Item 0.9.1: repo-lint check MUST be non-mutating.
 
-        :Returns:
+        :returns:
             LintResult for Ruff check
         """
         result = subprocess.run(
@@ -211,7 +220,7 @@ class PythonRunner(Runner):
 
         Per Phase 0 Item 0.9.1: repo-lint fix may apply SAFE fixes only.
 
-        :Returns:
+        :returns:
             LintResult for Ruff fix operation
         """
         # Apply safe fixes only (no --unsafe-fixes flag)
@@ -228,7 +237,7 @@ class PythonRunner(Runner):
     def _run_pylint(self) -> LintResult:
         """Run Pylint.
 
-        :Returns:
+        :returns:
             LintResult for Pylint check
         """
         # Get all Python files
@@ -265,7 +274,7 @@ class PythonRunner(Runner):
     def _run_docstring_validation(self) -> LintResult:
         """Run Python docstring validation.
 
-        :Returns:
+        :returns:
             LintResult for docstring validation
         """
         validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
