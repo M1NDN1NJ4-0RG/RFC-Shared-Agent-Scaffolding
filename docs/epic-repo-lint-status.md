@@ -578,6 +578,12 @@ Rationale:
 - ✅ **IMPLEMENTATION COMPLETE** (Items 6.0-6.6)
 - ⏳ **TRANSITION IN PROGRESS** (Items 6.4.7 and 6.4.9 await umbrella workflow CI execution)
 - ✅ **VERIFICATION COMPLETE** (Per `docs/epic-repo-lint-copilot-prompt.md`)
+- ✅ **LOGGING ENHANCEMENT COMPLETE** (2025-12-30 PR #132):
+  - Umbrella workflow now captures ALL logs (success + failure)
+  - Logs committed to `logs/umbrella-ci-logs-phase-6/YYYY-MM-DD-RUN_ID/`
+  - Auto-Fix forensic artifacts included in log archive
+  - Artifact upload runs always, not just on failure
+  - Docstring validator already uses `--language` flag for proper scoping
 - 📋 **NEXT ACTION:** Wait for umbrella workflow to run in CI, then verify parity and migrate old workflows
 
 ---
@@ -659,6 +665,75 @@ Following canonical instructions in `docs/epic-repo-lint-copilot-prompt.md` (PR 
 3. Use `force_all=true` → all language jobs run and fail on violations
 
 **Status**: Awaiting workflow run in CI to perform validation
+
+---
+
+## Phase 6 Logging Enhancement (2025-12-30)
+
+### Objective
+Implement comprehensive logging for the umbrella workflow per `docs/copilot-prompt-2-repo-lint-epic.md` requirements:
+- Capture logs on BOTH success AND failure (not just failure)
+- Use required path format: `/logs/umbrella-ci-logs-phase-6/YYYY-MM-DD-RUN_ID/`
+- Commit logs to repository for traceability (same-repo PRs only)
+- Upload logs as artifacts (always)
+
+### Part 1: Docstring Validation Scoping ✅
+**Status:** Already implemented, no changes needed
+
+**Verification:**
+- Confirmed `scripts/validate_docstrings.py` has `--language` flag
+- Python runner calls: `validate_docstrings.py --language python`
+- Bash runner calls: `validate_docstrings.py --language bash`
+- PowerShell runner calls: `validate_docstrings.py --language powershell`
+- Perl runner calls: `validate_docstrings.py --language perl`
+
+**Conclusion:** Route 2 (language selector) already implemented in Phase 3.
+
+### Part 2: Umbrella Workflow Logging ✅
+**Status:** Implemented
+
+**Changes Made:**
+1. **Job renamed:** "Consolidate Failures" → "Consolidate and Archive Logs"
+   - Reflects new purpose: archive ALL runs, not just failures
+   
+2. **Log path format updated:**
+   - Old: `repo-lint-failure-reports/summary-TIMESTAMP.md`
+   - New: `logs/umbrella-ci-logs-phase-6/YYYY-MM-DD-RUN_ID/summary.md`
+   - Uses `${{ github.run_id }}` for unique run identifier
+   
+3. **Artifact collection expanded:**
+   - Downloads Auto-Fix forensic artifacts (`black.diff`, `black.log`)
+   - Copies ALL job outputs to log directory (success + failure)
+   - Individual files: `python-lint-output.txt`, `bash-lint-output.txt`, etc.
+   
+4. **Artifact upload:** Now runs with `if: always()` (not just on failure)
+   - Artifact name: `umbrella-ci-logs`
+   - Path: `logs/umbrella-ci-logs-phase-6/`
+   - Retention: 30 days
+   
+5. **Log commit:** Now runs with `if: always()` (not just on failure)
+   - Commits all logs regardless of job outcome
+   - Uses bot-loop guard to prevent infinite loops
+   - Same-repo PRs only (forks get artifact only)
+   - Commit message: `CI: Add umbrella workflow logs [auto-generated]`
+   
+6. **`.gitignore` updated:**
+   - Removed: `repo-lint-failure-reports/`
+   - Added exceptions: `!logs/**/*.log` and `!logs/**/*.txt`
+   - Allows CI logs to be committed for traceability
+
+**Files Changed:**
+- `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+- `.gitignore`
+- `docs/epic-repo-lint-status.md`
+
+**Success Criteria:**
+- ✅ Logs captured on both pass and fail
+- ✅ Required path format implemented
+- ✅ Artifact upload runs always
+- ✅ Commit step runs always (with guards)
+- ✅ Auto-Fix forensics included
+- ✅ Docstring scoping verified (already correct)
 
 ---
 

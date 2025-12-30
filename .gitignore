@@ -1,6 +1,9 @@
 # Agent scaffolding test artifacts
 .agent/
 *.log
+# EXCEPTION: Allow CI logs to be committed for traceability
+!logs/**/*.log
+!logs/**/*.txt
 
 # Rust build artifacts
 rust/target/
@@ -29,5 +32,5 @@ node_modules/
 Thumbs.db
 black.diff
 
-# CI-generated repo-lint failure reports
-repo-lint-failure-reports/
+# NOTE: CI-generated logs under logs/umbrella-ci-logs-phase-6/ are intentionally
+# NOT ignored - they should be committed to the repository for traceability
