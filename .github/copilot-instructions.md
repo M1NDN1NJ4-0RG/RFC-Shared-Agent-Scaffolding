@@ -160,74 +160,80 @@ When CI, tests, or build steps are **not present**, the agent must:
 - Follow the escalation policy below
 - **When blocked:** Add a comment to the PR AND stop — no further commits or pushes until unblocked
 
-## AI Handoff Journals
+## AI Next-Steps Journals (MANDATORY)
 
-**Purpose:** Maintain persistent context across agent sessions, PR completions, and work transitions.
+**Purpose:** Maintain persistent, detailed context for every commit on an issue. This is a REQUIRED workflow component, not optional.
 
-**When to Create a Handoff Journal:**
-- When completing substantial work on an issue/epic
-- When work transitions between agents or sessions
-- When a PR is merged that represents a significant milestone
-- At the end of multi-phase epic work
+**MANDATORY UPDATE FREQUENCY:**
+- The next-steps journal MUST be updated on EVERY SINGLE COMMIT related to an issue
+- A commit is NOT considered complete unless the journal has been updated
+- This applies to ALL commits: partial work, refactors, fixes, experiments, formatting changes, failed attempts
+- **NO EXCEPTIONS**
 
-**Directory Structure:**
-- **Primary location:** `docs/ai-prompt/`
-- **Naming format:** One markdown file per ORIGINAL ISSUE
-- **File naming convention:** `issue-<number>-<slug>.md` or as specified by human direction
+**Directory and Naming (MANDATORY):**
+- **Directory:** `docs/ai-prompt/` (must exist)
+- **File naming:** `<ISSUE_NUMBER>-next-steps.md` (EXACTLY ONE file per ORIGINAL GitHub issue)
+- Use the ORIGINAL GitHub issue number (not PR number)
+- Do NOT create multiple files for the same issue
+- Do NOT delete or overwrite history
 
-**Required Contents:**
-1. **Issue/Epic Summary:** Brief description of the original problem
-2. **Work Completed:** List of PRs, commits, and changes made
-3. **Current State:** What works, what's tested, what's verified
-4. **Known Limitations:** Incomplete items, deferred work, technical debt
-5. **Next Steps:** Recommended follow-up work or remaining tasks
-6. **Context for Future Agents:** Key decisions, patterns, gotchas to remember
-
-**Creation Rules:**
-- Create handoff journal when requested by human via PR comment
-- Update journal as work progresses (optional but recommended)
-- Archive to `docs/ai-prompt/` when work is complete
-- Never delete or overwrite existing journals (append-only)
-
-**Example Structure:**
+**Required File Format (MANDATORY):**
 ```markdown
-# Issue #X: [Title]
+# Issue <ISSUE_NUMBER> AI Journal
+Status: In Progress | Paused | Complete
+Last Updated: YYYY-MM-DD
+Related: Issue <ISSUE_NUMBER>, PRs <list>
 
-**Status:** Complete / In Progress / Paused
-**Last Updated:** YYYY-MM-DD
-**Related PRs:** #A, #B, #C
+## NEXT
+- actionable next steps (newest at top)
 
-## Summary
-Brief description of the work and its purpose.
+---
 
-## Work Completed
-- [x] Item 1
-- [x] Item 2
-- [ ] Item 3 (deferred)
+## DONE (EXTREMELY DETAILED)
+### YYYY-MM-DD HH:MM - <short label>
+**Files Changed:**
+- `path/to/file1.ext`: <exact changes>
+- `path/to/file2.ext`: <exact changes>
 
-## Current State
-- Tests: All passing
-- Documentation: Updated
-- CI: Configured and passing
+**Changes Made:**
+- Extremely detailed summary including:
+  - Why each change was made
+  - Commands/tests run and results
+  - Relevant CI logs/errors (references)
+  - Known issues, risks, or follow-ups
 
-## Known Limitations
-- Issue A: Description and workaround
-- Deferred: Item B tracked in issue #Y
+**Verification:**
+- <commands run>
+- <results>
 
-## Next Steps
-1. Follow-up task 1
-2. Follow-up task 2
-
-## Key Context for Future Agents
-- Decision X was made because Y
-- Pattern Z should be followed for consistency
-- Gotcha: Watch out for edge case W
+[Previous entries below, newest first...]
 ```
 
-**Integration with Existing Journal System:**
-- `docs/history/ai-agent-guidelines/journal/` contains PR-level logs
-- `docs/ai-prompt/` contains issue/epic-level handoff documents
-- PR logs are granular (per PR), handoff journals are thematic (per issue/epic)
+**Update Rules (MANDATORY):**
+- Add new NEXT items at the TOP of the NEXT section
+- Move completed NEXT items to DONE with EXTREMELY DETAILED entry
+- Each DONE entry MUST include:
+  - Timestamp and short label
+  - Full file paths of all changes
+  - Exact changes per file
+  - Rationale for each change
+  - Commands/tests run with results
+  - CI log references if applicable
+  - Known issues or follow-ups
+- NEVER rewrite or condense previous DONE entries
+- NEVER skip a commit update
+- History is append-only, newest entries first
+
+**Enforcement:**
+- Updating `docs/ai-prompt/<ISSUE_NUMBER>-next-steps.md` is REQUIRED on EVERY commit
+- Commits without a journal update are INVALID
+- Multiple journals per issue are FORBIDDEN
+- The DONE section MUST be EXTREMELY DETAILED
+
+**Integration with Existing Journals:**
+- `docs/history/ai-agent-guidelines/journal/` contains PR-level logs (optional)
+- `docs/ai-prompt/` contains mandatory issue-level next-steps journals (REQUIRED)
+- Next-steps journals are per-commit tracking, PR logs are optional summaries
 
 ## HUMAN ESCALATION & MENTION POLICY
 
