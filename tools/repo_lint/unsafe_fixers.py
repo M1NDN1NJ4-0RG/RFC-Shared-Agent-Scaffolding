@@ -44,7 +44,7 @@
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
+from typing import List, Optional
 
 
 @dataclass
@@ -99,7 +99,7 @@ class UnsafeDocstringRewriter:
         """
         return file_path.suffix == ".py"
 
-    def fix(self, file_path: Path) -> UnsafeFixerResult | None:
+    def fix(self, file_path: Path) -> Optional[UnsafeFixerResult]:
         """Apply unsafe docstring rewriting to a Python file.
 
         :param file_path: Path to Python file to fix

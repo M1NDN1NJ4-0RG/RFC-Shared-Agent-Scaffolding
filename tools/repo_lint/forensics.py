@@ -41,7 +41,7 @@
 import difflib
 from datetime import datetime
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 from tools.repo_lint.unsafe_fixers import UnsafeFixerResult
 
@@ -155,7 +155,7 @@ def generate_log(results: List[UnsafeFixerResult], start_time: datetime, end_tim
     return "\n".join(log_lines)
 
 
-def save_forensics(results: List[UnsafeFixerResult], start_time: datetime, end_time: datetime) -> tuple[Path, Path]:
+def save_forensics(results: List[UnsafeFixerResult], start_time: datetime, end_time: datetime) -> Tuple[Path, Path]:
     """Save patch and log files for unsafe fix operations.
 
     :param results: List of unsafe fixer results

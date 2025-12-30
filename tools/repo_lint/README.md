@@ -124,7 +124,7 @@ python3 -m tools.repo_lint fix --ci
 
 ### `fix --unsafe` - DANGER: Unsafe Fixes
 
-> **DANGER:** `repo-lint fix --unsafe --yes-i-know` is intentionally dangerous. It may change behavior. It is forbidden in CI. Only run it locally when you accept risk, and ALWAYS review the generated patch/log before committing.
+> **DANGER:** `python3 -m tools.repo_lint fix --unsafe --yes-i-know` is intentionally dangerous. It may change behavior. It is forbidden in CI. Only run it locally when you accept risk, and ALWAYS review the generated patch/log before committing.
 
 Apply **unsafe** fixes that can modify code behavior or semantics:
 
