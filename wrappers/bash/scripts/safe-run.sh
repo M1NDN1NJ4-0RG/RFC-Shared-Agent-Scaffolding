@@ -93,9 +93,23 @@ set -euo pipefail
 # Determine repository root (walk up from script location)
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# find_repo_root - Walk up directory tree to locate repository root
-# Looks for RFC-Shared-Agent-Scaffolding-v0.1.0.md or .git directory
-# Returns: Absolute path to repo root, or empty string if not found
+# Walk up directory tree to locate repository root
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if repository root found
+#   1 if not found
+#
+# Globals:
+#   SCRIPT_DIR - Starting directory for search
+#
+# Outputs:
+#   Absolute path to repo root to stdout (if found)
+#
+# Logic:
+#   Looks for RFC-Shared-Agent-Scaffolding-v0.1.0.md or .git directory
 find_repo_root() {
 	local dir="$SCRIPT_DIR"
 	while [ "$dir" != "/" ]; do
@@ -110,10 +124,22 @@ find_repo_root() {
 
 REPO_ROOT="$(find_repo_root)" || REPO_ROOT=""
 
-# detect_platform - Determine OS and architecture for CI artifact paths
-# Returns: String in format "os/arch" (e.g., "linux/x86_64", "macos/aarch64")
-# Used for step 3 of binary discovery (./dist/<os>/<arch>/safe-run)
-# Also sets IS_WINDOWS=1 for binary name determination (.exe suffix)
+# Determine OS and architecture for CI artifact paths
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 (always succeeds)
+#
+# Globals:
+#   IS_WINDOWS - Set to 1 if running on Windows
+#
+# Outputs:
+#   String in format "os/arch" (e.g., "linux/x86_64", "macos/aarch64") to stdout
+#
+# Purpose:
+#   Used for step 3 of binary discovery (./dist/<os>/<arch>/safe-run)
 detect_platform() {
 	local os arch
 	case "$(uname -s)" in
@@ -139,11 +165,26 @@ detect_platform() {
 IS_WINDOWS=0
 PLATFORM="$(detect_platform)"
 
-# find_safe_run_binary - Execute binary discovery cascade
-# Implements the 5-step discovery order defined in docs/wrapper-discovery.md
-# Returns: Absolute path to safe-run binary (prints to stdout)
-# Exit: 0 if found, 1 if not found
-# Binary discovery cascade
+# Execute binary discovery cascade
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if binary found
+#   1 if not found
+#
+# Globals:
+#   SAFE_RUN_BIN - Environment override (highest priority)
+#   REPO_ROOT - Repository root directory
+#   IS_WINDOWS - Windows detection flag
+#   PLATFORM - OS/arch string
+#
+# Outputs:
+#   Absolute path to safe-run binary to stdout
+#
+# Logic:
+#   Implements 5-step discovery order defined in docs/wrapper-discovery.md
 find_safe_run_binary() {
 	# 1. Environment override (highest priority)
 	if [ -n "${SAFE_RUN_BIN:-}" ]; then

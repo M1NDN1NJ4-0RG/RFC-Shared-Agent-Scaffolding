@@ -113,22 +113,67 @@
 set -Eeuo pipefail
 IFS=$'\n\t'
 
-# Helper functions for consistent logging
+# Print error message and exit with code 1
+#
+# Arguments:
+#   $* - Error message to print
+#
+# Returns:
+#   Always exits with code 1
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Prints "ERROR: <message>" to stderr
 die() {
 	printf 'ERROR: %s\n' "$*" >&2
 	exit 1
 }
 
 # Print warning message to stderr
-# Args: $* = warning message
+#
+# Arguments:
+#   $* - Warning message to print
+#
+# Returns:
+#   0 (always succeeds)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Prints "WARN: <message>" to stderr
 warn() { printf 'WARN: %s\n' "$*" >&2; }
 
 # Print info message to stderr
-# Args: $* = info message
+#
+# Arguments:
+#   $* - Info message to print
+#
+# Returns:
+#   0 (always succeeds)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Prints "INFO: <message>" to stderr
 info() { printf 'INFO: %s\n' "$*" >&2; }
 
-# usage - Display help text and exit
-# Embedded usage text matches CLI argument structure above
+# Display help text and exit
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   Does not return (exits after displaying usage)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Prints usage information to stdout
 usage() {
 	cat <<'USAGE'
 Usage:
@@ -165,21 +210,55 @@ Examples:
 USAGE
 }
 
-# require_cmd - Check if required command exists, exit if not
-# Args: $1 = command name
+# Check if required command exists, exit if not
+#
+# Arguments:
+#   $1 - Command name to check
+#
+# Returns:
+#   0 if command exists
+#   Exits with code 1 if command not found (via die)
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Error message to stderr if command not found
 require_cmd() { command -v "$1" >/dev/null 2>&1 || die "Missing required command: $1"; }
 
-# json_has_default_branch_ref - Check if ruleset targets ~DEFAULT_BRANCH
-# Reads: ruleset JSON from stdin
-# Returns: 0 if ~DEFAULT_BRANCH in conditions.ref_name.include, else 1
+# Check if ruleset targets ~DEFAULT_BRANCH
+#
+# Arguments:
+#   None (reads from stdin)
+#
+# Returns:
+#   0 if ~DEFAULT_BRANCH in conditions.ref_name.include
+#   1 otherwise
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None (reads ruleset JSON from stdin)
 json_has_default_branch_ref() {
 	# Returns 0 if ruleset conditions include ~DEFAULT_BRANCH, otherwise 1.
 	jq -e '((.conditions.ref_name.include // []) | index("~DEFAULT_BRANCH")) != null' >/dev/null
 }
 
-# collect_required_contexts - Extract required status check contexts from ruleset
-# Reads: ruleset JSON from stdin
-# Outputs: One context per line (sorted, unique)
+# Extract required status check contexts from ruleset
+#
+# Arguments:
+#   None (reads from stdin)
+#
+# Returns:
+#   0 on success
+#   Non-zero if jq fails
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   One context per line (sorted, unique) to stdout
 collect_required_contexts() {
 	# Print sorted unique contexts from required_status_checks rule.
 	jq -r '
@@ -197,17 +276,46 @@ collect_required_contexts() {
 # Prefer gh CLI for auth, fallback to curl with TOKEN/GITHUB_TOKEN
 #
 
-# gh_get - Call GitHub API using gh CLI
-# Args: $1 = API endpoint (e.g., "repos/owner/repo/rulesets")
+# Call GitHub API using gh CLI
+#
+# Arguments:
+#   $1 - API endpoint (e.g., "repos/owner/repo/rulesets")
+#
+# Returns:
+#   0 on success
+#   Non-zero on API failure
+#
+# Globals:
+#   API_VERSION - GitHub API version header
+#
+# Outputs:
+#   JSON response from API to stdout
 gh_get() {
 	local endpoint="$1"
 	gh api -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: ${API_VERSION}" "$endpoint"
 }
 
-# curl_get - Call GitHub API using curl with token auth
-# Args: $1 = full URL
-# Requires: TOKEN or GITHUB_TOKEN env var
-# Security: Never prints token value
+# Call GitHub API using curl with token auth
+#
+# Arguments:
+#   $1 - Full URL to API endpoint
+#
+# Returns:
+#   0 on success
+#   1 if no auth token available
+#   Non-zero on curl failure
+#
+# Globals:
+#   TOKEN - GitHub token (preferred)
+#   GITHUB_TOKEN - GitHub token (fallback)
+#   API_VERSION - GitHub API version header
+#
+# Outputs:
+#   JSON response from API to stdout
+#   Error messages to stderr
+#
+# Security:
+#   Never prints token value
 curl_get() {
 	local url="$1"
 	local token="${TOKEN:-${GITHUB_TOKEN:-}}"
@@ -219,9 +327,20 @@ curl_get() {
 		"$url"
 }
 
-# api_get_rulesets - Fetch all rulesets for a repository
-# Args: $1 = repo (owner/name)
-# Returns: JSON array of rulesets
+# Fetch all rulesets for a repository
+#
+# Arguments:
+#   $1 - Repository slug (owner/name)
+#
+# Returns:
+#   0 on success
+#   Non-zero on API failure
+#
+# Globals:
+#   None (uses gh_get or curl_get which have their own globals)
+#
+# Outputs:
+#   JSON array of rulesets to stdout
 api_get_rulesets() {
 	local repo="$1"
 	if command -v gh >/dev/null 2>&1; then
@@ -231,9 +350,21 @@ api_get_rulesets() {
 	fi
 }
 
-# api_get_ruleset - Fetch a single ruleset by ID
-# Args: $1 = repo (owner/name), $2 = ruleset ID
-# Returns: JSON object for the ruleset
+# Fetch a single ruleset by ID
+#
+# Arguments:
+#   $1 - Repository slug (owner/name)
+#   $2 - Ruleset ID
+#
+# Returns:
+#   0 on success
+#   Non-zero on API failure
+#
+# Globals:
+#   None (uses gh_get or curl_get which have their own globals)
+#
+# Outputs:
+#   JSON object for the ruleset to stdout
 api_get_ruleset() {
 	local repo="$1"
 	local id="$2"
@@ -244,10 +375,23 @@ api_get_ruleset() {
 	fi
 }
 
-# classify_auth_error - Check if JSON response is an auth/permission error
-# Reads: JSON from stdin
-# Returns: 0 if auth error detected, 1 otherwise
-# Used to distinguish auth failures from other API errors
+# Check if JSON response is an auth/permission error
+#
+# Arguments:
+#   None (reads from stdin)
+#
+# Returns:
+#   0 if auth error detected
+#   1 otherwise
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   None (reads JSON from stdin)
+#
+# Purpose:
+#   Used to distinguish auth failures from other API errors
 classify_auth_error() {
 	# Inspect JSON error bodies for auth/permission issues.
 	# Returns 0 if looks like auth/permission problem, else 1.
@@ -257,14 +401,29 @@ classify_auth_error() {
   ' >/dev/null
 }
 
+# Main function - orchestrates precheck logic
 #
-# MAIN LOGIC
-# 1. Parse arguments
-# 2. Fetch ruleset from GitHub API
-# 3. Validate ruleset configuration
-# 4. Check required contexts
+# Arguments:
+#   Command-line arguments (see usage() for details)
 #
-
+# Returns:
+#   0 if precheck OK (ruleset active, targets default branch, contexts present)
+#   1 if precheck failed (missing/disabled/contexts changed)
+#   2 if auth/permission error
+#   3 if usage/validation error
+#
+# Globals:
+#   API_VERSION - GitHub API version header (set from --api-version or default)
+#
+# Outputs:
+#   Status messages to stdout/stderr
+#   JSON diagnostic output if requested
+#
+# Logic:
+#   1. Parse arguments
+#   2. Fetch ruleset from GitHub API
+#   3. Validate ruleset configuration
+#   4. Check required contexts
 main() {
 	if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
 		usage
