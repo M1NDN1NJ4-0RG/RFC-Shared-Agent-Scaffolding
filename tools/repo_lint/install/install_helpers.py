@@ -25,7 +25,9 @@
         success, msg = install_python_tools(verbose=True)
 
 :Exit Codes:
-    N/A - Functions return success/failure tuples
+    Functions return (success, message) tuples - not direct exit codes:
+    - 0: Success (when functions return (True, ...))
+    - 1: Error (when functions return (False, ...))
 """
 
 import shutil

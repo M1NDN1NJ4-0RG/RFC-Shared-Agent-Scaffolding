@@ -130,10 +130,12 @@ Combined result
 =cut
 
 # noqa: FUNCTION - Test fixture for subroutine prototypes
+## no critic (ProhibitSubroutinePrototypes)
 sub subroutine_with_prototype ($$@) {
     my ($first, $second, @rest) = @_;
     return "$first-$second-" . join(',', @rest);
 }
+## use critic
 
 =head2 multiline_signature
 

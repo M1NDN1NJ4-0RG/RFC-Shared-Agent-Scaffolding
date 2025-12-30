@@ -15,5 +15,7 @@
     This module is imported by repo_lint.install.install_helpers
 
 :Exit Codes:
-    N/A - This is a package initialization file
+    Package initialization - functions return tuples with success status:
+    - 0: Success (when functions return True)
+    - 1: Error (when functions return False)
 """
