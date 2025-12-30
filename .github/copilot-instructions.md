@@ -160,6 +160,75 @@ When CI, tests, or build steps are **not present**, the agent must:
 - Follow the escalation policy below
 - **When blocked:** Add a comment to the PR AND stop — no further commits or pushes until unblocked
 
+## AI Handoff Journals
+
+**Purpose:** Maintain persistent context across agent sessions, PR completions, and work transitions.
+
+**When to Create a Handoff Journal:**
+- When completing substantial work on an issue/epic
+- When work transitions between agents or sessions
+- When a PR is merged that represents a significant milestone
+- At the end of multi-phase epic work
+
+**Directory Structure:**
+- **Primary location:** `docs/ai-prompt/`
+- **Naming format:** One markdown file per ORIGINAL ISSUE
+- **File naming convention:** `issue-<number>-<slug>.md` or as specified by human direction
+
+**Required Contents:**
+1. **Issue/Epic Summary:** Brief description of the original problem
+2. **Work Completed:** List of PRs, commits, and changes made
+3. **Current State:** What works, what's tested, what's verified
+4. **Known Limitations:** Incomplete items, deferred work, technical debt
+5. **Next Steps:** Recommended follow-up work or remaining tasks
+6. **Context for Future Agents:** Key decisions, patterns, gotchas to remember
+
+**Creation Rules:**
+- Create handoff journal when requested by human via PR comment
+- Update journal as work progresses (optional but recommended)
+- Archive to `docs/ai-prompt/` when work is complete
+- Never delete or overwrite existing journals (append-only)
+
+**Example Structure:**
+```markdown
+# Issue #X: [Title]
+
+**Status:** Complete / In Progress / Paused
+**Last Updated:** YYYY-MM-DD
+**Related PRs:** #A, #B, #C
+
+## Summary
+Brief description of the work and its purpose.
+
+## Work Completed
+- [x] Item 1
+- [x] Item 2
+- [ ] Item 3 (deferred)
+
+## Current State
+- Tests: All passing
+- Documentation: Updated
+- CI: Configured and passing
+
+## Known Limitations
+- Issue A: Description and workaround
+- Deferred: Item B tracked in issue #Y
+
+## Next Steps
+1. Follow-up task 1
+2. Follow-up task 2
+
+## Key Context for Future Agents
+- Decision X was made because Y
+- Pattern Z should be followed for consistency
+- Gotcha: Watch out for edge case W
+```
+
+**Integration with Existing Journal System:**
+- `docs/history/ai-agent-guidelines/journal/` contains PR-level logs
+- `docs/ai-prompt/` contains issue/epic-level handoff documents
+- PR logs are granular (per PR), handoff journals are thematic (per issue/epic)
+
 ## HUMAN ESCALATION & MENTION POLICY
 
 When human action is required, the agent **MUST**:
