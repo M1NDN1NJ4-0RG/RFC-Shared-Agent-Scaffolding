@@ -8,13 +8,12 @@
 - `README.md` (minimal placeholder)
 - `LICENSE` (Unlicense)
 
-**Not Present:**
-- No CI/CD workflows
-- No tests
-- No build scripts
-- No RFCs
-- No scripts directory
-- No documentation structure
+**Not Present / May Be Incomplete:**
+- RFCs may be incomplete or evolving
+- Tests may be incomplete or evolving
+- Documentation structure may be incomplete or evolving
+
+**Note:** CI/CD workflows may exist under `.github/workflows/`. Always verify repository reality before claiming something is missing.
 
 ## Intended Purpose
 
@@ -154,23 +153,63 @@ When CI, tests, or build steps are **not present**, the agent must:
 - ✅ Good: `npm install && npm run test:unit`
 - ❌ Bad: "Run the tests"
 
-
 **Stop and Escalate if Human Action Required:**
 - If you encounter ambiguity, missing requirements, or need approval: **STOP**
 - Do NOT guess or invent solutions
 - Follow the escalation policy below
 - **When blocked:** Add a comment to the PR AND stop — no further commits or pushes until unblocked
 
-## SESSION EXIT REQUIREMENTS (MANDATORY)
+## SESSION START REQUIREMENTS (MANDATORY)
 
-Before ending **EVERY session** (including pausing, handing off, or saying work is complete), the agent MUST ensure the following have been run and reviewed:
-- Code review checks
-- CodeQL checks
+At the start of **EVERY session**, before making changes, the agent MUST ensure the required tooling is installed and available in the working environment.
+
+Required tools (install/verify each session):
+- `rgrep` (PREFERRED grep tool in this repository)
+- `black`
+- `pylint`
+- `pytest`
+- `ruff`
+- `yamllint`
+- Bash formatting tools: `shfmt` + any other bash formatting tools already used by repo CI
+- Perl tooling: `Perl::Critic`
+- PowerShell: `pwsh` + PowerShell AST support (required for analysis/parsing)
 
 Rules:
-- If these checks are available as GitHub PR/Checks (Actions/Checks), the agent MUST run them and confirm results.
-- If any check fails, the agent MUST either fix the failures or escalate as **BLOCKED — HUMAN ACTION REQUIRED** with references to the failing checks/logs.
-- If the repository does not yet have these checks configured, the agent MUST explicitly state they cannot be run because they are not configured (do NOT claim they ran), and escalate to the human to decide whether to add/enable them.
+- If any required tool is missing, install it before proceeding.
+- If installation is blocked by environment constraints, escalate using `**BLOCKED — HUMAN ACTION REQUIRED**` and list the missing tools.
+- Use `rgrep` as the default grep/search tool for repository work unless a human explicitly instructs otherwise.
+
+## SESSION EXIT REQUIREMENTS (MANDATORY)
+
+Before ending **EVERY session** (including pausing, handing off, or saying work is complete), the agent MUST perform an automated review pass AND ensure validation/security checks are in a known-good state.
+
+Required before session end:
+- Trigger a **GitHub Copilot Code Review** of the PR’s latest changes and review the feedback
+- Ensure all required PR status checks are passing (tests, linters, conformance, etc.)
+- Ensure CodeQL is passing **IF** CodeQL is configured/enabled for the repository
+
+Definitions:
+- **Copilot Code Review:** the GitHub Copilot PR review feature (Copilot leaves review comments on the PR). This is not the same as human code review.
+- **Required PR status checks:** the status checks enforced by branch protection/rulesets on the PR.
+- **CodeQL:** GitHub Code Scanning (CodeQL) analysis results, if CodeQL is configured.
+
+Rules:
+- Copilot Code Review is a required final quality gate:
+  - If Copilot reports actionable issues (bugs, logic errors, missing docs/tests, contract violations), the agent MUST fix them or explicitly justify why they are false positives.
+  - If the agent cannot resolve an issue without human direction, escalate using the exact escalation format below.
+- Agents cannot always directly “run” GitHub Actions in all environments. The agent MUST instead:
+  - Verify the latest workflow/check runs exist and are passing for the PR’s HEAD commit, OR
+  - If checks have not triggered, take the minimal action that triggers them (e.g., push a follow-up commit) when permitted.
+- If CodeQL is not configured/enabled, the agent MUST explicitly state that CodeQL cannot be verified because it is not configured (do NOT claim it ran).
+
+Escalation format (MUST match the policy below):
+- Comment on the PR with the exact opening line:
+  `**BLOCKED — HUMAN ACTION REQUIRED**`
+- Include:
+  - what Copilot Code Review reported (and why it can’t be resolved)
+  - which checks are failing or missing
+  - what evidence you have (check names / log references)
+  - the minimal options to proceed
 
 ## AI Next-Steps Journals (MANDATORY)
 
