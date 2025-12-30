@@ -530,6 +530,7 @@ Currently, `repo_lint` is run in-place using `python3 -m tools.repo_lint`. Futur
 2. Define console script entry point: `repo-lint` → `tools.repo_lint.cli:main`
 3. Support `pip install -e .` for local development
 4. Document installation in CONTRIBUTING.md
+5. Integrate naming enforcement into `repo_lint` so `python3 -m tools.repo_lint check --ci` also validates repo naming contracts (per `docs/contributing/naming-and-style.md`) and reports violations deterministically.
 
 **Current Workaround:**
 
