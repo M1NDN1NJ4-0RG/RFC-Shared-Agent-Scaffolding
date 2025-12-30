@@ -80,8 +80,7 @@ class TestPowerShellRunner(unittest.TestCase):
         :Purpose:
             Verify helper method correctly parses git output.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="script1.ps1\nscript2.ps1\n", stderr="")
 
@@ -98,8 +97,7 @@ class TestPowerShellRunner(unittest.TestCase):
         :Purpose:
             Verify helper method handles empty output.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
@@ -114,8 +112,7 @@ class TestPowerShellRunner(unittest.TestCase):
         :Purpose:
             Verify PSScriptAnalyzer runs with correct pwsh flags.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.side_effect = [
             MagicMock(returncode=0, stdout="test.ps1\n", stderr=""),  # git ls-files
@@ -138,8 +135,7 @@ class TestPowerShellRunner(unittest.TestCase):
         :Purpose:
             Verify command injection protection via parameter passing.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.side_effect = [
             MagicMock(returncode=0, stdout="test.ps1\n", stderr=""),  # git ls-files
@@ -167,8 +163,7 @@ class TestPowerShellRunner(unittest.TestCase):
         :Purpose:
             Verify tool detection correctly identifies missing PowerShell.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         with patch("tools.repo_lint.runners.powershell_runner.command_exists", return_value=False):
             missing = self.runner.check_tools()
@@ -181,8 +176,7 @@ class TestPowerShellRunner(unittest.TestCase):
         :Purpose:
             Verify tool detection checks for PSScriptAnalyzer module.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         with patch("tools.repo_lint.runners.powershell_runner.command_exists", return_value=True):
             # Mock Get-Module returning empty (module not found)
@@ -197,8 +191,7 @@ class TestPowerShellRunner(unittest.TestCase):
         :Purpose:
             Verify all methods handle empty file lists gracefully.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 

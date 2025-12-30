@@ -80,8 +80,7 @@ class TestRuffCheckFix(unittest.TestCase):
         :Purpose:
             Verify check command is non-mutating per Phase 0 Item 0.9.1.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         # Mock successful Ruff check
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
@@ -106,8 +105,7 @@ class TestRuffCheckFix(unittest.TestCase):
         :Purpose:
             Verify fix command applies safe fixes per Phase 0 Item 0.9.1.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         # Mock successful Ruff fix
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
@@ -133,8 +131,7 @@ class TestRuffCheckFix(unittest.TestCase):
         :Purpose:
             Verify violation parsing in check mode.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         # Mock Ruff check with violations
         mock_output = """tools/repo_lint/cli.py:10:1: E501 Line too long (125 > 120)
@@ -157,8 +154,7 @@ Found 2 errors."""
         :Purpose:
             Verify unsafe fixes message is parsed with check context.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         # Mock Ruff check with unsafe fixes warning
         mock_output = """tools/repo_lint/cli.py:10:1: E501 Line too long (125 > 120)
@@ -182,8 +178,7 @@ Found 1 error."""
         :Purpose:
             Verify unsafe fixes message is parsed with fix context.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         # Mock Ruff fix with unsafe fixes warning
         mock_output = """tools/repo_lint/cli.py:10:1: E501 Line too long (125 > 120)
@@ -207,8 +202,7 @@ Found 1 error."""
         :Purpose:
             Verify fix command properly sequences formatters.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         # Mock successful Black and Ruff runs
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")

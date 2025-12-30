@@ -79,8 +79,7 @@ class TestPerlRunner(unittest.TestCase):
         :Purpose:
             Verify helper method correctly parses git output.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="script1.pl\nscript2.pl\n", stderr="")
 
@@ -97,8 +96,7 @@ class TestPerlRunner(unittest.TestCase):
         :Purpose:
             Verify helper method handles empty output.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
@@ -113,8 +111,7 @@ class TestPerlRunner(unittest.TestCase):
         :Purpose:
             Verify Perl::Critic runs with correct verbosity.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.side_effect = [
             MagicMock(returncode=0, stdout="test.pl\n", stderr=""),  # git ls-files
@@ -137,8 +134,7 @@ class TestPerlRunner(unittest.TestCase):
         :Purpose:
             Verify correct handling of no violations.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.side_effect = [
             MagicMock(returncode=0, stdout="test.pl\n", stderr=""),  # git ls-files
@@ -158,8 +154,7 @@ class TestPerlRunner(unittest.TestCase):
         :Purpose:
             Verify correct handling of violations found.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_output = """Code before strictures are enabled at line 5
 Two-argument "open" used at line 10"""
@@ -181,8 +176,7 @@ Two-argument "open" used at line 10"""
         :Purpose:
             Verify all methods handle empty file lists gracefully.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 

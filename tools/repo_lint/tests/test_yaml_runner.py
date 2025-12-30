@@ -77,8 +77,7 @@ class TestYAMLRunner(unittest.TestCase):
         :Purpose:
             Verify YAML file detection for .yml extension.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="config.yml\n", stderr="")
 
@@ -91,8 +90,7 @@ class TestYAMLRunner(unittest.TestCase):
         :Purpose:
             Verify YAML file detection for .yaml extension.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="config.yaml\n", stderr="")
 
@@ -105,8 +103,7 @@ class TestYAMLRunner(unittest.TestCase):
         :Purpose:
             Verify YAML file detection for both extensions.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="config.yml\nother.yaml\n", stderr="")
 
@@ -119,8 +116,7 @@ class TestYAMLRunner(unittest.TestCase):
         :Purpose:
             Verify yamllint runs with parsable output format.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.side_effect = [
             MagicMock(returncode=0, stdout="test.yml\n", stderr=""),  # git ls-files
@@ -143,8 +139,7 @@ class TestYAMLRunner(unittest.TestCase):
         :Purpose:
             Verify violation parsing from yamllint output.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_output = """test.yml:10:1: [error] syntax error: expected <block end>, but found '<block mapping start>'
 test.yml:20:5: [warning] line too long (120 > 80 characters)"""
@@ -166,8 +161,7 @@ test.yml:20:5: [warning] line too long (120 > 80 characters)"""
         :Purpose:
             Verify methods handle empty file lists gracefully.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
@@ -180,8 +174,7 @@ test.yml:20:5: [warning] line too long (120 > 80 characters)"""
         :Purpose:
             Verify tool detection correctly identifies missing yamllint.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         with patch("tools.repo_lint.runners.yaml_runner.command_exists", return_value=False):
             missing = self.runner.check_tools()
@@ -194,8 +187,7 @@ test.yml:20:5: [warning] line too long (120 > 80 characters)"""
         :Purpose:
             Verify yamllint has no auto-fix mode (fix same as check).
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 

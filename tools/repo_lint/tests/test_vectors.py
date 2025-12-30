@@ -58,13 +58,13 @@ DOCSTRINGS_DIR = VECTORS_DIR / "docstrings"
 def load_vector(vector_file: Path) -> dict:
     """Load a test vector from JSON file.
 
-    :Args:
+    :param
         vector_file: Path to vector JSON file
 
-    :Returns:
+    :returns:
         Parsed vector dictionary
 
-    :Raises:
+    :raises
         FileNotFoundError: If vector file doesn't exist
         json.JSONDecodeError: If vector file is invalid JSON
     """
@@ -75,13 +75,13 @@ def load_vector(vector_file: Path) -> dict:
 def normalize_violation_from_docstring_output(line: str) -> Optional[Dict]:
     """Parse and normalize a violation from docstring validator output.
 
-    :Args:
+    :param
         line: Single line of output from validate_docstrings.py
 
-    :Returns:
+    :returns:
         Normalized violation dict or None if line doesn't contain violation
 
-    :Notes:
+    :note:
         Expected format examples:
         - "❌ /path/to/file.py:13"
         - "   Symbol: def no_doc()"
@@ -128,13 +128,13 @@ def normalize_violation_from_docstring_output(line: str) -> Optional[Dict]:
 def parse_docstring_validator_output(output: str) -> List[Dict]:
     """Parse docstring validator output into normalized violations.
 
-    :Args:
+    :param
         output: Raw output from validate_docstrings.py
 
-    :Returns:
+    :returns:
         List of normalized violation dictionaries
 
-    :Notes:
+    :note:
         Parser handles multi-line violation format:
         ❌ /path/file.py:13
            Symbol: def no_doc()
@@ -197,13 +197,13 @@ def parse_docstring_validator_output(output: str) -> List[Dict]:
 def run_docstring_validator(fixture_path: Path) -> List[Dict]:
     """Run docstring validator on fixture and return normalized violations.
 
-    :Args:
+    :param
         fixture_path: Path to source file to validate
 
-    :Returns:
+    :returns:
         List of normalized violation dictionaries
 
-    :Raises:
+    :raises
         subprocess.CalledProcessError: If validator fails unexpectedly
     """
     validator_script = REPO_ROOT / "scripts" / "validate_docstrings.py"
@@ -225,15 +225,15 @@ def run_docstring_validator(fixture_path: Path) -> List[Dict]:
 def compare_violations(actual: List[Dict], expected: List[Dict], vector_id: str) -> None:
     """Compare actual vs expected violations and assert match.
 
-    :Args:
+    :param
         actual: List of actual violations from running validator
         expected: List of expected violations from vector file
         vector_id: ID of test vector (for error messages)
 
-    :Raises:
+    :raises
         AssertionError: If violations don't match expected
 
-    :Notes:
+    :note:
         Compares violations by normalized fields:
         - rule_id
         - symbol
@@ -306,7 +306,7 @@ def test_python_docstring_vectors():
         Validates that Python docstring enforcement produces expected violations
         for missing docstrings, pragma exemptions, and edge cases.
 
-    :Notes:
+    :note:
         Loads and runs all Python docstring vectors from:
         conformance/repo-lint/vectors/docstrings/python-docstring-*.json
     """
@@ -332,7 +332,7 @@ def test_bash_docstring_vectors():
         Validates that Bash docstring enforcement produces expected violations
         using tree-sitter-based symbol discovery.
 
-    :Notes:
+    :note:
         Loads and runs all Bash docstring vectors from:
         conformance/repo-lint/vectors/docstrings/bash-docstring-*.json
     """
@@ -346,7 +346,7 @@ def test_powershell_docstring_vectors():
         Validates that PowerShell docstring enforcement produces expected violations
         using PowerShell AST-based symbol discovery.
 
-    :Notes:
+    :note:
         Loads and runs all PowerShell docstring vectors from:
         conformance/repo-lint/vectors/docstrings/powershell-docstring-*.json
     """
@@ -360,7 +360,7 @@ def test_perl_docstring_vectors():
         Validates that Perl docstring enforcement produces expected violations
         using PPI-based symbol discovery.
 
-    :Notes:
+    :note:
         Loads and runs all Perl docstring vectors from:
         conformance/repo-lint/vectors/docstrings/perl-docstring-*.json
     """
@@ -374,7 +374,7 @@ def test_vector_fixtures_exist():
         Ensures test vectors point to existing fixture files and fixture
         paths are correct relative to repo root.
 
-    :Notes:
+    :note:
         Validates all vectors in conformance/repo-lint/vectors/docstrings/
     """
     vector_files = list(DOCSTRINGS_DIR.glob("*.json"))
@@ -394,7 +394,7 @@ def test_vector_schema_validation():
         Ensures all test vectors contain required fields and follow
         the normalized violation schema defined in README.
 
-    :Notes:
+    :note:
         Checks for required fields:
         - id, name, description, language, fixture
         - expected_violations with proper violation objects

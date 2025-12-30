@@ -80,6 +80,8 @@ class TestVenvHelpers(unittest.TestCase):
 
         :Purpose:
             Verify venv path is repo_root/.venv-lint
+
+        :param mock_get_repo_root: Mocked dependency for testing
         """
         mock_get_repo_root.return_value = Path("/fake/repo")
         venv_path = get_venv_path()
@@ -91,6 +93,8 @@ class TestVenvHelpers(unittest.TestCase):
 
         :Purpose:
             Verify tools path is repo_root/.tools
+
+        :param mock_get_repo_root: Mocked dependency for testing
         """
         mock_get_repo_root.return_value = Path("/fake/repo")
         tools_path = get_tools_path()
@@ -102,6 +106,8 @@ class TestVenvHelpers(unittest.TestCase):
 
         :Purpose:
             Verify venv detection works correctly
+
+        :param mock_get_venv_path: Mocked dependency for testing
         """
         # Mock venv path
         mock_venv = MagicMock()
@@ -123,6 +129,8 @@ class TestVenvHelpers(unittest.TestCase):
 
         :Purpose:
             Verify venv detection handles missing venv
+
+        :param mock_get_venv_path: Mocked dependency for testing
         """
         mock_venv = MagicMock()
         mock_venv.exists.return_value = False
@@ -148,6 +156,9 @@ class TestCreateVenv(unittest.TestCase):
 
         :Purpose:
             Verify venv creation and pip upgrade with pinned version
+        :param mock_run: Mocked dependency for testing
+        :param mock_get_venv_path: Mocked dependency for testing
+        :param mock_venv_exists: Mocked dependency for testing
         """
         mock_venv_exists.return_value = False
         mock_get_venv_path.return_value = Path("/fake/repo/.venv-lint")
@@ -178,6 +189,8 @@ class TestCreateVenv(unittest.TestCase):
 
         :Purpose:
             Verify venv creation is skipped when venv exists
+        :param mock_get_venv_path: Mocked dependency for testing
+        :param mock_venv_exists: Mocked dependency for testing
         """
         mock_venv_exists.return_value = True
         mock_get_venv_path.return_value = Path("/fake/repo/.venv-lint")
@@ -196,6 +209,9 @@ class TestCreateVenv(unittest.TestCase):
 
         :Purpose:
             Verify correct paths on Windows platform
+        :param mock_run: Mocked dependency for testing
+        :param mock_get_venv_path: Mocked dependency for testing
+        :param mock_venv_exists: Mocked dependency for testing
         """
         mock_venv_exists.return_value = False
         mock_get_venv_path.return_value = Path("C:/fake/repo/.venv-lint")
@@ -228,6 +244,9 @@ class TestInstallPythonTools(unittest.TestCase):
 
         :Purpose:
             Verify all Python tools are installed with correct versions
+        :param mock_run: Mocked dependency for testing
+        :param mock_get_venv_path: Mocked dependency for testing
+        :param mock_create_venv: Mocked dependency for testing
         """
         mock_create_venv.return_value = (True, None)
         mock_get_venv_path.return_value = Path("/fake/repo/.venv-lint")
@@ -256,6 +275,9 @@ class TestInstallPythonTools(unittest.TestCase):
 
         :Purpose:
             Verify correct pip path on Windows
+        :param mock_run: Mocked dependency for testing
+        :param mock_get_venv_path: Mocked dependency for testing
+        :param mock_create_venv: Mocked dependency for testing
         """
         mock_create_venv.return_value = (True, None)
         mock_get_venv_path.return_value = Path("C:/fake/repo/.venv-lint")
@@ -277,6 +299,8 @@ class TestInstallPythonTools(unittest.TestCase):
 
         :Purpose:
             Verify error handling when venv creation fails
+
+        :param mock_create_venv: Mocked dependency for testing
         """
         mock_create_venv.return_value = (False, "Venv creation failed")
 
@@ -295,12 +319,21 @@ class TestInstallPythonTools(unittest.TestCase):
 
         :Purpose:
             Verify error collection when some tools fail to install
+        :param mock_run: Mocked dependency for testing
+        :param mock_get_venv_path: Mocked dependency for testing
+        :param mock_create_venv: Mocked dependency for testing
         """
         mock_create_venv.return_value = (True, None)
         mock_get_venv_path.return_value = Path("/fake/repo/.venv-lint")
 
         # Make second tool installation fail
         def side_effect(*args, **kwargs):
+            """Mock side effect that fails on second call.
+
+            :param args: Subprocess args
+            :param kwargs: Subprocess kwargs
+            :returns: Mock return value or raises exception
+            """
             call_count = mock_run.call_count
             if call_count == 2:
                 from subprocess import CalledProcessError
@@ -330,6 +363,8 @@ class TestCleanupRepoLocal(unittest.TestCase):
 
         :Purpose:
             Verify cleanup removes .venv-lint, .tools, .psmodules, .cpan-local
+        :param mock_rmtree: Mocked dependency for testing
+        :param mock_get_repo_root: Mocked dependency for testing
         """
         mock_get_repo_root.return_value = Path("/fake/repo")
 
@@ -356,6 +391,8 @@ class TestCleanupRepoLocal(unittest.TestCase):
 
         :Purpose:
             Verify cleanup handles case when no directories exist
+        :param mock_rmtree: Mocked dependency for testing
+        :param mock_get_repo_root: Mocked dependency for testing
         """
         mock_get_repo_root.return_value = Path("/fake/repo")
 
@@ -376,11 +413,19 @@ class TestCleanupRepoLocal(unittest.TestCase):
 
         :Purpose:
             Verify error handling when directory removal fails
+        :param mock_rmtree: Mocked dependency for testing
+        :param mock_get_repo_root: Mocked dependency for testing
         """
         mock_get_repo_root.return_value = Path("/fake/repo")
 
         # Mock one directory removal fails
         def side_effect(path, **kwargs):
+            """Mock side effect that fails for .venv-lint.
+
+            :param path: Path to remove
+            :param kwargs: Additional arguments
+            :raises OSError: For .venv-lint path
+            """
             if ".venv-lint" in str(path):
                 raise OSError("Permission denied")
 

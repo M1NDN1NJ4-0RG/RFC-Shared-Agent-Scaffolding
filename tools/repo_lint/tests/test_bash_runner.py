@@ -79,8 +79,7 @@ class TestBashRunner(unittest.TestCase):
         :Purpose:
             Verify helper method correctly parses git output.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="script1.sh\nscript2.sh\n", stderr="")
 
@@ -97,8 +96,7 @@ class TestBashRunner(unittest.TestCase):
         :Purpose:
             Verify helper method handles empty output.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
@@ -113,8 +111,7 @@ class TestBashRunner(unittest.TestCase):
         :Purpose:
             Verify ShellCheck runs with --color=never and --format=gcc.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.side_effect = [
             MagicMock(returncode=0, stdout="test.sh\n", stderr=""),  # git ls-files
@@ -137,8 +134,7 @@ class TestBashRunner(unittest.TestCase):
         :Purpose:
             Verify check mode is non-mutating (doesn't modify files).
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.side_effect = [
             MagicMock(returncode=0, stdout="test.sh\n", stderr=""),  # git ls-files
@@ -162,8 +158,7 @@ class TestBashRunner(unittest.TestCase):
         :Purpose:
             Verify fix mode applies formatting changes.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.side_effect = [
             MagicMock(returncode=0, stdout="test.sh\n", stderr=""),  # git ls-files
@@ -187,8 +182,7 @@ class TestBashRunner(unittest.TestCase):
         :Purpose:
             Verify all methods handle empty file lists gracefully.
 
-        :Parameters:
-            - mock_run: Mocked subprocess.run
+        :param mock_run: Mocked subprocess.run
         """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
