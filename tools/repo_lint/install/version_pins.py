@@ -11,6 +11,20 @@
 
 :Usage:
     Import version constants when implementing tool installation logic.
+
+:Environment Variables:
+    None
+
+:Examples:
+    Get all tool versions::
+
+        from tools.repo_lint.install.version_pins import get_all_versions
+        versions = get_all_versions()
+        print(f"Black version: {versions['black']}")
+
+:Exit Codes:
+    - 0: Success (when used in scripts)
+    - 1: Error (when used in scripts)
 """
 
 # Pip version for venv creation (pinned for deterministic installs)
@@ -48,8 +62,8 @@ PERL_TOOLS = {
 def get_all_versions():
     """Get all tool versions as a flat dictionary.
 
-    :Returns:
-        Dictionary mapping tool name to version string (or None if not pinned)
+    :returns: Dictionary mapping tool name to version string (or None if not pinned)
+    :rtype: dict
     """
     all_versions = {}
     all_versions.update(PYTHON_TOOLS)
