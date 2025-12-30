@@ -170,10 +170,18 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
   ```
 - Include expected output or success criteria
 
+
 **Exact Commands:**
 - Always specify the full command
 - ✅ Good: `npm install && npm run test:unit`
 - ❌ Bad: "Run the tests"
+
+**Pre-Commit Repo Lint Gate (MANDATORY):**
+- Before creating **ANY** commit, you MUST run:
+  - `python3 -m tools.repo_lint check --ci`
+- The command MUST exit **0** (PASS).
+- If it fails, you MUST fix the reported issues and re-run it until it passes.
+- Do NOT commit “known failing” work.
 
 **Stop and Escalate if Human Action Required:**
 - If you encounter ambiguity, missing requirements, or need approval: **STOP**
@@ -272,7 +280,7 @@ Escalation format (MUST match the policy below):
 Path: `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-next-steps.md`
 
 ```markdown
-MUST READ: `.github/copilot-instructions.md` FIRST!
+MUST READ: `.github/copilot-instructions.md` FIRST! 
 MUST READ: `docs/contributing/naming-and-style.md` SECOND!
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue <ISSUE_NUMBER> AI Journal
