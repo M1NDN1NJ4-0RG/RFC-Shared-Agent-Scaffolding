@@ -223,7 +223,7 @@ jobs:
               echo "Applying stashed changes..."
               if ! git stash pop; then
                 echo "Stash pop had conflicts, resolving by keeping formatted changes..."
-                # Keep the stashed changes (formatted version)
+                # Keep the current working tree state (formatted changes), not the conflicted stash contents
                 git checkout --ours .
                 git add -A
               fi
