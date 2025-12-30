@@ -1,0 +1,34 @@
+🔍 Running repository linters and formatters...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  YAML Linting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Linting Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ yamllint: FAILED (20 violation(s))
+   .: [yamllint] .github/workflows/drift-detection.yml:265:121: [warning] line too long (141 > 120 characters) (line-length)
+   .: [yamllint] .github/workflows/drift-detection.yml:266:121: [warning] line too long (149 > 120 characters) (line-length)
+   .: [yamllint] .github/workflows/drift-detection.yml:267:121: [warning] line too long (141 > 120 characters) (line-length)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:179:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:184:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:187:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:191:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:194:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:206:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:210:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:217:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:220:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:227:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:242:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:776:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:783:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:930:1: [error] trailing spaces (trailing-spaces)
+   .: [yamllint] .github/workflows/rust-conformance.yml:98:121: [warning] line too long (164 > 120 characters) (line-length)
+   .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:1: [warning] missing document start "---" (document-start)
+   .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:121: [warning] line too long (130 > 120 characters) (line-length)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ Found 20 violation(s) across 1 tool(s)
