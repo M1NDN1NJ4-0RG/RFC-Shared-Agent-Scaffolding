@@ -66,8 +66,7 @@ class UnsafeDocstringRewriter:
         """Initialize the unsafe docstring rewriter."""
         self.name = "unsafe_docstring_rewrite"
         self.why_unsafe = (
-            "Rewrites docstring format which may change semantic meaning "
-            "or incorrectly parse complex documentation"
+            "Rewrites docstring format which may change semantic meaning " "or incorrectly parse complex documentation"
         )
 
     def can_fix(self, file_path: Path) -> bool:
@@ -137,7 +136,7 @@ class UnsafeDocstringRewriter:
 
             if in_docstring and in_args_section:
                 # Match "    name: description" or "    name (type): description"
-                match = re.match(r'^(\s+)(\w+)(\s*\(.*?\))?\s*:\s*(.+)$', line)
+                match = re.match(r"^(\s+)(\w+)(\s*\(.*?\))?\s*:\s*(.+)$", line)
                 if match:
                     indent, param_name, param_type, description = match.groups()
                     # Convert to Sphinx format

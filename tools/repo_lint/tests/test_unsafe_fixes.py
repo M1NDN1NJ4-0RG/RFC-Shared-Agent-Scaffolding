@@ -198,7 +198,8 @@ class TestUnsafeDocstringRewriter(unittest.TestCase):
 
         # Create test file with Google-style docstring
         test_file = self.temp_dir / "test.py"
-        test_file.write_text('''
+        test_file.write_text(
+            '''
 def example(name, count):
     """Example function.
 
@@ -210,7 +211,8 @@ def example(name, count):
         A formatted string
     """
     return f"{name}: {count}"
-''')
+'''
+        )
 
         # Apply fixer (AUTHORIZED for PR #148)
         fixer = UnsafeDocstringRewriter()
@@ -236,7 +238,8 @@ def example(name, count):
 
         # Create test file with Sphinx-style docstring (already conformant)
         test_file = self.temp_dir / "test.py"
-        test_file.write_text('''
+        test_file.write_text(
+            '''
 def example(name, count):
     """Example function.
 
@@ -245,7 +248,8 @@ def example(name, count):
     :returns: A formatted string
     """
     return f"{name}: {count}"
-''')
+'''
+        )
 
         # Apply fixer
         fixer = UnsafeDocstringRewriter()
