@@ -140,6 +140,8 @@ $ErrorActionPreference = 'Stop'
 <#
 .SYNOPSIS
 Writes an error message to stderr.
+.DESCRIPTION
+Outputs the provided message to the standard error stream.
 .PARAMETER Msg
 The error message to write.
 #>
@@ -148,6 +150,8 @@ function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 <#
 .SYNOPSIS
 Checks if a command is available in the PATH.
+.DESCRIPTION
+Attempts to retrieve a command using Get-Command and returns true if found.
 .PARAMETER cmd
 The command name to check for.
 .OUTPUTS
@@ -161,6 +165,9 @@ function Have-Cmd([string]$cmd) {
 <#
 .SYNOPSIS
 Compresses a file using the specified method.
+.DESCRIPTION
+Applies compression to a file using gzip, xz, or zstd. The none method performs no compression.
+Removes the original file after compression.
 .PARAMETER method
 The compression method: none, gzip, xz, or zstd.
 .PARAMETER path
@@ -202,6 +209,9 @@ function Compress-File([string]$method, [string]$path) {
 <#
 .SYNOPSIS
 Archives a single file by moving it to the archive directory and optionally compressing it.
+.DESCRIPTION
+Moves a file from the source location to the archive directory without overwriting existing files.
+Applies compression after moving if specified. Never deletes destination files.
 .PARAMETER src
 The source file path.
 .PARAMETER archiveDir

@@ -289,6 +289,15 @@ sub find_repo_root {
 
 my $REPO_ROOT = find_repo_root();
 
+=head2 detect_platform
+
+Detects the current OS and architecture.
+
+Returns:
+    Platform string in format "os/arch" (e.g., "linux/x86_64")
+
+=cut
+
 # Detect OS and architecture for CI artifact path
 sub detect_platform {
     my $os = 'unknown';
@@ -317,6 +326,15 @@ sub detect_platform {
 }
 
 my $PLATFORM = detect_platform();
+
+=head2 find_safe_run_binary
+
+Finds the safe-run binary using a discovery cascade.
+
+Returns:
+    Path to the safe-run binary
+
+=cut
 
 # Binary discovery cascade
 sub find_safe_run_binary {

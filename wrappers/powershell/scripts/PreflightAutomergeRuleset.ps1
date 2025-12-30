@@ -180,6 +180,9 @@ $ErrorActionPreference = 'Stop'
 <#
 .SYNOPSIS
 Writes an error message to stderr.
+.DESCRIPTION
+Outputs the provided message to the standard error stream.
+Used throughout the script for error reporting.
 .PARAMETER Msg
 The error message to write.
 #>
@@ -188,6 +191,8 @@ function Write-Err([string]$Msg) { [Console]::Error.WriteLine($Msg) }
 <#
 .SYNOPSIS
 Displays usage information and exits with code 3.
+.DESCRIPTION
+Shows command-line usage syntax and exits the script with exit code 3 (usage error).
 #>
 function Usage {
   Write-Err "Usage:"
@@ -198,6 +203,8 @@ function Usage {
 <#
 .SYNOPSIS
 Checks if a command is available in the PATH.
+.DESCRIPTION
+Attempts to retrieve a command using Get-Command and returns true if found.
 .PARAMETER cmd
 The command name to check for.
 .OUTPUTS
@@ -208,6 +215,8 @@ function Have-Cmd([string]$cmd) { return $null -ne (Get-Command $cmd -ErrorActio
 <#
 .SYNOPSIS
 Determines if an API error response indicates an authentication or permission issue.
+.DESCRIPTION
+Examines error response objects for messages indicating authentication failures or permission denials.
 .PARAMETER obj
 The error response object to classify.
 .OUTPUTS
@@ -223,6 +232,9 @@ function Classify-Auth($obj) {
 <#
 .SYNOPSIS
 Calls the GitHub API using gh CLI.
+.DESCRIPTION
+Executes gh api command with proper headers for GitHub API version and content type.
+Returns raw JSON on success or null on error.
 .PARAMETER endpoint
 The API endpoint path to call.
 .OUTPUTS
@@ -238,6 +250,8 @@ function Gh-Api([string]$endpoint) {
 <#
 .SYNOPSIS
 Makes an HTTP GET request with GitHub API authentication.
+.DESCRIPTION
+Performs an HTTP GET request with proper GitHub API authentication headers using TOKEN or GITHUB_TOKEN environment variables.
 .PARAMETER url
 The URL to request.
 .OUTPUTS
@@ -293,6 +307,9 @@ try {
 <#
 .SYNOPSIS
 Fetches all rulesets for the repository using GitHub API.
+.DESCRIPTION
+Retrieves all repository rulesets using either gh API or direct HTTP calls.
+Prefers gh if available, falls back to HTTP with token auth.
 .OUTPUTS
 Array of ruleset objects.
 #>
@@ -318,6 +335,9 @@ function Get-Rulesets {
 <#
 .SYNOPSIS
 Fetches a specific ruleset by ID using GitHub API.
+.DESCRIPTION
+Retrieves a single repository ruleset by its ID using either gh API or direct HTTP calls.
+Handles both direct and wrapped response formats for test compatibility.
 .PARAMETER id
 The ruleset ID to fetch.
 .OUTPUTS

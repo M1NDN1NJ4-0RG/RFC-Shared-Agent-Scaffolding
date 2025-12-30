@@ -246,6 +246,15 @@ sub run_tests {
     return $exit_code >> 8;
 }
 
+=head2 main
+
+Main entry point for the test wrapper script.
+
+Returns:
+    Exit code from the test suite
+
+=cut
+
 # Main entry point
 sub main {
     # Get wrapper directory (where this script lives)

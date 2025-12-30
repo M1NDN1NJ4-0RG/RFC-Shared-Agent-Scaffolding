@@ -79,12 +79,27 @@ $ErrorActionPreference = 'Continue'  # Don't stop on expected errors
 
 # Helper function to write to both console and summary file
 $script:summaryLines = @()
+
+<#
+.SYNOPSIS
+Writes a message to both console and summary log.
+.DESCRIPTION
+Outputs a message to the console and stores it in the script-level summary array for later writing to file.
+.PARAMETER Message
+The message to log.
+#>
 function Write-ProbeLog {
     param([string]$Message)
     Write-Host $Message
     $script:summaryLines += $Message
 }
 
+<#
+.SYNOPSIS
+Executes the main Ctrl-C probe logic.
+.DESCRIPTION
+Probes Windows Ctrl-C handling behavior by spawning a child process and testing signal delivery.
+#>
 # Main probe logic
 function Invoke-CtrlCProbe {
     Write-ProbeLog "=== Phase 3: Windows Ctrl-C Probe ==="

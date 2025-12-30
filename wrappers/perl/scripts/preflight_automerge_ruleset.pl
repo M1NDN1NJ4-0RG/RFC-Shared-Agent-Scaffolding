@@ -455,6 +455,15 @@ use JSON::PP;
 use HTTP::Tiny;
 use Getopt::Long qw(GetOptions);
 
+=head2 die_usage
+
+Dies with a usage error message and exit code 3.
+
+Args:
+    $_[0]: Error message to display
+
+=cut
+
 sub die_usage { print STDERR $_[0] . "\n"; exit 3; }
 
 =head2 warn_msg
