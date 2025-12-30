@@ -98,12 +98,18 @@ def create_parser() -> argparse.ArgumentParser:
     fix_parser.add_argument(
         "--unsafe",
         action="store_true",
-        help="DANGER: Enable unsafe fixers (REQUIRES --yes-i-know, FORBIDDEN in CI, see docs/contributing/ai-constraints.md)",
+        help=(
+            "DANGER: Enable unsafe fixers "
+            "(REQUIRES --yes-i-know, FORBIDDEN in CI, see docs/contributing/ai-constraints.md)"
+        ),
     )
     fix_parser.add_argument(
         "--yes-i-know",
         action="store_true",
-        help="DANGER: Confirm unsafe mode execution (REQUIRED with --unsafe, review generated patch before committing)",
+        help=(
+            "DANGER: Confirm unsafe mode execution "
+            "(REQUIRED with --unsafe, review generated patch before committing)"
+        ),
     )
 
     # install command

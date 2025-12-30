@@ -1,3 +1,4 @@
+# noqa: EXITCODES
 """Unsafe fixers for repo_lint.
 
 :Purpose:
@@ -15,6 +16,26 @@
     - All unsafe fixers MUST generate forensic artifacts (patch + log)
     - AI agents MUST NOT run unsafe fixers without human permission
 
+:Environment Variables:
+    None - all configuration is passed as function parameters.
+
+:Exit Codes:
+    N/A - This is a library module, not an executable.
+
+:Examples:
+    Apply unsafe fixers to a file::
+
+        from pathlib import Path
+        from tools.repo_lint.unsafe_fixers import apply_unsafe_fixes
+
+        files = [Path("example.py")]
+        results = apply_unsafe_fixes(files)
+
+        for result in results:
+            print(f"Fixed: {result.file_path}")
+            print(f"Fixer: {result.fixer_name}")
+            print(f"Why unsafe: {result.why_unsafe}")
+
 :See Also:
     - docs/contributing/ai-constraints.md - AI safety constraints
     - Phase 7 requirements in new-requirement-phase-7.md
@@ -23,7 +44,7 @@
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Tuple
+from typing import List
 
 
 @dataclass
@@ -66,7 +87,8 @@ class UnsafeDocstringRewriter:
         """Initialize the unsafe docstring rewriter."""
         self.name = "unsafe_docstring_rewrite"
         self.why_unsafe = (
-            "Rewrites docstring format which may change semantic meaning " "or incorrectly parse complex documentation"
+            "Rewrites docstring format which may change semantic meaning "
+            + "or incorrectly parse complex documentation"
         )
 
     def can_fix(self, file_path: Path) -> bool:
@@ -98,7 +120,7 @@ class UnsafeDocstringRewriter:
         return UnsafeFixerResult(
             fixer_name=self.name,
             file_path=file_path,
-            changes_made=f"Rewrote docstrings to Sphinx :param:/:returns: format",
+            changes_made="Rewrote docstrings to Sphinx :param:/:returns: format",
             why_unsafe=self.why_unsafe,
             before_content=before_content,
             after_content=after_content,
@@ -138,11 +160,11 @@ class UnsafeDocstringRewriter:
                 # Match "    name: description" or "    name (type): description"
                 match = re.match(r"^(\s+)(\w+)(\s*\(.*?\))?\s*:\s*(.+)$", line)
                 if match:
-                    indent, param_name, param_type, description = match.groups()
+                    indent, param_name, _param_type, description = match.groups()
                     # Convert to Sphinx format
                     result_lines.append(f"{indent}:param {param_name}: {description}")
                     continue
-                elif line.strip() and not line.strip().startswith(":"):
+                if line.strip() and not line.strip().startswith(":"):
                     # End of Args section
                     in_args_section = False
 

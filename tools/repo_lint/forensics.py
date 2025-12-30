@@ -1,3 +1,4 @@
+# noqa: EXITCODES
 """Forensics and artifact generation for unsafe fixes.
 
 :Purpose:
@@ -10,6 +11,27 @@
 
 :Storage:
     Artifacts are stored in logs/unsafe-fixes/ directory following repo conventions.
+
+:Environment Variables:
+    None - all configuration is hardcoded or passed as function parameters.
+
+:Exit Codes:
+    N/A - This is a library module, not an executable.
+
+:Examples:
+    Generate forensics after running unsafe fixers::
+
+        from datetime import datetime
+        from tools.repo_lint.unsafe_fixers import apply_unsafe_fixes
+        from tools.repo_lint.forensics import save_forensics
+
+        start_time = datetime.now()
+        results = apply_unsafe_fixes([Path("file.py")])
+        end_time = datetime.now()
+
+        patch_path, log_path = save_forensics(results, start_time, end_time)
+        print(f"Patch: {patch_path}")
+        print(f"Log: {log_path}")
 
 :See Also:
     - docs/contributing/ai-constraints.md - AI safety constraints
