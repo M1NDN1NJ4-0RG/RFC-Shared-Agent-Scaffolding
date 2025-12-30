@@ -102,7 +102,8 @@ jobs:
         run: |
           black .
           git diff > black-formatting.patch
-          echo "::error::Black formatting check failed. Since this is a fork PR, we cannot auto-commit. Please download the patch artifact and apply it to your branch."
+          echo "::error::Black formatting check failed. Since this is a fork PR, we cannot \
+          auto-commit. Please download the patch artifact and apply it to your branch."
 
       - name: Upload formatting patch
         if: |

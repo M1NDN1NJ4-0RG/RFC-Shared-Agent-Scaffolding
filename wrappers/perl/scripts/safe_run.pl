@@ -275,7 +275,7 @@ sub find_repo_root {
         $dir = $parent;
     }
     
-    return undef;
+    return;
 }
 
 my $REPO_ROOT = find_repo_root();
@@ -357,7 +357,7 @@ sub find_safe_run_binary {
     }
     
     # 5. Not found
-    return undef;
+    return;
 }
 
 # Main execution

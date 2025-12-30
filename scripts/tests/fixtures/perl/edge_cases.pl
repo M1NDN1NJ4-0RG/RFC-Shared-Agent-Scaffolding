@@ -129,6 +129,7 @@ Combined result
 
 =cut
 
+# noqa: FUNCTION - Test fixture for subroutine prototypes
 sub subroutine_with_prototype ($$@) {
     my ($first, $second, @rest) = @_;
     return "$first-$second-" . join(',', @rest);

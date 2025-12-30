@@ -96,7 +96,7 @@ jobs:
         run: |
           # Create diff of changes
           git diff > black.diff
-          
+
           # Create detailed log
           {
             echo "Black Auto-Fix Forensics"
@@ -137,7 +137,8 @@ jobs:
       - name: Set run URL output
         id: set_run_url
         run: |
-          echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+          echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/\
+          ${{ github.run_id }}" >> $GITHUB_OUTPUT
 
       - name: Write job summary
         if: steps.check_changes.outputs.changes_made == 'true'
@@ -187,13 +188,14 @@ jobs:
 
             **Workflow Run:** ${{ steps.set_run_url.outputs.url }}
 
-            **Forensic Artifacts:** Download the \`black-autofix-forensics\` artifact from the workflow run to review the exact changes.
+            **Forensic Artifacts:** Download the \`black-autofix-forensics\` artifact from \
+            the workflow run to review the exact changes.
 
             **Next Steps:**
             - Pull the changes: \`git pull\`
             - Lint checks will run on the next workflow run for the updated commit.
             `;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -256,10 +258,10 @@ jobs:
             # For push events, compare with previous commit; fall back to empty tree on initial commit
             BASE_REF=$(git rev-parse --verify HEAD^ 2>/dev/null || echo "4b825dc642cb6eb9a060e54bf8d69288fbee4904")
           fi
-          
+
           # Get changed files
           CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD)
-          
+
           # Initialize all outputs to false
           echo "python=false" >> $GITHUB_OUTPUT
           echo "bash=false" >> $GITHUB_OUTPUT
@@ -267,34 +269,36 @@ jobs:
           echo "perl=false" >> $GITHUB_OUTPUT
           echo "yaml=false" >> $GITHUB_OUTPUT
           echo "shared_tooling=false" >> $GITHUB_OUTPUT
-          
+
           # Check for Python files
           if echo "$CHANGED_FILES" | grep -qE '\.py$'; then
             echo "python=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for Bash files
           if echo "$CHANGED_FILES" | grep -qE '\.(sh|bash|zsh)$'; then
             echo "bash=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for PowerShell files
           if echo "$CHANGED_FILES" | grep -qE '\.ps1$'; then
             echo "powershell=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for Perl files
           if echo "$CHANGED_FILES" | grep -qE '\.(pl|pm)$'; then
             echo "perl=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for YAML files
           if echo "$CHANGED_FILES" | grep -qE '\.(ya?ml)$'; then
             echo "yaml=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for shared tooling changes
-          if echo "$CHANGED_FILES" | grep -qE '(^|/)tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/|^pyproject\.toml$|^\.github/workflows/|docs/contributing/'; then
+          if echo "$CHANGED_FILES" | \
+              grep -qE '(^|/)tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/|\
+              ^pyproject\.toml$|^\.github/workflows/|docs/contributing/'; then
             echo "shared_tooling=true" >> $GITHUB_OUTPUT
           fi
 
@@ -307,7 +311,7 @@ jobs:
     needs: [auto-fix-black, detect-changed-files]
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.python == 'true' || 
+      (needs.detect-changed-files.outputs.python == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -336,7 +340,7 @@ jobs:
     needs: [auto-fix-black, detect-changed-files]
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.bash == 'true' || 
+      (needs.detect-changed-files.outputs.bash == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -376,7 +380,7 @@ jobs:
     needs: [auto-fix-black, detect-changed-files]
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.powershell == 'true' || 
+      (needs.detect-changed-files.outputs.powershell == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -405,7 +409,7 @@ jobs:
     needs: [auto-fix-black, detect-changed-files]
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.perl == 'true' || 
+      (needs.detect-changed-files.outputs.perl == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -438,7 +442,7 @@ jobs:
     needs: [auto-fix-black, detect-changed-files]
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.yaml == 'true' || 
+      (needs.detect-changed-files.outputs.yaml == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -529,7 +533,7 @@ jobs:
         run: |
           # Create failure report directory
           mkdir -p repo-lint-failure-reports
-          
+
           # Check job statuses
           AUTO_FIX="${{ needs.auto-fix-black.result }}"
           DETECT="${{ needs.detect-changed-files.result }}"
@@ -539,7 +543,7 @@ jobs:
           PERL="${{ needs.repo-lint-perl.result }}"
           YAML="${{ needs.repo-lint-yaml.result }}"
           VECTORS="${{ needs.vector-tests.result }}"
-          
+
           # Create summary file
           SUMMARY_FILE="repo-lint-failure-reports/summary-$(date -u +%Y%m%d-%H%M%S).md"
           {
@@ -564,10 +568,10 @@ jobs:
             echo "| Vector Tests: Conformance | $VECTORS |"
             echo ""
           } > "$SUMMARY_FILE"
-          
+
           # Track if any failures occurred
           HAS_FAILURES=false
-          
+
           # Add failure details for each failed job
           if [ "$PYTHON" = "failure" ]; then
             HAS_FAILURES=true
@@ -576,7 +580,7 @@ jobs:
             echo "Python linting failed. See job logs for details." >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$BASH" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Bash Linting Failures" >> "$SUMMARY_FILE"
@@ -584,7 +588,7 @@ jobs:
             echo "Bash linting failed. See job logs for details." >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$POWERSHELL" = "failure" ]; then
             HAS_FAILURES=true
             echo "## PowerShell Linting Failures" >> "$SUMMARY_FILE"
@@ -592,7 +596,7 @@ jobs:
             echo "PowerShell linting failed. See job logs for details." >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$PERL" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Perl Linting Failures" >> "$SUMMARY_FILE"
@@ -600,7 +604,7 @@ jobs:
             echo "Perl linting failed. See job logs for details." >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$YAML" = "failure" ]; then
             HAS_FAILURES=true
             echo "## YAML Linting Failures" >> "$SUMMARY_FILE"
@@ -608,7 +612,7 @@ jobs:
             echo "YAML linting failed. See job logs for details." >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$VECTORS" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Vector Test Failures" >> "$SUMMARY_FILE"
@@ -616,7 +620,7 @@ jobs:
             echo "Vector tests failed. See job logs for details." >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           # Set output flag
           if [ "$HAS_FAILURES" = "true" ]; then
             echo "has_failures=true" >> $GITHUB_OUTPUT
@@ -626,7 +630,7 @@ jobs:
             echo "" >> "$SUMMARY_FILE"
             echo "All linting and docstring enforcement checks passed successfully." >> "$SUMMARY_FILE"
           fi
-          
+
           # Display summary
           cat "$SUMMARY_FILE"
 
@@ -647,13 +651,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add repo-lint-failure-reports/
-          
+
           # Commit if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit (logs may already exist)"
           else
             git commit -m "CI: Add repo-lint failure report [auto-generated]"
-            
+
             # Push with error handling
             if ! git push; then
               echo "::warning::Failed to push failure report to repository"

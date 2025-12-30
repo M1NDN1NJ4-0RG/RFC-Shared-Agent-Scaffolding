@@ -353,7 +353,8 @@ jobs:
 
             # Build full pattern: keyword + optional colon + optional space + (epic refs)
             # Match the same format as JS normalization
-            echo '\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)(:[[:space:]]*|[[:space:]]+)('"$pattern_parts"')\b'
+            echo '\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)' \
+              '(:[[:space:]]*|[[:space:]]+)('"$pattern_parts"')\b'
           }
 
           sanitize_body() {
@@ -406,15 +407,20 @@ jobs:
               # Check PR title
               if matched_line=$(printf '%s' "$PR_TITLE" | grep -Ei "$EPIC_PATTERN"); then
                 # Extract which issue was matched
-                matched_issue=$(echo "$matched_line" | grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
-                fail "Auto-close keyword found in PR TITLE for EPIC issue $matched_issue. Use Refs/Related/Tracks instead. Matched text: $matched_line"
+                matched_issue=$(echo "$matched_line" | \
+                  grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
+                fail "Auto-close keyword found in PR TITLE for EPIC issue $matched_issue. \
+                Use Refs/Related/Tracks instead. Matched text: $matched_line"
               fi
 
               # Check PR body
               if matched_line=$(printf '%s' "$body" | grep -Ei "$EPIC_PATTERN" | head -1); then
                 # Extract which issue was matched
-                matched_issue=$(echo "$matched_line" | grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
-                fail "Auto-close keyword found in PR BODY for EPIC issue $matched_issue (excluding 'Original prompt' block). Use Refs/Related/Tracks instead. Matched line: $matched_line"
+                matched_issue=$(echo "$matched_line" | \
+                  grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
+                fail "Auto-close keyword found in PR BODY for EPIC issue $matched_issue \
+                (excluding 'Original prompt' block). Use Refs/Related/Tracks instead. \
+                Matched line: $matched_line"
               fi
 
               # Check commit messages
@@ -432,12 +438,18 @@ jobs:
                 commit_messages="$(echo "$commits_json" | jq -r '.[].commit.message')" || commit_messages=""
                 [ -z "$commit_messages" ] && break
 
-                if matched_line=$(printf '%s\n' "$commit_messages" | grep -Ei "$EPIC_PATTERN" | head -1); then
+                if matched_line=$(printf '%s\n' "$commit_messages" | \
+                    grep -Ei "$EPIC_PATTERN" | head -1); then
                   # Extract which issue was matched
-                  matched_issue=$(echo "$matched_line" | grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
+                  matched_issue=$(echo "$matched_line" | \
+                    grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
                   # Try to find which commit contains this
-                  matched_commit=$(echo "$commits_json" | jq -r --arg msg "$matched_line" '.[] | select(.commit.message | contains($msg)) | .sha[:7]' | head -1)
-                  fail "Auto-close keyword found in COMMIT $matched_commit for EPIC issue $matched_issue. Amend/reword commit(s) to use Refs/Related/Tracks instead. Matched line: $matched_line"
+                  matched_commit=$(echo "$commits_json" | \
+                    jq -r --arg msg "$matched_line" \
+                    '.[] | select(.commit.message | contains($msg)) | .sha[:7]' | head -1)
+                  fail "Auto-close keyword found in COMMIT $matched_commit for EPIC issue \
+                  $matched_issue. Amend/reword commit(s) to use Refs/Related/Tracks instead. \
+                  Matched line: $matched_line"
                 fi
 
                 page_count="$(echo "$commits_json" | jq 'length')"
