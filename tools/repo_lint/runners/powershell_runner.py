@@ -109,7 +109,7 @@ class PowerShellRunner(Runner):
         return results
 
     def _get_powershell_files(self) -> List[str]:
-        """Get list of PowerShell files in repository.
+        """Get list of PowerShell files in repository, excluding test fixtures.
 
         :returns:
             List of PowerShell file paths (empty list if none found)
@@ -119,7 +119,21 @@ class PowerShellRunner(Runner):
         )
         if not result.stdout.strip():
             return []
-        return result.stdout.strip().split("\n")
+        
+        # Exclude test fixture directories with intentional violations
+        exclude_patterns = [
+            "conformance/repo-lint/fixtures/violations/",
+            "conformance/repo-lint/vectors/fixtures/",
+            "scripts/tests/fixtures/",
+        ]
+        
+        all_files = result.stdout.strip().split("\n")
+        filtered_files = [
+            f for f in all_files 
+            if not any(pattern in f for pattern in exclude_patterns)
+        ]
+        
+        return filtered_files
 
     def _run_psscriptanalyzer(self) -> LintResult:
         """Run PSScriptAnalyzer.

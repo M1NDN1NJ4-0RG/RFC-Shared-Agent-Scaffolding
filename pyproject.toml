@@ -29,6 +29,18 @@ lint = [
 [tool.black]
 line-length = 120
 target-version = ['py38']
+# Exclude test fixtures with intentional violations
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | \.venv-lint
+  | dist
+  | conformance/repo-lint/fixtures/violations
+  | conformance/repo-lint/vectors/fixtures
+  | scripts/tests/fixtures
+)/
+'''
 
 [tool.ruff]
 # Match line length with Black
@@ -36,6 +48,17 @@ line-length = 120
 
 # Target Python 3.8+ (matching Black target-version)
 target-version = "py38"
+
+# Exclude test fixtures with intentional violations
+exclude = [
+    ".git",
+    ".venv",
+    ".venv-lint",
+    "dist",
+    "conformance/repo-lint/fixtures/violations",
+    "conformance/repo-lint/vectors/fixtures",
+    "scripts/tests/fixtures",
+]
 
 [tool.ruff.lint]
 # Select default rules plus additional checks
@@ -53,6 +76,12 @@ max-line-length = 120
 [tool.pylint.master]
 # Add repository root to sys.path to allow imports of tools.repo_lint
 init-hook = 'import sys; sys.path.insert(0, ".")'
+# Ignore test fixtures with intentional violations
+ignore-paths = [
+    "conformance/repo-lint/fixtures/violations/.*",
+    "conformance/repo-lint/vectors/fixtures/.*",
+    "scripts/tests/fixtures/.*",
+]
 
 [tool.pylint.messages_control]
 disable = [

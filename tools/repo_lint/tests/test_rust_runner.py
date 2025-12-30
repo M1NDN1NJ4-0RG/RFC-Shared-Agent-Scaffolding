@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=redefined-outer-name  # Expected for pytest fixtures
 """Tests for Rust language runner.
 
 :Purpose:
@@ -272,8 +273,16 @@ class TestRustRunnerClippy:
         :param mock_run: Mock subprocess.run
         :param rust_runner: RustRunner fixture
         """
-        json_output = """{"reason":"compiler-message","package_id":"test 0.1.0","target":{},"message":{"message":"unused variable: `x`","code":{"code":"unused_variables","explanation":""},"level":"warning","spans":[{"file_name":"src/main.rs","byte_start":100,"byte_end":101,"line_start":5,"line_end":5,"column_start":9,"column_end":10,"is_primary":true,"text":[{"text":"    let x = 5;","highlight_start":9,"highlight_end":10}],"label":"unused variable","suggested_replacement":null,"suggestion_applicability":null,"expansion":null}],"children":[],"rendered":"warning: unused variable: `x`\\n"}}
-"""
+        # JSON output from clippy with a sample warning
+        json_output = (
+            '{"reason":"compiler-message","package_id":"test 0.1.0","target":{},'
+            '"message":{"message":"unused variable: `x`","code":{"code":"unused_variables","explanation":""},'
+            '"level":"warning","spans":[{"file_name":"src/main.rs","byte_start":100,"byte_end":101,'
+            '"line_start":5,"line_end":5,"column_start":9,"column_end":10,"is_primary":true,'
+            '"text":[{"text":"    let x = 5;","highlight_start":9,"highlight_end":10}],'
+            '"label":"unused variable","suggested_replacement":null,"suggestion_applicability":null,'
+            '"expansion":null}],"children":[],"rendered":"warning: unused variable: `x`\\n"}}\n'
+        )
         mock_run.return_value = MagicMock(returncode=1, stdout=json_output, stderr="")
 
         result = rust_runner._run_clippy()  # pylint: disable=protected-access

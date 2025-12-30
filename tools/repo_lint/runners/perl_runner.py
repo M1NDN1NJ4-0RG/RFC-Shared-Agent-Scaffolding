@@ -87,7 +87,7 @@ class PerlRunner(Runner):
         return results
 
     def _get_perl_files(self) -> List[str]:
-        """Get list of Perl files in repository.
+        """Get list of Perl files in repository, excluding test fixtures.
 
         :returns:
             List of Perl file paths (empty list if none found)
@@ -97,7 +97,21 @@ class PerlRunner(Runner):
         )
         if not result.stdout.strip():
             return []
-        return result.stdout.strip().split("\n")
+        
+        # Exclude test fixture directories with intentional violations
+        exclude_patterns = [
+            "conformance/repo-lint/fixtures/violations/",
+            "conformance/repo-lint/vectors/fixtures/",
+            "scripts/tests/fixtures/",
+        ]
+        
+        all_files = result.stdout.strip().split("\n")
+        filtered_files = [
+            f for f in all_files 
+            if not any(pattern in f for pattern in exclude_patterns)
+        ]
+        
+        return filtered_files
 
     def _run_perlcritic(self) -> LintResult:
         """Run Perl::Critic.
