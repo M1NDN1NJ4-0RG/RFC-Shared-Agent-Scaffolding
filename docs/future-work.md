@@ -30,6 +30,7 @@ This document tracks **explicitly-marked future work** found in the repository. 
 | [FW-013](#fw-013-make-repo-lint-installable-package) | Low | Tooling | Make repo_lint installable via pip install -e . |
 | [FW-014](#fw-014-advanced-repo-local-tool-isolation) | Low | Tooling | Advanced repo-local tool isolation |
 | [FW-015](#fw-015-ci-workflow-tool-installation-security-hardening) | Medium | CI/CD | Add checksum/signature verification to tool installation steps |
+| [FW-016](#fw-016-ci-log-capture-retention-and-debug-mode-switch) | Medium | CI/CD | CI log capture + retention + debug-mode switch (repo-stored logs + 90-day prune) |
 
 ---
 
@@ -650,6 +651,53 @@ Code review identified security hardening opportunities in GitHub Actions workfl
 **Related:**
 - Phase 0 Item 0.4.2: Pin third-party actions by commit SHA (COMPLETE)
 - Phase 0 Item 0.7.1: Pin tool versions in CI (COMPLETE)
+
+---
+
+### FW-016: CI log capture, retention, and debug-mode switch
+
+**Severity:** Medium  
+**Area:** CI/CD  
+**Status:** 🔮 DEFERRED
+
+**Description:**
+
+We want CI failures (and their forensic context) to be **reviewable from the repository** without requiring humans/agents to scrape GitHub Actions UI logs.
+
+**Goals:**
+1. **Commit log artifacts to the repo** using a consistent directory structure.
+2. **Retain failure logs** for up to **90 days** (tunable downward if noise/cost warrants).
+3. Provide a **debug-mode switch** so a human can re-run a workflow with deeper logging when needed.
+
+**Proposed repo log layout (example):**
+- `logs/ci/<workflow-name>/<YYYY-MM-DD>/<run-id>/...`
+
+**Retention / pruning policy (starting point):**
+- Automatically prune logs older than **90 days**.
+- If this becomes too noisy or large, reduce retention (e.g., 30 days).
+
+**Debug-mode switch (repo-controlled):**
+GitHub’s UI “Enable debug logging” toggle cannot be enabled programmatically by workflows, so implement debug mode via one of:
+- **Workflow dispatch input** (preferred): `debug_logging: true|false`
+- **Separate debug workflow**: e.g., `Umbrella CI (Debug)` / `Repo Lint (Debug)`
+
+When debug mode is enabled, increase verbosity consistently (examples):
+- Set `ACTIONS_STEP_DEBUG=true` / `ACTIONS_RUNNER_DEBUG=true` when available (manual rerun input can set these)
+- Add verbose flags to tools (`--verbose`, `--debug`, `set -x`, etc.)
+- Ensure debug runs write the expanded logs into the repo log path above
+
+**Auto-rerun-on-failure (optional but desirable):**
+- Add orchestration using `workflow_run` (or equivalent) so that when the normal workflow fails, it triggers a debug run against the **same SHA**.
+- Ensure the debug run is the one that writes the *most useful* log output into the repo log directory.
+
+**Why this matters:**
+- Humans can quickly review failures via `logs/ci/...`.
+- AI coding agents can be directed at repo-stored log artifacts without API calls.
+- Failure evidence persists across time and is easy to link from PR reviews.
+
+**Notes:**
+- If adopting this repo-log strategy broadly, ensure it does **not** create a bot-commit loop (guardrails needed).
+- Prefer storing logs on failure; if logs are stored on success too, consider much shorter retention.
 
 ---
 
