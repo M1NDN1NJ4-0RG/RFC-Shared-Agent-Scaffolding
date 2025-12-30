@@ -207,14 +207,14 @@ class RustRunner(Runner):
         for line in result.stdout.splitlines():
             if not line.strip():
                 continue
-            
+
             violation = self._parse_clippy_json_line(line, rust_dir)
             if violation:
                 violations.append(violation)
 
         return LintResult(tool="clippy", passed=False, violations=violations[:50])  # Limit output
 
-    def _parse_clippy_json_line(self, line: str, rust_dir) -> Optional[Violation]:
+    def _parse_clippy_json_line(self, line: str, rust_dir: "Path") -> Optional[Violation]:
         """Parse a single line of clippy JSON output.
 
         :param line: JSON line from clippy output
@@ -242,7 +242,7 @@ class RustRunner(Runner):
             if primary_span:
                 file_path = primary_span.get("file_name", "unknown")
                 line_num = primary_span.get("line_start")
-                
+
                 if file_path.startswith(str(rust_dir)):
                     # Path is absolute and within rust_dir - make it relative
                     try:
