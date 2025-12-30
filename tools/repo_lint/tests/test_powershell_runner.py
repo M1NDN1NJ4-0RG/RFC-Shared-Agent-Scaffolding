@@ -36,7 +36,8 @@
 
     Run specific test::
 
-        python3 -m pytest tools/repo_lint/tests/test_powershell_runner.py::TestPowerShellRunner::test_psscriptanalyzer_uses_args_parameter -v
+        python3 -m pytest tools/repo_lint/tests/test_powershell_runner.py \
+            ::TestPowerShellRunner::test_psscriptanalyzer_uses_args_parameter -v
 
 :Notes:
     - Tests use unittest.mock to avoid executing actual linters
@@ -53,7 +54,7 @@ from unittest.mock import MagicMock, patch
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.runners.powershell_runner import PowerShellRunner
+from tools.repo_lint.runners.powershell_runner import PowerShellRunner  # noqa: E402
 
 
 class TestPowerShellRunner(unittest.TestCase):

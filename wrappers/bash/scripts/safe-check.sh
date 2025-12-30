@@ -104,8 +104,8 @@ before_count=$(find "$FAIL_DIR" -maxdepth 1 -type f 2>/dev/null | wc -l | tr -d 
 "$ROOT_DIR/scripts/safe-run.sh" bash -c 'echo ok; exit 0' >/dev/null
 after_count=$(find "$FAIL_DIR" -maxdepth 1 -type f 2>/dev/null | wc -l | tr -d ' ')
 if [ "$after_count" -ne "$before_count" ]; then
-  echo "FAIL: safe-run created artifacts on success" >&2
-  exit 1
+	echo "FAIL: safe-run created artifacts on success" >&2
+	exit 1
 fi
 
 #
@@ -117,8 +117,8 @@ fi
 "$ROOT_DIR/scripts/safe-run.sh" bash -c 'echo out; echo err 1>&2; exit 42' >/dev/null || true
 newest=$(ls -1t "$FAIL_DIR" 2>/dev/null | head -n 1 || true)
 if [ -z "$newest" ]; then
-  echo "FAIL: safe-run did not create failure log" >&2
-  exit 1
+	echo "FAIL: safe-run did not create failure log" >&2
+	exit 1
 fi
 
 #
@@ -131,14 +131,14 @@ fi
 
 # Verify log was moved from FAIL-LOGS
 if [ -e "$FAIL_DIR/$newest" ]; then
-  echo "FAIL: safe-archive did not move log" >&2
-  exit 1
+	echo "FAIL: safe-archive did not move log" >&2
+	exit 1
 fi
 
 # Verify log exists in FAIL-ARCHIVE (check all possible compression extensions)
 if [ ! -e "$ARCH_DIR/$newest" ] && [ ! -e "$ARCH_DIR/${newest}.gz" ] && [ ! -e "$ARCH_DIR/${newest}.xz" ] && [ ! -e "$ARCH_DIR/${newest}.zst" ]; then
-  echo "FAIL: safe-archive did not create archived file" >&2
-  exit 1
+	echo "FAIL: safe-archive did not create archived file" >&2
+	exit 1
 fi
 
 #

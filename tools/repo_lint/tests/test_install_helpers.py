@@ -46,26 +46,24 @@
     - Tests validate pip version pinning per Phase 4 requirements
 """
 
-import shutil
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 
 # Add repo_lint parent directory to path for imports
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.install.install_helpers import (
+from tools.repo_lint.install.install_helpers import (  # noqa: E402
     cleanup_repo_local,
     create_venv,
-    get_repo_root,
     get_tools_path,
     get_venv_path,
     install_python_tools,
     venv_exists,
 )
-from tools.repo_lint.install.version_pins import PIP_VERSION, PYTHON_TOOLS
+from tools.repo_lint.install.version_pins import PIP_VERSION, PYTHON_TOOLS  # noqa: E402
 
 
 class TestVenvHelpers(unittest.TestCase):

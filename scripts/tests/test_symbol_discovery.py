@@ -40,10 +40,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import validator modules
 try:
-    from docstring_validators.python_validator import PythonValidator
     from docstring_validators.bash_validator import BashValidator
-    from docstring_validators.powershell_validator import PowerShellValidator
     from docstring_validators.perl_validator import PerlValidator
+    from docstring_validators.powershell_validator import PowerShellValidator
+    from docstring_validators.python_validator import PythonValidator
 except ImportError as e:
     print(f"Error importing validators: {e}")
     sys.exit(1)
@@ -68,7 +68,7 @@ class TestPythonSymbolDiscovery(unittest.TestCase):
         if not fixture_path.exists():
             raise FileNotFoundError(f"Fixture not found: {fixture_path}")
 
-        with open(fixture_path, "r", encoding="utf-8") as f:
+        with open(fixture_path, encoding="utf-8") as f:
             cls.fixture_content = f.read()
         cls.fixture_path = fixture_path
 
@@ -221,7 +221,7 @@ class TestBashSymbolDiscovery(unittest.TestCase):
         if not fixture_path.exists():
             raise FileNotFoundError(f"Fixture not found: {fixture_path}")
 
-        with open(fixture_path, "r", encoding="utf-8") as f:
+        with open(fixture_path, encoding="utf-8") as f:
             cls.fixture_content = f.read()
         cls.fixture_path = fixture_path
 
@@ -317,7 +317,7 @@ class TestPowerShellSymbolDiscovery(unittest.TestCase):
         if not fixture_path.exists():
             raise FileNotFoundError(f"Fixture not found: {fixture_path}")
 
-        with open(fixture_path, "r", encoding="utf-8") as f:
+        with open(fixture_path, encoding="utf-8") as f:
             cls.fixture_content = f.read()
         cls.fixture_path = fixture_path
 
@@ -421,7 +421,7 @@ class TestPerlSymbolDiscovery(unittest.TestCase):
         if not fixture_path.exists():
             raise FileNotFoundError(f"Fixture not found: {fixture_path}")
 
-        with open(fixture_path, "r", encoding="utf-8") as f:
+        with open(fixture_path, encoding="utf-8") as f:
             cls.fixture_content = f.read()
         cls.fixture_path = fixture_path
 

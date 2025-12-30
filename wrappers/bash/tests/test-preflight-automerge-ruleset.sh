@@ -57,8 +57,8 @@ PREF="${ROOT}/scripts/preflight-automerge-ruleset.sh"
 # Args: $1 = directory to place mock binary
 # Creates executable script that responds based on GH_SCENARIO env var
 make_mock_gh() {
-  local dir="$1"
-  cat > "${dir}/gh" <<'GH'
+	local dir="$1"
+	cat >"${dir}/gh" <<'GH'
 #!/usr/bin/env bash
 set -euo pipefail
 if [[ "${1:-}" != "api" ]]; then
@@ -90,89 +90,94 @@ fi
 printf '{"message":"Not Found","status":"404"}\n'
 exit 0
 GH
-  chmod +x "${dir}/gh"
+	chmod +x "${dir}/gh"
 }
 
 # test_preflight_ok - Verify exit 0 when ruleset is properly configured
 test_preflight_ok() {
-  local tmp mockbin
-  tmp="$(mktemp_dir)"
-  (
-    cd "$tmp"
-    mockbin="$tmp/mockbin"; mkdir -p "$mockbin"
-    make_mock_gh "$mockbin"
-    PATH="$mockbin:$PATH" GH_SCENARIO=ok bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null
-  )
+	local tmp mockbin
+	tmp="$(mktemp_dir)"
+	(
+		cd "$tmp"
+		mockbin="$tmp/mockbin"
+		mkdir -p "$mockbin"
+		make_mock_gh "$mockbin"
+		PATH="$mockbin:$PATH" GH_SCENARIO=ok bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null
+	)
 }
 
 # test_preflight_missing_ctx - Verify exit 1 when required contexts missing
 test_preflight_missing_ctx() {
-  local tmp mockbin rc
-  tmp="$(mktemp_dir)"
-  (
-    cd "$tmp"
-    mockbin="$tmp/mockbin"; mkdir -p "$mockbin"
-    make_mock_gh "$mockbin"
-    set +e
-    PATH="$mockbin:$PATH" GH_SCENARIO=missing_ctx bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null 2>&1
-    rc=$?
-    set -e
-    [[ "$rc" -eq 1 ]]
-  )
+	local tmp mockbin rc
+	tmp="$(mktemp_dir)"
+	(
+		cd "$tmp"
+		mockbin="$tmp/mockbin"
+		mkdir -p "$mockbin"
+		make_mock_gh "$mockbin"
+		set +e
+		PATH="$mockbin:$PATH" GH_SCENARIO=missing_ctx bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null 2>&1
+		rc=$?
+		set -e
+		[[ "$rc" -eq 1 ]]
+	)
 }
 
 # Test: inactive enforcement returns exit code 1
 # Args: none
 # Returns: exit code from test assertions
 test_preflight_inactive() {
-  local tmp mockbin rc
-  tmp="$(mktemp_dir)"
-  (
-    cd "$tmp"
-    mockbin="$tmp/mockbin"; mkdir -p "$mockbin"
-    make_mock_gh "$mockbin"
-    set +e
-    PATH="$mockbin:$PATH" GH_SCENARIO=inactive bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null 2>&1
-    rc=$?
-    set -e
-    [[ "$rc" -eq 1 ]]
-  )
+	local tmp mockbin rc
+	tmp="$(mktemp_dir)"
+	(
+		cd "$tmp"
+		mockbin="$tmp/mockbin"
+		mkdir -p "$mockbin"
+		make_mock_gh "$mockbin"
+		set +e
+		PATH="$mockbin:$PATH" GH_SCENARIO=inactive bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null 2>&1
+		rc=$?
+		set -e
+		[[ "$rc" -eq 1 ]]
+	)
 }
 
 # Test: missing default branch returns exit code 1
 # Args: none
 # Returns: exit code from test assertions
 test_preflight_no_default() {
-  local tmp mockbin rc
-  tmp="$(mktemp_dir)"
-  (
-    cd "$tmp"
-    mockbin="$tmp/mockbin"; mkdir -p "$mockbin"
-    make_mock_gh "$mockbin"
-    set +e
-    PATH="$mockbin:$PATH" GH_SCENARIO=no_default bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null 2>&1
-    rc=$?
-    set -e
-    [[ "$rc" -eq 1 ]]
-  )
+	local tmp mockbin rc
+	tmp="$(mktemp_dir)"
+	(
+		cd "$tmp"
+		mockbin="$tmp/mockbin"
+		mkdir -p "$mockbin"
+		make_mock_gh "$mockbin"
+		set +e
+		PATH="$mockbin:$PATH" GH_SCENARIO=no_default bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null 2>&1
+		rc=$?
+		set -e
+		[[ "$rc" -eq 1 ]]
+	)
 }
 
 # Test: authentication error returns exit code 2
 # Args: none
 # Returns: exit code from test assertions
 test_preflight_auth_error() {
-  local tmp mockbin rc
-  tmp="$(mktemp_dir)"
-  (
-    cd "$tmp"
-    mockbin="$tmp/mockbin"; mkdir -p "$mockbin"
-    make_mock_gh "$mockbin"
-    set +e
-    PATH="$mockbin:$PATH" GH_SCENARIO=auth_error bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null 2>&1
-    rc=$?
-    set -e
-    [[ "$rc" -eq 2 ]]
-  )
+	local tmp mockbin rc
+	tmp="$(mktemp_dir)"
+	(
+		cd "$tmp"
+		mockbin="$tmp/mockbin"
+		mkdir -p "$mockbin"
+		make_mock_gh "$mockbin"
+		set +e
+		PATH="$mockbin:$PATH" GH_SCENARIO=auth_error bash "$PREF" --repo o/r --ruleset-name "Main - PR Only + Green CI" --want '["lint","test"]' >/dev/null 2>&1
+		rc=$?
+		set -e
+		[[ "$rc" -eq 2 ]]
+	)
 }
 
 t "preflight: ok returns 0" test_preflight_ok

@@ -34,7 +34,8 @@
 
     Run specific test::
 
-        python3 -m pytest tools/repo_lint/tests/test_yaml_runner.py::TestYAMLRunner::test_yamllint_uses_parsable_format -v
+        python3 -m pytest tools/repo_lint/tests/test_yaml_runner.py::TestYAMLRunner \
+            ::test_yamllint_uses_parsable_format -v
 
 :Notes:
     - Tests use unittest.mock to avoid executing actual linters
@@ -51,7 +52,7 @@ from unittest.mock import MagicMock, patch
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.runners.yaml_runner import YAMLRunner
+from tools.repo_lint.runners.yaml_runner import YAMLRunner  # noqa: E402
 
 
 class TestYAMLRunner(unittest.TestCase):

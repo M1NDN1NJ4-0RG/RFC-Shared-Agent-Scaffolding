@@ -84,8 +84,7 @@ def run_safe_check(workdir: Path, env=None, timeout=60):
         cwd=str(workdir),
         env=e,
         text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         timeout=timeout,
     )
     return proc
@@ -114,8 +113,7 @@ class TestSafeCheck(unittest.TestCase):
                 cwd=str(wd),
                 env=os.environ.copy(),
                 text=True,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
+                capture_output=True,
                 timeout=60,
             )
             self.assertEqual(

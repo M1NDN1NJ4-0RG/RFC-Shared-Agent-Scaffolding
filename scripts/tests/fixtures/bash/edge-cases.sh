@@ -39,9 +39,9 @@
 # Returns:
 #   0 - Success
 simple_function() {
-    local input="$1"
-    echo "Processing: $input"
-    return 0
+	local input="$1"
+	echo "Processing: $input"
+	return 0
 }
 
 # Function using 'function' keyword
@@ -52,7 +52,7 @@ simple_function() {
 # Returns:
 #   0 - Success
 function keyword_function {
-    echo "Keyword function: $1"
+	echo "Keyword function: $1"
 }
 
 # Function with 'function' keyword and parentheses
@@ -64,7 +64,7 @@ function keyword_function {
 # Returns:
 #   0 - Success
 function both_styles_function() {
-    echo "First: $1, Second: $2"
+	echo "First: $1, Second: $2"
 }
 
 # Multiline function definition
@@ -74,11 +74,10 @@ function both_styles_function() {
 #   $1 - Input parameter
 # Returns:
 #   0 - Success
-multiline_function()
-{
-    # Function body with opening brace on new line
-    local value="$1"
-    echo "Multiline style: $value"
+multiline_function() {
+	# Function body with opening brace on new line
+	local value="$1"
+	echo "Multiline style: $value"
 }
 
 # Function with special characters in name
@@ -89,7 +88,7 @@ multiline_function()
 # Returns:
 #   0 - Success
 function_with_underscores_123() {
-    echo "Special chars in name"
+	echo "Special chars in name"
 }
 
 # Outer function containing nested function
@@ -100,21 +99,21 @@ function_with_underscores_123() {
 # Returns:
 #   Result from nested function
 outer_function() {
-    local outer_value="$1"
-    
-    # Inner nested function
-    #
-    # Description: Nested function inside another function
-    # Arguments:
-    #   $1 - Inner parameter
-    # Returns:
-    #   Combined value
-    inner_function() {
-        local inner_value="$1"
-        echo "${outer_value}-${inner_value}"
-    }
-    
-    inner_function "nested"
+	local outer_value="$1"
+
+	# Inner nested function
+	#
+	# Description: Nested function inside another function
+	# Arguments:
+	#   $1 - Inner parameter
+	# Returns:
+	#   Combined value
+	inner_function() {
+		local inner_value="$1"
+		echo "${outer_value}-${inner_value}"
+	}
+
+	inner_function "nested"
 }
 
 # Function with complex multi-paragraph comment
@@ -141,9 +140,9 @@ outer_function() {
 # Notes:
 #   This is a note about usage
 complex_comment_function() {
-    [[ -z "$1" ]] && return 1
-    echo "$1 and $2"
-    return 0
+	[[ -z "$1" ]] && return 1
+	echo "$1 and $2"
+	return 0
 }
 
 # Private/helper function (leading underscore)
@@ -154,8 +153,8 @@ complex_comment_function() {
 # Returns:
 #   Processed value
 _private_helper() {
-    local value="$1"
-    echo "${value}_processed"
+	local value="$1"
+	echo "${value}_processed"
 }
 
 # Double underscore function
@@ -166,7 +165,7 @@ _private_helper() {
 # Returns:
 #   Modified input
 __internal_function() {
-    echo "__internal: $1"
+	echo "__internal: $1"
 }
 
 # Function with inline brace (K&R style)
@@ -186,18 +185,18 @@ kr_style_function() { echo "K&R style: $1"; }
 # Returns:
 #   0 - Success
 function_with_nested_calls() {
-    # Local helper within this function
-    #
-    # Description: Local helper function
-    # Arguments:
-    #   $1 - Value
-    # Returns:
-    #   Transformed value
-    local_helper() {
-        echo "local: $1"
-    }
-    
-    local_helper "test"
+	# Local helper within this function
+	#
+	# Description: Local helper function
+	# Arguments:
+	#   $1 - Value
+	# Returns:
+	#   Transformed value
+	local_helper() {
+		echo "local: $1"
+	}
+
+	local_helper "test"
 }
 
 # Function with array parameters
@@ -208,14 +207,14 @@ function_with_nested_calls() {
 # Returns:
 #   0 - Success
 array_function() {
-    local -a items=("$@")
-    echo "Array has ${#items[@]} items"
+	local -a items=("$@")
+	echo "Array has ${#items[@]} items"
 }
 
 # noqa: FUNCTION
 function exempted_function() {
-    # This function is exempted from documentation requirements
-    echo "No doc required"
+	# This function is exempted from documentation requirements
+	echo "No doc required"
 }
 
 # Function with conditional execution
@@ -227,19 +226,19 @@ function exempted_function() {
 #   0 - Success
 #   1 - Failure
 conditional_function() {
-    if [[ "$1" == "true" ]]; then
-        echo "Condition met"
-        return 0
-    else
-        echo "Condition not met"
-        return 1
-    fi
+	if [[ "$1" == "true" ]]; then
+		echo "Condition met"
+		return 0
+	else
+		echo "Condition not met"
+		return 1
+	fi
 }
 
 # Main execution
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
-    echo "Running Bash edge cases fixture"
-    simple_function "test"
-    keyword_function "value"
-    outer_function "outer_val"
+	echo "Running Bash edge cases fixture"
+	simple_function "test"
+	keyword_function "value"
+	outer_function "outer_val"
 fi
