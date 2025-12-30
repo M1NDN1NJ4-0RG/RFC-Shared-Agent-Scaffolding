@@ -76,7 +76,15 @@ jobs:
 
       - name: Install shfmt
         run: |
-          wget -qO- https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64 > shfmt
+          # Download shfmt binary
+          wget -q https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64 -O shfmt
+          # Download official checksums file for this release
+          wget -q https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_checksums.txt -O shfmt_v3.12.0_checksums.txt
+          # Extract expected SHA256 for the linux_amd64 binary
+          EXPECTED_SHA256="$(grep 'shfmt_v3.12.0_linux_amd64' shfmt_v3.12.0_checksums.txt | cut -d' ' -f1)"
+          # Verify the downloaded binary matches the expected checksum
+          echo "${EXPECTED_SHA256}  shfmt" | sha256sum -c -
+          # Make binary executable and install if verification succeeded
           chmod +x shfmt
           sudo mv shfmt /usr/local/bin/
 
