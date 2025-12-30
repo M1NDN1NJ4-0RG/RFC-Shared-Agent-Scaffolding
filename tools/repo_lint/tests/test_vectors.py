@@ -72,12 +72,11 @@ def load_vector(vector_file: Path) -> dict:
         return json.load(f)
 
 
-def normalize_violation_from_docstring_output(line: str, fixture_path: str) -> Optional[Dict]:
+def normalize_violation_from_docstring_output(line: str) -> Optional[Dict]:
     """Parse and normalize a violation from docstring validator output.
 
     :Args:
         line: Single line of output from validate_docstrings.py
-        fixture_path: Path to the fixture file being validated
 
     :Returns:
         Normalized violation dict or None if line doesn't contain violation
@@ -126,12 +125,11 @@ def normalize_violation_from_docstring_output(line: str, fixture_path: str) -> O
     }
 
 
-def parse_docstring_validator_output(output: str, fixture_path: str) -> List[Dict]:
+def parse_docstring_validator_output(output: str) -> List[Dict]:
     """Parse docstring validator output into normalized violations.
 
     :Args:
         output: Raw output from validate_docstrings.py
-        fixture_path: Path to fixture file (for path normalization)
 
     :Returns:
         List of normalized violation dictionaries
@@ -149,7 +147,7 @@ def parse_docstring_validator_output(output: str, fixture_path: str) -> List[Dic
 
     for line in lines:
         # Try to parse as new violation header
-        new_violation = normalize_violation_from_docstring_output(line, fixture_path)
+        new_violation = normalize_violation_from_docstring_output(line)
         if new_violation:
             if current_violation:
                 violations.append(current_violation)
@@ -219,7 +217,7 @@ def run_docstring_validator(fixture_path: Path) -> List[Dict]:
     )
 
     # Parse output (validator exits non-zero on violations, which is expected)
-    violations = parse_docstring_validator_output(result.stdout + result.stderr, str(fixture_path))
+    violations = parse_docstring_validator_output(result.stdout + result.stderr)
 
     return violations
 
