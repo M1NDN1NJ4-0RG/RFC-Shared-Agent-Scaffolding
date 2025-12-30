@@ -30,6 +30,7 @@
 
 import json
 import subprocess
+from pathlib import Path
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
@@ -214,7 +215,7 @@ class RustRunner(Runner):
 
         return LintResult(tool="clippy", passed=False, violations=violations[:50])  # Limit output
 
-    def _parse_clippy_json_line(self, line: str, rust_dir: "Path") -> Optional[Violation]:
+    def _parse_clippy_json_line(self, line: str, rust_dir: Path) -> Optional[Violation]:
         """Parse a single line of clippy JSON output.
 
         :param line: JSON line from clippy output

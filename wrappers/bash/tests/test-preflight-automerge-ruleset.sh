@@ -54,9 +54,25 @@ source "./lib.sh"
 ROOT="$(cd .. && pwd)"
 PREF="${ROOT}/scripts/preflight-automerge-ruleset.sh"
 
-# make_mock_gh - Create mock gh command for testing
-# Args: $1 = directory to place mock binary
-# Creates executable script that responds based on GH_SCENARIO env var
+# Create mock gh command for testing
+#
+# Arguments:
+#   $1 - Directory to place mock binary
+#
+# Returns:
+#   0 on success
+#
+# Globals:
+#   None
+#
+# Outputs:
+#   Creates executable mock gh script in specified directory
+#
+# Side Effects:
+#   Creates file ${dir}/gh with execute permissions
+#
+# Purpose:
+#   Mock responds based on GH_SCENARIO env var for test isolation
 make_mock_gh() {
 	local dir="$1"
 	cat >"${dir}/gh" <<'GH'
@@ -94,7 +110,23 @@ GH
 	chmod +x "${dir}/gh"
 }
 
-# test_preflight_ok - Verify exit 0 when ruleset is properly configured
+# Verify exit 0 when ruleset is properly configured
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes
+#   Non-zero if test fails
+#
+# Globals:
+#   PREF - Path to preflight script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Ruleset active, targets default branch, all contexts present
 test_preflight_ok() {
 	local tmp mockbin
 	tmp="$(mktemp_dir)"
@@ -107,7 +139,23 @@ test_preflight_ok() {
 	)
 }
 
-# test_preflight_missing_ctx - Verify exit 1 when required contexts missing
+# Verify exit 1 when required contexts missing
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes (script correctly exits with 1)
+#   Non-zero if test fails
+#
+# Globals:
+#   PREF - Path to preflight script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Ruleset missing required status check contexts
 test_preflight_missing_ctx() {
 	local tmp mockbin rc
 	tmp="$(mktemp_dir)"
@@ -124,9 +172,23 @@ test_preflight_missing_ctx() {
 	)
 }
 
-# Test: inactive enforcement returns exit code 1
-# Args: none
-# Returns: exit code from test assertions
+# Verify exit 1 when ruleset enforcement is inactive
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes (script correctly exits with 1)
+#   Non-zero if test fails
+#
+# Globals:
+#   PREF - Path to preflight script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Ruleset has enforcement=disabled
 test_preflight_inactive() {
 	local tmp mockbin rc
 	tmp="$(mktemp_dir)"
@@ -143,9 +205,23 @@ test_preflight_inactive() {
 	)
 }
 
-# Test: missing default branch returns exit code 1
-# Args: none
-# Returns: exit code from test assertions
+# Verify exit 1 when ruleset doesn't target default branch
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes (script correctly exits with 1)
+#   Non-zero if test fails
+#
+# Globals:
+#   PREF - Path to preflight script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   Ruleset targets specific branch instead of ~DEFAULT_BRANCH
 test_preflight_no_default() {
 	local tmp mockbin rc
 	tmp="$(mktemp_dir)"
@@ -162,9 +238,23 @@ test_preflight_no_default() {
 	)
 }
 
-# Test: authentication error returns exit code 2
-# Args: none
-# Returns: exit code from test assertions
+# Verify exit 2 when authentication fails
+#
+# Arguments:
+#   None
+#
+# Returns:
+#   0 if test passes (script correctly exits with 2)
+#   Non-zero if test fails
+#
+# Globals:
+#   PREF - Path to preflight script
+#
+# Outputs:
+#   None (test output suppressed)
+#
+# Test Scenario:
+#   GitHub API returns auth error (Bad credentials/Forbidden)
 test_preflight_auth_error() {
 	local tmp mockbin rc
 	tmp="$(mktemp_dir)"
