@@ -103,6 +103,11 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
 - **Updated documentation**:
   - `epic-repo-lint-status.md`: Sub-Item 6.4.7 marked COMPLETE
   - Documented migration strategy and workflow names
+- **Code review completed** (per session-exit requirements):
+  - 3 security hardening suggestions (checksum/signature verification)
+  - Documented as FW-015 in `docs/future-work.md`
+  - Not blocking (applies to existing workflows too)
+- **CodeQL check**: Not applicable (CodeQL not configured)
 - **Strategy implemented**:
   - Umbrella workflow: PR gate (validates only changed languages)
   - Weekly full scan: Drift detection (validates all languages)
