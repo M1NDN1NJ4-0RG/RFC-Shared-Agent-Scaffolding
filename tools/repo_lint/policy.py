@@ -118,9 +118,7 @@ def get_policy_summary(policy: Dict) -> str:
     """Generate human-readable policy summary.
 
     :param policy: Loaded policy dictionary
-
-    :returns:
-        Multi-line string summarizing policy
+    :returns: Multi-line string summarizing policy
 
     :Examples:
         Auto-fix policy (deny-by-default):
