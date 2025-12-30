@@ -39,6 +39,12 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      force_all:
+        description: 'Force all language jobs to run (ignores changed-file detection)'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write  # Allow auto-commit for Black formatting (Auto-Fix job only)
@@ -160,18 +166,84 @@ jobs:
             echo "\`\`\`"
           } >> $GITHUB_STEP_SUMMARY
 
-      # Same-repo PR: commit and push changes
+      # Same-repo PR: commit and push changes with sync and retry
       - name: Commit and push changes (same-repo only)
         if: |
           steps.check_changes.outputs.changes_made == 'true' &&
           github.event.pull_request.head.repo.full_name == github.repository &&
           github.event_name == 'pull_request'
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Auto-format: Apply Black formatting [auto-format]"
-          git push
+          
+          # Retry loop: attempt up to 3 times to sync, format, commit, and push
+          MAX_ATTEMPTS=3
+          ATTEMPT=1
+          SUCCESS=false
+          
+          while [ $ATTEMPT -le $MAX_ATTEMPTS ] && [ "$SUCCESS" = "false" ]; do
+            echo "Attempt $ATTEMPT of $MAX_ATTEMPTS to commit and push auto-format changes..."
+            
+            # Sync with remote branch
+            echo "Fetching latest changes from remote..."
+            git fetch origin "${{ github.event.pull_request.head.ref }}"
+            
+            # Ensure we're on the correct branch
+            git checkout "${{ github.event.pull_request.head.ref }}" || true
+            
+            # Rebase on top of the latest remote changes
+            echo "Rebasing on latest remote changes..."
+            if git rebase "origin/${{ github.event.pull_request.head.ref }}"; then
+              echo "Rebase successful"
+            else
+              echo "Rebase had conflicts, aborting and retrying..."
+              git rebase --abort
+              ATTEMPT=$((ATTEMPT + 1))
+              sleep 2
+              continue
+            fi
+            
+            # Re-run Black formatter in case new changes need formatting
+            echo "Re-running Black formatter..."
+            black --line-length 120 . > /dev/null 2>&1 || true
+            
+            # Check if there are still changes after rebase
+            if git diff --quiet && git diff --cached --quiet; then
+              echo "No changes to commit after sync (formatting already applied or no longer needed)"
+              SUCCESS=true
+              break
+            fi
+            
+            # Stage all changes
+            git add -A
+            
+            # Commit with auto-format marker
+            git commit -m "Auto-format: Apply Black formatting [auto-format]" || {
+              echo "Commit failed, no changes to commit"
+              SUCCESS=true
+              break
+            }
+            
+            # Try to push
+            echo "Pushing changes..."
+            if git push origin "${{ github.event.pull_request.head.ref }}"; then
+              echo "Push successful!"
+              SUCCESS=true
+            else
+              echo "Push failed (non-fast-forward), will retry..."
+              # Fetch latest and reset to clean state for retry
+              git fetch origin "${{ github.event.pull_request.head.ref }}"
+              git reset --hard "origin/${{ github.event.pull_request.head.ref }}"
+              ATTEMPT=$((ATTEMPT + 1))
+              sleep 2
+            fi
+          done
+          
+          if [ "$SUCCESS" = "false" ]; then
+            echo "::error::Failed to push auto-format changes after $MAX_ATTEMPTS attempts"
+            exit 1
+          fi
 
       # Same-repo PR: leave PR comment
       - name: Comment on PR (same-repo only)
@@ -310,12 +382,11 @@ jobs:
     name: "Repo Lint: Python"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
-    outputs:
-      lint_outcome: ${{ steps.lint_python.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.python == 'true' ||
-       needs.detect-changed-files.outputs.shared_tooling == 'true')
+       needs.detect-changed-files.outputs.shared_tooling == 'true' ||
+       inputs.force_all == true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
@@ -332,7 +403,6 @@ jobs:
 
       - name: Run repo_lint for Python
         id: lint_python
-        continue-on-error: true
         run: |
           python3 -m tools.repo_lint check --ci --only python 2>&1 | tee python-lint-output.txt
           exit ${PIPESTATUS[0]}
@@ -352,12 +422,11 @@ jobs:
     name: "Repo Lint: Bash"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
-    outputs:
-      lint_outcome: ${{ steps.lint_bash.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.bash == 'true' ||
-       needs.detect-changed-files.outputs.shared_tooling == 'true')
+       needs.detect-changed-files.outputs.shared_tooling == 'true' ||
+       inputs.force_all == true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
@@ -385,7 +454,6 @@ jobs:
 
       - name: Run repo_lint for Bash
         id: lint_bash
-        continue-on-error: true
         run: |
           python3 -m tools.repo_lint check --ci --only bash 2>&1 | tee bash-lint-output.txt
           exit ${PIPESTATUS[0]}
@@ -405,12 +473,11 @@ jobs:
     name: "Repo Lint: PowerShell"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
-    outputs:
-      lint_outcome: ${{ steps.lint_powershell.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.powershell == 'true' ||
-       needs.detect-changed-files.outputs.shared_tooling == 'true')
+       needs.detect-changed-files.outputs.shared_tooling == 'true' ||
+       inputs.force_all == true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
@@ -427,7 +494,6 @@ jobs:
 
       - name: Run repo_lint for PowerShell
         id: lint_powershell
-        continue-on-error: true
         run: |
           python3 -m tools.repo_lint check --ci --only powershell 2>&1 | tee powershell-lint-output.txt
           exit ${PIPESTATUS[0]}
@@ -447,12 +513,11 @@ jobs:
     name: "Repo Lint: Perl"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
-    outputs:
-      lint_outcome: ${{ steps.lint_perl.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.perl == 'true' ||
-       needs.detect-changed-files.outputs.shared_tooling == 'true')
+       needs.detect-changed-files.outputs.shared_tooling == 'true' ||
+       inputs.force_all == true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
@@ -473,7 +538,6 @@ jobs:
 
       - name: Run repo_lint for Perl
         id: lint_perl
-        continue-on-error: true
         run: |
           python3 -m tools.repo_lint check --ci --only perl 2>&1 | tee perl-lint-output.txt
           exit ${PIPESTATUS[0]}
@@ -493,12 +557,11 @@ jobs:
     name: "Repo Lint: YAML"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
-    outputs:
-      lint_outcome: ${{ steps.lint_yaml.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.yaml == 'true' ||
-       needs.detect-changed-files.outputs.shared_tooling == 'true')
+       needs.detect-changed-files.outputs.shared_tooling == 'true' ||
+       inputs.force_all == true)
     steps:
       - name: Checkout repository
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
@@ -515,7 +578,6 @@ jobs:
 
       - name: Run repo_lint for YAML
         id: lint_yaml
-        continue-on-error: true
         run: |
           python3 -m tools.repo_lint check --ci --only yaml 2>&1 | tee yaml-lint-output.txt
           exit ${PIPESTATUS[0]}
@@ -641,18 +703,17 @@ jobs:
           # Create failure report directory
           mkdir -p repo-lint-failure-reports
 
-          # Check job statuses and lint step outcomes
+          # Check job statuses (now using job.result since continue-on-error is removed)
           AUTO_FIX="${{ needs.auto-fix-black.result }}"
           DETECT="${{ needs.detect-changed-files.result }}"
-          # For lint jobs, check step outcome (not job result) since continue-on-error masks failures
-          PYTHON="${{ needs.repo-lint-python.outputs.lint_outcome }}"
-          BASH="${{ needs.repo-lint-bash.outputs.lint_outcome }}"
-          POWERSHELL="${{ needs.repo-lint-powershell.outputs.lint_outcome }}"
-          PERL="${{ needs.repo-lint-perl.outputs.lint_outcome }}"
-          YAML="${{ needs.repo-lint-yaml.outputs.lint_outcome }}"
+          PYTHON="${{ needs.repo-lint-python.result }}"
+          BASH="${{ needs.repo-lint-bash.result }}"
+          POWERSHELL="${{ needs.repo-lint-powershell.result }}"
+          PERL="${{ needs.repo-lint-perl.result }}"
+          YAML="${{ needs.repo-lint-yaml.result }}"
           VECTORS="${{ needs.vector-tests.result }}"
 
-          # Map empty outcomes (skipped jobs) to "skipped" for display
+          # Map empty results (skipped jobs) to "skipped" for display
           PYTHON="${PYTHON:-skipped}"
           BASH="${BASH:-skipped}"
           POWERSHELL="${POWERSHELL:-skipped}"

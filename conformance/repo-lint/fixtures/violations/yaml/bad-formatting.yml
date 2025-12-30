@@ -1,0 +1,16 @@
+# Test fixture: intentionally bad YAML formatting
+
+# yamllint line-too-long violation (not auto-fixable)
+very_long_key_that_exceeds_the_maximum_line_length_limit_of_one_hundred_twenty_characters_and_will_trigger_yamllint_warning: value
+
+# yamllint trailing-spaces violation
+test: value   
+
+# yamllint indentation issues
+uneven:
+   indentation:
+    problem: here
+
+# yamllint comments-indentation
+  # badly indented comment
+key: value

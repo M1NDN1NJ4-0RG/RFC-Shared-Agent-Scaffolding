@@ -149,9 +149,9 @@ class PerlRunner(Runner):
         if not perl_files:
             return LintResult(tool="validate_docstrings", passed=True, violations=[])
 
-        # Run validator for each Perl file
+        # Run validator for perl language only (no need for --file args with --language flag)
         result = subprocess.run(
-            [sys.executable, str(validator_script)] + [f"--file={f}" for f in perl_files],
+            [sys.executable, str(validator_script), "--language", "perl"],
             cwd=self.repo_root,
             capture_output=True,
             text=True,

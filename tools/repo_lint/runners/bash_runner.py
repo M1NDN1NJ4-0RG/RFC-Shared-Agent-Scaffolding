@@ -231,9 +231,9 @@ class BashRunner(Runner):
         if not bash_files:
             return LintResult(tool="validate_docstrings", passed=True, violations=[])
 
-        # Run validator for each Bash file
+        # Run validator for bash language only (no need for --file args with --language flag)
         result = subprocess.run(
-            [sys.executable, str(validator_script)] + [f"--file={f}" for f in bash_files],
+            [sys.executable, str(validator_script), "--language", "bash"],
             cwd=self.repo_root,
             capture_output=True,
             text=True,
