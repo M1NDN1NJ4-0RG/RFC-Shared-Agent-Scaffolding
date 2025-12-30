@@ -81,7 +81,7 @@ class RustRunner(Runner):
         results = []
         results.append(self._run_rustfmt_check())
         results.append(self._run_clippy())
-        # TODO: Add docstring validation once Rust validator is integrated
+        # TODO: Add docstring validation once Rust validator is integrated  # pylint: disable=fixme
         # results.append(self._run_docstring_validation())
 
         return results

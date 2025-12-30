@@ -140,8 +140,8 @@ jobs:
           # Set SAFE_RUN_BIN for wrapper discovery (scripts run from outside repo)
           export SAFE_RUN_BIN="${GITHUB_WORKSPACE}/dist/linux/x86_64/safe-run"
 
-          # Note: Script paths include 'scripts' subdirectory in each bundle
-          # Structure: wrappers/scripts/<lang>/scripts/<script>
+          # Note: Bash uses dash-separated names, Python/Perl use underscore-separated names
+          # Structure: wrappers/<lang>/scripts/<script>
 
           # Test Bash
           echo "Testing Bash implementation..."
@@ -153,14 +153,15 @@ jobs:
           # Test Python 3
           echo "Testing Python 3 implementation..."
           python_exit=0
-          python3 "$GITHUB_WORKSPACE/wrappers/python3/scripts/safe-run.py" echo "ok" > /tmp/python-out.txt 2>&1 || python_exit=$?
+          python3 "$GITHUB_WORKSPACE/wrappers/python3/scripts/safe_run.py" echo "ok" \
+            > /tmp/python-out.txt 2>&1 || python_exit=$?
           python_artifacts=$(ls .agent/FAIL-LOGS/ 2>/dev/null | wc -l || echo 0)
           rm -rf .agent
 
           # Test Perl
           echo "Testing Perl implementation..."
           perl_exit=0
-          perl "$GITHUB_WORKSPACE/wrappers/perl/scripts/safe-run.pl" echo "ok" > /tmp/perl-out.txt 2>&1 || perl_exit=$?
+          perl "$GITHUB_WORKSPACE/wrappers/perl/scripts/safe_run.pl" echo "ok" > /tmp/perl-out.txt 2>&1 || perl_exit=$?
           perl_artifacts=$(ls .agent/FAIL-LOGS/ 2>/dev/null | wc -l || echo 0)
           rm -rf .agent
 
@@ -211,39 +212,50 @@ jobs:
           # Test Bash
           echo "Testing Bash implementation..."
           bash_exit=0
-          bash "$GITHUB_WORKSPACE/wrappers/bash/scripts/safe-run.sh" bash -c 'echo OUT; echo ERR >&2; exit 7' > /tmp/bash-out2.txt 2>&1 || bash_exit=$?
+          bash "$GITHUB_WORKSPACE/wrappers/bash/scripts/safe-run.sh" \
+            bash -c 'echo OUT; echo ERR >&2; exit 7' > /tmp/bash-out2.txt 2>&1 || bash_exit=$?
           bash_log=$(ls .agent/FAIL-LOGS/*.log 2>/dev/null | head -1 || echo "")
           bash_has_stdout=$(grep -c "=== STDOUT ===" "$bash_log" 2>/dev/null || echo 0)
           bash_has_stderr=$(grep -c "=== STDERR ===" "$bash_log" 2>/dev/null || echo 0)
           bash_log_pattern="FAIL"
           if [ -n "$bash_log" ]; then
-            basename "$bash_log" | grep -qE '^[0-9]{8}T[0-9]{6}Z-pid[0-9]+-FAIL\.log$' && bash_log_pattern="MATCH" || bash_log_pattern="NOMATCH"
+            basename "$bash_log" | \
+              grep -qE '^[0-9]{8}T[0-9]{6}Z-pid[0-9]+-FAIL\.log$' && \
+              bash_log_pattern="MATCH" || bash_log_pattern="NOMATCH"
           fi
           rm -rf .agent
 
           # Test Python 3
           echo "Testing Python 3 implementation..."
           python_exit=0
-          python3 "$GITHUB_WORKSPACE/wrappers/python3/scripts/safe-run.py" python3 -c 'import sys; print("OUT"); print("ERR", file=sys.stderr); raise SystemExit(7)' > /tmp/python-out2.txt 2>&1 || python_exit=$?
+          python3 "$GITHUB_WORKSPACE/wrappers/python3/scripts/safe_run.py" \
+            python3 -c 'import sys; print("OUT"); print("ERR", file=sys.stderr); raise SystemExit(7)' \
+            > /tmp/python-out2.txt 2>&1 || python_exit=$?
           python_log=$(ls .agent/FAIL-LOGS/*.log 2>/dev/null | head -1 || echo "")
           python_has_stdout=$(grep -c "=== STDOUT ===" "$python_log" 2>/dev/null || echo 0)
           python_has_stderr=$(grep -c "=== STDERR ===" "$python_log" 2>/dev/null || echo 0)
           python_log_pattern="FAIL"
           if [ -n "$python_log" ]; then
-            basename "$python_log" | grep -qE '^[0-9]{8}T[0-9]{6}Z-pid[0-9]+-FAIL\.log$' && python_log_pattern="MATCH" || python_log_pattern="NOMATCH"
+            basename "$python_log" | \
+              grep -qE '^[0-9]{8}T[0-9]{6}Z-pid[0-9]+-FAIL\.log$' && \
+              python_log_pattern="MATCH" || python_log_pattern="NOMATCH"
           fi
           rm -rf .agent
 
           # Test Perl
           echo "Testing Perl implementation..."
           perl_exit=0
-          perl "$GITHUB_WORKSPACE/wrappers/perl/scripts/safe-run.pl" perl -e 'print "OUT\n"; print STDERR "ERR\n"; exit 7' > /tmp/perl-out2.txt 2>&1 || perl_exit=$?
+          perl "$GITHUB_WORKSPACE/wrappers/perl/scripts/safe_run.pl" \
+            perl -e 'print "OUT\n"; print STDERR "ERR\n"; exit 7' \
+            > /tmp/perl-out2.txt 2>&1 || perl_exit=$?
           perl_log=$(ls .agent/FAIL-LOGS/*.log 2>/dev/null | head -1 || echo "")
           perl_has_stdout=$(grep -c "=== STDOUT ===" "$perl_log" 2>/dev/null || echo 0)
           perl_has_stderr=$(grep -c "=== STDERR ===" "$perl_log" 2>/dev/null || echo 0)
           perl_log_pattern="FAIL"
           if [ -n "$perl_log" ]; then
-            basename "$perl_log" | grep -qE '^[0-9]{8}T[0-9]{6}Z-pid[0-9]+-FAIL\.log$' && perl_log_pattern="MATCH" || perl_log_pattern="NOMATCH"
+            basename "$perl_log" | \
+              grep -qE '^[0-9]{8}T[0-9]{6}Z-pid[0-9]+-FAIL\.log$' && \
+              perl_log_pattern="MATCH" || perl_log_pattern="NOMATCH"
           fi
           rm -rf .agent
 
@@ -265,7 +277,8 @@ jobs:
           fi
 
           # All should have stdout marker
-          if [ "$bash_has_stdout" != "1" ] || [ "$python_has_stdout" != "1" ] || [ "$perl_has_stdout" != "1" ]; then
+          if [ "$bash_has_stdout" != "1" ] || [ "$python_has_stdout" != "1" ] || \
+             [ "$perl_has_stdout" != "1" ]; then
             echo "❌ DRIFT: All implementations should have === STDOUT === marker (M0-P1-I1)"
             echo "   Bash: $bash_has_stdout, Python: $python_has_stdout, Perl: $perl_has_stdout"
             drift=1
@@ -279,7 +292,8 @@ jobs:
           fi
 
           # All should match log naming pattern
-          if [ "$bash_log_pattern" != "MATCH" ] || [ "$python_log_pattern" != "MATCH" ] || [ "$perl_log_pattern" != "MATCH" ]; then
+          if [ "$bash_log_pattern" != "MATCH" ] || [ "$python_log_pattern" != "MATCH" ] || \
+             [ "$perl_log_pattern" != "MATCH" ]; then
             echo "❌ DRIFT: All implementations should follow M0-P1-I2 log naming format"
             echo "   Format: YYYYMMDDTHHMMSSZ-pidPID-FAIL.log"
             echo "   Bash: $bash_log_pattern, Python: $python_log_pattern, Perl: $perl_log_pattern"
@@ -318,7 +332,8 @@ jobs:
           echo "Note: PowerShell tests run on Windows runner separately"
           echo "      (not included in this Linux-based drift detection)"
           echo ""
-          if [ "${{ steps.drift-safe-run-001.outcome }}" == "success" ] && [ "${{ steps.drift-safe-run-002.outcome }}" == "success" ]; then
+          if [ "${{ steps.drift-safe-run-001.outcome }}" == "success" ] && \
+             [ "${{ steps.drift-safe-run-002.outcome }}" == "success" ]; then
             echo "✅ PASS: No drift detected. All implementations exhibit identical behavior."
           else
             echo "❌ FAIL: Drift detected. Review failures above."

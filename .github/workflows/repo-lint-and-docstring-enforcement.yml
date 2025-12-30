@@ -96,7 +96,7 @@ jobs:
         run: |
           # Create diff of changes
           git diff > black.diff
-          
+
           # Create detailed log
           {
             echo "Black Auto-Fix Forensics"
@@ -137,7 +137,8 @@ jobs:
       - name: Set run URL output
         id: set_run_url
         run: |
-          echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> $GITHUB_OUTPUT
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "url=$run_url" >> $GITHUB_OUTPUT
 
       - name: Write job summary
         if: steps.check_changes.outputs.changes_made == 'true'
@@ -187,13 +188,14 @@ jobs:
 
             **Workflow Run:** ${{ steps.set_run_url.outputs.url }}
 
-            **Forensic Artifacts:** Download the \`black-autofix-forensics\` artifact from the workflow run to review the exact changes.
+            **Forensic Artifacts:** Download the \`black-autofix-forensics\` artifact from \
+            the workflow run to review the exact changes.
 
             **Next Steps:**
             - Pull the changes: \`git pull\`
             - Lint checks will run on the next workflow run for the updated commit.
             `;
-            
+
             github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -256,10 +258,10 @@ jobs:
             # For push events, compare with previous commit; fall back to empty tree on initial commit
             BASE_REF=$(git rev-parse --verify HEAD^ 2>/dev/null || echo "4b825dc642cb6eb9a060e54bf8d69288fbee4904")
           fi
-          
+
           # Get changed files
           CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD)
-          
+
           # Initialize all outputs to false
           echo "python=false" >> $GITHUB_OUTPUT
           echo "bash=false" >> $GITHUB_OUTPUT
@@ -267,34 +269,37 @@ jobs:
           echo "perl=false" >> $GITHUB_OUTPUT
           echo "yaml=false" >> $GITHUB_OUTPUT
           echo "shared_tooling=false" >> $GITHUB_OUTPUT
-          
+
           # Check for Python files
           if echo "$CHANGED_FILES" | grep -qE '\.py$'; then
             echo "python=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for Bash files
           if echo "$CHANGED_FILES" | grep -qE '\.(sh|bash|zsh)$'; then
             echo "bash=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for PowerShell files
           if echo "$CHANGED_FILES" | grep -qE '\.ps1$'; then
             echo "powershell=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for Perl files
           if echo "$CHANGED_FILES" | grep -qE '\.(pl|pm)$'; then
             echo "perl=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for YAML files
           if echo "$CHANGED_FILES" | grep -qE '\.(ya?ml)$'; then
             echo "yaml=true" >> $GITHUB_OUTPUT
           fi
-          
+
           # Check for shared tooling changes
-          if echo "$CHANGED_FILES" | grep -qE '(^|/)tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/|^pyproject\.toml$|^\.github/workflows/|docs/contributing/'; then
+          if echo "$CHANGED_FILES" | grep -qE \
+              '(^|/)tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/' ||
+             echo "$CHANGED_FILES" | grep -qE \
+              '^pyproject\.toml$|^\.github/workflows/|docs/contributing/'; then
             echo "shared_tooling=true" >> $GITHUB_OUTPUT
           fi
 
@@ -305,9 +310,11 @@ jobs:
     name: "Repo Lint: Python"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_python.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.python == 'true' || 
+      (needs.detect-changed-files.outputs.python == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -324,8 +331,19 @@ jobs:
           python3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1
 
       - name: Run repo_lint for Python
+        id: lint_python
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only python
+          python3 -m tools.repo_lint check --ci --only python 2>&1 | tee python-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Python lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: python-lint-results
+          path: python-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Repo Lint: Bash
@@ -334,9 +352,11 @@ jobs:
     name: "Repo Lint: Bash"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_bash.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.bash == 'true' || 
+      (needs.detect-changed-files.outputs.bash == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -364,8 +384,19 @@ jobs:
           sudo mv /tmp/shfmt /usr/local/bin/shfmt
 
       - name: Run repo_lint for Bash
+        id: lint_bash
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only bash
+          python3 -m tools.repo_lint check --ci --only bash 2>&1 | tee bash-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Bash lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: bash-lint-results
+          path: bash-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Repo Lint: PowerShell
@@ -374,9 +405,11 @@ jobs:
     name: "Repo Lint: PowerShell"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_powershell.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.powershell == 'true' || 
+      (needs.detect-changed-files.outputs.powershell == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -393,8 +426,19 @@ jobs:
           Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.23.0 -Force -Scope CurrentUser
 
       - name: Run repo_lint for PowerShell
+        id: lint_powershell
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only powershell
+          python3 -m tools.repo_lint check --ci --only powershell 2>&1 | tee powershell-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload PowerShell lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: powershell-lint-results
+          path: powershell-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Repo Lint: Perl
@@ -403,9 +447,11 @@ jobs:
     name: "Repo Lint: Perl"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_perl.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.perl == 'true' || 
+      (needs.detect-changed-files.outputs.perl == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -426,8 +472,19 @@ jobs:
           cpanm --notest Perl::Critic PPI
 
       - name: Run repo_lint for Perl
+        id: lint_perl
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only perl
+          python3 -m tools.repo_lint check --ci --only perl 2>&1 | tee perl-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Perl lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: perl-lint-results
+          path: perl-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Repo Lint: YAML
@@ -436,9 +493,11 @@ jobs:
     name: "Repo Lint: YAML"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_yaml.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
-      (needs.detect-changed-files.outputs.yaml == 'true' || 
+      (needs.detect-changed-files.outputs.yaml == 'true' ||
        needs.detect-changed-files.outputs.shared_tooling == 'true')
     steps:
       - name: Checkout repository
@@ -455,8 +514,19 @@ jobs:
           python3 -m pip install yamllint==1.35.1
 
       - name: Run repo_lint for YAML
+        id: lint_yaml
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only yaml
+          python3 -m tools.repo_lint check --ci --only yaml 2>&1 | tee yaml-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload YAML lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: yaml-lint-results
+          path: yaml-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Vector Tests: Conformance
@@ -524,22 +594,71 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download Python lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: python-lint-results
+          path: lint-artifacts/python-lint-results/
+
+      - name: Download Bash lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: bash-lint-results
+          path: lint-artifacts/bash-lint-results/
+
+      - name: Download PowerShell lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: powershell-lint-results
+          path: lint-artifacts/powershell-lint-results/
+
+      - name: Download Perl lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: perl-lint-results
+          path: lint-artifacts/perl-lint-results/
+
+      - name: Download YAML lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: yaml-lint-results
+          path: lint-artifacts/yaml-lint-results/
+
+      - name: "Debug: List downloaded artifacts"
+        run: |
+          echo "=== Listing lint-artifacts directory ==="
+          ls -laR lint-artifacts/ || echo "No lint-artifacts directory found"
+          echo "========================================="
+
       - name: Collect job results
         id: collect_results
         run: |
           # Create failure report directory
           mkdir -p repo-lint-failure-reports
-          
-          # Check job statuses
+
+          # Check job statuses and lint step outcomes
           AUTO_FIX="${{ needs.auto-fix-black.result }}"
           DETECT="${{ needs.detect-changed-files.result }}"
-          PYTHON="${{ needs.repo-lint-python.result }}"
-          BASH="${{ needs.repo-lint-bash.result }}"
-          POWERSHELL="${{ needs.repo-lint-powershell.result }}"
-          PERL="${{ needs.repo-lint-perl.result }}"
-          YAML="${{ needs.repo-lint-yaml.result }}"
+          # For lint jobs, check step outcome (not job result) since continue-on-error masks failures
+          PYTHON="${{ needs.repo-lint-python.outputs.lint_outcome }}"
+          BASH="${{ needs.repo-lint-bash.outputs.lint_outcome }}"
+          POWERSHELL="${{ needs.repo-lint-powershell.outputs.lint_outcome }}"
+          PERL="${{ needs.repo-lint-perl.outputs.lint_outcome }}"
+          YAML="${{ needs.repo-lint-yaml.outputs.lint_outcome }}"
           VECTORS="${{ needs.vector-tests.result }}"
-          
+
+          # Map empty outcomes (skipped jobs) to "skipped" for display
+          PYTHON="${PYTHON:-skipped}"
+          BASH="${BASH:-skipped}"
+          POWERSHELL="${POWERSHELL:-skipped}"
+          PERL="${PERL:-skipped}"
+          YAML="${YAML:-skipped}"
+
           # Create summary file
           SUMMARY_FILE="repo-lint-failure-reports/summary-$(date -u +%Y%m%d-%H%M%S).md"
           {
@@ -564,51 +683,96 @@ jobs:
             echo "| Vector Tests: Conformance | $VECTORS |"
             echo ""
           } > "$SUMMARY_FILE"
-          
+
           # Track if any failures occurred
           HAS_FAILURES=false
-          
+
           # Add failure details for each failed job
           if [ "$PYTHON" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Python Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "Python linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            PYTHON_ARTIFACT="lint-artifacts/python-lint-results/python-lint-output.txt"
+            if [ -f "$PYTHON_ARTIFACT" ]; then
+              echo "Found Python lint output at: $PYTHON_ARTIFACT" >&2
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "$PYTHON_ARTIFACT" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "WARNING: Python lint artifact not found at: $PYTHON_ARTIFACT" >&2
+              echo "Python linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$BASH" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Bash Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "Bash linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            BASH_ARTIFACT="lint-artifacts/bash-lint-results/bash-lint-output.txt"
+            if [ -f "$BASH_ARTIFACT" ]; then
+              echo "Found Bash lint output at: $BASH_ARTIFACT" >&2
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "$BASH_ARTIFACT" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "WARNING: Bash lint artifact not found at: $BASH_ARTIFACT" >&2
+              echo "Bash linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$POWERSHELL" = "failure" ]; then
             HAS_FAILURES=true
             echo "## PowerShell Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "PowerShell linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            POWERSHELL_ARTIFACT="lint-artifacts/powershell-lint-results/powershell-lint-output.txt"
+            if [ -f "$POWERSHELL_ARTIFACT" ]; then
+              echo "Found PowerShell lint output at: $POWERSHELL_ARTIFACT" >&2
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "$POWERSHELL_ARTIFACT" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "WARNING: PowerShell lint artifact not found at: $POWERSHELL_ARTIFACT" >&2
+              echo "PowerShell linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$PERL" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Perl Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "Perl linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            PERL_ARTIFACT="lint-artifacts/perl-lint-results/perl-lint-output.txt"
+            if [ -f "$PERL_ARTIFACT" ]; then
+              echo "Found Perl lint output at: $PERL_ARTIFACT" >&2
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "$PERL_ARTIFACT" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "WARNING: Perl lint artifact not found at: $PERL_ARTIFACT" >&2
+              echo "Perl linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$YAML" = "failure" ]; then
             HAS_FAILURES=true
             echo "## YAML Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "YAML linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            YAML_ARTIFACT="lint-artifacts/yaml-lint-results/yaml-lint-output.txt"
+            if [ -f "$YAML_ARTIFACT" ]; then
+              echo "Found YAML lint output at: $YAML_ARTIFACT" >&2
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "$YAML_ARTIFACT" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "WARNING: YAML lint artifact not found at: $YAML_ARTIFACT" >&2
+              echo "YAML linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           if [ "$VECTORS" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Vector Test Failures" >> "$SUMMARY_FILE"
@@ -616,7 +780,7 @@ jobs:
             echo "Vector tests failed. See job logs for details." >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
           fi
-          
+
           # Set output flag
           if [ "$HAS_FAILURES" = "true" ]; then
             echo "has_failures=true" >> $GITHUB_OUTPUT
@@ -626,7 +790,7 @@ jobs:
             echo "" >> "$SUMMARY_FILE"
             echo "All linting and docstring enforcement checks passed successfully." >> "$SUMMARY_FILE"
           fi
-          
+
           # Display summary
           cat "$SUMMARY_FILE"
 
@@ -647,13 +811,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add repo-lint-failure-reports/
-          
+
           # Commit if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit (logs may already exist)"
           else
             git commit -m "CI: Add repo-lint failure report [auto-generated]"
-            
+
             # Push with error handling
             if ! git push; then
               echo "::warning::Failed to push failure report to repository"

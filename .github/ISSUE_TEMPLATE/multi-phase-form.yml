@@ -24,7 +24,8 @@
 # - This is a GitHub Issue Form YAML template, not executable code
 # - Standard phase count is 3 (adjustable per feature complexity)
 # - PR chain checklist enables progress tracking in issue
-# - See: https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/syntax-for-issue-forms
+# - See: https://docs.github.com/en/communities/using-templates-to-encourage-useful-
+#        issues-and-pull-requests/syntax-for-issue-forms
 
 ---
 name: Multi-Phase Feature Implementation

@@ -81,6 +81,7 @@
 
 set -euo pipefail
 cd "$(dirname "$0")"
+# shellcheck disable=SC1091  # lib.sh is sourced at runtime
 source "./lib.sh"
 
 # Discover paths
@@ -132,6 +133,7 @@ test_failure_captures_and_rc() {
 		rc=$?
 		set -e
 		[[ "$rc" -eq 42 ]]
+		# shellcheck disable=SC2012  # ls is acceptable here for getting first file
 		f="$(ls .agent/FAIL-LOGS/*-FAIL.log | head -n1)"
 		[[ -n "$f" ]]
 		c="$(cat "$f")"
@@ -193,6 +195,7 @@ test_sigint_aborted_log() {
 		set -e
 		# 143 is the canonical exit code for SIGTERM; accept 130 too if the platform maps differently.
 		[[ "$rc" -eq 143 || "$rc" -eq 130 ]]
+		# shellcheck disable=SC2012  # ls is acceptable here for getting first file
 		f="$(ls .agent/FAIL-LOGS/*ABORTED.log | head -n1)"
 		[[ -n "$f" ]]
 		grep -F "START" "$f" >/dev/null
@@ -212,6 +215,7 @@ test_event_ledger() {
 		rc=$?
 		set -e
 		[[ "$rc" -eq 5 ]]
+		# shellcheck disable=SC2012  # ls is acceptable here for getting first file
 		f="$(ls .agent/FAIL-LOGS/*-FAIL.log | head -n1)"
 		[[ -n "$f" ]]
 		c="$(cat "$f")"
@@ -241,6 +245,7 @@ test_merged_view() {
 		rc=$?
 		set -e
 		[[ "$rc" -eq 3 ]]
+		# shellcheck disable=SC2012  # ls is acceptable here for getting first file
 		f="$(ls .agent/FAIL-LOGS/*-FAIL.log | head -n1)"
 		[[ -n "$f" ]]
 		c="$(cat "$f")"

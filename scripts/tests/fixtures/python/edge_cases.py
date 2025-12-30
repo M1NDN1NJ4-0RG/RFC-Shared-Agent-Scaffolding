@@ -110,6 +110,7 @@ class ComplexClass:
         await asyncio.sleep(delay)
 
 
+# pylint: disable=keyword-arg-before-vararg  # Intentional test fixture
 def function_with_multiline_signature(
     first_param: str,
     second_param: int,
@@ -171,6 +172,7 @@ def outer_function(x: int) -> Callable[[int], int]:
     return inner_function
 
 
+# pylint: disable=non-ascii-name  # Intentional test fixture for unicode handling
 def function_with_special_chars_λ(param_with_émoji: str) -> str:
     """Function with unicode characters in name.
 

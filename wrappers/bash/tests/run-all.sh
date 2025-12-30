@@ -64,6 +64,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 # shellcheck source=lib.sh
+# shellcheck disable=SC1091  # lib.sh is sourced at runtime
 source "./lib.sh"
 
 # Run each test file in a fresh bash to avoid state leakage.

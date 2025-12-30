@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=wrong-import-position,protected-access,unused-variable  # Test file needs special setup
 """Unit tests for install module (install/cleanup functionality).
 
 :Purpose:

@@ -17,10 +17,10 @@ def no_doc():
 class MissingClassDoc:
     def method_with_doc(self):
         """Method has documentation."""
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
     def method_without_doc(self):
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
 
 class ProperlyDocumented:
@@ -36,7 +36,7 @@ class ProperlyDocumented:
         :Purpose:
             Constructor documentation.
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
     def public_method(self):
         """Public method with documentation.
@@ -44,7 +44,7 @@ class ProperlyDocumented:
         :Purpose:
             Demonstrates proper method documentation.
         """
-        pass
+        pass  # pylint: disable=unnecessary-pass
 
 
 def exempted_function():  # noqa: D103

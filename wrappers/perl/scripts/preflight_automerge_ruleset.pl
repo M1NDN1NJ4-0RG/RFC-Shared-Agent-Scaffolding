@@ -484,7 +484,7 @@ sub gh_api {
   open(my $fh, "-|", "gh", "api",
        "-H", "Accept: application/vnd.github+json",
        "-H", "X-GitHub-Api-Version: $api_version",
-       $endpoint) or return undef;
+       $endpoint) or return;
   my $json = do { local $/; <$fh> };
   close($fh);
   return $json;

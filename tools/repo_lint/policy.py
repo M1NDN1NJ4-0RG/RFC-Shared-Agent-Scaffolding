@@ -72,7 +72,7 @@ def load_policy() -> Dict:
         json.JSONDecodeError: If policy file is invalid JSON
     """
     policy_path = get_policy_path()
-    with open(policy_path) as f:
+    with open(policy_path, encoding="utf-8") as f:
         return json.load(f)
 
 
