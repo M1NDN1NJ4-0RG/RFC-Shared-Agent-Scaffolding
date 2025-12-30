@@ -29,7 +29,7 @@ import subprocess
 import sys
 from typing import List, Optional
 
-from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
 from tools.repo_lint.policy import is_category_allowed
 from tools.repo_lint.runners.base import Runner, command_exists
 
@@ -117,21 +117,9 @@ class BashRunner(Runner):
         )
         if not result.stdout.strip():
             return []
-        
-        # Exclude test fixture directories with intentional violations
-        exclude_patterns = [
-            "conformance/repo-lint/fixtures/violations/",
-            "conformance/repo-lint/vectors/fixtures/",
-            "scripts/tests/fixtures/",
-        ]
-        
+
         all_files = result.stdout.strip().split("\n")
-        filtered_files = [
-            f for f in all_files 
-            if not any(pattern in f for pattern in exclude_patterns)
-        ]
-        
-        return filtered_files
+        return filter_excluded_paths(all_files)
 
     def _run_shellcheck(self) -> LintResult:
         """Run ShellCheck.

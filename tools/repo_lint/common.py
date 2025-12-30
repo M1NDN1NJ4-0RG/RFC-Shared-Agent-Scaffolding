@@ -100,3 +100,47 @@ class MissingToolError(RepoLintError):
 
 class RunnerError(RepoLintError):
     """Raised when a runner encounters an error."""
+
+
+# File filtering utilities
+
+
+def filter_excluded_paths(files: List[str], exclude_patterns: Optional[List[str]] = None) -> List[str]:
+    """Filter out files matching exclusion patterns.
+
+    :param files: List of file paths to filter
+    :param exclude_patterns: List of path patterns to exclude (uses substring matching)
+    :returns: Filtered list of file paths
+
+    :Examples:
+        Filter test fixtures::
+
+            files = ["src/main.py", "fixtures/violations/bad.py"]
+            filtered = filter_excluded_paths(files, ["fixtures/violations/"])
+            # Result: ["src/main.py"]
+
+    :Note:
+        Uses simple substring matching. A file is excluded if any pattern
+        appears anywhere in its path. This is consistent with how git pathspecs
+        work for directory exclusions.
+    """
+    if exclude_patterns is None:
+        exclude_patterns = get_default_exclude_patterns()
+
+    return [f for f in files if not any(pattern in f for pattern in exclude_patterns)]
+
+
+def get_default_exclude_patterns() -> List[str]:
+    """Get the default list of exclusion patterns for test fixtures.
+
+    :returns: List of exclusion patterns
+
+    :Note:
+        These patterns are used consistently across all language runners to
+        exclude test fixtures with intentional violations from linting.
+    """
+    return [
+        "conformance/repo-lint/fixtures/violations/",
+        "conformance/repo-lint/vectors/fixtures/",
+        "scripts/tests/fixtures/",
+    ]
