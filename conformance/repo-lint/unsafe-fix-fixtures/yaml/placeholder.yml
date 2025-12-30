@@ -1,0 +1,7 @@
+# Placeholder fixture for YAML unsafe fix testing
+# TODO: This file is minimal - unsafe fixers not yet implemented
+# When unsafe fixers are added, replace this with a real non-conforming example
+
+placeholder:
+  note: "TODO: Add non-conforming YAML format here"
+  status: "Unsafe fixers not implemented"

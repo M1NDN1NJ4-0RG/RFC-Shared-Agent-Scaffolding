@@ -42,10 +42,8 @@ class PerlRunner(Runner):
         :returns:
             True if Perl files exist, False otherwise
         """
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.pl"] + get_git_pathspec_excludes()], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-        return bool(result.stdout.strip())
+        files = get_tracked_files(["**/*.pl"], self.repo_root)
+        return len(files) > 0
 
     def check_tools(self) -> List[str]:
         """Check which Perl tools are missing.

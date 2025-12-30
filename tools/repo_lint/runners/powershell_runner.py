@@ -42,10 +42,8 @@ class PowerShellRunner(Runner):
         :returns:
             True if PowerShell files exist, False otherwise
         """
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.ps1"] + get_git_pathspec_excludes()], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-        return bool(result.stdout.strip())
+        files = get_tracked_files(["**/*.ps1"], self.repo_root)
+        return len(files) > 0
 
     def check_tools(self) -> List[str]:
         """Check which PowerShell tools are missing.
