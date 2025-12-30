@@ -246,15 +246,13 @@ def get_tracked_files() -> List[Path]:
         p = Path(file_path)
 
         # Check if file is in an excluded directory
+        # Compatibility-friendly check: treat file as excluded if it is the
+        # directory itself or is located within that directory.
         excluded = False
         for exclude_dir in exclude_dirs:
-            try:
-                if p.is_relative_to(exclude_dir):
-                    excluded = True
-                    break
-            except ValueError:
-                # is_relative_to raises ValueError if not relative
-                pass
+            if p == exclude_dir or exclude_dir in p.parents:
+                excluded = True
+                break
 
         if excluded:
             continue
