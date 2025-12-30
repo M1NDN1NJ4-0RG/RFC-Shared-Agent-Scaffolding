@@ -207,73 +207,80 @@ class RustRunner(Runner):
         for line in result.stdout.splitlines():
             if not line.strip():
                 continue
-            try:
-                msg = json.loads(line)
-                # Only process compiler messages (not build artifacts)
-                if msg.get("reason") != "compiler-message":
-                    continue
-
-                message_obj = msg.get("message", {})
-                # Skip non-warning/non-error messages
-                level = message_obj.get("level", "")
-                if level not in ["warning", "error"]:
-                    continue
-
-                # Extract location information
-                spans = message_obj.get("spans", [])
-                primary_span = next((s for s in spans if s.get("is_primary")), None)
-
-                if primary_span:
-                    file_path = primary_span.get("file_name", "unknown")
-                    line_num = primary_span.get("line_start")
-                    # Make file path relative to rust/ directory if it's absolute
-                    # Note: Clippy may return absolute paths; we normalize them to be relative to rust/
-                    if file_path.startswith(str(rust_dir)):
-                        # Path is absolute and within rust_dir - make it relative
-                        try:
-                            file_path = file_path[len(str(rust_dir)) + 1 :]
-                        except (ValueError, IndexError):
-                            pass  # Keep original path if relativization fails
-                    elif file_path.startswith("/"):
-                        # Path is absolute but not within rust_dir
-                        # This shouldn't normally happen, but keep the path as-is for debugging
-                        # The absolute path will help developers locate the issue
-                        pass
-                else:
-                    file_path = "unknown"
-                    line_num = None
-
-                # Extract message text
-                msg_text = message_obj.get("message", "clippy warning")
-
-                # Add lint name if available
-                code = message_obj.get("code", {})
-                if code and "code" in code:
-                    lint_name = code["code"]
-                    msg_text = f"{lint_name}: {msg_text}"
-
-                violations.append(
-                    Violation(
-                        tool="clippy",
-                        file=file_path,
-                        line=line_num,
-                        message=msg_text,
-                    )
-                )
-
-            except (json.JSONDecodeError, KeyError, TypeError):
-                # Fallback to plain text parsing if JSON fails
-                if "warning:" in line or "error:" in line:
-                    # Try to extract file information from text format
-                    # Format typically: "warning: message\n  --> file.rs:line:col"
-                    file_info = "unknown"
-                    if "-->" in line:
-                        parts = line.split("-->")
-                        if len(parts) > 1:
-                            file_info = parts[1].strip().split(":")[0]
-                    violations.append(Violation(tool="clippy", file=file_info, line=None, message=line.strip()))
+            
+            violation = self._parse_clippy_json_line(line, rust_dir)
+            if violation:
+                violations.append(violation)
 
         return LintResult(tool="clippy", passed=False, violations=violations[:50])  # Limit output
+
+    def _parse_clippy_json_line(self, line: str, rust_dir) -> Optional[Violation]:
+        """Parse a single line of clippy JSON output.
+
+        :param line: JSON line from clippy output
+        :param rust_dir: Path to rust directory for path relativization
+        :returns: Violation object if line contains a warning/error, None otherwise
+        """
+        try:
+            msg = json.loads(line)
+            # Only process compiler messages (not build artifacts)
+            if msg.get("reason") != "compiler-message":
+                return None
+
+            message_obj = msg.get("message", {})
+            # Skip non-warning/non-error messages
+            level = message_obj.get("level", "")
+            if level not in ["warning", "error"]:
+                return None
+
+            # Extract location information
+            spans = message_obj.get("spans", [])
+            primary_span = next((s for s in spans if s.get("is_primary")), None)
+
+            # Make file path relative to rust/ directory if it's absolute
+            # Note: Clippy may return absolute paths; we normalize them to be relative to rust/
+            if primary_span:
+                file_path = primary_span.get("file_name", "unknown")
+                line_num = primary_span.get("line_start")
+                
+                if file_path.startswith(str(rust_dir)):
+                    # Path is absolute and within rust_dir - make it relative
+                    try:
+                        file_path = file_path[len(str(rust_dir)) + 1 :]
+                    except (ValueError, IndexError):
+                        pass  # Keep original path if relativization fails
+                elif file_path.startswith("/"):
+                    # Path is absolute but not within rust_dir
+                    # This shouldn't normally happen, but keep the path as-is for debugging
+                    # The absolute path will help developers locate the issue
+                    pass
+            else:
+                file_path = "unknown"
+                line_num = None
+
+            # Extract message text
+            msg_text = message_obj.get("message", "clippy warning")
+
+            # Add lint name if available
+            code = message_obj.get("code", {})
+            if code and "code" in code:
+                lint_name = code["code"]
+                msg_text = f"{lint_name}: {msg_text}"
+
+            return Violation(tool="clippy", file=file_path, line=line_num, message=msg_text)
+
+        except (json.JSONDecodeError, KeyError, TypeError):
+            # Fallback to plain text parsing if JSON fails
+            if "warning:" in line or "error:" in line:
+                # Try to extract file information from text format
+                # Format typically: "warning: message\n  --> file.rs:line:col"
+                file_info = "unknown"
+                if "-->" in line:
+                    parts = line.split("-->")
+                    if len(parts) > 1:
+                        file_info = parts[1].strip().split(":")[0]
+                return Violation(tool="clippy", file=file_info, line=None, message=line.strip())
+            return None
 
     def _run_docstring_validation(self) -> LintResult:
         """Run Rust docstring validation using validate_docstrings.py.
