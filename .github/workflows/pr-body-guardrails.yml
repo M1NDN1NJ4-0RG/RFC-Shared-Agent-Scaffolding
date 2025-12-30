@@ -409,8 +409,8 @@ jobs:
                 # Extract which issue was matched
                 matched_issue=$(echo "$matched_line" | \
                   grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
-                fail "Auto-close keyword found in PR TITLE for EPIC issue $matched_issue. \
-                Use Refs/Related/Tracks instead. Matched text: $matched_line"
+                fail "Auto-close keyword found in PR TITLE for EPIC issue $matched_issue." \
+                     " Use Refs/Related/Tracks instead. Matched text: $matched_line"
               fi
 
               # Check PR body
@@ -418,9 +418,9 @@ jobs:
                 # Extract which issue was matched
                 matched_issue=$(echo "$matched_line" | \
                   grep -Eo '(#[0-9]+|[[:alnum:]_.-]+/[[:alnum:]_.-]+#[0-9]+)' | head -1)
-                fail "Auto-close keyword found in PR BODY for EPIC issue $matched_issue \
-                (excluding 'Original prompt' block). Use Refs/Related/Tracks instead. \
-                Matched line: $matched_line"
+                fail "Auto-close keyword found in PR BODY for EPIC issue $matched_issue" \
+                     " (excluding 'Original prompt' block). Use Refs/Related/Tracks instead." \
+                     " Matched line: $matched_line"
               fi
 
               # Check commit messages
@@ -447,9 +447,9 @@ jobs:
                   matched_commit=$(echo "$commits_json" | \
                     jq -r --arg msg "$matched_line" \
                     '.[] | select(.commit.message | contains($msg)) | .sha[:7]' | head -1)
-                  fail "Auto-close keyword found in COMMIT $matched_commit for EPIC issue \
-                  $matched_issue. Amend/reword commit(s) to use Refs/Related/Tracks instead. \
-                  Matched line: $matched_line"
+                  fail "Auto-close keyword found in COMMIT $matched_commit for EPIC issue" \
+                       " $matched_issue. Amend/reword commit(s) to use Refs/Related/Tracks instead." \
+                       " Matched line: $matched_line"
                 fi
 
                 page_count="$(echo "$commits_json" | jq 'length')"

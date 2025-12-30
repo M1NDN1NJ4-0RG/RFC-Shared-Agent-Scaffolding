@@ -137,8 +137,8 @@ jobs:
       - name: Set run URL output
         id: set_run_url
         run: |
-          echo "url=${{ github.server_url }}/${{ github.repository }}/actions/runs/\
-          ${{ github.run_id }}" >> $GITHUB_OUTPUT
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          echo "url=$run_url" >> $GITHUB_OUTPUT
 
       - name: Write job summary
         if: steps.check_changes.outputs.changes_made == 'true'
@@ -296,9 +296,10 @@ jobs:
           fi
 
           # Check for shared tooling changes
-          if echo "$CHANGED_FILES" | \
-              grep -qE '(^|/)tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/|\
-              ^pyproject\.toml$|^\.github/workflows/|docs/contributing/'; then
+          if echo "$CHANGED_FILES" | grep -qE \
+              '(^|/)tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/' ||
+             echo "$CHANGED_FILES" | grep -qE \
+              '^pyproject\.toml$|^\.github/workflows/|docs/contributing/'; then
             echo "shared_tooling=true" >> $GITHUB_OUTPUT
           fi
 
@@ -328,8 +329,19 @@ jobs:
           python3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1
 
       - name: Run repo_lint for Python
+        id: lint_python
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only python
+          python3 -m tools.repo_lint check --ci --only python 2>&1 | tee python-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Python lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: python-lint-results
+          path: python-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Repo Lint: Bash
@@ -368,8 +380,19 @@ jobs:
           sudo mv /tmp/shfmt /usr/local/bin/shfmt
 
       - name: Run repo_lint for Bash
+        id: lint_bash
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only bash
+          python3 -m tools.repo_lint check --ci --only bash 2>&1 | tee bash-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Bash lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: bash-lint-results
+          path: bash-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Repo Lint: PowerShell
@@ -397,8 +420,19 @@ jobs:
           Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.23.0 -Force -Scope CurrentUser
 
       - name: Run repo_lint for PowerShell
+        id: lint_powershell
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only powershell
+          python3 -m tools.repo_lint check --ci --only powershell 2>&1 | tee powershell-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload PowerShell lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: powershell-lint-results
+          path: powershell-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Repo Lint: Perl
@@ -430,8 +464,19 @@ jobs:
           cpanm --notest Perl::Critic PPI
 
       - name: Run repo_lint for Perl
+        id: lint_perl
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only perl
+          python3 -m tools.repo_lint check --ci --only perl 2>&1 | tee perl-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload Perl lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: perl-lint-results
+          path: perl-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Repo Lint: YAML
@@ -459,8 +504,19 @@ jobs:
           python3 -m pip install yamllint==1.35.1
 
       - name: Run repo_lint for YAML
+        id: lint_yaml
+        continue-on-error: true
         run: |
-          python3 -m tools.repo_lint check --ci --only yaml
+          python3 -m tools.repo_lint check --ci --only yaml 2>&1 | tee yaml-lint-output.txt
+          exit ${PIPESTATUS[0]}
+
+      - name: Upload YAML lint results
+        if: always()
+        uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
+        with:
+          name: yaml-lint-results
+          path: yaml-lint-output.txt
+          retention-days: 7
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Vector Tests: Conformance
@@ -528,6 +584,12 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Download lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          path: lint-artifacts/
+
       - name: Collect job results
         id: collect_results
         run: |
@@ -577,7 +639,13 @@ jobs:
             HAS_FAILURES=true
             echo "## Python Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "Python linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            if [ -f "lint-artifacts/python-lint-results/python-lint-output.txt" ]; then
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "lint-artifacts/python-lint-results/python-lint-output.txt" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "Python linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
 
@@ -585,7 +653,13 @@ jobs:
             HAS_FAILURES=true
             echo "## Bash Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "Bash linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            if [ -f "lint-artifacts/bash-lint-results/bash-lint-output.txt" ]; then
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "lint-artifacts/bash-lint-results/bash-lint-output.txt" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "Bash linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
 
@@ -593,7 +667,13 @@ jobs:
             HAS_FAILURES=true
             echo "## PowerShell Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "PowerShell linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            if [ -f "lint-artifacts/powershell-lint-results/powershell-lint-output.txt" ]; then
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "lint-artifacts/powershell-lint-results/powershell-lint-output.txt" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "PowerShell linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
 
@@ -601,7 +681,13 @@ jobs:
             HAS_FAILURES=true
             echo "## Perl Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "Perl linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            if [ -f "lint-artifacts/perl-lint-results/perl-lint-output.txt" ]; then
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "lint-artifacts/perl-lint-results/perl-lint-output.txt" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "Perl linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
 
@@ -609,7 +695,13 @@ jobs:
             HAS_FAILURES=true
             echo "## YAML Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            echo "YAML linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            if [ -f "lint-artifacts/yaml-lint-results/yaml-lint-output.txt" ]; then
+              echo '```' >> "$SUMMARY_FILE"
+              tail -100 "lint-artifacts/yaml-lint-results/yaml-lint-output.txt" >> "$SUMMARY_FILE"
+              echo '```' >> "$SUMMARY_FILE"
+            else
+              echo "YAML linting failed. See job logs for details." >> "$SUMMARY_FILE"
+            fi
             echo "" >> "$SUMMARY_FILE"
           fi
 
