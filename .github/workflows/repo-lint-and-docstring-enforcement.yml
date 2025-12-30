@@ -710,9 +710,9 @@ jobs:
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   # Consolidate and Archive Logs
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Waits for all lint jobs to complete and consolidates ALL logs (success + failure)
-  # into a summary artifact and commits logs to the repository for review.
-  # Runs always to ensure comprehensive logging regardless of job outcomes.
+  # Only runs when lint jobs fail. Consolidates failure logs into a summary
+  # artifact and commits logs to the repository for review.
+  # Skips entirely when all checks pass to reduce noise and storage usage.
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   consolidate-failures:
     name: "Consolidate and Archive Logs"
@@ -727,10 +727,10 @@ jobs:
       - repo-lint-yaml
       - repo-lint-rust
       - vector-tests
+    # Only run if any job failed AND not triggered by bot
     # Bot-loop guard: Skip if actor is a bot OR commit message contains auto-generated marker
-    # Run even if previous jobs failed (always()) but not if triggered by bot
     if: |
-      always() &&
+      contains(needs.*.result, 'failure') &&
       github.actor != 'github-actions[bot]' &&
       !contains(github.event.head_commit.message, '[auto-generated]')
     steps:
@@ -1027,17 +1027,17 @@ jobs:
           # Display summary
           cat "$SUMMARY_FILE"
 
-      - name: Upload log summary artifact (on failure only)
-        if: failure()
+      - name: Upload log summary artifact
+        if: always()  # Always upload when this job runs (job only runs on failures)
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: umbrella-ci-logs
           path: logs/umbrella-ci-logs-phase-6/
           retention-days: 30
 
-      - name: Commit logs to repository (on failure, same-repo PRs only)
+      - name: Commit logs to repository (same-repo PRs only)
         if: |
-          failure() &&
+          always() &&
           github.event.pull_request.head.repo.full_name == github.repository &&
           github.event_name == 'pull_request' &&
           github.actor != 'github-actions[bot]' &&
@@ -1063,7 +1063,7 @@ jobs:
           fi
 
       - name: Add job summary
-        if: failure()
+        if: always()  # Always add summary when this job runs (job only runs on failures)
         run: |
           # Find the summary file in the log directory
           LOG_DIR="${{ steps.collect_results.outputs.log_dir }}"
