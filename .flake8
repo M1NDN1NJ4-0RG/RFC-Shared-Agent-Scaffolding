@@ -1,6 +1,0 @@
-[flake8]
-# Set max line length to 120
-max-line-length = 120
-# E203: whitespace before ':'
-# W503: line break before binary operator
-extend-ignore = E203, W503
