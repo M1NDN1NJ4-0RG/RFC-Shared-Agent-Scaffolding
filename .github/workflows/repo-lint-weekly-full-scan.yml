@@ -91,9 +91,14 @@ jobs:
       - name: Install PowerShell
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget apt-transport-https software-properties-common
-          wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
-          sudo dpkg -i packages-microsoft-prod.deb
+          sudo apt-get install -y wget gnupg apt-transport-https software-properties-common
+          # Import the Microsoft APT repository GPG key with explicit verification
+          wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+          sudo install -o root -g root -m 644 microsoft.gpg /usr/share/keyrings/packages.microsoft.gpg
+          rm microsoft.gpg
+          UBUNTU_VERSION="$(lsb_release -rs)"
+          UBUNTU_CODENAME="$(lsb_release -cs)"
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/ubuntu/${UBUNTU_VERSION}/prod ${UBUNTU_CODENAME} main" | sudo tee /etc/apt/sources.list.d/microsoft-prod.list
           sudo apt-get update
           sudo apt-get install -y powershell
 
