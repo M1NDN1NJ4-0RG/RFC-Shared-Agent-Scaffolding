@@ -13,7 +13,7 @@
     - --ci/--no-install: CI mode - fail if tools are missing instead of installing
     - --verbose: Show verbose output including passed checks
     - --only <language>: Run checks for only the specified language
-    - --json: Output results in JSON format (future)
+    - --json: Output results in JSON format for CI debugging
 
 :Environment Variables:
     None - all configuration via command-line arguments
@@ -83,6 +83,7 @@ def create_parser() -> argparse.ArgumentParser:
         choices=["python", "bash", "powershell", "perl", "yaml", "rust"],
         help="Run checks for only the specified language",
     )
+    check_parser.add_argument("--json", action="store_true", help="Output results in JSON format for CI debugging")
 
     # fix command
     fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
@@ -93,6 +94,7 @@ def create_parser() -> argparse.ArgumentParser:
         choices=["python", "bash", "powershell", "perl", "yaml", "rust"],
         help="Run fixes for only the specified language",
     )
+    fix_parser.add_argument("--json", action="store_true", help="Output results in JSON format for CI debugging")
 
     # install command
     install_parser = subparsers.add_parser("install", help="Install/bootstrap required linting tools")
@@ -111,6 +113,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
     all_results = []
+    use_json = getattr(args, "json", False)
 
     # Define all runners
     all_runners = [
@@ -143,9 +146,11 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     # Run each runner if it has files
     for key, name, runner in runners:
         if runner.has_files():
-            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-            print(f"  {name} {mode}")
-            print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            # Skip progress output in JSON mode
+            if not use_json:
+                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                print(f"  {name} {mode}")
+                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
 
             missing_tools = runner.check_tools()
             if missing_tools:
@@ -160,12 +165,20 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             results = action_callback(runner)
             all_results.extend(results)
         else:
-            if args.verbose:
+            if args.verbose and not use_json:
                 print(f"No {name} files found. Skipping {name} {mode.lower()}.")
 
     # Report results
-    print("")
-    return report_results(all_results, verbose=args.verbose)
+    if not use_json:
+        print("")
+
+    # Use JSON or standard reporting based on flag
+    if use_json:
+        from tools.repo_lint.reporting import report_results_json
+
+        return report_results_json(all_results, verbose=args.verbose)
+    else:
+        return report_results(all_results, verbose=args.verbose)
 
 
 def cmd_check(args: argparse.Namespace) -> int:
@@ -174,8 +187,10 @@ def cmd_check(args: argparse.Namespace) -> int:
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
-    print("🔍 Running repository linters and formatters...")
-    print("")
+    use_json = getattr(args, "json", False)
+    if not use_json:
+        print("🔍 Running repository linters and formatters...")
+        print("")
 
     return _run_all_runners(args, "Linting", lambda runner: runner.check())
 
@@ -186,8 +201,10 @@ def cmd_fix(args: argparse.Namespace) -> int:
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=violations remain, 2=missing tools, 3=error)
     """
-    print("🔧 Running formatters in fix mode...")
-    print("")
+    use_json = getattr(args, "json", False)
+    if not use_json:
+        print("🔧 Running formatters in fix mode...")
+        print("")
 
     # Load and validate auto-fix policy
     try:

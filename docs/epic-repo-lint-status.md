@@ -852,19 +852,48 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 
 ## Phase 7 — Tests, Determinism, and Output Guarantees
 
+**Phase 7 Status:** ✅ **COMPLETE**
+
+**Completion Notes (2025-12-30):**
+- All Phase 7 implementation complete
+- Comprehensive test suite added: 23 tests covering dispatch, exit codes, and output format
+- JSON output implemented for CI debugging with stable schema
+- CI enforcement verified: all lint jobs fail on violations
+- All Phase 7 acceptance criteria met
+
 ### Item 7.1 — Unit tests for dispatch + reporting (High)
-- [ ] **Sub-Item 7.1.1:** Test runner dispatch (which files trigger which runners)
-- [ ] **Sub-Item 7.1.2:** Test exit codes for: pass, violations, missing tools in CI, internal errors
-- [ ] **Sub-Item 7.1.3:** Snapshot/fixture test for deterministic output format
+- [x] **Sub-Item 7.1.1:** Test runner dispatch (which files trigger which runners)
+  - ✅ Implemented in `tools/repo_lint/tests/test_cli_dispatch.py` (5 tests)
+  - Tests cover --only flag filtering, has_files() gating, all-runners execution
+- [x] **Sub-Item 7.1.2:** Test exit codes for: pass, violations, missing tools in CI, internal errors
+  - ✅ Implemented in `tools/repo_lint/tests/test_exit_codes.py` (11 tests)
+  - Tests cover all exit codes: SUCCESS (0), VIOLATIONS (1), MISSING_TOOLS (2), INTERNAL_ERROR (3)
+- [x] **Sub-Item 7.1.3:** Snapshot/fixture test for deterministic output format
+  - ✅ Implemented in `tools/repo_lint/tests/test_output_format.py` (7 tests)
+  - Tests verify output stability, no timestamps, deterministic formatting
 
 ### Item 7.2 — Optional JSON reports (Medium)
-- [ ] **Sub-Item 7.2.1:** Implement `--json` output artifact mode for CI debugging
-- [ ] **Sub-Item 7.2.2:** Ensure no unstable fields unless in verbose mode
-- [ ] **Sub-Item 7.2.3:** Re-enable (or ensure) all lint/docstring CI checks to **fail on error** (no warn-only) once migration is complete and the umbrella workflow is the canonical gate.
+- [x] **Sub-Item 7.2.1:** Implement `--json` output artifact mode for CI debugging
+  - ✅ Added `report_results_json()` in reporting.py
+  - ✅ Integrated --json flag in CLI (check and fix commands)
+  - ✅ JSON output suppresses progress messages for clean parsing
+- [x] **Sub-Item 7.2.2:** Ensure no unstable fields unless in verbose mode
+  - ✅ JSON schema version "1.0" stable
+  - ✅ Verbose mode adds: tools_run, failed_tool_names, errored_tool_names
+  - ✅ Base output contains only deterministic fields
+- [x] **Sub-Item 7.2.3:** Re-enable (or ensure) all lint/docstring CI checks to **fail on error** (no warn-only) once migration is complete and the umbrella workflow is the canonical gate.
+  - ✅ Verified `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+  - ✅ NO continue-on-error on any lint job steps
+  - ✅ All 5 language jobs (Python, Bash, PowerShell, Perl, YAML) fail on violations
+  - ✅ continue-on-error only on artifact download steps (correct behavior)
 
 **Phase 7 Success Criteria**
 - ✅ Tool is test-covered, deterministic, and safe to evolve.
-- ✅ All Linting CIs & Docstring CIs pass.
+  - 23 comprehensive unit tests covering dispatch, exit codes, and output format
+  - All tests passing
+- ✅ JSON output available for CI debugging with stable schema
+- ✅ All Linting CIs & Docstring CIs pass and fail on violations.
+  - Verified umbrella workflow enforcement
 
 ---
 
