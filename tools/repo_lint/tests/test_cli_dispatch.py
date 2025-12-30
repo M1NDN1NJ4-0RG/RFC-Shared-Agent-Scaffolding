@@ -39,7 +39,8 @@
     Run specific test::
 
         python3 -m pytest \\
-            tools/repo_lint/tests/test_cli_dispatch.py::TestRunnerDispatch::test_only_flag_filters_runners -v
+            tools/repo_lint/tests/test_cli_dispatch.py::TestRunnerDispatch:: \
+                test_only_flag_filters_runners -v
 
 :Notes:
     - Tests use unittest.mock to avoid executing actual runners
