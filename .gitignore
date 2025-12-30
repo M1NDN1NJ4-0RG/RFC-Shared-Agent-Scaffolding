@@ -4,6 +4,7 @@
 # EXCEPTION: Allow CI logs to be committed for traceability
 !logs/**/*.log
 !logs/**/*.txt
+!logs/**/*.diff
 
 # Rust build artifacts
 rust/target/
@@ -30,7 +31,8 @@ node_modules/
 # OS-specific
 .DS_Store
 Thumbs.db
-black.diff
+# NOTE: black.diff in root is excluded, but logs/*/black.diff is allowed
+/black.diff
 
 # NOTE: CI-generated logs under logs/umbrella-ci-logs-phase-6/ are intentionally
 # NOT ignored - they should be committed to the repository for traceability
