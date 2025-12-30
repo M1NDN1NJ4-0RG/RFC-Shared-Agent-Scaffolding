@@ -1,0 +1,41 @@
+🔍 Running repository linters and formatters...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Bash Linting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Linting Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ shellcheck: FAILED (2 violation(s))
+   .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:11:1: warning: UNUSED_VAR appears unused. Verify use (or export if used externally). [SC2034]
+   .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:16:7: note: Double quote to prevent globbing and word splitting. [SC2086]
+
+❌ shfmt: FAILED (1 violation(s))
+   .: [shfmt] Shell scripts do not match shfmt style. Run 'python -m tools.repo_lint fix' to auto-format.
+
+❌ validate_docstrings: FAILED (20 violation(s))
+   .: [validate_docstrings] ❌ Validation FAILED: 46 violation(s) in 9 file(s)
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:124
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:128
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:170
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:175
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:202
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:225
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:237
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:251
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:268
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/safe-archive.sh:117
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/safe-archive.sh:148
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/safe-run.sh:117
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/tests/lib.sh:116
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/tests/lib.sh:127
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/tests/lib.sh:137
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/tests/lib.sh:158
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/tests/lib.sh:168
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/tests/lib.sh:180
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ Found 23 violation(s) across 3 tool(s)
