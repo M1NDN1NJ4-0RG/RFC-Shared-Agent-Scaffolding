@@ -117,8 +117,7 @@ def get_category_info(policy: Dict, category: str) -> Optional[Dict]:
 def get_policy_summary(policy: Dict) -> str:
     """Generate human-readable policy summary.
 
-    :param
-        policy: Loaded policy dictionary
+    :param policy: Loaded policy dictionary
 
     :returns:
         Multi-line string summarizing policy
