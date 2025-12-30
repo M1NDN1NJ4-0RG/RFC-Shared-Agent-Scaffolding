@@ -1,0 +1,18 @@
+﻿2025-12-30T14:50:48.5006718Z ##[group]Run if [ -s black.diff ]; then
+2025-12-30T14:50:48.5007109Z [36;1mif [ -s black.diff ]; then[0m
+2025-12-30T14:50:48.5007404Z [36;1m  echo "changes_made=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:48.5007757Z [36;1m  echo "Changes detected after Black formatting"[0m
+2025-12-30T14:50:48.5008046Z [36;1melse[0m
+2025-12-30T14:50:48.5008271Z [36;1m  echo "changes_made=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:48.5008556Z [36;1m  echo "No changes needed"[0m
+2025-12-30T14:50:48.5008776Z [36;1mfi[0m
+2025-12-30T14:50:48.5041198Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:50:48.5041434Z env:
+2025-12-30T14:50:48.5041675Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.5042105Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:50:48.5042515Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.5042873Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.5043224Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.5043772Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:50:48.5044069Z ##[endgroup]
+2025-12-30T14:50:48.5094868Z No changes needed

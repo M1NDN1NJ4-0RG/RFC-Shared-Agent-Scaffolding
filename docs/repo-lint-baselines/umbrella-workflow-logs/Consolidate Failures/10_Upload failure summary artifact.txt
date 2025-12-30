@@ -1,0 +1,21 @@
+﻿2025-12-30T14:51:57.1748878Z ##[group]Run actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+2025-12-30T14:51:57.1749286Z with:
+2025-12-30T14:51:57.1749473Z   name: repo-lint-failure-summary
+2025-12-30T14:51:57.1749724Z   path: repo-lint-failure-reports/
+2025-12-30T14:51:57.1750126Z   retention-days: 30
+2025-12-30T14:51:57.1750317Z   if-no-files-found: warn
+2025-12-30T14:51:57.1750521Z   compression-level: 6
+2025-12-30T14:51:57.1750706Z   overwrite: false
+2025-12-30T14:51:57.1750891Z   include-hidden-files: false
+2025-12-30T14:51:57.1751099Z ##[endgroup]
+2025-12-30T14:51:57.3971649Z With the provided path, there will be 21 files uploaded
+2025-12-30T14:51:57.3976152Z Artifact name is valid!
+2025-12-30T14:51:57.3977234Z Root directory input is valid!
+2025-12-30T14:51:57.6443319Z Beginning upload of artifact content to blob storage
+2025-12-30T14:51:58.5154343Z Uploaded bytes 4970275
+2025-12-30T14:51:58.5736271Z Finished uploading artifact content to blob storage!
+2025-12-30T14:51:58.5739295Z SHA256 hash of uploaded artifact zip is fb6866c5940ead2c5ebaa6652ad1a8e5463780c56d60ad2154e522fe8deff777
+2025-12-30T14:51:58.5741328Z Finalizing artifact upload
+2025-12-30T14:51:58.7282353Z Artifact repo-lint-failure-summary.zip successfully finalized. Artifact ID 4991800160
+2025-12-30T14:51:58.7283539Z Artifact repo-lint-failure-summary has been successfully uploaded! Final size is 4970275 bytes. Artifact ID is 4991800160
+2025-12-30T14:51:58.7290897Z Artifact download URL: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696/artifacts/4991800160

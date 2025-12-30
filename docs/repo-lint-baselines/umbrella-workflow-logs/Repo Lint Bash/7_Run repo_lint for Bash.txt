@@ -1,0 +1,54 @@
+﻿2025-12-30T14:51:19.6360663Z ##[group]Run python3 -m tools.repo_lint check --ci --only bash 2>&1 | tee bash-lint-output.txt
+2025-12-30T14:51:19.6361341Z [36;1mpython3 -m tools.repo_lint check --ci --only bash 2>&1 | tee bash-lint-output.txt[0m
+2025-12-30T14:51:19.6361763Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:19.6395062Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:19.6395321Z env:
+2025-12-30T14:51:19.6395565Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.6395972Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:19.6396373Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.6396728Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.6397669Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.6398041Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:19.6398335Z ##[endgroup]
+2025-12-30T14:51:22.1243365Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:22.1243989Z 
+2025-12-30T14:51:22.1244240Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1244552Z   Bash Linting
+2025-12-30T14:51:22.1244868Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1245081Z 
+2025-12-30T14:51:22.1245608Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1245928Z   Linting Results
+2025-12-30T14:51:22.1246258Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1246492Z 
+2025-12-30T14:51:22.1246639Z ❌ shellcheck: FAILED (2 violation(s))
+2025-12-30T14:51:22.1247565Z    .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:11:1: warning: UNUSED_VAR appears unused. Verify use (or export if used externally). [SC2034]
+2025-12-30T14:51:22.1248648Z    .: [shellcheck] conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh:16:7: note: Double quote to prevent globbing and word splitting. [SC2086]
+2025-12-30T14:51:22.1249219Z 
+2025-12-30T14:51:22.1249350Z ❌ shfmt: FAILED (1 violation(s))
+2025-12-30T14:51:22.1249768Z    .: [shfmt] Shell scripts do not match shfmt style. Run 'python -m tools.repo_lint fix' to auto-format.
+2025-12-30T14:51:22.1250134Z 
+2025-12-30T14:51:22.1250302Z ❌ validate_docstrings: FAILED (20 violation(s))
+2025-12-30T14:51:22.1250741Z    .: [validate_docstrings] ❌ Validation FAILED: 60 violation(s) in 11 file(s)
+2025-12-30T14:51:22.1251658Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+2025-12-30T14:51:22.1252895Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh
+2025-12-30T14:51:22.1254117Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh:22
+2025-12-30T14:51:22.1255350Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/bash/docstring-test.sh:35
+2025-12-30T14:51:22.1256501Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:54
+2025-12-30T14:51:22.1257756Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:66
+2025-12-30T14:51:22.1258833Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:77
+2025-12-30T14:51:22.1259916Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:90
+2025-12-30T14:51:22.1260989Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:101
+2025-12-30T14:51:22.1262303Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:111
+2025-12-30T14:51:22.1263393Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:155
+2025-12-30T14:51:22.1264476Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:167
+2025-12-30T14:51:22.1265551Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:178
+2025-12-30T14:51:22.1266641Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:209
+2025-12-30T14:51:22.1267910Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/bash/edge-cases.sh:228
+2025-12-30T14:51:22.1269058Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:124
+2025-12-30T14:51:22.1270470Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:128
+2025-12-30T14:51:22.1271661Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:170
+2025-12-30T14:51:22.1272839Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/wrappers/bash/scripts/preflight-automerge-ruleset.sh:175
+2025-12-30T14:51:22.1273425Z 
+2025-12-30T14:51:22.1273666Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:22.1274035Z ❌ Found 23 violation(s) across 3 tool(s)
+2025-12-30T14:51:22.1346159Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,36 @@
+﻿2025-12-30T14:51:16.4443480Z ##[group]Run python3 -m tools.repo_lint check --ci --only powershell 2>&1 | tee powershell-lint-output.txt
+2025-12-30T14:51:16.4444369Z [36;1mpython3 -m tools.repo_lint check --ci --only powershell 2>&1 | tee powershell-lint-output.txt[0m
+2025-12-30T14:51:16.4444882Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:16.4478086Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:16.4478376Z env:
+2025-12-30T14:51:16.4478663Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:16.4479126Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:16.4479572Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:16.4480113Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:16.4480523Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:16.4480924Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:16.4481264Z ##[endgroup]
+2025-12-30T14:51:41.2158626Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:41.2159535Z 
+2025-12-30T14:51:41.2160868Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:41.2161542Z   PowerShell Linting
+2025-12-30T14:51:41.2162360Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:41.2162805Z 
+2025-12-30T14:51:41.2163255Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:41.2163810Z   Linting Results
+2025-12-30T14:51:41.2164452Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:41.2164928Z 
+2025-12-30T14:51:41.2165209Z ❌ validate_docstrings: FAILED (9 violation(s))
+2025-12-30T14:51:41.2166379Z    .: [validate_docstrings] ❌ Validation FAILED: 8 violation(s) in 3 file(s)
+2025-12-30T14:51:41.2168196Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1
+2025-12-30T14:51:41.2171011Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:4
+2025-12-30T14:51:41.2173819Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:14
+2025-12-30T14:51:41.2176593Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:20
+2025-12-30T14:51:41.2179356Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:25
+2025-12-30T14:51:41.2182311Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1
+2025-12-30T14:51:41.2184980Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1:16
+2025-12-30T14:51:41.2187589Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/fixtures/powershell/EdgeCases.ps1:312
+2025-12-30T14:51:41.2188915Z 
+2025-12-30T14:51:41.2189453Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:41.2190478Z ❌ Found 9 violation(s) across 1 tool(s)
+2025-12-30T14:51:41.2253107Z ##[error]Process completed with exit code 1.

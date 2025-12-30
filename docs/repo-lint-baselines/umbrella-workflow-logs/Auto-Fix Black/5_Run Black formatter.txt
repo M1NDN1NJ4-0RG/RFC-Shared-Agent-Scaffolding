@@ -1,0 +1,16 @@
+﻿2025-12-30T14:50:46.8837158Z ##[group]Run echo "Running Black formatter..."
+2025-12-30T14:50:46.8837572Z [36;1mecho "Running Black formatter..."[0m
+2025-12-30T14:50:46.8837987Z [36;1mblack --line-length 120 --check --diff . > black_check.log 2>&1 || true[0m
+2025-12-30T14:50:46.8838671Z [36;1mblack --line-length 120 . > black_fix.log 2>&1 || true[0m
+2025-12-30T14:50:46.8839014Z [36;1mecho "Black formatting complete."[0m
+2025-12-30T14:50:46.8872686Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:50:46.8872936Z env:
+2025-12-30T14:50:46.8873194Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:46.8873647Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:50:46.8874067Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:46.8874454Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:46.8874836Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:46.8875200Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:50:46.8875549Z ##[endgroup]
+2025-12-30T14:50:46.8929353Z Running Black formatter...
+2025-12-30T14:50:48.3157094Z Black formatting complete.

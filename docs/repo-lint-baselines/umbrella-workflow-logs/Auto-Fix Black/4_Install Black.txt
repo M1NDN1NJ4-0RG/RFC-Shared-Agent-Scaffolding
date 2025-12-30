@@ -1,0 +1,35 @@
+﻿2025-12-30T14:50:44.9610184Z ##[group]Run python3 -m pip install --upgrade pip
+2025-12-30T14:50:44.9611499Z [36;1mpython3 -m pip install --upgrade pip[0m
+2025-12-30T14:50:44.9612632Z [36;1mpython3 -m pip install black==24.10.0[0m
+2025-12-30T14:50:44.9661637Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:50:44.9662501Z env:
+2025-12-30T14:50:44.9663370Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:44.9664857Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:50:44.9666599Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:44.9667946Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:44.9669282Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:44.9670630Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:50:44.9671755Z ##[endgroup]
+2025-12-30T14:50:45.6612686Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages (25.3)
+2025-12-30T14:50:46.3177227Z Collecting black==24.10.0
+2025-12-30T14:50:46.3729265Z   Downloading black-24.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+2025-12-30T14:50:46.4221537Z Collecting click>=8.0.0 (from black==24.10.0)
+2025-12-30T14:50:46.4253130Z   Downloading click-8.3.1-py3-none-any.whl.metadata (2.6 kB)
+2025-12-30T14:50:46.4352868Z Collecting mypy-extensions>=0.4.3 (from black==24.10.0)
+2025-12-30T14:50:46.4381874Z   Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+2025-12-30T14:50:46.4530259Z Collecting packaging>=22.0 (from black==24.10.0)
+2025-12-30T14:50:46.4561197Z   Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+2025-12-30T14:50:46.4685393Z Collecting pathspec>=0.9.0 (from black==24.10.0)
+2025-12-30T14:50:46.4717412Z   Downloading pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+2025-12-30T14:50:46.4991611Z Collecting platformdirs>=2 (from black==24.10.0)
+2025-12-30T14:50:46.5021182Z   Downloading platformdirs-4.5.1-py3-none-any.whl.metadata (12 kB)
+2025-12-30T14:50:46.5129506Z Downloading black-24.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl (1.7 MB)
+2025-12-30T14:50:46.5326726Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 112.7 MB/s  0:00:00
+2025-12-30T14:50:46.5358187Z Downloading click-8.3.1-py3-none-any.whl (108 kB)
+2025-12-30T14:50:46.5409903Z Downloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+2025-12-30T14:50:46.5456473Z Downloading packaging-25.0-py3-none-any.whl (66 kB)
+2025-12-30T14:50:46.5510000Z Downloading pathspec-0.12.1-py3-none-any.whl (31 kB)
+2025-12-30T14:50:46.5558915Z Downloading platformdirs-4.5.1-py3-none-any.whl (18 kB)
+2025-12-30T14:50:46.5850557Z Installing collected packages: platformdirs, pathspec, packaging, mypy-extensions, click, black
+2025-12-30T14:50:46.8294705Z 
+2025-12-30T14:50:46.8305723Z Successfully installed black-24.10.0 click-8.3.1 mypy-extensions-1.1.0 packaging-25.0 pathspec-0.12.1 platformdirs-4.5.1

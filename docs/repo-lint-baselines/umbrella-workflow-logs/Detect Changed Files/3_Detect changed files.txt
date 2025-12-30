@@ -1,0 +1,54 @@
+﻿2025-12-30T14:50:57.9191558Z ##[group]Run # Get base ref for comparison
+2025-12-30T14:50:57.9192393Z [36;1m# Get base ref for comparison[0m
+2025-12-30T14:50:57.9193033Z [36;1mif [ "pull_request" = "pull_request" ]; then[0m
+2025-12-30T14:50:57.9193734Z [36;1m  BASE_REF="f227266c3f6463f0a986ee4d521673a34e0e8803"[0m
+2025-12-30T14:50:57.9194383Z [36;1melse[0m
+2025-12-30T14:50:57.9195178Z [36;1m  # For push events, compare with previous commit; fall back to empty tree on initial commit[0m
+2025-12-30T14:50:57.9196420Z [36;1m  BASE_REF=$(git rev-parse --verify HEAD^ 2>/dev/null || echo "4b825dc642cb6eb9a060e54bf8d69288fbee4904")[0m
+2025-12-30T14:50:57.9197610Z [36;1mfi[0m
+2025-12-30T14:50:57.9198025Z [36;1m[0m
+2025-12-30T14:50:57.9198409Z [36;1m# Get changed files[0m
+2025-12-30T14:50:57.9199033Z [36;1mCHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD)[0m
+2025-12-30T14:50:57.9199658Z [36;1m[0m
+2025-12-30T14:50:57.9200080Z [36;1m# Initialize all outputs to false[0m
+2025-12-30T14:50:57.9200668Z [36;1mecho "python=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9201310Z [36;1mecho "bash=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9201917Z [36;1mecho "powershell=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9202525Z [36;1mecho "perl=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9203094Z [36;1mecho "yaml=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9203725Z [36;1mecho "shared_tooling=false" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9204294Z [36;1m[0m
+2025-12-30T14:50:57.9204698Z [36;1m# Check for Python files[0m
+2025-12-30T14:50:57.9205306Z [36;1mif echo "$CHANGED_FILES" | grep -qE '\.py$'; then[0m
+2025-12-30T14:50:57.9205968Z [36;1m  echo "python=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9206521Z [36;1mfi[0m
+2025-12-30T14:50:57.9206895Z [36;1m[0m
+2025-12-30T14:50:57.9207453Z [36;1m# Check for Bash files[0m
+2025-12-30T14:50:57.9208118Z [36;1mif echo "$CHANGED_FILES" | grep -qE '\.(sh|bash|zsh)$'; then[0m
+2025-12-30T14:50:57.9208856Z [36;1m  echo "bash=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9209396Z [36;1mfi[0m
+2025-12-30T14:50:57.9209774Z [36;1m[0m
+2025-12-30T14:50:57.9210180Z [36;1m# Check for PowerShell files[0m
+2025-12-30T14:50:57.9210806Z [36;1mif echo "$CHANGED_FILES" | grep -qE '\.ps1$'; then[0m
+2025-12-30T14:50:57.9211490Z [36;1m  echo "powershell=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9212060Z [36;1mfi[0m
+2025-12-30T14:50:57.9212444Z [36;1m[0m
+2025-12-30T14:50:57.9212826Z [36;1m# Check for Perl files[0m
+2025-12-30T14:50:57.9213433Z [36;1mif echo "$CHANGED_FILES" | grep -qE '\.(pl|pm)$'; then[0m
+2025-12-30T14:50:57.9214105Z [36;1m  echo "perl=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9214641Z [36;1mfi[0m
+2025-12-30T14:50:57.9215010Z [36;1m[0m
+2025-12-30T14:50:57.9215390Z [36;1m# Check for YAML files[0m
+2025-12-30T14:50:57.9215975Z [36;1mif echo "$CHANGED_FILES" | grep -qE '\.(ya?ml)$'; then[0m
+2025-12-30T14:50:57.9216647Z [36;1m  echo "yaml=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9217433Z [36;1mfi[0m
+2025-12-30T14:50:57.9217848Z [36;1m[0m
+2025-12-30T14:50:57.9218285Z [36;1m# Check for shared tooling changes[0m
+2025-12-30T14:50:57.9218874Z [36;1mif echo "$CHANGED_FILES" | grep -qE \[0m
+2025-12-30T14:50:57.9219760Z [36;1m    '(^|/)tools/repo_lint/|scripts/validate_docstrings\.py|scripts/docstring_validators/' ||[0m
+2025-12-30T14:50:57.9220642Z [36;1m   echo "$CHANGED_FILES" | grep -qE \[0m
+2025-12-30T14:50:57.9221616Z [36;1m    '^pyproject\.toml$|^\.github/workflows/|docs/contributing/'; then[0m
+2025-12-30T14:50:57.9222413Z [36;1m  echo "shared_tooling=true" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:57.9222984Z [36;1mfi[0m
+2025-12-30T14:50:57.9260623Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:50:57.9261177Z ##[endgroup]

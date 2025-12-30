@@ -1,0 +1,23 @@
+﻿2025-12-30T14:51:05.2634311Z ##[group]Run python3 -m pip install --upgrade pip
+2025-12-30T14:51:05.2634874Z [36;1mpython3 -m pip install --upgrade pip[0m
+2025-12-30T14:51:05.2635339Z [36;1mpython3 -m pip install tree-sitter==0.25.1 tree-sitter-bash==0.25.1[0m
+2025-12-30T14:51:05.2842945Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:05.2843272Z env:
+2025-12-30T14:51:05.2843583Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.2844068Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:05.2844544Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.2844976Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.2845404Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.2845846Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:05.2846192Z ##[endgroup]
+2025-12-30T14:51:07.8901345Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages (25.3)
+2025-12-30T14:51:08.7110693Z Collecting tree-sitter==0.25.1
+2025-12-30T14:51:08.8148238Z   Downloading tree_sitter-0.25.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (10.0 kB)
+2025-12-30T14:51:08.8477186Z Collecting tree-sitter-bash==0.25.1
+2025-12-30T14:51:08.8681599Z   Downloading tree_sitter_bash-0.25.1-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.2 kB)
+2025-12-30T14:51:08.9009573Z Downloading tree_sitter-0.25.1-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (631 kB)
+2025-12-30T14:51:08.9743211Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 631.6/631.6 kB 16.5 MB/s  0:00:00
+2025-12-30T14:51:09.0287861Z Downloading tree_sitter_bash-0.25.1-cp310-abi3-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (231 kB)
+2025-12-30T14:51:09.0485105Z Installing collected packages: tree-sitter-bash, tree-sitter
+2025-12-30T14:51:09.0721541Z 
+2025-12-30T14:51:09.0730134Z Successfully installed tree-sitter-0.25.1 tree-sitter-bash-0.25.1

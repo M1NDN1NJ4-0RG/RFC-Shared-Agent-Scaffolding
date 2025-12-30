@@ -1,0 +1,328 @@
+﻿2025-12-30T14:51:02.7151020Z Current runner version: '2.330.0'
+2025-12-30T14:51:02.7177675Z ##[group]Runner Image Provisioner
+2025-12-30T14:51:02.7178585Z Hosted Compute Agent
+2025-12-30T14:51:02.7179167Z Version: 20251211.462
+2025-12-30T14:51:02.7179759Z Commit: 6cbad8c2bb55d58165063d031ccabf57e2d2db61
+2025-12-30T14:51:02.7180491Z Build Date: 2025-12-11T16:28:49Z
+2025-12-30T14:51:02.7181132Z Worker ID: {333581bc-91ee-4635-98ae-db58bd9655cc}
+2025-12-30T14:51:02.7181839Z ##[endgroup]
+2025-12-30T14:51:02.7182308Z ##[group]Operating System
+2025-12-30T14:51:02.7182927Z Ubuntu
+2025-12-30T14:51:02.7183363Z 24.04.3
+2025-12-30T14:51:02.7183801Z LTS
+2025-12-30T14:51:02.7184306Z ##[endgroup]
+2025-12-30T14:51:02.7184786Z ##[group]Runner Image
+2025-12-30T14:51:02.7185309Z Image: ubuntu-24.04
+2025-12-30T14:51:02.7185840Z Version: 20251215.174.1
+2025-12-30T14:51:02.7187006Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20251215.174/images/ubuntu/Ubuntu2404-Readme.md
+2025-12-30T14:51:02.7188588Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20251215.174
+2025-12-30T14:51:02.7189594Z ##[endgroup]
+2025-12-30T14:51:02.7190958Z ##[group]GITHUB_TOKEN Permissions
+2025-12-30T14:51:02.7193030Z Contents: write
+2025-12-30T14:51:02.7193559Z Metadata: read
+2025-12-30T14:51:02.7194121Z PullRequests: write
+2025-12-30T14:51:02.7194652Z ##[endgroup]
+2025-12-30T14:51:02.7197068Z Secret source: Actions
+2025-12-30T14:51:02.7198263Z Prepare workflow directory
+2025-12-30T14:51:02.7544062Z Prepare all required actions
+2025-12-30T14:51:02.7583225Z Getting action download info
+2025-12-30T14:51:03.1212609Z Download action repository 'actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683' (SHA:11bd71901bbe5b1630ceea73d27597364c9af683)
+2025-12-30T14:51:03.2409353Z Download action repository 'actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b' (SHA:0b93645e9fea7318ecaed2b359559ac225c90a2b)
+2025-12-30T14:51:03.4683945Z Download action repository 'actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882' (SHA:b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882)
+2025-12-30T14:51:03.8681146Z Complete job name: Repo Lint: Python
+2025-12-30T14:51:03.9537278Z ##[group]Run actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+2025-12-30T14:51:03.9539076Z with:
+2025-12-30T14:51:03.9540022Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:03.9541548Z   token: ***
+2025-12-30T14:51:03.9542286Z   ssh-strict: true
+2025-12-30T14:51:03.9543064Z   ssh-user: git
+2025-12-30T14:51:03.9543868Z   persist-credentials: true
+2025-12-30T14:51:03.9544748Z   clean: true
+2025-12-30T14:51:03.9545536Z   sparse-checkout-cone-mode: true
+2025-12-30T14:51:03.9546862Z   fetch-depth: 1
+2025-12-30T14:51:03.9547670Z   fetch-tags: false
+2025-12-30T14:51:03.9548482Z   show-progress: true
+2025-12-30T14:51:03.9549313Z   lfs: false
+2025-12-30T14:51:03.9550061Z   submodules: false
+2025-12-30T14:51:03.9550897Z   set-safe-directory: true
+2025-12-30T14:51:03.9552125Z ##[endgroup]
+2025-12-30T14:51:04.0716576Z Syncing repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.0719684Z ##[group]Getting Git version info
+2025-12-30T14:51:04.0721606Z Working directory is '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:04.0724053Z [command]/usr/bin/git version
+2025-12-30T14:51:04.0774830Z git version 2.52.0
+2025-12-30T14:51:04.0803171Z ##[endgroup]
+2025-12-30T14:51:04.0820677Z Temporarily overriding HOME='/home/runner/work/_temp/eb27b663-d3a5-4138-b597-29bd8bb79b9a' before making global git config changes
+2025-12-30T14:51:04.0825539Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:04.0830582Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.0871678Z Deleting the contents of '/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding'
+2025-12-30T14:51:04.0876416Z ##[group]Initializing the repository
+2025-12-30T14:51:04.0880976Z [command]/usr/bin/git init /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.0998658Z hint: Using 'master' as the name for the initial branch. This default branch name
+2025-12-30T14:51:04.1001554Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2025-12-30T14:51:04.1003573Z hint: to use in all of your new repositories, which will suppress this warning,
+2025-12-30T14:51:04.1005085Z hint: call:
+2025-12-30T14:51:04.1005819Z hint:
+2025-12-30T14:51:04.1007588Z hint: 	git config --global init.defaultBranch <name>
+2025-12-30T14:51:04.1008825Z hint:
+2025-12-30T14:51:04.1009962Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2025-12-30T14:51:04.1011782Z hint: 'development'. The just-created branch can be renamed via this command:
+2025-12-30T14:51:04.1013548Z hint:
+2025-12-30T14:51:04.1014299Z hint: 	git branch -m <name>
+2025-12-30T14:51:04.1015169Z hint:
+2025-12-30T14:51:04.1016607Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2025-12-30T14:51:04.1019205Z Initialized empty Git repository in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.git/
+2025-12-30T14:51:04.1023224Z [command]/usr/bin/git remote add origin https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.1050726Z ##[endgroup]
+2025-12-30T14:51:04.1052109Z ##[group]Disabling automatic garbage collection
+2025-12-30T14:51:04.1054100Z [command]/usr/bin/git config --local gc.auto 0
+2025-12-30T14:51:04.1085246Z ##[endgroup]
+2025-12-30T14:51:04.1087938Z ##[group]Setting up auth
+2025-12-30T14:51:04.1093243Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:04.1127354Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:04.1475499Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:04.1518348Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:04.1745393Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2025-12-30T14:51:04.1784610Z ##[endgroup]
+2025-12-30T14:51:04.1792606Z ##[group]Fetching the repository
+2025-12-30T14:51:04.1796597Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2:refs/remotes/pull/130/merge
+2025-12-30T14:51:04.6163581Z From https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:04.6165017Z  * [new ref]         d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2 -> pull/130/merge
+2025-12-30T14:51:04.6195742Z ##[endgroup]
+2025-12-30T14:51:04.6196528Z ##[group]Determining the checkout info
+2025-12-30T14:51:04.6197750Z ##[endgroup]
+2025-12-30T14:51:04.6202921Z [command]/usr/bin/git sparse-checkout disable
+2025-12-30T14:51:04.6244608Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2025-12-30T14:51:04.6273189Z ##[group]Checking out the ref
+2025-12-30T14:51:04.6277115Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/130/merge
+2025-12-30T14:51:04.6682009Z Note: switching to 'refs/remotes/pull/130/merge'.
+2025-12-30T14:51:04.6682552Z 
+2025-12-30T14:51:04.6682906Z You are in 'detached HEAD' state. You can look around, make experimental
+2025-12-30T14:51:04.6683754Z changes and commit them, and you can discard any commits you make in this
+2025-12-30T14:51:04.6684618Z state without impacting any branches by switching back to a branch.
+2025-12-30T14:51:04.6685089Z 
+2025-12-30T14:51:04.6685469Z If you want to create a new branch to retain commits you create, you may
+2025-12-30T14:51:04.6685994Z do so (now or later) by using -c with the switch command. Example:
+2025-12-30T14:51:04.6686960Z 
+2025-12-30T14:51:04.6687128Z   git switch -c <new-branch-name>
+2025-12-30T14:51:04.6687348Z 
+2025-12-30T14:51:04.6687472Z Or undo this operation with:
+2025-12-30T14:51:04.6687655Z 
+2025-12-30T14:51:04.6687766Z   git switch -
+2025-12-30T14:51:04.6687950Z 
+2025-12-30T14:51:04.6688184Z Turn off this advice by setting config variable advice.detachedHead to false
+2025-12-30T14:51:04.6688532Z 
+2025-12-30T14:51:04.6688916Z HEAD is now at d13871f Merge 1260744479dfd1063e7b851fed4d0f27c11f5d51 into f227266c3f6463f0a986ee4d521673a34e0e8803
+2025-12-30T14:51:04.6690950Z ##[endgroup]
+2025-12-30T14:51:04.6730156Z [command]/usr/bin/git log -1 --format=%H
+2025-12-30T14:51:04.6752568Z d13871fb1289b7ae9ae56db1bc1a2ee05b279aa2
+2025-12-30T14:51:04.7009441Z ##[group]Run actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b
+2025-12-30T14:51:04.7009896Z with:
+2025-12-30T14:51:04.7010114Z   python-version: 3.11
+2025-12-30T14:51:04.7010370Z   check-latest: false
+2025-12-30T14:51:04.7010777Z   token: ***
+2025-12-30T14:51:04.7011022Z   update-environment: true
+2025-12-30T14:51:04.7011301Z   allow-prereleases: false
+2025-12-30T14:51:04.7011562Z ##[endgroup]
+2025-12-30T14:51:04.8702344Z ##[group]Installed versions
+2025-12-30T14:51:04.8851216Z Successfully set up CPython (3.11.14)
+2025-12-30T14:51:04.8852832Z ##[endgroup]
+2025-12-30T14:51:04.9073222Z ##[group]Run python3 -m pip install --upgrade pip
+2025-12-30T14:51:04.9073812Z [36;1mpython3 -m pip install --upgrade pip[0m
+2025-12-30T14:51:04.9074335Z [36;1mpython3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1[0m
+2025-12-30T14:51:04.9122081Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:04.9122452Z env:
+2025-12-30T14:51:04.9122756Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.9123257Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:04.9123734Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.9124185Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.9124603Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:04.9125040Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:04.9125388Z ##[endgroup]
+2025-12-30T14:51:05.6528191Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages (25.3)
+2025-12-30T14:51:06.3578740Z Collecting black==24.10.0
+2025-12-30T14:51:06.4632683Z   Downloading black-24.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl.metadata (79 kB)
+2025-12-30T14:51:06.8451789Z Collecting ruff==0.8.4
+2025-12-30T14:51:06.8657032Z   Downloading ruff-0.8.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (25 kB)
+2025-12-30T14:51:06.9034985Z Collecting pylint==3.3.2
+2025-12-30T14:51:06.9239284Z   Downloading pylint-3.3.2-py3-none-any.whl.metadata (12 kB)
+2025-12-30T14:51:06.9433445Z Collecting yamllint==1.35.1
+2025-12-30T14:51:06.9639452Z   Downloading yamllint-1.35.1-py3-none-any.whl.metadata (4.2 kB)
+2025-12-30T14:51:06.9832438Z Collecting click>=8.0.0 (from black==24.10.0)
+2025-12-30T14:51:07.0033743Z   Downloading click-8.3.1-py3-none-any.whl.metadata (2.6 kB)
+2025-12-30T14:51:07.0145806Z Collecting mypy-extensions>=0.4.3 (from black==24.10.0)
+2025-12-30T14:51:07.0346462Z   Downloading mypy_extensions-1.1.0-py3-none-any.whl.metadata (1.1 kB)
+2025-12-30T14:51:07.0510072Z Collecting packaging>=22.0 (from black==24.10.0)
+2025-12-30T14:51:07.0710024Z   Downloading packaging-25.0-py3-none-any.whl.metadata (3.3 kB)
+2025-12-30T14:51:07.0847768Z Collecting pathspec>=0.9.0 (from black==24.10.0)
+2025-12-30T14:51:07.1049736Z   Downloading pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+2025-12-30T14:51:07.1278373Z Collecting platformdirs>=2 (from black==24.10.0)
+2025-12-30T14:51:07.1479684Z   Downloading platformdirs-4.5.1-py3-none-any.whl.metadata (12 kB)
+2025-12-30T14:51:07.1657550Z Collecting dill>=0.3.6 (from pylint==3.3.2)
+2025-12-30T14:51:07.1866040Z   Downloading dill-0.4.0-py3-none-any.whl.metadata (10 kB)
+2025-12-30T14:51:07.2282265Z Collecting astroid<=3.4.0-dev0,>=3.3.5 (from pylint==3.3.2)
+2025-12-30T14:51:07.2486741Z   Downloading astroid-3.3.11-py3-none-any.whl.metadata (4.4 kB)
+2025-12-30T14:51:07.3062759Z Collecting isort!=5.13.0,<6,>=4.2.5 (from pylint==3.3.2)
+2025-12-30T14:51:07.3268587Z   Downloading isort-5.13.2-py3-none-any.whl.metadata (12 kB)
+2025-12-30T14:51:07.3404950Z Collecting mccabe<0.8,>=0.6 (from pylint==3.3.2)
+2025-12-30T14:51:07.3604771Z   Downloading mccabe-0.7.0-py2.py3-none-any.whl.metadata (5.0 kB)
+2025-12-30T14:51:07.3790800Z Collecting tomlkit>=0.10.1 (from pylint==3.3.2)
+2025-12-30T14:51:07.3990991Z   Downloading tomlkit-0.13.3-py3-none-any.whl.metadata (2.8 kB)
+2025-12-30T14:51:07.4393211Z Collecting pyyaml (from yamllint==1.35.1)
+2025-12-30T14:51:07.4634974Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2025-12-30T14:51:07.4927566Z Downloading black-24.10.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.manylinux_2_28_x86_64.whl (1.7 MB)
+2025-12-30T14:51:07.5619534Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.7/1.7 MB 34.0 MB/s  0:00:00
+2025-12-30T14:51:07.5822152Z Downloading ruff-0.8.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (11.2 MB)
+2025-12-30T14:51:07.6674667Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.2/11.2 MB 133.3 MB/s  0:00:00
+2025-12-30T14:51:07.6875156Z Downloading pylint-3.3.2-py3-none-any.whl (521 kB)
+2025-12-30T14:51:07.7192813Z Downloading yamllint-1.35.1-py3-none-any.whl (66 kB)
+2025-12-30T14:51:07.7423949Z Downloading astroid-3.3.11-py3-none-any.whl (275 kB)
+2025-12-30T14:51:07.7679613Z Downloading isort-5.13.2-py3-none-any.whl (92 kB)
+2025-12-30T14:51:07.7901805Z Downloading mccabe-0.7.0-py2.py3-none-any.whl (7.3 kB)
+2025-12-30T14:51:07.8124333Z Downloading click-8.3.1-py3-none-any.whl (108 kB)
+2025-12-30T14:51:07.8367885Z Downloading dill-0.4.0-py3-none-any.whl (119 kB)
+2025-12-30T14:51:07.8597243Z Downloading mypy_extensions-1.1.0-py3-none-any.whl (5.0 kB)
+2025-12-30T14:51:07.8816116Z Downloading packaging-25.0-py3-none-any.whl (66 kB)
+2025-12-30T14:51:07.9043329Z Downloading pathspec-0.12.1-py3-none-any.whl (31 kB)
+2025-12-30T14:51:07.9276451Z Downloading platformdirs-4.5.1-py3-none-any.whl (18 kB)
+2025-12-30T14:51:07.9498655Z Downloading tomlkit-0.13.3-py3-none-any.whl (38 kB)
+2025-12-30T14:51:07.9724570Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+2025-12-30T14:51:07.9802995Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 114.1 MB/s  0:00:00
+2025-12-30T14:51:08.0354228Z Installing collected packages: tomlkit, ruff, pyyaml, platformdirs, pathspec, packaging, mypy-extensions, mccabe, isort, dill, click, astroid, yamllint, pylint, black
+2025-12-30T14:51:09.1510833Z 
+2025-12-30T14:51:09.1526887Z Successfully installed astroid-3.3.11 black-24.10.0 click-8.3.1 dill-0.4.0 isort-5.13.2 mccabe-0.7.0 mypy-extensions-1.1.0 packaging-25.0 pathspec-0.12.1 platformdirs-4.5.1 pylint-3.3.2 pyyaml-6.0.3 ruff-0.8.4 tomlkit-0.13.3 yamllint-1.35.1
+2025-12-30T14:51:09.2658783Z ##[group]Run python3 -m tools.repo_lint check --ci --only python 2>&1 | tee python-lint-output.txt
+2025-12-30T14:51:09.2659489Z [36;1mpython3 -m tools.repo_lint check --ci --only python 2>&1 | tee python-lint-output.txt[0m
+2025-12-30T14:51:09.2659918Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:09.2693385Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:09.2693617Z env:
+2025-12-30T14:51:09.2693857Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.2694274Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:09.2694684Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.2695033Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.2695396Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.2695943Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:09.2696476Z ##[endgroup]
+2025-12-30T14:51:37.7469716Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:37.7470194Z 
+2025-12-30T14:51:37.7470516Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7470934Z   Python Linting
+2025-12-30T14:51:37.7471358Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7471668Z 
+2025-12-30T14:51:37.7471983Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7472410Z   Linting Results
+2025-12-30T14:51:37.7472864Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7473199Z 
+2025-12-30T14:51:37.7473372Z ❌ ruff: FAILED (44 violation(s))
+2025-12-30T14:51:37.7474570Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: E402 Module level import not at top of file
+2025-12-30T14:51:37.7475566Z    .: [ruff] |
+2025-12-30T14:51:37.7476546Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:37.7477726Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:37.7478507Z    .: [ruff] | ^^^^^^^^^ E402
+2025-12-30T14:51:37.7478989Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:37.7479442Z    .: [ruff] |
+2025-12-30T14:51:37.7480588Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:1: I001 [*] Import block is un-sorted or un-formatted
+2025-12-30T14:51:37.7481866Z    .: [ruff] |
+2025-12-30T14:51:37.7482378Z    .: [ruff] 13 |   # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:37.7483046Z    .: [ruff] 14 | / import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:37.7483409Z    .: [ruff] 15 | | import sys
+2025-12-30T14:51:37.7483627Z    .: [ruff] 16 | |
+2025-12-30T14:51:37.7483815Z    .: [ruff] 17 | |
+2025-12-30T14:51:37.7484122Z    .: [ruff] 18 | | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+2025-12-30T14:51:37.7484505Z    .: [ruff] | |_^ I001
+2025-12-30T14:51:37.7485033Z    .: [ruff] 19 |   VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+2025-12-30T14:51:37.7485617Z    .: [ruff] 20 |       "value"
+2025-12-30T14:51:37.7485820Z    .: [ruff] |
+2025-12-30T14:51:37.7486013Z    .: [ruff] = help: Organize imports
+2025-12-30T14:51:37.7486797Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:1: E402 Module level import not at top of file
+2025-12-30T14:51:37.7487369Z    .: [ruff] |
+2025-12-30T14:51:37.7487683Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:37.7488180Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:37.7488536Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:37.7488750Z    .: [ruff] | ^^^^^^^^^^ E402
+2025-12-30T14:51:37.7488954Z    .: [ruff] |
+2025-12-30T14:51:37.7489703Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:8: F401 [*] `sys` imported but unused
+2025-12-30T14:51:37.7490275Z    .: [ruff] |
+2025-12-30T14:51:37.7490596Z    .: [ruff] 13 | # Unused import (Ruff F401 - not auto-fixable as it might be intentional)
+2025-12-30T14:51:37.7491102Z    .: [ruff] 14 | import os  # noqa: F401 - Remove this noqa to trigger violation
+2025-12-30T14:51:37.7491463Z    .: [ruff] 15 | import sys
+2025-12-30T14:51:37.7491673Z    .: [ruff] |        ^^^ F401
+2025-12-30T14:51:37.7491871Z    .: [ruff] |
+2025-12-30T14:51:37.7492059Z    .: [ruff] = help: Remove unused import: `sys`
+2025-12-30T14:51:37.7492601Z    .: [ruff] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:121: E501 Line too long (122 > 120)
+2025-12-30T14:51:37.7493095Z    .: [ruff] |
+2025-12-30T14:51:37.7493390Z    .: [ruff] 18 | # Line too long (Ruff E501 - not auto-fixable as Black won't break it)
+2025-12-30T14:51:37.7494225Z    .: [ruff] 19 | VERY_LONG_STRING_THAT_EXCEEDS_THE_LINE_LENGTH_LIMIT_OF_ONE_HUNDRED_TWENTY_CHARACTERS_AND_CANNOT_BE_AUTO_FIXED_BY_BLACK = (
+2025-12-30T14:51:37.7494877Z    .: [ruff] |                                                                                                                         ^^ E501
+2025-12-30T14:51:37.7495238Z    .: [ruff] 20 |     "value"
+2025-12-30T14:51:37.7495435Z    .: [ruff] 21 | )
+2025-12-30T14:51:37.7495602Z    .: [ruff] |
+2025-12-30T14:51:37.7495793Z    .: [ruff] [*] 2 fixable with the `--fix` option.
+2025-12-30T14:51:37.7495988Z 
+2025-12-30T14:51:37.7496346Z ❌ pylint: FAILED (6 violation(s))
+2025-12-30T14:51:37.7496720Z    .: [pylint] ************* Module missing_docstring
+2025-12-30T14:51:37.7497308Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:19:0: C0301: Line too long (122/120) (line-too-long)
+2025-12-30T14:51:37.7498331Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: C0413: Import "import os" should be placed at the top of the module (wrong-import-position)
+2025-12-30T14:51:37.7499460Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: C0413: Import "import sys" should be placed at the top of the module (wrong-import-position)
+2025-12-30T14:51:37.7500479Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:14:0: W0611: Unused import os (unused-import)
+2025-12-30T14:51:37.7501338Z    .: [pylint] conformance/repo-lint/fixtures/violations/python/missing_docstring.py:15:0: W0611: Unused import sys (unused-import)
+2025-12-30T14:51:37.7501804Z 
+2025-12-30T14:51:37.7501973Z ❌ validate_docstrings: FAILED (13 violation(s))
+2025-12-30T14:51:37.7502414Z    .: [validate_docstrings] ❌ Validation FAILED: 12 violation(s) in 4 file(s)
+2025-12-30T14:51:37.7503339Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh
+2025-12-30T14:51:37.7504617Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl
+2025-12-30T14:51:37.7505909Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1
+2025-12-30T14:51:37.7507455Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:4
+2025-12-30T14:51:37.7508878Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:14
+2025-12-30T14:51:37.7510245Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:20
+2025-12-30T14:51:37.7511776Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1:25
+2025-12-30T14:51:37.7513115Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py
+2025-12-30T14:51:37.7514418Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:4
+2025-12-30T14:51:37.7515717Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:8
+2025-12-30T14:51:37.7517383Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:24
+2025-12-30T14:51:37.7518850Z    .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/conformance/repo-lint/fixtures/violations/python/missing_docstring.py:9
+2025-12-30T14:51:37.7519488Z 
+2025-12-30T14:51:37.7519730Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:37.7520085Z ❌ Found 63 violation(s) across 3 tool(s)
+2025-12-30T14:51:37.7566490Z ##[error]Process completed with exit code 1.
+2025-12-30T14:51:37.7643624Z ##[group]Run actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+2025-12-30T14:51:37.7644015Z with:
+2025-12-30T14:51:37.7644201Z   name: python-lint-results
+2025-12-30T14:51:37.7644424Z   path: python-lint-output.txt
+2025-12-30T14:51:37.7644668Z   retention-days: 7
+2025-12-30T14:51:37.7644856Z   if-no-files-found: warn
+2025-12-30T14:51:37.7645083Z   compression-level: 6
+2025-12-30T14:51:37.7645278Z   overwrite: false
+2025-12-30T14:51:37.7645483Z   include-hidden-files: false
+2025-12-30T14:51:37.7645690Z env:
+2025-12-30T14:51:37.7645914Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:37.7646910Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:37.7647315Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:37.7647683Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:37.7648028Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:37.7648414Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:37.7648712Z ##[endgroup]
+2025-12-30T14:51:37.9801904Z With the provided path, there will be 1 file uploaded
+2025-12-30T14:51:37.9808217Z Artifact name is valid!
+2025-12-30T14:51:37.9809376Z Root directory input is valid!
+2025-12-30T14:51:38.1004602Z Beginning upload of artifact content to blob storage
+2025-12-30T14:51:38.2432644Z Uploaded bytes 1213
+2025-12-30T14:51:38.2847272Z Finished uploading artifact content to blob storage!
+2025-12-30T14:51:38.2850364Z SHA256 hash of uploaded artifact zip is 3fe2c84880e5617c65911a05815d70cd4d1c30c3f455d854bb8d0a126157eaf3
+2025-12-30T14:51:38.2852157Z Finalizing artifact upload
+2025-12-30T14:51:38.3778988Z Artifact python-lint-results.zip successfully finalized. Artifact ID 4991798057
+2025-12-30T14:51:38.3780542Z Artifact python-lint-results has been successfully uploaded! Final size is 1213 bytes. Artifact ID is 4991798057
+2025-12-30T14:51:38.3789613Z Artifact download URL: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696/artifacts/4991798057
+2025-12-30T14:51:38.3937762Z Post job cleanup.
+2025-12-30T14:51:38.4890372Z [command]/usr/bin/git version
+2025-12-30T14:51:38.4928196Z git version 2.52.0
+2025-12-30T14:51:38.4969425Z Temporarily overriding HOME='/home/runner/work/_temp/eb30d74a-349a-4436-8ece-af4f6cc36a64' before making global git config changes
+2025-12-30T14:51:38.4970989Z Adding repository directory to the temporary git global config as a safe directory
+2025-12-30T14:51:38.4974540Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:38.5009567Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2025-12-30T14:51:38.5042320Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2025-12-30T14:51:38.5277713Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2025-12-30T14:51:38.5299085Z http.https://github.com/.extraheader
+2025-12-30T14:51:38.5311711Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2025-12-30T14:51:38.5344572Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2025-12-30T14:51:38.5674359Z Cleaning up orphan processes

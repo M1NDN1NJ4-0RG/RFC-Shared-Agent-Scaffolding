@@ -1,0 +1,12 @@
+﻿2025-12-30T14:50:48.5142423Z ##[group]Run run_url="https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696"
+2025-12-30T14:50:48.5143197Z [36;1mrun_url="https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696"[0m
+2025-12-30T14:50:48.5143701Z [36;1mecho "url=$run_url" >> $GITHUB_OUTPUT[0m
+2025-12-30T14:50:48.5172920Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:50:48.5173154Z env:
+2025-12-30T14:50:48.5173397Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.5173823Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:50:48.5174242Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.5174602Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.5174978Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:50:48.5175344Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:50:48.5175643Z ##[endgroup]

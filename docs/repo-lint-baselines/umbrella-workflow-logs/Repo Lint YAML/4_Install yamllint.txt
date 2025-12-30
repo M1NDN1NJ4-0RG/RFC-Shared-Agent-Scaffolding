@@ -1,0 +1,26 @@
+﻿2025-12-30T14:51:03.9901050Z ##[group]Run python3 -m pip install --upgrade pip
+2025-12-30T14:51:03.9902402Z [36;1mpython3 -m pip install --upgrade pip[0m
+2025-12-30T14:51:03.9903558Z [36;1mpython3 -m pip install yamllint==1.35.1[0m
+2025-12-30T14:51:03.9954080Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:03.9954953Z env:
+2025-12-30T14:51:03.9955827Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:03.9957495Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:03.9959014Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:03.9960342Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:03.9961721Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:03.9963098Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:03.9964234Z ##[endgroup]
+2025-12-30T14:51:04.6863516Z Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.14/x64/lib/python3.11/site-packages (25.3)
+2025-12-30T14:51:05.2911727Z Collecting yamllint==1.35.1
+2025-12-30T14:51:05.3471444Z   Downloading yamllint-1.35.1-py3-none-any.whl.metadata (4.2 kB)
+2025-12-30T14:51:05.3615760Z Collecting pathspec>=0.5.3 (from yamllint==1.35.1)
+2025-12-30T14:51:05.3652836Z   Downloading pathspec-0.12.1-py3-none-any.whl.metadata (21 kB)
+2025-12-30T14:51:05.4187235Z Collecting pyyaml (from yamllint==1.35.1)
+2025-12-30T14:51:05.4232044Z   Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (2.4 kB)
+2025-12-30T14:51:05.4306481Z Downloading yamllint-1.35.1-py3-none-any.whl (66 kB)
+2025-12-30T14:51:05.4447708Z Downloading pathspec-0.12.1-py3-none-any.whl (31 kB)
+2025-12-30T14:51:05.4504461Z Downloading pyyaml-6.0.3-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (806 kB)
+2025-12-30T14:51:05.4603492Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 806.6/806.6 kB 98.5 MB/s  0:00:00
+2025-12-30T14:51:05.4781528Z Installing collected packages: pyyaml, pathspec, yamllint
+2025-12-30T14:51:05.5726010Z 
+2025-12-30T14:51:05.5735777Z Successfully installed pathspec-0.12.1 pyyaml-6.0.3 yamllint-1.35.1

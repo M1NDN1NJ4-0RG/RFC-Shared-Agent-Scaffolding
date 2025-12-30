@@ -1,0 +1,60 @@
+﻿2025-12-30T14:51:09.1209318Z ##[group]Run sudo apt-get update
+2025-12-30T14:51:09.1209669Z [36;1msudo apt-get update[0m
+2025-12-30T14:51:09.1209934Z [36;1msudo apt-get install -y shellcheck[0m
+2025-12-30T14:51:09.1242681Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:09.1242960Z env:
+2025-12-30T14:51:09.1243232Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.1243649Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:09.1244046Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.1244579Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.1244934Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:09.1245297Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:09.1245591Z ##[endgroup]
+2025-12-30T14:51:09.2100038Z Get:1 file:/etc/apt/apt-mirrors.txt Mirrorlist [144 B]
+2025-12-30T14:51:09.2416160Z Hit:2 http://azure.archive.ubuntu.com/ubuntu noble InRelease
+2025-12-30T14:51:09.2419541Z Hit:6 https://packages.microsoft.com/repos/azure-cli noble InRelease
+2025-12-30T14:51:09.2455503Z Get:3 http://azure.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+2025-12-30T14:51:09.2457407Z Get:7 https://packages.microsoft.com/ubuntu/24.04/prod noble InRelease [3600 B]
+2025-12-30T14:51:09.2487911Z Get:4 http://azure.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+2025-12-30T14:51:09.2574189Z Get:5 http://azure.archive.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+2025-12-30T14:51:09.4185585Z Get:8 https://packages.microsoft.com/ubuntu/24.04/prod noble/main armhf Packages [11.4 kB]
+2025-12-30T14:51:09.4285836Z Get:9 https://packages.microsoft.com/ubuntu/24.04/prod noble/main arm64 Packages [58.9 kB]
+2025-12-30T14:51:09.4321582Z Get:10 https://packages.microsoft.com/ubuntu/24.04/prod noble/main amd64 Packages [76.9 kB]
+2025-12-30T14:51:09.4657586Z Get:11 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [1684 kB]
+2025-12-30T14:51:09.4746190Z Get:12 http://azure.archive.ubuntu.com/ubuntu noble-updates/main Translation-en [311 kB]
+2025-12-30T14:51:09.4771870Z Get:13 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 Components [175 kB]
+2025-12-30T14:51:09.4792220Z Get:14 http://azure.archive.ubuntu.com/ubuntu noble-updates/main amd64 c-n-f Metadata [15.8 kB]
+2025-12-30T14:51:09.4805349Z Get:15 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1506 kB]
+2025-12-30T14:51:09.4879095Z Get:16 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe Translation-en [306 kB]
+2025-12-30T14:51:09.4923742Z Get:17 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 Components [377 kB]
+2025-12-30T14:51:09.4933181Z Get:18 http://azure.archive.ubuntu.com/ubuntu noble-updates/universe amd64 c-n-f Metadata [31.4 kB]
+2025-12-30T14:51:09.4957712Z Get:19 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [2413 kB]
+2025-12-30T14:51:09.5066629Z Get:20 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted Translation-en [550 kB]
+2025-12-30T14:51:09.5554989Z Get:21 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+2025-12-30T14:51:09.5562070Z Get:22 http://azure.archive.ubuntu.com/ubuntu noble-updates/restricted amd64 c-n-f Metadata [516 B]
+2025-12-30T14:51:09.5570978Z Get:23 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [30.3 kB]
+2025-12-30T14:51:09.5578879Z Get:24 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse Translation-en [6048 B]
+2025-12-30T14:51:09.5585660Z Get:25 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+2025-12-30T14:51:09.5593274Z Get:26 http://azure.archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 c-n-f Metadata [488 B]
+2025-12-30T14:51:09.5602079Z Get:27 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [40.4 kB]
+2025-12-30T14:51:09.5613488Z Get:28 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 Components [7312 B]
+2025-12-30T14:51:09.5617372Z Get:29 http://azure.archive.ubuntu.com/ubuntu noble-backports/main amd64 c-n-f Metadata [368 B]
+2025-12-30T14:51:09.5624987Z Get:30 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [29.5 kB]
+2025-12-30T14:51:09.5632340Z Get:31 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe Translation-en [17.9 kB]
+2025-12-30T14:51:09.5638627Z Get:32 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 Components [10.5 kB]
+2025-12-30T14:51:09.5648639Z Get:33 http://azure.archive.ubuntu.com/ubuntu noble-backports/universe amd64 c-n-f Metadata [1444 B]
+2025-12-30T14:51:09.5652797Z Get:34 http://azure.archive.ubuntu.com/ubuntu noble-backports/restricted amd64 Components [216 B]
+2025-12-30T14:51:09.6070724Z Get:35 http://azure.archive.ubuntu.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+2025-12-30T14:51:09.6083860Z Get:36 http://azure.archive.ubuntu.com/ubuntu noble-security/main Translation-en [225 kB]
+2025-12-30T14:51:09.6102664Z Get:37 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 Components [21.5 kB]
+2025-12-30T14:51:09.6110073Z Get:38 http://azure.archive.ubuntu.com/ubuntu noble-security/main amd64 c-n-f Metadata [9504 B]
+2025-12-30T14:51:09.6118721Z Get:39 http://azure.archive.ubuntu.com/ubuntu noble-security/universe amd64 Components [71.4 kB]
+2025-12-30T14:51:09.6128659Z Get:40 http://azure.archive.ubuntu.com/ubuntu noble-security/restricted amd64 Components [212 B]
+2025-12-30T14:51:09.6136121Z Get:41 http://azure.archive.ubuntu.com/ubuntu noble-security/multiverse amd64 Components [208 B]
+2025-12-30T14:51:18.0332647Z Fetched 8374 kB in 1s (7409 kB/s)
+2025-12-30T14:51:18.8397303Z Reading package lists...
+2025-12-30T14:51:18.8723653Z Reading package lists...
+2025-12-30T14:51:19.0775297Z Building dependency tree...
+2025-12-30T14:51:19.0783196Z Reading state information...
+2025-12-30T14:51:19.2886446Z shellcheck is already the newest version (0.9.0-1).
+2025-12-30T14:51:19.2887253Z 0 upgraded, 0 newly installed, 0 to remove and 69 not upgraded.

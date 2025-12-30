@@ -1,0 +1,13 @@
+﻿2025-12-30T14:51:19.2936057Z ##[group]Run wget -qO /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64
+2025-12-30T14:51:19.2937070Z [36;1mwget -qO /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64[0m
+2025-12-30T14:51:19.2937854Z [36;1mchmod +x /tmp/shfmt[0m
+2025-12-30T14:51:19.2938110Z [36;1msudo mv /tmp/shfmt /usr/local/bin/shfmt[0m
+2025-12-30T14:51:19.2970881Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:19.2971111Z env:
+2025-12-30T14:51:19.2971357Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.2971764Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:19.2972161Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.2972511Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.2972855Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:19.2973213Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:19.2973565Z ##[endgroup]

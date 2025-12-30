@@ -1,0 +1,271 @@
+﻿2025-12-30T14:51:08.8113733Z ##[group]Run cpanm --notest Perl::Critic PPI
+2025-12-30T14:51:08.8114228Z [36;1mcpanm --notest Perl::Critic PPI[0m
+2025-12-30T14:51:08.8194484Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:08.8194796Z env:
+2025-12-30T14:51:08.8195063Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:08.8195516Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:08.8196127Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:08.8196523Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:08.8196909Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:08.8197321Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:08.8199158Z   PERL5LIB: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5:/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/local/lib/perl5/x86_64-linux:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib:/home/runner/work/_actions/shogo82148/actions-setup-perl/9c1eca9952ccc07f9ca4a2097b63df93d9d138e9/scripts/lib/perl5
+2025-12-30T14:51:08.8200873Z ##[endgroup]
+2025-12-30T14:51:09.2816336Z --> Working on Perl::Critic
+2025-12-30T14:51:09.7116832Z Fetching https://www.cpan.org/authors/id/P/PE/PETDANCE/Perl-Critic-1.156.tar.gz ... OK
+2025-12-30T14:51:09.9983505Z ==> Found dependencies: List::SomeUtils, B::Keywords, Module::Build
+2025-12-30T14:51:09.9984221Z --> Working on List::SomeUtils
+2025-12-30T14:51:10.0919608Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/List-SomeUtils-0.59.tar.gz ... OK
+2025-12-30T14:51:12.0568992Z Configuring List-SomeUtils-0.59 ... OK
+2025-12-30T14:51:12.0569962Z ==> Found dependencies: Module::Implementation, List::SomeUtils::XS
+2025-12-30T14:51:12.0570651Z --> Working on Module::Implementation
+2025-12-30T14:51:12.1294637Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/Module-Implementation-0.09.tar.gz ... OK
+2025-12-30T14:51:12.4398885Z Configuring Module-Implementation-0.09 ... OK
+2025-12-30T14:51:12.4399747Z ==> Found dependencies: Module::Runtime, Try::Tiny
+2025-12-30T14:51:12.4400373Z --> Working on Module::Runtime
+2025-12-30T14:51:12.5139183Z Fetching https://www.cpan.org/authors/id/H/HA/HAARG/Module-Runtime-0.018.tar.gz ... OK
+2025-12-30T14:51:12.5513918Z Configuring Module-Runtime-0.018 ... OK
+2025-12-30T14:51:12.5610195Z Building Module-Runtime-0.018 ... OK
+2025-12-30T14:51:12.5610927Z Successfully installed Module-Runtime-0.018
+2025-12-30T14:51:12.6786127Z --> Working on Try::Tiny
+2025-12-30T14:51:12.7560299Z Fetching https://www.cpan.org/authors/id/E/ET/ETHER/Try-Tiny-0.32.tar.gz ... OK
+2025-12-30T14:51:13.0484176Z Configuring Try-Tiny-0.32 ... OK
+2025-12-30T14:51:13.2772905Z Building Try-Tiny-0.32 ... OK
+2025-12-30T14:51:13.2773463Z Successfully installed Try-Tiny-0.32
+2025-12-30T14:51:13.5559962Z Building Module-Implementation-0.09 ... OK
+2025-12-30T14:51:13.5560670Z Successfully installed Module-Implementation-0.09
+2025-12-30T14:51:13.6921911Z --> Working on List::SomeUtils::XS
+2025-12-30T14:51:13.7853802Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/List-SomeUtils-XS-0.58.tar.gz ... OK
+2025-12-30T14:51:14.0393481Z Configuring List-SomeUtils-XS-0.58 ... OK
+2025-12-30T14:51:16.2554278Z Building List-SomeUtils-XS-0.58 ... OK
+2025-12-30T14:51:16.2555166Z Successfully installed List-SomeUtils-XS-0.58
+2025-12-30T14:51:16.5704224Z Building List-SomeUtils-0.59 ... OK
+2025-12-30T14:51:16.5704876Z Successfully installed List-SomeUtils-0.59
+2025-12-30T14:51:16.6899103Z --> Working on B::Keywords
+2025-12-30T14:51:16.7624722Z Fetching https://www.cpan.org/authors/id/R/RU/RURBAN/B-Keywords-1.29.tar.gz ... OK
+2025-12-30T14:51:16.9317024Z Configuring B-Keywords-1.29 ... OK
+2025-12-30T14:51:17.1807909Z Building B-Keywords-1.29 ... OK
+2025-12-30T14:51:17.1808462Z Successfully installed B-Keywords-1.29
+2025-12-30T14:51:17.2993993Z --> Working on Module::Build
+2025-12-30T14:51:17.4220306Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/Module-Build-0.4234.tar.gz ... OK
+2025-12-30T14:51:17.6686419Z Configuring Module-Build-0.4234 ... OK
+2025-12-30T14:51:17.9260283Z Building Module-Build-0.4234 ... OK
+2025-12-30T14:51:17.9260907Z Successfully installed Module-Build-0.4234
+2025-12-30T14:51:18.3177094Z Configuring Perl-Critic-1.156 ... OK
+2025-12-30T14:51:18.3179354Z ==> Found dependencies: Exception::Class, Pod::Select, PPIx::Regexp::Util, PPIx::Utils::Traversal, Readonly, PPI::Token::Whitespace, Config::Tiny, PPIx::Regexp, PPI::Document::File, Module::Pluggable, PPI, PPI::Token::Quote::Single, Pod::PlainText, PPI::Node, String::Format, Perl::Tidy, PPIx::QuoteLike, PPI::Document, Pod::Spell, File::Which
+2025-12-30T14:51:18.3181216Z --> Working on Exception::Class
+2025-12-30T14:51:18.4050235Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/Exception-Class-1.45.tar.gz ... OK
+2025-12-30T14:51:18.7493933Z Configuring Exception-Class-1.45 ... OK
+2025-12-30T14:51:18.7494877Z ==> Found dependencies: Devel::StackTrace, Class::Data::Inheritable
+2025-12-30T14:51:18.7496084Z --> Working on Devel::StackTrace
+2025-12-30T14:51:18.8340858Z Fetching https://www.cpan.org/authors/id/D/DR/DROLSKY/Devel-StackTrace-2.05.tar.gz ... OK
+2025-12-30T14:51:19.0882578Z Configuring Devel-StackTrace-2.05 ... OK
+2025-12-30T14:51:19.3347110Z Building Devel-StackTrace-2.05 ... OK
+2025-12-30T14:51:19.3348009Z Successfully installed Devel-StackTrace-2.05
+2025-12-30T14:51:19.4544279Z --> Working on Class::Data::Inheritable
+2025-12-30T14:51:19.5250986Z Fetching https://www.cpan.org/authors/id/R/RS/RSHERER/Class-Data-Inheritable-0.10.tar.gz ... OK
+2025-12-30T14:51:19.5301421Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.lastuseddate#PS'
+2025-12-30T14:51:19.6759041Z Configuring Class-Data-Inheritable-0.10 ... OK
+2025-12-30T14:51:19.9096482Z Building Class-Data-Inheritable-0.10 ... OK
+2025-12-30T14:51:19.9097371Z Successfully installed Class-Data-Inheritable-0.10
+2025-12-30T14:51:20.1845446Z Building Exception-Class-1.45 ... OK
+2025-12-30T14:51:20.1846576Z Successfully installed Exception-Class-1.45
+2025-12-30T14:51:20.3024344Z --> Working on Pod::Select
+2025-12-30T14:51:20.3971436Z Fetching https://www.cpan.org/authors/id/M/MA/MAREKR/Pod-Parser-1.67.tar.gz ... OK
+2025-12-30T14:51:20.5735057Z Configuring Pod-Parser-1.67 ... OK
+2025-12-30T14:51:20.9046484Z Building Pod-Parser-1.67 ... OK
+2025-12-30T14:51:20.9046915Z Successfully installed Pod-Parser-1.67
+2025-12-30T14:51:21.0446478Z --> Working on PPIx::Regexp::Util
+2025-12-30T14:51:21.1609590Z Fetching https://www.cpan.org/authors/id/W/WY/WYANT/PPIx-Regexp-0.091.tar.gz ... OK
+2025-12-30T14:51:21.4870905Z Configuring PPIx-Regexp-0.091 ... OK
+2025-12-30T14:51:21.4871933Z ==> Found dependencies: Task::Weaken, PPI::Dumper, PPI::Document
+2025-12-30T14:51:21.4872452Z --> Working on Task::Weaken
+2025-12-30T14:51:21.5644373Z Fetching https://www.cpan.org/authors/id/E/ET/ETHER/Task-Weaken-1.06.tar.gz ... OK
+2025-12-30T14:51:21.8318852Z Configuring Task-Weaken-1.06 ... OK
+2025-12-30T14:51:22.0672950Z Building Task-Weaken-1.06 ... OK
+2025-12-30T14:51:22.0673652Z Successfully installed Task-Weaken-1.06
+2025-12-30T14:51:22.1868046Z --> Working on PPI::Dumper
+2025-12-30T14:51:22.2999586Z Fetching https://www.cpan.org/authors/id/O/OA/OALDERS/PPI-1.284.tar.gz ... OK
+2025-12-30T14:51:22.6978367Z Configuring PPI-1.284 ... OK
+2025-12-30T14:51:22.6979098Z ==> Found dependencies: YAML::PP, Params::Util, Clone, Safe::Isa
+2025-12-30T14:51:22.6979569Z --> Working on YAML::PP
+2025-12-30T14:51:22.8095012Z Fetching https://www.cpan.org/authors/id/T/TI/TINITA/YAML-PP-v0.39.0.tar.gz ... OK
+2025-12-30T14:51:23.1560777Z Configuring YAML-PP-v0.39.0 ... OK
+2025-12-30T14:51:23.7579355Z Building YAML-PP-v0.39.0 ... OK
+2025-12-30T14:51:23.7580121Z Successfully installed YAML-PP-v0.39.0
+2025-12-30T14:51:23.8753966Z --> Working on Params::Util
+2025-12-30T14:51:23.9859721Z Fetching https://www.cpan.org/authors/id/R/RE/REHSACK/Params-Util-1.102.tar.gz ... OK
+2025-12-30T14:51:24.4234577Z Configuring Params-Util-1.102 ... OK
+2025-12-30T14:51:25.0847453Z Building Params-Util-1.102 ... OK
+2025-12-30T14:51:25.0847984Z Successfully installed Params-Util-1.102
+2025-12-30T14:51:25.2030354Z --> Working on Clone
+2025-12-30T14:51:25.3058980Z Fetching https://www.cpan.org/authors/id/A/AT/ATOOMIC/Clone-0.47.tar.gz ... OK
+2025-12-30T14:51:25.4635348Z Configuring Clone-0.47 ... OK
+2025-12-30T14:51:26.0789088Z Building Clone-0.47 ... OK
+2025-12-30T14:51:26.0789476Z Successfully installed Clone-0.47
+2025-12-30T14:51:26.1947277Z --> Working on Safe::Isa
+2025-12-30T14:51:26.2647232Z Fetching https://www.cpan.org/authors/id/E/ET/ETHER/Safe-Isa-1.000010.tar.gz ... OK
+2025-12-30T14:51:26.4201374Z Configuring Safe-Isa-1.000010 ... OK
+2025-12-30T14:51:26.6539845Z Building Safe-Isa-1.000010 ... OK
+2025-12-30T14:51:26.6540504Z Successfully installed Safe-Isa-1.000010
+2025-12-30T14:51:27.0689438Z Building PPI-1.284 ... OK
+2025-12-30T14:51:27.0690017Z Successfully installed PPI-1.284
+2025-12-30T14:51:27.4768522Z Building PPIx-Regexp-0.091 ... OK
+2025-12-30T14:51:27.5971556Z Successfully installed PPIx-Regexp-0.091
+2025-12-30T14:51:27.5972316Z --> Working on PPIx::Utils::Traversal
+2025-12-30T14:51:27.6739865Z Fetching https://www.cpan.org/authors/id/D/DB/DBOOK/PPIx-Utils-0.004.tar.gz ... OK
+2025-12-30T14:51:27.8530987Z Configuring PPIx-Utils-0.004 ... OK
+2025-12-30T14:51:28.0983531Z Building PPIx-Utils-0.004 ... OK
+2025-12-30T14:51:28.0984050Z Successfully installed PPIx-Utils-0.004
+2025-12-30T14:51:28.2158542Z --> Working on Readonly
+2025-12-30T14:51:28.2920032Z Fetching https://www.cpan.org/authors/id/S/SA/SANKO/Readonly-2.05.tar.gz ... OK
+2025-12-30T14:51:28.4023247Z ==> Found dependencies: Module::Build::Tiny
+2025-12-30T14:51:28.4023985Z --> Working on Module::Build::Tiny
+2025-12-30T14:51:28.4774729Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/Module-Build-Tiny-0.052.tar.gz ... OK
+2025-12-30T14:51:28.6123851Z ==> Found dependencies: ExtUtils::Helpers, ExtUtils::Config, ExtUtils::InstallPaths
+2025-12-30T14:51:28.6124765Z --> Working on ExtUtils::Helpers
+2025-12-30T14:51:28.6864909Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/ExtUtils-Helpers-0.028.tar.gz ... OK
+2025-12-30T14:51:28.8671341Z Configuring ExtUtils-Helpers-0.028 ... OK
+2025-12-30T14:51:29.1065403Z Building ExtUtils-Helpers-0.028 ... OK
+2025-12-30T14:51:29.1066181Z Successfully installed ExtUtils-Helpers-0.028
+2025-12-30T14:51:29.2342319Z --> Working on ExtUtils::Config
+2025-12-30T14:51:29.3070716Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/ExtUtils-Config-0.010.tar.gz ... OK
+2025-12-30T14:51:29.4781193Z Configuring ExtUtils-Config-0.010 ... OK
+2025-12-30T14:51:29.7203059Z Building ExtUtils-Config-0.010 ... OK
+2025-12-30T14:51:29.7203838Z Successfully installed ExtUtils-Config-0.010
+2025-12-30T14:51:29.8396713Z --> Working on ExtUtils::InstallPaths
+2025-12-30T14:51:29.9131226Z Fetching https://www.cpan.org/authors/id/L/LE/LEONT/ExtUtils-InstallPaths-0.015.tar.gz ... OK
+2025-12-30T14:51:30.0851698Z Configuring ExtUtils-InstallPaths-0.015 ... OK
+2025-12-30T14:51:30.3215461Z Building ExtUtils-InstallPaths-0.015 ... OK
+2025-12-30T14:51:30.3216521Z Successfully installed ExtUtils-InstallPaths-0.015
+2025-12-30T14:51:30.5082468Z Configuring Module-Build-Tiny-0.052 ... OK
+2025-12-30T14:51:30.6525490Z Building Module-Build-Tiny-0.052 ... OK
+2025-12-30T14:51:30.6526351Z Successfully installed Module-Build-Tiny-0.052
+2025-12-30T14:51:30.7579426Z Configuring Readonly-2.05 ... OK
+2025-12-30T14:51:30.8970572Z Building Readonly-2.05 ... OK
+2025-12-30T14:51:30.8970976Z Successfully installed Readonly-2.05
+2025-12-30T14:51:31.1025473Z --> Working on Config::Tiny
+2025-12-30T14:51:31.1763504Z Fetching https://www.cpan.org/authors/id/R/RS/RSAVAGE/Config-Tiny-2.30.tgz ... OK
+2025-12-30T14:51:31.3515346Z Configuring Config-Tiny-2.30 ... OK
+2025-12-30T14:51:31.5865661Z Building Config-Tiny-2.30 ... OK
+2025-12-30T14:51:31.5866525Z Successfully installed Config-Tiny-2.30
+2025-12-30T14:51:31.8748660Z --> Working on Module::Pluggable
+2025-12-30T14:51:31.9490752Z Fetching https://www.cpan.org/authors/id/S/SI/SIMONW/Module-Pluggable-6.3.tar.gz ... OK
+2025-12-30T14:51:31.9544625Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemTextContentLanguage'
+2025-12-30T14:51:31.9546620Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseVersion'
+2025-12-30T14:51:31.9548236Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseLabels'
+2025-12-30T14:51:31.9549851Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseConfidences'
+2025-12-30T14:51:31.9551162Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9552491Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9554235Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemTextContentLanguage'
+2025-12-30T14:51:31.9555993Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseVersion'
+2025-12-30T14:51:31.9557437Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseLabels'
+2025-12-30T14:51:31.9558875Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.apple.metadata:kMDItemKeyphraseConfidences'
+2025-12-30T14:51:31.9560270Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9561636Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9563000Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9564377Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9565674Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9567102Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9568305Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9569399Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9570090Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9570732Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9571636Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9572267Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9572941Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9573675Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9574386Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9575110Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9576065Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9576732Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9577410Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9578111Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9578943Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9579599Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9580303Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9581003Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9581698Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9582371Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9583003Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9583789Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9584527Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9585213Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9586186Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9586962Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9587777Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9588583Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9589359Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9590130Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9590862Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9591733Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9592494Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9593219Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9594010Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9594904Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9595695Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9596721Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.caret'
+2025-12-30T14:51:31.9597470Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9598268Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9599069Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9599828Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:31.9600638Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.visibleIndex'
+2025-12-30T14:51:31.9601451Z /usr/bin/tar: Ignoring unknown extended header keyword 'LIBARCHIVE.xattr.com.macromates.selectionRange'
+2025-12-30T14:51:32.1382721Z Configuring Module-Pluggable-6.3 ... OK
+2025-12-30T14:51:32.3682508Z Building Module-Pluggable-6.3 ... OK
+2025-12-30T14:51:32.3683606Z Successfully installed Module-Pluggable-6.3
+2025-12-30T14:51:32.8389360Z --> Working on String::Format
+2025-12-30T14:51:32.9095163Z Fetching https://www.cpan.org/authors/id/S/SR/SREZIC/String-Format-1.18.tar.gz ... OK
+2025-12-30T14:51:33.0648825Z Configuring String-Format-1.18 ... OK
+2025-12-30T14:51:33.2943570Z Building String-Format-1.18 ... OK
+2025-12-30T14:51:33.2944347Z Successfully installed String-Format-1.18
+2025-12-30T14:51:33.4116894Z --> Working on Perl::Tidy
+2025-12-30T14:51:33.5683512Z Fetching https://www.cpan.org/authors/id/S/SH/SHANCOCK/Perl-Tidy-20250912.tar.gz ... OK
+2025-12-30T14:51:33.8078924Z Configuring Perl-Tidy-20250912 ... OK
+2025-12-30T14:51:34.1687901Z Building Perl-Tidy-20250912 ... OK
+2025-12-30T14:51:34.1688699Z Successfully installed Perl-Tidy-20250912
+2025-12-30T14:51:34.2893260Z --> Working on PPIx::QuoteLike
+2025-12-30T14:51:34.3812172Z Fetching https://www.cpan.org/authors/id/W/WY/WYANT/PPIx-QuoteLike-0.023.tar.gz ... OK
+2025-12-30T14:51:34.6578609Z Configuring PPIx-QuoteLike-0.023 ... OK
+2025-12-30T14:51:34.9087249Z Building PPIx-QuoteLike-0.023 ... OK
+2025-12-30T14:51:34.9087910Z Successfully installed PPIx-QuoteLike-0.023
+2025-12-30T14:51:35.0261579Z --> Working on Pod::Spell
+2025-12-30T14:51:35.1021619Z Fetching https://www.cpan.org/authors/id/H/HA/HAARG/Pod-Spell-1.27.tar.gz ... OK
+2025-12-30T14:51:35.2150186Z ==> Found dependencies: File::ShareDir::Install
+2025-12-30T14:51:35.2151154Z --> Working on File::ShareDir::Install
+2025-12-30T14:51:35.2916097Z Fetching https://www.cpan.org/authors/id/E/ET/ETHER/File-ShareDir-Install-0.14.tar.gz ... OK
+2025-12-30T14:51:35.5744416Z Configuring File-ShareDir-Install-0.14 ... OK
+2025-12-30T14:51:35.8001947Z Building File-ShareDir-Install-0.14 ... OK
+2025-12-30T14:51:35.8002833Z Successfully installed File-ShareDir-Install-0.14
+2025-12-30T14:51:36.0788511Z Configuring Pod-Spell-1.27 ... OK
+2025-12-30T14:51:36.0789273Z ==> Found dependencies: File::ShareDir, Lingua::EN::Inflect, Class::Tiny
+2025-12-30T14:51:36.0789818Z --> Working on File::ShareDir
+2025-12-30T14:51:36.1540869Z Fetching https://www.cpan.org/authors/id/R/RE/REHSACK/File-ShareDir-1.118.tar.gz ... OK
+2025-12-30T14:51:36.4239120Z Configuring File-ShareDir-1.118 ... OK
+2025-12-30T14:51:36.4239747Z ==> Found dependencies: Class::Inspector
+2025-12-30T14:51:36.4240417Z --> Working on Class::Inspector
+2025-12-30T14:51:36.4988436Z Fetching https://www.cpan.org/authors/id/P/PL/PLICEASE/Class-Inspector-1.36.tar.gz ... OK
+2025-12-30T14:51:36.6623763Z Configuring Class-Inspector-1.36 ... OK
+2025-12-30T14:51:36.8907395Z Building Class-Inspector-1.36 ... OK
+2025-12-30T14:51:36.8908298Z Successfully installed Class-Inspector-1.36
+2025-12-30T14:51:37.2543039Z Building File-ShareDir-1.118 ... OK
+2025-12-30T14:51:37.2543951Z Successfully installed File-ShareDir-1.118
+2025-12-30T14:51:37.3713942Z --> Working on Lingua::EN::Inflect
+2025-12-30T14:51:37.4606147Z Fetching https://www.cpan.org/authors/id/D/DC/DCONWAY/Lingua-EN-Inflect-1.905.tar.gz ... OK
+2025-12-30T14:51:37.6176521Z Configuring Lingua-EN-Inflect-1.905 ... OK
+2025-12-30T14:51:37.8443476Z Building Lingua-EN-Inflect-1.905 ... OK
+2025-12-30T14:51:37.8444215Z Successfully installed Lingua-EN-Inflect-1.905
+2025-12-30T14:51:37.9647765Z --> Working on Class::Tiny
+2025-12-30T14:51:38.0390976Z Fetching https://www.cpan.org/authors/id/D/DA/DAGOLDEN/Class-Tiny-1.008.tar.gz ... OK
+2025-12-30T14:51:38.2150152Z Configuring Class-Tiny-1.008 ... OK
+2025-12-30T14:51:38.4443387Z Building Class-Tiny-1.008 ... OK
+2025-12-30T14:51:38.4444010Z Successfully installed Class-Tiny-1.008
+2025-12-30T14:51:38.8357280Z Building Pod-Spell-1.27 ... OK
+2025-12-30T14:51:38.8358276Z Successfully installed Pod-Spell-1.27
+2025-12-30T14:51:38.9538927Z --> Working on File::Which
+2025-12-30T14:51:39.0280096Z Fetching https://www.cpan.org/authors/id/P/PL/PLICEASE/File-Which-1.27.tar.gz ... OK
+2025-12-30T14:51:39.1934833Z Configuring File-Which-1.27 ... OK
+2025-12-30T14:51:39.4447739Z Building File-Which-1.27 ... OK
+2025-12-30T14:51:39.4448432Z Successfully installed File-Which-1.27
+2025-12-30T14:51:39.9026792Z Building Perl-Critic-1.156 ... OK
+2025-12-30T14:51:39.9029992Z Successfully installed Perl-Critic-1.156
+2025-12-30T14:51:39.9349786Z 37 distributions installed

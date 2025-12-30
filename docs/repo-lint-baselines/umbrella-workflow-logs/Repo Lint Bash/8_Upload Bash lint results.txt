@@ -1,0 +1,28 @@
+﻿2025-12-30T14:51:22.1427563Z ##[group]Run actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882
+2025-12-30T14:51:22.1428000Z with:
+2025-12-30T14:51:22.1428186Z   name: bash-lint-results
+2025-12-30T14:51:22.1428402Z   path: bash-lint-output.txt
+2025-12-30T14:51:22.1428621Z   retention-days: 7
+2025-12-30T14:51:22.1428813Z   if-no-files-found: warn
+2025-12-30T14:51:22.1429020Z   compression-level: 6
+2025-12-30T14:51:22.1429211Z   overwrite: false
+2025-12-30T14:51:22.1429409Z   include-hidden-files: false
+2025-12-30T14:51:22.1429618Z env:
+2025-12-30T14:51:22.1429839Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:22.1430250Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:22.1430642Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:22.1430994Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:22.1431343Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:22.1431696Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:22.1432047Z ##[endgroup]
+2025-12-30T14:51:22.3643196Z With the provided path, there will be 1 file uploaded
+2025-12-30T14:51:22.3650064Z Artifact name is valid!
+2025-12-30T14:51:22.3651270Z Root directory input is valid!
+2025-12-30T14:51:22.5855167Z Beginning upload of artifact content to blob storage
+2025-12-30T14:51:22.8244980Z Uploaded bytes 790
+2025-12-30T14:51:22.8832912Z Finished uploading artifact content to blob storage!
+2025-12-30T14:51:22.8835790Z SHA256 hash of uploaded artifact zip is 598857ea7567f52237d33223ca2bfbfd69207aff846be929e9d96f933749057c
+2025-12-30T14:51:22.8837814Z Finalizing artifact upload
+2025-12-30T14:51:23.0143330Z Artifact bash-lint-results.zip successfully finalized. Artifact ID 4991796399
+2025-12-30T14:51:23.0144582Z Artifact bash-lint-results has been successfully uploaded! Final size is 790 bytes. Artifact ID is 4991796399
+2025-12-30T14:51:23.0153632Z Artifact download URL: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20599177696/artifacts/4991796399

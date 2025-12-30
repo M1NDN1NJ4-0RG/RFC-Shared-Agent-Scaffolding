@@ -1,0 +1,47 @@
+﻿2025-12-30T14:51:05.6272476Z ##[group]Run python3 -m tools.repo_lint check --ci --only yaml 2>&1 | tee yaml-lint-output.txt
+2025-12-30T14:51:05.6273393Z [36;1mpython3 -m tools.repo_lint check --ci --only yaml 2>&1 | tee yaml-lint-output.txt[0m
+2025-12-30T14:51:05.6273977Z [36;1mexit ${PIPESTATUS[0]}[0m
+2025-12-30T14:51:05.6310048Z shell: /usr/bin/bash -e {0}
+2025-12-30T14:51:05.6310391Z env:
+2025-12-30T14:51:05.6310749Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.6311556Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib/pkgconfig
+2025-12-30T14:51:05.6312087Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.6312561Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.6313032Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.14/x64
+2025-12-30T14:51:05.6313569Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.14/x64/lib
+2025-12-30T14:51:05.6313974Z ##[endgroup]
+2025-12-30T14:51:06.0471673Z 🔍 Running repository linters and formatters...
+2025-12-30T14:51:06.0472457Z 
+2025-12-30T14:51:06.0472944Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0473690Z   YAML Linting
+2025-12-30T14:51:06.0474377Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0474868Z 
+2025-12-30T14:51:06.0475200Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0475701Z   Linting Results
+2025-12-30T14:51:06.0476213Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0476566Z 
+2025-12-30T14:51:06.0476759Z ❌ yamllint: FAILED (20 violation(s))
+2025-12-30T14:51:06.0477783Z    .: [yamllint] .github/workflows/drift-detection.yml:265:121: [warning] line too long (141 > 120 characters) (line-length)
+2025-12-30T14:51:06.0478931Z    .: [yamllint] .github/workflows/drift-detection.yml:266:121: [warning] line too long (149 > 120 characters) (line-length)
+2025-12-30T14:51:06.0480061Z    .: [yamllint] .github/workflows/drift-detection.yml:267:121: [warning] line too long (141 > 120 characters) (line-length)
+2025-12-30T14:51:06.0481232Z    .: [yamllint] .github/workflows/lint-and-format-checker.yml:105:121: [warning] line too long (168 > 120 characters) (line-length)
+2025-12-30T14:51:06.0482436Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:179:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0483645Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:184:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0484844Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:187:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0486035Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:191:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0487459Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:194:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0488668Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:206:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0489884Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:210:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0491065Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:217:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0492055Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:220:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0493014Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:227:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0493986Z    .: [yamllint] .github/workflows/repo-lint-and-docstring-enforcement.yml:241:1: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0494953Z    .: [yamllint] .github/workflows/rust-conformance.yml:98:121: [warning] line too long (164 > 120 characters) (line-length)
+2025-12-30T14:51:06.0496273Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:1: [warning] missing document start "---" (document-start)
+2025-12-30T14:51:06.0497689Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:4:121: [warning] line too long (130 > 120 characters) (line-length)
+2025-12-30T14:51:06.0499056Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:7:12: [error] trailing spaces (trailing-spaces)
+2025-12-30T14:51:06.0500311Z    .: [yamllint] conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml:11:4: [error] wrong indentation: expected 2 but found 3 (indentation)
+2025-12-30T14:51:06.0500965Z 
+2025-12-30T14:51:06.0501292Z ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+2025-12-30T14:51:06.0501796Z ❌ Found 20 violation(s) across 1 tool(s)
+2025-12-30T14:51:06.0579761Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,18 @@
+﻿2025-12-30T14:51:52.7218094Z ##[group]Run actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16
+2025-12-30T14:51:52.7218732Z with:
+2025-12-30T14:51:52.7218934Z   name: python-lint-results
+2025-12-30T14:51:52.7219199Z   path: lint-artifacts/python-lint-results/
+2025-12-30T14:51:52.7219490Z   merge-multiple: false
+2025-12-30T14:51:52.7219763Z   repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
+2025-12-30T14:51:52.7220065Z   run-id: 20599177696
+2025-12-30T14:51:52.7220256Z ##[endgroup]
+2025-12-30T14:51:52.9286966Z Downloading single artifact
+2025-12-30T14:51:53.1962798Z Preparing to download the following artifacts:
+2025-12-30T14:51:53.1963369Z - python-lint-results (ID: 4991798057, Size: 1213)
+2025-12-30T14:51:53.3753489Z Redirecting to blob download url: https://productionresultssa6.blob.core.windows.net/actions-results/1c67f884-5fc2-4783-9779-f6cb135a6a02/workflow-job-run-9915d267-f778-54d0-9742-f3ba5dda4e80/artifacts/52795d7a49fc3b74905a84aec698986d1d5dd6958be23da28fcf9ef9e31f0b48.zip
+2025-12-30T14:51:53.3756614Z Starting download of artifact to: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/lint-artifacts/python-lint-results
+2025-12-30T14:51:53.5753549Z (node:2098) [DEP0005] DeprecationWarning: Buffer() is deprecated due to security and usability issues. Please use the Buffer.alloc(), Buffer.allocUnsafe(), or Buffer.from() methods instead.
+2025-12-30T14:51:53.5792421Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2025-12-30T14:51:53.5793192Z Artifact download completed successfully.
+2025-12-30T14:51:53.5793691Z Total of 1 artifact(s) downloaded
+2025-12-30T14:51:53.5798396Z Download artifact has finished successfully
