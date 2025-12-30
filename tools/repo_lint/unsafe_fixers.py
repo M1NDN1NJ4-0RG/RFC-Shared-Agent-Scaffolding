@@ -44,7 +44,32 @@
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Protocol
+
+
+class UnsafeFixer(Protocol):
+    """Protocol for unsafe fixers.
+
+    All unsafe fixers must implement this interface:
+    - can_fix(file_path): Check if fixer applies to this file
+    - fix(file_path): Apply the unsafe fix and return result
+    """
+
+    def can_fix(self, file_path: Path) -> bool:
+        """Check if this fixer can fix the given file.
+
+        :param file_path: Path to file to check
+        :returns: True if this fixer applies to this file
+        """
+        ...  # pylint: disable=unnecessary-ellipsis
+
+    def fix(self, file_path: Path) -> Optional["UnsafeFixerResult"]:
+        """Apply the unsafe fix to the file.
+
+        :param file_path: Path to file to fix
+        :returns: Result of the fix operation, or None if no changes made
+        """
+        ...  # pylint: disable=unnecessary-ellipsis
 
 
 @dataclass
@@ -188,12 +213,12 @@ class UnsafeDocstringRewriter:
 
 
 # Registry of all unsafe fixers
-UNSAFE_FIXERS: List[UnsafeDocstringRewriter] = [
+UNSAFE_FIXERS: List[UnsafeFixer] = [
     UnsafeDocstringRewriter(),
 ]
 
 
-def get_unsafe_fixers() -> List[UnsafeDocstringRewriter]:
+def get_unsafe_fixers() -> List[UnsafeFixer]:
     """Get all registered unsafe fixers.
 
     :returns: List of unsafe fixer instances

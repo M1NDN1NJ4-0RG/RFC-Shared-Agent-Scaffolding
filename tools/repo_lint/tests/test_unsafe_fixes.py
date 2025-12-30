@@ -13,7 +13,19 @@
 :Authorization:
     These tests are authorized to run unsafe mode ONLY within PR #148
     and ONLY against purpose-built test fixtures in temporary workspaces.
-"""
+
+:Environment Variables:
+    CI - Set to "true" to enable CI mode detection tests
+
+:Examples:
+    Run tests::
+
+        python3 -m pytest tools/repo_lint/tests/test_unsafe_fixes.py
+
+:Exit Codes:
+    0 - All tests passed
+    1 - One or more tests failed
+"""  # noqa: EXITCODES
 
 import os
 import shutil

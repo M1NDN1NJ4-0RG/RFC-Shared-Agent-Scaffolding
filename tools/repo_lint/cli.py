@@ -301,11 +301,14 @@ def cmd_fix(args: argparse.Namespace) -> int:
         if only_language == "python" or only_language is None:
             all_files.extend(repo_root.rglob("*.py"))
 
-        # Filter out common non-source directories
+        # Filter out common non-source directories and test fixtures
         all_files = [
             f
             for f in all_files
-            if not any(part in f.parts for part in [".venv", ".venv-lint", "venv", "__pycache__", ".git", "dist"])
+            if not any(
+                part in f.parts
+                for part in [".venv", ".venv-lint", "venv", "__pycache__", ".git", "dist", "conformance"]
+            )
         ]
 
         start_time = datetime.now()

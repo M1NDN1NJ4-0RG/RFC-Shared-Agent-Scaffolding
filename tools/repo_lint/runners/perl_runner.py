@@ -29,7 +29,6 @@ import sys
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
-from tools.repo_lint.policy import is_category_allowed
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
