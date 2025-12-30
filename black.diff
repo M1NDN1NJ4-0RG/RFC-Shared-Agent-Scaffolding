@@ -1,104 +1,109 @@
 diff --git a/black.diff b/black.diff
-index 368de82..e69de29 100644
+index 0922f1a..e69de29 100644
 --- a/black.diff
 +++ b/black.diff
-@@ -1,99 +0,0 @@
+@@ -1,104 +0,0 @@
 -diff --git a/black.diff b/black.diff
--index ccce7b3..e69de29 100644
+-index 368de82..e69de29 100644
 ---- a/black.diff
 -+++ b/black.diff
--@@ -1,94 +0,0 @@
+-@@ -1,99 +0,0 @@
 --diff --git a/black.diff b/black.diff
---index d1ab8a4..e69de29 100644
+--index ccce7b3..e69de29 100644
 ----- a/black.diff
 --+++ b/black.diff
---@@ -1,74 +0,0 @@
+--@@ -1,94 +0,0 @@
 ---diff --git a/black.diff b/black.diff
----index f8abdf7..e69de29 100644
+---index d1ab8a4..e69de29 100644
 ------ a/black.diff
 ---+++ b/black.diff
----@@ -1,69 +0,0 @@
+---@@ -1,74 +0,0 @@
 ----diff --git a/black.diff b/black.diff
-----index 3d04292..e69de29 100644
+----index f8abdf7..e69de29 100644
 ------- a/black.diff
 ----+++ b/black.diff
-----@@ -1,64 +0,0 @@
+----@@ -1,69 +0,0 @@
 -----diff --git a/black.diff b/black.diff
------index 4e95084..e69de29 100644
+-----index 3d04292..e69de29 100644
 -------- a/black.diff
 -----+++ b/black.diff
------@@ -1,59 +0,0 @@
+-----@@ -1,64 +0,0 @@
 ------diff --git a/black.diff b/black.diff
-------index 39c16dd..e69de29 100644
+------index 4e95084..e69de29 100644
 --------- a/black.diff
 ------+++ b/black.diff
-------@@ -1,54 +0,0 @@
+------@@ -1,59 +0,0 @@
 -------diff --git a/black.diff b/black.diff
--------index 159bc3f..e69de29 100644
+-------index 39c16dd..e69de29 100644
 ---------- a/black.diff
 -------+++ b/black.diff
--------@@ -1,49 +0,0 @@
+-------@@ -1,54 +0,0 @@
 --------diff --git a/black.diff b/black.diff
---------index 876375a..e69de29 100644
+--------index 159bc3f..e69de29 100644
 ----------- a/black.diff
 --------+++ b/black.diff
---------@@ -1,44 +0,0 @@
+--------@@ -1,49 +0,0 @@
 ---------diff --git a/black.diff b/black.diff
----------index f06c78d..e69de29 100644
+---------index 876375a..e69de29 100644
 ------------ a/black.diff
 ---------+++ b/black.diff
----------@@ -1,39 +0,0 @@
+---------@@ -1,44 +0,0 @@
 ----------diff --git a/black.diff b/black.diff
-----------index 1d255d4..e69de29 100644
+----------index f06c78d..e69de29 100644
 ------------- a/black.diff
 ----------+++ b/black.diff
-----------@@ -1,19 +0,0 @@
+----------@@ -1,39 +0,0 @@
 -----------diff --git a/black.diff b/black.diff
------------index 6d8c909..e69de29 100644
+-----------index 1d255d4..e69de29 100644
 -------------- a/black.diff
 -----------+++ b/black.diff
------------@@ -1,14 +0,0 @@
-------------diff --git a/tools/repo_lint/cli.py b/tools/repo_lint/cli.py
-------------index 64107e5..8049c8d 100644
---------------- a/tools/repo_lint/cli.py
-------------+++ b/tools/repo_lint/cli.py
-------------@@ -137,8 +137,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
-------------             return ExitCode.ERROR
-------------         if not any(runner.has_files() for _, _, runner in runners):
-------------             print(
--------------                f"Error: No files found for language '{only_language}'. "
--------------                f"Nothing to {mode.lower()}.",
-------------+                f"Error: No files found for language '{only_language}'. " f"Nothing to {mode.lower()}.",
-------------                 file=sys.stderr,
-------------             )
-------------             return ExitCode.ERROR
-----------diff --git a/tools/repo_lint/runners/rust_runner.py b/tools/repo_lint/runners/rust_runner.py
-----------index df52708..cce3fce 100644
-------------- a/tools/repo_lint/runners/rust_runner.py
-----------+++ b/tools/repo_lint/runners/rust_runner.py
-----------@@ -108,9 +108,7 @@ class RustRunner(Runner):
-----------             return [LintResult(tool="rustfmt", passed=True, violations=[])]
----------- 
-----------         # Run rustfmt to format code
------------        rustfmt_result = subprocess.run(
------------            ["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False
------------        )
-----------+        rustfmt_result = subprocess.run(["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False)
----------- 
-----------         if rustfmt_result.returncode != 0:
-----------             results.append(
---diff --git a/tools/repo_lint/tests/test_vectors.py b/tools/repo_lint/tests/test_vectors.py
---index 8d94c16..6426f0f 100644
------ a/tools/repo_lint/tests/test_vectors.py
---+++ b/tools/repo_lint/tests/test_vectors.py
---@@ -416,9 +416,7 @@ def test_vector_schema_validation():
---         if "expected_violations" in vector:
---             for i, violation in enumerate(vector["expected_violations"]):
---                 for field in required_violation_fields:
----                    assert field in violation, (
----                        f"{vector_file.name}: Violation {i} missing field '{field}'"
----                    )
---+                    assert field in violation, f"{vector_file.name}: Violation {i} missing field '{field}'"
--- 
---         # Validate expected_passes (if present)
---         if "expected_passes" in vector:
+-----------@@ -1,19 +0,0 @@
+------------diff --git a/black.diff b/black.diff
+------------index 6d8c909..e69de29 100644
+--------------- a/black.diff
+------------+++ b/black.diff
+------------@@ -1,14 +0,0 @@
+-------------diff --git a/tools/repo_lint/cli.py b/tools/repo_lint/cli.py
+-------------index 64107e5..8049c8d 100644
+---------------- a/tools/repo_lint/cli.py
+-------------+++ b/tools/repo_lint/cli.py
+-------------@@ -137,8 +137,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
+-------------             return ExitCode.ERROR
+-------------         if not any(runner.has_files() for _, _, runner in runners):
+-------------             print(
+--------------                f"Error: No files found for language '{only_language}'. "
+--------------                f"Nothing to {mode.lower()}.",
+-------------+                f"Error: No files found for language '{only_language}'. " f"Nothing to {mode.lower()}.",
+-------------                 file=sys.stderr,
+-------------             )
+-------------             return ExitCode.ERROR
+-----------diff --git a/tools/repo_lint/runners/rust_runner.py b/tools/repo_lint/runners/rust_runner.py
+-----------index df52708..cce3fce 100644
+-------------- a/tools/repo_lint/runners/rust_runner.py
+-----------+++ b/tools/repo_lint/runners/rust_runner.py
+-----------@@ -108,9 +108,7 @@ class RustRunner(Runner):
+-----------             return [LintResult(tool="rustfmt", passed=True, violations=[])]
+----------- 
+-----------         # Run rustfmt to format code
+------------        rustfmt_result = subprocess.run(
+------------            ["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False
+------------        )
+-----------+        rustfmt_result = subprocess.run(["cargo", "fmt"], cwd=rust_dir, capture_output=True, text=True, check=False)
+----------- 
+-----------         if rustfmt_result.returncode != 0:
+-----------             results.append(
+---diff --git a/tools/repo_lint/tests/test_vectors.py b/tools/repo_lint/tests/test_vectors.py
+---index 8d94c16..6426f0f 100644
+------ a/tools/repo_lint/tests/test_vectors.py
+---+++ b/tools/repo_lint/tests/test_vectors.py
+---@@ -416,9 +416,7 @@ def test_vector_schema_validation():
+---         if "expected_violations" in vector:
+---             for i, violation in enumerate(vector["expected_violations"]):
+---                 for field in required_violation_fields:
+----                    assert field in violation, (
+----                        f"{vector_file.name}: Violation {i} missing field '{field}'"
+----                    )
+---+                    assert field in violation, f"{vector_file.name}: Violation {i} missing field '{field}'"
+--- 
+---         # Validate expected_passes (if present)
+---         if "expected_passes" in vector:
