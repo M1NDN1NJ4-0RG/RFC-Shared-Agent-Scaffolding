@@ -310,6 +310,8 @@ jobs:
     name: "Repo Lint: Python"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_python.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.python == 'true' ||
@@ -350,6 +352,8 @@ jobs:
     name: "Repo Lint: Bash"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_bash.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.bash == 'true' ||
@@ -401,6 +405,8 @@ jobs:
     name: "Repo Lint: PowerShell"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_powershell.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.powershell == 'true' ||
@@ -441,6 +447,8 @@ jobs:
     name: "Repo Lint: Perl"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_perl.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.perl == 'true' ||
@@ -485,6 +493,8 @@ jobs:
     name: "Repo Lint: YAML"
     runs-on: ubuntu-latest
     needs: [auto-fix-black, detect-changed-files]
+    outputs:
+      lint_outcome: ${{ steps.lint_yaml.outcome }}
     if: |
       needs.auto-fix-black.outputs.autofix_applied != 'true' &&
       (needs.detect-changed-files.outputs.yaml == 'true' ||
@@ -584,11 +594,40 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download lint artifacts
+      - name: Download Python lint artifacts
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
         continue-on-error: true
         with:
-          path: lint-artifacts/
+          name: python-lint-results
+          path: lint-artifacts/python-lint-results/
+
+      - name: Download Bash lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: bash-lint-results
+          path: lint-artifacts/bash-lint-results/
+
+      - name: Download PowerShell lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: powershell-lint-results
+          path: lint-artifacts/powershell-lint-results/
+
+      - name: Download Perl lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: perl-lint-results
+          path: lint-artifacts/perl-lint-results/
+
+      - name: Download YAML lint artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: yaml-lint-results
+          path: lint-artifacts/yaml-lint-results/
 
       - name: "Debug: List downloaded artifacts"
         run: |
@@ -602,15 +641,23 @@ jobs:
           # Create failure report directory
           mkdir -p repo-lint-failure-reports
 
-          # Check job statuses
+          # Check job statuses and lint step outcomes
           AUTO_FIX="${{ needs.auto-fix-black.result }}"
           DETECT="${{ needs.detect-changed-files.result }}"
-          PYTHON="${{ needs.repo-lint-python.result }}"
-          BASH="${{ needs.repo-lint-bash.result }}"
-          POWERSHELL="${{ needs.repo-lint-powershell.result }}"
-          PERL="${{ needs.repo-lint-perl.result }}"
-          YAML="${{ needs.repo-lint-yaml.result }}"
+          # For lint jobs, check step outcome (not job result) since continue-on-error masks failures
+          PYTHON="${{ needs.repo-lint-python.outputs.lint_outcome }}"
+          BASH="${{ needs.repo-lint-bash.outputs.lint_outcome }}"
+          POWERSHELL="${{ needs.repo-lint-powershell.outputs.lint_outcome }}"
+          PERL="${{ needs.repo-lint-perl.outputs.lint_outcome }}"
+          YAML="${{ needs.repo-lint-yaml.outputs.lint_outcome }}"
           VECTORS="${{ needs.vector-tests.result }}"
+
+          # Map empty outcomes (skipped jobs) to "skipped" for display
+          PYTHON="${PYTHON:-skipped}"
+          BASH="${BASH:-skipped}"
+          POWERSHELL="${POWERSHELL:-skipped}"
+          PERL="${PERL:-skipped}"
+          YAML="${YAML:-skipped}"
 
           # Create summary file
           SUMMARY_FILE="repo-lint-failure-reports/summary-$(date -u +%Y%m%d-%H%M%S).md"
