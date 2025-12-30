@@ -160,6 +160,81 @@ When CI, tests, or build steps are **not present**, the agent must:
 - Follow the escalation policy below
 - **When blocked:** Add a comment to the PR AND stop — no further commits or pushes until unblocked
 
+## AI Next-Steps Journals (MANDATORY)
+
+**Purpose:** Maintain persistent, detailed context for every commit on an issue. This is a REQUIRED workflow component, not optional.
+
+**MANDATORY UPDATE FREQUENCY:**
+- The next-steps journal MUST be updated on EVERY SINGLE COMMIT related to an issue
+- A commit is NOT considered complete unless the journal has been updated
+- This applies to ALL commits: partial work, refactors, fixes, experiments, formatting changes, failed attempts
+- **NO EXCEPTIONS**
+
+**Directory and Naming (MANDATORY):**
+- **Directory:** `docs/ai-prompt/` (must exist)
+- **File naming:** `<ISSUE_NUMBER>-next-steps.md` (EXACTLY ONE file per ORIGINAL GitHub issue)
+- Use the ORIGINAL GitHub issue number (not PR number)
+- Do NOT create multiple files for the same issue
+- Do NOT delete or overwrite history
+
+**Required File Format (MANDATORY):**
+```markdown
+# Issue <ISSUE_NUMBER> AI Journal
+Status: In Progress | Paused | Complete
+Last Updated: YYYY-MM-DD
+Related: Issue <ISSUE_NUMBER>, PRs <list>
+
+## NEXT
+- actionable next steps (newest at top)
+
+---
+
+## DONE (EXTREMELY DETAILED)
+### YYYY-MM-DD HH:MM - <short label>
+**Files Changed:**
+- `path/to/file1.ext`: <exact changes>
+- `path/to/file2.ext`: <exact changes>
+
+**Changes Made:**
+- Extremely detailed summary including:
+  - Why each change was made
+  - Commands/tests run and results
+  - Relevant CI logs/errors (references)
+  - Known issues, risks, or follow-ups
+
+**Verification:**
+- <commands run>
+- <results>
+
+[Previous entries below, newest first...]
+```
+
+**Update Rules (MANDATORY):**
+- Add new NEXT items at the TOP of the NEXT section
+- Move completed NEXT items to DONE with EXTREMELY DETAILED entry
+- Each DONE entry MUST include:
+  - Timestamp and short label
+  - Full file paths of all changes
+  - Exact changes per file
+  - Rationale for each change
+  - Commands/tests run with results
+  - CI log references if applicable
+  - Known issues or follow-ups
+- NEVER rewrite or condense previous DONE entries
+- NEVER skip a commit update
+- History is append-only, newest entries first
+
+**Enforcement:**
+- Updating `docs/ai-prompt/<ISSUE_NUMBER>-next-steps.md` is REQUIRED on EVERY commit
+- Commits without a journal update are INVALID
+- Multiple journals per issue are FORBIDDEN
+- The DONE section MUST be EXTREMELY DETAILED
+
+**Integration with Existing Journals:**
+- `docs/history/ai-agent-guidelines/journal/` contains PR-level logs (optional)
+- `docs/ai-prompt/` contains mandatory issue-level next-steps journals (REQUIRED)
+- Next-steps journals are per-commit tracking, PR logs are optional summaries
+
 ## HUMAN ESCALATION & MENTION POLICY
 
 When human action is required, the agent **MUST**:

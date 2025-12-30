@@ -623,14 +623,14 @@ jobs:
           python3 -m pytest tools/repo_lint/tests/test_vectors.py -v
 
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Consolidate Failures
+  # Consolidate and Archive Logs
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  # Waits for all lint jobs to complete and consolidates failures into
-  # a summary artifact and commits failure logs to the repository for review.
-  # Runs always (even on failures) to capture all errors.
+  # Waits for all lint jobs to complete and consolidates ALL logs (success + failure)
+  # into a summary artifact and commits logs to the repository for review.
+  # Runs always to ensure comprehensive logging regardless of job outcomes.
   # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   consolidate-failures:
-    name: "Consolidate Failures"
+    name: "Consolidate and Archive Logs"
     runs-on: ubuntu-latest
     needs:
       - auto-fix-black
@@ -691,6 +691,13 @@ jobs:
           name: yaml-lint-results
           path: lint-artifacts/yaml-lint-results/
 
+      - name: Download Auto-Fix artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        continue-on-error: true
+        with:
+          name: black-autofix-forensics
+          path: lint-artifacts/autofix-forensics/
+
       - name: "Debug: List downloaded artifacts"
         run: |
           echo "=== Listing lint-artifacts directory ==="
@@ -700,8 +707,11 @@ jobs:
       - name: Collect job results
         id: collect_results
         run: |
-          # Create failure report directory
-          mkdir -p repo-lint-failure-reports
+          # Create log directory with required path format
+          # Format: /logs/umbrella-ci-logs-phase-6/RUN_ID/
+          RUN_ID="${{ github.run_id }}"
+          LOG_DIR="logs/umbrella-ci-logs-phase-6/${RUN_ID}"
+          mkdir -p "$LOG_DIR"
 
           # Check job statuses (now using job.result since continue-on-error is removed)
           AUTO_FIX="${{ needs.auto-fix-black.result }}"
@@ -719,11 +729,12 @@ jobs:
           POWERSHELL="${POWERSHELL:-skipped}"
           PERL="${PERL:-skipped}"
           YAML="${YAML:-skipped}"
+          VECTORS="${VECTORS:-skipped}"
 
           # Create summary file
-          SUMMARY_FILE="repo-lint-failure-reports/summary-$(date -u +%Y%m%d-%H%M%S).md"
+          SUMMARY_FILE="${LOG_DIR}/summary.md"
           {
-            echo "# Repo Lint Failure Summary"
+            echo "# Repo Lint Summary"
             echo ""
             echo "**Workflow Run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
             echo "**Timestamp:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
@@ -748,14 +759,34 @@ jobs:
           # Track if any failures occurred
           HAS_FAILURES=false
 
+          # Copy all job artifacts to log directory (regardless of pass/fail)
+          # This ensures comprehensive logging on both success and failure
+
+          # Auto-Fix artifacts (if they exist)
+          AUTOFIX_DIFF="lint-artifacts/autofix-forensics/black.diff"
+          AUTOFIX_LOG="lint-artifacts/autofix-forensics/black.log"
+          if [ -f "$AUTOFIX_DIFF" ]; then
+            cp "$AUTOFIX_DIFF" "${LOG_DIR}/black.diff"
+            echo "Captured Black diff" >&2
+          fi
+          if [ -f "$AUTOFIX_LOG" ]; then
+            cp "$AUTOFIX_LOG" "${LOG_DIR}/black.log"
+            echo "Captured Black log" >&2
+          fi
+          
+          # Python logs
+          PYTHON_ARTIFACT="lint-artifacts/python-lint-results/python-lint-output.txt"
+          if [ -f "$PYTHON_ARTIFACT" ]; then
+            cp "$PYTHON_ARTIFACT" "${LOG_DIR}/python-lint-output.txt"
+            echo "Captured Python lint output" >&2
+          fi
+          
           # Add failure details for each failed job
           if [ "$PYTHON" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Python Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            PYTHON_ARTIFACT="lint-artifacts/python-lint-results/python-lint-output.txt"
             if [ -f "$PYTHON_ARTIFACT" ]; then
-              echo "Found Python lint output at: $PYTHON_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
               tail -100 "$PYTHON_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
@@ -766,13 +797,18 @@ jobs:
             echo "" >> "$SUMMARY_FILE"
           fi
 
+          # Bash logs
+          BASH_ARTIFACT="lint-artifacts/bash-lint-results/bash-lint-output.txt"
+          if [ -f "$BASH_ARTIFACT" ]; then
+            cp "$BASH_ARTIFACT" "${LOG_DIR}/bash-lint-output.txt"
+            echo "Captured Bash lint output" >&2
+          fi
+
           if [ "$BASH" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Bash Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            BASH_ARTIFACT="lint-artifacts/bash-lint-results/bash-lint-output.txt"
             if [ -f "$BASH_ARTIFACT" ]; then
-              echo "Found Bash lint output at: $BASH_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
               tail -100 "$BASH_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
@@ -783,13 +819,18 @@ jobs:
             echo "" >> "$SUMMARY_FILE"
           fi
 
+          # PowerShell logs
+          POWERSHELL_ARTIFACT="lint-artifacts/powershell-lint-results/powershell-lint-output.txt"
+          if [ -f "$POWERSHELL_ARTIFACT" ]; then
+            cp "$POWERSHELL_ARTIFACT" "${LOG_DIR}/powershell-lint-output.txt"
+            echo "Captured PowerShell lint output" >&2
+          fi
+
           if [ "$POWERSHELL" = "failure" ]; then
             HAS_FAILURES=true
             echo "## PowerShell Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            POWERSHELL_ARTIFACT="lint-artifacts/powershell-lint-results/powershell-lint-output.txt"
             if [ -f "$POWERSHELL_ARTIFACT" ]; then
-              echo "Found PowerShell lint output at: $POWERSHELL_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
               tail -100 "$POWERSHELL_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
@@ -800,13 +841,18 @@ jobs:
             echo "" >> "$SUMMARY_FILE"
           fi
 
+          # Perl logs
+          PERL_ARTIFACT="lint-artifacts/perl-lint-results/perl-lint-output.txt"
+          if [ -f "$PERL_ARTIFACT" ]; then
+            cp "$PERL_ARTIFACT" "${LOG_DIR}/perl-lint-output.txt"
+            echo "Captured Perl lint output" >&2
+          fi
+
           if [ "$PERL" = "failure" ]; then
             HAS_FAILURES=true
             echo "## Perl Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            PERL_ARTIFACT="lint-artifacts/perl-lint-results/perl-lint-output.txt"
             if [ -f "$PERL_ARTIFACT" ]; then
-              echo "Found Perl lint output at: $PERL_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
               tail -100 "$PERL_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
@@ -817,13 +863,18 @@ jobs:
             echo "" >> "$SUMMARY_FILE"
           fi
 
+          # YAML logs
+          YAML_ARTIFACT="lint-artifacts/yaml-lint-results/yaml-lint-output.txt"
+          if [ -f "$YAML_ARTIFACT" ]; then
+            cp "$YAML_ARTIFACT" "${LOG_DIR}/yaml-lint-output.txt"
+            echo "Captured YAML lint output" >&2
+          fi
+
           if [ "$YAML" = "failure" ]; then
             HAS_FAILURES=true
             echo "## YAML Linting Failures" >> "$SUMMARY_FILE"
             echo "" >> "$SUMMARY_FILE"
-            YAML_ARTIFACT="lint-artifacts/yaml-lint-results/yaml-lint-output.txt"
             if [ -f "$YAML_ARTIFACT" ]; then
-              echo "Found YAML lint output at: $YAML_ARTIFACT" >&2
               echo '```' >> "$SUMMARY_FILE"
               tail -100 "$YAML_ARTIFACT" >> "$SUMMARY_FILE"
               echo '```' >> "$SUMMARY_FILE"
@@ -842,7 +893,7 @@ jobs:
             echo "" >> "$SUMMARY_FILE"
           fi
 
-          # Set output flag
+          # Set output flag and log directory path
           if [ "$HAS_FAILURES" = "true" ]; then
             echo "has_failures=true" >> $GITHUB_OUTPUT
           else
@@ -852,46 +903,58 @@ jobs:
             echo "All linting and docstring enforcement checks passed successfully." >> "$SUMMARY_FILE"
           fi
 
+          # Export log directory for subsequent steps
+          echo "log_dir=${LOG_DIR}" >> $GITHUB_OUTPUT
+
           # Display summary
           cat "$SUMMARY_FILE"
 
-      - name: Upload failure summary artifact
-        if: steps.collect_results.outputs.has_failures == 'true'
+      - name: Upload log summary artifact (always)
+        if: always()
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
-          name: repo-lint-failure-summary
-          path: repo-lint-failure-reports/
+          name: umbrella-ci-logs
+          path: logs/umbrella-ci-logs-phase-6/
           retention-days: 30
 
-      - name: Commit failure logs to repository (same-repo PRs only)
+      - name: Commit logs to repository (always, same-repo PRs only)
         if: |
-          steps.collect_results.outputs.has_failures == 'true' &&
+          always() &&
           github.event.pull_request.head.repo.full_name == github.repository &&
-          github.event_name == 'pull_request'
+          github.event_name == 'pull_request' &&
+          github.actor != 'github-actions[bot]' &&
+          !contains(github.event.head_commit.message, '[auto-generated]')
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add repo-lint-failure-reports/
+          
+          # Add all logs (success and failure)
+          git add logs/umbrella-ci-logs-phase-6/
 
           # Commit if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit (logs may already exist)"
           else
-            git commit -m "CI: Add repo-lint failure report [auto-generated]"
+            git commit -m "CI: Add umbrella workflow logs [auto-generated]"
 
             # Push with error handling
             if ! git push; then
-              echo "::warning::Failed to push failure report to repository"
+              echo "::warning::Failed to push logs to repository"
               exit 1
             fi
           fi
 
       - name: Add job summary
+        if: always()
         run: |
-          # Find the most recent summary file created in this run
-          SUMMARY_FILE=$(ls -t repo-lint-failure-reports/summary-*.md 2>/dev/null | head -n 1)
-          if [ -n "$SUMMARY_FILE" ] && [ -f "$SUMMARY_FILE" ]; then
+          # Find the summary file in the log directory
+          LOG_DIR="${{ steps.collect_results.outputs.log_dir }}"
+          SUMMARY_FILE="${LOG_DIR}/summary.md"
+          if [ -f "$SUMMARY_FILE" ]; then
             cat "$SUMMARY_FILE" >> $GITHUB_STEP_SUMMARY
           else
-            echo "::error::No summary file found"
+            echo "::warning::No summary file found at ${SUMMARY_FILE}"
+            echo "## Logs Collection Status" >> $GITHUB_STEP_SUMMARY
+            echo "Log directory: ${LOG_DIR}" >> $GITHUB_STEP_SUMMARY
+            echo "Summary file was not created." >> $GITHUB_STEP_SUMMARY
           fi
