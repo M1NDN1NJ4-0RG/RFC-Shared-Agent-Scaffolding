@@ -1,5 +1,4 @@
-MUST READ: `.github/copilot-instructions.md` FIRST! 
-MUST READ: `docs/contributing/naming-and-style.md` SECOND!
+MUST READ: `.github/copilot-instructions.md` FIRST!
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
 Status: In Progress
