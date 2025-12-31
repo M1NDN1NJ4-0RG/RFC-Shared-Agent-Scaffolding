@@ -1,5 +1,22 @@
 # GitHub Copilot Agent Instructions
 
+## ⚠️ MANDATORY FIRST STEP ⚠️
+
+**BEFORE DOING ANYTHING ELSE:** Read `docs/contributing/session-compliance-requirements.md` IMMEDIATELY at session start.
+
+This is **MANDATORY** and **NON-NEGOTIABLE**. You may NOT:
+- Explore files
+- Analyze the problem
+- Read repository contents
+- Plan changes
+- Make any code modifications
+
+Until you have read the complete Session Compliance Requirements document.
+
+**After reading:** Follow the Session Start checklist exactly as specified in that document (run bootstrapper, activate environment, verify tools, etc.).
+
+---
+
 ## Repository State and Inventory
 
 **Current State:** Bootstrap/Empty
