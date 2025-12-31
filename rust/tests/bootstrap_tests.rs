@@ -202,9 +202,7 @@ fn test_install_target_detection_prefers_tools_repo_cli() {
     assert!(tools_has_pkg);
 
     // When both exist, tools/repo_cli should be preferred
-    let install_target = if root_has_pkg && tools_has_pkg {
-        tools_repo_cli.clone()
-    } else if tools_has_pkg {
+    let install_target = if tools_has_pkg {
         tools_repo_cli.clone()
     } else if root_has_pkg {
         repo_root.to_path_buf()
