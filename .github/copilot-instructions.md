@@ -176,6 +176,7 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
 - ✅ Good: `npm install && npm run test:unit`
 - ❌ Bad: "Run the tests"
 
+
 **Pre-Commit Repo Lint Gate (MANDATORY for scripting changes):**
 - If your commit includes **ANY changes** to **scripting/tooling files** (examples: `*.py`, `*.sh`, `*.bash`, `*.pl`, `*.pm`, `*.ps1`, `*.psm1`, `*.rs`, plus any other executable/script files in `tools/` or `scripts/`), you MUST run:
   - `python3 -m tools.repo_lint check --ci`
@@ -184,6 +185,13 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
 - If it fails, you MUST fix the reported issues and re-run it until it passes.
 - Do NOT commit “known failing” work.
 - If you’re unsure whether your change counts as “scripting/tooling”, treat it as **YES** and run the command.
+
+**New Script File Test Requirement (MANDATORY):**
+- If you introduce **ANY new scripting/tooling file** (examples: `*.py`, `*.sh`, `*.bash`, `*.pl`, `*.pm`, `*.ps1`, `*.psm1`, `*.rs`, plus any new executable/script file under `tools/` or `scripts/`), you MUST add **comprehensive unit tests** for it **in the appropriate test harness** for that language.
+- Those tests MUST be runnable via the repository’s standard test runner(s) for that language (or the closest existing equivalent).
+- Before committing, you MUST run the unit tests locally and they MUST PASS.
+- If the repository does not yet have a unit test framework/harness for that language, you MUST **STOP** and escalate using the `**BLOCKED — HUMAN ACTION REQUIRED**` format to request guidance (do NOT invent a new test framework without explicit human approval).
+- Do NOT commit new scripts without tests.
 
 **Stop and Escalate if Human Action Required:**
 - If you encounter ambiguity, missing requirements, or need approval: **STOP**
