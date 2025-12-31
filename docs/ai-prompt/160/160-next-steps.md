@@ -7,6 +7,39 @@ Related: Issue #160, PRs #176, #180
 
 ## NEXT
 
+### Phase 2.7.1 In Progress - Language Filtering (1 of 6 Steps Complete)
+
+**Completed (2025-12-31 23:55):**
+- [x] Step 1: Add `--lang` option as alias for `--only`
+  - Works in both `check` and `fix` commands
+  - Accepts all languages + "all" option
+  - Backward compatible with `--only`
+  - Pre-commit gate passes (exit code 0)
+
+**Remaining Steps:**
+- [ ] Step 2: Add `--tool` option (repeatable, filter to specific tools)
+  - Examples: `--tool black`, `--tool ruff --tool pylint`
+  - Validate tool names against known tools
+  - Clear error if tool not available
+- [ ] Step 3: Tool availability validation with clear errors
+- [ ] Step 4: Update Rich-Click help with examples
+- [ ] Step 5: Add unit tests for lang/tool filtering logic
+- [ ] Step 6: Update HOW-TO-USE-THIS-TOOL.md with filtering examples
+
+**Current Branch State:**
+- 2 commits ahead of base
+- All tests passing
+- Pre-commit gate clean (Python exit code 0)
+- Ready for code review
+
+**Next Session Actions:**
+1. Request code review for Step 1 changes
+2. Address any code review feedback
+3. Implement Step 2 (--tool option)
+4. Continue through remaining steps
+
+---
+
 ### ✅ PHASES 2.5 AND 2.9 COMPLETE - READY FOR PHASE 2.7
 
 **Current State (2025-12-31 23:50):**
@@ -59,6 +92,57 @@ Related: Issue #160, PRs #176, #180
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 23:55 - Phase 2.7.1 Step 1 Complete: Added --lang Option
+
+**Files Changed:**
+- `tools/repo_lint/cli.py`: Added `--lang` option to check and fix commands (30 lines modified)
+  - Lines 185-187: Added `--lang` parameter to `check()` with choices including "all"
+  - Lines 255-261: Added precedence logic (`--lang` overrides `--only`, "all" = no filter)
+  - Lines 292-294: Added `--lang` parameter to `fix()` 
+  - Lines 395-401: Added same precedence logic to `fix()`
+  - Lines 84-92, 94-102: Updated OPTION_GROUPS to show `--lang` in Filtering section
+  - Marked `--only` as deprecated in help text for both commands
+  
+- `docs/ai-prompt/160/160-next-steps.md`: Updated NEXT section with Phase 2.7.1 progress
+
+**Changes Made:**
+- **Phase 2.7.1 Step 1: Add --lang option** ✅ COMPLETE
+  - New `--lang` parameter accepts: python, bash, powershell, perl, yaml, rust, all
+  - `--lang all` is equivalent to not specifying a language (runs all)
+  - `--lang` takes precedence over deprecated `--only` option
+  - Backward compatible: `--only` still works but shows deprecation notice
+  - Both `check` and `fix` commands updated identically
+  - Rich-Click help properly organizes options in Filtering section
+
+**Verification:**
+- Manual testing: `repo-lint check --help` shows `--lang` in Filtering panel
+- Manual testing: `repo-lint check --ci --lang python` works correctly (exit 0)
+- Automated tests: `test_output_format.py` all 7 tests pass
+- Pre-commit gate: `repo-lint check --ci --lang python` exits 0 (all checks pass)
+- No breaking changes: existing `--only` usage continues to work
+
+**Rationale:**
+- Per Phase 2.7 requirements: need granular language filtering
+- Per Decision 5: implement full flag set with strong UX
+- Minimal change principle: only ~30 lines modified
+- Backward compatibility: don't break existing users
+- Foundation for Step 2 (--tool option) and other Phase 2.7 features
+
+**Implementation Notes:**
+- Used Click's `type=click.Choice()` for validation
+- Precedence logic: `effective_lang = lang if lang and lang != "all" else only`
+- This ensures `--lang` always wins if specified
+- "all" value converts to None internally (run all languages)
+- Reuses existing `only` parameter in argparse.Namespace for compatibility
+
+**Next Steps:**
+- Step 2: Add `--tool` option (repeatable tool filtering)
+- Request code review before continuing
+- Address any feedback
+- Continue with Steps 3-6
+
+---
 
 ### 2025-12-31 23:50 - Session Start: Verified Phase 2.5 and 2.9 Complete, Planned Phase 2.7
 
