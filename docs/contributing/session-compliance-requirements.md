@@ -59,6 +59,19 @@ This document exists to **prevent those failures** by establishing clear, non-ne
      - **2** = Missing tools → **BLOCKER**
      - Any other non-zero → investigate
 
+5. **Initialize issue journals** (if working on a tracked issue)
+   - For ANY new issue you begin work on, create:
+     - `docs/ai-prompt/<ISSUE_NUMBER>/`
+     - `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-overview.md`
+     - Copy the ORIGINAL GitHub issue text into `<ISSUE_NUMBER>-overview.md` in Markdown, preserving checkboxes/tasks
+
+### Additional Rules
+
+- If any required tool is missing (including any tool required by `repo-lint`), the bootstrapper will attempt to install it.
+- If installation is blocked by environment constraints, escalate using `**BLOCKED — HUMAN ACTION REQUIRED**` and list the missing tools.
+- Use `rgrep` as the default grep/search tool for repository work unless a human explicitly instructs otherwise.
+- Do NOT proceed with scripting/tooling work until `repo-lint` is installed, on PATH, and functional.
+
 ### STOP Conditions
 
 If any of the above steps fail:
@@ -147,20 +160,45 @@ Attempted fix: [what you tried]
 
 ### Ordered Checklist
 
-1. **Update journals**
-   - If working on a tracked issue (e.g., `docs/ai-prompt/209/`):
-     - Update `{ISSUE}-next-steps.md` with latest DONE entry
-     - Update `{ISSUE}-issue-overview.md` progress tracker
+1. **Trigger GitHub Copilot Code Review**
+   - Request a code review of the PR's latest changes
+   - Review all feedback provided by Copilot
 
-2. **Verify repository state**
-   - Option A: All checks passing
+2. **Address ALL code review comments**
+   - Treat **every** Copilot Code Review comment as a **required action**
+   - This includes items labeled "nit", "code quality", "maintainability", "consistency", or "suggestion"
+   - Do **not** classify review feedback as "non-blocking" or "nice-to-have"
+   - **Nits are not optional**
+   - You may skip or partially implement a review comment **only** if implementing it would:
+     - break existing behavior, conformance, or CI/contracts, OR
+     - violate repo contracts/naming rules, OR
+     - exceed explicitly-approved scope constraints for the current PR
+   - If you skip or partially implement any review comment, you MUST:
+     - Leave a **nearby, durable** note explaining why (function/class docstring, module-level comment, or inline comment)
+     - Mention it explicitly in the PR update comment
+
+3. **Verify PR status checks**
+   - Ensure all required PR status checks are passing (tests, linters, conformance, etc.)
+   - Agents cannot always directly "run" GitHub Actions. Instead:
+     - Verify the latest workflow/check runs exist and are passing for the PR's HEAD commit, OR
+     - If checks have not triggered, take the minimal action that triggers them (e.g., push a follow-up commit)
+   - If CodeQL is configured/enabled: ensure CodeQL is passing
+   - If CodeQL is not configured: explicitly state that CodeQL cannot be verified
+
+4. **Update journals**
+   - If working on a tracked issue (e.g., `docs/ai-prompt/209/`):
+     - Update `{ISSUE}-next-steps.md` with latest DONE entry (per-commit journal)
+     - Update `{ISSUE}-issue-overview.md` progress tracker (per-session journal)
+
+5. **Verify repository state**
+   - Run final check:
      ```bash
      repo-lint check --ci
      # Exit 0 or 1 is OK
      ```
-   - Option B: Escalate with BLOCKED format if tools missing (exit 2)
+   - If exit 2 (missing tools): escalate with BLOCKED format
 
-3. **Ensure work is committed**
+6. **Ensure work is committed**
    - All meaningful progress committed via `report_progress`
    - No uncommitted changes that would be lost
 
@@ -213,6 +251,35 @@ Current blocker: [description]
 - `PPI` (Perl parsing library)
 
 The bootstrapper (`scripts/bootstrap-repo-lint-toolchain.sh --all`) installs ALL of these.
+
+---
+
+## Rule of Three (MANDATORY) — Repository Automation Only
+
+This rule applies to **repository automation and tooling**, including:
+- `tools/` code (repo tooling packages like `repo_lint`)
+- `scripts/` (bash/python/perl/ps1 utilities)
+- CI/workflows (`.github/workflows/`)
+- test harnesses, fixtures, validators, conformance runners
+- build/lint orchestration, log/forensics generation, plumbing code
+
+It does **NOT** automatically apply to product/runtime/business logic unless a human explicitly says so.
+
+### Requirement
+
+If you implement the same logic **3+ times** within the scope above (copy/paste or near-identical patterns), you MUST refactor it into a shared helper.
+
+### Rules
+
+- Create a single helper in the most appropriate shared location (prefer existing shared modules; don't invent new structure unnecessarily).
+- Update all call sites to use the helper (don't leave duplicate variants unless there is a real behavioral difference).
+- Add/extend tests to lock behavior so the refactor does not change semantics.
+- If refactoring would break existing behavior/contracts, STOP and document why using the repo's "durable note" rule.
+- If two implementations must remain separate, explicitly document the reason and the behavioral difference (durable note).
+
+### Enforcement
+
+This is **MANDATORY** for repository tooling/scripting. Violations constitute non-compliance and will result in rework.
 
 ---
 

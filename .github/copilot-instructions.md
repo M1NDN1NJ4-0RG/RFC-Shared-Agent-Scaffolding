@@ -211,99 +211,33 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
 
 ## SESSION START REQUIREMENTS (MANDATORY)
 
-At the start of **EVERY session**, before making changes, the agent MUST ensure the required tooling is installed and available in the working environment.
+**SEE: `docs/contributing/session-compliance-requirements.md`**
 
-### repo-lint Toolchain Installation (MANDATORY)
+The canonical session start requirements are defined in the Session Compliance Requirements document. That document supersedes any conflicting guidance.
 
-`repo-lint` exists to prevent exactly the kind of compliance failures we keep seeing. Treat it as a required toolchain, not a nice-to-have.
+**Quick Summary:**
+1. Run bootstrapper: `./scripts/bootstrap-repo-lint-toolchain.sh --all`
+2. Activate environment (venv + Perl PATH/PERL5LIB)
+3. Verify `repo-lint --help` works
+4. Run health check: `repo-lint check --ci` (exit 0/1 OK, exit 2 = BLOCKER)
+5. Initialize issue journals (if working on tracked issue)
 
-**Mandatory order of operations (no exceptions):**
-1) Install `repo-lint` as a Python package in the active environment.
-2) Ensure the environment is active/"sourced" so `repo-lint` is on `PATH` for this shell session.
-3) Verify `repo-lint` works by running `repo-lint --help`.
-4) Only then: use `repo-lint install` (if available) to install/verify any required external tools.
-5) Only then: begin making scripting/tooling changes.
-
-If any step fails, STOP and escalate using `**BLOCKED — HUMAN ACTION REQUIRED**`.
-
-Before making **any** scripting/tooling changes, you MUST ensure:
-- `repo-lint` is installed and runnable on PATH (verify with `repo-lint --help`)
-- all `repo-lint` Python dependencies are installed in the current environment (installed via the `repo-lint` package installation)
-- all external linters/formatters required by `repo-lint` are installed and on PATH (install manually OR via `repo-lint install`, if available)
-
-If you do not know the exact install command for `repo-lint` in this repo, you MUST:
-- search the repo for the canonical install instructions for `repo-lint`, and
-- if still unclear, STOP and escalate using `**BLOCKED — HUMAN ACTION REQUIRED**`.
-
-Do NOT proceed with scripting/tooling work until `repo-lint` is installed, on PATH, and functional.
-
-Required tools (install/verify each session):
-- `repo-lint` toolchain (installed package + required external linters/formatters)
-- `rgrep` (PREFERRED grep tool in this repository)
-- `black`
-- `pylint`
-- `pytest`
-- `ruff`
-- `yamllint`
-- `shellcheck`
-- `shfmt`
-- `pwsh`
-- `PSScriptAnalyzer`
-- `Perl::Critic`
-- `PPI`
-
-Rules:
-- If any required tool is missing (including any tool required by `repo-lint`), install it before proceeding.
-- If installation is blocked by environment constraints, escalate using `**BLOCKED — HUMAN ACTION REQUIRED**` and list the missing tools.
-- Use `rgrep` as the default grep/search tool for repository work unless a human explicitly instructs otherwise.
-
-- For ANY new issue you begin work on, initialize the issue journal directory:
-  - Create: `docs/ai-prompt/<ISSUE_NUMBER>/`
-  - Create: `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-overview.md`
-  - Copy the ORIGINAL GitHub issue text into `<ISSUE_NUMBER>-overview.md` in Markdown, preserving checkboxes/tasks.
+For complete details, STOP conditions, and escalation format, see: `docs/contributing/session-compliance-requirements.md`
 
 ## SESSION EXIT REQUIREMENTS (MANDATORY)
 
-Before ending **EVERY session** (including pausing, handing off, or saying work is complete), the agent MUST perform an automated review pass AND ensure validation/security checks are in a known-good state.
+**SEE: `docs/contributing/session-compliance-requirements.md`**
 
-Required before session end:
-- Trigger a **GitHub Copilot Code Review** of the PR’s latest changes and review the feedback
-- Ensure all required PR status checks are passing (tests, linters, conformance, etc.)
-- Ensure CodeQL is passing **IF** CodeQL is configured/enabled for the repository
+The canonical session exit requirements are defined in the Session Compliance Requirements document. That document supersedes any conflicting guidance.
 
-Definitions:
-- **Copilot Code Review:** the GitHub Copilot PR review feature (Copilot leaves review comments on the PR). This is not the same as human code review.
-- **Required PR status checks:** the status checks enforced by branch protection/rulesets on the PR.
-- **CodeQL:** GitHub Code Scanning (CodeQL) analysis results, if CodeQL is configured.
+**Quick Summary:**
+1. Trigger GitHub Copilot Code Review and address ALL feedback (nits are not optional)
+2. Verify PR status checks are passing
+3. Update journals (per-commit and per-session)
+4. Verify repository state: `repo-lint check --ci` (exit 0/1 OK, exit 2 = BLOCKER)
+5. Ensure work is committed via `report_progress`
 
-Rules:
-- Copilot Code Review is a required final quality gate:
-  - Treat **every** Copilot Code Review comment as a **required action** — including items labeled “nit”, “code quality”, “maintainability”, “consistency”, or “suggestion”.
-  - Do **not** classify review feedback as “non-blocking” or “nice-to-have”. **Nits are not optional.**
-  - You may skip or partially implement a review comment **only** if implementing it would:
-    - break existing behavior, conformance, or CI/contracts, OR
-    - violate repo contracts/naming rules, OR
-    - exceed explicitly-approved scope constraints for the current PR.
-  - If you skip or partially implement any review comment, you MUST:
-    - Leave a **nearby, durable** note explaining why, located at one of:
-      - the relevant function/class docstring
-      - the module-level docstring/header comment
-      - an inline comment immediately above the impacted code
-    - Mention it explicitly in the PR update comment (see `### 5) Output required in your PR update comment`), including **what was skipped** and **why**, plus where the local note was left.
-  - If the agent cannot resolve an issue without human direction, escalate using the exact escalation format below.
-- Agents cannot always directly “run” GitHub Actions in all environments. The agent MUST instead:
-  - Verify the latest workflow/check runs exist and are passing for the PR’s HEAD commit, OR
-  - If checks have not triggered, take the minimal action that triggers them (e.g., push a follow-up commit) when permitted.
-- If CodeQL is not configured/enabled, the agent MUST explicitly state that CodeQL cannot be verified because it is not configured (do NOT claim it ran).
-
-Escalation format (MUST match the policy below):
-- Comment on the PR with the exact opening line:
-  `**BLOCKED — HUMAN ACTION REQUIRED**`
-- Include:
-  - what Copilot Code Review reported (and why it can’t be resolved)
-  - which checks are failing or missing
-  - what evidence you have (check names / log references)
-  - the minimal options to proceed
+For complete details, code review rules, STOP conditions, and escalation format, see: `docs/contributing/session-compliance-requirements.md`
 
 ## AI Next-Steps Journals (MANDATORY)
 
