@@ -29,9 +29,6 @@ from typing import Optional
 
 from rich.console import Console
 
-# Global console instance (singleton per run)
-_console: Optional[Console] = None
-
 
 def is_tty() -> bool:
     """Check if stdout is a TTY.
@@ -44,18 +41,17 @@ def is_tty() -> bool:
 def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) -> Console:
     """Get or create the configured Rich Console instance.
 
-    Creates a single Console instance per run with appropriate configuration
-    for TTY or CI mode. In CI mode, colors and interactive features are disabled.
+    Creates a Console instance with appropriate configuration for TTY or CI mode.
+    In CI mode, colors and interactive features are disabled.
+
+    Note: This function creates a new console each time to ensure ci_mode changes
+    are respected. The previous singleton pattern cached the first console created,
+    which could cause issues if the same process needed both CI and interactive modes.
 
     :param ci_mode: If True, disable colors and interactive features
     :param force_terminal: Override TTY detection (default: auto-detect)
     :returns: Configured Console instance
     """
-    global _console  # pylint: disable=global-statement
-
-    if _console is not None:
-        return _console
-
     # Determine if we should force terminal mode
     if force_terminal is None:
         # In interactive mode, force terminal if TTY detected
@@ -63,7 +59,7 @@ def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) ->
         force_terminal = not ci_mode and is_tty()
 
     # Create console with appropriate settings
-    _console = Console(
+    console = Console(
         force_terminal=force_terminal,
         no_color=ci_mode,  # Disable colors in CI mode
         highlight=not ci_mode,  # Disable syntax highlighting in CI mode
@@ -71,14 +67,4 @@ def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) ->
         emoji=not ci_mode,  # Disable emoji in CI mode (some terminals don't support)
     )
 
-    return _console
-
-
-def reset_console() -> None:
-    """Reset the global console instance.
-
-    This is primarily for testing purposes to ensure a fresh console
-    between test runs.
-    """
-    global _console  # pylint: disable=global-statement
-    _console = None
+    return console

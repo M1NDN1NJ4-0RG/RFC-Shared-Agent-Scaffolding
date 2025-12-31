@@ -27,7 +27,7 @@
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Optional
 
 import yaml
 from rich import box
@@ -36,20 +36,16 @@ from rich import box
 def _get_default_theme_path() -> Path:
     """Get the default theme path relative to repository root.
 
+    This function is called lazily when needed rather than at module import time
+    to avoid failures if the current directory is not within a repository when
+    the module is first imported.
+
     :returns: Path to default theme YAML
     """
-    # Try to find repository root by looking for .git
-    current = Path.cwd()
-    while current != current.parent:
-        if (current / ".git").exists():
-            return current / "conformance/repo-lint/repo-lint-ui-theme.yaml"
-        current = current.parent
-    # Fallback: assume we're in repo root
-    return Path("conformance/repo-lint/repo-lint-ui-theme.yaml")
+    from tools.repo_lint.repo_utils import find_repo_root
 
-
-# Default theme file location (computed at module load time)
-DEFAULT_THEME_PATH = _get_default_theme_path()
+    repo_root = find_repo_root()
+    return repo_root / "conformance/repo-lint/repo-lint-ui-theme.yaml"
 
 
 @dataclass
@@ -128,10 +124,6 @@ class UITheme:
             self.help = HelpTheme()
 
 
-# Global theme instance
-_theme: Optional[UITheme] = None
-
-
 class ThemeValidationError(Exception):
     """Raised when theme validation fails."""
 
@@ -171,19 +163,22 @@ def _validate_theme_structure(data: dict, file_path: Path) -> None:
     version_str = str(data["version"])
     # Check if it's a simple integer
     if version_str.isdigit():
-        pass  # Valid: "1"
+        major_version_int = int(version_str)
     # Check if it's X.Y.Z format (simple semver without pre-release/build)
     elif "." in version_str:
         parts = version_str.split(".")
         if not all(part.isdigit() for part in parts):
             raise ThemeValidationError(f"Invalid version format: {version_str} (expected integer or X.Y.Z)", file_path)
+        major_version_int = int(parts[0])
     else:
         raise ThemeValidationError(f"Invalid version format: {version_str} (expected integer or X.Y.Z)", file_path)
 
-    # Check that we support this version (major version must be 1)
-    major_version = version_str.split(".")[0]
-    if major_version != "1":
-        raise ThemeValidationError(f"Unsupported theme version: {version_str} (only version 1 supported)", file_path)
+    # Check that we support this version (only major version 1 is currently supported)
+    # Future versions (2, 3, etc.) would require code changes to handle new schema
+    if major_version_int != 1:
+        raise ThemeValidationError(
+            f"Unsupported theme version: {version_str} (only version 1.x.x supported)", file_path
+        )
 
 
 def _validate_no_unknown_keys(data: dict, allowed_keys: set, file_path: Path, context: str = "root") -> None:
@@ -235,7 +230,7 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
             candidates.append(user_config)
 
     # Always fall back to default theme
-    candidates.append(DEFAULT_THEME_PATH)
+    candidates.append(_get_default_theme_path())
 
     # Find first existing theme file
     selected_theme = None
@@ -249,7 +244,7 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
         return UITheme()
 
     # Load and validate theme file
-    with open(selected_theme, "r", encoding="utf-8") as f:
+    with open(selected_theme, encoding="utf-8") as f:
         content = f.read()
 
     # Check for required YAML markers
@@ -333,15 +328,14 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
 def get_theme(ci_mode: bool = False) -> UITheme:
     """Get the active theme configuration.
 
+    Always delegates to load_theme() so that different ci_mode values produce
+    appropriately configured theme instances. The previous caching approach
+    could cause issues if the same process needed themes with different ci_mode settings.
+
     :param ci_mode: If True, load with CI mode restrictions
     :returns: Active UITheme instance
     """
-    global _theme  # pylint: disable=global-statement
-
-    if _theme is None:
-        _theme = load_theme(ci_mode=ci_mode)
-
-    return _theme
+    return load_theme(ci_mode=ci_mode)
 
 
 def get_box_style(theme: UITheme, ci_mode: bool) -> box.Box:

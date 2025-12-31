@@ -23,18 +23,14 @@
 """
 
 import sys
-from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from rich.live import Live
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.table import Table
 
 from tools.repo_lint.common import ExitCode, LintResult
 from tools.repo_lint.ui.console import get_console
 from tools.repo_lint.ui.theme import UITheme, get_box_style, get_theme
-
 
 # Maximum number of violations to display per tool (to avoid overwhelming output)
 MAX_VIOLATIONS_PER_TOOL = 50
@@ -169,11 +165,20 @@ class Reporter:
     def runner_completed(self, result: LintResult) -> None:
         """Report that a runner has completed.
 
+        This is a placeholder hook for future live progress display updates.
+        Currently, all results are rendered at once via render_results_table(),
+        so this method is an explicit no-op.
+
         :param result: LintResult from runner
+
+        :Future:
+            This could update a live Rich Progress display or spinner to show
+            per-runner status as checks complete, rather than waiting until all
+            runners finish.
         """
-        # In the future, this could update a live display
-        # For now, results are shown in render_results_table()
-        pass
+        # TODO: Implement live progress display updates
+        # For now, results are batched and shown in render_results_table()
+        _ = result  # Explicit unused parameter to signal this is intentional
 
     def render_results_table(self, results: List[LintResult]) -> None:
         """Render results summary table.

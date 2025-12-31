@@ -450,7 +450,10 @@ def main():
         click.echo(f"❌ Internal error: {e}", err=True)
         import traceback
 
-        if "--verbose" in sys.argv or "-v" in sys.argv:
+        # Check for verbose flag in various forms
+        verbose_flags = {"-v", "--verbose"}
+        has_verbose = any(arg in verbose_flags or arg.startswith("--verbose=") for arg in sys.argv[1:])
+        if has_verbose:
             traceback.print_exc()
         sys.exit(ExitCode.INTERNAL_ERROR)
 

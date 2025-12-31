@@ -46,19 +46,14 @@ def get_repo_root() -> Path:
     allowing repo_lint to work in non-Git directories.
 
     :returns: Path to repository root (or cwd if .git not found)
+
+    :Note:
+        This delegates to the shared repo_utils.find_repo_root() for consistency
+        across the codebase.
     """
-    # Start from current working directory (consistent with find_repo_root)
-    current = Path.cwd().resolve()
-    start_dir = current
+    from tools.repo_lint.repo_utils import find_repo_root
 
-    # Walk up until we find .git directory
-    while current != current.parent:
-        if (current / ".git").exists():
-            return current
-        current = current.parent
-
-    # Fallback: return starting directory if .git not found
-    return start_dir
+    return find_repo_root()
 
 
 def get_venv_path() -> Path:

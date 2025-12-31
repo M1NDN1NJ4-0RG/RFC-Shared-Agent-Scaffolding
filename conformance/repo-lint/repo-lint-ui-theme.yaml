@@ -13,11 +13,11 @@ interactive:
     info: cyan
     metadata: dim
   icons:
-    pass: "✅"
-    fail: "❌"
-    warn: "⚠️"
-    skip: "⏭️"
-    running: "⏳"
+    pass: ✅
+    fail: ❌
+    warn: ⚠️
+    skip: ⏭️
+    running: ⏳
 
 ci:
   box_style: SIMPLE
