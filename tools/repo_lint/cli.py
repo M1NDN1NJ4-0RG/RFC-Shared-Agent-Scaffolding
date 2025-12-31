@@ -23,6 +23,7 @@
     - 1: Linting violations found
     - 2: Required tools missing (CI mode)
     - 3: Internal error
+    - 4: Unsafe mode policy violation (CI or missing confirmation)
 
 :Examples:
     Run checks in local mode::
@@ -215,7 +216,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
     """Apply automatic fixes where possible (formatters only).
 
     :param args: Parsed command-line arguments
-    :returns: Exit code (0=success, 1=violations remain, 2=missing tools, 3=error)
+    :returns: Exit code (0=success, 1=violations remain, 2=missing tools, 3=error, 4=unsafe violation)
     """
     import os
 
@@ -233,7 +234,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
         print("Unsafe fixes are not allowed in CI environments.")
         print("See: docs/contributing/ai-constraints.md")
         print("")
-        return ExitCode.MISSING_TOOLS  # Exit code 2 per requirements
+        return ExitCode.UNSAFE_VIOLATION  # Exit code 4 for policy violations
 
     # Guard: --unsafe requires --yes-i-know
     if unsafe_mode and not yes_i_know:
@@ -247,7 +248,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
         print("")
         print("See: docs/contributing/ai-constraints.md")
         print("")
-        return ExitCode.MISSING_TOOLS  # Exit code 2 per requirements
+        return ExitCode.UNSAFE_VIOLATION  # Exit code 4 for policy violations
 
     if not use_json:
         if unsafe_mode:

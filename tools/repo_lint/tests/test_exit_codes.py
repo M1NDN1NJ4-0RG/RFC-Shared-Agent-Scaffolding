@@ -8,6 +8,7 @@
     - ExitCode.VIOLATIONS (1) when violations found
     - ExitCode.MISSING_TOOLS (2) in CI mode when tools missing
     - ExitCode.INTERNAL_ERROR (3) for internal errors
+    - ExitCode.UNSAFE_VIOLATION (4) for unsafe mode policy violations
 
 :Test Coverage:
     - cmd_check() returns SUCCESS when no violations
@@ -15,6 +16,8 @@
     - cmd_check() returns MISSING_TOOLS in CI mode when tools missing
     - cmd_fix() returns SUCCESS when fixes applied successfully
     - cmd_fix() returns VIOLATIONS when violations remain after fix
+    - cmd_fix() returns UNSAFE_VIOLATION when --unsafe used in CI
+    - cmd_fix() returns UNSAFE_VIOLATION when --unsafe without --yes-i-know
     - cmd_install() returns SUCCESS on successful install
     - cmd_install() returns INTERNAL_ERROR on install failure
 
@@ -323,6 +326,63 @@ class TestExitCodes(unittest.TestCase):
 
         # Verify internal error exit code
         self.assertEqual(result, ExitCode.INTERNAL_ERROR)
+
+    @patch("tools.repo_lint.cli.load_policy")
+    @patch("tools.repo_lint.cli.validate_policy")
+    @patch("os.getenv")
+    def test_fix_unsafe_violation_in_ci(self, mock_getenv, mock_validate, mock_load):
+        """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe used in CI.
+
+        :Purpose:
+            Verify EXIT_CODE.UNSAFE_VIOLATION (4) when unsafe mode is used in CI.
+
+        :param mock_getenv: Mocked os.getenv
+        :param mock_validate: Mocked validate_policy
+        :param mock_load: Mocked load_policy
+        """
+        # Mock CI environment
+        mock_getenv.return_value = "true"
+
+        # Create args with unsafe mode
+        args_unsafe_ci = argparse.Namespace(
+            ci=True,
+            verbose=False,
+            only=None,
+            unsafe=True,
+            yes_i_know=True,
+        )
+
+        # Run fix with unsafe in CI
+        result = cmd_fix(args_unsafe_ci)
+
+        # Verify unsafe violation exit code
+        self.assertEqual(result, ExitCode.UNSAFE_VIOLATION)
+
+    @patch("tools.repo_lint.cli.load_policy")
+    @patch("tools.repo_lint.cli.validate_policy")
+    def test_fix_unsafe_violation_without_confirmation(self, mock_validate, mock_load):
+        """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe without --yes-i-know.
+
+        :Purpose:
+            Verify EXIT_CODE.UNSAFE_VIOLATION (4) when unsafe mode lacks confirmation.
+
+        :param mock_validate: Mocked validate_policy
+        :param mock_load: Mocked load_policy
+        """
+        # Create args with unsafe mode but no confirmation
+        args_unsafe_no_confirm = argparse.Namespace(
+            ci=False,
+            verbose=False,
+            only=None,
+            unsafe=True,
+            yes_i_know=False,
+        )
+
+        # Run fix with unsafe but no confirmation
+        result = cmd_fix(args_unsafe_no_confirm)
+
+        # Verify unsafe violation exit code
+        self.assertEqual(result, ExitCode.UNSAFE_VIOLATION)
 
 
 if __name__ == "__main__":
