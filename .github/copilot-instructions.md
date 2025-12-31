@@ -202,7 +202,6 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
 ## SESSION START REQUIREMENTS (MANDATORY)
 
 At the start of **EVERY session**, before making changes, the agent MUST ensure the required tooling is installed and available in the working environment.
-READ AND ADHERE TO ALL CONTRACTS FOUND `docs/contributing/*`
 
 Required tools (install/verify each session):
 - `rgrep` (PREFERRED grep tool in this repository)
@@ -291,8 +290,7 @@ Escalation format (MUST match the policy below):
 Path: `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-next-steps.md`
 
 ```markdown
-MUST READ: `.github/copilot-instructions.md` FIRST! 
-MUST READ: `docs/contributing/naming-and-style.md` SECOND!
+MUST READ: `.github/copilot-instructions.md` FIRST!
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue <ISSUE_NUMBER> AI Journal
 Status: In Progress | Paused | Complete
