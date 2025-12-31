@@ -142,7 +142,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         ("yaml", "YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("rust", "Rust", RustRunner(ci_mode=args.ci, verbose=args.verbose)),
     ]
-    
+
     # Add cross-language runners (run on all files, not language-specific)
     # Naming runner runs separately after language-specific checks
     cross_language_runners = []
@@ -196,7 +196,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         else:
             if args.verbose and not use_json:
                 print(f"No {name} files found. Skipping {name} {mode.lower()}.")
-    
+
     # Run cross-language runners (only if --only not specified)
     if not only_language:
         for key, name, runner in cross_language_runners:
@@ -204,7 +204,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                 print(f"  {name} {mode}")
                 print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-            
+
             results = action_callback(runner)
             all_results.extend(results)
 
