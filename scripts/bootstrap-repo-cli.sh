@@ -197,7 +197,7 @@ fi
 if ! command -v shfmt >/dev/null 2>&1; then
 	log "Installing shfmt..."
 	if command -v go >/dev/null 2>&1; then
-		go install mvdan.cc/sh/v3/cmd/shfmt@v3.12.0
+		go install mvdan.cc/sh/v3/cmd/shfmt@latest
 		export PATH="$HOME/go/bin:$PATH"
 	else
 		warn "shfmt requires Go to be installed. Please install Go first or install shfmt manually."
