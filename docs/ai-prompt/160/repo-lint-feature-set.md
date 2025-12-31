@@ -4,12 +4,93 @@ We need THREE complementary UX variants:
 2) `repo-lint activate` — convenience launcher that spawns a subshell (or runs a command) with the target venv activated so the CLI is immediately usable without manually sourcing activation scripts.
 3) `repo-lint which` — diagnostic helper that prints the resolved repo root, venv path, bin/scripts dir, and resolved executable(s), so PATH/venv confusion becomes a one-liner debug.
 
+
 ### Non-negotiable constraints
 - NEVER attempt to modify the user’s PATH “automatically” during `pip install` or import time. It’s not reliable and it’s hostile.
 - Any persistent changes must be explicit opt-in and MUST NOT edit `.bashrc`/`.zshrc` automatically.
 - Must be cross-platform (Linux/macOS + Windows PowerShell).
 - Output/behavior must be deterministic and testable.
 - Must follow Phase 2.5 Console Output + Rich-Click Help Content Contracts.
+- GENERAL RULE (MANDATORY): Any third-party packages rolled into `repo-lint` (new Python deps, extras, or vendored libs) MUST be added to every CI workflow/action/job that depends on them, or CI will fail.
+- This includes: lint/test umbrella workflows, repo-lint-specific workflows, and any helper workflows that invoke `repo-lint`.
+- Dependency installation steps MUST be updated in lockstep with code changes (same PR), and verified on all supported OS runners.
+- Packaging note: if using extras (e.g., `.[dev]`, `.[lint]`), CI MUST install the correct extra(s) explicitly.
+
+## Mandatory: Internal Integration Contract (No “Mystery Helper Scripts”)
+
+If `repo-lint` relies on any helper scripts/tools that are not already clearly part of the `repo-lint` package (e.g., separate one-off scripts living elsewhere in the repo), those helpers MUST be **fully integrated** into `repo-lint` as first-class components.
+
+This requirement applies to:
+- Any script/module invoked by `repo-lint` at runtime (subprocess calls, imports, or file execution)
+- Any validation/enforcement logic currently implemented in separate helper scripts
+
+This requirement does NOT apply to:
+- CI workflows (GitHub Actions / pipeline YAMLs)
+
+### Integration Requirements (Non-negotiable)
+- The helper MUST live under the `repo-lint` package/module namespace (e.g., `tools/repo_lint/...`) and be included in packaging (wheel/sdist).
+- The helper MUST have a stable, testable Python API (even if it can also be executed as a script).
+- Any configuration it uses MUST be wired into the conformance YAML system (and validated by the same strict config validator).
+- Invocation MUST be centralized through a single internal interface (no ad-hoc subprocess strings scattered across runners).
+- The helper MUST be documented in `HOW-TO-USE-THIS-TOOL.md` and referenced in the Tool Registry Contract (where applicable).
+- The helper MUST have unit tests covering:
+  - success paths
+  - failure modes (missing deps, invalid config, bad input)
+  - output schema stability if it emits structured results
+
+### Enforcement
+- If `repo-lint` detects it is configured to call an external helper that is not integrated, it MUST fail fast with a clear error explaining what must be integrated and where.
+
+
+## Mandatory: External Configuration Contract (YAML-First)
+
+`repo-lint` MUST maximize user-configurability while preserving contract safety.
+
+### Scope
+
+Any behavior that can reasonably be configured externally MUST be migrated to the conformance YAML configuration system (or a dedicated `repo-lint` YAML config), including but not limited to:
+- tool enable/disable lists (per language)
+- tool invocation options/args (where safe)
+- file targeting patterns (include/exclude globs)
+- severity mapping and fail thresholds
+- output styling/theme selections (TTY)
+- reporting formats and report destinations (defaults)
+- exception/ignore policies (YAML exceptions + pragma policies)
+
+In addition, any behavior currently controlled by:
+- hard-coded constants
+- ad-hoc environment variables
+- CLI-only flags with no config equivalent
+- separate helper-script config files
+
+MUST be migrated to YAML-first configuration **wherever it is safe and does not violate contracts**.
+
+### Non-negotiable rules
+
+- External configuration MUST be expressed in YAML (YAML-first).
+- Config MUST be strictly validated before use, with:
+  - required document start marker `---`
+  - required document end marker `...`
+  - required `type` marker and `version`
+  - schema validation + semantic validation (anti-typo, enum checks, path checks)
+- Unknown keys MUST fail validation by default (no silent ignores).
+- Config layering MUST be deterministic:
+  - Baseline conformance configs in `conformance/repo-lint/` (committed)
+  - Optional user overrides supplied explicitly via CLI flags (never auto-discovered in CI)
+- CLI flags MUST override config defaults, but MUST NOT allow violating contracts.
+- Contract-critical behavior MUST NOT be disable-able via config (e.g., config validation itself, contract enforcement, unsafe-mode acknowledgements).
+
+### Required CLI support
+
+- Add `--config <PATH>` to commands that need configurable defaults (`check`, `fix`, `doctor`, and any future reporting commands).
+- Add `--dump-config` (TTY-only) to print the fully-resolved configuration after layering.
+- Add `--validate-config <PATH>` command or subcommand (no linting run) that validates a config file and exits non-zero on errors.
+
+### CI determinism
+
+- In `--ci` mode, `repo-lint` MUST NOT auto-load user config from the working directory or home directory.
+- In `--ci` mode, only configs explicitly passed via `--config` may be used.
+- CI output MUST include a line indicating which config(s) were loaded (or "none").
 
 ## Mandatory: Rich-Click CLI Granularity for `check` / `fix` (Per-language + Per-tool + Summary Modes)
 
@@ -402,7 +483,6 @@ Wire into Click CLI. Ensure Rich-Click help includes:
 
 ---
 
-# Acceptance Criteria
 - [ ] `repo-lint env` exists and supports `--print`, `--install`, `--shell`, `--path-only`.
 - [ ] `repo-lint activate` exists and supports interactive subshell and `--command`, with CI-safe behavior.
 - [ ] `repo-lint which` exists and prints a Rich table + supports `--json`.
@@ -423,3 +503,9 @@ Wire into Click CLI. Ensure Rich-Click help includes:
 - [ ] `--reports-dir` emits deterministic multi-file artifacts for `csv` and `xlsx` (with required files/sheets).
 - [ ] Rich-Click help groups options into panels with consistent headings (Filtering/Output/Execution/Info).
 - [ ] `repo-lint doctor` exists and produces a green/red checklist; supports `--format`, `--report`, and `--ci`.
+- [ ] Any non-`repo-lint` helper scripts required by `repo-lint` are fully integrated into the `repo-lint` package namespace, documented, and covered by unit tests (CI workflows excluded).
+- [ ] Any behavior that can be configured externally (including behavior currently driven by constants/env/CLI-only toggles) is migrated to YAML-first configuration without allowing contract violations.
+- [ ] `--config`, `--dump-config` (TTY-only), and `--validate-config` (no linting) are implemented, documented, and tested.
+- [ ] `--ci` mode is deterministic: no auto-discovered configs; only explicit `--config` is honored.
+- [ ] Any new third-party dependencies introduced for `repo-lint` are reflected in all CI workflows/actions/jobs that rely on them (including correct extras), verified across supported OS runners.
+- [ ] If the dependency set changes, update both: pyproject.toml (or requirements) and CI install steps in the same PR.
