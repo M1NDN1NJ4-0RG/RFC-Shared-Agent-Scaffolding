@@ -29,6 +29,7 @@
     - 1: VIOLATIONS - Linting/formatting violations found
     - 2: MISSING_TOOLS - Required tools not installed (CI mode)
     - 3: INTERNAL_ERROR - Internal error or exception
+    - 4: UNSAFE_VIOLATION - Unsafe mode policy violation (CI or missing confirmation)
 """
 
 from dataclasses import dataclass
@@ -43,6 +44,7 @@ class ExitCode(IntEnum):
     VIOLATIONS = 1  # Linting/formatting violations found
     MISSING_TOOLS = 2  # Required tools not installed (CI mode)
     INTERNAL_ERROR = 3  # Internal error or exception
+    UNSAFE_VIOLATION = 4  # Unsafe mode policy violation (CI or missing confirmation)
 
 
 @dataclass
