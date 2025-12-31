@@ -6,12 +6,47 @@ Last Updated: 2025-12-31
 Related: Issue #160, PRs TBD
 
 ## NEXT
-- Address remaining review comments if any
-- Continue with next Phase 1 item: exit code clarification for unsafe mode (new PR)
+- Continue with next Phase 1 item: Handle partial install failures gracefully (next PR)
+- Run code review on current changes
+- Address any code review feedback
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 01:02 - Completed exit code clarification for unsafe mode
+**Files Changed:**
+- `tools/repo_lint/common.py`: Added `ExitCode.UNSAFE_VIOLATION = 4` (line 46)
+  - Added new exit code enum value for unsafe mode policy violations
+  - Updated module docstring to document exit code 4 (lines 26-31)
+- `tools/repo_lint/cli.py`: Updated `cmd_fix()` to use new exit code (lines 21-25, 236, 250)
+  - Changed two unsafe mode guard clauses to return `UNSAFE_VIOLATION` instead of `MISSING_TOOLS`
+  - Line 236: When `--unsafe` used in CI environment (forbidden)
+  - Line 250: When `--unsafe` used without `--yes-i-know` confirmation
+  - Updated function docstring to document exit code 4 (line 219)
+  - Updated module docstring to document exit code 4 (lines 21-25)
+- `tools/repo_lint/tests/test_exit_codes.py`: Added comprehensive test coverage (lines 327-375)
+  - Added `test_fix_unsafe_violation_in_ci`: verifies exit code 4 when unsafe mode in CI
+  - Added `test_fix_unsafe_violation_without_confirmation`: verifies exit code 4 when unsafe lacks confirmation
+  - Updated test file docstrings to document new test coverage (lines 6, 12-19)
+
+**Changes Made:**
+- Completed Phase 1, Item 2: "Clarify exit codes for unsafe mode" (Severity: High)
+- Introduced new `ExitCode.UNSAFE_VIOLATION = 4` to distinguish policy violations from missing tools
+- Previously, `repo_lint fix --unsafe` returned exit code 2 (MISSING_TOOLS) which was misleading
+- Now returns exit code 4 (UNSAFE_VIOLATION) for policy violations, making CI logs clearer
+- Exit code 2 now exclusively means "tools are missing, run install"
+- Exit code 4 now exclusively means "configuration/policy violation, fix flags or environment"
+- Minimal changes: only modified the exact lines specified in the epic, no drive-by refactors
+
+**Verification:**
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes.TestExitCodes.test_fix_unsafe_violation_in_ci -v` - PASS
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes.TestExitCodes.test_fix_unsafe_violation_without_confirmation -v` - PASS
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes -v` - all 13 tests passed (11 existing + 2 new)
+- All tests demonstrate correct exit code behavior for unsafe mode policy violations
+- Changes committed in commit 9cf27b3
+
+---
+
 ### 2025-12-31 00:37 - Addressed code review feedback
 **Files Changed:**
 - `tools/repo_lint/install/install_helpers.py`: Fixed `get_repo_root()` inconsistent fallback (lines 42-60)

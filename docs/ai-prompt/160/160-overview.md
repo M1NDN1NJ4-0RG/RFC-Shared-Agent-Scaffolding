@@ -152,7 +152,7 @@ Each fix above should be committed with clear messages, linking to issues if the
 ## Progress Tracker
 - [x] Phase 1 – Critical Fixes and Corrections (High Priority) - IN PROGRESS
   - [x] Fix repository root detection - COMPLETED
-  - [ ] Clarify exit codes for unsafe mode
+  - [x] Clarify exit codes for unsafe mode - COMPLETED
   - [ ] Handle partial install failures gracefully
   - [ ] Ensure missing docstring validator is detected
   - [ ] Validate non-Python unsafe mode behavior
@@ -169,6 +169,14 @@ Each fix above should be committed with clear messages, linking to issues if the
   - [ ] Test coverage for runners (Optional)
 
 ## Session Notes (newest first)
+### 2025-12-31 01:02 - Completed exit code clarification for unsafe mode
+- Added `ExitCode.UNSAFE_VIOLATION = 4` for policy violations in unsafe mode
+- Updated `cmd_fix()` to use new exit code instead of MISSING_TOOLS
+- Added 2 new unit tests, all 13 tests passing
+- Changes committed in 9cf27b3
+- Ready for code review
+- Next item: Handle partial install failures gracefully
+
 ### 2025-12-31 00:37 - Addressed code review feedback
 - Fixed inconsistent fallback behavior in `get_repo_root()` - now starts from cwd like `find_repo_root()`
 - Added comprehensive test coverage: 7 new tests (3 for get_repo_root, 4 for find_repo_root)
