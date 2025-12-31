@@ -6,12 +6,246 @@ Last Updated: 2025-12-31
 Related: Issue #160, PRs TBD
 
 ## NEXT
-- None - Phase 1 is complete
-- Awaiting human direction for Phase 2/3 work (if requested)
+- Run final code_review after this commit (MANDATORY)
+- Run codeql_checker if available (MANDATORY after code_review)
+- Update session journal overview before ending session
+- Phase 2.4 deferred to future work (Click migration is major refactor)
+- Phase 3 items deferred to future work
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 03:10 - Second round of code review fixes
+**Files Changed:**
+- `tools/repo_lint/config_validator.py`:
+  - Added module-level constant `SEMANTIC_VERSION_PATTERN` for version regex (line 34)
+  - Added module-level constant `DEFAULT_ALLOWED_KEYS` for default allowed keys (line 37)
+  - Updated `_validate_required_fields()` to use `SEMANTIC_VERSION_PATTERN` constant
+  - Updated `validate_config_file()` to use `DEFAULT_ALLOWED_KEYS` constant
+  - Fixed import order (moved yaml import after standard library imports)
+
+- `tools/repo_lint/runners/naming_runner.py`:
+  - Fixed `MissingToolError` constructor calls to match API signature (lines 58, 60)
+  - Now passes tool name as first parameter, message as second parameter (install_hint)
+  - Format: `MissingToolError("naming-rules-config", "message...")`
+
+**Changes Made:**
+- Addressed second round of code review feedback:
+  1. Fixed MissingToolError constructor calls (API contract violation)
+  2. Extracted magic values to constants for maintainability:
+     - SEMANTIC_VERSION_PATTERN for version validation
+     - DEFAULT_ALLOWED_KEYS for config validation
+  3. Fixed import order in config_validator.py (I001 Ruff issue)
+- All files re-formatted with Black
+- All files pass Ruff checks
+
+**Verification:**
+- `.venv-lint/bin/black --check` - PASS (all files unchanged)
+- `.venv-lint/bin/ruff check` - PASS (all checks passed)
+- MissingToolError calls now match constructor signature
+- Constants improve code maintainability
+
+**Rationale:**
+- Code review identified API contract violations in MissingToolError usage
+- Moving magic values to constants improves maintainability
+- Following repository code quality standards
+
+---
+
+### 2025-12-31 03:00 - Fixed linting issues in Phase 2.2 code
+**Files Changed:**
+- `tools/repo_lint/config_validator.py`: Formatted with Black (removed extra blank lines)
+- `tools/repo_lint/runners/naming_runner.py`: Formatted with Black and fixed Ruff issues
+  - Removed unused import: `find_repo_root` (line 33)
+  - Removed unused variable: `description` (line 208)
+  - Applied Black formatting throughout
+- `conformance/repo-lint/repo-lint-naming-rules.yaml`: Removed trailing spaces (yamllint fix)
+- `conformance/repo-lint/repo-lint-docstring-rules.yaml`: Removed trailing spaces (yamllint fix)
+- `conformance/repo-lint/repo-lint-linting-rules.yaml`: Removed trailing spaces (yamllint fix)
+
+**Changes Made:**
+- Ran Black formatter on new Python files (config_validator.py, naming_runner.py)
+- Ran Ruff linter and fixed all issues:
+  - F401: Removed unused import `find_repo_root`
+  - F841: Removed unused variable `description`
+- Ran yamllint and fixed all YAML files:
+  - Removed trailing spaces from all three config YAML files
+- All new files now pass linting checks (Black, Ruff, yamllint)
+
+**Verification:**
+- `python3 -m py_compile` on both new Python files - SUCCESS
+- `.venv-lint/bin/black --check` on both files - PASS (all would be left unchanged)
+- `.venv-lint/bin/ruff check` on both files - PASS (all checks passed)
+- `.venv-lint/bin/yamllint` on all three YAML files - PASS (no errors)
+
+**Rationale:**
+- Per repository instructions: "Pre-Commit Repo Lint Gate (MANDATORY for scripting changes)"
+- All scripting/tooling changes must pass linting before commit
+- Black, Ruff, and yamllint are the standard linters for this repository
+- This ensures code quality and consistency with existing codebase
+
+---
+
+### 2025-12-31 02:50 - Completed Phase 2.2: Integrate naming/style enforcement
+**Files Changed:**
+- `conformance/repo-lint/repo-lint-naming-rules.yaml`: Created (162 lines)
+  - Comprehensive naming rules for 7 languages (python, bash, powershell, perl, yaml, markdown, json)
+  - Required YAML markers: `---` start, `...` end
+  - Required fields: `config_type: repo-lint-naming-rules`, `version: 1.0.0`
+  - Per-language rules under `languages:` mapping (Option A as per decision)
+  - Includes patterns, descriptions, examples for each language
+  - Global exclusions list for test fixtures and build artifacts
+  - Special handling for Python dunder files (__init__.py, __main__.py)
+  - Special handling for markdown files with version suffixes (e.g., project-v1.0.0.md)
+
+- `conformance/repo-lint/repo-lint-docstring-rules.yaml`: Created (121 lines)
+  - Docstring validation rules for 4 languages (python, bash, powershell, perl)
+  - Required YAML markers and fields
+  - Defines validation requirements per language
+  - Includes examples of valid/invalid docstrings
+  - Validation settings (strict_mode, check_private, min_length)
+  - Exclusions for test files
+
+- `conformance/repo-lint/repo-lint-linting-rules.yaml`: Created (109 lines)
+  - Linting tool configurations for 6 languages
+  - Defines which tools to run and their versions
+  - Tool capabilities (fix_capable: true/false)
+  - Config file references (pyproject.toml, .yamllint, .perlcriticrc)
+  - Global settings (strict_mode, line_length, parallel, timeout)
+  - Exclusions for fixtures and build artifacts
+
+- `tools/repo_lint/config_validator.py`: Created (282 lines)
+  - Strict YAML config validation with pre-ingest checks
+  - Validates YAML structure: `---` start marker required
+  - Validates YAML structure: `...` end marker required
+  - Validates single-document structure (rejects multi-document YAML)
+  - Validates required fields: `config_type`, `version`
+  - Validates semantic version format (X.Y.Z)
+  - Validates `languages:` section is present and non-empty
+  - Rejects unknown top-level keys with clear error messages
+  - Provides actionable error messages with file path and context
+  - ConfigValidationError exception with file path, message, optional line number
+
+- `tools/repo_lint/runners/naming_runner.py`: Created (290 lines)
+  - Check-only naming validation (NO auto-renames per human decision)
+  - Loads naming rules from external YAML config
+  - Uses strict config validator before ingesting rules
+  - Scans all repository files and validates naming
+  - Per-language pattern matching with regex
+  - Exclusion filtering (directories, patterns, exact paths)
+  - Inherits from Runner base class
+  - Implements has_files() (always True), check_tools() (always empty)
+  - Detailed violation messages with language, pattern, and examples
+  - Returns LintResult objects compatible with existing reporting
+
+- `tools/repo_lint/cli.py`: Modified (added lines 57, 147-153, 197-207)
+  - Added import of NamingRunner
+  - Added cross-language runners list (separate from language-specific runners)
+  - Naming runner initialized with try/except (gracefully skips if config missing)
+  - Cross-language runners run after language-specific runners
+  - Only run when --only flag not specified (naming checks all files)
+  - Naming checks integrated into normal check/fix workflow
+
+**Changes Made:**
+- **Phase 2.2: Integrate naming/style enforcement** ✅ COMPLETE
+  - Created all three external YAML config files as per human decision requirements
+  - All config files have required `---` and `...` markers
+  - All config files have required `config_type` and `version` fields
+  - All config files use Option A (single file per category with `languages:` mapping)
+  - Implemented strict config validator with pre-ingest validation
+  - Config validator enforces all requirements: markers, fields, schema, unknown keys
+  - Config validator provides actionable error messages with file path context
+  - Naming enforcement implemented as check-only (NO auto-renames)
+  - Naming runner uses external YAML rules (no hardcoded rules)
+  - Naming runner integrated into CLI workflow
+  - Tested: 3 naming violations found in current repo (edge cases with numbers/dots in filenames)
+
+**Verification:**
+- Validated all three YAML config files load successfully
+- Config validator successfully validates structure, markers, and fields
+- Config validator rejects missing markers with clear error messages
+- Config validator rejects invalid config_type with clear error messages
+- Config validator rejects invalid version format with clear error messages
+- NamingRunner initializes successfully and loads config
+- NamingRunner.has_files() returns True (always checks files)
+- NamingRunner.check_tools() returns [] (no external tools needed)
+- NamingRunner.check() runs successfully and finds violations
+- Found 3 naming violations in current repo (acceptable edge cases)
+- Special Python files (__init__.py, __main__.py) correctly handled
+- Markdown files with version suffixes correctly handled
+
+**Rationale:**
+- Per locked-in decision #2: "Add naming/style checks to repo_lint check output"
+- Explicit constraint: "NO automatic renaming of files (no auto-change behavior)"
+- Naming rules MUST be defined externally via YAML (per-language rules)
+- Config files MUST be under `conformance/repo-lint/`
+- Config files MUST have type marker, version, and YAML document markers
+- Strict config validation MUST run before ingesting any rules
+- This is a check-only feature to prevent breaking git history
+
+---
+
+### 2025-12-31 02:35 - Verified Phase 2.3: Pin external tool versions (ALREADY COMPLETE)
+**Files Changed:**
+- None - verification only
+
+**Changes Made:**
+- **Phase 2.3: Pin external tool versions** ✅ ALREADY COMPLETE (from prior work)
+  - Verified that `install_python_tools()` already uses pinned versions from `version_pins.py`
+  - Verified versions in `version_pins.py` match `pyproject.toml` exactly:
+    - black: 24.10.0
+    - ruff: 0.8.4
+    - pylint: 3.3.2
+    - yamllint: 1.35.1
+  - The installer at lines 164-170 of `install_helpers.py` iterates over `PYTHON_TOOLS.items()` and installs with exact version: `tool_spec = f"{tool}=={version}"`
+  - Single source of truth is `install/version_pins.py` with sync to pyproject.toml documented in docstring
+
+**Verification:**
+- Checked import statement: `from tools.repo_lint.install.version_pins import PYTHON_TOOLS` (line 39)
+- Checked installer loop: `for tool, version in PYTHON_TOOLS.items()` (line 164)
+- Checked version specification: `tool_spec = f"{tool}=={version}"` (line 165)
+- Manually compared versions between version_pins.py and pyproject.toml - all match
+- This work was completed in a prior phase (likely Phase 0 or early work)
+
+**Rationale:**
+- Per locked-in decision #3: "Resolve the current mismatch between install/version_pins.py and requirements-dev.txt so there is one canonical source of truth for tool versions"
+- This is already done - version_pins.py is the source, and pyproject.toml is in sync
+- Installer uses pinned versions, ensuring deterministic linting behavior
+
+---
+
+### 2025-12-31 02:30 - Completed Phase 2.1: Make repo_lint installable package
+**Files Changed:**
+- `pyproject.toml`: Added packaging configuration (lines 1-16)
+  - Added `[build-system]` section with setuptools configuration
+  - Added `[project.scripts]` with `repo-lint` entry point to `tools.repo_lint.cli:main`
+  - Added `[tool.setuptools.packages.find]` to specify only `tools*` packages are included
+  - This prevents accidental inclusion of unwanted directories (rust, logs, wrappers, conformance)
+
+**Changes Made:**
+- **Phase 2.1: Make repo_lint installable package** ✅ COMPLETE
+  - Added entry point configuration to pyproject.toml
+  - Entry point: `repo-lint` command maps to `tools.repo_lint.cli:main`
+  - Package can now be installed with `pip install -e .`
+  - Backward compatibility maintained: `python3 -m tools.repo_lint` still works
+  - Only `tools*` packages included in distribution (excludes rust, logs, wrappers, conformance)
+
+**Verification:**
+- Ran `pip install -e .` - SUCCESS (installed in editable mode)
+- Ran `which repo-lint` - `/home/runner/.local/bin/repo-lint` (entry point created)
+- Ran `repo-lint --help` - SUCCESS (shows help menu)
+- Ran `python3 -m tools.repo_lint --help` - SUCCESS (backward compatibility confirmed)
+- Both invocation methods work identically
+- Entry point properly maps to the main() function in cli.py
+
+**Rationale:**
+- Per locked-in decision #1: "Provide a standard install + entrypoint so contributors can run `repo-lint ...` directly"
+- Maintains backward compatibility during transition period
+- Aligns with Future Work item FW-013
+- Makes tool easier to install and use
+
+---
 
 ### 2025-12-31 01:25 - Final code review iterations complete
 **Files Changed:**

@@ -1,0 +1,130 @@
+---
+config_type: repo-lint-linting-rules
+version: "1.0.0"
+
+# Linting tool configurations per language
+# Defines which tools to run and their configurations
+
+languages:
+  python:
+    description: "Python linting tools and rules"
+    enabled: true
+    tools:
+      black:
+        enabled: true
+        version: "24.10.0"
+        config_file: "pyproject.toml"
+        fix_capable: true
+        description: "Python code formatter"
+      ruff:
+        enabled: true
+        version: "0.8.4"
+        config_file: "pyproject.toml"
+        fix_capable: true
+        description: "Fast Python linter (replaces flake8, isort)"
+      pylint:
+        enabled: true
+        version: "3.3.2"
+        config_file: "pyproject.toml"
+        fix_capable: false
+        description: "Comprehensive Python code analyzer"
+
+  bash:
+    description: "Bash linting tools and rules"
+    enabled: true
+    tools:
+      shellcheck:
+        enabled: true
+        version: null  # System package manager version
+        fix_capable: false
+        description: "Shell script static analysis"
+      shfmt:
+        enabled: true
+        version: "v3.12.0"
+        fix_capable: true
+        description: "Shell script formatter"
+        format_options:
+          - "--indent=2"
+          - "--binary-next-line"
+          - "--case-indent"
+
+  powershell:
+    description: "PowerShell linting tools and rules"
+    enabled: true
+    tools:
+      PSScriptAnalyzer:
+        enabled: true
+        version: "1.23.0"
+        fix_capable: false
+        description: "PowerShell script analyzer"
+        rules:
+          # Enforce approved verb usage
+          - PSUseApprovedVerbs
+          # Avoid hardcoded credentials
+          - PSAvoidUsingPlainTextForPassword
+          # Other standard rules enabled by default
+
+  perl:
+    description: "Perl linting tools and rules"
+    enabled: true
+    tools:
+      perlcritic:
+        enabled: true
+        version: null  # CPAN version
+        config_file: ".perlcriticrc"
+        fix_capable: false
+        description: "Perl code quality analyzer"
+        severity: 5  # Gentle (1=brutal, 5=gentle)
+
+  yaml:
+    description: "YAML linting tools and rules"
+    enabled: true
+    tools:
+      yamllint:
+        enabled: true
+        version: "1.35.1"
+        config_file: ".yamllint"
+        fix_capable: false
+        description: "YAML syntax and style checker"
+
+  rust:
+    description: "Rust linting tools and rules"
+    enabled: true
+    tools:
+      rustfmt:
+        enabled: true
+        version: null  # Bundled with Rust toolchain
+        fix_capable: true
+        description: "Rust code formatter"
+      clippy:
+        enabled: true
+        version: null  # Bundled with Rust toolchain
+        fix_capable: false
+        description: "Rust lint checker"
+
+# Global linting settings
+settings:
+  # Whether to treat warnings as errors
+  strict_mode: false
+  # Maximum line length (language-specific overrides in pyproject.toml, etc.)
+  default_line_length: 120
+  # Parallel execution of linters
+  parallel: true
+  # Timeout for each linter (seconds)
+  timeout: 300
+
+# Exclusions (files/directories to skip linting)
+exclusions:
+  - ".git/"
+  - ".venv/"
+  - ".venv-lint/"
+  - "__pycache__/"
+  - "node_modules/"
+  - "*.egg-info/"
+  - "build/"
+  - "dist/"
+  - "conformance/repo-lint/fixtures/violations/"
+  - "conformance/repo-lint/vectors/fixtures/"
+  - "scripts/tests/fixtures/"
+
+...

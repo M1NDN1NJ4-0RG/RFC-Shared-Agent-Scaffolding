@@ -1,0 +1,136 @@
+---
+config_type: repo-lint-docstring-rules
+version: "1.0.0"
+
+# Docstring validation rules per language
+# Enforcement: Check-only (validate docstring presence and format)
+
+languages:
+  python:
+    description: "Python docstring requirements"
+    enabled: true
+    validator_script: "scripts/validate_docstrings.py"
+    requirements:
+      - Public functions must have docstrings
+      - Docstrings must include Purpose section
+      - Docstrings should document parameters and return values
+      - Use reST-style field lists (:param:, :returns:, :raises:)
+    style: "reST"
+    examples:
+      valid: |
+        def example_function(arg1, arg2):
+            """Short description.
+
+            :Purpose:
+                Detailed purpose description.
+
+            :param arg1: Description of arg1
+            :param arg2: Description of arg2
+            :returns: Description of return value
+            :raises ValueError: When invalid input
+            """
+            pass
+      invalid: |
+        def example_function(arg1, arg2):
+            # Just a comment, not a docstring
+            pass
+
+  bash:
+    description: "Bash documentation requirements"
+    enabled: true
+    validator_script: "scripts/validate_docstrings.py"
+    requirements:
+      - Functions must have header comments describing purpose
+      - Script files should have header blocks with usage information
+    examples:
+      valid: |
+        # Function: find_repo_root
+        # Purpose: Find the repository root directory
+        # Arguments: None
+        # Returns: Path to repo root
+        find_repo_root() {
+            ...
+        }
+      invalid: |
+        find_repo_root() {
+            # Missing header comment
+            ...
+        }
+
+  powershell:
+    description: "PowerShell documentation requirements"
+    enabled: true
+    validator_script: "scripts/validate_docstrings.py"
+    requirements:
+      - Functions should have comment-based help
+      - Use .SYNOPSIS, .DESCRIPTION, .PARAMETER sections
+      - Follow PowerShell help conventions
+    examples:
+      valid: |
+        <#
+        .SYNOPSIS
+        Finds the repository root directory
+
+        .DESCRIPTION
+        Searches for .git directory walking up from current location
+
+        .OUTPUTS
+        Path to repository root
+        #>
+        function Find-RepoRoot {
+            ...
+        }
+      invalid: |
+        function Find-RepoRoot {
+            # Missing comment-based help
+            ...
+        }
+
+  perl:
+    description: "Perl documentation requirements"
+    enabled: true
+    validator_script: "scripts/validate_docstrings.py"
+    requirements:
+      - Subroutines should have POD documentation or header comments
+      - Modules should include POD sections (NAME, SYNOPSIS, DESCRIPTION)
+    examples:
+      valid: |
+        =head1 NAME
+
+        MyModule - Brief description
+
+        =head1 SYNOPSIS
+
+        use MyModule;
+        my $result = do_something();
+
+        =head1 DESCRIPTION
+
+        Detailed description here.
+
+        =cut
+      invalid: |
+        # Module with no POD documentation
+        sub do_something {
+            # Missing documentation
+        }
+
+# Validation settings
+validation:
+  # Whether to fail on missing docstrings
+  strict_mode: false
+  # Whether to check private functions (leading underscore)
+  check_private: false
+  # Minimum docstring length (characters)
+  min_length: 10
+
+# Exclusions (files/directories to skip docstring validation)
+exclusions:
+  - "*/tests/*"
+  - "*/test_*.py"
+  - "*_test.py"
+  - "conformance/repo-lint/fixtures/"
+  - "conformance/repo-lint/vectors/fixtures/"
+  - "scripts/tests/fixtures/"
+
+...
