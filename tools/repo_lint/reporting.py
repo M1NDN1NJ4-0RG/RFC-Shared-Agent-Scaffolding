@@ -3,21 +3,22 @@
 :Purpose:
     Provides stable, deterministic output formatting for linting results.
     Ensures consistent reporting across local development and CI environments.
+    Routes all output through the new Reporter UI layer.
 
 :Functions:
-    - report_results: Format and print linting results
+    - report_results: Format and print linting results using Reporter
     - report_results_json: Format results as JSON for CI debugging
     - format_violation: Format a single violation for display
     - print_summary: Print summary statistics
 
 :Environment Variables:
-    None
+    - REPO_LINT_UI_THEME: Path to custom UI theme YAML file
 
 :Examples:
     Format linting results::
 
         from tools.repo_lint.reporting import report_results
-        exit_code = report_results(all_results, verbose=True)
+        exit_code = report_results(all_results, verbose=True, ci_mode=False)
 
     Format results as JSON::
 
@@ -34,7 +35,8 @@
 import json
 from typing import Any, Dict, List
 
-from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.common import ExitCode, LintResult, Violation
+from tools.repo_lint.ui import Reporter
 
 
 def format_violation(violation: Violation) -> str:
@@ -48,68 +50,63 @@ def format_violation(violation: Violation) -> str:
     return f"{violation.file}: [{violation.tool}] {violation.message}"
 
 
-def report_results(results: List[LintResult], verbose: bool = False) -> int:
-    """Report linting results and return appropriate exit code.
+def report_results(results: List[LintResult], verbose: bool = False, ci_mode: bool = False) -> int:
+    """Report linting results using Reporter and return appropriate exit code.
 
     :param results: List of linting results from all runners
     :param verbose: Whether to print verbose output
+    :param ci_mode: Whether to use CI mode output
     :returns: Exit code (0 for success, 1 for violations, 3 for errors)
     """
+    # Create reporter
+    reporter = Reporter(ci_mode=ci_mode)
+
+    # Determine overall status
     all_passed = True
     has_errors = False
     total_violations = 0
 
-    print("━" * 80)
-    print("  Linting Results")
-    print("━" * 80)
-
     for result in results:
         if result.error:
             has_errors = True
-            print(f"\n❌ {result.tool}: ERROR")
-            print(f"   {result.error}")
-            continue
-
-        if result.passed:
-            if verbose:
-                print(f"✅ {result.tool}: PASSED")
-        else:
+        elif not result.passed:
             all_passed = False
             total_violations += len(result.violations)
-            print(f"\n❌ {result.tool}: FAILED ({len(result.violations)} violation(s))")
 
-            # Print violations
-            for violation in result.violations:
-                print(f"   {format_violation(violation)}")
+    # Render results table
+    reporter.render_results_table(results)
 
-    # Summary
-    print("\n" + "━" * 80)
+    # Render failures (if any)
+    reporter.render_failures(results)
+
+    # Determine exit code
     if has_errors:
-        print("❌ Some linters encountered errors. See output above for details.")
-        return 3
+        exit_code = ExitCode.INTERNAL_ERROR
     elif all_passed:
-        print("✅ All linting checks passed!")
-        return 0
+        exit_code = ExitCode.SUCCESS
     else:
-        print(f"❌ Found {total_violations} violation(s) across {len([r for r in results if not r.passed])} tool(s)")
-        return 1
+        exit_code = ExitCode.VIOLATIONS
+
+    # Render final summary
+    reporter.render_final_summary(results, exit_code)
+
+    return int(exit_code)
 
 
-def print_install_instructions(missing_tools: List[str]) -> None:
+def print_install_instructions(missing_tools: List[str], ci_mode: bool = False) -> None:
     """Print installation instructions for missing tools.
 
     :param missing_tools: List of missing tool names
+    :param ci_mode: Whether to use CI mode output
     """
-    print("━" * 80)
-    print("  Missing Tools")
-    print("━" * 80)
-    print("\nThe following tools are required but not installed:")
+    reporter = Reporter(ci_mode=ci_mode)
+
+    reporter.print("\nThe following tools are required but not installed:")
     for tool in missing_tools:
-        print(f"  - {tool}")
-    print("\nTo install missing tools, run:")
-    print("  python3 -m tools.repo_lint install")
-    print("\nOr install manually following the instructions in CONTRIBUTING.md")
-    print("━" * 80)
+        reporter.print(f"  - {tool}")
+    reporter.print("\nTo install missing tools, run:")
+    reporter.print("  repo-lint install")
+    reporter.print("\nOr install manually following the instructions in HOW-TO-USE-THIS-TOOL.md")
 
 
 def report_results_json(results: List[LintResult], verbose: bool = False) -> int:
@@ -141,6 +138,12 @@ def report_results_json(results: List[LintResult], verbose: bool = False) -> int
             "tool": result.tool,
             "passed": result.passed,
         }
+
+        # Add optional fields
+        if result.file_count is not None:
+            result_dict["file_count"] = result.file_count
+        if result.duration is not None:
+            result_dict["duration"] = result.duration
 
         if result.error:
             has_errors = True
@@ -185,7 +188,7 @@ def report_results_json(results: List[LintResult], verbose: bool = False) -> int
         output["summary"]["failed_tool_names"] = [r.tool for r in results if not r.passed]
         output["summary"]["errored_tool_names"] = [r.tool for r in results if r.error]
 
-    # Print JSON output
+    # Print JSON output (no Reporter needed for JSON)
     print(json.dumps(output, indent=2, sort_keys=True))
 
     # Return appropriate exit code

@@ -184,10 +184,10 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             missing_tools = runner.check_tools()
             if missing_tools:
                 if args.ci:
-                    print_install_instructions(missing_tools)
+                    print_install_instructions(missing_tools, ci_mode=args.ci)
                     return ExitCode.MISSING_TOOLS
                 print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
-                print("   Run 'python3 -m tools.repo_lint install' to install them")
+                print("   Run 'repo-lint install' to install them")
                 print("")
                 return ExitCode.MISSING_TOOLS
 
@@ -218,7 +218,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
         return report_results_json(all_results, verbose=args.verbose)
     else:
-        return report_results(all_results, verbose=args.verbose)
+        return report_results(all_results, verbose=args.verbose, ci_mode=args.ci)
 
 
 def cmd_check(args: argparse.Namespace) -> int:

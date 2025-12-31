@@ -1,0 +1,29 @@
+---
+config_type: repo-lint-ui-theme
+version: 1
+
+interactive:
+  box_style: ROUNDED
+  hyperlinks_enabled: true
+  colors:
+    primary: cyan
+    success: green
+    failure: red
+    warning: yellow
+    info: cyan
+    metadata: dim
+  icons:
+    pass: ✅
+    fail: ❌
+    warn: ⚠️
+    skip: ⏭️
+    running: ⏳
+
+ci:
+  box_style: SIMPLE
+  icons_enabled: true
+
+help:
+  width: 120
+  show_defaults: true
+...

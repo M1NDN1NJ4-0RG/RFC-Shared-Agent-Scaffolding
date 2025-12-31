@@ -91,7 +91,7 @@ jobs:
       - name: Install Black
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install black==24.10.0 PyYAML>=6.0 click>=8.0 rich>=10.0
+          python3 -m pip install black==24.10.0 PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Run Black formatter
         id: black_run
@@ -435,7 +435,7 @@ jobs:
       - name: Install Python linting tools
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1 PyYAML>=6.0 click>=8.0 rich>=10.0
+          python3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1 PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Run repo_lint for Python
         id: lint_python
@@ -475,7 +475,7 @@ jobs:
       - name: Install Python tools (for repo_lint)
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install tree-sitter==0.25.1 tree-sitter-bash==0.25.1 PyYAML>=6.0 click>=8.0 rich>=10.0
+          python3 -m pip install tree-sitter==0.25.1 tree-sitter-bash==0.25.1 PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Install shellcheck
         run: |
@@ -526,7 +526,7 @@ jobs:
       - name: Install Python dependencies (for repo_lint)
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install PyYAML>=6.0 click>=8.0 rich>=10.0
+          python3 -m pip install PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Install PSScriptAnalyzer
         shell: pwsh
@@ -571,7 +571,7 @@ jobs:
       - name: Install Python dependencies (for repo_lint)
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install PyYAML>=6.0 click>=8.0 rich>=10.0
+          python3 -m pip install PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Set up Perl
         uses: shogo82148/actions-setup-perl@9c1eca9952ccc07f9ca4a2097b63df93d9d138e9  # v1.31.3
@@ -620,7 +620,7 @@ jobs:
       - name: Install yamllint
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install yamllint==1.35.1 PyYAML>=6.0 click>=8.0 rich>=10.0
+          python3 -m pip install yamllint==1.35.1 PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Run repo_lint for YAML
         id: lint_yaml
@@ -660,7 +660,7 @@ jobs:
       - name: Install Python dependencies (for repo_lint)
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install PyYAML>=6.0 click>=8.0 rich>=10.0
+          python3 -m pip install PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Install Rust toolchain
         run: |
