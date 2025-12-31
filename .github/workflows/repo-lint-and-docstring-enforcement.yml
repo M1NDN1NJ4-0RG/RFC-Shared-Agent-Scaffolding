@@ -941,9 +941,9 @@ jobs:
         id: collect_results
         run: |
           # Create log directory with required path format
-          # Format: /logs/umbrella-ci-logs-phase-6/RUN_ID/
+          # Format: repo-lint-failure-reports/RUN_ID/
           RUN_ID="${{ github.run_id }}"
-          LOG_DIR="logs/umbrella-ci-logs-phase-6/${RUN_ID}"
+          LOG_DIR="repo-lint-failure-reports/${RUN_ID}"
           mkdir -p "$LOG_DIR"
 
           # Check job statuses (now using job.result since continue-on-error is removed)
@@ -1172,7 +1172,7 @@ jobs:
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882  # v4.4.3
         with:
           name: umbrella-ci-logs
-          path: logs/umbrella-ci-logs-phase-6/
+          path: repo-lint-failure-reports/
           retention-days: 30
 
       - name: Commit logs to repository (same-repo PRs only)
@@ -1187,13 +1187,13 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Add all logs (success and failure)
-          git add logs/umbrella-ci-logs-phase-6/
+          git add repo-lint-failure-reports/
 
           # Commit if there are changes
           if git diff --staged --quiet; then
             echo "No changes to commit (logs may already exist)"
           else
-            git commit -m "CI: Add umbrella workflow logs [auto-generated]"
+            git commit -m "CI: Add repo-lint failure reports [auto-generated]"
 
             # Push with error handling
             if ! git push; then

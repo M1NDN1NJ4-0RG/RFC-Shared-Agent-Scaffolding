@@ -278,7 +278,13 @@ class Reporter:
 
                 # Create violations table
                 violations_table = Table(show_header=True, box=box_style, show_lines=False)
-                violations_table.add_column("File", style=self._get_color("metadata") if not self.ci_mode else None)
+                # In CI mode, prevent file path truncation by setting no_wrap=False and overflow="fold"
+                file_column_kwargs = {}
+                if self.ci_mode:
+                    file_column_kwargs = {"no_wrap": False, "overflow": "fold"}
+                violations_table.add_column(
+                    "File", style=self._get_color("metadata") if not self.ci_mode else None, **file_column_kwargs
+                )
                 violations_table.add_column("Line", justify="right")
                 violations_table.add_column("Message")
 
