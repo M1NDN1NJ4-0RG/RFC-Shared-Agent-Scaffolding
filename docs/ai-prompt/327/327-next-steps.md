@@ -6,13 +6,44 @@ Last Updated: 2025-12-31
 Related: Issue #327, PRs TBD
 
 ## NEXT
-- Monitor CI to verify bash docstring violations are captured in logs
-- Investigate actual bash docstring violations once logs are available
-- Fix bash docstring violations in non-fixture files
+- Test CI run with updated console width (should show full file paths)
+- Once full paths visible, fix the 2 bash files with docstring violations
+- Verify all checks pass
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 HH:MM - Fix Console Width Truncation in CI Mode
+**Files Changed:**
+- `tools/repo_lint/ui/console.py`: Added width=2000 for CI mode to prevent path truncation
+- `tools/repo_lint/ui/reporter.py`: Added no_wrap=False and overflow="fold" for File column in CI mode violations table
+
+**Changes Made:**
+1. **Console Width Fix (tools/repo_lint/ui/console.py:87):**
+   - Added `width=2000 if ci_mode else None` parameter to Console creation
+   - In CI mode, console now uses 2000-character width instead of auto-detected terminal width
+   - This prevents Rich from truncating long file paths to fit narrow terminals
+   - Interactive mode (non-CI) still uses automatic width detection
+
+2. **Violations Table Column Fix (tools/repo_lint/ui/reporter.py:279-289):**
+   - In CI mode, File column now configured with `no_wrap=False` and `overflow="fold"`
+   - This ensures file paths wrap/fold instead of being truncated with ellipsis
+   - Combined with wide console, this guarantees full paths are always visible
+
+**Rationale:**
+- CI logs were truncating file paths with "…" making debugging impossible
+- Rich table rendering was using terminal width detection even in CI mode
+- Setting a very wide console (2000 chars) in CI ensures paths never truncate
+- The no_wrap=False setting allows long paths to fold onto multiple lines if needed
+- These changes only affect CI mode; interactive mode behavior unchanged
+
+**Verification:**
+- `repo-lint check --ci --only bash` still exits 0 locally
+- Console width is now 2000 in CI mode vs auto-detect in interactive mode
+- Next CI run will capture full file paths in archived logs
+
+---
+
 ### 2025-12-31 HH:MM - Fix Consolidate & Archive Logs Path
 **Files Changed:**
 - `.github/workflows/repo-lint-and-docstring-enforcement.yml`: Changed log path from `logs/umbrella-ci-logs-phase-6/` to `repo-lint-failure-reports/` (3 locations)

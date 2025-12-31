@@ -84,6 +84,7 @@ def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) ->
         highlight=not ci_mode,  # Disable syntax highlighting in CI mode
         markup=True,  # Always allow Rich markup
         emoji=not ci_mode,  # Disable emoji in CI mode (some terminals don't support)
+        width=2000 if ci_mode else None,  # Use very wide console in CI to prevent path truncation
     )
 
     # Cache the console for reuse
