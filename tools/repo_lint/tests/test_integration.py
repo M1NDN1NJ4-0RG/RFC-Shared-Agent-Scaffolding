@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
+# pylint: disable=wrong-import-position  # Test file needs special setup
 """Integration tests for repo_lint CLI.
 
 :Purpose:
@@ -53,6 +53,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 # Add repo_lint parent directory to path for imports
+# Note: .parent chain matches pattern used consistently across all test files in this codebase
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 

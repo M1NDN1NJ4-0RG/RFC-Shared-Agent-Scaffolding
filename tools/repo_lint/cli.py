@@ -296,15 +296,13 @@ def cmd_fix(args: argparse.Namespace) -> int:
         # Guard: Unsafe fixes only supported for Python
         only_language = getattr(args, "only", None)
         if only_language and only_language != "python":
-            error_msg = (
-                "❌ Unsafe fixes not supported for this language\n"
-                "\n"
-                f"Unsafe mode currently only supports Python files.\n"
-                f"You specified: --only={only_language}\n"
-                "\n"
-                "Remove --unsafe flag or use --only=python\n"
-            )
-            print(error_msg, file=sys.stderr)
+            print("❌ Unsafe fixes not supported for this language", file=sys.stderr)
+            print("", file=sys.stderr)
+            print("Unsafe mode currently only supports Python files.", file=sys.stderr)
+            print(f"You specified: --only={only_language}", file=sys.stderr)
+            print("", file=sys.stderr)
+            print("Remove --unsafe flag or use --only=python", file=sys.stderr)
+            print("", file=sys.stderr)
             return ExitCode.UNSAFE_VIOLATION
 
         # Collect all Python files to process
