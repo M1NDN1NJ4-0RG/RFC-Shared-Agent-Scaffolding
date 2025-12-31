@@ -48,6 +48,16 @@
 //! }
 //! ```
 //!
+//! # Examples
+//!
+//! Load conformance vectors and execute tests:
+//!
+//! ```ignore
+//! let vectors = load_vectors().expect("Failed to load conformance vectors");
+//! let binary = get_safe_run_binary();
+//! // Use vectors in your test cases
+//! ```
+//!
 //! # Contract References
 //!
 //! - Conformance vectors specification: `conformance/vectors.json`

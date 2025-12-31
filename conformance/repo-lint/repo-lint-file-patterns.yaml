@@ -23,29 +23,29 @@ in_scope:
     # Bash scripts
     - "**/*.sh"
     - "**/*.bash"
-    
+
     # Python scripts
     - "**/*.py"
-    
+
     # PowerShell scripts
     - "**/*.ps1"
     - "**/*.psm1"
-    
+
     # Perl scripts
     - "**/*.pl"
     - "**/*.pm"
-    
+
     # YAML configuration files
     - "**/*.yaml"
     - "**/*.yml"
-    
+
     # Rust source files
     - "**/*.rs"
 
 # Patterns for files/directories to exclude from validation
 exclusions:
   description: "Patterns to exclude from all checks"
-  
+
   build_artifacts:
     description: "Build output and distribution directories"
     patterns:
@@ -53,7 +53,7 @@ exclusions:
       - "target/**"
       - "build/**"
       - "*.egg-info/**"
-  
+
   dependencies:
     description: "Dependency directories (should not be linted)"
     patterns:
@@ -62,14 +62,14 @@ exclusions:
       - "virtualenv/**"
       - "node_modules/**"
       - ".tox/**"
-  
+
   test_fixtures:
     description: "Test fixtures that are intentionally non-conformant"
     patterns:
       - "conformance/repo-lint/unsafe-fix-fixtures/**"
       - "conformance/repo-lint/fixtures/**"
       - "scripts/tests/fixtures/**"
-  
+
   cache_and_temp:
     description: "Cache directories and temporary files"
     patterns:
@@ -81,13 +81,13 @@ exclusions:
       - ".mypy_cache/**"
       - "*.tmp"
       - "*.temp"
-  
+
   version_control:
     description: "Version control metadata"
     patterns:
       - ".git/**"
       - ".github/**"  # Workflows are validated separately
-  
+
   documentation_build:
     description: "Generated documentation"
     patterns:

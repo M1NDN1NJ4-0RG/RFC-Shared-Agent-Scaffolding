@@ -57,6 +57,20 @@
 //! cargo test --test conformance -- --include-ignored
 //! ```
 //!
+//! # Examples
+//!
+//! Run all conformance tests:
+//!
+//! ```bash
+//! cargo test --test conformance
+//! ```
+//!
+//! Run only safe-run tests:
+//!
+//! ```bash
+//! cargo test --test conformance safe_run_tests
+//! ```
+//!
 //! # Dependencies
 //!
 //! - `assert_cmd`: Command execution and assertion framework

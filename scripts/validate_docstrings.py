@@ -160,12 +160,18 @@ from typing import List
 # Add scripts directory to path for imports
 try:
     scripts_dir = Path(__file__).resolve().parent
+    repo_root = scripts_dir.parent  # Get repository root (parent of scripts/)
 except NameError:
     # __file__ may not be defined in some interactive contexts
     scripts_dir = Path.cwd()
+    repo_root = scripts_dir
 
 if str(scripts_dir) not in sys.path:
     sys.path.insert(0, str(scripts_dir))
+
+# Add repository root to path for tools.repo_lint imports (Phase 2.9)
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
 
 # Import validator classes from modular package
 # pylint: disable=wrong-import-position

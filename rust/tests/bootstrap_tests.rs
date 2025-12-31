@@ -1,8 +1,18 @@
 //! Unit tests for bootstrap-repo-cli functionality
 //!
+//! # Purpose
+//!
 //! These tests cover the core functionality of the bootstrap module,
 //! including repository root finding, command existence checking,
 //! and path construction.
+//!
+//! # Examples
+//!
+//! Run these tests with:
+//!
+//! ```bash
+//! cargo test --test bootstrap_tests
+//! ```
 
 use std::env;
 use std::fs;
