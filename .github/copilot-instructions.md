@@ -290,8 +290,7 @@ Escalation format (MUST match the policy below):
 Path: `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-next-steps.md`
 
 ```markdown
-MUST READ: `.github/copilot-instructions.md` FIRST! 
-MUST READ: `docs/contributing/naming-and-style.md` SECOND!
+MUST READ: `.github/copilot-instructions.md` FIRST!
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue <ISSUE_NUMBER> AI Journal
 Status: In Progress | Paused | Complete
