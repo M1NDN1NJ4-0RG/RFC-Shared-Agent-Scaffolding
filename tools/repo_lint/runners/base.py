@@ -45,20 +45,20 @@ EXCLUDED_PATHS = [
 
 
 def find_repo_root() -> Path:
-    """Find the repository root directory.
+    """Find the repository root directory (legacy wrapper).
 
-    Falls back to current working directory if .git is not found,
-    allowing repo_lint to work in non-Git directories.
+    DEPRECATED: Use tools.repo_lint.repo_utils.find_repo_root() directly.
 
-    :returns: Path to repository root (or cwd if .git not found)
+    :returns: Path to repository root
 
     :Note:
         This is a compatibility wrapper around the shared repo_utils.find_repo_root().
         New code should import directly from tools.repo_lint.repo_utils.
     """
-    from tools.repo_lint.repo_utils import find_repo_root as _find_repo_root
+    # pylint: disable=import-outside-toplevel,redefined-outer-name
+    from tools.repo_lint.repo_utils import find_repo_root as find_repo_root_impl
 
-    return _find_repo_root()
+    return find_repo_root_impl()
 
 
 def command_exists(command: str) -> bool:

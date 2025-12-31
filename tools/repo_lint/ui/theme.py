@@ -14,9 +14,12 @@
     - REPO_LINT_UI_THEME: Path to custom UI theme YAML file
 
 :Exit Codes:
-    This module does not define or use exit codes (theme configuration only):
-    - 0: Not applicable (see tools.repo_lint.common.ExitCode)
-    - 1: Not applicable (raises ThemeValidationError on validation failures)
+    This module does not define or use exit codes directly:
+    - 0: Not applicable (theme configuration only)
+    - 1: Not applicable (theme configuration only)
+    - Note: May raise ThemeValidationError on validation failures; callers (such as
+      CLI entrypoints) are responsible for catching this exception and mapping
+      it to an appropriate exit code (for example, ``ExitCode.INTERNAL_ERROR``).
 
 :Examples:
     Load default theme::
@@ -219,48 +222,55 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
     :returns: Loaded and validated UITheme
     :raises ThemeValidationError: If theme validation fails
     """
-    # Determine which theme file to load
-    candidates = []
+    selected_theme: Optional[Path] = None
 
-    if theme_path:
-        candidates.append(theme_path)
-    elif allow_user_override and not ci_mode:
-        # Check environment variable
-        env_theme = os.environ.get("REPO_LINT_UI_THEME")
-        if env_theme:
-            candidates.append(Path(env_theme))
+    # Explicit theme_path must take absolute precedence and must exist
+    if theme_path is not None:
+        explicit_path = Path(theme_path)
+        if not explicit_path.exists():
+            raise ThemeValidationError(f"Explicitly provided theme_path does not exist: {explicit_path}")
+        selected_theme = explicit_path
+    else:
+        # Determine which theme file to load from candidates
+        candidates = []
 
-        # Check user config path
-        user_config = Path.home() / ".config" / "repo-lint" / "repo-lint-ui-theme.yaml"
-        if user_config.exists():
-            candidates.append(user_config)
+        if allow_user_override and not ci_mode:
+            # Check environment variable
+            env_theme = os.environ.get("REPO_LINT_UI_THEME")
+            if env_theme:
+                candidates.append(Path(env_theme))
 
-    # Always fall back to default theme
-    candidates.append(_get_default_theme_path())
+            # Check user config path
+            user_config = Path.home() / ".config" / "repo-lint" / "repo-lint-ui-theme.yaml"
+            if user_config.exists():
+                candidates.append(user_config)
 
-    # Find first existing theme file
-    selected_theme = None
-    for candidate in candidates:
-        if Path(candidate).exists():
-            selected_theme = Path(candidate)
-            break
+        # Always fall back to default theme
+        candidates.append(_get_default_theme_path())
 
-    if not selected_theme:
-        # If no theme file exists, warn and return default theme
-        # This can happen when running outside a repo or if conformance/ is missing
-        # Create a minimal stderr console for warning output
-        # Note: We can't use Reporter here (circular dependency), so we use a minimal
-        # Console instance directly. This is acceptable because theme loading happens
-        # very early in the process, before the Reporter is initialized.
-        from rich.console import Console as RichConsole
+        # Find first existing theme file
+        for candidate in candidates:
+            candidate_path = Path(candidate)
+            if candidate_path.exists():
+                selected_theme = candidate_path
+                break
 
-        stderr_console = RichConsole(file=sys.stderr, highlight=False)
-        default_path = _get_default_theme_path()
-        stderr_console.print(
-            f"[yellow]⚠️  Theme file not found[/yellow] (checked {len(candidates)} "
-            f"locations, including {default_path}). Using built-in defaults."
-        )
-        return UITheme()
+        if not selected_theme:
+            # If no theme file exists, warn and return default theme
+            # This can happen when running outside a repo or if conformance/ is missing
+            # Create a minimal stderr console for warning output
+            # Note: We can't use Reporter here (circular dependency), so we use a minimal
+            # Console instance directly. This is acceptable because theme loading happens
+            # very early in the process, before the Reporter is initialized.
+            from rich.console import Console as RichConsole
+
+            stderr_console = RichConsole(file=sys.stderr, highlight=False)
+            default_path = _get_default_theme_path()
+            stderr_console.print(
+                f"[yellow]⚠️  Theme file not found[/yellow] (checked {len(candidates)} "
+                f"locations, including {default_path}). Using built-in defaults."
+            )
+            return UITheme()
 
     # Load and validate theme file
     with open(selected_theme, encoding="utf-8") as f:

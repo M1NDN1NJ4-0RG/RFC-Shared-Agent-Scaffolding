@@ -112,6 +112,27 @@ click.rich_click.OPTION_GROUPS = {
 }
 
 
+def _is_verbose_enabled() -> bool:
+    """Check if verbose mode is enabled via CLI flags or environment variable.
+
+    :returns: True if verbose mode is enabled, False otherwise
+    """
+    import os
+
+    # Check CLI flags
+    verbose_flags = {"-v", "--verbose"}
+    has_verbose_flag = any(arg in verbose_flags or arg.startswith("--verbose=") for arg in sys.argv[1:])
+
+    # Check environment variable
+    has_verbose_env = os.environ.get("REPO_LINT_VERBOSE", "").lower() in (
+        "1",
+        "true",
+        "yes",
+    )
+
+    return has_verbose_flag or has_verbose_env
+
+
 # Main CLI group
 @click.group(invoke_without_command=True)
 @click.pass_context
@@ -467,16 +488,10 @@ def main():
         sys.exit(ExitCode.MISSING_TOOLS)
     except Exception as e:
         click.echo(f"❌ Internal error: {e}", err=True)
-        import os
         import traceback
 
-        # Check for verbose flag - check both sys.argv and environment variable
-        # This ensures verbose mode is detected in all scenarios (CLI flag and env var)
-        verbose_flags = {"-v", "--verbose"}
-        has_verbose_flag = any(arg in verbose_flags or arg.startswith("--verbose=") for arg in sys.argv[1:])
-        has_verbose_env = os.environ.get("REPO_LINT_VERBOSE", "").lower() in ("1", "true", "yes")
-
-        if has_verbose_flag or has_verbose_env:
+        # Check if verbose mode is enabled (CLI flag or environment variable)
+        if _is_verbose_enabled():
             traceback.print_exc()
         sys.exit(ExitCode.INTERNAL_ERROR)
 
