@@ -109,6 +109,7 @@ click.rich_click.OPTION_GROUPS = {
     ],
 }
 
+
 # Main CLI group
 @click.group(invoke_without_command=True)
 @click.pass_context
@@ -161,27 +162,27 @@ def check(verbose, ci_mode, only, use_json):
     WHAT THIS DOES:
     Performs comprehensive linting and docstring validation across all supported
     languages. Scans repository files and reports violations without making changes.
-    
+
     \b
     EXAMPLES:
     Example 1 — Most common usage:
       $ repo-lint check
       Scans all languages, shows violations, installs missing tools if needed
-    
+
     Example 2 — CI usage:
       $ repo-lint check --ci
       Stable output for CI, fails if tools missing (no auto-install)
-    
+
     Example 3 — Focused usage:
       $ repo-lint check --only python
       Check only Python files, skip other languages
-    
+
     \b
     OUTPUT MODES:
     - Interactive (TTY): Rich formatting with colors, panels, and tables
     - CI mode (--ci): Stable, greppable output without ANSI colors or spinners
     - JSON mode (--json): Machine-readable JSON output for automation
-    
+
     \b
     CONFIGURATION:
     Config files loaded from conformance/repo-lint/:
@@ -189,21 +190,21 @@ def check(verbose, ci_mode, only, use_json):
     - repo-lint-naming-rules.yaml: Filename conventions
     - repo-lint-docstring-rules.yaml: Docstring requirements
     - repo-lint-ui-theme.yaml: UI colors and styling (interactive mode)
-    
+
     \b
     EXIT CODES:
     - 0: All checks passed (no violations)
     - 1: Linting violations found
     - 2: Required tools missing (CI mode only)
     - 3: Internal error or exception
-    
+
     \b
     TROUBLESHOOTING:
     - Missing tools: Run 'repo-lint install' to bootstrap Python tools
     - Config errors: Check YAML syntax in conformance/repo-lint/*.yaml
     - No files found: Ensure you're running from repository root
     - CI failures: Add '--ci' locally to reproduce CI environment
-    
+
     See HOW-TO-USE-THIS-TOOL.md for detailed usage and examples.
     """
     import argparse  # Local import - only needed for Namespace creation
@@ -266,21 +267,21 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     Runs auto-formatters to fix code style issues in-place. Only modifies files
     that need formatting. By default, only runs safe formatters that don't change
     code behavior. Unsafe mode available for advanced users with explicit confirmation.
-    
+
     \b
     EXAMPLES:
     Example 1 — Most common usage:
       $ repo-lint fix
       Auto-format all files with safe formatters (Black, shfmt, perltidy, etc.)
-    
+
     Example 2 — CI usage:
       $ repo-lint fix --ci
       Verify formatting in CI (fails if changes needed, doesn't modify files)
-    
+
     Example 3 — Focused usage:
       $ repo-lint fix --only python
       Fix only Python files, skip other languages
-    
+
     \b
     SAFE FORMATTERS:
     - Python: Black (code formatter), Ruff (auto-fixable rules)
@@ -289,7 +290,7 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     - PowerShell: PSScriptAnalyzer formatting rules
     - Perl: perltidy (code formatter)
     - Rust: rustfmt (code formatter)
-    
+
     \b
     UNSAFE MODE (⚠️ Use with extreme caution):
     The --unsafe flag enables experimental fixers that MAY change code behavior.
@@ -298,19 +299,19 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     - Generates forensic report in repo-lint-failure-reports/
     - Always review generated patch before committing
     - Only supports Python currently (other languages error out)
-    
+
     \b
     OUTPUT MODES:
     - Interactive (TTY): Rich formatting with action tables and summaries
     - CI mode (--ci): Stable, greppable output without ANSI colors or spinners
     - JSON mode (--json): Machine-readable JSON output for automation
-    
+
     \b
     CONFIGURATION:
     Config files loaded from conformance/repo-lint/:
     - repo-lint-linting-rules.yaml: Tool configurations per language
     - repo-lint-ui-theme.yaml: UI colors and styling (interactive mode)
-    
+
     \b
     EXIT CODES:
     - 0: All fixes applied successfully (or no fixes needed)
@@ -318,7 +319,7 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     - 2: Required tools missing (CI mode only)
     - 3: Internal error or exception
     - 4: Unsafe mode policy violation (CI or missing confirmation)
-    
+
     \b
     TROUBLESHOOTING:
     - Unsafe blocked in CI: This is intentional, unsafe mode only works locally
@@ -326,7 +327,7 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     - Missing tools: Run 'repo-lint install' to bootstrap Python tools
     - Fixes not applied: Check file permissions and repo write access
     - Unsafe with non-Python: --unsafe only supports Python currently
-    
+
     See HOW-TO-USE-THIS-TOOL.md for detailed usage, forensic reports, and examples.
     """
     import argparse  # Local import - only needed for Namespace creation
@@ -366,21 +367,21 @@ def install(verbose, cleanup):
     Installs Python-based linting tools in a repository-local virtual environment
     (.venv-lint). Also provides installation instructions for language-specific
     tools that must be installed system-wide or via language package managers.
-    
+
     \b
     EXAMPLES:
     Example 1 — Most common usage:
       $ repo-lint install
       Install Python tools and show instructions for other tools
-    
+
     Example 2 — Cleanup:
       $ repo-lint install --cleanup
       Remove .venv-lint and reset to clean state
-    
+
     Example 3 — Verbose mode:
       $ repo-lint install --verbose
       Show detailed progress and pip output
-    
+
     \b
     WHAT GETS INSTALLED:
     Auto-installed (Python tools in .venv-lint):
@@ -388,7 +389,7 @@ def install(verbose, cleanup):
     - ruff (v0.8.4): Fast Python linter
     - pylint (v3.3.2): Comprehensive Python linter
     - yamllint (v1.35.1): YAML linter
-    
+
     Instructions provided (install manually):
     - shellcheck: Bash linter (apt/brew/choco)
     - shfmt: Bash formatter (apt/brew/choco/go install)
@@ -397,23 +398,23 @@ def install(verbose, cleanup):
     - pwsh: PowerShell (download from Microsoft)
     - PSScriptAnalyzer: PowerShell linter (Install-Module)
     - rustfmt/clippy: Rust tools (rustup component add)
-    
+
     \b
     OUTPUT MODES:
     - Interactive (TTY): Step-by-step checklist with tool status table
     - All modes: Clear instructions for manual tool installation
-    
+
     \b
     CONFIGURATION:
     Tool versions are pinned in:
     - tools/repo_lint/install/version_pins.py (source of truth)
     - pyproject.toml [project.optional-dependencies] (synced)
-    
+
     \b
     EXIT CODES:
     - 0: All auto-installable tools installed successfully
     - 3: Installation failed (Python tools or venv creation)
-    
+
     \b
     TROUBLESHOOTING:
     - venv creation fails: Check Python 3.8+ is installed and working
@@ -421,7 +422,7 @@ def install(verbose, cleanup):
     - Permission denied: Don't use sudo, installs to local .venv-lint
     - Cleanup removes everything: Cleanup deletes .venv-lint, you'll need to re-run install
     - Manual tools not found: Follow provided instructions for your OS
-    
+
     See HOW-TO-USE-THIS-TOOL.md for detailed installation guide and OS-specific instructions.
     """
     import argparse  # Local import - only needed for Namespace creation

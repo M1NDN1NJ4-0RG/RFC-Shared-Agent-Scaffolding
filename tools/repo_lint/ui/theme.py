@@ -200,9 +200,7 @@ def _validate_no_unknown_keys(data: dict, allowed_keys: set, file_path: Path, co
         raise ThemeValidationError(f"Unknown keys in {context}: {', '.join(sorted(unknown_keys))}", file_path)
 
 
-def load_theme(
-    theme_path: Optional[Path] = None, ci_mode: bool = False, allow_user_override: bool = True
-) -> UITheme:
+def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_user_override: bool = True) -> UITheme:
     """Load and validate UI theme from YAML.
 
     Loads theme from (in precedence order):
@@ -318,7 +316,9 @@ def load_theme(
         ci_data = data["ci"]
         allowed_ci = {"box_style", "icons_enabled"}
         _validate_no_unknown_keys(ci_data, allowed_ci, selected_theme, "ci")
-        theme.ci = CITheme(box_style=ci_data.get("box_style", "SIMPLE"), icons_enabled=ci_data.get("icons_enabled", True))
+        theme.ci = CITheme(
+            box_style=ci_data.get("box_style", "SIMPLE"), icons_enabled=ci_data.get("icons_enabled", True)
+        )
 
     # Load help settings
     if "help" in data:

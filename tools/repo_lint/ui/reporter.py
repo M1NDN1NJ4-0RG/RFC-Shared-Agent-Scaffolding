@@ -145,7 +145,11 @@ class Reporter:
 
         # Create panel
         box_style = get_box_style(self.theme, self.ci_mode)
-        title = self._format_with_color("Repository Linter", "primary", bold=True) if not self.ci_mode else "Repository Linter"
+        title = (
+            self._format_with_color("Repository Linter", "primary", bold=True)
+            if not self.ci_mode
+            else "Repository Linter"
+        )
         border_style = self._get_color("primary") if not self.ci_mode else "white"
 
         panel = Panel(content, title=title, border_style=border_style, box=box_style)
