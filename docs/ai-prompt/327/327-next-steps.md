@@ -6,12 +6,41 @@ Last Updated: 2025-12-31
 Related: Issue #327, PRs TBD
 
 ## NEXT
-- Monitor CI to ensure all jobs pass on GitHub Actions
-- Verify the PR is ready for review
+- Monitor CI to verify bash docstring violations are captured in logs
+- Investigate actual bash docstring violations once logs are available
+- Fix bash docstring violations in non-fixture files
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 HH:MM - Fix Consolidate & Archive Logs Path
+**Files Changed:**
+- `.github/workflows/repo-lint-and-docstring-enforcement.yml`: Changed log path from `logs/umbrella-ci-logs-phase-6/` to `repo-lint-failure-reports/` (3 locations)
+- `.gitignore`: Removed ignore rule for old logs path, added exceptions to allow repo-lint-failure-reports to be committed
+
+**Changes Made:**
+1. **Workflow Path Update:**
+   - Line 946: Changed LOG_DIR from `logs/umbrella-ci-logs-phase-6/${RUN_ID}` to `repo-lint-failure-reports/${RUN_ID}`
+   - Line 1175: Changed artifact path from `logs/umbrella-ci-logs-phase-6/` to `repo-lint-failure-reports/`
+   - Line 1190: Changed git add path from `logs/umbrella-ci-logs-phase-6/` to `repo-lint-failure-reports/`
+   - Line 1196: Updated commit message from "CI: Add umbrella workflow logs" to "CI: Add repo-lint failure reports"
+
+2. **Gitignore Update:**
+   - Removed line 10: `logs/umbrella-ci-logs-phase-6/` (was preventing logs from being committed)
+   - Added exceptions for repo-lint-failure-reports: `!repo-lint-failure-reports/**/*.log`, `!repo-lint-failure-reports/**/*.txt`, `!repo-lint-failure-reports/**/*.md`
+
+**Rationale:**
+- The consolidate & archive logs job was failing because it tried to `git add logs/umbrella-ci-logs-phase-6/` but that path was ignored in .gitignore
+- Per human requirement, logs should be sent to `repo-lint-failure-reports` directory instead
+- This allows CI failure logs (including bash docstring violations) to be committed and visible for debugging
+
+**Verification:**
+- Checked all references to old path in workflow - all updated
+- Verified .gitignore now allows repo-lint-failure-reports to be committed
+- Once CI runs, logs will be available in repo-lint-failure-reports/ with actual bash violation details
+
+---
+
 ### 2025-12-31 Session Start - Initial Setup and Ruff Fix
 **Files Changed:**
 - `tools/repo_lint/tests/test_unsafe_fixes.py`: Removed trailing whitespace on blank line at line 28

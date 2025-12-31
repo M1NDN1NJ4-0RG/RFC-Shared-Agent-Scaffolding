@@ -5,9 +5,9 @@
 !logs/**/*.log
 !logs/**/*.txt
 !logs/**/*.diff
-
-# Umbrella CI logs - these are auto-generated and should not be committed
-logs/umbrella-ci-logs-phase-6/
+!repo-lint-failure-reports/**/*.log
+!repo-lint-failure-reports/**/*.txt
+!repo-lint-failure-reports/**/*.md
 
 # Pip install artifact files (from malformed pip commands)
 =*
