@@ -86,9 +86,7 @@ class TestBootstrapScript(unittest.TestCase):
             timeout=10,
         )
 
-        self.assertEqual(
-            result.returncode, 10, "Expected exit code 10 when not in a repository"
-        )
+        self.assertEqual(result.returncode, 10, "Expected exit code 10 when not in a repository")
         self.assertIn("Could not find repository root", result.stderr)
 
     def test_exit_code_12_no_install_target(self):
@@ -110,7 +108,8 @@ class TestBootstrapScript(unittest.TestCase):
         )
 
         self.assertEqual(
-            result.returncode, 12,
+            result.returncode,
+            12,
             "Expected exit code 12 when no pyproject.toml found",
         )
         self.assertIn("No valid install target found", result.stderr)
@@ -204,9 +203,7 @@ version = "0.1.0"
         )
 
         # Create venv first
-        subprocess.run(
-            ["python3", "-m", "venv", str(repo_root / ".venv")], check=True, timeout=30
-        )
+        subprocess.run(["python3", "-m", "venv", str(repo_root / ".venv")], check=True, timeout=30)
 
         script_copy = repo_root / "bootstrap.sh"
         shutil.copy(self.script_path, script_copy)
@@ -297,9 +294,7 @@ find_repo_root
 
         test_script = self._create_find_repo_root_test_script(repo_root, subdir)
 
-        result = subprocess.run(
-            ["bash", str(test_script)], capture_output=True, text=True, timeout=10
-        )
+        result = subprocess.run(["bash", str(test_script)], capture_output=True, text=True, timeout=10)
 
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), str(repo_root))
@@ -314,9 +309,7 @@ find_repo_root
 
         test_script = self._create_find_repo_root_test_script(repo_root, subdir)
 
-        result = subprocess.run(
-            ["bash", str(test_script)], capture_output=True, text=True, timeout=10
-        )
+        result = subprocess.run(["bash", str(test_script)], capture_output=True, text=True, timeout=10)
 
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), str(repo_root))
@@ -329,9 +322,7 @@ find_repo_root
 
         test_script = self._create_find_repo_root_test_script(repo_root, repo_root)
 
-        result = subprocess.run(
-            ["bash", str(test_script)], capture_output=True, text=True, timeout=10
-        )
+        result = subprocess.run(["bash", str(test_script)], capture_output=True, text=True, timeout=10)
 
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), str(repo_root))
@@ -343,9 +334,7 @@ find_repo_root
 
         test_script = self._create_find_repo_root_test_script(non_repo, non_repo)
 
-        result = subprocess.run(
-            ["bash", str(test_script)], capture_output=True, text=True, timeout=10
-        )
+        result = subprocess.run(["bash", str(test_script)], capture_output=True, text=True, timeout=10)
 
         self.assertEqual(result.returncode, 10)
         self.assertIn("Could not find repository root", result.stderr)
@@ -354,7 +343,6 @@ find_repo_root
 if __name__ == "__main__":
     # Allow running tests directly with python3
     unittest.main()
-
 
     def test_find_repo_root_with_git_marker(self):
         """Test finding repo root when .git directory exists."""
@@ -409,9 +397,7 @@ find_repo_root
         test_script.chmod(0o755)
 
         # Run from subdirectory
-        result = subprocess.run(
-            ["bash", str(test_script)], capture_output=True, text=True, cwd=str(subdir)
-        )
+        result = subprocess.run(["bash", str(test_script)], capture_output=True, text=True, cwd=str(subdir))
 
         self.assertEqual(result.returncode, 0, f"stderr: {result.stderr}")
         self.assertEqual(result.stdout.strip(), str(repo_root))
@@ -438,9 +424,7 @@ find_repo_root
         )
         test_runner.chmod(0o755)
 
-        result = subprocess.run(
-            ["bash", str(test_runner)], capture_output=True, text=True, cwd=str(subdir)
-        )
+        result = subprocess.run(["bash", str(test_runner)], capture_output=True, text=True, cwd=str(subdir))
 
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), str(repo_root))
@@ -464,9 +448,7 @@ find_repo_root
         )
         test_runner.chmod(0o755)
 
-        result = subprocess.run(
-            ["bash", str(test_runner)], capture_output=True, text=True, cwd=str(repo_root)
-        )
+        result = subprocess.run(["bash", str(test_runner)], capture_output=True, text=True, cwd=str(repo_root))
 
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), str(repo_root))
@@ -490,14 +472,10 @@ find_repo_root
         )
         test_runner.chmod(0o755)
 
-        result = subprocess.run(
-            ["bash", str(test_runner)], capture_output=True, text=True, cwd=str(non_repo)
-        )
+        result = subprocess.run(["bash", str(test_runner)], capture_output=True, text=True, cwd=str(non_repo))
 
         self.assertEqual(result.returncode, 10, "Expected exit code 10 when not in a repo")
         self.assertIn("Could not find repository root", result.stderr)
-
-
 
 
 if __name__ == "__main__":
