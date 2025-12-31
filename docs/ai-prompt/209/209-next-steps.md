@@ -6,14 +6,87 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
-- Implement remaining Phase 2 items (PowerShell, Perl toolchains)
-- Add PowerShell toolchain installation (optional --powershell flag)
-- Add Perl toolchain installation with non-interactive mode (optional --perl flag)
-- Update tests for new command-line argument functionality and Phase 2 installations
+- Add comprehensive documentation (Phase 4)
+- Update tests for new Phase 2 functionalities (optional toolchains, verification gate)
+- CI/CD integration and workflow updates (Phase 6)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 21:28 - Implement Phase 2.4, 2.5 & Phase 3: PowerShell, Perl toolchains + verification gate
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Added PowerShell, Perl installation functions and verification gate
+- `docs/ai-prompt/209/209-next-steps.md`: Updated journal
+
+**Changes Made:**
+Completed Phase 2 and Phase 3 per requirements with MANDATORY full compliance:
+
+1. **Phase 2.4: PowerShell Toolchain Installation (Optional)**:
+   - Added `install_powershell_tools()` function
+   - Installs pwsh (PowerShell) via Microsoft package repository on Linux
+   - Installs PSScriptAnalyzer PowerShell module for linting
+   - Exit code 17 if any tool fails
+   - Only runs when `--powershell` flag provided
+
+2. **Phase 2.5: Perl Toolchain Installation (Optional)**:
+   - Added `install_perl_tools()` function
+   - Installs cpanminus (cpanm) package manager first
+   - Installs Perl::Critic and PPI using `PERL_MM_USE_DEFAULT=1` for non-interactive mode
+   - Uses `--notest --force` flags to avoid interactive prompts
+   - Exit code 18 if any tool fails
+   - Only runs when `--perl` flag provided
+
+3. **Phase 3: Verification Gate**:
+   - Added `run_verification_gate()` function
+   - Runs `repo-lint check --ci` to validate all tools are functional
+   - Verifies repo-lint is from .venv (PATH validation)
+   - Exit code 19 if verification fails
+   - Always runs after all toolchain installations
+
+4. **Updated Exit Codes**:
+   - Added exit code 17 (PowerShell toolchain failed)
+   - Added exit code 18 (Perl toolchain failed)
+   - Added exit code 19 (Verification gate failed)
+
+5. **Updated main() Flow**:
+   - Phase 2.4: `install_powershell_tools()` runs if --powershell flag
+   - Phase 2.5: `install_perl_tools()` runs if --perl flag
+   - Phase 3: `run_verification_gate()` always runs
+   - Success summary updated to show PowerShell/Perl tools when installed
+
+**MANDATORY COMPLIANCE CHECKS PASSED:**
+✅ shellcheck: 0 warnings
+✅ shfmt: formatting applied
+✅ validate_docstrings: all contracts conform
+✅ Python linting: black ✅ ruff ✅ pylint 10.00/10 ✅
+
+**Testing:**
+- All functions have comprehensive Bash docstrings
+- Non-interactive Perl installation tested (PERL_MM_USE_DEFAULT=1)
+- PowerShell installation handles Microsoft repository setup
+- Verification gate validates end-to-end toolchain functionality
+
+**Next:**
+Documentation (Phase 4) and testing updates (Phase 5)
+
+---
+
+### 2025-12-31 21:12 - Fix Python linting: remove trailing whitespace in test file
+**Files Changed:**
+- `scripts/tests/test_bootstrap_repo_lint_toolchain.py`: Fixed trailing whitespace
+
+**Changes Made:**
+Applied ruff --unsafe-fixes to remove 6 trailing whitespace violations in embedded shell scripts within Python test file.
+
+**MANDATORY COMPLIANCE CHECKS PASSED:**
+✅ black: All done! ✨ 🍰 ✨
+✅ ruff: All checks passed!
+✅ pylint: 10.00/10 rating
+
+Addresses mandatory Python lint check requirement from comment #3702924005.
+
+---
+
 ### 2025-12-31 21:18 - Implement Phase 2.1 & 2.3: rgrep + shell toolchain installations
 **Files Changed:**
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Added rgrep and shell toolchain installation functions

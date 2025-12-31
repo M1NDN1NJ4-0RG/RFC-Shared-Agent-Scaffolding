@@ -44,6 +44,9 @@
 #     14  repo-lint exists but --help command failed
 #     15  Python toolchain installation failed
 #     16  Shell toolchain installation failed (shellcheck/shfmt)
+#     17  PowerShell toolchain installation failed (pwsh/PSScriptAnalyzer)
+#     18  Perl toolchain installation failed (Perl::Critic/PPI)
+#     19  Verification gate failed (repo-lint check --ci)
 #
 #   Stdout:
 #     Progress messages prefixed with [bootstrap]
@@ -872,6 +875,260 @@ install_shell_tools() {
 	log "Shell toolchain installed successfully"
 }
 
+# install_powershell_tools - Install PowerShell development toolchain
+#
+# DESCRIPTION:
+#   Installs PowerShell (pwsh) and PowerShell linting/analysis tools required
+#   for PowerShell script development. Only runs if --powershell flag provided.
+#
+# INPUTS:
+#   None (uses package managers: apt-get, brew, snap)
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   Tools installed or verified successfully
+#     17  PowerShell toolchain installation failed
+#
+#   Stdout:
+#     Installation progress and verification messages
+#
+# EXAMPLES:
+#   install_powershell_tools
+install_powershell_tools() {
+	log ""
+	log "Installing PowerShell toolchain (pwsh, PSScriptAnalyzer)"
+	log "This may take several minutes..."
+
+	local failed_tools=()
+
+	# Install pwsh (PowerShell)
+	if command -v pwsh >/dev/null 2>&1; then
+		local pwsh_version
+		pwsh_version=$(pwsh --version 2>&1 | head -n1)
+		log "  ✓ pwsh already installed: $pwsh_version"
+	else
+		log "Installing pwsh..."
+		if command -v apt-get >/dev/null 2>&1; then
+			if command -v sudo >/dev/null 2>&1; then
+				# Install PowerShell via Microsoft package repository
+				sudo apt-get update
+				sudo apt-get install -y wget apt-transport-https software-properties-common
+				wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+				sudo dpkg -i packages-microsoft-prod.deb
+				rm packages-microsoft-prod.deb
+				sudo apt-get update
+				sudo apt-get install -y powershell
+
+				if command -v pwsh >/dev/null 2>&1; then
+					local pwsh_version
+					pwsh_version=$(pwsh --version 2>&1 | head -n1)
+					log "  ✓ pwsh installed: $pwsh_version"
+				else
+					failed_tools+=("pwsh")
+				fi
+			else
+				warn "  ✗ sudo not available, cannot install pwsh via apt-get"
+				failed_tools+=("pwsh")
+			fi
+		elif command -v brew >/dev/null 2>&1; then
+			brew install --cask powershell
+			if command -v pwsh >/dev/null 2>&1; then
+				local pwsh_version
+				pwsh_version=$(pwsh --version 2>&1 | head -n1)
+				log "  ✓ pwsh installed: $pwsh_version"
+			else
+				failed_tools+=("pwsh")
+			fi
+		else
+			warn "  ✗ No supported package manager found for pwsh"
+			failed_tools+=("pwsh")
+		fi
+	fi
+
+	# Install PSScriptAnalyzer (PowerShell linter)
+	if command -v pwsh >/dev/null 2>&1; then
+		log "Installing PSScriptAnalyzer..."
+		if pwsh -Command "Get-Module -ListAvailable -Name PSScriptAnalyzer" | grep -q PSScriptAnalyzer; then
+			log "  ✓ PSScriptAnalyzer already installed"
+		else
+			pwsh -Command "Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser"
+			if pwsh -Command "Get-Module -ListAvailable -Name PSScriptAnalyzer" | grep -q PSScriptAnalyzer; then
+				log "  ✓ PSScriptAnalyzer installed"
+			else
+				failed_tools+=("PSScriptAnalyzer")
+			fi
+		fi
+	else
+		warn "  ✗ pwsh not available, cannot install PSScriptAnalyzer"
+		failed_tools+=("PSScriptAnalyzer")
+	fi
+
+	# Check if any tools failed
+	if [ ${#failed_tools[@]} -gt 0 ]; then
+		warn "Failed to install PowerShell tools: ${failed_tools[*]}"
+		warn "Manual installation required:"
+		for tool in "${failed_tools[@]}"; do
+			case "$tool" in
+			pwsh)
+				warn "  - pwsh: https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell"
+				;;
+			PSScriptAnalyzer)
+				warn "  - PSScriptAnalyzer: Install-Module -Name PSScriptAnalyzer -Force"
+				;;
+			esac
+		done
+		die "PowerShell toolchain installation incomplete" 17
+	fi
+
+	log "PowerShell toolchain installed successfully"
+}
+
+# install_perl_tools - Install Perl development toolchain (non-interactive)
+#
+# DESCRIPTION:
+#   Installs Perl linting/analysis tools (Perl::Critic, PPI) required for
+#   Perl script development. Uses non-interactive installation to avoid prompts.
+#   Only runs if --perl flag provided.
+#
+# INPUTS:
+#   None (uses cpanm with PERL_MM_USE_DEFAULT=1 for non-interactive install)
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   Tools installed or verified successfully
+#     18  Perl toolchain installation failed
+#
+#   Stdout:
+#     Installation progress and verification messages
+#
+# EXAMPLES:
+#   install_perl_tools
+install_perl_tools() {
+	log ""
+	log "Installing Perl toolchain (Perl::Critic, PPI)"
+	log "This may take several minutes..."
+	log "NOTE: Using non-interactive installation (PERL_MM_USE_DEFAULT=1)"
+
+	local failed_tools=()
+
+	# Ensure cpanm (cpanminus) is installed
+	if ! command -v cpanm >/dev/null 2>&1; then
+		log "Installing cpanminus..."
+		if command -v apt-get >/dev/null 2>&1; then
+			if command -v sudo >/dev/null 2>&1; then
+				sudo apt-get update
+				sudo apt-get install -y cpanminus
+			else
+				warn "  ✗ sudo not available, cannot install cpanminus via apt-get"
+				die "Perl toolchain installation incomplete (cpanminus required)" 18
+			fi
+		elif command -v brew >/dev/null 2>&1; then
+			brew install cpanminus
+		else
+			warn "  ✗ No supported package manager found for cpanminus"
+			die "Perl toolchain installation incomplete (cpanminus required)" 18
+		fi
+	fi
+
+	if command -v cpanm >/dev/null 2>&1; then
+		log "  ✓ cpanm available"
+	else
+		die "cpanminus installation failed" 18
+	fi
+
+	# Install Perl::Critic (non-interactive)
+	log "Installing Perl::Critic..."
+	if perl -MPerlCritic -e 1 2>/dev/null; then
+		log "  ✓ Perl::Critic already installed"
+	else
+		# Non-interactive installation with default answers
+		PERL_MM_USE_DEFAULT=1 cpanm --notest --force Perl::Critic
+		if perl -MPerl::Critic -e 1 2>/dev/null; then
+			log "  ✓ Perl::Critic installed"
+		else
+			failed_tools+=("Perl::Critic")
+		fi
+	fi
+
+	# Install PPI (Perl parsing library)
+	log "Installing PPI..."
+	if perl -MPPI -e 1 2>/dev/null; then
+		log "  ✓ PPI already installed"
+	else
+		PERL_MM_USE_DEFAULT=1 cpanm --notest --force PPI
+		if perl -MPPI -e 1 2>/dev/null; then
+			log "  ✓ PPI installed"
+		else
+			failed_tools+=("PPI")
+		fi
+	fi
+
+	# Check if any tools failed
+	if [ ${#failed_tools[@]} -gt 0 ]; then
+		warn "Failed to install Perl tools: ${failed_tools[*]}"
+		warn "Manual installation required:"
+		for tool in "${failed_tools[@]}"; do
+			case "$tool" in
+			Perl::Critic)
+				warn "  - Perl::Critic: cpanm Perl::Critic"
+				;;
+			PPI)
+				warn "  - PPI: cpanm PPI"
+				;;
+			esac
+		done
+		die "Perl toolchain installation incomplete" 18
+	fi
+
+	log "Perl toolchain installed successfully"
+}
+
+# run_verification_gate - Run repo-lint verification gate
+#
+# DESCRIPTION:
+#   Runs repo-lint check --ci to verify that all required tools are properly
+#   installed and functional. This is the final compliance gate.
+#
+# INPUTS:
+#   None (assumes repo-lint is on PATH in activated venv)
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   Verification passed
+#     19  Verification gate failed
+#
+#   Stdout:
+#     Verification progress and results
+#
+# EXAMPLES:
+#   run_verification_gate
+run_verification_gate() {
+	log ""
+	log "Running verification gate (repo-lint check --ci)..."
+	log "This validates that all required tools are functional"
+
+	# Ensure we're using the venv repo-lint
+	local repo_lint_path
+	repo_lint_path=$(command -v repo-lint)
+
+	if [[ ! "$repo_lint_path" =~ \.venv ]]; then
+		warn "repo-lint is not from .venv: $repo_lint_path"
+		warn "This may indicate PATH activation issues"
+	fi
+
+	# Run verification gate with full output
+	log "Running: repo-lint check --ci"
+	if repo-lint check --ci; then
+		log "  ✓ Verification gate passed"
+		return 0
+	else
+		warn "  ✗ Verification gate failed"
+		warn "Some tools may be missing or non-functional"
+		warn "Review the output above for specific failures"
+		die "Verification gate failed" 19
+	fi
+}
+
 # ============================================================================
 # Main Execution
 # ============================================================================
@@ -956,6 +1213,23 @@ main() {
 		log ""
 	fi
 
+	# Phase 2.4: Install PowerShell toolchain (if requested)
+	if [ "$INSTALL_POWERSHELL" = true ]; then
+		install_powershell_tools
+		log ""
+	fi
+
+	# Phase 2.5: Install Perl toolchain (if requested)
+	if [ "$INSTALL_PERL" = true ]; then
+		install_perl_tools
+		log ""
+	fi
+
+	# Phase 3: Run verification gate
+	show_banner "PHASE 3: VERIFICATION GATE" "Validating installation..."
+	run_verification_gate
+	log ""
+
 	# Success summary
 	show_banner "BOOTSTRAP COMPLETE" "All requested components installed successfully"
 
@@ -971,6 +1245,12 @@ main() {
 	fi
 	if [ "$INSTALL_SHELL" = true ]; then
 		log "  - Shell tools: shellcheck, shfmt"
+	fi
+	if [ "$INSTALL_POWERSHELL" = true ]; then
+		log "  - PowerShell tools: pwsh, PSScriptAnalyzer"
+	fi
+	if [ "$INSTALL_PERL" = true ]; then
+		log "  - Perl tools: Perl::Critic, PPI"
 	fi
 	log ""
 
