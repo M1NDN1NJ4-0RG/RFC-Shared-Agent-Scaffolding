@@ -153,18 +153,25 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
 import argparse
 import subprocess
 import sys
+import warnings
 from pathlib import Path
 from typing import List
 
 # Add scripts directory to path for imports
 try:
     scripts_dir = Path(__file__).resolve().parent
+    repo_root = scripts_dir.parent  # Get repository root (parent of scripts/)
 except NameError:
     # __file__ may not be defined in some interactive contexts
     scripts_dir = Path.cwd()
+    repo_root = scripts_dir
 
 if str(scripts_dir) not in sys.path:
     sys.path.insert(0, str(scripts_dir))
+
+# Add repository root to path for tools.repo_lint imports (Phase 2.9)
+if str(repo_root) not in sys.path:
+    sys.path.insert(0, str(repo_root))
 
 # Import validator classes from modular package
 # pylint: disable=wrong-import-position
@@ -180,56 +187,66 @@ from docstring_validators.yaml_validator import YAMLValidator  # noqa: E402
 common_module = sys.modules["docstring_validators.common"]  # noqa: E402
 
 
-# In-scope directory patterns for validation
-# Strategy: Include ALL scripts repository-wide, with explicit exclusions
-IN_SCOPE_PATTERNS = [
-    # All Bash scripts
-    "**/*.sh",
-    "**/*.bash",
-    "**/*.zsh",
-    # All PowerShell scripts
-    "**/*.ps1",
-    # All Python scripts
-    "**/*.py",
-    # All Perl scripts
-    "**/*.pl",
-    "**/*.pm",
-    # All Rust source files
-    "rust/src/**/*.rs",
-    # All YAML workflow and config files
-    ".github/workflows/*.yml",
-    ".github/workflows/*.yaml",
-    ".github/ISSUE_TEMPLATE/*.yml",
-    ".github/ISSUE_TEMPLATE/*.yaml",
-]
+# Phase 2.9 YAML-first migration: Patterns loaded from YAML configuration
+# DEPRECATED: Direct constant access will be removed in future version
 
-# Patterns to exclude from validation
-EXCLUDE_PATTERNS = [
-    # Build artifacts and dependencies
-    "dist/**",
-    "target/**",
-    "node_modules/**",
-    "__pycache__/**",
-    "*.pyc",
-    # Git directory
-    ".git/**",
-    # Rust test files (these are tested via cargo test, not as standalone scripts)
-    "rust/tests/**",
-    # Temporary files
-    "tmp/**",
-    ".tmp/**",
-    # Test fixtures (intentionally have violations for conformance testing)
-    "conformance/repo-lint/vectors/fixtures/**",
-    "scripts/tests/fixtures/**",
-    # Unsafe fix fixtures (intentionally non-conformant for unsafe mode testing)
-    "conformance/repo-lint/unsafe-fix-fixtures/**",
-]
+
+def _get_in_scope_patterns():
+    """Load in-scope patterns from YAML configuration (Phase 2.9).
+
+    :returns: List of file patterns to include in validation
+    """
+    # pylint: disable=import-outside-toplevel
+    from tools.repo_lint.yaml_loader import get_in_scope_patterns
+
+    return get_in_scope_patterns()
+
+
+def _get_exclude_patterns():
+    """Load exclusion patterns from YAML configuration (Phase 2.9).
+
+    :returns: List of file patterns to exclude from validation
+    """
+    # pylint: disable=import-outside-toplevel
+    from tools.repo_lint.yaml_loader import get_exclusion_patterns
+
+    return get_exclusion_patterns()
+
+
+# Backward compatibility with deprecation warning
+def __getattr__(name):
+    """Provide backward compatibility for pattern constants with deprecation warning.
+
+    :param name: Attribute name being accessed
+    :returns: Pattern list from YAML config
+    :raises AttributeError: If attribute doesn't exist
+    """
+    if name == "IN_SCOPE_PATTERNS":
+        warnings.warn(
+            "IN_SCOPE_PATTERNS constant is deprecated. Use _get_in_scope_patterns() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return _get_in_scope_patterns()
+    elif name == "EXCLUDE_PATTERNS":
+        warnings.warn(
+            "EXCLUDE_PATTERNS constant is deprecated. Use _get_exclude_patterns() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return _get_exclude_patterns()
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
 def get_tracked_files() -> List[Path]:
-    """Get all tracked files matching in-scope patterns using git.
+    """Get all tracked files matching in-scope patterns using git (YAML-first, Phase 2.9).
 
-    :returns: List of Path objects for files that match in-scope patterns and are not excluded"""
+    :returns: List of Path objects for files that match in-scope patterns and are not excluded
+
+    :Note:
+        Updated in Phase 2.9 to load patterns from YAML configuration instead of
+        hardcoded constants.
+    """
     try:
         result = subprocess.run(
             ["git", "ls-files"],
@@ -242,11 +259,17 @@ def get_tracked_files() -> List[Path]:
         print("Error: Could not get tracked files from git", file=sys.stderr)
         sys.exit(1)
 
+    # Load patterns from YAML configuration (Phase 2.9)
+    in_scope_patterns = _get_in_scope_patterns()
+    exclude_patterns = _get_exclude_patterns()
+
     # Filter files by patterns
-    repo_root = Path.cwd()
+    # Note: Using repository root to construct absolute paths from git ls-files relative paths
+    repo_root_dir = Path.cwd()
     matched_files = []
 
     # Directories to exclude (test fixtures with intentional violations)
+    # NOTE: These are also in YAML config, but kept here for directory-based filtering
     exclude_dirs = [
         Path("conformance/repo-lint/vectors/fixtures"),
         Path("conformance/repo-lint/fixtures/violations"),
@@ -269,8 +292,8 @@ def get_tracked_files() -> List[Path]:
         if excluded:
             continue
 
-        # Check if file matches any exclude pattern
-        for exclude_pattern in EXCLUDE_PATTERNS:
+        # Check if file matches any exclude pattern (from YAML)
+        for exclude_pattern in exclude_patterns:
             if p.match(exclude_pattern):
                 excluded = True
                 break
@@ -278,10 +301,10 @@ def get_tracked_files() -> List[Path]:
         if excluded:
             continue
 
-        # Check if file matches any in-scope pattern
-        for pattern in IN_SCOPE_PATTERNS:
+        # Check if file matches any in-scope pattern (from YAML)
+        for pattern in in_scope_patterns:
             if p.match(pattern):
-                matched_files.append(repo_root / p)
+                matched_files.append(repo_root_dir / p)
                 break
 
     return matched_files

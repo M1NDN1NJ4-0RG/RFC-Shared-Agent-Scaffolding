@@ -17,6 +17,20 @@
 //! - repo-lint package and dependencies
 //! - System tools (shellcheck, shfmt, ripgrep, PowerShell, Perl modules)
 //!
+//! # Examples
+//!
+//! Run the bootstrap from the bootstrap_main.rs binary:
+//!
+//! ```bash
+//! bootstrap-repo-cli
+//! ```
+//!
+//! The bootstrap will automatically:
+//! - Find the repository root
+//! - Create a Python virtual environment
+//! - Install repo-lint and dependencies
+//! - Install and verify system tools
+//!
 //! # Exit Codes
 //!
 //! - 0: Success

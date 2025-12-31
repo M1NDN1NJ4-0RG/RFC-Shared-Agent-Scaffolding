@@ -31,17 +31,41 @@
 
 import shutil
 import subprocess
+import warnings
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, MissingToolError
 
-# Paths to exclude from linting/docstring validation
-# These are test fixtures that are intentionally non-conformant
-EXCLUDED_PATHS = [
-    "conformance/repo-lint/unsafe-fix-fixtures/",
-]
+
+# DEPRECATED (Phase 2.9): Use get_excluded_paths() instead
+# This constant is maintained for backward compatibility only
+def __getattr__(name):
+    """Provide backward compatibility for deprecated module-level constants.
+
+    This module-level __getattr__ function enables smooth migration from hardcoded
+    constants to YAML-first configuration (Phase 2.9). It intercepts attribute
+    access to deprecated constants and redirects to the new YAML-based functions
+    while emitting deprecation warnings.
+
+    This pattern allows existing code that imports deprecated constants to continue
+    working during the transition period, giving users time to update their code
+    before the constants are completely removed in a future release.
+
+    :param name: Attribute name being accessed
+    :returns: List of excluded paths from YAML config (for EXCLUDED_PATHS)
+
+    :raises AttributeError: If the requested attribute doesn't exist or isn't deprecated
+    """
+    if name == "EXCLUDED_PATHS":
+        warnings.warn(
+            "EXCLUDED_PATHS constant is deprecated. Use get_excluded_paths() instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return get_excluded_paths()
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
 def find_repo_root() -> Path:
@@ -70,13 +94,31 @@ def command_exists(command: str) -> bool:
     return shutil.which(command) is not None
 
 
+def get_excluded_paths() -> List[str]:
+    """Get paths to exclude from linting (YAML-first, Phase 2.9).
+
+    :returns: List of paths to exclude from linting
+
+    :Note:
+        This function loads exclusions from conformance/repo-lint/repo-lint-file-patterns.yaml
+        and replaces the hardcoded EXCLUDED_PATHS constant.
+    """
+    # pylint: disable=import-outside-toplevel
+    from tools.repo_lint.yaml_loader import get_linting_exclusion_paths
+
+    return get_linting_exclusion_paths()
+
+
 def get_git_pathspec_excludes() -> List[str]:
-    """Get git pathspec exclude patterns for linting.
+    """Get git pathspec exclude patterns for linting (YAML-first, Phase 2.9).
 
     :returns: List of exclude patterns for git ls-files
+
+    :Note:
+        Updated in Phase 2.9 to use YAML configuration instead of hardcoded EXCLUDED_PATHS.
     """
     excludes = []
-    for path in EXCLUDED_PATHS:
+    for path in get_excluded_paths():
         # Git pathspec format: ':(exclude)pattern'
         excludes.append(f":(exclude){path}")
     return excludes

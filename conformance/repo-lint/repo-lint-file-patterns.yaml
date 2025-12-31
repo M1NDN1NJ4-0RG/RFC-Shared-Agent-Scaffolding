@@ -1,0 +1,112 @@
+---
+config_type: repo-lint-file-patterns
+version: "1.0.0"
+
+# File discovery patterns and exclusions for linting and validation
+# Reference: YAML-first contract (Phase 2.9)
+# Purpose: Centralize file pattern configuration to avoid hardcoding
+
+description: |
+  File pattern configuration for repository linting and validation.
+  Controls which files are scanned and which are excluded from checks.
+
+# NOTE: languages section required by config_validator (minimal for this config type)
+languages:
+  _all:
+    description: "File patterns apply to all languages (cross-cutting config)"
+    enabled: true
+
+# Patterns for files that should be validated
+in_scope:
+  description: "File patterns to include in validation and linting"
+  patterns:
+    # Bash scripts
+    - "**/*.sh"
+    - "**/*.bash"
+
+    # Python scripts
+    - "**/*.py"
+
+    # PowerShell scripts
+    - "**/*.ps1"
+    - "**/*.psm1"
+
+    # Perl scripts
+    - "**/*.pl"
+    - "**/*.pm"
+
+    # YAML configuration files
+    - "**/*.yaml"
+    - "**/*.yml"
+
+    # Rust source files
+    - "**/*.rs"
+
+# Patterns for files/directories to exclude from validation
+exclusions:
+  description: "Patterns to exclude from all checks"
+
+  build_artifacts:
+    description: "Build output and distribution directories"
+    patterns:
+      - "dist/**"
+      - "target/**"
+      - "build/**"
+      - "*.egg-info/**"
+
+  dependencies:
+    description: "Dependency directories (should not be linted)"
+    patterns:
+      - ".venv*/**"
+      - "venv/**"
+      - "virtualenv/**"
+      - "node_modules/**"
+      - ".tox/**"
+
+  test_fixtures:
+    description: "Test fixtures that are intentionally non-conformant"
+    patterns:
+      - "conformance/repo-lint/unsafe-fix-fixtures/**"
+      - "conformance/repo-lint/fixtures/**"
+      - "scripts/tests/fixtures/**"
+
+  cache_and_temp:
+    description: "Cache directories and temporary files"
+    patterns:
+      - "__pycache__/**"
+      - "*.pyc"
+      - "*.pyo"
+      - ".pytest_cache/**"
+      - ".ruff_cache/**"
+      - ".mypy_cache/**"
+      - "*.tmp"
+      - "*.temp"
+
+  version_control:
+    description: "Version control metadata"
+    patterns:
+      - ".git/**"
+      - ".github/**"  # Workflows are validated separately
+
+  documentation_build:
+    description: "Generated documentation"
+    patterns:
+      - "docs/_build/**"
+      - "site/**"
+
+# Exclusions specific to docstring validation
+# These are paths excluded from EXCLUDED_PATHS in base.py
+linting_exclusions:
+  description: "Paths excluded from linting checks (base.py EXCLUDED_PATHS)"
+  patterns:
+    - "conformance/repo-lint/unsafe-fix-fixtures/"
+
+# Metadata
+metadata:
+  schema_version: "1.0.0"
+  last_updated: "2025-12-31"
+  migration_from:
+    - "scripts/validate_docstrings.py (IN_SCOPE_PATTERNS, EXCLUDE_PATTERNS)"
+    - "tools/repo_lint/runners/base.py (EXCLUDED_PATHS)"
+
+...

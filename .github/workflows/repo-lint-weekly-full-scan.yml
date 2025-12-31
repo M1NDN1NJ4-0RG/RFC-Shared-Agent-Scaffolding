@@ -67,7 +67,9 @@ jobs:
       - name: Install Python linting tools
         run: |
           python -m pip install --upgrade pip
-          pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1 PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
+          pip install \
+            black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1 \
+            PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Install ShellCheck
         run: |
@@ -79,7 +81,9 @@ jobs:
           # Download shfmt binary
           wget -q https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64 -O shfmt
           # Download official checksums file for this release
-          wget -q https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_checksums.txt -O shfmt_v3.12.0_checksums.txt
+          wget -q \
+            https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_checksums.txt \
+            -O shfmt_v3.12.0_checksums.txt
           # Extract expected SHA256 for the linux_amd64 binary
           EXPECTED_SHA256="$(grep 'shfmt_v3.12.0_linux_amd64' shfmt_v3.12.0_checksums.txt | cut -d' ' -f1)"
           # Verify the downloaded binary matches the expected checksum
@@ -98,7 +102,9 @@ jobs:
           rm microsoft.gpg
           UBUNTU_VERSION="$(lsb_release -rs)"
           UBUNTU_CODENAME="$(lsb_release -cs)"
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] https://packages.microsoft.com/ubuntu/${UBUNTU_VERSION}/prod ${UBUNTU_CODENAME} main" | sudo tee /etc/apt/sources.list.d/microsoft-prod.list
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/packages.microsoft.gpg] \
+            https://packages.microsoft.com/ubuntu/${UBUNTU_VERSION}/prod ${UBUNTU_CODENAME} main" | \
+            sudo tee /etc/apt/sources.list.d/microsoft-prod.list
           sudo apt-get update
           sudo apt-get install -y powershell
 

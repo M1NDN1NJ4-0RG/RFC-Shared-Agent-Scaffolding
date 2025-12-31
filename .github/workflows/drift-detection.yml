@@ -262,9 +262,12 @@ jobs:
           # Compare results
           echo ""
           echo "Results:"
-          echo "  Bash:       exit=$bash_exit, stdout_marker=$bash_has_stdout, stderr_marker=$bash_has_stderr, log_pattern=$bash_log_pattern"
-          echo "  Python 3:   exit=$python_exit, stdout_marker=$python_has_stdout, stderr_marker=$python_has_stderr, log_pattern=$python_log_pattern"
-          echo "  Perl:       exit=$perl_exit, stdout_marker=$perl_has_stdout, stderr_marker=$perl_has_stderr, log_pattern=$perl_log_pattern"
+          echo "  Bash:       exit=$bash_exit, stdout_marker=$bash_has_stdout,"
+          echo "              stderr_marker=$bash_has_stderr, log_pattern=$bash_log_pattern"
+          echo "  Python 3:   exit=$python_exit, stdout_marker=$python_has_stdout,"
+          echo "              stderr_marker=$python_has_stderr, log_pattern=$python_log_pattern"
+          echo "  Perl:       exit=$perl_exit, stdout_marker=$perl_has_stdout,"
+          echo "              stderr_marker=$perl_has_stderr, log_pattern=$perl_log_pattern"
 
           # Validate parity
           drift=0

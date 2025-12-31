@@ -362,7 +362,8 @@ jobs:
           fi
 
           # Get changed files, excluding unsafe-fix fixtures
-          CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD | grep -v '^conformance/repo-lint/unsafe-fix-fixtures/' || true)
+          CHANGED_FILES=$(git diff --name-only "$BASE_REF" HEAD | \
+            grep -v '^conformance/repo-lint/unsafe-fix-fixtures/' || true)
 
           # Initialize all outputs to false
           echo "python=false" >> $GITHUB_OUTPUT
@@ -435,7 +436,9 @@ jobs:
       - name: Install Python linting tools
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1 PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
+          python3 -m pip install \
+            black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1 \
+            PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Run repo_lint for Python
         id: lint_python
@@ -475,7 +478,9 @@ jobs:
       - name: Install Python tools (for repo_lint)
         run: |
           python3 -m pip install --upgrade pip
-          python3 -m pip install tree-sitter==0.25.1 tree-sitter-bash==0.25.1 PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
+          python3 -m pip install \
+            tree-sitter==0.25.1 tree-sitter-bash==0.25.1 \
+            PyYAML>=6.0 click>=8.0 rich>=10.0 rich-click>=1.6.0
 
       - name: Install shellcheck
         run: |

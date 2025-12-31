@@ -95,7 +95,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: rust/target
-          key: ${{ runner.os }}-cargo-build-target-${{ hashFiles('rust/Cargo.lock') }}-${{ hashFiles('rust/src/**/*.rs', 'rust/Cargo.toml', 'rust/tests/**/*.rs') }}
+          key: >-
+            ${{ runner.os }}-cargo-build-target-${{ hashFiles('rust/Cargo.lock') }}-
+            ${{ hashFiles('rust/src/**/*.rs', 'rust/Cargo.toml', 'rust/tests/**/*.rs') }}
 
       # Step 6: Display Rust version for diagnostics
       - name: Check Rust version

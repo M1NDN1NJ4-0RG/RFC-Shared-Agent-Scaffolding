@@ -1,9 +1,13 @@
 //! # Bootstrap Repo-CLI Binary Entry Point
 //!
+//! # Purpose
+//!
 //! This binary implements the bootstrap-repo-cli functionality for setting up
 //! the repo-lint toolchain in a local Python virtual environment.
 //!
-//! # Usage
+//! # Examples
+//!
+//! Run the bootstrap to set up repo-lint:
 //!
 //! ```bash
 //! bootstrap-repo-cli
