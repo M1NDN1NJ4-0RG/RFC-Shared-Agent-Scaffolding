@@ -296,20 +296,22 @@ def cmd_fix(args: argparse.Namespace) -> int:
         # Guard: Unsafe fixes only supported for Python
         only_language = getattr(args, "only", None)
         if only_language and only_language != "python":
-            print("❌ Unsafe fixes not supported for this language", file=sys.stderr)
-            print("")
-            print(f"Unsafe mode currently only supports Python files.")
-            print(f"You specified: --only={only_language}")
-            print("")
-            print("Remove --unsafe flag or use --only=python")
-            print("")
+            error_msg = (
+                "❌ Unsafe fixes not supported for this language\n"
+                "\n"
+                f"Unsafe mode currently only supports Python files.\n"
+                f"You specified: --only={only_language}\n"
+                "\n"
+                "Remove --unsafe flag or use --only=python\n"
+            )
+            print(error_msg, file=sys.stderr)
             return ExitCode.UNSAFE_VIOLATION
 
-        # Collect all files to process
+        # Collect all Python files to process
+        # At this point, only_language is either "python" or None (all languages)
         repo_root = Path.cwd()
         all_files = []
 
-        # Only process Python files (--only=python or no --only flag)
         if only_language == "python" or only_language is None:
             all_files.extend(repo_root.rglob("*.py"))
 
