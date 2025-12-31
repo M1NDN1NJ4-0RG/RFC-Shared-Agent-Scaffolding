@@ -245,16 +245,24 @@ class Reporter:
             return
 
         for result in failed_results:
-            # Create failure panel
+            # Create failure panel header
             box_style = get_box_style(self.theme, self.ci_mode)
-            title = f"{result.tool} Failures" if not self.ci_mode else f"{result.tool} Failures"
+            title = f"{result.tool} Failures"
             title_formatted = self._format_with_color(title, "failure", bold=True) if not self.ci_mode else title
             border_style = self._get_color("failure") if not self.ci_mode else "white"
 
-            # Build content
+            # Render panel header
             if result.error:
+                # For errors, show in a panel
                 content = self._format_with_color(result.error, "failure")
+                panel = Panel(content, title=title_formatted, border_style=border_style, box=box_style)
+                self.console.print(panel)
             else:
+                # For violations, show a panel with header and then a table
+                panel_content = f"Found {len(result.violations)} violation(s)"
+                panel = Panel(panel_content, title=title_formatted, border_style=border_style, box=box_style)
+                self.console.print(panel)
+
                 # Create violations table
                 violations_table = Table(show_header=True, box=box_style, show_lines=False)
                 violations_table.add_column("File", style=self._get_color("metadata") if not self.ci_mode else None)
@@ -272,17 +280,9 @@ class Reporter:
                     note = self._format_with_color(f"... and {remaining} more violations", "warning")
                     violations_table.add_row("", "", note)
 
-                # Convert table to string by capturing console output
-                from io import StringIO
+                # Render the table
+                self.console.print(violations_table)
 
-                string_io = StringIO()
-                temp_console = get_console(ci_mode=self.ci_mode)
-                temp_console.file = string_io
-                temp_console.print(violations_table)
-                content = string_io.getvalue()
-
-            panel = Panel(content, title=title_formatted, border_style=border_style, box=box_style)
-            self.console.print(panel)
             self.console.print()
 
     def render_final_summary(self, results: List[LintResult], exit_code: ExitCode) -> None:
