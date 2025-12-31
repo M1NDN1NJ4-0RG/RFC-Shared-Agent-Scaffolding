@@ -293,12 +293,23 @@ def cmd_fix(args: argparse.Namespace) -> int:
         from tools.repo_lint.forensics import print_forensics_summary, save_forensics
         from tools.repo_lint.unsafe_fixers import apply_unsafe_fixes
 
+        # Guard: Unsafe fixes only supported for Python
+        only_language = getattr(args, "only", None)
+        if only_language and only_language != "python":
+            print("❌ Unsafe fixes not supported for this language", file=sys.stderr)
+            print("")
+            print(f"Unsafe mode currently only supports Python files.")
+            print(f"You specified: --only={only_language}")
+            print("")
+            print("Remove --unsafe flag or use --only=python")
+            print("")
+            return ExitCode.UNSAFE_VIOLATION
+
         # Collect all files to process
         repo_root = Path.cwd()
         all_files = []
 
-        # Only process files for the specified language if --only is used
-        only_language = getattr(args, "only", None)
+        # Only process Python files (--only=python or no --only flag)
         if only_language == "python" or only_language is None:
             all_files.extend(repo_root.rglob("*.py"))
 
@@ -374,22 +385,15 @@ def cmd_install(args: argparse.Namespace) -> int:
         print("To use these tools in your shell:")
         print(f"  source {venv_path}/bin/activate  # Linux/macOS")
         print(f"  {venv_path}\\Scripts\\activate     # Windows")
-    else:
         print("")
-        print("✗ Python tool installation failed:")
-        for error in errors:
-            print(f"  {error}")
+        
+        # Print manual install instructions for other tools
+        print_bash_tool_instructions()
+        print_powershell_tool_instructions()
+        print_perl_tool_instructions()
+        
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         print("")
-
-    # Print manual install instructions for other tools
-    print_bash_tool_instructions()
-    print_powershell_tool_instructions()
-    print_perl_tool_instructions()
-
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    print("")
-
-    if success:
         print("✓ Installation complete")
         print("")
         print("Next steps:")
@@ -397,6 +401,20 @@ def cmd_install(args: argparse.Namespace) -> int:
         print("  2. Run 'python3 -m tools.repo_lint check' to verify")
         return ExitCode.SUCCESS
     else:
+        print("")
+        print("✗ Python tool installation failed:")
+        for error in errors:
+            print(f"  {error}")
+        print("")
+        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        print("")
+        print("⚠️  Python tools are required for repo_lint to function.")
+        print("   Please fix the errors above and try again.")
+        print("")
+        print("Common issues:")
+        print("  - Python 3.8+ required")
+        print("  - Ensure pip is up to date: python3 -m pip install --upgrade pip")
+        print("  - Check network connectivity for package downloads")
         return ExitCode.INTERNAL_ERROR
 
 
