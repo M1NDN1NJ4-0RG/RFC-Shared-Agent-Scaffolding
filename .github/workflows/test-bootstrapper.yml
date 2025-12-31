@@ -1,0 +1,94 @@
+# Workflow: Test Bootstrapper
+#
+# Purpose: Runs comprehensive tests for the repo-lint toolchain bootstrapper script.
+# Validates repository discovery, venv management, tool installation, and verification
+# gate functionality across all toolchains (Python, Shell, PowerShell, Perl).
+#
+# Dependencies:
+# - Python 3.12 (for pytest test runner)
+# - pytest package
+# - scripts/bootstrap-repo-lint-toolchain.sh (script under test)
+#
+# Triggers:
+# - Pull requests modifying bootstrapper script, tests, or this workflow
+# - Pushes to main branch affecting the same paths
+# - Manual workflow dispatch
+#
+# Outputs:
+# - Status check: "Test Bootstrapper"
+# - Artifacts: Test failure logs (if tests fail)
+# - Side effects: Fails if tests fail
+#
+# Notes:
+# - Required for merge when bootstrapper code changes
+# - Tests run in isolated temporary directories
+# - Exit 0 = tests pass, non-zero = tests fail
+---
+name: Test Bootstrapper
+
+on:
+  pull_request:
+    paths:
+      - 'scripts/bootstrap-repo-lint-toolchain.sh'
+      - 'scripts/tests/test_bootstrap_repo_lint_toolchain.py'
+      - '.github/workflows/test-bootstrapper.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/bootstrap-repo-lint-toolchain.sh'
+      - 'scripts/tests/test_bootstrap_repo_lint_toolchain.py'
+      - '.github/workflows/test-bootstrapper.yml'
+  workflow_dispatch:
+
+# Permissions: Read-only access to repository contents
+permissions:
+  contents: read
+
+jobs:
+  # Job: Bootstrapper Tests
+  # Sets up Python environment and runs pytest suite for bootstrapper script
+  test:
+    name: Bootstrapper Tests
+    # Runner: Ubuntu latest (provides Python, bash, system package managers)
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository to access bootstrapper script and tests
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python 3.12 environment for pytest
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # Step 3: Install pytest test runner
+      - name: Install pytest
+        run: |
+          python3 -m pip install --upgrade pip
+          python3 -m pip install pytest
+
+      # Step 4: Display Python and pytest versions for diagnostics
+      - name: Display versions
+        run: |
+          python3 --version
+          pytest --version
+
+      # Step 5: Run bootstrapper test suite
+      # Tests cover repository discovery, venv management, tool detection,
+      # verification gate, idempotency, and non-interactive behavior
+      - name: Run bootstrapper tests
+        run: |
+          pytest scripts/tests/test_bootstrap_repo_lint_toolchain.py -v
+
+      # Step 6: Upload test failure artifacts (only on test failure)
+      # Captures any temporary test directories created during test execution
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bootstrapper-test-failures
+          path: /tmp/bootstrap_*
+          if-no-files-found: ignore

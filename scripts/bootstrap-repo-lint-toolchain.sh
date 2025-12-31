@@ -1005,6 +1005,33 @@ install_powershell_tools() {
 	log "PowerShell toolchain installed successfully"
 }
 
+# setup_perl_environment - Set up Perl local::lib environment variables
+#
+# DESCRIPTION:
+#   Exports environment variables required for Perl modules installed to ~/perl5
+#   via cpanm local::lib. This function is called by install_perl_tools during
+#   installation and by run_verification_gate before running repo-lint.
+#
+# INPUTS:
+#   None
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   Environment variables exported
+#
+#   Environment:
+#     Exports PERL_LOCAL_LIB_ROOT, PERL_MB_OPT, PERL_MM_OPT, PERL5LIB, PATH
+#
+# EXAMPLES:
+#   setup_perl_environment
+setup_perl_environment() {
+	export PERL_LOCAL_LIB_ROOT="$HOME/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"
+	export PERL_MB_OPT="--install_base \"$HOME/perl5\""
+	export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
+	export PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
+	export PATH="$HOME/perl5/bin${PATH:+:${PATH}}"
+}
+
 # install_perl_tools - Install Perl development toolchain (non-interactive)
 #
 # DESCRIPTION:
@@ -1058,9 +1085,13 @@ install_perl_tools() {
 		die "cpanminus installation failed" 18
 	fi
 
+	# Set up local::lib environment for Perl module installation
+	# cpanm will install to ~/perl5 when it can't write to system directories. These environment variables ensure modules and executables are discoverable both during installation and when running repo-lint verification.
+	setup_perl_environment
+
 	# Install Perl::Critic (non-interactive)
 	log "Installing Perl::Critic..."
-	if perl -MPerlCritic -e 1 2>/dev/null; then
+	if perl -MPerl::Critic -e 1 2>/dev/null; then
 		log "  ✓ Perl::Critic already installed"
 	else
 		# Non-interactive installation with default answers
@@ -1085,6 +1116,14 @@ install_perl_tools() {
 		fi
 	fi
 
+	# Verify perlcritic executable is available
+	if ! command -v perlcritic >/dev/null 2>&1; then
+		warn "  ✗ perlcritic executable not found in PATH"
+		failed_tools+=("perlcritic-executable")
+	else
+		log "  ✓ perlcritic executable found: $(command -v perlcritic)"
+	fi
+
 	# Check if any tools failed
 	if [ ${#failed_tools[@]} -gt 0 ]; then
 		warn "Failed to install Perl tools: ${failed_tools[*]}"
@@ -1097,12 +1136,17 @@ install_perl_tools() {
 			PPI)
 				warn "  - PPI: cpanm PPI"
 				;;
+			perlcritic-executable)
+				warn "  - perlcritic not in PATH. Add ~/perl5/bin to PATH:"
+				warn "    export PATH=\"\$HOME/perl5/bin:\$PATH\""
+				;;
 			esac
 		done
 		die "Perl toolchain installation incomplete" 18
 	fi
 
 	log "Perl toolchain installed successfully"
+	log "NOTE: Perl tools installed to ~/perl5/bin - ensure this is in your PATH"
 }
 
 # run_verification_gate - Run repo-lint verification gate
@@ -1110,14 +1154,17 @@ install_perl_tools() {
 # DESCRIPTION:
 #   Runs repo-lint check --ci to verify that all required tools are properly
 #   installed and functional. This is the final compliance gate.
+#   Accepts exit code 1 (VIOLATIONS) as success since it means tools work.
+#   Only fails on exit code 2 (MISSING_TOOLS) or other errors.
 #
 # INPUTS:
 #   None (assumes repo-lint is on PATH in activated venv)
+#   Globals: INSTALL_PERL (to set Perl PATH if needed)
 #
 # OUTPUTS:
 #   Exit Code:
-#     0   Verification passed
-#     19  Verification gate failed
+#     0   Verification passed (tools functional)
+#     19  Verification gate failed (missing tools)
 #
 #   Stdout:
 #     Verification progress and results
@@ -1128,6 +1175,11 @@ run_verification_gate() {
 	log ""
 	log "Running verification gate (repo-lint check --ci)..."
 	log "This validates that all required tools are functional"
+
+	# Set up Perl environment if Perl toolchain was installed
+	if [ "$INSTALL_PERL" = true ]; then
+		setup_perl_environment
+	fi
 
 	# Ensure we're using the venv repo-lint
 	local repo_lint_path
@@ -1140,12 +1192,30 @@ run_verification_gate() {
 
 	# Run verification gate with full output
 	log "Running: repo-lint check --ci"
-	if repo-lint check --ci; then
-		log "  ✓ Verification gate passed"
+
+	# Capture exit code
+	local exit_code=0
+	repo-lint check --ci || exit_code=$?
+
+	# Exit code 0: All checks passed
+	# Exit code 1: Violations found (tools work, but repo has lint issues - THIS IS OK for verification)
+	# Exit code 2: Missing tools (THIS IS FAILURE)
+	# Exit code 3+: Other errors (THIS IS FAILURE)
+
+	if [ $exit_code -eq 0 ]; then
+		log "  ✓ Verification gate passed (no violations)"
 		return 0
+	elif [ $exit_code -eq 1 ]; then
+		log "  ✓ Verification gate passed (tools functional, violations found)"
+		log "  Note: Repository has lint violations but all tools are working"
+		return 0
+	elif [ $exit_code -eq 2 ]; then
+		warn "  ✗ Verification gate failed: Missing tools"
+		warn "Some required tools are not installed or not on PATH"
+		warn "Review the output above for specific missing tools"
+		die "Verification gate failed: missing tools" 19
 	else
-		warn "  ✗ Verification gate failed"
-		warn "Some tools may be missing or non-functional"
+		warn "  ✗ Verification gate failed with exit code $exit_code"
 		warn "Review the output above for specific failures"
 		die "Verification gate failed" 19
 	fi
@@ -1282,6 +1352,20 @@ main() {
 	log ""
 	log "  source .venv/bin/activate"
 	log ""
+	if [ "$INSTALL_PERL" = true ]; then
+		log "For Perl tools (Perl::Critic, PPI), this script has configured a local::lib-style"
+		log "environment for the CURRENT shell, including:"
+		log "  PATH, PERL5LIB, PERL_LOCAL_LIB_ROOT, PERL_MB_OPT, PERL_MM_OPT"
+		log ""
+		log "In a NEW shell, the recommended way to restore the full Perl environment is to re-run:"
+		log ""
+		log "  scripts/bootstrap-repo-lint-toolchain.sh --install-perl"
+		log ""
+		log "If you prefer to configure Perl manually, you must at least:"
+		log "  - add \$HOME/perl5/bin to PATH, and"
+		log "  - set PERL5LIB (and any additional local::lib variables) consistently"
+		log ""
+	fi
 	log "OR run repo-lint with explicit path:"
 	log ""
 	log "  .venv/bin/repo-lint --help"
