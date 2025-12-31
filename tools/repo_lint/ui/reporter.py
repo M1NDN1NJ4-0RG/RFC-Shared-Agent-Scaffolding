@@ -283,9 +283,7 @@ class Reporter:
                 if self.ci_mode:
                     file_column_kwargs = {"no_wrap": False, "overflow": "fold"}
                 violations_table.add_column(
-                    "File",
-                    style=self._get_color("metadata") if not self.ci_mode else None,
-                    **file_column_kwargs
+                    "File", style=self._get_color("metadata") if not self.ci_mode else None, **file_column_kwargs
                 )
                 violations_table.add_column("Line", justify="right")
                 violations_table.add_column("Message")
