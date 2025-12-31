@@ -3,8 +3,9 @@
 #   Bootstrap the repo-lint toolchain in a local Python virtual environment.
 #   This script locates the repository root, creates a .venv if needed,
 #   installs repo-lint into that environment, verifies it is on PATH,
-#   and then runs repo-lint install (if supported) followed by
-#   repo-lint check --ci.
+#   runs repo-lint install to set up Python linting tools, installs additional
+#   external tools (shellcheck, shfmt, ripgrep, PowerShell, Perl modules), and
+#   validates bash linting functionality.
 #
 # USAGE:
 #   From anywhere inside the repository:

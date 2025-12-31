@@ -11,8 +11,12 @@
 #   - Repo root detection logic
 #   - Virtual environment creation
 #   - Installation target selection (repo root vs tools/repo_cli)
-#   - Error handling for missing tools
-#   - Exit code validation
+#   - Packaging metadata detection (pyproject.toml, setup.py, setup.cfg)
+#
+# NOTE:
+#   This test suite does NOT cover the external tool installation functionality
+#   (shellcheck, shfmt, ripgrep, PowerShell, PSScriptAnalyzer, Perl::Critic, PPI)
+#   added in later commits. Those require integration testing in actual environments.
 #
 # USAGE:
 #   ./test-bootstrap-repo-cli.sh
@@ -228,12 +232,12 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "repo-cli"
+name = "repo-lint"
 version = "0.0.1"
 EOF
-		# Mock repo-cli script
+		# Mock repo-lint script
 		mkdir -p .venv/bin
-		cat >.venv/bin/repo-cli <<'EOFSCRIPT'
+		cat >.venv/bin/repo-lint <<'EOFSCRIPT'
 #!/usr/bin/env bash
 case "${1:-}" in
   --help) exit 0 ;;
@@ -242,7 +246,7 @@ case "${1:-}" in
   *) exit 1 ;;
 esac
 EOFSCRIPT
-		chmod +x .venv/bin/repo-cli
+		chmod +x .venv/bin/repo-lint
 
 		# Check that venv directory would be created by script logic
 		# We're testing the conditional logic, not actually running the full script
