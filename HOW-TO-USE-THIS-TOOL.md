@@ -8,8 +8,17 @@ This guide covers installation, common commands, shell completion, and troublesh
 - [Basic Usage](#basic-usage)
 - [Common Commands](#common-commands)
 - [Shell Completion](#shell-completion)
+  - [Bash, Zsh, Fish](#bash-completion)
+  - [PowerShell (Windows)](#powershell-completion-windows)
 - [Troubleshooting](#troubleshooting)
+  - [Windows-Specific Issues](#windows-specific-issues)
 - [Advanced Usage](#advanced-usage)
+  - [Output Modes: Interactive vs CI](#output-modes-interactive-vs-ci)
+  - [Theme Customization](#theme-customization)
+  - [Custom Configuration](#custom-configuration)
+  - [Pre-Commit Hooks](#integrating-with-pre-commit-hooks)
+  - [CI/CD Integration](#cicd-integration)
+- [Getting Help](#getting-help)
 
 ---
 
@@ -219,6 +228,42 @@ _REPO_LINT_COMPLETE=fish_source repo-lint > ~/.config/fish/completions/repo-lint
 source ~/.config/fish/config.fish
 ```
 
+### PowerShell Completion (Windows)
+
+**For PowerShell 5.x (Built-in on Windows):**
+
+```powershell
+# Generate completion script
+$env:_REPO_LINT_COMPLETE = "powershell_source"
+repo-lint | Out-File -FilePath "$HOME\Documents\WindowsPowerShell\repo-lint-complete.ps1" -Encoding UTF8
+
+# Add to PowerShell profile
+if (!(Test-Path $PROFILE)) {
+    New-Item -Path $PROFILE -ItemType File -Force
+}
+Add-Content $PROFILE ". `"$HOME\Documents\WindowsPowerShell\repo-lint-complete.ps1`""
+
+# Reload profile
+. $PROFILE
+```
+
+**For PowerShell 7+ (Cross-Platform):**
+
+```powershell
+# Generate completion script
+$env:_REPO_LINT_COMPLETE = "powershell_source"
+repo-lint | Out-File -FilePath "$HOME\.config\powershell\repo-lint-complete.ps1" -Encoding UTF8
+
+# Add to PowerShell 7+ profile
+if (!(Test-Path $PROFILE)) {
+    New-Item -Path $PROFILE -ItemType File -Force
+}
+Add-Content $PROFILE ". `"$HOME\.config\powershell\repo-lint-complete.ps1`""
+
+# Reload profile
+. $PROFILE
+```
+
 ### Testing Completion
 
 After setting up completion, test it:
@@ -382,6 +427,98 @@ In CI workflows, ensure tools are installed before running repo-lint:
 - Use `--yes-i-know` with `--unsafe` in local environments
 - Read docs/contributing/ai-constraints.md before using unsafe mode
 
+### Windows-Specific Issues
+
+#### Issue: Rich output not displaying correctly in Command Prompt
+
+**Cause:** Windows Command Prompt has limited Unicode and color support.
+
+**Solution:**
+
+```powershell
+# Option 1: Use Windows Terminal (recommended)
+# Download from Microsoft Store or GitHub
+
+# Option 2: Use PowerShell instead of cmd.exe
+# PowerShell has better Unicode support
+
+# Option 3: Force CI mode for plain text output
+repo-lint check --ci
+```
+
+#### Issue: PowerShell completion not working
+
+**Cause:** Execution policy may block the completion script.
+
+**Solution:**
+
+```powershell
+# Check current execution policy
+Get-ExecutionPolicy
+
+# If Restricted, change to RemoteSigned (allows local scripts)
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# Then regenerate and load completion script
+$env:_REPO_LINT_COMPLETE = "powershell_source"
+repo-lint | Out-File -FilePath "$HOME\.config\powershell\repo-lint-complete.ps1" -Encoding UTF8
+. $PROFILE
+```
+
+#### Issue: "python: command not found" on Windows
+
+**Cause:** Python may be installed as `python3` or `py` instead of `python`.
+
+**Solution:**
+
+```powershell
+# Try different Python commands
+py -3 -m tools.repo_lint check
+python3 -m tools.repo_lint check
+
+# Or create an alias in PowerShell profile
+Set-Alias -Name python -Value py
+
+# Verify Python is in PATH
+$env:PATH -split ';' | Select-String python
+```
+
+#### Issue: Line ending differences (CRLF vs LF)
+
+**Cause:** Windows uses CRLF, Unix/Linux/Mac use LF. Git auto-conversion may conflict with linters.
+
+**Solution:**
+
+```bash
+# Configure Git to handle line endings correctly
+git config --global core.autocrlf true
+
+# For repo-lint to work correctly, ensure consistent line endings
+# Edit .gitattributes:
+* text=auto
+*.py text eol=lf
+*.sh text eol=lf
+*.ps1 text eol=crlf
+```
+
+#### Issue: Theme colors not appearing in PowerShell
+
+**Cause:** PowerShell may need color support enabled.
+
+**Solution:**
+
+```powershell
+# Enable ANSI color support in PowerShell (Windows 10+)
+# This is usually automatic, but if not:
+$env:TERM = "xterm-256color"
+
+# For PowerShell 7+, colors should work by default
+# For PowerShell 5.x, use Windows Terminal for best results
+
+# Alternative: Force CI mode for plain output
+repo-lint check --ci
+```
+
 ---
 
 ## Advanced Usage
@@ -462,6 +599,175 @@ export REPO_LINT_CI=1
 # Run with environment defaults
 repo-lint check
 ```
+
+### Output Modes: Interactive vs CI
+
+repo-lint provides two output modes optimized for different environments:
+
+#### Interactive Mode (Default)
+
+Used when running in a terminal (TTY). Features:
+- **Rich formatting** with colors, tables, and panels
+- **Icons** for status indicators (✓, ✗, ⚠️)
+- **Progress indicators** and spinners for long operations
+- **Styled help** output with syntax highlighting
+
+```bash
+# Interactive mode (automatic when running in terminal)
+repo-lint check
+
+# Example output:
+# ╭───────────────────── Linting Results ─────────────────────╮
+# │ Runner │ Status │ Files │ Violations │ Duration        │
+# ├────────┼────────┼───────┼────────────┼─────────────────┤
+# │ black  │ ✓ PASS │   142 │          0 │ 1.23s          │
+# │ ruff   │ ✗ FAIL │   142 │          3 │ 0.87s          │
+# ╰────────────────────────────────────────────────────────────╯
+```
+
+#### CI Mode
+
+Used in CI/CD environments. Features:
+- **Plain text** output without colors or formatting
+- **No icons** or progress indicators
+- **Stable, deterministic** output for log parsing
+- **Greppable** format for automated analysis
+
+```bash
+# Enable CI mode explicitly
+repo-lint check --ci
+
+# CI mode is also automatically detected when:
+# - CI environment variable is set (e.g., GitHub Actions, GitLab CI)
+# - STDOUT is not a TTY (output is redirected to file/pipe)
+
+# Example output:
+# Runner: black    Status: PASS   Files: 142   Violations: 0   Duration: 1.23s
+# Runner: ruff     Status: FAIL   Files: 142   Violations: 3   Duration: 0.87s
+```
+
+**When to use CI mode:**
+- GitHub Actions, GitLab CI, Jenkins, or other CI/CD
+- Redirecting output to files: `repo-lint check > results.txt`
+- Scripting and automation where stable output is needed
+- Windows Command Prompt (if Rich rendering has issues)
+
+### Theme Customization
+
+repo-lint uses a YAML-based theme system for customizing UI appearance.
+
+#### Default Theme
+
+The default theme is defined in `conformance/repo-lint/repo-lint-ui-theme.yaml`:
+
+```yaml
+---
+config_type: repo-lint-ui-theme
+version: 1.0.0
+
+interactive:
+  colors:
+    primary: "cyan"
+    success: "green"
+    failure: "red"
+    warning: "yellow"
+    info: "blue"
+    metadata: "dim"
+  
+  icons:
+    pass: "✓"
+    fail: "✗"
+    warn: "⚠️"
+    skip: "○"
+    running: "▶"
+  
+  borders:
+    style: "rounded"  # Options: ascii, rounded, heavy, double
+    color: "cyan"
+
+ci:
+  icons_enabled: false  # No icons in CI mode
+  colors_enabled: false  # No colors in CI mode
+...
+```
+
+#### Custom Theme
+
+Create a custom theme file anywhere in your repository:
+
+```bash
+# Create custom theme
+mkdir -p ~/.config/repo-lint
+cat > ~/.config/repo-lint/my-theme.yaml << 'EOF'
+---
+config_type: repo-lint-ui-theme
+version: 1.0.0
+
+interactive:
+  colors:
+    primary: "magenta"
+    success: "bright_green"
+    failure: "bright_red"
+    warning: "bright_yellow"
+    info: "bright_blue"
+  
+  icons:
+    pass: "✅"
+    fail: "❌"
+    warn: "⚠️"
+  
+  borders:
+    style: "heavy"
+    color: "magenta"
+
+ci:
+  icons_enabled: false
+  colors_enabled: false
+...
+EOF
+```
+
+#### Using Custom Themes
+
+**Method 1: Command-line flag**
+
+```bash
+repo-lint --theme ~/.config/repo-lint/my-theme.yaml check
+```
+
+**Method 2: Environment variable**
+
+```bash
+export REPO_LINT_UI_THEME=~/.config/repo-lint/my-theme.yaml
+repo-lint check
+```
+
+**Method 3: Per-command override**
+
+```bash
+# Use custom theme for this command only
+REPO_LINT_UI_THEME=/path/to/theme.yaml repo-lint check
+```
+
+**Theme Precedence (highest to lowest):**
+1. `--theme` flag
+2. `REPO_LINT_UI_THEME` environment variable
+3. User theme: `~/.config/repo-lint/repo-lint-ui-theme.yaml`
+4. Repository theme: `conformance/repo-lint/repo-lint-ui-theme.yaml`
+5. Built-in default theme
+
+#### Available Color Names
+
+- Standard: `black`, `red`, `green`, `yellow`, `blue`, `magenta`, `cyan`, `white`
+- Bright: `bright_black`, `bright_red`, `bright_green`, `bright_yellow`, `bright_blue`, `bright_magenta`, `bright_cyan`, `bright_white`
+- Special: `dim` (dimmed text), `bold` (bold text)
+
+#### Available Border Styles
+
+- `ascii` - Simple ASCII characters (`+`, `-`, `|`)
+- `rounded` - Rounded corners (╭, ╮, ╰, ╯)
+- `heavy` - Heavy borders (┏, ┓, ┗, ┛)
+- `double` - Double-line borders (╔, ╗, ╚, ╝)
 
 ### Forensics and Debugging
 

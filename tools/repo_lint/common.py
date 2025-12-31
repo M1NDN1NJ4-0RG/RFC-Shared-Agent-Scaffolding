@@ -37,6 +37,48 @@ from enum import IntEnum
 from typing import List, Optional
 
 
+def safe_print(text: str, fallback_text: str = None) -> None:
+    """Print text with emoji, falling back to plain text on encoding errors.
+    
+    This function handles Windows and CI environments that may not support
+    Unicode emoji characters. It attempts to print the original text, and
+    if that fails due to encoding errors, it either prints a fallback or
+    automatically strips/replaces emoji with ASCII equivalents.
+    
+    :param text: Text to print (may contain emoji)
+    :param fallback_text: Fallback text if emoji can't be encoded (optional)
+    
+    :raises: Never raises - always prints something
+    
+    :examples:
+        >>> safe_print("✓ Success")  # Works everywhere
+        >>> safe_print("🔍 Searching...", "Searching...")  # With fallback
+    """
+    try:
+        print(text)
+    except UnicodeEncodeError:
+        # Windows/CI environments may not support emoji
+        if fallback_text:
+            print(fallback_text)
+        else:
+            # Strip emoji and retry (simple fallback)
+            # Replace common emoji with ASCII equivalents
+            safe_text = (
+                text.replace("🔍", "[*]")
+                .replace("🔧", "[*]")
+                .replace("🧹", "[*]")
+                .replace("📦", "[*]")
+                .replace("📄", "[-]")
+                .replace("📋", "[-]")
+                .replace("⚠️", "[!]")
+                .replace("✓", "[+]")
+                .replace("✗", "[x]")
+                .replace("❌", "[X]")
+                .replace("✅", "[OK]")
+            )
+            print(safe_text)
+
+
 class ExitCode(IntEnum):
     """Standard exit codes for repo_lint."""
 

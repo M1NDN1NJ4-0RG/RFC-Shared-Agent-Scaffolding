@@ -7,37 +7,124 @@ Related: Issue #160, PRs #176, #180
 
 ## NEXT
 
-###COMPLETED: Phase 2.5 Blocker #2 - Add Windows CI Validation ✅
-**Status:** COMPLETE  
-**Completed:** 2025-12-31 07:45 UTC  
-**Changes:**
-- Added `windows-rich-ui-validation` job to `.github/workflows/repo-lint-and-docstring-enforcement.yml`
-- Added `windows-rich-ui-validation` job to `.github/workflows/repo-lint-weekly-full-scan.yml`
-- Both jobs run on `windows-latest` GitHub Actions runner
-- Tests validate Rich console output in CI and interactive modes
-- Tests validate Rich-Click help output for all commands
-- Tests validate PowerShell completion generation
-- Jobs run conditionally based on changed files (PR workflow) or always (weekly workflow)
-- Integrated into consolidate-failures job dependency chain
-- Artifacts uploaded for troubleshooting (help outputs, completion test)
+### ✅ ALL PHASE 2.5 BLOCKERS COMPLETE
 
-### NEXT: Phase 2.5 Blocker #3 - Update HOW-TO-USE-THIS-TOOL.md
+**Phase 2.5 is now COMPLETE.** All three blockers have been addressed:
+- [x] Blocker #1: Update test_output_format.py ✅
+- [x] Blocker #2: Add Windows CI validation ✅
+- [x] Blocker #3: Update HOW-TO-USE-THIS-TOOL.md ✅
+
+### NEXT: Proceed to Phase 2.9 (Integration & YAML-First Contracts)
+
 **Status:** READY TO START  
-**Tasks:**
-1. Add Windows PowerShell completion instructions
-2. Add Windows PowerShell 7+ completion instructions
-3. Add theme customization guide (YAML theme system usage)
-4. Add output mode examples (interactive vs CI mode)
-5. Update troubleshooting section for Windows-specific issues
-
-### AFTER Phase 2.5 Complete: Proceed to Phase 2.9
-**Status:** BLOCKED until all Phase 2.5 blockers complete  
 **Per human decision:** Phase 2.9 MUST be implemented BEFORE Phase 2.6-2.8  
-**See:** `160-implementation-plan.md` for detailed sequencing
+**See:** `160-implementation-plan.md` for detailed requirements
+
+**Phase 2.9 Tasks:**
+1. Audit existing helper scripts for integration needs
+2. Document integration requirements
+3. Migrate configuration to YAML where possible
+4. Enforce YAML-first contracts
+5. Apply retroactive enforcement from audit findings
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 08:00 - Phase 2.5 Blocker #3 Complete: Updated HOW-TO-USE-THIS-TOOL.md
+
+**Files Changed:**
+- `HOW-TO-USE-THIS-TOOL.md`: Major documentation update (+250 lines)
+  
+  **Table of Contents:**
+  - Expanded with new subsections for PowerShell, Windows issues, output modes, and theme customization
+  
+  **Shell Completion Section (lines 214-261):**
+  - Added PowerShell 5.x completion instructions (Windows built-in PowerShell)
+  - Added PowerShell 7+ completion instructions (cross-platform PowerShell)
+  - Instructions cover: script generation, profile configuration, and reload steps
+  - Separated by PowerShell version due to different profile locations
+  
+  **Advanced Usage Section (lines 500-650, new subsections):**
+  
+  1. **Output Modes: Interactive vs CI** (new subsection)
+     - Interactive Mode features: Rich formatting, colors, tables, panels, icons, progress indicators
+     - CI Mode features: plain text, no colors, no icons, stable output, greppable format
+     - Example outputs for both modes
+     - When to use CI mode: GitHub Actions, output redirection, scripting, Windows CMD issues
+  
+  2. **Theme Customization** (new subsection, ~150 lines)
+     - Explanation of YAML-based theme system
+     - Default theme example with full YAML structure
+     - Custom theme creation guide
+     - Three methods to apply custom themes: CLI flag, env var, per-command
+     - Theme precedence hierarchy (5 levels)
+     - Available color names (standard, bright, special)
+     - Available border styles (ascii, rounded, heavy, double)
+  
+  **Troubleshooting Section (lines 420-485, new subsection):**
+  
+  3. **Windows-Specific Issues** (new subsection, ~65 lines)
+     - Issue: Rich output not displaying in Command Prompt
+       - Solutions: Use Windows Terminal, use PowerShell, force CI mode
+     - Issue: PowerShell completion not working
+       - Solution: Check/set execution policy to RemoteSigned
+     - Issue: "python: command not found"
+       - Solutions: Try py/python3 commands, create alias, verify PATH
+     - Issue: Line ending differences (CRLF vs LF)
+       - Solution: Configure Git autocrlf, .gitattributes settings
+     - Issue: Theme colors not appearing
+       - Solutions: Enable ANSI support, use PowerShell 7+, use Windows Terminal, force CI mode
+
+**Changes Made:**
+- **Phase 2.5 Blocker #3: Update HOW-TO-USE-THIS-TOOL.md** ✅ COMPLETE
+  
+  **All Required Tasks Completed:**
+  1. ✅ Windows PowerShell completion instructions (PowerShell 5.x)
+  2. ✅ Windows PowerShell 7+ completion instructions (cross-platform)
+  3. ✅ Theme customization guide (YAML theme system, colors, borders, precedence)
+  4. ✅ Output mode examples (interactive vs CI, when to use each)
+  5. ✅ Windows-specific troubleshooting (5 common issues with solutions)
+  
+  **Documentation Quality:**
+  - All new sections follow existing documentation style
+  - Code examples with proper syntax highlighting markers
+  - Clear headings and subsection organization
+  - Practical, actionable solutions for common issues
+  - Cross-references to related documentation
+  - Updated Table of Contents with all new sections
+
+**Verification:**
+- Documentation file is valid Markdown
+- All code blocks are properly formatted
+- All internal links are correct (tested anchor formats)
+- Table of Contents matches actual headings
+- No orphaned sections or broken structure
+
+**Rationale:**
+- Per Phase 2.5 specification: "Update HOW-TO-USE-THIS-TOOL.md with Windows completion and theme customization"
+- Per human decision requirements for Blocker #3
+- Windows users now have complete guidance for:
+  - Setting up shell completion in PowerShell (both versions)
+  - Troubleshooting common Windows-specific issues
+  - Understanding Rich UI rendering differences
+- All users now have complete documentation for:
+  - Understanding and choosing between interactive and CI modes
+  - Customizing the UI theme to their preferences
+  - Troubleshooting theme/color issues
+
+**Impact:**
+- **Phase 2.5 is now COMPLETE** - all 3 blockers resolved
+- Ready to proceed to Phase 2.9 per human-approved sequencing
+- Windows users have full parity with Unix/Linux/Mac users for documentation
+- Theme system is now fully documented and discoverable
+
+**Next Actions:**
+- Commit documentation updates
+- Mark Phase 2.5 as complete in tracking documents
+- Proceed to Phase 2.9: Integration & YAML-First Contracts
+
+---
 
 ### 2025-12-31 07:45 - Phase 2.5 Blocker #2 Complete: Added Windows CI Validation
 

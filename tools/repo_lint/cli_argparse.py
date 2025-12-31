@@ -42,7 +42,7 @@
 import argparse
 import sys
 
-from tools.repo_lint.common import ExitCode, MissingToolError
+from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
 from tools.repo_lint.install.install_helpers import (
     cleanup_repo_local,
     get_venv_path,
@@ -229,7 +229,7 @@ def cmd_check(args: argparse.Namespace) -> int:
     """
     use_json = getattr(args, "json", False)
     if not use_json:
-        print("🔍 Running repository linters and formatters...")
+        safe_print("🔍 Running repository linters and formatters...", "Running repository linters and formatters...")
         print("")
 
     return _run_all_runners(args, "Linting", lambda runner: runner.check())
@@ -276,10 +276,10 @@ def cmd_fix(args: argparse.Namespace) -> int:
     if not use_json:
         if unsafe_mode:
             print("⚠️  DANGER: Running in UNSAFE FIX MODE")
-            print("⚠️  Review the generated patch/log before committing!")
+            safe_print("⚠️  Review the generated patch/log before committing!", "WARNING: Review the generated patch/log before committing!")
             print("")
         else:
-            print("🔧 Running formatters in fix mode...")
+            safe_print("🔧 Running formatters in fix mode...", "Running formatters in fix mode...")
             print("")
 
     # Load and validate auto-fix policy
@@ -372,7 +372,7 @@ def cmd_install(args: argparse.Namespace) -> int:
     """
     # Handle cleanup mode
     if args.cleanup:
-        print("🧹 Cleaning up repo-local tool installations...")
+        safe_print("🧹 Cleaning up repo-local tool installations...", "Cleaning up repo-local tool installations...")
         print("")
 
         success, messages = cleanup_repo_local(verbose=args.verbose)
@@ -382,14 +382,14 @@ def cmd_install(args: argparse.Namespace) -> int:
 
         print("")
         if success:
-            print("✓ Cleanup complete")
+            safe_print("✓ Cleanup complete", "Cleanup complete")
             return ExitCode.SUCCESS
         else:
-            print("✗ Cleanup completed with errors")
+            safe_print("✗ Cleanup completed with errors", "Cleanup completed with errors")
             return ExitCode.INTERNAL_ERROR
 
     # Normal install mode
-    print("📦 Installing linting tools...")
+    safe_print("📦 Installing linting tools...", "Installing linting tools...")
     print("")
 
     # Install Python tools (auto-installable)
