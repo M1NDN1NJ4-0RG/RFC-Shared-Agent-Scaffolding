@@ -71,7 +71,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
     - [ ] Otherwise check if `pyproject.toml` exists → install from repo root
     - [ ] Exit with code 12 if no valid install target found
   - [ ] Run `pip install -e <target>` to install repo-lint in editable mode
-  - [ ] Verify installation by checking for `repo-lint` or `repo-cli` command
+  - [ ] Verify installation by checking for `repo-lint` command
   - [ ] Exit with code 13 if repo-lint not found on PATH after install
 - [ ] Add logging: print install target and installation progress
 - [ ] Handle installation failures with clear error messages
@@ -88,7 +88,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 
 #### Sub-items:
 - [ ] Implement `verify_repo_lint()` function:
-  - [ ] Check `which repo-lint` (or `repo-cli`) finds the command
+  - [ ] Check `which repo-lint` finds the command
   - [ ] Run `repo-lint --help` and verify exit code 0
   - [ ] Exit with code 14 if repo-lint exists but `--help` fails
   - [ ] Print repo-lint path and version if available
@@ -352,7 +352,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 **Objective:** Create comprehensive external documentation
 
 #### Sub-items:
-- [ ] Create `docs/tools/repo-cli/bootstrap-bash.md`:
+- [ ] Create `docs/tools/repo-lint/bootstrap-bash.md`:
   - [ ] Overview of Bash bootstrapper vs Rust bootstrapper
   - [ ] How to run the bootstrapper
   - [ ] What gets installed
@@ -368,9 +368,10 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Update `README.md` (if applicable):
   - [ ] Add "Quick Start" section with bootstrapper usage
   - [ ] Link to detailed documentation
-- [ ] Update `docs/repo-cli-bootstrapper.md`:
+- [ ] Update `docs/repo-cli-bootstrapper.md` (existing Rust bootstrapper docs):
   - [ ] Add section comparing Bash vs Rust implementations
   - [ ] Clarify when to use which implementation
+  - [ ] Note: This file documents the Rust `bootstrap-repo-cli` tool which predates the naming clarification
 
 **Acceptance:**
 - Documentation is comprehensive and easy to follow
@@ -588,7 +589,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - Issue #209: This epic
 
 ### Related Documentation
-- `docs/repo-cli-bootstrapper.md`: Rust bootstrapper documentation
+- `docs/repo-cli-bootstrapper.md`: Existing Rust bootstrapper documentation (predates naming clarification)
 - `.github/copilot-instructions.md`: Copilot agent guidelines
 - `tools/repo_lint/README.md`: repo-lint tool documentation
 - `pyproject.toml`: Python dependencies and tool configuration

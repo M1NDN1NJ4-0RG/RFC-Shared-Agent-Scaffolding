@@ -7,7 +7,7 @@
 
 ## Problem Statement
 Copilot agents repeatedly fail the repository's mandatory "repo-lint before commit" rules due to environment/tooling drift:
-- `repo-cli` (repo-lint) is not installed or not on PATH
+- `repo-lint` is not installed or not on PATH
 - Required linters aren't installed (black/ruff/pylint/shellcheck/shfmt/etc.)
 - CI failures become non-actionable because agents can't reproduce checks locally
 - Agents stall asking for "exact install commands" instead of fixing issues
@@ -15,8 +15,8 @@ Copilot agents repeatedly fail the repository's mandatory "repo-lint before comm
 ## Goal
 Create a single, deterministic bootstrapper script that Copilot can run at the start of every session to:
 1. Ensure required tools are installed/available
-2. Install and activate the repo's `repo-cli`/repo-lint Python package correctly
-3. Verify `repo-cli` is on PATH and runnable
+2. Install and activate the repo's `repo-lint` Python package correctly
+3. Verify `repo-lint` is on PATH and runnable
 4. Verify repo-lint checks can run locally in a predictable way
 
 ## Key Deliverables
@@ -25,9 +25,9 @@ Create a single, deterministic bootstrapper script that Copilot can run at the s
    - Locates repo root from any subdirectory
    - Creates/uses `.venv/` for repo-lint installation
    - Installs/verifies all required tools
-   - Runs final verification gate (`repo-cli check --ci`)
+   - Runs final verification gate (`repo-lint check --ci`)
 
-2. **Documentation**: `docs/tools/repo-cli/bootstrapper.md` (or similar)
+2. **Documentation**: `docs/tools/repo-lint/bootstrapper.md` (or similar)
    - How to run the bootstrapper locally
    - Session-start requirements for Copilot
    - Where venv lives and how PATH is managed
@@ -69,12 +69,12 @@ The bootstrapper must install or verify:
 - [ ] `Perl::Critic`
 - [ ] `PPI`
 
-**repo-cli:**
-- [ ] Install `repo-cli` package into `.venv/`
+**repo-lint:**
+- [ ] Install `repo-lint` package into `.venv/`
 - [ ] Activate venv for current shell session
-- [ ] Verify `repo-cli --help` works
-- [ ] Run `repo-cli install` to install additional dependencies
-- [ ] Run `repo-cli check --ci` as verification gate
+- [ ] Verify `repo-lint --help` works
+- [ ] Run `repo-lint install` to install additional dependencies
+- [ ] Run `repo-lint check --ci` as verification gate
 
 ## Exit Code Requirements
 The bootstrapper must use stable, documented exit codes:
@@ -87,10 +87,10 @@ The bootstrapper must use stable, documented exit codes:
 - [ ] Running `scripts/bootstrap-repo-lint-toolchain.sh` from any subdirectory:
   - [ ] Locates repo root
   - [ ] Creates/uses `.venv/`
-  - [ ] Installs `repo-cli`/repo-lint package
-  - [ ] Verifies `repo-cli --help` works
+  - [ ] Installs `repo-lint` package
+  - [ ] Verifies `repo-lint --help` works
   - [ ] Installs/verifies all required tools
-  - [ ] Runs `repo-cli check --ci` successfully (exit 0) on clean repo
+  - [ ] Runs `repo-lint check --ci` successfully (exit 0) on clean repo
 - [ ] Script is idempotent
 - [ ] Clear documentation exists
 - [ ] New dependencies reflected in CI workflows

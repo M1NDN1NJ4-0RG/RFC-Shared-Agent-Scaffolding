@@ -6,12 +6,79 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
-- No immediate next steps - planning phase complete
-- Await human direction on whether to proceed with implementation or adjust plan
+- No immediate next steps - awaiting human direction on implementation
+- Terminology correction applied per comment #3702811579
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 19:54 - Corrected terminology from repo-cli to repo-lint
+**Files Changed:**
+- `docs/ai-prompt/209/209-summary.md`: Updated all `repo-cli` references to `repo-lint`
+- `docs/ai-prompt/209/209-issue-overview.md`: Updated all `repo-cli` references to `repo-lint`
+- `docs/ai-prompt/209/209-implementation-plan.md`: Updated all `repo-cli` references to `repo-lint`
+- `docs/ai-prompt/209/209-next-steps.md`: Updated journal entry
+
+**Changes Made:**
+Addressed comment #3702811579 from @m1ndn1nj4 clarifying that:
+- The tool is `repo-lint` (not `repo-cli`)
+- All references to `repo-cli` in planning docs needed to be updated to `repo-lint`
+- The bootstrapper sets up the environment so `repo-lint` tool is fully usable with all arguments
+
+**Specific Updates:**
+1. **209-summary.md:**
+   - Line 10: Changed "`repo-cli` (repo-lint)" → "`repo-lint`"
+   - Line 18: Changed "`repo-cli`/repo-lint Python package" → "`repo-lint` Python package"
+   - Line 19: Changed "`repo-cli` is on PATH" → "`repo-lint` is on PATH"
+   - Line 28: Changed "`repo-cli check --ci`" → "`repo-lint check --ci`"
+   - Line 30: Changed "docs/tools/repo-cli/" → "docs/tools/repo-lint/"
+   - Lines 72-77: Changed all `repo-cli` references in checklist to `repo-lint`
+   - Lines 90-93: Changed acceptance criteria references
+
+2. **209-issue-overview.md:**
+   - Used sed to replace all `repo-cli` → `repo-lint` throughout
+   - Line 68: Changed "`repo-cli` (repo-lint)" → "`repo-lint`"
+   - Line 78: Fixed duplicate to just "`repo-lint`"
+   - Lines 121-132: Updated R3 and R4 requirements sections
+
+3. **209-implementation-plan.md:**
+   - Line 74: Changed "checking for `repo-lint` or `repo-cli`" → "checking for `repo-lint`"
+   - Line 91: Changed "`which repo-lint` (or `repo-cli`)" → "`which repo-lint`"
+   - Line 355: Changed "docs/tools/repo-cli/" → "docs/tools/repo-lint/"
+   - Lines 371-373: Updated with note about existing `repo-cli-bootstrapper.md` file
+   - Line 591: Added clarification note about existing Rust docs
+
+**Rationale:**
+The canonical tool name in this repository is `repo-lint` as defined in `pyproject.toml`:
+```toml
+[project.scripts]
+repo-lint = "tools.repo_lint.cli:main"
+```
+
+The only remaining references to "repo-cli" are:
+- `docs/repo-cli-bootstrapper.md` - existing file documenting the Rust `bootstrap-repo-cli` tool
+- References to that existing file in the plan
+These are appropriate as they refer to legacy/existing artifacts that predate the naming clarification.
+
+**Verification:**
+- Searched all three planning files for remaining `repo-cli` references
+- Only legitimate references remain (to existing file/tool names)
+- All functional/requirement references now correctly use `repo-lint`
+
+**Commands Run:**
+```bash
+sed -i 's/repo-cli/repo-lint/g' docs/ai-prompt/209/209-issue-overview.md
+sed -i "s/\`repo-lint\`\/repo-lint/\`repo-lint\`/g" docs/ai-prompt/209/209-issue-overview.md
+grep -r "repo-cli" docs/ai-prompt/209/  # verification
+git diff --stat  # confirm changes
+```
+
+**Follow-ups:**
+- Ready to proceed with implementation using correct `repo-lint` terminology
+- Will reply to comment #3702811579 confirming correction
+
+---
+
 ### 2025-12-31 19:47 - Planning phase complete - all deliverables created
 **Files Changed:**
 - `docs/ai-prompt/209/209-next-steps.md`: Created and updated AI journal

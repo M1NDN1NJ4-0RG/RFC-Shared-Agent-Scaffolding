@@ -65,7 +65,7 @@ Related: Issue #209
 
 ## Problem / Why This Exists
 Copilot repeatedly fails the repository’s mandatory “repo-lint before commit” rules due to environment/tooling drift:
-- `repo-cli` (repo-lint) is not installed / not on PATH
+- `repo-lint` is not installed / not on PATH
 - required linters aren’t installed (black/ruff/pylint/etc.)
 - CI failures become non-actionable because the agent can’t reproduce checks locally
 - the agent then stalls asking for “exact install commands” instead of fixing issues
@@ -75,8 +75,8 @@ This repository already treats tooling compliance as mandatory. The missing piec
 ## Goal
 Add a **Repo-Lint Toolchain Bootstrapper** that Copilot can run at session start to:
 1) Ensure required tools are installed/available
-2) Install and activate the repo’s `repo-cli`/repo-lint Python package correctly
-3) Verify `repo-cli` is on PATH and runnable
+2) Install and activate the repo’s `repo-lint` Python package correctly
+3) Verify `repo-lint` is on PATH and runnable
 4) Verify repo-lint checks can run locally in a predictable way
 
 This is designed specifically to prevent future “missing tools are a blocker” compliance failures.
@@ -118,18 +118,18 @@ The bootstrapper must install or verify availability of:
 - `Perl::Critic`
 - `PPI`
 
-### R3 — repo-cli / repo-lint activation (MANDATORY)
+### R3 — repo-lint / repo-lint activation (MANDATORY)
 After tool verification/installation, the bootstrapper must:
-- Install `repo-cli` (repo-lint package) into a Python venv owned by the repo (e.g. `.venv/`)
+- Install `repo-lint` (repo-lint package) into a Python venv owned by the repo (e.g. `.venv/`)
 - Activate that venv for the current shell session
-- Ensure `repo-cli` (and/or `repo-lint`, depending on canonical naming) is on PATH and runnable:
-  - `repo-cli --help` must succeed
+- Ensure `repo-lint` (and/or `repo-lint`, depending on canonical naming) is on PATH and runnable:
+  - `repo-lint --help` must succeed
 
-If the repo provides a `repo-cli install` command to install dependencies, the bootstrapper must run it.
+If the repo provides a `repo-lint install` command to install dependencies, the bootstrapper must run it.
 
 ### R4 — Verification gate (MANDATORY)
 At the end, the bootstrapper must run a minimal verification gate and fail non-zero if it doesn’t pass:
-- `repo-cli check --ci`  (or a narrower run if needed for speed, but default should be full gate)
+- `repo-lint check --ci`  (or a narrower run if needed for speed, but default should be full gate)
 
 If the verification fails due to missing tools, that is treated as bootstrap failure and must clearly list missing tools.
 
@@ -146,7 +146,7 @@ Add a short doc explaining:
 - where the venv lives and how PATH is managed
 
 Preferred doc location:
-- `docs/tools/repo-cli/bootstrapper.md` (or repository’s existing docs structure)
+- `docs/tools/repo-lint/bootstrapper.md` (or repository’s existing docs structure)
 
 ### R7 — Tests (as applicable)
 If feasible, add lightweight tests to validate:
@@ -173,10 +173,10 @@ No “out of scope” behavior. The bootstrapper exists specifically to enforce 
 - [ ] Running `scripts/bootstrap-repo-lint-toolchain.sh` from any subdirectory inside the repo:
   - locates repo root
   - creates/uses `.venv/`
-  - installs `repo-cli`/repo-lint package
-  - verifies `repo-cli --help` works
+  - installs `repo-lint` package
+  - verifies `repo-lint --help` works
   - installs/verifies required tools listed above
-  - runs `repo-cli check --ci` successfully (exit 0) on a clean repo
+  - runs `repo-lint check --ci` successfully (exit 0) on a clean repo
 - [ ] Script is idempotent and can be run multiple times without breaking state
 - [ ] Clear docs exist and are linked from a relevant README/CONTRIBUTING location
 - [ ] Any new dependencies required by the bootstrapper are reflected in CI workflows that depend on them
