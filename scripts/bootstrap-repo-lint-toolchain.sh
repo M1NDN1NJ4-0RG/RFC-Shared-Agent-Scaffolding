@@ -1005,6 +1005,33 @@ install_powershell_tools() {
 	log "PowerShell toolchain installed successfully"
 }
 
+# setup_perl_environment - Set up Perl local::lib environment variables
+#
+# DESCRIPTION:
+#   Exports environment variables required for Perl modules installed to ~/perl5
+#   via cpanm local::lib. This function is called by install_perl_tools during
+#   installation and by run_verification_gate before running repo-lint.
+#
+# INPUTS:
+#   None
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   Environment variables exported
+#
+#   Environment:
+#     Exports PERL_LOCAL_LIB_ROOT, PERL_MB_OPT, PERL_MM_OPT, PERL5LIB, PATH
+#
+# EXAMPLES:
+#   setup_perl_environment
+setup_perl_environment() {
+	export PERL_LOCAL_LIB_ROOT="$HOME/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"
+	export PERL_MB_OPT="--install_base \"$HOME/perl5\""
+	export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
+	export PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
+	export PATH="$HOME/perl5/bin${PATH:+:${PATH}}"
+}
+
 # install_perl_tools - Install Perl development toolchain (non-interactive)
 #
 # DESCRIPTION:
@@ -1060,11 +1087,7 @@ install_perl_tools() {
 
 	# Set up local::lib environment for Perl module installation
 	# cpanm will install to ~/perl5 when it can't write to system directories
-	export PERL_LOCAL_LIB_ROOT="$HOME/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"
-	export PERL_MB_OPT="--install_base \"$HOME/perl5\""
-	export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
-	export PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
-	export PATH="$HOME/perl5/bin${PATH:+:${PATH}}"
+	setup_perl_environment
 
 	# Install Perl::Critic (non-interactive)
 	log "Installing Perl::Critic..."
@@ -1155,11 +1178,7 @@ run_verification_gate() {
 
 	# Set up Perl environment if Perl toolchain was installed
 	if [ "$INSTALL_PERL" = true ]; then
-		export PERL_LOCAL_LIB_ROOT="$HOME/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"
-		export PERL_MB_OPT="--install_base \"$HOME/perl5\""
-		export PERL_MM_OPT="INSTALL_BASE=$HOME/perl5"
-		export PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
-		export PATH="$HOME/perl5/bin${PATH:+:${PATH}}"
+		setup_perl_environment
 	fi
 
 	# Ensure we're using the venv repo-lint
