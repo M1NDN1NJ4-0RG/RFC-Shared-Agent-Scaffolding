@@ -59,12 +59,92 @@ sys.path.insert(0, str(repo_root))
 from tools.repo_lint.install.install_helpers import (  # noqa: E402
     cleanup_repo_local,
     create_venv,
+    get_repo_root,
     get_tools_path,
     get_venv_path,
     install_python_tools,
     venv_exists,
 )
 from tools.repo_lint.install.version_pins import PIP_VERSION, PYTHON_TOOLS  # noqa: E402
+
+
+class TestRepoRootDetection(unittest.TestCase):
+    """Test repository root detection functions.
+
+    :Purpose:
+        Validates get_repo_root() behavior with and without .git directory.
+    """
+
+    @patch("pathlib.Path.cwd")
+    def test_get_repo_root_finds_git_directory(self, mock_cwd):
+        """Test get_repo_root returns repo root when .git exists.
+
+        :Purpose:
+            Verify normal operation when .git directory is found
+
+        :param mock_cwd: Mocked Path.cwd
+        """
+        # Setup: cwd is /home/user/project/subdir (actual Git repo)
+        # This test runs in a real Git repo, so it should find .git
+        import tempfile
+        import os
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Create a fake .git directory
+            git_dir = Path(tmpdir) / ".git"
+            git_dir.mkdir()
+
+            # Mock cwd to return tmpdir
+            mock_cwd.return_value = Path(tmpdir)
+
+            root = get_repo_root()
+            self.assertEqual(root, Path(tmpdir))
+
+    @patch("pathlib.Path.cwd")
+    def test_get_repo_root_fallback_when_no_git(self, mock_cwd):
+        """Test get_repo_root returns cwd when .git not found.
+
+        :Purpose:
+            Verify fallback behavior for non-Git directories
+
+        :param mock_cwd: Mocked Path.cwd
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Don't create .git directory
+            mock_cwd.return_value = Path(tmpdir)
+
+            root = get_repo_root()
+            # Should fall back to cwd when .git not found
+            self.assertEqual(root, Path(tmpdir))
+
+    @patch("pathlib.Path.cwd")
+    def test_get_repo_root_from_nested_directory(self, mock_cwd):
+        """Test get_repo_root walks up directory tree correctly.
+
+        :Purpose:
+            Verify search traverses parent directories
+
+        :param mock_cwd: Mocked Path.cwd
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # Create nested directories a/b/c
+            nested_dir = Path(tmpdir) / "a" / "b" / "c"
+            nested_dir.mkdir(parents=True)
+
+            # Create .git at the root
+            git_dir = Path(tmpdir) / ".git"
+            git_dir.mkdir()
+
+            # Mock cwd to return nested directory
+            mock_cwd.return_value = nested_dir
+
+            root = get_repo_root()
+            # Should find .git at tmpdir, not at nested_dir
+            self.assertEqual(root, Path(tmpdir))
 
 
 class TestVenvHelpers(unittest.TestCase):

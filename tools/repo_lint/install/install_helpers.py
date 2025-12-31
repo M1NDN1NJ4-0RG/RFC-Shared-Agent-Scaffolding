@@ -47,9 +47,9 @@ def get_repo_root() -> Path:
 
     :returns: Path to repository root (or cwd if .git not found)
     """
-    # Start from current file's directory
-    current = Path(__file__).resolve().parent
-    start_dir = Path.cwd()
+    # Start from current working directory (consistent with find_repo_root)
+    current = Path.cwd().resolve()
+    start_dir = current
 
     # Walk up until we find .git directory
     while current != current.parent:
@@ -57,7 +57,7 @@ def get_repo_root() -> Path:
             return current
         current = current.parent
 
-    # Fallback: return current working directory if .git not found
+    # Fallback: return starting directory if .git not found
     return start_dir
 
 
