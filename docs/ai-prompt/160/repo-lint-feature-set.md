@@ -45,7 +45,6 @@ When `--tool <TOOL>` is requested and the tool is not available:
 - If multiple tools are requested and only some are missing:
   - By default: fail the run (CI-safe)
   - Optional (nice-to-have): a `--skip-missing-tools` flag that continues running available tools but still prints a missing-tools summary and returns non-zero.
-
 ### Fix-mode Safety (Mandatory)
 
 Fixing should be safe and predictable.
@@ -86,39 +85,60 @@ We need a stable way to capture output for humans and CI artifacts.
 Add these flags to `repo-lint check` and `repo-lint fix`:
 
 - `--format <FMT>`
-  - Supported values MUST include: `rich` (TTY default), `plain` (CI default), `json`.
+  - Supported values MUST include: `rich` (TTY default), `plain` (CI default), `json`, `yaml`, `csv`, `xlsx`.
   - `--ci` MUST force `plain` unless the user explicitly sets `--format`.
+  - `csv` and `xlsx` outputs MUST be based on the same underlying normalized data model used for `json`/`yaml`.
 
 - `--report <PATH>`
   - Writes a single consolidated report to disk.
-  - If `--format json`, output MUST be valid JSON with a stable schema.
+  - If `--format json`, output MUST be valid JSON with a stable schema. If `--format yaml`, output MUST be valid YAML with a stable schema.
 
 - `--reports-dir <DIR>`
   - Writes per-tool reports (one file per tool, plus an index summary file).
   - File naming MUST be deterministic and collision-safe.
+  - When `--format csv`, `--reports-dir` MUST emit:
+    - `summary.csv` (run-level summary)
+    - `violations.csv` (one row per violation)
+    - `tools.csv` (one row per tool run)
+  - When `--format xlsx`, `--reports-dir` MUST emit:
+    - `report.xlsx` with sheets: `Summary`, `Tools`, `Violations`, `MissingTools`, `Ignored`
+  - When `--format yaml`, `--reports-dir` MUST emit:
+    - `report.yaml` and `index.yaml` (if per-tool files are also emitted)
 
 - `--summary-format <MODE>`
   - Supported values MUST include: `short`, `by-tool`, `by-file`, `by-code`.
   - MUST work with `--summary` and `--summary-only`.
 
-Report schema (minimum for JSON):
+- Report schema (minimum; applies to JSON/YAML and is the source for CSV/XLSX):
 - run metadata: repo root, timestamp, platform, python version
 - filters: lang(s), tool(s)
 - results: per-tool exit status, counts, top offending files, codes
 - missing tools summary
 - ignored-by-exceptions counts (if exceptions/pragma logic exists)
+- normalized tabular model:
+  - tools table: tool name, language, status, exit code, duration, missing?
+  - violations table: file, line, col, tool, code, message, severity, ignored?, ignore_source, ignore_id
+  - summary table: totals by tool/lang/code/file (as requested by `--summary-format`)
+
+
 
 ### Rich-Click help contract for these flags
-- Help output MUST show:
+
+Help output MUST show:
   - Examples:
     - `repo-lint check --lang python --tool black --summary-only`
     - `repo-lint check --lang yaml --tool yamllint --max-violations 50`
   - Tool/value enums for `--lang` and `--tool` (where possible).
   - Clear notes about missing-tool behavior and exit codes.
 
+
+
 ### Back-compat
-- Existing flags (e.g. `--only` if present) must be supported or cleanly aliased to `--lang`.
-- If both `--only` and `--lang` are provided, error out with a clear message to avoid ambiguity.
+
+Existing flags (e.g. `--only` if present) must be supported or cleanly aliased to `--lang`.
+If both `--only` and `--lang` are provided, error out with a clear message to avoid ambiguity.
+
+
 
 ### Tool Registry Contract (Source of Truth)
 
@@ -129,6 +149,7 @@ To keep `--tool` robust and to prevent drift, `repo-lint` MUST maintain a single
   - Example: `conformance/repo-lint/repo-lint-docstring-rules.yaml` declares the docstring validator(s) per language.
 - `--tool <TOOL>` MUST validate against this registry.
 - Rich-Click help SHOULD enumerate known tools per language (or provide a `--list-tools` command if the list is too long).
+
 
 ### Discoverability (Mandatory)
 
@@ -146,6 +167,39 @@ Add these flags to `repo-lint check` and `repo-lint fix`:
   - Alias of `--explain-tool <TOOL>` (keep both; users will try both names).
 
 These MUST NOT run linting; informational only.
+
+---
+
+## Extra Glam (MANDATORY): Help Panels + `repo-lint doctor`
+
+### Rich-Click Help Panels (Mandatory)
+
+Rich-Click help output MUST group options into panels/sections with consistent headings. Minimum panels:
+- **Filtering**: `--lang`, `--tool`, `--changed-only`
+- **Output**: `--summary`, `--summary-only`, `--summary-format`, `--format`, `--report`, `--reports-dir`, `--max-violations`, `--show-files/--hide-files`, `--show-codes/--hide-codes`
+- **Execution**: `--fail-fast`, `--skip-missing-tools`
+- **Info/Debug**: `--list-langs`, `--list-tools`, `--tool-help`, `--explain-tool`, `--print`, `--no-color`, `--ci`
+
+### `repo-lint doctor` (Mandatory)
+
+Add a new command `repo-lint doctor` that performs a comprehensive environment + configuration sanity check and prints a single **green/red checklist**.
+
+It MUST check:
+- repo root resolution
+- venv resolution
+- tool registry load from conformance YAML
+- config validity for all conformance files (linting/docstring/naming/ui theme/exceptions if present)
+- tool availability per config (installed vs missing)
+- PATH sanity (what `shutil.which("repo-lint")` resolves to)
+
+Flags:
+- `--format <FMT>`: supports `rich`, `plain`, `json`, `yaml`
+- `--report <PATH>`: write the checklist report
+- `--ci`: plain output + non-zero exit if any red items
+
+Exit codes:
+- 0 if all checks green
+- non-zero if any checks red (use existing policy/tooling exit code conventions)
 
 ---
 
@@ -365,3 +419,7 @@ Wire into Click CLI. Ensure Rich-Click help includes:
 - [ ] `--report` and `--reports-dir` write deterministic report artifacts; JSON schema is stable and tested.
 - [ ] `--summary-format` supports `short`, `by-tool`, `by-file`, `by-code`.
 - [ ] `repo-lint fix` supports `--dry-run` and `--diff` (TTY-only); behavior is documented and tested.
+- [ ] `--format` supports `json`, `yaml`, `csv`, and `xlsx` using a single normalized data model.
+- [ ] `--reports-dir` emits deterministic multi-file artifacts for `csv` and `xlsx` (with required files/sheets).
+- [ ] Rich-Click help groups options into panels with consistent headings (Filtering/Output/Execution/Info).
+- [ ] `repo-lint doctor` exists and produces a green/red checklist; supports `--format`, `--report`, and `--ci`.
