@@ -176,12 +176,14 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
 - ✅ Good: `npm install && npm run test:unit`
 - ❌ Bad: "Run the tests"
 
-**Pre-Commit Repo Lint Gate (MANDATORY):**
-- Before creating **ANY** commit, you MUST run:
+**Pre-Commit Repo Lint Gate (MANDATORY for scripting changes):**
+- If your commit includes **ANY changes** to **scripting/tooling files** (examples: `*.py`, `*.sh`, `*.bash`, `*.pl`, `*.pm`, `*.ps1`, `*.psm1`, `*.rs`, plus any other executable/script files in `tools/` or `scripts/`), you MUST run:
   - `python3 -m tools.repo_lint check --ci`
+- This command is intended to lint **script/tooling** changes; if you are **only** changing documentation (e.g. `*.md`) or other non-script text files, running it is **recommended** but **not required**.
 - The command MUST exit **0** (PASS).
 - If it fails, you MUST fix the reported issues and re-run it until it passes.
 - Do NOT commit “known failing” work.
+- If you’re unsure whether your change counts as “scripting/tooling”, treat it as **YES** and run the command.
 
 **Stop and Escalate if Human Action Required:**
 - If you encounter ambiguity, missing requirements, or need approval: **STOP**
