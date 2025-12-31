@@ -7,17 +7,20 @@ Related: Issue #160, PRs #176, #180
 
 ## NEXT
 
-### IMMEDIATE: Phase 2.5 Blocker #1 - Update test_output_format.py
-**Status:** NEXT ACTION  
-**Why:** Tests fail because output format changed from plain text to Rich tables  
-**Tasks:**
-1. Review failing tests in `tools/repo_lint/tests/test_output_format.py`
-2. Update test expectations to match Rich table format
-3. Ensure exit code tests still pass (logic unchanged)
-4. Run full test suite to verify no regressions
+### COMPLETED: Phase 2.5 Blocker #1 - Update test_output_format.py ✅
+**Status:** COMPLETE  
+**Completed:** 2025-12-31 07:30 UTC  
+**Changes:**
+- Updated all 7 tests in `test_output_format.py` to expect Rich table/panel format instead of plain text
+- All tests now use `ci_mode=True` to ensure deterministic rendering
+- Tests verify Rich table structure, Summary panels, and violation counts
+- Fixed related test import issues (cli → cli_argparse) in test_cli_dispatch.py, test_exit_codes.py, test_integration.py
+- Fixed test expectations for unsafe mode exit codes (2 → 4) in test_unsafe_fixes.py
+- All 7 output format tests passing
+- 98 of 100 total tests passing (2 pre-existing failures unrelated to changes)
 
-### THEN: Phase 2.5 Blocker #2 - Add Windows CI Validation
-**Status:** BLOCKED until test updates complete  
+### NEXT: Phase 2.5 Blocker #2 - Add Windows CI Validation
+**Status:** READY TO START  
 **Decision:** Hybrid approach - CI-first Windows validation (manual deferred)  
 **Tasks:**
 1. Add Windows runner to `.github/workflows/repo-lint-and-docstring-enforcement.yml`
@@ -40,6 +43,88 @@ Related: Issue #160, PRs #176, #180
 **Status:** BLOCKED until all Phase 2.5 blockers complete  
 **Per human decision:** Phase 2.9 MUST be implemented BEFORE Phase 2.6-2.8  
 **See:** `160-implementation-plan.md` for detailed sequencing
+
+---
+
+## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 07:30 - Phase 2.5 Blocker #1 Complete: Updated test_output_format.py for Rich UI
+
+**Files Changed:**
+- `tools/repo_lint/tests/test_output_format.py`: Updated all 7 tests (190 lines modified)
+  - `test_no_violations_output()`: Now checks for "Summary" and "Exit Code: 0 (SUCCESS)" in Rich panel format
+  - `test_violations_output_format()`: Now checks for table data (test.py, line numbers, messages) instead of "test.py:10: [ruff]" format
+  - `test_summary_count_accuracy()`: Now checks for "Total Violations: 3" in Rich panel format
+  - `test_verbose_output_includes_passed()`: Updated to use ci_mode=True for deterministic rendering
+  - `test_output_contains_no_unstable_fields()`: Updated to use ci_mode=True for deterministic comparison
+  - `test_multiple_violations_same_file()`: Now checks for table data instead of plain text format
+  - Updated module docstring to reflect Phase 2.5 Rich UI migration
+  - Updated class docstring to note CI mode usage for deterministic rendering
+  - All tests now pass `ci_mode=True` to ensure deterministic Rich table rendering without terminal-specific formatting
+
+- `tools/repo_lint/tests/test_unsafe_fixes.py`: Updated exit code expectations (4 tests + docstring)
+  - `test_unsafe_without_yes_i_know_fails()`: Changed expected exit code from 2 to 4 (UNSAFE_VIOLATION)
+  - `test_unsafe_with_yes_i_know_in_ci_fails()`: Changed expected exit code from 2 to 4
+  - `test_unsafe_with_ci_env_var_fails()`: Changed expected exit code from 2 to 4
+  - `test_safe_fix_mode_works_normally()`: Added exit code 4 to valid exit codes list
+  - Updated module docstring to document Phase 1 Item 2 change (exit code 2 → 4 for unsafe violations)
+
+- `tools/repo_lint/tests/test_cli_dispatch.py`: Fixed import paths (1 patch statement)
+  - Line 234: Changed `@patch("tools.repo_lint.cli.report_results")` to `@patch("tools.repo_lint.cli_argparse.report_results")`
+  - Applied bulk sed replacement for all other patches (completed earlier)
+
+- `tools/repo_lint/tests/test_exit_codes.py`: Fixed import paths (bulk sed replacement)
+  - All `@patch("tools.repo_lint.cli.*)` changed to `@patch("tools.repo_lint.cli_argparse.*)`
+
+- `tools/repo_lint/tests/test_integration.py`: Fixed import paths (6 imports + bulk sed replacement)
+  - All `from tools.repo_lint.cli import main` changed to `from tools.repo_lint.cli_argparse import main`
+  - All `@patch("tools.repo_lint.cli.*)` changed to `@patch("tools.repo_lint.cli_argparse.*)`
+
+**Changes Made:**
+- **Phase 2.5 Blocker #1: Update test_output_format.py** ✅ COMPLETE
+  - All 7 tests updated to verify Rich table/panel format instead of plain text
+  - Tests now use CI mode for deterministic rendering (no terminal-specific escape codes)
+  - Test expectations match actual Rich Reporter output:
+    - Success case: Rich panel with "Summary" header and "Exit Code: 0 (SUCCESS)"
+    - Violations case: Rich tables with File/Line/Message columns, per-tool panels, Summary panel
+    - Counts: "Total Violations: N" in Summary panel
+  - Tests verify deterministic output (no timestamps, no random data)
+  
+- **Fixed test import issues across 4 test files**
+  - Phase 2.4 renamed `cli.py` to `cli_argparse.py` (old implementation)
+  - Phase 2.4 created new `cli.py` with Click/Rich-Click integration
+  - Tests were importing from old `cli` module path, causing AttributeError and ModuleNotFoundError
+  - Fixed all imports and patches to use `cli_argparse` module path
+  
+- **Fixed unsafe mode exit code expectations**
+  - Phase 1 Item 2 changed unsafe violations from exit code 2 (MISSING_TOOLS) to 4 (UNSAFE_VIOLATION)
+  - Tests were still expecting old exit code 2
+  - Updated all unsafe mode tests to expect exit code 4
+  - This aligns with the design: exit code 4 distinguishes policy violations from missing tools
+
+**Verification:**
+- Ran `python3 -m unittest tools.repo_lint.tests.test_output_format -v`: all 7 tests passed ✅
+- Ran `python3 -m unittest tools.repo_lint.tests.test_unsafe_fixes.TestUnsafeFixGuardRails -v`: all 4 tests passed ✅
+- Ran `python3 -m unittest discover -s tools/repo_lint/tests -p "test_*.py"`: 98/100 tests passed
+  - 2 failures are pre-existing (test_fix_command_sequences_black_and_ruff, test_patch_and_log_generated)
+  - 2 errors are pre-existing import failures (test_rust_runner, test_vectors - files don't exist/have issues)
+  - Per repository guidelines: "Do NOT fix unrelated bugs or broken tests"
+  - No regressions introduced by my changes
+
+**Rationale:**
+- Per Phase 2.5 specification: Rich UI migration changed output format from plain text to Rich tables/panels
+- Tests must verify new format to ensure stability and determinism
+- CI mode ensures deterministic rendering (no colors, no terminal-specific codes)
+- This unblocks Phase 2.5 progress and allows proceeding to Windows CI validation
+
+**Known Issues:**
+- 2 pre-existing test failures (unrelated to output format changes)
+- 2 pre-existing import errors (test files don't exist or have module-level issues)
+- These are documented as pre-existing in the journal (session 2025-12-31 00:37)
+
+**Next Actions:**
+- Commit all test updates
+- Proceed to Phase 2.5 Blocker #2: Add Windows CI validation
 
 ---
 
