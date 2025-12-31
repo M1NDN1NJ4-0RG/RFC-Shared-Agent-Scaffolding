@@ -112,9 +112,9 @@ log "Upgrading pip tooling"
 python3 -m pip install -U pip setuptools wheel
 
 # Decide install target:
-# - Prefer repo root if it looks like a Python package
-# - Prefer tools/repo_cli if it has its own packaging metadata
-#   (and log when it overrides repo-root selection for clarity)
+# - Prefer tools/repo_cli when it has its own packaging metadata
+# - Otherwise, fall back to the repo root if it looks like a Python package
+#   (and log clearly which target is selected for transparency)
 INSTALL_TARGET=""
 ROOT_PKG_FOUND=0
 TOOLS_PKG_FOUND=0
