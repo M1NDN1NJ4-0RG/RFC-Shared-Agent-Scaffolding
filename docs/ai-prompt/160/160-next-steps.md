@@ -6,14 +6,52 @@ Last Updated: 2025-12-31
 Related: Issue #160, PRs TBD
 
 ## NEXT
-- Run code_review tool before finalizing (MANDATORY)
-- Run codeql_checker after code_review (MANDATORY if available)
-- Continue with Phase 2.4: CLI usability improvements (Click migration) if time permits
-- Then move to Phase 3 tasks if time permits
+- Run final code_review after this commit (MANDATORY)
+- Run codeql_checker if available (MANDATORY after code_review)
+- Update session journal overview before ending session
+- Phase 2.4 deferred to future work (Click migration is major refactor)
+- Phase 3 items deferred to future work
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 03:10 - Second round of code review fixes
+**Files Changed:**
+- `tools/repo_lint/config_validator.py`:
+  - Added module-level constant `SEMANTIC_VERSION_PATTERN` for version regex (line 34)
+  - Added module-level constant `DEFAULT_ALLOWED_KEYS` for default allowed keys (line 37)
+  - Updated `_validate_required_fields()` to use `SEMANTIC_VERSION_PATTERN` constant
+  - Updated `validate_config_file()` to use `DEFAULT_ALLOWED_KEYS` constant
+  - Fixed import order (moved yaml import after standard library imports)
+
+- `tools/repo_lint/runners/naming_runner.py`:
+  - Fixed `MissingToolError` constructor calls to match API signature (lines 58, 60)
+  - Now passes tool name as first parameter, message as second parameter (install_hint)
+  - Format: `MissingToolError("naming-rules-config", "message...")`
+
+**Changes Made:**
+- Addressed second round of code review feedback:
+  1. Fixed MissingToolError constructor calls (API contract violation)
+  2. Extracted magic values to constants for maintainability:
+     - SEMANTIC_VERSION_PATTERN for version validation
+     - DEFAULT_ALLOWED_KEYS for config validation
+  3. Fixed import order in config_validator.py (I001 Ruff issue)
+- All files re-formatted with Black
+- All files pass Ruff checks
+
+**Verification:**
+- `.venv-lint/bin/black --check` - PASS (all files unchanged)
+- `.venv-lint/bin/ruff check` - PASS (all checks passed)
+- MissingToolError calls now match constructor signature
+- Constants improve code maintainability
+
+**Rationale:**
+- Code review identified API contract violations in MissingToolError usage
+- Moving magic values to constants improves maintainability
+- Following repository code quality standards
+
+---
 
 ### 2025-12-31 03:00 - Fixed linting issues in Phase 2.2 code
 **Files Changed:**

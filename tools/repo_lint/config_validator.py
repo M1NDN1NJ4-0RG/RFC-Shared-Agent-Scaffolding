@@ -29,6 +29,12 @@ from typing import Any, Dict, List, Optional
 
 import yaml
 
+# Semantic version pattern (X.Y.Z)
+SEMANTIC_VERSION_PATTERN = r"^\d+\.\d+\.\d+$"
+
+# Default allowed top-level keys in config files
+DEFAULT_ALLOWED_KEYS = ["config_type", "version", "languages", "exclusions", "validation", "settings", "description"]
+
 
 class ConfigValidationError(Exception):
     """Exception raised when config validation fails.
@@ -131,7 +137,7 @@ def _validate_required_fields(file_path: Path, data: Dict[str, Any], config_type
         )
 
     # Validate semantic version format
-    if not re.match(r"^\d+\.\d+\.\d+$", version):
+    if not re.match(SEMANTIC_VERSION_PATTERN, version):
         raise ConfigValidationError(
             str(file_path),
             f"Invalid version format: '{version}'. Version must follow semantic versioning (e.g., '1.0.0').",
@@ -237,7 +243,7 @@ def validate_config_file(file_path: Path, config_type: str, allowed_keys: Option
 
     # Check for unknown keys
     if allowed_keys is None:
-        allowed_keys = ["config_type", "version", "languages", "exclusions", "validation", "settings", "description"]
+        allowed_keys = DEFAULT_ALLOWED_KEYS
 
     _check_unknown_keys(file_path, data, allowed_keys)
 

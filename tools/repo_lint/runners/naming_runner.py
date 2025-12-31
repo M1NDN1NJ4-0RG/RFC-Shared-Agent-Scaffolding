@@ -55,9 +55,9 @@ class NamingRunner(Runner):
         try:
             self.config = load_validated_config(str(self.config_file), "repo-lint-naming-rules")
         except FileNotFoundError as e:
-            raise MissingToolError(f"Naming rules config not found: {self.config_file}") from e
+            raise MissingToolError("naming-rules-config", f"Config not found: {self.config_file}") from e
         except ConfigValidationError as e:
-            raise MissingToolError(f"Naming rules config validation failed: {e}") from e
+            raise MissingToolError("naming-rules-config", f"Config validation failed: {e}") from e
 
         self.languages = self.config.get("languages", {})
         self.exclusions = self.config.get("exclusions", [])
