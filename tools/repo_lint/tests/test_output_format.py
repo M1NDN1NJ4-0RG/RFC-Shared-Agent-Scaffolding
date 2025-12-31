@@ -162,7 +162,7 @@ class TestOutputFormat(unittest.TestCase):
         self.assertIn("test.py", output_text)
         self.assertIn("10", output_text)  # Line number
         self.assertIn("Line too long", output_text)
-        self.assertIn("20", output_text)  # Line number  
+        self.assertIn("20", output_text)  # Line number
         self.assertIn("Missing function docstring", output_text)
         # Check summary section
         self.assertIn("Total Violations: 2", output_text)
