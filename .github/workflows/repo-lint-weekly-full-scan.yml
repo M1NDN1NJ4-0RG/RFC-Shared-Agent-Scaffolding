@@ -175,7 +175,7 @@ jobs:
             Write-Host "✓ Interactive mode output produced successfully (exit code: $LASTEXITCODE)"
             exit 0
           } else {
-            Write-Host "✗ Unexpected exit code: $LASTEXITCODE)"
+            Write-Host "✗ Unexpected exit code: $LASTEXITCODE"
             exit 1
           }
         shell: pwsh
@@ -226,7 +226,7 @@ jobs:
           # Test that completion can be generated (basic sanity check)
           # Note: Full shell completion testing requires interactive shell
           $env:_REPO_LINT_COMPLETE = "powershell_complete"
-          python -m tools.repo_lint > completion_test.txt 2>&1 || $true
+          python -m tools.repo_lint > completion_test.txt 2>&1; $true
           # Just verify the command doesn't crash - actual completion requires interactive shell
           Write-Host "✓ Completion generation didn't crash"
         shell: pwsh
