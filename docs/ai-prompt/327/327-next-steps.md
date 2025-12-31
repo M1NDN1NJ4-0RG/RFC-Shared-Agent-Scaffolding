@@ -6,10 +6,8 @@ Last Updated: 2025-12-31
 Related: Issue #327, PRs TBD
 
 ## NEXT
-- Run full repo-lint check --ci to verify all fixes
-- Verify Windows Rich UI help test would pass
-- Commit and push all changes
-- Monitor CI to ensure all jobs pass
+- Monitor CI to ensure all jobs pass on GitHub Actions
+- Verify the PR is ready for review
 
 ---
 
@@ -48,6 +46,10 @@ Related: Issue #327, PRs TBD
 - `ruff check .` → All checks passed!
 - `repo-lint check --ci` → All docstring validators passed
 - `python3 -m tools.repo_lint fix --help` → Exit code 0, ASCII-safe output
+- `repo-lint check --only python` → All 4 runners passed (black, ruff, pylint, validate_docstrings)
+- `repo-lint check --only bash` → All 3 runners passed (shellcheck, shfmt, validate_docstrings)
+- All help commands tested: main, check, fix, install → All exit code 0
+- Verified no emojis in help text → ASCII-safe confirmed
 
 **CI Status:**
 - Ruff violations: FIXED (1 violation resolved)
