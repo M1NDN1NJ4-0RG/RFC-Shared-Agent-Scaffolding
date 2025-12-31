@@ -202,6 +202,7 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
 ## SESSION START REQUIREMENTS (MANDATORY)
 
 At the start of **EVERY session**, before making changes, the agent MUST ensure the required tooling is installed and available in the working environment.
+READ AND ADHERE TO ALL CONTRACTS FOUND `docs/contributing/*`
 
 Required tools (install/verify each session):
 - `rgrep` (PREFERRED grep tool in this repository)
