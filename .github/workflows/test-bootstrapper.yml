@@ -5,7 +5,7 @@
 # gate functionality across all toolchains (Python, Shell, PowerShell, Perl).
 #
 # Dependencies:
-# - Python 3.8+ (for pytest test runner)
+# - Python 3.12 (for pytest test runner)
 # - pytest package
 # - scripts/bootstrap-repo-lint-toolchain.sh (script under test)
 #
@@ -84,13 +84,11 @@ jobs:
           pytest scripts/tests/test_bootstrap_repo_lint_toolchain.py -v
 
       # Step 6: Upload test failure artifacts (only on test failure)
-      # Captures pytest output and any temporary test directories
+      # Captures any temporary test directories created during test execution
       - name: Upload test artifacts on failure
         if: failure()
         uses: actions/upload-artifact@v4
         with:
           name: bootstrapper-test-failures
-          path: |
-            pytest-output.log
-            /tmp/bootstrap_*
+          path: /tmp/bootstrap_*
           if-no-files-found: ignore
