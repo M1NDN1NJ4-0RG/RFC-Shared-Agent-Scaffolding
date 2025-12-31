@@ -238,7 +238,12 @@ class TestRepositoryDiscovery(unittest.TestCase):
             shutil.rmtree(self.test_dir)
 
     def _create_find_repo_root_test_script(self, repo_root, run_from_dir):
-        """Create a standalone test script for find_repo_root function."""
+        """Create a standalone test script for find_repo_root function.
+
+        :param repo_root: Path to the repository root directory.
+        :param run_from_dir: Directory from which to run the test script.
+        :returns: Path object pointing to the created test script.
+        """
         test_script = repo_root / "test_find_repo.sh"
         test_script.write_text(
             f"""#!/bin/bash

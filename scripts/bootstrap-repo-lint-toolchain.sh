@@ -83,7 +83,29 @@
 #   - Script is idempotent: safe to run multiple times
 #   - Requires Python 3 with venv module
 #   - Must be run from within the repository
-#   - Phase 1 + Phase 2 implementation (core + Python toolchain)
+#   - Phase 1 + Phase 2 + Phase 3 implementation (core + all toolchains + verification)
+#
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+# ┃ ⚠️  PRE-COMMIT COMPLIANCE REMINDER FOR COPILOT AGENTS ⚠️              ┃
+# ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
+# ┃ BEFORE EVERY COMMIT, YOU **MUST** RUN AND PASS ALL OF THE FOLLOWING:  ┃
+# ┃                                                                        ┃
+# ┃ Shell Scripts (Bash/sh):                                              ┃
+# ┃   • shellcheck <file>                                                 ┃
+# ┃   • shfmt -d <file>                                                   ┃
+# ┃   • python3 scripts/validate_docstrings.py --file <file> --lang bash ┃
+# ┃                                                                        ┃
+# ┃ Python Scripts (.py):                                                 ┃
+# ┃   • black --check <file>                                              ┃
+# ┃   • ruff check <file>                                                 ┃
+# ┃   • pylint <file>                                                     ┃
+# ┃   • python3 scripts/validate_docstrings.py --file <file> --lang py   ┃
+# ┃                                                                        ┃
+# ┃ FIX ALL VIOLATIONS BEFORE COMMITTING - NO EXCEPTIONS!                 ┃
+# ┃                                                                        ┃
+# ┃ This includes fixing violations in files you created earlier in the   ┃
+# ┃ PR, even if the current changes don't directly touch those files.     ┃
+# ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 #
 # PLATFORM COMPATIBILITY:
 #   - Linux (tested on Ubuntu/Debian)
