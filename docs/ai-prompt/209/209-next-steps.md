@@ -6,13 +6,42 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
-- Add comprehensive documentation (Phase 4)
-- Update tests for new Phase 2 functionalities (optional toolchains, verification gate)
-- CI/CD integration and workflow updates (Phase 6)
+- Update session start/end requirements documentation per new requirement
+- Create canonical session compliance document
+- Ensure all future Copilot sessions follow established bootstrapper workflow
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 23:01 - Updated journals per new requirement document
+**Files Changed:**
+- `docs/ai-prompt/209/209-issue-overview.md`: Updated progress tracker to reflect all phases complete
+- `docs/ai-prompt/209/209-next-steps.md`: This journal entry
+
+**Changes Made:**
+Per new requirement document (`docs/ai-prompt/209/new-new-requirements.md`):
+1. Read canonical instructions (`.github/copilot-instructions.md`) ✅
+2. Updated issue journals to reflect actual completion state ✅
+3. Preparing to draft session start/end requirements document
+
+**Current State:**
+All work on Issue #209 (repo-lint bootstrapper) is COMPLETE:
+- ✅ Bash script: `scripts/bootstrap-repo-lint-toolchain.sh` (42,290 bytes)
+- ✅ Test suite: `scripts/tests/test_bootstrap_repo_lint_toolchain.py` (20 tests, all passing)
+- ✅ CI workflow: `.github/workflows/test-bootstrapper.yml`
+- ✅ Documentation: `docs/tools/repo-lint/bootstrapper.md`
+- ✅ All compliance checks passing (shellcheck, shfmt, black, ruff, pylint, yamllint, docstrings)
+
+**Verification:**
+- Bootstrapper runs successfully with all toolchains (--all flag)
+- Tests pass in CI
+- All linters green
+
+**Next:**
+Create canonical session start/end requirements document
+
+---
+
 ### 2025-12-31 21:28 - Implement Phase 2.4, 2.5 & Phase 3: PowerShell, Perl toolchains + verification gate
 **Files Changed:**
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Added PowerShell, Perl installation functions and verification gate
