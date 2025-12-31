@@ -1,0 +1,191 @@
+# Repo Lint Summary
+
+**Workflow Run:** https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20611254586
+**Timestamp:** 2025-12-31 03:29:20 UTC
+**Branch:** 176/merge
+**Commit:** e9ceb87feb4b54f4d7550edc20bbef5ea35d4bbb
+
+## Job Results
+
+| Job | Status |
+|-----|--------|
+| Auto-Fix: Black | success |
+| Detect Changed Files | success |
+| Repo Lint: Python | failure |
+| Repo Lint: Bash | failure |
+| Repo Lint: PowerShell | failure |
+| Repo Lint: Perl | failure |
+| Repo Lint: YAML | failure |
+| Repo Lint: Rust | failure |
+| Vector Tests: Conformance | success |
+
+## Python Linting Failures
+
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Python Linting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Linting Results
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❌ ruff: FAILED (56 violation(s))
+   .: [ruff] tools/repo_lint/cli.py:44:18: W291 Trailing whitespace
+   .: [ruff] |
+   .: [ruff] 42 |         source ~/.repo-lint-complete.bash
+   .: [ruff] 43 |
+   .: [ruff] 44 |         # For Zsh
+   .: [ruff] |                  ^^ W291
+   .: [ruff] 45 |         _REPO_LINT_COMPLETE=zsh_source repo-lint > ~/.repo-lint-complete.zsh
+   .: [ruff] 46 |         source ~/.repo-lint-complete.zsh
+   .: [ruff] |
+   .: [ruff] = help: Remove trailing whitespace
+   .: [ruff] tools/repo_lint/cli.py:53:21: F401 [*] `pathlib.Path` imported but unused
+   .: [ruff] |
+   .: [ruff] 52 | import sys
+   .: [ruff] 53 | from pathlib import Path
+   .: [ruff] |                     ^^^^ F401
+   .: [ruff] 54 |
+   .: [ruff] 55 | import click
+   .: [ruff] |
+   .: [ruff] = help: Remove unused import: `pathlib.Path`
+   .: [ruff] tools/repo_lint/cli.py:151:1: I001 [*] Import block is un-sorted or un-formatted
+   .: [ruff] |
+   .: [ruff] 149 |           repo-lint check --json           # Output in JSON format
+   .: [ruff] 150 |       """
+   .: [ruff] 151 | /     from tools.repo_lint.cli_argparse import cmd_check
+   .: [ruff] 152 | |     import argparse
+   .: [ruff] 153 | |
+   .: [ruff] | |_^ I001
+   .: [ruff] 154 |       # Create a namespace object compatible with the existing cmd_check function
+   .: [ruff] 155 |       args = argparse.Namespace(
+   .: [ruff] |
+   .: [ruff] = help: Organize imports
+   .: [ruff] tools/repo_lint/cli.py:229:1: I001 [*] Import block is un-sorted or un-formatted
+   .: [ruff] |
+   .: [ruff] 227 |           repo-lint fix --unsafe --yes-i-know  # Enable unsafe fixers (LOCAL ONLY)
+   .: [ruff] 228 |       """
+   .: [ruff] 229 | /     from tools.repo_lint.cli_argparse import cmd_fix
+   .: [ruff] 230 | |     import argparse
+   .: [ruff] 231 | |
+   .: [ruff] | |_^ I001
+   .: [ruff] 232 |       # Create a namespace object compatible with the existing cmd_fix function
+   .: [ruff] 233 |       args = argparse.Namespace(
+   .: [ruff] |
+   .: [ruff] = help: Organize imports
+   .: [ruff] tools/repo_lint/cli.py:277:1: I001 [*] Import block is un-sorted or un-formatted
+   .: [ruff] |
+   .: [ruff] 275 |           repo-lint install --verbose      # Show detailed progress
+   .: [ruff] 276 |       """
+   .: [ruff] 277 | /     from tools.repo_lint.cli_argparse import cmd_install
+   .: [ruff] 278 | |     import argparse
+   .: [ruff] 279 | |
+   .: [ruff] | |_^ I001
+   .: [ruff] 280 |       # Create a namespace object compatible with the existing cmd_install function
+   .: [ruff] 281 |       args = argparse.Namespace(
+   .: [ruff] |
+   .: [ruff] = help: Organize imports
+   .: [ruff] [*] 4 fixable with the `--fix` option (1 hidden fix can be enabled with the `--unsafe-fixes` option).
+
+❌ pylint: FAILED (18 violation(s))
+   .: [pylint] ************* Module repo_lint.cli
+   .: [pylint] tools/repo_lint/cli.py:203:0: R0913: Too many arguments (6/5) (too-many-arguments)
+   .: [pylint] tools/repo_lint/cli.py:203:0: R0917: Too many positional arguments (6/5) (too-many-positional-arguments)
+   .: [pylint] tools/repo_lint/cli.py:301:4: W0107: Unnecessary pass statement (unnecessary-pass)
+   .: [pylint] tools/repo_lint/cli.py:307:8: E1120: No value for argument 'ctx' in function call (no-value-for-parameter)
+   .: [pylint] tools/repo_lint/cli.py:309:8: E1123: Unexpected keyword argument 'file' in method call (unexpected-keyword-arg)
+   .: [pylint] tools/repo_lint/cli.py:310:8: E1123: Unexpected keyword argument 'file' in method call (unexpected-keyword-arg)
+   .: [pylint] tools/repo_lint/cli.py:313:8: E1123: Unexpected keyword argument 'file' in method call (unexpected-keyword-arg)
+   .: [pylint] tools/repo_lint/cli.py:53:0: W0611: Unused Path imported from pathlib (unused-import)
+   .: [pylint] ************* Module repo_lint.tests.test_cli_dispatch
+   .: [pylint] tools/repo_lint/tests/test_cli_dispatch.py:61:0: E0611: No name '_run_all_runners' in module 'tools.repo_lint.cli' (no-name-in-module)
+   .: [pylint] ************* Module repo_lint.tests.test_exit_codes
+   .: [pylint] tools/repo_lint/tests/test_exit_codes.py:67:0: E0611: No name 'cmd_check' in module 'tools.repo_lint.cli' (no-name-in-module)
+   .: [pylint] tools/repo_lint/tests/test_exit_codes.py:67:0: E0611: No name 'cmd_fix' in module 'tools.repo_lint.cli' (no-name-in-module)
+   .: [pylint] tools/repo_lint/tests/test_exit_codes.py:67:0: E0611: No name 'cmd_install' in module 'tools.repo_lint.cli' (no-name-in-module)
+   .: [pylint] ************* Module repo_lint.tests.test_unsafe_fixes
+   .: [pylint] tools/repo_lint/tests/test_unsafe_fixes.py:36:0: E0611: No name 'cmd_fix' in module 'tools.repo_lint.cli' (no-name-in-module)
+   .: [pylint] tools/repo_lint/tests/test_unsafe_fixes.py:36:0: E0611: No name 'create_parser' in module 'tools.repo_lint.cli' (no-name-in-module)
+
+❌ validate_docstrings: FAILED (9 violation(s))
+   .: [validate_docstrings] ❌ Validation FAILED: 8 violation(s) in 2 file(s)
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py:102
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py:138
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py:203
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py:259
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py:293
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py:70
+   .: [validate_docstrings] ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/config_validator.py
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+❌ Found 83 violation(s) across 3 tool(s)
+```
+
+## Bash Linting Failures
+
+```
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/__main__.py", line 25, in <module>
+    from tools.repo_lint.cli import main
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py", line 55, in <module>
+    import click
+ModuleNotFoundError: No module named 'click'
+```
+
+## PowerShell Linting Failures
+
+```
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/__main__.py", line 25, in <module>
+    from tools.repo_lint.cli import main
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py", line 55, in <module>
+    import click
+ModuleNotFoundError: No module named 'click'
+```
+
+## Perl Linting Failures
+
+```
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/__main__.py", line 25, in <module>
+    from tools.repo_lint.cli import main
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py", line 55, in <module>
+    import click
+ModuleNotFoundError: No module named 'click'
+```
+
+## YAML Linting Failures
+
+```
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/__main__.py", line 25, in <module>
+    from tools.repo_lint.cli import main
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py", line 55, in <module>
+    import click
+ModuleNotFoundError: No module named 'click'
+```
+
+## Rust Linting Failures
+
+```
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/__main__.py", line 25, in <module>
+    from tools.repo_lint.cli import main
+  File "/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/cli.py", line 55, in <module>
+    import click
+ModuleNotFoundError: No module named 'click'
+```
+
