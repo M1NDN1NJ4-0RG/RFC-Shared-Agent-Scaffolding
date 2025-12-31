@@ -35,6 +35,7 @@ dist/*.whl
 dist/*.tar.gz
 
 # Repo-local tool installations (Phase 4 Item 4.3.1)
+.venv/
 .venv-lint/
 .tools/
 .psmodules/
