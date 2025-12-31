@@ -31,6 +31,7 @@
 #    12  pip install -e failed.
 #    13  repo-lint is not runnable after install.
 #    14  repo-lint exists but failed to run --help.
+#    15  repo-lint install failed.
 #    20  repo-lint check --ci FAILED.
 #
 # EXAMPLES:
