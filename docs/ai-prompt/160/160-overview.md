@@ -147,6 +147,329 @@ This plan outlines prioritized phases to address all findings. Each item include
 
 ---
 
+## Phase 2.5 – Rich UI "Glow Up" for Console Output + Rich-Click Help (CORE COMPLETE ✅)
+
+**Goal:** Make `repo-lint` feel like a polished terminal application with professional-grade UI.
+
+- [x] **Add UI/Reporter Layer** (Severity: **High**)
+  - **Context:** All user-facing output should be routed through a single authoritative UI/reporting interface.
+  - **Affected Files:** New: `tools/repo_lint/ui/{__init__,console,reporter,theme}.py`
+  - **Implementation:** Created Reporter with methods: `render_header()`, `runner_started()`, `runner_completed()`, `render_results_table()`, `render_failures()`, `render_final_summary()`, `render_config_validation_errors()`
+  - **Status:** ✅ COMPLETE
+
+- [x] **Extend Data Model for Results** (Severity: **High**)
+  - **Context:** Need consistent results model for Rich table generation.
+  - **Affected Files:** `tools/repo_lint/common.py`
+  - **Implementation:** Extended `LintResult` with `file_count` and `duration` fields
+  - **Status:** ✅ COMPLETE
+
+- [x] **Implement Results Rendering** (Severity: **High**)
+  - **Context:** Rich tables/panels for interactive mode, stable output for CI mode.
+  - **Affected Files:** `tools/repo_lint/ui/reporter.py`, `tools/repo_lint/reporting.py`
+  - **Implementation:** Reporter renders Rich tables in TTY mode, plain tables in CI mode
+  - **Status:** ✅ COMPLETE
+
+- [x] **Integrate Reporter into CLI** (Severity: **High**)
+  - **Context:** Replace all direct prints with Reporter calls.
+  - **Affected Files:** `tools/repo_lint/cli_argparse.py`, `tools/repo_lint/reporting.py`
+  - **Implementation:** All output routes through Reporter; `ci_mode` flag passed through
+  - **Status:** ✅ COMPLETE
+
+- [x] **Rich-Click Integration** (Severity: **High**)
+  - **Context:** Beautiful help output with styled headings, option groups, examples.
+  - **Affected Files:** `tools/repo_lint/cli.py`, `pyproject.toml`
+  - **Implementation:** Click-based CLI with Rich-Click styling, comprehensive help, option grouping
+  - **Status:** ✅ COMPLETE
+
+- [x] **Theme System** (Severity: **Medium**)
+  - **Context:** User-configurable YAML theme for colors/icons/box styles/help formatting.
+  - **Affected Files:** New: `conformance/repo-lint/repo-lint-ui-theme.yaml`, `tools/repo_lint/ui/theme.py`
+  - **Implementation:** YAML theme config with strict validation; precedence: flag > env > user config > default
+  - **Status:** ✅ COMPLETE
+
+- [ ] **Update Tests for Rich Format** (Severity: **Medium**)
+  - **Context:** `test_output_format.py` expects plain text; now outputs Rich tables.
+  - **Affected Files:** `tools/repo_lint/tests/test_output_format.py`
+  - **Status:** ⏸️ PENDING
+
+- [ ] **Windows Validation** (Severity: **High** - BLOCKER)
+  - **Context:** MUST validate on Windows PowerShell, PowerShell 7+, Windows Terminal.
+  - **Affected Files:** N/A (validation/testing task)
+  - **Validation Required:** Help rendering, shell completion, stable CI output
+  - **Status:** ⏸️ PENDING - RELEASE BLOCKER
+
+- [ ] **Documentation Updates** (Severity: **Medium**)
+  - **Context:** Update HOW-TO with theme customization, Windows completion instructions.
+  - **Affected Files:** `tools/repo_lint/HOW-TO-USE-THIS-TOOL.md`
+  - **Status:** ⏸️ PENDING
+
+**Rationale:** Professional UI significantly improves user experience. CI mode maintains determinism.
+
+---
+
+## Phase 2.6 – Centralized Exception Rules (Planned, NOT STARTED)
+
+**Goal:** Add a strict, centralized YAML "exceptions roster" that declares *what to ignore, where, and why* — with strong validation, auditability, and predictable CI behavior — **without removing pragma support**.
+
+**Core Principle:** Exceptions are **data**, not **inline code graffiti**. Pragmas remain supported (backward compatible). The YAML exceptions file becomes a first-class alternative (and preferred in docs).
+
+- [ ] **Create Exceptions Schema & Validator** (Severity: **High**)
+  - **Context:** Need centralized YAML config for ignore/exceptions with strict validation.
+  - **Affected Files:** New: `conformance/repo-lint/repo-lint-exceptions.yaml`, `tools/repo_lint/conformance/exceptions_schema.py`
+  - **Requirements:**
+    - YAML MUST have `---` and `...` markers
+    - MUST include `config_type: repo-lint-exceptions` and `version: 1`
+    - Unknown keys at any depth are hard errors
+    - Each exception MUST include: `id`, `scope`, `ignores`, `reason`, `owner`, `created`, `expires`, `tracking`
+    - Anti-Typo Contract: tools/codes MUST match known values from conformance configs
+  - **Rationale:** Centralized exceptions are auditable, expirable, and have clear ownership.
+
+- [ ] **Integrate Exceptions into Results & Reporting** (Severity: **High**)
+  - **Context:** Filter violations via exceptions YAML before reporting; track ignored counts.
+  - **Affected Files:** Results model, reporting layer
+  - **Requirements:**
+    - Violations carry metadata: tool, code, file, symbol
+    - Filter violations before reporting
+    - Track: original vs ignored vs remaining counts
+    - CI FAIL on expired exceptions; TTY shows red panel
+  - **Rationale:** Makes exception usage visible and prevents expired exceptions from going stale.
+
+- [ ] **Keep Pragma Support & Add Conflict Detection** (Severity: **High**)
+  - **Context:** Pragmas remain fully supported; YAML is additional mechanism.
+  - **Affected Files:** CLI, runners
+  - **Requirements:**
+    - Pragmas remain supported (no breaking changes)
+    - Add pragma warning toggle (configurable)
+    - If YAML + pragma conflict → ALWAYS warn (even if warnings disabled)
+    - Precedence: YAML exceptions > pragmas (deterministic)
+  - **Rationale:** Backward compatibility while encouraging centralized approach.
+
+- [ ] **Implement Symbol/Scope Matching** (Severity: **Medium**)
+  - **Context:** Exceptions need to target specific modules, classes, functions, files, paths, globs.
+  - **Affected Files:** Exception application logic
+  - **Requirements:**
+    - Python: module + qualified name matching
+    - PowerShell/Bash/Perl/Rust: file/path scoping (AST symbol optional)
+    - Regex matching with explicit anchoring requirements
+  - **Rationale:** Precise targeting prevents over-broad exceptions.
+
+- [ ] **Add Documentation for Exceptions** (Severity: **Medium**)
+  - **Context:** Users need clear guidance on YAML exceptions vs pragmas.
+  - **Affected Files:** `tools/repo_lint/HOW-TO-USE-THIS-TOOL.md`
+  - **Requirements:**
+    - Add "Exceptions YAML" section with schema examples
+    - Document "Pragmas remain supported" explicitly
+    - Document pragma warning toggle behavior
+    - Document conflict rules and precedence
+  - **Rationale:** Clear documentation ensures adoption and correct usage.
+
+- [ ] **Add Exception Tests** (Severity: **High**)
+  - **Context:** Validate exception application, expiration, conflicts.
+  - **Affected Files:** New test files
+  - **Requirements:**
+    - Validator tests: missing markers, wrong config_type, bad regex, expired exceptions
+    - Integration tests: violations + exceptions (counts verified), pragma + YAML conflicts
+  - **Rationale:** Ensures exceptions work correctly and catch regressions.
+
+**Rationale:** Centralized exceptions with expiration and audit trails prevent "eternal mold" and improve maintainability.
+
+---
+
+## Phase 2.7 – Extended CLI Granularity & Reporting (Planned, NOT STARTED)
+
+**Goal:** Add extremely granular CLI options for filtering, output control, and robust reporting.
+
+**Mandatory Features:**
+
+- [ ] **Add Language and Tool Filtering** (Severity: **High**)
+  - **Context:** Users need to run specific tools on specific languages.
+  - **Affected Files:** `tools/repo_lint/cli.py`, `tools/repo_lint/cli_argparse.py`
+  - **Requirements:**
+    - `--lang <LANG>`: filter to single language (python, bash, perl, powershell, rust, yaml, markdown, all)
+    - `--tool <TOOL>`: filter to single tool (repeatable or comma-separated)
+    - Tool availability validation: clear error if tool not installed
+    - Missing tools MUST exit with correct exit code
+  - **Rationale:** Enables focused linting and debugging of specific tools.
+
+- [ ] **Add Summary Modes** (Severity: **High**)
+  - **Context:** Users need different levels of output detail.
+  - **Affected Files:** CLI, reporting layer
+  - **Requirements:**
+    - `--summary`: normal output + compact summary at end
+    - `--summary-only`: ONLY compact summary (no per-file details)
+    - `--summary-format <MODE>`: short, by-tool, by-file, by-code
+  - **Rationale:** Improves UX for both detailed debugging and high-level overview.
+
+- [ ] **Add Verbosity Controls** (Severity: **Medium**)
+  - **Context:** Prevent terminal spam; allow fine-tuned output.
+  - **Affected Files:** CLI, reporting layer
+  - **Requirements:**
+    - `--max-violations <N>`: hard cap for detailed items printed
+    - `--show-files` / `--hide-files`: per-file breakdown control
+    - `--show-codes` / `--hide-codes`: tool rule IDs/codes control
+    - `--fail-fast`: stop after first tool failure
+  - **Rationale:** Improves local iteration and CI output readability.
+
+- [ ] **Add Output Formats & Report Generation** (Severity: **High**)
+  - **Context:** Need structured output for humans and CI artifacts.
+  - **Affected Files:** Reporting layer
+  - **Requirements:**
+    - `--format <FMT>`: rich (TTY default), plain (CI default), json, yaml, csv, xlsx
+    - `--report <PATH>`: write consolidated report to disk
+    - `--reports-dir <DIR>`: write per-tool reports + index summary
+    - JSON/YAML schema MUST be stable and documented
+    - CSV output: summary.csv, violations.csv, tools.csv
+    - XLSX output: report.xlsx with sheets (Summary, Tools, Violations, MissingTools, Ignored)
+  - **Rationale:** Enables integration with external tools and artifact archival.
+
+- [ ] **Add Fix-Mode Safety Features** (Severity: **High**)
+  - **Context:** Fixing should be safe and predictable.
+  - **Affected Files:** `tools/repo_lint/cli.py`, fix command logic
+  - **Requirements:**
+    - `--dry-run`: show what would change without modifying files
+    - `--diff`: show unified diff previews (TTY-only)
+    - `--changed-only`: restrict to git-changed files (error if no git)
+  - **Rationale:** Prevents accidental broad changes and improves safety.
+
+- [ ] **Add `repo-lint doctor` Command** (Severity: **High**)
+  - **Context:** Need comprehensive environment + config sanity check.
+  - **Affected Files:** New CLI command
+  - **Requirements:**
+    - Check: repo root, venv, tool registry, config validity, tool availability, PATH
+    - Flags: `--format`, `--report`, `--ci`
+    - Exit 0 if all green, non-zero if any red
+    - Output: green/red checklist
+  - **Rationale:** Simplifies troubleshooting and onboarding.
+
+- [ ] **Implement External Configuration Contract (YAML-First)** (Severity: **High**)
+  - **Context:** Maximize user-configurability while preserving contract safety.
+  - **Affected Files:** Config system, CLI
+  - **Requirements:**
+    - All configurable behavior MUST be in YAML (tool enable/disable, invocation options, file patterns, severity mapping, output styling, exception policies)
+    - Strict validation: `---`/`...` markers, `type`/`version` fields, unknown keys fail
+    - `--config <PATH>`: explicit config file
+    - `--dump-config`: print fully-resolved config (TTY-only)
+    - `--validate-config <PATH>`: validate without running
+    - In `--ci`: only explicit `--config` honored (no auto-discovery)
+  - **Rationale:** Centralized configuration improves maintainability and discoverability.
+
+- [ ] **Add Tool Registry & Discoverability Commands** (Severity: **Medium**)
+  - **Context:** Users need to discover what languages/tools are supported.
+  - **Affected Files:** CLI
+  - **Requirements:**
+    - `--list-langs`: print supported `--lang` values
+    - `--list-tools [--lang <LANG>]`: print supported tools (all or per-language)
+    - `--tool-help <TOOL>` / `--explain-tool <TOOL>`: print tool info (what it does, how to install, how invoked)
+    - Tool registry derived from conformance configs (single source of truth)
+  - **Rationale:** Improves discoverability and self-teaching CLI.
+
+**Rationale:** Granular control enables both power users and CI/CD integration.
+
+---
+
+## Phase 2.8 – Environment & PATH Management (Planned, NOT STARTED)
+
+**Goal:** Add commands to help users manage venv/PATH setup for `repo-lint` without automatic rc file editing.
+
+**Mandatory Features:**
+
+- [ ] **Add `repo-lint env` Command** (Severity: **High**)
+  - **Context:** Shell integration helper that prints/writes PATH snippets.
+  - **Affected Files:** New CLI command, new modules under `tools/repo_lint/env/`
+  - **Requirements:**
+    - `--print` (default): print instructions + shell snippet
+    - `--install`: write snippet file to user config dir + print manual rc line
+    - `--shell [bash|zsh|fish|powershell]`: select snippet type
+    - `--venv <path>`: explicit venv path
+    - `--path-only`: print ONLY PATH line (automation-friendly)
+    - Snippet locations: `~/.config/repo-lint/shell/` (Linux/macOS), `%APPDATA%\repo-lint\shell\` (Windows)
+    - MUST NOT auto-edit rc files
+  - **Rationale:** Explicit opt-in for persistent PATH changes.
+
+- [ ] **Add `repo-lint activate` Command** (Severity: **High**)
+  - **Context:** Convenience launcher that spawns subshell with venv activated.
+  - **Affected Files:** New CLI command
+  - **Requirements:**
+    - `--venv <path>`: explicit venv path
+    - `--shell [bash|zsh|fish|powershell|cmd]`: subshell to launch
+    - `--command "<cmd>"`: run single command (no interactive shell)
+    - `--no-rc`: start subshell without loading user rc files
+    - `--print`: print exact underlying command
+    - `--ci`: disallow interactive subshell; require `--command`
+  - **Rationale:** Immediately usable venv without manual activation.
+
+- [ ] **Add `repo-lint which` Command** (Severity: **Medium**)
+  - **Context:** Diagnostic helper for PATH/venv confusion.
+  - **Affected Files:** New CLI command
+  - **Requirements:**
+    - Print table with: repo root, resolved venv, bin/scripts dir, activation script, resolved `repo-lint` executable, Python executable, sys.prefix/base_prefix, detected shell
+    - `--json`: machine-readable output with stable keys
+    - Warn if `shutil.which("repo-lint")` doesn't match resolved venv
+  - **Rationale:** One-liner debug for PATH issues.
+
+- [ ] **Implement Shared Venv Resolution Utility** (Severity: **High**)
+  - **Context:** Single source of truth for venv detection.
+  - **Affected Files:** New shared utility module
+  - **Requirements:**
+    - Precedence: `--venv` flag > `.venv/` under repo root > current Python venv (sys.prefix) > error
+    - Cross-platform path detection (bin/ vs Scripts/)
+    - Clear error messages with remediation guidance
+  - **Rationale:** Consistent venv resolution across all commands.
+
+- [ ] **Cross-Platform Validation** (Severity: **High** - BLOCKER)
+  - **Context:** MUST validate on Linux/macOS + Windows (PowerShell, PowerShell 7+, Windows Terminal).
+  - **Affected Files:** N/A (validation/testing task)
+  - **Requirements:**
+    - Validate env/activate/which on all platforms
+    - Validate shell completion installation instructions
+    - Validate snippet generation accuracy
+  - **Rationale:** Cross-platform reliability is essential for adoption.
+
+- [ ] **Update Documentation** (Severity: **Medium**)
+  - **Context:** Users need clear guidance on env/activate/which usage.
+  - **Affected Files:** `tools/repo_lint/HOW-TO-USE-THIS-TOOL.md`
+  - **Requirements:**
+    - Add section "Making repo-lint available in your shell"
+    - Add section "Debugging PATH / venv issues with `repo-lint which`"
+    - Include examples for bash/zsh/fish/powershell
+    - Clarify why rc edits are manual (by design)
+  - **Rationale:** Clear documentation improves onboarding.
+
+**Rationale:** Explicit PATH/venv management improves usability without hostile automatic modifications.
+
+---
+
+## Phase 2.9 – Mandatory Integration & YAML-First Contracts (Cross-Cutting)
+
+**Goal:** Ensure all helper scripts are integrated into `repo-lint` and all configuration is YAML-first.
+
+**Mandatory Requirements:**
+
+- [ ] **Integrate External Helper Scripts** (Severity: **High**)
+  - **Context:** Any helper scripts invoked by `repo-lint` MUST be integrated into the package.
+  - **Requirements:**
+    - Helpers MUST live under `tools/repo_lint/` namespace
+    - Helpers MUST have stable, testable Python API
+    - Configuration MUST use conformance YAML system
+    - Invocation MUST be centralized (no ad-hoc subprocess strings)
+    - Helpers MUST be documented in HOW-TO
+    - Helpers MUST have unit tests (success paths, failure modes, output schema)
+    - Fail fast if external helper detected but not integrated
+  - **Rationale:** No "mystery helper scripts"; everything is first-class.
+
+- [ ] **Migrate to YAML-First Configuration** (Severity: **High**)
+  - **Context:** Maximize configurability while preserving contracts.
+  - **Requirements:**
+    - All configurable behavior MUST be in YAML (not hard-coded constants or ad-hoc env vars)
+    - Strict validation enforced
+    - CLI flags override config but cannot violate contracts
+    - Contract-critical behavior MUST NOT be disable-able
+  - **Rationale:** Centralized, validated configuration prevents drift and improves maintainability.
+
+**Rationale:** Cross-cutting contracts ensure consistency and quality across all features.
+
+---
+
 Each fix above should be committed with clear messages, linking to issues if the repository uses an issue tracker. Prioritize the Phase 1 items immediately, as they address correctness and compliance issues. Phase 2 implements requested features and contract alignments from the "Future Work" document. Phase 3 covers residual improvements and housekeeping.
 
 ## Progress Tracker
@@ -157,11 +480,42 @@ Each fix above should be committed with clear messages, linking to issues if the
   - [x] Ensure missing docstring validator is detected
   - [x] Validate non-Python unsafe mode behavior
   - [x] Add missing unit tests for error conditions
-- [x] Phase 2 – Major Enhancements and Alignments (Partial) ✅ 3/4 COMPLETE
+- [x] Phase 2 – Major Enhancements and Alignments ✅ COMPLETE
   - [x] Make `repo_lint` an installable package (✅ P2.1)
   - [x] Integrate naming-and-style enforcement (✅ P2.2)
-  - [x] Pin external tool versions in installer (✅ P2.3 - already done)
-  - [ ] Improve CLI usability (⏸️ P2.4 - deferred: Click migration is major refactor)
+  - [x] Pin external tool versions in installer (✅ P2.3)
+  - [x] Improve CLI usability (✅ P2.4 - Click + Rich + completion + HOW-TO)
+- [x] Phase 2.5 – Rich UI "Glow Up" ✅ CORE COMPLETE
+  - [x] UI/Reporter Layer (2.5.3-A)
+  - [x] Data Model Extensions (2.5.3-B, 2.5.3-C)
+  - [x] Results Rendering (2.5.3-C)
+  - [x] CLI Integration (2.5.3-D)
+  - [x] Rich-Click Integration (2.5.3-E)
+  - [x] Theme System (2.5.3-G)
+  - [ ] Test Updates (tests need updating for Rich format)
+  - [ ] Windows Validation (BLOCKER - not yet validated)
+  - [ ] Documentation Updates (HOW-TO needs theme/Windows completion docs)
+- [ ] Phase 2.6 – Centralized Exception Rules (NOT STARTED)
+  - [ ] Schema & Validator (2.6.1)
+  - [ ] Integration into Results & Reporting (2.6.2)
+  - [ ] Pragma Support & Conflict Detection (2.6.3)
+  - [ ] Symbol/Scope Matching (2.6.4)
+  - [ ] Documentation Updates (2.6.5)
+  - [ ] Tests (2.6.6)
+- [ ] Phase 2.7 – Extended CLI Granularity & Reporting (NOT STARTED)
+  - [ ] `--lang` and `--tool` filtering
+  - [ ] Summary modes and verbosity controls
+  - [ ] Output formats (json, yaml, csv, xlsx)
+  - [ ] Fix-mode safety (--dry-run, --diff, --changed-only)
+  - [ ] `repo-lint doctor` command
+  - [ ] External configuration contract (YAML-first)
+  - [ ] Tool registry and discoverability commands
+- [ ] Phase 2.8 – Environment & PATH Management (NOT STARTED)
+  - [ ] `repo-lint env` command (shell integration helper)
+  - [ ] `repo-lint activate` command (subshell launcher)
+  - [ ] `repo-lint which` command (diagnostics)
+  - [ ] Shared venv resolution utility
+  - [ ] Cross-platform validation (Linux/macOS/Windows)
 - [ ] Phase 3 – Polish, Nits, and Minor Improvements (Low Priority) ⏸️ DEFERRED
   - [ ] Code style clean-up
   - [ ] Add or improve docstrings in the code
@@ -169,6 +523,63 @@ Each fix above should be committed with clear messages, linking to issues if the
   - [ ] Test coverage for runners (Optional)
 
 ## Session Notes (newest first)
+
+### 2025-12-31 06:41 - Consolidated Phase 2.5-2.9 into Canonical Overview ✅
+
+**Session Complete:**
+- ✅ Consolidated all external documents into single canonical `160-overview.md`
+- ✅ Created `160-human-decisions-2.md` for human review (10 major decisions)
+- ✅ Updated Progress Tracker to reflect actual completion state
+- ✅ Updated `160-next-steps.md` with current blockers and next actions
+
+**Documents Consolidated:**
+- `160-phase-2-point-5-rich-glow-up.md` → Phase 2.5 section in overview
+- `160-phase-2-point-6-pragmas-sucks.md` → Phase 2.6 section in overview  
+- `repo-lint-feature-set.md` → Phase 2.7 and 2.8 sections in overview
+
+**New Phase Structure:**
+- Phase 2.5: Rich UI "Glow Up" (CORE COMPLETE - 6/9 items; Windows validation BLOCKER)
+- Phase 2.6: Centralized Exception Rules (NOT STARTED - awaiting human decision)
+- Phase 2.7: Extended CLI Granularity & Reporting (NOT STARTED - awaiting human decision)
+- Phase 2.8: Environment & PATH Management (NOT STARTED - awaiting human decision)
+- Phase 2.9: Mandatory Integration & YAML-First Contracts (NOT STARTED - awaiting human decision)
+
+**Key Changes:**
+- Normalized all requirements to use explicit MUST/SHOULD/MAY language
+- Added severity markers (High/Medium/Low) for all items
+- Marked blockers explicitly (Windows validation for Phase 2.5)
+- Created comprehensive human decision document (10 decisions covering priorities, scope, trade-offs)
+
+**Human Decisions Required:**
+- Phase 2.5 Windows validation: Blocker or deferred?
+- Phase 2.6-2.9 prioritization and sequencing
+- YAML-first configuration scope and aggressiveness
+- Pragma policy for centralized exceptions
+- CLI complexity vs usability trade-offs
+- Output format support (json/yaml/csv/xlsx)
+- `repo-lint doctor` command scope
+- Environment commands priority
+- Phase 2.9 integration contract timing
+- Testing strategy and coverage requirements
+
+**Files Changed:**
+- `docs/ai-prompt/160/160-overview.md`: Consolidated all content, updated progress tracker
+- `docs/ai-prompt/160/160-next-steps.md`: Updated with Phase 2.5 blockers and human decision requirement
+- `docs/ai-prompt/160/160-human-decisions-2.md`: Created (16KB, 10 major decisions)
+
+**Rationale:**
+- Per task requirements: merge all external phase documents into canonical overview
+- Eliminate duplication and ambiguity
+- Ensure single source of truth for Issue #160
+- Surface decisions requiring human input before proceeding
+
+**Next Steps:**
+- Await human decisions on Phase 2.5 Windows validation approach
+- Await human decisions on Phase 2.6-2.9 priorities
+- Complete Phase 2.5 blockers once direction is clear
+- Do NOT proceed to Phase 2.6+ until human sign-off received
+
+---
 
 ### 2025-12-31 04:10 - Phase 2 Complete ✅ - All Mandatory Validation Passed
 
