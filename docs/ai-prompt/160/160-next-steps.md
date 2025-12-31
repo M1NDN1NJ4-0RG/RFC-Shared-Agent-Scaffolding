@@ -1,19 +1,111 @@
 MUST READ: `.github/copilot-instructions.md` FIRST!
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
-Status: Phase 2 Complete
+Status: Phase 2.5 Core Complete; Phase 2.6-2.9 Planned
 Last Updated: 2025-12-31
-Related: Issue #160, PRs #176
+Related: Issue #160, PRs #176, #180
 
 ## NEXT
-- Run final code_review (MANDATORY before ending session)
-- Run codeql_checker if available (MANDATORY after code_review)
-- Update session journal overview before ending session
+- Address Phase 2.5 remaining items (BLOCKERS):
+  - Update test_output_format.py for Rich table format
+  - Windows validation (PowerShell, PowerShell 7+, Windows Terminal) - RELEASE BLOCKER
+  - Update HOW-TO-USE-THIS-TOOL.md with theme customization and Windows completion
+- Human decision required for Phase 2.6-2.9 prioritization (see 160-human-decisions-2.md)
 - Phase 3 items deferred to future work per human decision
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 06:41 - Consolidated Issue #160 Documentation into Canonical Overview
+
+**Files Changed:**
+- `docs/ai-prompt/160/160-overview.md`: Major consolidation (300+ lines added)
+  - Added Phase 2.5 section (9 sub-items: Rich UI "Glow Up")
+  - Added Phase 2.6 section (6 sub-items: Centralized Exception Rules)
+  - Added Phase 2.7 section (7 sub-items: Extended CLI Granularity & Reporting)
+  - Added Phase 2.8 section (5 sub-items: Environment & PATH Management)
+  - Added Phase 2.9 section (2 sub-items: Mandatory Integration & YAML-First Contracts)
+  - Updated Progress Tracker to reflect all phases (2.5-2.9)
+  - Updated completion status: Phase 2.5 is CORE COMPLETE (6/9); 2.6-2.9 are NOT STARTED
+  - Added latest session notes documenting consolidation work
+  
+- `docs/ai-prompt/160/160-next-steps.md`: Updated NEXT section
+  - Changed focus to Phase 2.5 blockers (Windows validation, tests, docs)
+  - Added reference to 160-human-decisions-2.md for Phase 2.6-2.9 prioritization
+  
+- `docs/ai-prompt/160/160-human-decisions-2.md`: Created (16KB, 350+ lines)
+  - Decision 1: Phase 2.5 Windows Validation (Blocker vs Deferred)
+  - Decision 2: Phase 2.6-2.9 Prioritization (Sequential vs Parallel vs Cherry-Pick)
+  - Decision 3: YAML-First Configuration Scope (Conservative vs Aggressive)
+  - Decision 4: Exception System Pragma Policy (Warn vs Allow)
+  - Decision 5: CLI Granularity vs Complexity (All Flags vs Subset vs Profiles)
+  - Decision 6: Output Format Support (XLSX required? Full suite vs minimal?)
+  - Decision 7: `repo-lint doctor` Command Scope (Check-only vs Auto-fix)
+  - Decision 8: Environment Commands Priority (Required vs Nice-to-have)
+  - Decision 9: Phase 2.9 Integration Enforcement Timing (First vs Later)
+  - Decision 10: Testing Strategy (Coverage level and timing)
+  - Recommendation summary with conservative defaults
+  - Next steps section requiring human sign-off
+
+**Changes Made:**
+- **Task: Consolidate Issue 160 docs into single canonical overview** ✅ COMPLETE
+  - Merged content from `160-phase-2-point-5-rich-glow-up.md` (Rich UI specs)
+  - Merged content from `160-phase-2-point-6-pragmas-sucks.md` (Centralized exceptions specs)
+  - Merged content from `repo-lint-feature-set.md` (CLI granularity + env commands specs)
+  - Normalized all requirements to use explicit MUST/SHOULD/MAY language per repository conventions
+  - Resolved structural organization: organized by Phase number (2.5-2.9), then by severity/priority
+  - Added severity markers (High/Medium/Low) to all items for prioritization clarity
+  - Marked completion status accurately based on repository state (git log review)
+  - Identified 3 Phase 2.5 blockers: test updates, Windows validation (BLOCKER), HOW-TO docs
+  
+- **Task: Update completion state** ✅ COMPLETE
+  - Phase 1: 6/6 complete (from prior sessions)
+  - Phase 2: 4/4 complete (from prior sessions including Click/Rich migration)
+  - Phase 2.5: 6/9 complete (core implementation done; 3 items pending)
+  - Phase 2.6-2.9: 0/20 items started (all awaiting human decision)
+  - Phase 3: Deferred per prior human decision
+  
+- **Task: Identify human decisions required** ✅ COMPLETE
+  - Created comprehensive decision document with 10 major decisions
+  - Each decision includes: issue statement, current state, options, recommendation, required human input
+  - Recommendations follow minimal-change principle and conservative defaults
+  - Clear escalation: DO NOT proceed to Phase 2.6-2.9 until human sign-off
+
+**Verification:**
+- Reviewed all three source documents completely
+- Cross-referenced with git commit history (PR #180 for Phase 2.5 work)
+- Verified no content duplication between sections
+- Confirmed all MUST/SHOULD/MAY language is explicit and testable
+- Confirmed Progress Tracker checkbox states match repository reality
+
+**Rationale:**
+- Per task instructions: "Consolidate all content from these files into `160-overview.md` in the most logical/efficient locations"
+- Per task instructions: "Normalize wording so requirements are explicit (MUST/SHOULD/MAY), consistent, and testable"
+- Per task instructions: "If any new requirement conflicts with existing text, resolve it by updating the overview to the correct final intent"
+- Per new requirement: "Also add a `160-human-decisions-2.md` file for any decisions you think may need a human decision"
+- Following repository minimal-change principle: do not implement features without human approval
+- Following escalation policy: surface major decisions requiring human input before proceeding
+
+**Conflicts Resolved:**
+- No direct conflicts found between documents
+- All three documents were additive (new phases, not modifications to existing phases)
+- Organized sequentially as Phase 2.5, 2.6, 2.7, 2.8, 2.9 for clarity
+
+**Known Issues:**
+- Windows validation for Phase 2.5 is marked as RELEASE BLOCKER but not yet performed
+- No Windows CI runners currently exist in repository
+- Large scope expansion (4 new phases) requires human prioritization
+- Some Phase 2.7 features may create CLI complexity (flagged in human decisions)
+
+**Next Actions:**
+- Commit all changes with reference to Issue #160
+- Update session journal overview (this file)
+- Await human decisions on priorities before any implementation work
+- DO NOT start Phase 2.6-2.9 implementation without explicit human approval
+
+---
+
 
 ### 2025-12-31 04:00 - Completed Phase 2.4: Click CLI migration with Rich formatting
 
