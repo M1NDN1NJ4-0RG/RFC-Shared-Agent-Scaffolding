@@ -6,13 +6,131 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
-- Phase 3: Verification Gate and Error Handling (future)
-- Phase 4: Documentation (future)
-- Consider adding shell toolchain (shellcheck, shfmt) installation
+- Implement remaining Phase 2 items (rgrep, shell, PowerShell, Perl toolchains)
+- Add rgrep installation (default)
+- Add shell toolchain installation (optional --shell flag)
+- Add PowerShell toolchain installation (optional --powershell flag)
+- Add Perl toolchain installation with non-interactive mode (optional --perl flag)
+- Update tests for new command-line argument functionality
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 21:04 - Add command-line arguments, banners, and verbose output (Phase 2 architectural enhancement)
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Major architectural enhancement
+- `docs/ai-prompt/209/209-next-steps.md`: Updated journal
+
+**Changes Made:**
+Implemented architectural enhancements per comment #3702895198:
+- Added command-line argument parsing with selective toolchain installation
+- Added verbose/quiet flag support (verbose-only during implementation)
+- Added progress banners for better user experience
+- Removed `--quiet` flags from pip commands for full stdout/stderr visibility
+- Added PATH activation banner at completion
+
+**Implementation Details:**
+
+1. **New Command-Line Arguments**:
+   - `--verbose, -v`: Enable verbose output (DEFAULT, REQUIRED during implementation)
+   - `--quiet, -q`: Reserved for future use (shows warning, continues in verbose mode)
+   - `--shell`: Install shell toolchain (shellcheck, shfmt)
+   - `--powershell`: Install PowerShell toolchain (pwsh, PSScriptAnalyzer)
+   - `--perl`: Install Perl toolchain (Perl::Critic, PPI)
+   - `--all`: Install all optional toolchains
+   - `--help, -h`: Show usage information
+
+2. **New Functions**:
+   - `show_banner()`: Display prominent banners for section headers
+   - `show_usage()`: Display comprehensive help message
+   - `parse_arguments()`: Parse and validate command-line arguments
+   
+3. **Global Flags**:
+   - `VERBOSE_MODE`: true (default, required during implementation)
+   - `QUIET_MODE`: false (reserved for future use)
+   - `INSTALL_SHELL`: false (set by --shell or --all)
+   - `INSTALL_POWERSHELL`: false (set by --powershell or --all)
+   - `INSTALL_PERL`: false (set by --perl or --all)
+
+4. **Enhanced main() Function**:
+   - Parses arguments before execution
+   - Shows configuration summary
+   - Displays section banners (PHASE 1, PHASE 2, completion)
+   - Shows explicit PATH activation instructions at end
+   
+5. **Full stdout/stderr Visibility**:
+   - Removed `--quiet` from all pip install commands
+   - Users now see complete installation output
+   - Essential for troubleshooting during implementation phase
+
+6. **Banners Added**:
+   - "REPO-LINT TOOLCHAIN BOOTSTRAP" at start
+   - "PHASE 1: CORE SETUP" before venv creation
+   - "PHASE 2: TOOLCHAIN INSTALLATION" with "may take several minutes" warning
+   - "BOOTSTRAP COMPLETE" at success
+   - "IMPORTANT: PATH ACTIVATION REQUIRED" with explicit instructions
+
+**Caveat Addressed:**
+Per comment #3702895198 requirement:
+- `--quiet/-q` flags exist but are DISABLED with warning
+- Only verbose mode actually works during implementation
+- Warning message explains troubleshooting requirement
+- Continues in verbose mode if --quiet is specified
+
+**Design Decisions:**
+
+1. **Selective Toolchain Installation**:
+   - Python + rgrep: Always installed (required)
+   - Shell, PowerShell, Perl: Optional via flags
+   - Allows users to install only what they need
+   
+2. **Verbose-Only During Implementation**:
+   - All pip commands show full output
+   - Helps identify dependency conflicts or installation issues
+   - Can be switched to quiet mode post-implementation
+
+3. **Explicit PATH Instructions**:
+   - Banner shows exact `source .venv/bin/activate` command
+   - Alternative: `.venv/bin/repo-lint --help` for one-off usage
+   - Clarifies PATH activation is per-session
+
+**Testing:**
+```bash
+# Help works
+bash scripts/bootstrap-repo-lint-toolchain.sh --help
+# Usage information displayed ✓
+
+# Basic run with verbose output
+rm -rf .venv
+bash scripts/bootstrap-repo-lint-toolchain.sh
+# Shows all pip output ✓
+# Displays banners ✓
+# Shows configuration summary ✓
+# PATH activation banner shown ✓
+
+# Quiet mode warning
+bash scripts/bootstrap-repo-lint-toolchain.sh --quiet
+# Shows warning about --quiet being disabled ✓
+# Continues in verbose mode ✓
+```
+
+**Verification:**
+- Script formatted with shfmt ✓
+- All banners display correctly ✓
+- Configuration summary shows correct flags ✓
+- Full pip output visible (no --quiet) ✓
+- PATH activation instructions clear ✓
+- Help message comprehensive ✓
+
+**Next Steps:**
+- Implement rgrep installation (Phase 2.1)
+- Implement shell toolchain installation (Phase 2.3)
+- Implement PowerShell toolchain installation (Phase 2.4)
+- Implement Perl toolchain with non-interactive mode (Phase 2.5)
+- Update tests for argument parsing
+
+---
+
 ### 2025-12-31 20:48 - Implement Phase 2.2: Python toolchain installation
 **Files Changed:**
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Added install_python_tools function and Phase 2.2 implementation

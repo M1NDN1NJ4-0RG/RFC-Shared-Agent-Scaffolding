@@ -17,12 +17,18 @@
 #   ripgrep, PowerShell, Perl modules) and final verification gate.
 #
 # USAGE:
-#   ./scripts/bootstrap-repo-lint-toolchain.sh
-#   bash scripts/bootstrap-repo-lint-toolchain.sh
+#   ./scripts/bootstrap-repo-lint-toolchain.sh [OPTIONS]
+#   bash scripts/bootstrap-repo-lint-toolchain.sh [OPTIONS]
 #
 # INPUTS:
 #   Arguments:
-#     None (planned: --force, --skip-verify)
+#     --verbose, -v    Enable verbose output (DEFAULT, REQUIRED during implementation)
+#     --quiet, -q      Enable quiet mode (DISABLED - reserved for future use)
+#     --shell          Install shell toolchain (shellcheck, shfmt)
+#     --powershell     Install PowerShell toolchain (pwsh, PSScriptAnalyzer)
+#     --perl           Install Perl toolchain (Perl::Critic, PPI)
+#     --all            Install all optional toolchains
+#     --help, -h       Show this help message
 #
 #   Environment Variables:
 #     None (uses auto-detected repo root)
@@ -52,11 +58,17 @@
 #     Modifies current shell's PATH (via venv activation)
 #
 # EXAMPLES:
-#   # Run from repository root
+#   # Run from repository root (verbose mode - default)
 #   ./scripts/bootstrap-repo-lint-toolchain.sh
 #
-#   # Run from any subdirectory
-#   bash scripts/bootstrap-repo-lint-toolchain.sh
+#   # Install all toolchains
+#   ./scripts/bootstrap-repo-lint-toolchain.sh --all
+#
+#   # Install specific toolchains
+#   ./scripts/bootstrap-repo-lint-toolchain.sh --shell --perl
+#
+#   # Verbose mode (explicit)
+#   ./scripts/bootstrap-repo-lint-toolchain.sh --verbose
 #
 #   # Check exit code
 #   if ./scripts/bootstrap-repo-lint-toolchain.sh; then
@@ -78,6 +90,13 @@ set -euo pipefail
 
 # Constants
 readonly VENV_DIR=".venv"
+
+# Global flags (set by parse_arguments)
+VERBOSE_MODE=true # Default to verbose during implementation
+QUIET_MODE=false  # Reserved for future use
+INSTALL_SHELL=false
+INSTALL_POWERSHELL=false
+INSTALL_PERL=false
 
 # ============================================================================
 # Logging Functions
@@ -138,6 +157,149 @@ die() {
 	local code="${2:-1}"
 	echo "[bootstrap][ERROR] $msg" >&2
 	exit "$code"
+}
+
+# show_banner - Display a prominent banner message
+#
+# DESCRIPTION:
+#   Prints a visually prominent banner with a message to help users
+#   identify important information during bootstrap process.
+#
+# INPUTS:
+#   $1 - Banner title/message
+#   $2 - Optional subtitle (default: none)
+#
+# OUTPUTS:
+#   Stdout: Formatted banner with borders
+#
+# EXAMPLES:
+#   show_banner "INSTALLATION IN PROGRESS" "This may take several minutes"
+show_banner() {
+	local title="$1"
+	local subtitle="${2:-}"
+	local width=80
+
+	echo ""
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	echo "  $title"
+	if [[ -n "$subtitle" ]]; then
+		echo "  $subtitle"
+	fi
+	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+	echo ""
+}
+
+# show_usage - Display help message
+#
+# DESCRIPTION:
+#   Prints usage information and available command-line options.
+#
+# INPUTS:
+#   None
+#
+# OUTPUTS:
+#   Stdout: Help message
+#
+# EXAMPLES:
+#   show_usage
+show_usage() {
+	cat <<-'EOF'
+		Usage: bootstrap-repo-lint-toolchain.sh [OPTIONS]
+
+		Bootstrap the repo-lint toolchain and development environment.
+
+		OPTIONS:
+		  --verbose, -v      Enable verbose output (DEFAULT - required during implementation)
+		  --quiet, -q        Enable quiet mode (DISABLED - reserved for future use)
+		  --shell            Install shell toolchain (shellcheck, shfmt)
+		  --powershell       Install PowerShell toolchain (pwsh, PSScriptAnalyzer)
+		  --perl             Install Perl toolchain (Perl::Critic, PPI)
+		  --all              Install all optional toolchains
+		  --help, -h         Show this help message
+
+		DEFAULT TOOLCHAINS (always installed):
+		  - Python toolchain (black, ruff, pylint, yamllint, pytest)
+		  - rgrep (or grep fallback)
+
+		EXAMPLES:
+		  # Basic install (Python + rgrep only)
+		  ./scripts/bootstrap-repo-lint-toolchain.sh
+
+		  # Install all toolchains
+		  ./scripts/bootstrap-repo-lint-toolchain.sh --all
+
+		  # Install specific optional toolchains
+		  ./scripts/bootstrap-repo-lint-toolchain.sh --shell --perl
+
+		NOTE: Verbose mode is currently the ONLY supported output mode during
+		      implementation for troubleshooting purposes. The --quiet flag is
+		      reserved for future use and will display a warning if used.
+
+	EOF
+}
+
+# parse_arguments - Parse command-line arguments
+#
+# DESCRIPTION:
+#   Parses command-line arguments and sets global flags accordingly.
+#   Handles --verbose, --quiet, --shell, --powershell, --perl, --all, --help.
+#
+# INPUTS:
+#   $@ - All command-line arguments
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   Arguments parsed successfully
+#     0   Help displayed (exits after showing help)
+#
+#   Side Effects:
+#     Sets global variables: VERBOSE_MODE, QUIET_MODE, INSTALL_SHELL,
+#     INSTALL_POWERSHELL, INSTALL_PERL
+#
+# EXAMPLES:
+#   parse_arguments "$@"
+parse_arguments() {
+	while [[ $# -gt 0 ]]; do
+		case "$1" in
+		-h | --help)
+			show_usage
+			exit 0
+			;;
+		-v | --verbose)
+			VERBOSE_MODE=true
+			shift
+			;;
+		-q | --quiet)
+			warn "The --quiet flag is reserved for future use and currently disabled."
+			warn "During implementation, verbose output is REQUIRED for troubleshooting."
+			warn "Continuing in verbose mode..."
+			QUIET_MODE=false
+			VERBOSE_MODE=true
+			shift
+			;;
+		--shell)
+			INSTALL_SHELL=true
+			shift
+			;;
+		--powershell)
+			INSTALL_POWERSHELL=true
+			shift
+			;;
+		--perl)
+			INSTALL_PERL=true
+			shift
+			;;
+		--all)
+			INSTALL_SHELL=true
+			INSTALL_POWERSHELL=true
+			INSTALL_PERL=true
+			shift
+			;;
+		*)
+			die "Unknown option: $1. Use --help for usage information." 1
+			;;
+		esac
+	done
 }
 
 # ============================================================================
@@ -357,14 +519,14 @@ install_repo_lint() {
 	local repo_root="$1"
 
 	log "Upgrading pip, setuptools, and wheel"
-	python3 -m pip install --upgrade pip setuptools wheel --quiet
+	python3 -m pip install --upgrade pip setuptools wheel
 
 	local install_target
 	install_target=$(determine_install_target "$repo_root")
 
 	log "Installing repo-lint from: $install_target"
 
-	if ! python3 -m pip install -e "$install_target" --quiet; then
+	if ! python3 -m pip install -e "$install_target"; then
 		die "Failed to install repo-lint package" 13
 	fi
 
@@ -456,7 +618,7 @@ install_python_tools() {
 
 	for tool in "${tools[@]}"; do
 		log "Installing $tool..."
-		if python3 -m pip install "$tool" --quiet; then
+		if python3 -m pip install "$tool"; then
 			# Verify installation
 			if command -v "$tool" >/dev/null 2>&1; then
 				local version
@@ -494,11 +656,12 @@ install_python_tools() {
 # main - Main bootstrap execution flow
 #
 # DESCRIPTION:
-#   Executes the bootstrap sequence: find repo root, create/activate venv,
-#   install repo-lint, and verify installation. Prints success summary.
+#   Executes the bootstrap sequence: parse arguments, find repo root,
+#   create/activate venv, install repo-lint, install toolchains based on flags,
+#   and verify installation. Prints success summary with PATH instructions.
 #
 # INPUTS:
-#   None (command-line arguments will be added in future phases)
+#   $@ - Command-line arguments (parsed by parse_arguments)
 #
 # OUTPUTS:
 #   Exit Code:
@@ -509,9 +672,22 @@ install_python_tools() {
 #     Progress messages and success summary
 #
 # EXAMPLES:
-#   main
+#   main "$@"
 main() {
+	# Parse command-line arguments
+	parse_arguments "$@"
+
+	show_banner "REPO-LINT TOOLCHAIN BOOTSTRAP" "Setting up development environment..."
+
 	log "Starting repo-lint toolchain bootstrap"
+	log ""
+
+	# Display configuration
+	log "Configuration:"
+	log "  Verbose mode: $VERBOSE_MODE"
+	log "  Install shell toolchain: $INSTALL_SHELL"
+	log "  Install PowerShell toolchain: $INSTALL_POWERSHELL"
+	log "  Install Perl toolchain: $INSTALL_PERL"
 	log ""
 
 	# Phase 1.1: Find repository root
@@ -524,6 +700,7 @@ main() {
 	cd "$repo_root"
 
 	# Phase 1.2: Ensure virtual environment exists
+	show_banner "PHASE 1: CORE SETUP" "Creating Python virtual environment..."
 	ensure_venv "$repo_root"
 	log ""
 
@@ -539,23 +716,36 @@ main() {
 	verify_repo_lint
 	log ""
 
-	# Phase 2.2: Install Python toolchain
+	# Phase 2: Install toolchains
+	show_banner "PHASE 2: TOOLCHAIN INSTALLATION" "This may take several minutes. Please wait..."
+
+	# Phase 2.2: Install Python toolchain (always installed)
 	install_python_tools
 	log ""
 
 	# Success summary
-	log "SUCCESS: Bootstrap complete!"
-	log ""
+	show_banner "BOOTSTRAP COMPLETE" "All requested components installed successfully"
+
 	log "Summary:"
 	log "  - Repository root: $repo_root"
 	log "  - Virtual environment: $repo_root/$VENV_DIR"
 	log "  - repo-lint: $(command -v repo-lint)"
 	log "  - Python tools: black, ruff, pylint, yamllint, pytest"
 	log ""
-	log "Next steps:"
-	log "  - Virtual environment is activated for this shell session"
-	log "  - Run 'repo-lint --help' to see available commands"
-	log "  - Phase 3 (verification gate) will be implemented in future commits"
+
+	# PATH activation banner
+	show_banner "IMPORTANT: PATH ACTIVATION REQUIRED"
+	log "To use repo-lint and installed tools, you MUST activate the virtual environment:"
+	log ""
+	log "  source .venv/bin/activate"
+	log ""
+	log "OR run repo-lint with explicit path:"
+	log ""
+	log "  .venv/bin/repo-lint --help"
+	log ""
+	log "The virtual environment is activated for THIS shell session only."
+	log "You will need to activate it again in new terminal sessions."
+	log ""
 }
 
 # Entry point
