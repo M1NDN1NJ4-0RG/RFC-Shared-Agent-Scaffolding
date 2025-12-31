@@ -6,12 +6,61 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
-- Implement remaining Phase 2 items (rgrep, shell, PowerShell, Perl toolchains)
-- Add rgrep installation (default)
-- Add shell toolchain installation (optional --shell flag)
+- Implement remaining Phase 2 items (PowerShell, Perl toolchains)
 - Add PowerShell toolchain installation (optional --powershell flag)
 - Add Perl toolchain installation with non-interactive mode (optional --perl flag)
-- Update tests for new command-line argument functionality
+- Update tests for new command-line argument functionality and Phase 2 installations
+
+---
+
+## DONE (EXTREMELY DETAILED)
+### 2025-12-31 21:18 - Implement Phase 2.1 & 2.3: rgrep + shell toolchain installations
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Added rgrep and shell toolchain installation functions
+- `docs/ai-prompt/209/209-next-steps.md`: Updated journal
+
+**Changes Made:**
+Implemented Phase 2.1 (rgrep) and Phase 2.3 (shell toolchain) per comment #3702915403 with MANDATORY compliance checks:
+
+1. **Phase 2.1: rgrep Installation (Required)**:
+   - Added `install_rgrep()` function
+   - Attempts to install ripgrep (provides `rg` command) via apt-get or brew
+   - Falls back to grep with loud warnings if installation fails
+   - Always returns 0 (does not block bootstrap if unavailable)
+
+2. **Phase 2.3: Shell Toolchain Installation (Optional)**:
+   - Added `install_shell_tools()` function
+   - Installs shellcheck (shell script linter)
+   - Installs shfmt (shell script formatter) with fallback to snap if apt fails
+   - Exit code 16 if any tool fails to install
+   - Only runs when `--shell` flag is provided
+
+3. **Updated main() Flow**:
+   - Phase 2.1: `install_rgrep()` always runs (required utility)
+   - Phase 2.2: `install_python_tools()` always runs (required)
+   - Phase 2.3: `install_shell_tools()` runs only if `INSTALL_SHELL=true`
+   - Updated success summary to show installed toolchains
+
+4. **Exit Code Documentation**:
+   - Added exit code 16: Shell toolchain installation failed
+
+**Compliance Verification (MANDATORY):**
+- ✅ shellcheck: 0 warnings (fixed SC2034 warnings with suppressions)
+- ✅ shfmt: formatting applied (trailing whitespace removed)
+- ✅ validate_docstrings: All docstrings conform to contract
+- ✅ No Python files changed (no Python linting required)
+
+**Testing:**
+```bash
+# Compliance checks passed
+shellcheck scripts/bootstrap-repo-lint-toolchain.sh  # ✓
+shfmt -d scripts/bootstrap-repo-lint-toolchain.sh    # ✓ (no diffs after formatting)
+python3 scripts/validate_docstrings.py --file scripts/bootstrap-repo-lint-toolchain.sh  # ✓
+```
+
+**Known Issues/Limitations:**
+- shfmt installation via apt may fail on some systems (fallback to snap implemented)
+- ripgrep installation requires sudo access (graceful fallback to grep with warning)
 
 ---
 

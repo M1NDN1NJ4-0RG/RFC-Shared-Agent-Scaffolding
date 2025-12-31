@@ -43,6 +43,7 @@
 #     13  repo-lint not found on PATH after installation
 #     14  repo-lint exists but --help command failed
 #     15  Python toolchain installation failed
+#     16  Shell toolchain installation failed (shellcheck/shfmt)
 #
 #   Stdout:
 #     Progress messages prefixed with [bootstrap]
@@ -177,7 +178,6 @@ die() {
 show_banner() {
 	local title="$1"
 	local subtitle="${2:-}"
-	local width=80
 
 	echo ""
 	echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
@@ -273,6 +273,7 @@ parse_arguments() {
 			warn "The --quiet flag is reserved for future use and currently disabled."
 			warn "During implementation, verbose output is REQUIRED for troubleshooting."
 			warn "Continuing in verbose mode..."
+			# shellcheck disable=SC2034  # QUIET_MODE reserved for future use
 			QUIET_MODE=false
 			VERBOSE_MODE=true
 			shift
@@ -650,6 +651,228 @@ install_python_tools() {
 }
 
 # ============================================================================
+# Core Utilities Installation (Phase 2.1)
+# ============================================================================
+
+# install_rgrep - Install or verify ripgrep (rgrep) utility
+#
+# DESCRIPTION:
+#   Attempts to install ripgrep (provides rgrep command) using available
+#   package managers (apt-get on Debian/Ubuntu). If ripgrep is not available,
+#   warns the user and falls back to grep. This is a required utility.
+#
+# INPUTS:
+#   None
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   rgrep available or fallback to grep configured
+#
+#   Stdout:
+#     Installation progress and warnings about grep fallback if needed
+#
+#   Side Effects:
+#     May install ripgrep system package if sudo is available
+#
+# EXAMPLES:
+#   install_rgrep
+install_rgrep() {
+	log "Checking for ripgrep (rgrep)..."
+
+	# Check if ripgrep (rg) is already installed
+	if command -v rg >/dev/null 2>&1; then
+		local version
+		version=$(rg --version | head -n1)
+		log "  ✓ ripgrep is already installed: $version"
+		return 0
+	fi
+
+	# Attempt to install ripgrep
+	log "ripgrep not found. Attempting to install..."
+
+	# Detect package manager and install
+	if command -v apt-get >/dev/null 2>&1; then
+		log "Detected apt-get package manager"
+		if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+			log "Installing ripgrep via apt-get..."
+			if sudo apt-get update -qq && sudo apt-get install -y ripgrep; then
+				log "  ✓ ripgrep installed successfully"
+				return 0
+			else
+				warn "  ✗ Failed to install ripgrep via apt-get"
+			fi
+		else
+			warn "  ✗ Cannot install ripgrep: sudo access required"
+		fi
+	elif command -v brew >/dev/null 2>&1; then
+		log "Detected Homebrew package manager"
+		log "Installing ripgrep via brew..."
+		if brew install ripgrep; then
+			log "  ✓ ripgrep installed successfully"
+			return 0
+		else
+			warn "  ✗ Failed to install ripgrep via brew"
+		fi
+	else
+		warn "  ✗ No supported package manager found (apt-get/brew)"
+	fi
+
+	# Fallback warning
+	warn "ripgrep (rg/rgrep) could not be installed"
+	warn "repo-lint will fall back to 'grep' but performance may be degraded"
+	warn "To install manually:"
+	warn "  - Debian/Ubuntu: sudo apt-get install ripgrep"
+	warn "  - macOS: brew install ripgrep"
+	warn "  - Or download from: https://github.com/BurntSushi/ripgrep/releases"
+
+	return 0
+}
+
+# ============================================================================
+# Shell Toolchain Installation (Phase 2.3)
+# ============================================================================
+
+# install_shell_tools - Install shell linting and formatting tools
+#
+# DESCRIPTION:
+#   Installs shellcheck (shell script linter) and shfmt (shell script formatter)
+#   using available package managers. These tools are required for bash/shell
+#   script compliance checks.
+#
+# INPUTS:
+#   None
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   All shell tools installed successfully
+#     16  One or more shell tools failed to install
+#
+#   Stdout:
+#     Installation progress and version information for each tool
+#
+#   Side Effects:
+#     May install system packages if sudo is available
+#
+# EXAMPLES:
+#   install_shell_tools
+install_shell_tools() {
+	log "Installing shell toolchain (shellcheck, shfmt)"
+
+	local failed_tools=()
+
+	# Install shellcheck
+	log "Installing shellcheck..."
+	if command -v shellcheck >/dev/null 2>&1; then
+		local version
+		version=$(shellcheck --version | grep "^version:" | awk '{print $2}')
+		log "  ✓ shellcheck already installed: version $version"
+	else
+		# Attempt to install shellcheck
+		if command -v apt-get >/dev/null 2>&1; then
+			if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+				log "Installing shellcheck via apt-get..."
+				if sudo apt-get update -qq && sudo apt-get install -y shellcheck; then
+					local version
+					version=$(shellcheck --version | grep "^version:" | awk '{print $2}')
+					log "  ✓ shellcheck installed: version $version"
+				else
+					warn "  ✗ Failed to install shellcheck via apt-get"
+					failed_tools+=("shellcheck")
+				fi
+			else
+				warn "  ✗ Cannot install shellcheck: sudo access required"
+				failed_tools+=("shellcheck")
+			fi
+		elif command -v brew >/dev/null 2>&1; then
+			log "Installing shellcheck via brew..."
+			if brew install shellcheck; then
+				local version
+				version=$(shellcheck --version | grep "^version:" | awk '{print $2}')
+				log "  ✓ shellcheck installed: version $version"
+			else
+				warn "  ✗ Failed to install shellcheck via brew"
+				failed_tools+=("shellcheck")
+			fi
+		else
+			warn "  ✗ No supported package manager found for shellcheck"
+			failed_tools+=("shellcheck")
+		fi
+	fi
+
+	# Install shfmt
+	log "Installing shfmt..."
+	if command -v shfmt >/dev/null 2>&1; then
+		local version
+		version=$(shfmt --version 2>&1)
+		log "  ✓ shfmt already installed: version $version"
+	else
+		# Attempt to install shfmt
+		if command -v apt-get >/dev/null 2>&1; then
+			if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+				log "Installing shfmt via apt-get..."
+				if sudo apt-get update -qq && sudo apt-get install -y shfmt; then
+					local version
+					version=$(shfmt --version 2>&1)
+					log "  ✓ shfmt installed: version $version"
+				else
+					warn "  ✗ Failed to install shfmt via apt-get"
+					warn "  → shfmt may not be in default apt repos, trying alternative method..."
+					# Try installing via snap as fallback
+					if command -v snap >/dev/null 2>&1; then
+						log "Attempting to install shfmt via snap..."
+						if sudo snap install shfmt; then
+							local version
+							version=$(shfmt --version 2>&1)
+							log "  ✓ shfmt installed via snap: version $version"
+						else
+							warn "  ✗ Failed to install shfmt via snap"
+							failed_tools+=("shfmt")
+						fi
+					else
+						failed_tools+=("shfmt")
+					fi
+				fi
+			else
+				warn "  ✗ Cannot install shfmt: sudo access required"
+				failed_tools+=("shfmt")
+			fi
+		elif command -v brew >/dev/null 2>&1; then
+			log "Installing shfmt via brew..."
+			if brew install shfmt; then
+				local version
+				version=$(shfmt --version 2>&1)
+				log "  ✓ shfmt installed: version $version"
+			else
+				warn "  ✗ Failed to install shfmt via brew"
+				failed_tools+=("shfmt")
+			fi
+		else
+			warn "  ✗ No supported package manager found for shfmt"
+			failed_tools+=("shfmt")
+		fi
+	fi
+
+	# Check if any tools failed
+	if [ ${#failed_tools[@]} -gt 0 ]; then
+		warn "Failed to install shell tools: ${failed_tools[*]}"
+		warn "Manual installation required:"
+		for tool in "${failed_tools[@]}"; do
+			case "$tool" in
+			shellcheck)
+				warn "  - shellcheck: https://github.com/koalaman/shellcheck#installing"
+				;;
+			shfmt)
+				warn "  - shfmt: https://github.com/mvdan/sh#shfmt or 'go install mvdan.cc/sh/v3/cmd/shfmt@latest'"
+				;;
+			esac
+		done
+		die "Shell toolchain installation incomplete" 16
+	fi
+
+	log "Shell toolchain installed successfully"
+}
+
+# ============================================================================
 # Main Execution
 # ============================================================================
 
@@ -719,9 +942,19 @@ main() {
 	# Phase 2: Install toolchains
 	show_banner "PHASE 2: TOOLCHAIN INSTALLATION" "This may take several minutes. Please wait..."
 
-	# Phase 2.2: Install Python toolchain (always installed)
+	# Phase 2.1: Install rgrep (always installed - required)
+	install_rgrep
+	log ""
+
+	# Phase 2.2: Install Python toolchain (always installed - required)
 	install_python_tools
 	log ""
+
+	# Phase 2.3: Install shell toolchain (if requested)
+	if [ "$INSTALL_SHELL" = true ]; then
+		install_shell_tools
+		log ""
+	fi
 
 	# Success summary
 	show_banner "BOOTSTRAP COMPLETE" "All requested components installed successfully"
@@ -731,6 +964,14 @@ main() {
 	log "  - Virtual environment: $repo_root/$VENV_DIR"
 	log "  - repo-lint: $(command -v repo-lint)"
 	log "  - Python tools: black, ruff, pylint, yamllint, pytest"
+	if command -v rg >/dev/null 2>&1; then
+		log "  - ripgrep: $(command -v rg)"
+	else
+		log "  - ripgrep: NOT INSTALLED (fallback to grep)"
+	fi
+	if [ "$INSTALL_SHELL" = true ]; then
+		log "  - Shell tools: shellcheck, shfmt"
+	fi
 	log ""
 
 	# PATH activation banner
