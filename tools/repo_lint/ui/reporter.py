@@ -180,12 +180,11 @@ class Reporter:
         msg = f"{icon} {name}" if icon else f"Running: {name}"
         self.console.print(self._format_with_color(msg, "info"))
 
-    def runner_completed(self, result: LintResult) -> None:
-        """Report that a runner has completed.
+    def _runner_completed(self, result: LintResult) -> None:
+        """Private placeholder hook for future live progress display updates.
 
-        This is a placeholder hook for future live progress display updates.
-        Currently, all results are rendered at once via render_results_table(),
-        so this method is an explicit no-op.
+        This is currently unused but reserved for future implementation of live
+        progress displays. Made private since it's not part of the public API yet.
 
         :param result: LintResult from runner
 

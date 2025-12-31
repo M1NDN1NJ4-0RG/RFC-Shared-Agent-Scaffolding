@@ -53,7 +53,7 @@ def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) ->
     Creates a Console instance with appropriate configuration for TTY or CI mode.
     In CI mode, colors and interactive features are disabled.
 
-    Design Note: This function caches Console instances by (ci_mode, force_terminal)
+    Design Note: This function caches Console instances by (ci_mode, effective_force_terminal)
     to avoid redundant creation while still allowing the same process to use different
     configurations for different operations (e.g., interactive output for user messages,
     CI output for log files).
@@ -62,22 +62,24 @@ def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) ->
     :param force_terminal: Override TTY detection (default: auto-detect)
     :returns: Configured Console instance
     """
-    # Create cache key including force_terminal for correctness
-    cache_key = (ci_mode, force_terminal)
+    # Determine effective force_terminal value before caching
+    if force_terminal is None:
+        # In interactive mode, force terminal if TTY detected
+        # In CI mode, never force terminal
+        effective_force_terminal = not ci_mode and is_tty()
+    else:
+        effective_force_terminal = force_terminal
+
+    # Create cache key with resolved force_terminal value for correctness
+    cache_key = (ci_mode, effective_force_terminal)
 
     # Check cache first
     if cache_key in _console_cache:
         return _console_cache[cache_key]
 
-    # Determine if we should force terminal mode
-    if force_terminal is None:
-        # In interactive mode, force terminal if TTY detected
-        # In CI mode, never force terminal
-        force_terminal = not ci_mode and is_tty()
-
     # Create console with appropriate settings
     console = Console(
-        force_terminal=force_terminal,
+        force_terminal=effective_force_terminal,
         no_color=ci_mode,  # Disable colors in CI mode
         highlight=not ci_mode,  # Disable syntax highlighting in CI mode
         markup=True,  # Always allow Rich markup

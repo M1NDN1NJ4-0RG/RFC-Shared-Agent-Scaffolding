@@ -17,9 +17,10 @@
     This module does not define or use exit codes directly:
     - 0: Not applicable (theme configuration only)
     - 1: Not applicable (theme configuration only)
-    - Note: May raise ThemeValidationError on validation failures; callers (such as
-      CLI entrypoints) are responsible for catching this exception and mapping
-      it to an appropriate exit code (for example, ``ExitCode.INTERNAL_ERROR``).
+    - Note: May raise ThemeValidationError on validation failures (e.g., malformed
+      YAML, invalid schema, missing required fields). Callers (such as CLI entrypoints)
+      are responsible for catching this exception and mapping it to an appropriate
+      exit code for configuration errors as defined by their own error-handling scheme.
 
 :Examples:
     Load default theme::
@@ -238,7 +239,18 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
             # Check environment variable
             env_theme = os.environ.get("REPO_LINT_UI_THEME")
             if env_theme:
-                candidates.append(Path(env_theme))
+                env_path = Path(env_theme)
+                if env_path.exists():
+                    candidates.append(env_path)
+                else:
+                    # Warn user that explicitly configured env var path doesn't exist
+                    from rich.console import Console as RichConsole
+
+                    stderr_console = RichConsole(file=sys.stderr, highlight=False)
+                    stderr_console.print(
+                        f"[yellow]⚠️  Warning:[/yellow] REPO_LINT_UI_THEME environment "
+                        f"variable points to non-existent path: {env_path}. Falling back to default theme."
+                    )
 
             # Check user config path
             user_config = Path.home() / ".config" / "repo-lint" / "repo-lint-ui-theme.yaml"
@@ -258,10 +270,14 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
         if not selected_theme:
             # If no theme file exists, warn and return default theme
             # This can happen when running outside a repo or if conformance/ is missing
-            # Create a minimal stderr console for warning output
-            # Note: We can't use Reporter here (circular dependency), so we use a minimal
-            # Console instance directly. This is acceptable because theme loading happens
-            # very early in the process, before the Reporter is initialized.
+            #
+            # Note on output mechanism: We use a minimal Rich Console here instead of
+            # Reporter because theme loading happens very early in initialization, before
+            # Reporter exists. This creates a circular dependency that can't be resolved
+            # without restructuring the initialization order. This is acceptable since
+            # theme loading is a one-time early operation, and the warning formatting
+            # doesn't need to respect CI mode or theme settings (it's about theme loading
+            # itself failing).
             from rich.console import Console as RichConsole
 
             stderr_console = RichConsole(file=sys.stderr, highlight=False)

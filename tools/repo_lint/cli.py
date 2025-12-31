@@ -71,8 +71,10 @@ click.rich_click.APPEND_METAVARS_HELP = True
 click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
 click.rich_click.ERRORS_SUGGESTION = "Try running the '--help' flag for more information."
 click.rich_click.ERRORS_EPILOGUE = ""
-# Note: MAX_WIDTH controls help text formatting. This is independent of theme.help.width,
-# which is stored in the theme YAML but not currently used (both set to 120 for consistency).
+# Note: MAX_WIDTH controls help text formatting and is hardcoded here for consistency.
+# The theme.help.width field exists in the theme YAML schema for potential future use
+# but is not currently applied. If you need to customize help width, change this value
+# here (and optionally update the theme YAML to match for documentation purposes).
 click.rich_click.MAX_WIDTH = 120
 click.rich_click.COLOR_SYSTEM = "auto"  # Respect NO_COLOR environment variable
 
@@ -115,11 +117,17 @@ click.rich_click.OPTION_GROUPS = {
 def _is_verbose_enabled() -> bool:
     """Check if verbose mode is enabled via CLI flags or environment variable.
 
+    Note: This function checks sys.argv before Click parses arguments, so it may
+    have false positives if 'verbose' appears as a value for another argument.
+    In practice, this is acceptable for traceback display since the worst case
+    is showing a traceback when not requested (better than hiding errors).
+
     :returns: True if verbose mode is enabled, False otherwise
     """
     import os
 
     # Check CLI flags
+    # Look for exact -v or --verbose flags (not as substring of other args)
     verbose_flags = {"-v", "--verbose"}
     has_verbose_flag = any(arg in verbose_flags or arg.startswith("--verbose=") for arg in sys.argv[1:])
 
