@@ -6,12 +6,40 @@ Last Updated: 2025-12-31
 Related: Issue #160, PRs #176, #180
 
 ## NEXT
-- Address Phase 2.5 remaining items (BLOCKERS):
-  - Update test_output_format.py for Rich table format
-  - Windows validation (PowerShell, PowerShell 7+, Windows Terminal) - RELEASE BLOCKER
-  - Update HOW-TO-USE-THIS-TOOL.md with theme customization and Windows completion
-- Human decision required for Phase 2.6-2.9 prioritization (see 160-human-decisions-2.md)
-- Phase 3 items deferred to future work per human decision
+
+### IMMEDIATE: Phase 2.5 Blocker #1 - Update test_output_format.py
+**Status:** NEXT ACTION  
+**Why:** Tests fail because output format changed from plain text to Rich tables  
+**Tasks:**
+1. Review failing tests in `tools/repo_lint/tests/test_output_format.py`
+2. Update test expectations to match Rich table format
+3. Ensure exit code tests still pass (logic unchanged)
+4. Run full test suite to verify no regressions
+
+### THEN: Phase 2.5 Blocker #2 - Add Windows CI Validation
+**Status:** BLOCKED until test updates complete  
+**Decision:** Hybrid approach - CI-first Windows validation (manual deferred)  
+**Tasks:**
+1. Add Windows runner to `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+2. Add Windows runner to `.github/workflows/repo-lint-weekly-full-scan.yml`
+3. Validate Rich console output works on Windows
+4. Validate Rich-Click help output works on Windows
+5. Validate shell completion (to extent testable in CI)
+6. Ensure all jobs pass
+
+### THEN: Phase 2.5 Blocker #3 - Update HOW-TO-USE-THIS-TOOL.md
+**Status:** BLOCKED until Windows CI complete  
+**Tasks:**
+1. Add Windows PowerShell completion instructions
+2. Add Windows PowerShell 7+ completion instructions
+3. Add theme customization guide (YAML theme system usage)
+4. Add output mode examples (interactive vs CI mode)
+5. Update troubleshooting section for Windows-specific issues
+
+### AFTER Phase 2.5 Complete: Proceed to Phase 2.9
+**Status:** BLOCKED until all Phase 2.5 blockers complete  
+**Per human decision:** Phase 2.9 MUST be implemented BEFORE Phase 2.6-2.8  
+**See:** `160-implementation-plan.md` for detailed sequencing
 
 ---
 
