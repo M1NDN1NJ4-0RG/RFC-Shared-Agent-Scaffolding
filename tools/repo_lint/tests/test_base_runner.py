@@ -139,6 +139,7 @@ class TestFindRepoRoot(unittest.TestCase):
         :param mock_cwd: Mocked Path.cwd
         """
         import tempfile
+
         from tools.repo_lint.install.install_helpers import get_repo_root
 
         with tempfile.TemporaryDirectory() as tmpdir:

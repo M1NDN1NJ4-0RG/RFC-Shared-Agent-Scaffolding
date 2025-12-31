@@ -169,6 +169,13 @@ Each fix above should be committed with clear messages, linking to issues if the
   - [ ] Test coverage for runners (Optional)
 
 ## Session Notes (newest first)
+### 2025-12-31 00:37 - Addressed code review feedback
+- Fixed inconsistent fallback behavior in `get_repo_root()` - now starts from cwd like `find_repo_root()`
+- Added comprehensive test coverage: 7 new tests (3 for get_repo_root, 4 for find_repo_root)
+- All tests passing (21/21 total)
+- Replied to both code review comments with commit hash e8070b0
+- PR ready for re-review
+
 ### 2025-12-31 00:25 - Completed repository root detection fix
 - Fixed `get_repo_root()` and `find_repo_root()` to handle missing .git directory
 - Both functions now return current working directory as fallback

@@ -87,7 +87,6 @@ class TestRepoRootDetection(unittest.TestCase):
         # Setup: cwd is /home/user/project/subdir (actual Git repo)
         # This test runs in a real Git repo, so it should find .git
         import tempfile
-        import os
 
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create a fake .git directory
