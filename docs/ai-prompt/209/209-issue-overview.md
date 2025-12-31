@@ -1,4 +1,63 @@
 # Repo-Lint Toolchain Bootstrapper (Session-Start Compliance Gate)
+Last Updated: 2025-12-31
+Related: Issue #209
+
+## Progress Tracker
+- [x] Read issue overview (209-issue-overview.md)
+- [x] Create AI journal (209-next-steps.md)
+- [x] Create issue summary (209-summary.md)
+- [x] Create detailed implementation plan (209-implementation-plan.md)
+- [ ] Phase 1: Core Bootstrapper Script Creation
+  - [ ] Item 1.1: Repository root discovery
+  - [ ] Item 1.2: Python virtual environment setup
+  - [ ] Item 1.3: repo-lint package installation
+  - [ ] Item 1.4: repo-lint verification
+- [ ] Phase 2: Tool Installation and Verification
+  - [ ] Item 2.1: Core utility installation (rgrep)
+  - [ ] Item 2.2: Python toolchain installation
+  - [ ] Item 2.3: Shell toolchain installation
+  - [ ] Item 2.4: PowerShell toolchain installation
+  - [ ] Item 2.5: Perl toolchain installation
+- [ ] Phase 3: Verification Gate and Error Handling
+  - [ ] Item 3.1: Final verification gate
+  - [ ] Item 3.2: Error handling and messages
+  - [ ] Item 3.3: Idempotency and state management
+- [ ] Phase 4: Documentation
+  - [ ] Item 4.1: Inline script documentation
+  - [ ] Item 4.2: External documentation
+  - [ ] Item 4.3: Copilot session-start integration
+- [ ] Phase 5: Testing and Validation
+  - [ ] Item 5.1: Manual testing
+  - [ ] Item 5.2: Automated testing (optional)
+- [ ] Phase 6: CI Integration and Rollout
+  - [ ] Item 6.1: CI workflow updates
+  - [ ] Item 6.2: Rollout plan
+
+## Session Notes (newest first)
+### 2025-12-31 19:47 - Planning phase complete
+**Summary:**
+- Created all required planning documentation per agent instructions
+- Analyzed existing Rust bootstrap implementation as reference
+- Developed comprehensive 6-phase implementation plan with detailed sub-items
+- Identified that Bash script is specifically requested (Rust impl already exists)
+- Ready for implementation pending human approval
+
+**Deliverables Created:**
+- `docs/ai-prompt/209/209-next-steps.md` - AI journal for per-commit tracking
+- `docs/ai-prompt/209/209-summary.md` - High-level issue summary and requirements
+- `docs/ai-prompt/209/209-implementation-plan.md` - Detailed phased plan with checkboxes and TODOs
+
+**Key Decision Points:**
+- Plan assumes Bash and Rust implementations will coexist
+- Focus on Debian/Ubuntu (apt) as primary platform
+- Defer macOS/Windows support unless requested
+- Prioritize manual testing over automated tests initially
+
+**Next Steps:**
+- Await human approval/feedback on implementation plan
+- If approved, begin Phase 1 (core bootstrapper script creation)
+
+---
 
 > **CALL THE TOOL** `copilot_repo_compliance_bootstraper.*`
 > USE THE CORRECT NAMING FOR WHATEVER LANGUAGE YOU BUILD THIS BOOTSTRAPPER IN:
