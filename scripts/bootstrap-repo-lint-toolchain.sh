@@ -1086,7 +1086,7 @@ install_perl_tools() {
 	fi
 
 	# Set up local::lib environment for Perl module installation
-	# cpanm will install to ~/perl5 when it can't write to system directories
+	# cpanm will install to ~/perl5 when it can't write to system directories. These environment variables ensure modules and executables are discoverable both during installation and when running repo-lint verification.
 	setup_perl_environment
 
 	# Install Perl::Critic (non-interactive)
