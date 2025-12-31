@@ -256,7 +256,7 @@ die() {{
 find_repo_root() {{
     local current_dir
     current_dir="$(pwd)"
-    
+
     while true; do
         # Check for repository markers
         if [[ -d "$current_dir/.git" ]] || \\
@@ -265,12 +265,12 @@ find_repo_root() {{
             echo "$current_dir"
             return 0
         fi
-        
+
         # Check if we've reached filesystem root
         if [[ "$current_dir" == "/" ]]; then
             die "Could not find repository root (no .git, pyproject.toml, or README.md found)" 10
         fi
-        
+
         # Move up one directory
         current_dir="$(dirname "$current_dir")"
     done
@@ -369,7 +369,7 @@ die() {{
 find_repo_root() {{
     local current_dir
     current_dir="$(pwd)"
-    
+
     while true; do
         # Check for repository markers
         if [[ -d "$current_dir/.git" ]] || \\
@@ -378,12 +378,12 @@ find_repo_root() {{
             echo "$current_dir"
             return 0
         fi
-        
+
         # Check if we've reached filesystem root
         if [[ "$current_dir" == "/" ]]; then
             die "Could not find repository root (no .git, pyproject.toml, or README.md found)" 10
         fi
-        
+
         # Move up one directory
         current_dir="$(dirname "$current_dir")"
     done
