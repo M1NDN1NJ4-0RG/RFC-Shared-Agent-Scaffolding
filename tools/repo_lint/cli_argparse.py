@@ -186,7 +186,10 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 if args.ci:
                     print_install_instructions(missing_tools, ci_mode=args.ci)
                     return ExitCode.MISSING_TOOLS
-                safe_print(f"⚠️  Missing tools: {', '.join(missing_tools)}", f"WARNING: Missing tools: {', '.join(missing_tools)}")
+                safe_print(
+                    f"⚠️  Missing tools: {', '.join(missing_tools)}",
+                    f"WARNING: Missing tools: {', '.join(missing_tools)}",
+                )
                 print("   Run 'repo-lint install' to install them")
                 print("")
                 return ExitCode.MISSING_TOOLS
@@ -322,7 +325,9 @@ def cmd_fix(args: argparse.Namespace) -> int:
         # Guard: Unsafe fixes only supported for Python
         only_language = getattr(args, "only", None)
         if only_language and only_language != "python":
-            safe_print("❌ Unsafe fixes not supported for this language", "ERROR: Unsafe fixes not supported for this language")
+            safe_print(
+                "❌ Unsafe fixes not supported for this language", "ERROR: Unsafe fixes not supported for this language"
+            )
             print("", file=sys.stderr)
             print("Unsafe mode currently only supports Python files.", file=sys.stderr)
             print(f"You specified: --only={only_language}", file=sys.stderr)
@@ -406,7 +411,10 @@ def cmd_install(args: argparse.Namespace) -> int:
     if success:
         venv_path = get_venv_path()
         print("")
-        safe_print(f"✓ Python tools installed successfully in {venv_path}", f"Python tools installed successfully in {venv_path}")
+        safe_print(
+            f"✓ Python tools installed successfully in {venv_path}",
+            f"Python tools installed successfully in {venv_path}",
+        )
         print("")
         print("To use these tools in your shell:")
         print(f"  source {venv_path}/bin/activate  # Linux/macOS")
@@ -434,7 +442,10 @@ def cmd_install(args: argparse.Namespace) -> int:
         print("")
         safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
         print("")
-        safe_print("⚠️  Python tools are required for repo_lint to function.", "WARNING: Python tools are required for repo_lint to function.")
+        safe_print(
+            "⚠️  Python tools are required for repo_lint to function.",
+            "WARNING: Python tools are required for repo_lint to function.",
+        )
         print("   Please fix the errors above and try again.")
         print("")
         print("Common issues:")
