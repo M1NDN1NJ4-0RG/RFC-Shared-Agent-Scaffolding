@@ -1,6 +1,33 @@
+# Issue 098 Overview
+Last Updated: 2025-12-31
+Related: Issue #098, PRs #159
+
+## Original Issue
+
 # EPIC: Repo Cleanup Follow‑Ups — Phased Fix Plan (Post-Restructure)
 
 This issue tracks the remaining callouts, recommendations, and nits identified after the initial repo restructure. The work is intentionally phased to keep risk low and ensure CI remains green throughout.
+
+## Progress Tracker
+- [x] Phase 0: Preflight & Guardrails
+- [x] Phase 1: Documentation Hygiene & Entry Points
+- [x] Phase 2: Wrappers Path Simplification
+- [x] Phase 3: Build Artifact Directory
+- [x] Phase 4: Script & Code Casing Standardization
+- [x] Phase 4.5: CI Enforcement Conversion
+- [x] Phase 5: Wrapper Test Runner Parity
+- [x] Phase 5.5: Docstring/Documentation Contract Expansion
+- [x] Phase 6: Final Polish & Long-Term Maintenance
+
+## Session Notes (newest first)
+### 2025-12-31 00:20 - Phase 5.5.0.3 verification and Phase 6 completion
+- Verified all Perl filename references are correct (snake_case)
+- Added persona-based navigation to docs/README.md
+- Added repository structure map to root README.md
+- Completed all Epic #098 phases
+- Links: PR #159, commit 1966ec9
+
+---
 
 ## Global Rules (Apply to every Phase)
 - Use `git mv` for renames/moves to preserve history.
@@ -509,16 +536,16 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ---
 
 ## Reference Verification Checklist (Run after every Phase)
-- [x] `rg "documents/"` returns 0 (outside history docs) ✅
-- [x] `rg "RFC-Shared-Agent-Scaffolding-Example"` returns 0 (outside history/ai-prompt docs) ✅
-- [x] `rg` for any old file names you renamed returns 0 ✅
+- [x] `grep "documents/"` returns 0 (outside history docs) ✅
+- [x] `grep "RFC-Shared-Agent-Scaffolding-Example"` returns 0 (outside history/ai-prompt docs) ✅
+- [x] `grep` for any old file names you renamed returns 0 ✅
 - [x] All Markdown links work (verified key navigation paths) ✅
 - [x] All workflows updated for any moved/renamed paths ✅
-- [x] Rust tests pass (not run - documentation-only changes)
-- [x] Wrapper tests pass (not run - documentation-only changes)
-- [x] Conformance tests pass (not run - documentation-only changes)
+- [x] Rust tests: Not run (documentation-only changes)
+- [x] Wrapper tests: Not run (documentation-only changes)
+- [x] Conformance tests: Not run (documentation-only changes)
 
 **Verification Notes:**
-- Phases 5.5-6 involved only documentation changes
+- Phases 5.5-6 involved only documentation changes to README.md, docs/README.md, and AI journals
 - No code or workflow changes that would affect tests
 - All linting checks passed via `repo_lint check --ci`
