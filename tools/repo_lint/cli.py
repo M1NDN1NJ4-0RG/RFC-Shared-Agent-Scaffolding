@@ -54,6 +54,7 @@ from tools.repo_lint.install.install_helpers import (
 from tools.repo_lint.policy import get_policy_summary, load_policy, validate_policy
 from tools.repo_lint.reporting import print_install_instructions, report_results
 from tools.repo_lint.runners.bash_runner import BashRunner
+from tools.repo_lint.runners.naming_runner import NamingRunner
 from tools.repo_lint.runners.perl_runner import PerlRunner
 from tools.repo_lint.runners.powershell_runner import PowerShellRunner
 from tools.repo_lint.runners.python_runner import PythonRunner
@@ -141,6 +142,17 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         ("yaml", "YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("rust", "Rust", RustRunner(ci_mode=args.ci, verbose=args.verbose)),
     ]
+    
+    # Add cross-language runners (run on all files, not language-specific)
+    # Naming runner runs separately after language-specific checks
+    cross_language_runners = []
+    try:
+        cross_language_runners.append(("naming", "Naming Conventions", NamingRunner()))
+    except Exception as e:
+        # If naming runner fails to initialize (e.g., config missing), skip it
+        if args.verbose and not use_json:
+            print(f"⚠️  Naming validation skipped: {e}")
+            print("")
 
     # Filter runners based on --only flag
     only_language = getattr(args, "only", None)
@@ -184,6 +196,17 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         else:
             if args.verbose and not use_json:
                 print(f"No {name} files found. Skipping {name} {mode.lower()}.")
+    
+    # Run cross-language runners (only if --only not specified)
+    if not only_language:
+        for key, name, runner in cross_language_runners:
+            if not use_json:
+                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                print(f"  {name} {mode}")
+                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            
+            results = action_callback(runner)
+            all_results.extend(results)
 
     # Report results
     if not use_json:

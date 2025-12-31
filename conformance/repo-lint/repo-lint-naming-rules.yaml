@@ -1,0 +1,145 @@
+---
+config_type: repo-lint-naming-rules
+version: "1.0.0"
+
+# Naming and file casing rules per language
+# Reference: docs/contributing/naming-and-style.md
+# Enforcement: Check-only (no auto-renames)
+
+languages:
+  python:
+    description: "Python naming conventions (PEP 8)"
+    file_patterns:
+      - pattern: "^__[a-z]+__\\.py$"
+        description: "Python special files (dunder files) are allowed"
+        examples:
+          valid:
+            - "__init__.py"
+            - "__main__.py"
+            - "__version__.py"
+      - pattern: "^[a-z0-9]+(_[a-z0-9]+)*\\.py$"
+        description: "Python files must use snake_case"
+        examples:
+          valid:
+            - "safe_run.py"
+            - "test_helpers.py"
+            - "validate_docstrings.py"
+          invalid:
+            - "safe-run.py"  # kebab-case
+            - "SafeRun.py"   # PascalCase
+    
+  bash:
+    description: "Bash naming conventions (Unix/Linux)"
+    file_patterns:
+      - pattern: "^[a-z0-9]+(-[a-z0-9]+)*\\.sh$"
+        description: "Bash scripts must use kebab-case"
+        examples:
+          valid:
+            - "safe-run.sh"
+            - "test-helpers.sh"
+            - "verify-repo-references.sh"
+          invalid:
+            - "safe_run.sh"  # snake_case
+            - "SafeRun.sh"   # PascalCase
+    
+  powershell:
+    description: "PowerShell naming conventions"
+    file_patterns:
+      - pattern: "^[A-Z][a-zA-Z0-9]*\\.ps1$"
+        description: "PowerShell scripts must use PascalCase"
+        examples:
+          valid:
+            - "SafeRun.ps1"
+            - "TestHelpers.ps1"
+            - "PreflightAutomergeRuleset.ps1"
+          invalid:
+            - "safe-run.ps1"  # kebab-case
+            - "safe_run.ps1"  # snake_case
+      - pattern: "^[A-Z][a-zA-Z0-9]*\\.psm1$"
+        description: "PowerShell modules must use PascalCase"
+        examples:
+          valid:
+            - "SafeArchive.psm1"
+          invalid:
+            - "safe-archive.psm1"
+    
+  perl:
+    description: "Perl naming conventions"
+    file_patterns:
+      - pattern: "^[a-z0-9]+(_[a-z0-9]+)*\\.pl$"
+        description: "Perl scripts must use snake_case"
+        examples:
+          valid:
+            - "safe_run.pl"
+            - "test_helpers.pl"
+            - "run_tests.pl"
+          invalid:
+            - "safe-run.pl"  # kebab-case
+      - pattern: "^[A-Z][a-zA-Z0-9]*\\.pm$"
+        description: "Perl modules must use PascalCase"
+        examples:
+          valid:
+            - "TestUtil.pm"
+            - "SafeRun.pm"
+          invalid:
+            - "test-util.pm"  # kebab-case for modules
+    
+  yaml:
+    description: "YAML file naming conventions"
+    file_patterns:
+      - pattern: "^[a-z0-9]+(-[a-z0-9]+)*\\.ya?ml$"
+        description: "YAML files must use kebab-case"
+        examples:
+          valid:
+            - "naming-rules.yaml"
+            - "config.yml"
+            - "auto-merge-policy.yaml"
+          invalid:
+            - "naming_rules.yaml"  # snake_case
+            - "NamingRules.yaml"   # PascalCase
+    
+  markdown:
+    description: "Markdown documentation naming"
+    file_patterns:
+      - pattern: "^([A-Z][A-Z0-9_]*|[a-z0-9]+(-[a-z0-9]+)*(-v[0-9]+\\.[0-9]+\\.[0-9]+)?)\\.md$"
+        description: "Markdown files: kebab-case (optionally with -vX.Y.Z suffix) or UPPER_SNAKE_CASE (special files)"
+        examples:
+          valid:
+            - "contributing-guide.md"  # kebab-case
+            - "naming-and-style.md"    # kebab-case
+            - "project-v1.0.0.md"      # kebab-case with version
+            - "README.md"              # UPPER_SNAKE_CASE (special)
+            - "CONTRIBUTING.md"        # UPPER_SNAKE_CASE (special)
+          invalid:
+            - "contributing_guide.md"  # snake_case
+            - "ContributingGuide.md"   # PascalCase
+    
+  json:
+    description: "JSON file naming conventions"
+    file_patterns:
+      - pattern: "^[a-z0-9]+(-[a-z0-9]+)*\\.json$"
+        description: "JSON files must use kebab-case"
+        examples:
+          valid:
+            - "vectors.json"
+            - "autofix-policy.json"
+            - "package.json"
+          invalid:
+            - "autofix_policy.json"  # snake_case
+            - "AutofixPolicy.json"   # PascalCase
+
+# Global exclusions (directories/patterns to skip)
+exclusions:
+  - ".git/"
+  - ".venv/"
+  - ".venv-lint/"
+  - "__pycache__/"
+  - "node_modules/"
+  - "*.egg-info/"
+  - "build/"
+  - "dist/"
+  - "conformance/repo-lint/fixtures/"
+  - "conformance/repo-lint/vectors/fixtures/"
+  - "scripts/tests/fixtures/"
+
+...
