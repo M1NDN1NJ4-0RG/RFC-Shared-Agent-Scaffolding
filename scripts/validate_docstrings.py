@@ -264,7 +264,7 @@ def get_tracked_files() -> List[Path]:
     exclude_patterns = _get_exclude_patterns()
 
     # Filter files by patterns
-    repo_root = Path.cwd()
+    current_dir = Path.cwd()
     matched_files = []
 
     # Directories to exclude (test fixtures with intentional violations)
@@ -303,7 +303,7 @@ def get_tracked_files() -> List[Path]:
         # Check if file matches any in-scope pattern (from YAML)
         for pattern in in_scope_patterns:
             if p.match(pattern):
-                matched_files.append(repo_root / p)
+                matched_files.append(current_dir / p)
                 break
 
     return matched_files
