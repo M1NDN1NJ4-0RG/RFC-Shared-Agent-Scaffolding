@@ -74,7 +74,7 @@ warn() { printf "\n[bootstrap][WARN] %s\n" "$*" >&2; }
 # Returns:
 #   Never returns (exits process)
 die() {
-	printf "\n[bootstrap][ERROR] %s\n" "$*" >&2
+	printf "\n[bootstrap][ERROR] %s\n" "$1" >&2
 	exit "${2:-1}"
 }
 
