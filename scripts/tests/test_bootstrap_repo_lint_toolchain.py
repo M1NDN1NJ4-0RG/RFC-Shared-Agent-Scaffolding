@@ -529,7 +529,10 @@ class TestRepoLintInstallation(unittest.TestCase):
             shutil.rmtree(self.test_dir)
 
     def _setup_mock_repo(self, repo_root):
-        """Create a minimal mock repository with repo-lint package."""
+        """Create a minimal mock repository with repo-lint package.
+
+        :param repo_root: Path to repository root directory where mock repo will be created.
+        """
         repo_root.mkdir(parents=True, exist_ok=True)
         (repo_root / ".git").mkdir()
         (repo_root / "pyproject.toml").write_text(
@@ -792,7 +795,10 @@ class TestIdempotency(unittest.TestCase):
             shutil.rmtree(self.test_dir)
 
     def _setup_mock_repo(self, repo_root):
-        """Create a minimal mock repository."""
+        """Create a minimal mock repository.
+
+        :param repo_root: Path to repository root directory where mock repo will be created.
+        """
         repo_root.mkdir(parents=True, exist_ok=True)
         (repo_root / ".git").mkdir()
         (repo_root / "pyproject.toml").write_text(
