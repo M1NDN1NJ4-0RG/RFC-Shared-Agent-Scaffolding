@@ -7,18 +7,34 @@ Related: Issue #160, PRs #176, #180
 
 ## NEXT
 
-### ✅ PHASE 2.9 COMPLETE - READY FOR REVIEW
+### ✅ PHASES 2.5 AND 2.9 COMPLETE - READY FOR PHASE 2.7
 
-**Phase 2.9 core work is COMPLETE and VALIDATED.**
+**Current State (2025-12-31 23:50):**
+- Phase 2.5: Rich UI "Glow Up" - ✅ COMPLETE (all 3 blockers resolved)
+- Phase 2.9: YAML-First Configuration - ✅ COMPLETE (merged in PR #207)
 
-**Pre-commit validation:** ✅ PASS (`repo-lint check --ci --only python` exits 0)
+**Verified Complete:**
+1. ✅ Phase 2.5 Blocker 1: Tests updated for Rich format (`test_output_format.py` passes)
+2. ✅ Phase 2.5 Blocker 2: Windows CI validation (GitHub Actions job exists and runs)
+3. ✅ Phase 2.5 Blocker 3: Documentation (PowerShell, theme, output modes in HOW-TO)
+4. ✅ Phase 2.9: YAML-first migration (PR #207 merged, `yaml_loader.py` exists, all configs migrated)
 
-**Remaining tasks:**
-- [ ] Request code review
-- [ ] Address review feedback
-- [ ] Optional: Add unit tests for yaml_loader.py
-- [ ] Optional: Integration tests for backward compatibility
-- [ ] Merge and proceed to Phase 2.7
+**Next Phase per Decision 2 Sequencing:**
+**Phase 2.7 - Extended CLI Granularity & Reporting Surface**
+
+**Phase 2.7.1 - Language and Tool Filtering (HIGHEST PRIORITY)**
+- [ ] Add `--lang <LANG>` option (single language filter, alternative to `--only`)
+- [ ] Add `--tool <TOOL>` option (repeatable, filter to specific tools like `black`, `ruff`, `pylint`)
+- [ ] Tool validation: error if requested tool not available
+- [ ] Update Rich-Click OPTION_GROUPS for proper help organization
+- [ ] Add unit tests for lang/tool filtering logic
+- [ ] Update HOW-TO-USE-THIS-TOOL.md with filtering examples
+
+**Why Phase 2.7.1 First:**
+- Foundation for all other Phase 2.7 features (summaries, formats, doctor, etc.)
+- Enables granular debugging and focused linting
+- Relatively self-contained (< 200 lines changed)
+- High user value (frequently requested feature)
 
 ### Summary of Phase 2.9 Implementation
 
@@ -43,6 +59,53 @@ Related: Issue #160, PRs #176, #180
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 23:50 - Session Start: Verified Phase 2.5 and 2.9 Complete, Planned Phase 2.7
+
+**Session Activities:**
+- ✅ Ran mandatory session start procedure per Session Compliance Requirements
+  - Bootstrapper completed successfully (exit 0)
+  - Activated venv and Perl environment
+  - Verified `repo-lint --help` functional
+  - Health check: `repo-lint check --ci` exits 1 (violations exist, acceptable at session start)
+  
+- ✅ Investigated current EPIC #160 state
+  - Confirmed PR #207 (Phase 2.9) was merged to main
+  - yaml_loader.py exists and is functional
+  - All Phase 2.9 YAML configs present
+
+- ✅ Verified Phase 2.5 blockers are complete
+  - Blocker 1: `test_output_format.py` passes (7/7 tests)
+  - Blocker 2: Windows CI job exists in `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+  - Blocker 3: HOW-TO-USE-THIS-TOOL.md contains PowerShell completion, theme customization, output modes
+
+- ✅ Updated EPIC tracking documents
+  - Updated 160-next-steps.md to reflect true current state
+  - Documented Phase 2.7 as next per Decision 2 sequencing
+  - Identified Phase 2.7.1 (lang/tool filtering) as highest priority item
+
+**Files Changed:**
+- `docs/ai-prompt/160/160-next-steps.md`: Updated NEXT section with accurate state
+
+**Current Repository State:**
+- Exit code 1 from `repo-lint check --ci` (51 violations)
+- These are pre-existing violations, not from my changes
+- Per Session Compliance Requirements, exit code 1 is acceptable at session start
+
+**Rationale:**
+- Per Session Compliance Requirements: must read session docs first
+- Per repository guidelines: verify state before making changes
+- Per Decision 2: must complete Phase 2.5 blockers before Phase 2.7
+- All blockers confirmed complete through direct verification (ran tests, checked files, reviewed workflows)
+
+**Next Session Actions:**
+- Implement Phase 2.7.1: Language and Tool Filtering
+- Add `--lang` and `--tool` CLI options
+- Update cli.py and cli_argparse.py with minimal changes
+- Add tests for filtering logic
+- Update documentation
+
+---
 
 ### 2025-12-31 19:05 - Phase 2.9 Core Implementation: YAML-First Configuration Complete
 
