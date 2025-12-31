@@ -1,3 +1,108 @@
+# LOCKED IN HUMAN DECISIONS (ROUND 2)
+
+These decisions are final unless explicitly revised by Ryan. Requirements below are intentionally direct and must be treated as contracts.
+
+## Decision 1 — Phase 2.5 Windows Validation (Blocking vs Deferred)
+
+**Decision:** **Hybrid approach (CI-first Windows validation).**
+
+**Requirements:**
+- Windows support remains a **Phase 2.5 RELEASE BLOCKER**, per contract.
+- Implement and require **Windows GitHub Actions CI runs** that validate Phase 2.5 behavior.
+- Manual validation on a physical Windows machine is **explicitly deferred** until one is available or a VM is spun up on macOS.
+
+**Notes:**
+- CI must cover: Rich console output, Rich-Click help output, and shell completion behaviors to the extent testable in CI.
+
+## Decision 2 — Phase 2.6–2.9 Prioritization and Sequencing
+
+**Decision:** **Sequential approach (complete Phase 2.5 blockers first), then proceed in this order:**
+1) **Finish Phase 2.5 blockers** (Windows CI validation + remaining tests/docs)
+2) **Phase 2.9** (contracts enforcement)
+3) **Phase 2.7** (CLI granularity + reporting surface)
+4) **Phase 2.8** (env/activate/which) in the order: `which` → `env` → `activate`
+5) **Phase 2.6** (centralized exceptions) after the above
+6) **Phase 3** (polish) last
+
+**PR strategy:** Break phases into manageable PRs (small, reviewable units) but preserve the phase ordering above.
+
+## Decision 3 — YAML-First Configuration Scope (Phase 2.9)
+
+**Decision:** **Aggressive YAML-first migration.**
+
+**Requirements:**
+- Migrate **all behavior that can reasonably be configured** into YAML-first configuration, without allowing contract violations.
+- Maintain **multi-file structure** (separate conformance YAML files by concern).
+- Preserve backward compatibility via a **transition period** with **deprecation warnings** (do not hard-break users immediately).
+- Only allow CLI overrides that do **not** violate contracts.
+
+## Decision 4 — Exception System Pragma Policy (Phase 2.6)
+
+**Decision:**
+- **Warn on pragmas by default**, but this warning must be **configurable/disable-able**.
+- **YAML exceptions have strict precedence** over pragmas when both apply.
+- Provide a migration tool that **prints suggestions** and may optionally write a **draft file**; it must not silently rewrite canonical exception files.
+
+## Decision 5 — CLI Granularity vs Complexity (Phase 2.7)
+
+**Decision:** **Implement the full flag set (spec-compliant), with strong UX to prevent overwhelm.**
+
+**Requirements:**
+- Implement all Phase 2.7 CLI flags as specified (granular `--lang`, repeatable `--tool`, formats, summaries, reporting, etc.).
+- Mitigate complexity via:
+  - Rich-Click help **panels/sections** (Filtering / Output / Execution / Info)
+  - Excellent examples in the help text
+  - Clear error messages and deterministic exit codes
+
+## Decision 6 — Output Format Support (Phase 2.7)
+
+**Decision:** **Support the full structured output suite in-scope for Phase 2.7: `json`, `yaml`, `csv`, `xlsx`.**
+
+**Requirements:**
+- Outputs MUST derive from a **single normalized data model** shared across formats.
+- XLSX support is required; if it needs a dependency (e.g., `openpyxl`), handle it as an explicit packaging extra and ensure CI installs it where needed.
+
+## Decision 7 — `repo-lint doctor` Command Scope
+
+**Decision:** **Minimum checks; check-only (no auto-fix).**
+
+**Requirements:**
+- `repo-lint doctor` must perform minimum mandatory checks (repo root, venv resolution, config validity, tool registry load, tool availability, PATH sanity).
+- `doctor` must be **check-only** (report + suggest fixes; no automatic changes).
+- Help content must be extremely clear, with **exact references** documented in the tool documentation.
+- Documentation file reference: `tools/repo_lint/HOW-TO-USE.md` (name may change later, but this is the current canonical path).
+
+## Decision 8 — Environment Commands (`repo-lint env/activate/which`)
+
+**Decision:** **Required. Implement all three in this order:**
+1) `repo-lint which`
+2) `repo-lint env`
+3) `repo-lint activate`
+
+## Decision 9 — Phase 2.9 Timing (Integration + YAML-First Enforcement)
+
+**Decision:** **Phase 2.9 must be implemented before Phase 2.6–2.8 work proceeds (after Phase 2.5 blockers).**
+
+**Requirements:**
+- Perform an audit to identify any existing non-integrated helper scripts.
+- Enforce Phase 2.9 contracts for all new work immediately.
+- Apply retroactive enforcement as part of the audit findings (prioritize correctness and determinism).
+
+## Decision 10 — Testing Strategy for New Phases
+
+**Decision:** **Standard coverage, tests required before review, and Windows CI for relevant phases.**
+
+**Requirements:**
+- Standard test coverage: unit tests + targeted integration tests for major workflows.
+- Tests MUST be added and passing **before** code review.
+- Windows CI must be included for phases where Windows behavior is relevant (Phase 2.5 and anything that touches CLI/help/output/shell integration).
+
+---
+
+<--- LOCKED IN HUMAN ANSWERS ABOVE THIS LINE --->
+
+---
+
 # Issue #160 - Human Decisions Required (Round 2)
 
 **Date:** 2025-12-31  
