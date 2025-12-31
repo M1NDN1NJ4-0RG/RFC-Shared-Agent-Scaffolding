@@ -6,12 +6,136 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
-- No immediate next steps - awaiting human direction on implementation
-- Terminology correction applied per comment #3702811579
+- Phase 2: Tool Installation and Verification (future)
+- Phase 3: Verification Gate and Error Handling (future)
+- Phase 4: Documentation (future)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 20:02 - Phase 1 implementation complete
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Created new Bash script (13,781 bytes)
+- `docs/ai-prompt/209/209-next-steps.md`: Updated journal
+
+**Changes Made:**
+Implemented Phase 1 of the implementation plan (Issue #209, comment #3702826930):
+- **Item 1.1: Repository Root Discovery** ✅
+- **Item 1.2: Python Virtual Environment Setup** ✅
+- **Item 1.3: repo-lint Package Installation** ✅
+- **Item 1.4: repo-lint Verification** ✅
+
+**Script Features:**
+1. **Comprehensive Bash docstrings** following `docs/contributing/docstring-contracts/bash.md`:
+   - Top-level script docstring with all required sections (DESCRIPTION, USAGE, INPUTS, OUTPUTS, EXAMPLES, NOTES, PLATFORM COMPATIBILITY)
+   - Function-level docstrings for all 9 functions (log, warn, die, find_repo_root, ensure_venv, activate_venv, determine_install_target, install_repo_lint, verify_repo_lint, main)
+   - Documented exit codes: 0, 1, 10, 11, 12, 13, 14
+   - All examples prefixed with `#` as required
+
+2. **Naming compliance**:
+   - Script name: `bootstrap-repo-lint-toolchain.sh` (kebab-case per requirement)
+   - All functions use snake_case
+   - Constants use UPPER_SNAKE_CASE (VENV_DIR)
+
+3. **Linting compliance**:
+   - Passes `shellcheck` with no warnings
+   - Passes `shfmt` formatting checks
+   - Passes `validate_docstrings` (Bash docstring validator)
+   - Verified with `repo-lint check --only bash` (exit 0)
+
+4. **Functionality**:
+   - Finds repository root from any subdirectory (looks for .git, pyproject.toml, README.md)
+   - Creates `.venv/` virtual environment if missing
+   - Activates venv and verifies activation
+   - Upgrades pip/setuptools/wheel
+   - Installs repo-lint from repo root in editable mode (`pip install -e .`)
+   - Verifies `repo-lint --help` works
+   - Prints clear progress messages with [bootstrap] prefix
+   - Error messages with [bootstrap][ERROR] prefix
+   - Warning messages with [bootstrap][WARN] prefix
+
+5. **Idempotency**:
+   - Skips venv creation if `.venv/` already exists
+   - Safe to run multiple times
+   - Re-installation updates package without errors
+
+6. **Exit Codes**:
+   - 0: Success
+   - 1: Generic failure
+   - 10: Repository root not found
+   - 11: Virtual environment creation/activation failed
+   - 12: No valid install target found (no pyproject.toml)
+   - 13: repo-lint not found on PATH after install
+   - 14: repo-lint exists but --help failed
+
+**Testing Performed:**
+```bash
+# Test 1: Fresh install
+rm -rf .venv
+bash scripts/bootstrap-repo-lint-toolchain.sh
+# Result: SUCCESS, .venv created, repo-lint installed, exit 0
+
+# Test 2: Idempotency
+bash scripts/bootstrap-repo-lint-toolchain.sh
+# Result: SUCCESS, skipped venv creation, exit 0
+
+# Test 3: From subdirectory
+cd scripts && bash bootstrap-repo-lint-toolchain.sh
+# Result: SUCCESS, found repo root, exit 0
+
+# Test 4: Verify repo-lint works
+source .venv/bin/activate && repo-lint --help
+# Result: Shows help text, exit 0
+
+# Test 5: Compliance validation
+export PATH="$HOME/go/bin:$PATH"
+source .venv/bin/activate
+repo-lint check --only bash
+# Result: All checks PASS (shellcheck, shfmt, validate_docstrings)
+```
+
+**Compliance Evidence:**
+- ✅ Shellcheck: 0 warnings
+- ✅ Shfmt: Formatted correctly
+- ✅ Docstring validator: All required sections present
+- ✅ repo-lint: Exit code 0
+
+**Design Decisions:**
+1. Install target logic simplified to only check for pyproject.toml at repo root (not tools/repo_lint/) since the package is defined at root level
+2. Used `command -v` instead of `which` for better portability
+3. Added explicit venv activation verification
+4. Used `--quiet` flag for pip to reduce noise while keeping our own progress messages
+5. All functions documented inline per Bash docstring contract
+
+**Known Limitations (Phase 1):**
+- Does NOT install system tools (shellcheck, shfmt, etc.) - deferred to Phase 2
+- Does NOT run `repo-lint install` - deferred to Phase 2
+- Does NOT run `repo-lint check --ci` verification gate - deferred to Phase 3
+- No command-line flags (--force, --skip-verify) - deferred to Phase 3
+
+**Verification:**
+```bash
+# File exists and is executable
+ls -la scripts/bootstrap-repo-lint-toolchain.sh
+# -rwxrwxr-x 1 runner runner 13781 Dec 31 20:02
+
+# Script structure
+wc -l scripts/bootstrap-repo-lint-toolchain.sh
+# 497 lines
+
+# Compliance check passed
+repo-lint check --only bash
+# Exit 0
+```
+
+**Follow-ups:**
+- Phase 2: Tool installation (rgrep, Python toolchain, Shell, PowerShell, Perl)
+- Phase 3: Verification gate and error handling
+- Phase 4: Documentation
+- Reply to comment #3702826930 confirming Phase 1 completion
+
+---
+
 ### 2025-12-31 19:54 - Corrected terminology from repo-cli to repo-lint
 **Files Changed:**
 - `docs/ai-prompt/209/209-summary.md`: Updated all `repo-cli` references to `repo-lint`
