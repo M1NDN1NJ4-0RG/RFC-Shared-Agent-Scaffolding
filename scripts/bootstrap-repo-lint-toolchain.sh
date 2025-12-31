@@ -455,7 +455,7 @@ main() {
     ensure_venv "$repo_root"
     log ""
     
-    # Phase 1.2: Activate virtual environment
+    # Phase 1.2 (continued): Activate virtual environment
     activate_venv "$repo_root"
     log ""
     
