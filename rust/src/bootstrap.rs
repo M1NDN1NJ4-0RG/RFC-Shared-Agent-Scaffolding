@@ -46,7 +46,8 @@ fn die(msg: &str, code: i32) -> ! {
 
 /// Find repository root by walking up until we hit .git or pyproject.toml or README.md
 fn find_repo_root() -> Result<PathBuf, String> {
-    let mut current = env::current_dir().map_err(|e| format!("Failed to get current directory: {}", e))?;
+    let mut current =
+        env::current_dir().map_err(|e| format!("Failed to get current directory: {}", e))?;
 
     loop {
         if current.join(".git").is_dir()
@@ -90,8 +91,7 @@ fn run_command_output(cmd: &str, args: &[&str]) -> Result<String, String> {
         .map_err(|e| format!("Failed to execute {}: {}", cmd, e))?;
 
     if output.status.success() {
-        String::from_utf8(output.stdout)
-            .map_err(|e| format!("Invalid UTF-8 output: {}", e))
+        String::from_utf8(output.stdout).map_err(|e| format!("Invalid UTF-8 output: {}", e))
     } else {
         Err(String::from_utf8_lossy(&output.stderr).to_string())
     }
@@ -130,7 +130,10 @@ fn determine_install_target(repo_root: &Path) -> Result<PathBuf, String> {
     } else if root_has_pkg {
         Ok(repo_root.to_path_buf())
     } else {
-        Err("Could not determine where to install repo-lint (no packaging metadata found).".to_string())
+        Err(
+            "Could not determine where to install repo-lint (no packaging metadata found)."
+                .to_string(),
+        )
     }
 }
 
@@ -153,7 +156,13 @@ fn install_repo_lint(repo_root: &Path, install_target: &Path) -> Result<(), Stri
 
     if !run_command(
         venv_python.to_str().unwrap(),
-        &["-m", "pip", "install", "-e", install_target.to_str().unwrap()],
+        &[
+            "-m",
+            "pip",
+            "install",
+            "-e",
+            install_target.to_str().unwrap(),
+        ],
     ) {
         return Err(format!(
             "pip install -e failed for: {}",
@@ -173,9 +182,12 @@ fn verify_repo_lint(repo_root: &Path) -> Result<(), String> {
     if !repo_lint_path.exists() {
         warn("repo-lint not found on PATH after install.");
         warn("Diagnostics:");
-        
+
         let venv_python = repo_root.join(VENV_DIR).join("bin/python3");
-        if let Ok(python_path) = run_command_output(venv_python.to_str().unwrap(), &["-c", "import sys; print(sys.executable)"]) {
+        if let Ok(python_path) = run_command_output(
+            venv_python.to_str().unwrap(),
+            &["-c", "import sys; print(sys.executable)"],
+        ) {
             eprintln!("  python: {}", python_path.trim());
         }
 
@@ -248,7 +260,9 @@ fn install_shfmt() {
             warn("Failed to install shfmt");
         }
     } else {
-        warn("shfmt requires Go to be installed. Please install Go first or install shfmt manually.");
+        warn(
+            "shfmt requires Go to be installed. Please install Go first or install shfmt manually.",
+        );
     }
 }
 
@@ -349,7 +363,7 @@ fn install_psscriptanalyzer() {
 
     // Check if already installed
     let check_output = Command::new("pwsh")
-        .args(&[
+        .args([
             "-Command",
             "Get-Module -ListAvailable -Name PSScriptAnalyzer",
         ])
@@ -398,7 +412,14 @@ fn install_perl_modules() {
         log("Installing Perl::Critic via apt-get...");
         let _ = run_command(
             "sudo",
-            &["apt-get", "install", "-y", "-qq", "libperl-critic-perl", "libppi-perl"],
+            &[
+                "apt-get",
+                "install",
+                "-y",
+                "-qq",
+                "libperl-critic-perl",
+                "libppi-perl",
+            ],
         );
     }
 }
@@ -441,7 +462,7 @@ fn verify_tools() {
 
     // Check Perl::Critic
     let perl_check = Command::new("perl")
-        .args(&["-MPerl::Critic", "-e", "1"])
+        .args(["-MPerl::Critic", "-e", "1"])
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .status();
@@ -499,7 +520,7 @@ fn print_success_summary(repo_root: &Path) {
     }
 
     let perl_check = Command::new("perl")
-        .args(&["-MPerl::Critic", "-e", "1"])
+        .args(["-MPerl::Critic", "-e", "1"])
         .stdout(Stdio::null())
         .stderr(Stdio::null())
         .status();
@@ -512,8 +533,14 @@ fn print_success_summary(repo_root: &Path) {
 
     log("");
     log("To use in your shell session:");
-    log(&format!("  source {}/.venv/bin/activate", repo_root.display()));
-    log(&format!("  export PATH=\"{}/.venv-lint/bin:$HOME/go/bin:$PATH\"", repo_root.display()));
+    log(&format!(
+        "  source {}/.venv/bin/activate",
+        repo_root.display()
+    ));
+    log(&format!(
+        "  export PATH=\"{}/.venv-lint/bin:$HOME/go/bin:$PATH\"",
+        repo_root.display()
+    ));
 }
 
 /// Main bootstrap function
@@ -544,7 +571,7 @@ pub fn run() -> ExitCode {
     };
 
     // Install repo-lint
-    if let Err(_) = install_repo_lint(&repo_root, &install_target) {
+    if install_repo_lint(&repo_root, &install_target).is_err() {
         die(
             &format!("pip install -e failed for: {}", install_target.display()),
             12,
@@ -552,12 +579,15 @@ pub fn run() -> ExitCode {
     }
 
     // Verify repo-lint
-    if let Err(_) = verify_repo_lint(&repo_root) {
-        die("repo-lint is not runnable. Fix packaging/venv/PATH first.", 13);
+    if verify_repo_lint(&repo_root).is_err() {
+        die(
+            "repo-lint is not runnable. Fix packaging/venv/PATH first.",
+            13,
+        );
     }
 
     // Run repo-lint install
-    if let Err(_) = run_repo_lint_install(&repo_root) {
+    if run_repo_lint_install(&repo_root).is_err() {
         die(
             "repo-lint install failed. Missing tools are BLOCKER. Install missing tools and rerun.",
             15,
