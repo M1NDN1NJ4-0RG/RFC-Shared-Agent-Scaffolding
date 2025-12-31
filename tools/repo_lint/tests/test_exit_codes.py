@@ -18,6 +18,7 @@
     - cmd_fix() returns VIOLATIONS when violations remain after fix
     - cmd_fix() returns UNSAFE_VIOLATION when --unsafe used in CI
     - cmd_fix() returns UNSAFE_VIOLATION when --unsafe without --yes-i-know
+    - cmd_fix() returns UNSAFE_VIOLATION when --unsafe with non-Python language
     - cmd_install() returns SUCCESS on successful install
     - cmd_install() returns INTERNAL_ERROR on install failure
 
@@ -53,6 +54,7 @@
 """
 
 import argparse
+import os
 import sys
 import unittest
 from pathlib import Path
@@ -375,6 +377,38 @@ class TestExitCodes(unittest.TestCase):
 
         # Run fix with unsafe but no confirmation
         result = cmd_fix(args_unsafe_no_confirm)
+
+        # Verify unsafe violation exit code
+        self.assertEqual(result, ExitCode.UNSAFE_VIOLATION)
+
+    @patch("tools.repo_lint.cli.load_policy")
+    @patch("tools.repo_lint.cli.validate_policy")
+    @patch.dict(os.environ, {}, clear=True)  # Clear environment to ensure CI is not set
+    def test_fix_unsafe_violation_non_python_language(self, mock_validate, mock_load):
+        """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe with non-Python language.
+
+        :Purpose:
+            Verify EXIT_CODE.UNSAFE_VIOLATION (4) when unsafe mode used with unsupported language.
+
+        :param mock_validate: Mocked validate_policy
+        :param mock_load: Mocked load_policy
+        """
+        # Mock policy loading to succeed
+        mock_load.return_value = {}
+        mock_validate.return_value = []
+
+        # Create args with unsafe mode and non-Python language
+        args_unsafe_perl = argparse.Namespace(
+            ci=False,
+            verbose=False,
+            only="perl",
+            unsafe=True,
+            yes_i_know=True,
+            json=False,
+        )
+
+        # Run fix with unsafe and --only=perl
+        result = cmd_fix(args_unsafe_perl)
 
         # Verify unsafe violation exit code
         self.assertEqual(result, ExitCode.UNSAFE_VIOLATION)

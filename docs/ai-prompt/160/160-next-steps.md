@@ -1,18 +1,132 @@
 MUST READ: `.github/copilot-instructions.md` FIRST!
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
-Status: In Progress
+Status: Complete
 Last Updated: 2025-12-31
 Related: Issue #160, PRs TBD
 
 ## NEXT
-- Continue with next Phase 1 item: Handle partial install failures gracefully (next PR)
-- Run code review on current changes
-- Address any code review feedback
+- None - Phase 1 is complete
+- Awaiting human direction for Phase 2/3 work (if requested)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 01:25 - Final code review iterations complete
+**Files Changed:**
+- `tools/repo_lint/cli.py`: Final cleanup of error message format (lines 298-307)
+  - Reverted to individual print statements per repository style
+  - Removed unnecessary f-string prefixes
+  - Maintained consistency with existing error output patterns
+- `tools/repo_lint/tests/test_integration.py`: Cleaned up pylint directives (line 2)
+  - Removed unused 'protected-access' disable directive
+  - Added comment explaining path traversal pattern matches codebase convention
+  - Lines 55-57: Path traversal consistent with all 12 test files in repo
+
+**Changes Made:**
+- Addressed all code review feedback across 4 iterations
+- Final code review: 3 minor nits addressed
+  1. Removed unused pylint disable directive
+  2. Improved error message format (removed f-strings without interpolation)
+  3. Added comment explaining path traversal pattern is codebase-wide convention
+- All changes follow established repository patterns
+- Code style matches existing conventions
+
+**Verification:**
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes tools.repo_lint.tests.test_integration`: all 20 tests passed
+- All error messages display correctly with proper formatting
+- Code follows minimal change principle - only touched what was needed
+
+**Summary:**
+Phase 1 of Issue #160 is COMPLETE. All 6 critical fixes implemented and tested:
+1. ✅ Repository root detection fixed
+2. ✅ Exit codes clarified  
+3. ✅ Install failures handled gracefully
+4. ✅ Docstring validator detection improved
+5. ✅ Non-Python unsafe mode validated
+6. ✅ Unit tests added (20 total, all passing)
+
+All code review feedback addressed. Ready for merge.
+
+---
+
+### 2025-12-31 01:20 - Completed Phase 1 item 6: Add missing unit tests
+**Files Changed:**
+- `tools/repo_lint/tests/test_integration.py`: Created new integration test file (210 lines)
+  - Added 6 integration tests exercising full CLI invocation
+  - Tests cover: missing tools, policy errors, unsafe mode violations, install failures
+  - Tests use subprocess-style invocation (mocking sys.argv and catching SystemExit)
+  - Complements existing unit tests with end-to-end validation
+
+**Changes Made:**
+- **Item 6: Add missing unit tests for error conditions** ✅
+  - Created new `test_integration.py` file with 6 comprehensive integration tests
+  - `test_check_missing_tools_ci`: Full CLI → check --ci → exit code 2 (missing tools)
+  - `test_fix_policy_not_found`: Full CLI → fix → exit code 3 (policy not found)
+  - `test_fix_unsafe_unsupported_language`: Full CLI → fix --unsafe --only=perl → exit code 4
+  - `test_fix_unsafe_forbidden_in_ci`: Full CLI → fix --unsafe --ci → exit code 4
+  - `test_no_command_shows_help`: Full CLI → no command → exit code 0 (help shown)
+  - `test_install_failure_integration`: Full CLI → install failure → exit code 3 + no manual instructions
+  - Tests exercise argument parsing AND command dispatch (integration vs unit testing)
+  - Per epic requirement: "Use subprocess calls or invoke main() directly" - tests invoke main()
+
+**Verification:**
+- Ran `python3 -m unittest tools.repo_lint.tests.test_integration -v`: all 6 tests passed
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes tools.repo_lint.tests.test_integration -v`: all 20 tests passed (14 + 6)
+- Integration tests validate full end-to-end behavior from CLI to exit codes
+- Tests confirm Phase 1 Item 3 requirement: install failure doesn't print manual instructions
+
+**Phase 1 Status:**
+All 6 Phase 1 items are now complete:
+1. ✅ Fix repository root detection (completed in previous session)
+2. ✅ Clarify exit codes for unsafe mode (completed in previous session)
+3. ✅ Handle partial install failures gracefully (completed earlier this session)
+4. ✅ Ensure missing docstring validator is detected (completed earlier this session)
+5. ✅ Validate non-Python unsafe mode behavior (completed earlier this session)
+6. ✅ Add missing unit tests for error conditions (completed just now)
+
+---
+
+### 2025-12-31 01:15 - Completed Phase 1 items 3, 4, 5
+**Files Changed:**
+- `tools/repo_lint/cli.py`: 
+  - Lines 288-306: Added guard for unsafe mode with non-Python languages
+  - Lines 367-407: Restructured install failure handling to avoid printing irrelevant instructions
+- `tools/repo_lint/runners/python_runner.py`: Line 276-282: Improved docstring validation error message
+- `tools/repo_lint/runners/bash_runner.py`: Line 217-223: Improved docstring validation error message
+- `tools/repo_lint/runners/perl_runner.py`: Line 135-141: Improved docstring validation error message
+- `tools/repo_lint/runners/powershell_runner.py`: Line 169-175: Improved docstring validation error message
+- `tools/repo_lint/tests/test_exit_codes.py`:
+  - Line 57: Added `import os` for environment patching
+  - Lines 13-21: Updated docstring to document new test
+  - Lines 383-413: Added test for unsafe mode with non-Python language
+
+**Changes Made:**
+- **Item 3: Handle partial install failures gracefully** ✅
+  - Restructured `cmd_install()` to only print manual install instructions if Python tools succeed
+  - When Python tools fail, now shows helpful troubleshooting tips instead of confusing next steps
+  - Error output now includes common issues: Python version, pip upgrade, network connectivity
+  
+- **Item 4: Ensure missing docstring validator is detected** ✅
+  - Updated all 4 runner files (Python, Bash, Perl, PowerShell) to use clearer error message
+  - Changed from "Docstring validator script not found" to "Docstring validation SKIPPED: validator script not found at {path}. This check was not executed."
+  - Makes it crystal clear that the check was skipped, not that it failed
+  
+- **Item 5: Validate non-Python unsafe mode behavior** ✅
+  - Added guard in `cmd_fix()` to check if `--unsafe` used with non-Python language
+  - Returns `ExitCode.UNSAFE_VIOLATION` (4) with clear error message
+  - Prevents silent no-op when user tries `--unsafe --only=perl` etc.
+  - Added comprehensive unit test with environment patching to verify behavior
+
+**Verification:**
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes -v`: all 14 tests passed
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes.TestExitCodes.test_fix_unsafe_violation_non_python_language -v`: PASS
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes.TestExitCodes.test_install_internal_error_on_failure -v`: PASS
+- New error messages display correctly for all three completed items
+
+---
+
 ### 2025-12-31 01:02 - Completed exit code clarification for unsafe mode
 **Files Changed:**
 - `tools/repo_lint/common.py`: Added `ExitCode.UNSAFE_VIOLATION = 4` (line 46)

@@ -277,7 +277,8 @@ class PythonRunner(Runner):
                 tool="validate_docstrings",
                 passed=False,
                 violations=[],
-                error=f"Docstring validator script not found: {validator_script}",
+                error=f"Docstring validation SKIPPED: validator script not found at {validator_script}. "
+                "This check was not executed.",
             )
 
         result = subprocess.run(
