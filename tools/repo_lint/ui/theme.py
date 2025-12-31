@@ -13,6 +13,11 @@
 :Environment Variables:
     - REPO_LINT_UI_THEME: Path to custom UI theme YAML file
 
+:Exit Codes:
+    This module does not define or use exit codes (theme configuration only):
+    - 0: Not applicable (see tools.repo_lint.common.ExitCode)
+    - 1: Not applicable (raises ThemeValidationError on validation failures)
+
 :Examples:
     Load default theme::
 

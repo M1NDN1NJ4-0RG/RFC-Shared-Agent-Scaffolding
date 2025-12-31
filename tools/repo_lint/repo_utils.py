@@ -10,6 +10,11 @@
 :Environment Variables:
     None
 
+:Exit Codes:
+    This module does not define or use exit codes (utility functions only):
+    - 0: Not applicable (see tools.repo_lint.common.ExitCode)
+    - 1: Not applicable (see tools.repo_lint.common.ExitCode)
+
 :Examples:
     Find repository root::
 

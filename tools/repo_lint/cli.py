@@ -123,6 +123,8 @@ def cli(ctx):
     For detailed usage instructions, see: HOW-TO-USE-THIS-TOOL.md
 
     For shell completion setup, run: repo-lint --help
+
+    :param ctx: Click context object (passed automatically by Click)
     """
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help())
@@ -206,6 +208,11 @@ def check(verbose, ci_mode, only, use_json):
     - CI failures: Add '--ci' locally to reproduce CI environment
 
     See HOW-TO-USE-THIS-TOOL.md for detailed usage and examples.
+
+    :param verbose: Show verbose output including passed checks
+    :param ci_mode: CI mode - stable output, fail if tools missing
+    :param only: Run only for specific language (python, bash, etc.)
+    :param use_json: Output results in JSON format for CI debugging
     """
     import argparse  # Local import - only needed for Namespace creation
 
@@ -329,6 +336,13 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     - Unsafe with non-Python: --unsafe only supports Python currently
 
     See HOW-TO-USE-THIS-TOOL.md for detailed usage, forensic reports, and examples.
+
+    :param verbose: Show verbose output including passed checks
+    :param ci_mode: CI mode - stable output, fail if tools missing
+    :param only: Run only for specific language (python, bash, etc.)
+    :param use_json: Output results in JSON format for CI debugging
+    :param unsafe: Enable unsafe experimental fixers (DANGER - requires --yes-i-know)
+    :param yes_i_know: Confirmation flag required for unsafe mode
     """
     import argparse  # Local import - only needed for Namespace creation
 
@@ -424,6 +438,9 @@ def install(verbose, cleanup):
     - Manual tools not found: Follow provided instructions for your OS
 
     See HOW-TO-USE-THIS-TOOL.md for detailed installation guide and OS-specific instructions.
+
+    :param verbose: Show verbose output during installation
+    :param cleanup: Remove repo-local tool installations (.venv-lint)
     """
     import argparse  # Local import - only needed for Namespace creation
 

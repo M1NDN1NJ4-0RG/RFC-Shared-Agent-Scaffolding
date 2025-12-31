@@ -10,6 +10,11 @@
 :Environment Variables:
     None
 
+:Exit Codes:
+    This module does not define or use exit codes (UI rendering only):
+    - 0: Not applicable (see tools.repo_lint.common.ExitCode)
+    - 1: Not applicable (see tools.repo_lint.common.ExitCode)
+
 :Examples:
     Create reporter and render header::
 
@@ -176,7 +181,7 @@ class Reporter:
             per-runner status as checks complete, rather than waiting until all
             runners finish.
         """
-        # TODO: Implement live progress display updates
+        # TODO: Implement live progress display updates  # pylint: disable=fixme
         # For now, results are batched and shown in render_results_table()
         _ = result  # Explicit unused parameter to signal this is intentional
 
@@ -358,7 +363,9 @@ class Reporter:
         else:
             formatted = self._format_with_color(f"ERROR: {message}", "failure", bold=True)
 
-        self.console.print(formatted, file=sys.stderr)
+        # Print to stderr using sys.stderr.write since Rich Console.print doesn't accept file parameter
+        sys.stderr.write(f"{formatted}\n")
+        sys.stderr.flush()
 
     def warning(self, message: str) -> None:
         """Print a warning message.
