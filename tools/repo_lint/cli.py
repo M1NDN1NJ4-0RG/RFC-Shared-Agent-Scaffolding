@@ -59,7 +59,7 @@ import sys
 import rich_click as click
 
 from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
-from tools.repo_lint.common import ExitCode, MissingToolError
+from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
 
 # Configure rich-click globally
 click.rich_click.USE_RICH_MARKUP = True
@@ -490,12 +490,12 @@ def main():
     try:
         cli(auto_envvar_prefix="REPO_LINT")  # pylint: disable=no-value-for-parameter
     except MissingToolError as e:
-        # Use rich-click's echo for consistent output
-        click.echo(f"❌ Error: {e}", err=True)
-        click.echo("\nRun 'repo-lint install' to install missing tools", err=True)
+        # Use safe_print to handle Windows encoding
+        safe_print(f"❌ Error: {e}", f"Error: {e}")
+        print("\nRun 'repo-lint install' to install missing tools", file=sys.stderr)
         sys.exit(ExitCode.MISSING_TOOLS)
     except Exception as e:
-        click.echo(f"❌ Internal error: {e}", err=True)
+        safe_print(f"❌ Internal error: {e}", f"Internal error: {e}")
         import traceback
 
         # Check if verbose mode is enabled (CLI flag or environment variable)

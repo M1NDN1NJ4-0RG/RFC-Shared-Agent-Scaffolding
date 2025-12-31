@@ -151,7 +151,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     except Exception as e:
         # If naming runner fails to initialize (e.g., config missing), skip it
         if args.verbose and not use_json:
-            print(f"⚠️  Naming validation skipped: {e}")
+            safe_print(f"⚠️  Naming validation skipped: {e}", f"WARNING: Naming validation skipped: {e}")
             print("")
 
     # Filter runners based on --only flag
@@ -177,16 +177,19 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         if runner.has_files():
             # Skip progress output in JSON mode
             if not use_json:
-                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
                 print(f"  {name} {mode}")
-                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
 
             missing_tools = runner.check_tools()
             if missing_tools:
                 if args.ci:
                     print_install_instructions(missing_tools, ci_mode=args.ci)
                     return ExitCode.MISSING_TOOLS
-                print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
+                safe_print(
+                    f"⚠️  Missing tools: {', '.join(missing_tools)}",
+                    f"WARNING: Missing tools: {', '.join(missing_tools)}",
+                )
                 print("   Run 'repo-lint install' to install them")
                 print("")
                 return ExitCode.MISSING_TOOLS
@@ -201,9 +204,9 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     if not only_language:
         for key, name, runner in cross_language_runners:
             if not use_json:
-                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
                 print(f"  {name} {mode}")
-                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
 
             results = action_callback(runner)
             all_results.extend(results)
@@ -252,7 +255,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
 
     # Guard: Unsafe mode is forbidden in CI
     if unsafe_mode and is_ci:
-        print("❌ UNSAFE MODE FORBIDDEN IN CI")
+        safe_print("❌ UNSAFE MODE FORBIDDEN IN CI", "ERROR: UNSAFE MODE FORBIDDEN IN CI")
         print("")
         print("Unsafe fixes are not allowed in CI environments.")
         print("See: docs/contributing/ai-constraints.md")
@@ -261,7 +264,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
 
     # Guard: --unsafe requires --yes-i-know
     if unsafe_mode and not yes_i_know:
-        print("❌ UNSAFE MODE BLOCKED FOR SAFETY")
+        safe_print("❌ UNSAFE MODE BLOCKED FOR SAFETY", "ERROR: UNSAFE MODE BLOCKED FOR SAFETY")
         print("")
         print("The --unsafe flag requires --yes-i-know to actually execute.")
         print("Unsafe fixes can change behavior and MUST be reviewed before committing.")
@@ -275,7 +278,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
 
     if not use_json:
         if unsafe_mode:
-            print("⚠️  DANGER: Running in UNSAFE FIX MODE")
+            safe_print("⚠️  DANGER: Running in UNSAFE FIX MODE", "WARNING: DANGER: Running in UNSAFE FIX MODE")
             safe_print(
                 "⚠️  Review the generated patch/log before committing!",
                 "WARNING: Review the generated patch/log before committing!",
@@ -290,7 +293,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
         policy = load_policy()
         policy_errors = validate_policy(policy)
         if policy_errors:
-            print("❌ Auto-fix policy validation failed:")
+            safe_print("❌ Auto-fix policy validation failed:", "ERROR: Auto-fix policy validation failed:")
             for error in policy_errors:
                 print(f"   {error}")
             print("")
@@ -302,12 +305,12 @@ def cmd_fix(args: argparse.Namespace) -> int:
             print("")
 
     except FileNotFoundError:
-        print("❌ Auto-fix policy file not found")
+        safe_print("❌ Auto-fix policy file not found", "ERROR: Auto-fix policy file not found")
         print("   Expected: conformance/repo-lint/autofix-policy.json")
         print("")
         return ExitCode.INTERNAL_ERROR
     except Exception as e:
-        print(f"❌ Failed to load auto-fix policy: {e}")
+        safe_print(f"❌ Failed to load auto-fix policy: {e}", f"ERROR: Failed to load auto-fix policy: {e}")
         print("")
         return ExitCode.INTERNAL_ERROR
 
@@ -322,7 +325,9 @@ def cmd_fix(args: argparse.Namespace) -> int:
         # Guard: Unsafe fixes only supported for Python
         only_language = getattr(args, "only", None)
         if only_language and only_language != "python":
-            print("❌ Unsafe fixes not supported for this language", file=sys.stderr)
+            safe_print(
+                "❌ Unsafe fixes not supported for this language", "ERROR: Unsafe fixes not supported for this language"
+            )
             print("", file=sys.stderr)
             print("Unsafe mode currently only supports Python files.", file=sys.stderr)
             print(f"You specified: --only={only_language}", file=sys.stderr)
@@ -396,9 +401,9 @@ def cmd_install(args: argparse.Namespace) -> int:
     print("")
 
     # Install Python tools (auto-installable)
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
     print("  Python Tools - Auto-Install")
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
     print("")
 
     success, errors = install_python_tools(verbose=args.verbose)
@@ -406,7 +411,10 @@ def cmd_install(args: argparse.Namespace) -> int:
     if success:
         venv_path = get_venv_path()
         print("")
-        print(f"✓ Python tools installed successfully in {venv_path}")
+        safe_print(
+            f"✓ Python tools installed successfully in {venv_path}",
+            f"Python tools installed successfully in {venv_path}",
+        )
         print("")
         print("To use these tools in your shell:")
         print(f"  source {venv_path}/bin/activate  # Linux/macOS")
@@ -418,9 +426,9 @@ def cmd_install(args: argparse.Namespace) -> int:
         print_powershell_tool_instructions()
         print_perl_tool_instructions()
 
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
         print("")
-        print("✓ Installation complete")
+        safe_print("✓ Installation complete", "Installation complete")
         print("")
         print("Next steps:")
         print("  1. Follow the manual installation instructions above")
@@ -428,13 +436,16 @@ def cmd_install(args: argparse.Namespace) -> int:
         return ExitCode.SUCCESS
     else:
         print("")
-        print("✗ Python tool installation failed:")
+        safe_print("✗ Python tool installation failed:", "Python tool installation failed:")
         for error in errors:
             print(f"  {error}")
         print("")
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
         print("")
-        print("⚠️  Python tools are required for repo_lint to function.")
+        safe_print(
+            "⚠️  Python tools are required for repo_lint to function.",
+            "WARNING: Python tools are required for repo_lint to function.",
+        )
         print("   Please fix the errors above and try again.")
         print("")
         print("Common issues:")
@@ -472,14 +483,14 @@ def main() -> None:
         sys.exit(exit_code)
 
     except MissingToolError as e:
-        print(f"❌ Error: {e}", file=sys.stderr)
+        safe_print(f"❌ Error: {e}", f"Error: {e}")
         if getattr(args, "ci", False):
             sys.exit(ExitCode.MISSING_TOOLS)
         print("\nRun 'python3 -m tools.repo_lint install' to install missing tools", file=sys.stderr)
         sys.exit(ExitCode.MISSING_TOOLS)
 
     except Exception as e:
-        print(f"❌ Internal error: {e}", file=sys.stderr)
+        safe_print(f"❌ Internal error: {e}", f"Internal error: {e}")
         if args.verbose:
             import traceback
 
