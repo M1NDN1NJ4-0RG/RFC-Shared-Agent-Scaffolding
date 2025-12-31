@@ -53,7 +53,6 @@
         _REPO_LINT_COMPLETE=fish_source repo-lint > ~/.config/fish/completions/repo-lint.fish
 """
 
-import argparse
 import sys
 
 import click
@@ -167,6 +166,8 @@ def check(verbose, ci_mode, only, use_json):
         repo-lint check --ci             # Run in CI mode (fail on missing tools)
         repo-lint check --json           # Output in JSON format
     """
+    import argparse  # Local import - only needed for Namespace creation
+
     # Create a namespace object compatible with the existing cmd_check function
     args = argparse.Namespace(
         verbose=verbose,
@@ -250,6 +251,8 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
         repo-lint fix --only python      # Fix only Python files
         repo-lint fix --unsafe --yes-i-know  # Enable unsafe fixers (LOCAL ONLY)
     """
+    import argparse  # Local import - only needed for Namespace creation
+
     # Create a namespace object compatible with the existing cmd_fix function
     args = argparse.Namespace(
         verbose=verbose,
@@ -298,6 +301,8 @@ def install(verbose, cleanup):
         repo-lint install --cleanup      # Remove repo-local installations
         repo-lint install --verbose      # Show detailed progress
     """
+    import argparse  # Local import - only needed for Namespace creation
+
     # Create a namespace object compatible with the existing cmd_install function
     args = argparse.Namespace(
         verbose=verbose,
@@ -321,7 +326,6 @@ def completion(shell):
     """
     # Click's built-in completion support handles this via _REPO_LINT_COMPLETE environment variable
     # This function exists as a placeholder for the command in help text
-    return
 
 
 def main():
