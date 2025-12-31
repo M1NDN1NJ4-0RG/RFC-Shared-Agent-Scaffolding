@@ -32,8 +32,24 @@ from typing import Dict, Optional
 import yaml
 from rich import box
 
-# Default theme file location
-DEFAULT_THEME_PATH = Path("conformance/repo-lint/repo-lint-ui-theme.yaml")
+
+def _get_default_theme_path() -> Path:
+    """Get the default theme path relative to repository root.
+
+    :returns: Path to default theme YAML
+    """
+    # Try to find repository root by looking for .git
+    current = Path.cwd()
+    while current != current.parent:
+        if (current / ".git").exists():
+            return current / "conformance/repo-lint/repo-lint-ui-theme.yaml"
+        current = current.parent
+    # Fallback: assume we're in repo root
+    return Path("conformance/repo-lint/repo-lint-ui-theme.yaml")
+
+
+# Default theme file location (computed at module load time)
+DEFAULT_THEME_PATH = _get_default_theme_path()
 
 
 @dataclass
@@ -151,12 +167,20 @@ def _validate_theme_structure(data: dict, file_path: Path) -> None:
     if "version" not in data:
         raise ThemeValidationError("Missing required field: version", file_path)
 
-    # Validate version format (must be integer or semver)
+    # Validate version format (must be simple integer or X.Y.Z format, no pre-release/build metadata)
     version_str = str(data["version"])
-    if not version_str.replace(".", "").isdigit():
-        raise ThemeValidationError(f"Invalid version format: {version_str}", file_path)
+    # Check if it's a simple integer
+    if version_str.isdigit():
+        pass  # Valid: "1"
+    # Check if it's X.Y.Z format (simple semver without pre-release/build)
+    elif "." in version_str:
+        parts = version_str.split(".")
+        if not all(part.isdigit() for part in parts):
+            raise ThemeValidationError(f"Invalid version format: {version_str} (expected integer or X.Y.Z)", file_path)
+    else:
+        raise ThemeValidationError(f"Invalid version format: {version_str} (expected integer or X.Y.Z)", file_path)
 
-    # Check that we support this version
+    # Check that we support this version (major version must be 1)
     major_version = version_str.split(".")[0]
     if major_version != "1":
         raise ThemeValidationError(f"Unsupported theme version: {version_str} (only version 1 supported)", file_path)

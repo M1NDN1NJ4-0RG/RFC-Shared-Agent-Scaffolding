@@ -124,7 +124,7 @@ def cli(ctx):
     For shell completion setup, run: repo-lint --help
     """
     if ctx.invoked_subcommand is None:
-        ctx.get_help()
+        click.echo(ctx.get_help())
         sys.exit(0)
 
 

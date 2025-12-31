@@ -36,6 +36,10 @@ from tools.repo_lint.ui.console import get_console
 from tools.repo_lint.ui.theme import UITheme, get_box_style, get_theme
 
 
+# Maximum number of violations to display per tool (to avoid overwhelming output)
+MAX_VIOLATIONS_PER_TOOL = 50
+
+
 class Reporter:
     """Reporter for all user-facing output in repo_lint.
 
@@ -163,26 +167,9 @@ class Reporter:
 
         :param result: LintResult from runner
         """
-        if result.passed:
-            icon = self._get_icon("pass")
-            status = f"{icon} PASS" if icon else "PASS"
-            msg = f"{result.tool}: {self._format_with_color(status, 'success')}"
-        elif result.error:
-            icon = self._get_icon("fail")
-            status = f"{icon} ERROR" if icon else "ERROR"
-            msg = f"{result.tool}: {self._format_with_color(status, 'failure')}"
-        else:
-            icon = self._get_icon("fail")
-            status = f"{icon} FAIL" if icon else "FAIL"
-            msg = f"{result.tool}: {self._format_with_color(status, 'failure')} ({len(result.violations)} violation(s))"
-
-        if not self.ci_mode:
-            # In interactive mode, we might have been showing a spinner
-            # Just print the result
-            pass
-
-        # For now, just print (later we can add live updating)
-        # self.console.print(msg)
+        # In the future, this could update a live display
+        # For now, results are shown in render_results_table()
+        pass
 
     def render_results_table(self, results: List[LintResult]) -> None:
         """Render results summary table.
@@ -269,14 +256,13 @@ class Reporter:
                 violations_table.add_column("Line", justify="right")
                 violations_table.add_column("Message")
 
-                # Add violations (limit to top 50 to avoid overwhelming output)
-                MAX_VIOLATIONS = 50
-                for violation in result.violations[:MAX_VIOLATIONS]:
+                # Add violations (limit to avoid overwhelming output)
+                for violation in result.violations[:MAX_VIOLATIONS_PER_TOOL]:
                     line_str = str(violation.line) if violation.line else "-"
                     violations_table.add_row(violation.file, line_str, violation.message)
 
-                if len(result.violations) > MAX_VIOLATIONS:
-                    remaining = len(result.violations) - MAX_VIOLATIONS
+                if len(result.violations) > MAX_VIOLATIONS_PER_TOOL:
+                    remaining = len(result.violations) - MAX_VIOLATIONS_PER_TOOL
                     note = self._format_with_color(f"... and {remaining} more violations", "warning")
                     violations_table.add_row("", "", note)
 
