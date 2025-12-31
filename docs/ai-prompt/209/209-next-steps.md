@@ -6,6 +6,7 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
+- Address any remaining feedback from code review
 - Phase 2: Tool Installation and Verification (future)
 - Phase 3: Verification Gate and Error Handling (future)
 - Phase 4: Documentation (future)
@@ -13,6 +14,68 @@ Related: Issue #209
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 20:14 - Fix shfmt formatting compliance
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Applied shfmt formatting (378 lines changed)
+- `docs/ai-prompt/209/209-next-steps.md`: Updated journal
+
+**Changes Made:**
+Fixed bash lint failure reported in `repo-lint-failure-reports/20626392540/bash-lint-output.txt` (comment #3621392628):
+- shfmt formatter identified formatting inconsistencies
+- Applied automatic formatting with `repo-lint fix --only bash`
+- Changes are purely cosmetic (indentation and whitespace)
+
+**Specific Formatting Changes:**
+shfmt made the following standardizations:
+1. **Function body indentation**: Changed from 4 spaces to tab-based indentation
+2. **Continuation line formatting**: Reformatted multi-line conditionals for consistency
+3. **Whitespace normalization**: Standardized blank lines and spacing
+
+**Examples of changes:**
+- Function bodies now use tabs instead of spaces for indentation
+- Multi-line `if` statements reformatted for readability
+- Consistent spacing around operators
+
+**Verification:**
+```bash
+# Before fix:
+repo-lint check --only bash
+# Exit 1 - shfmt FAIL (1 violation)
+
+# After fix:
+repo-lint check --only bash
+# Exit 0 - All PASS (shellcheck, shfmt, validate_docstrings)
+
+# Functionality test:
+rm -rf .venv && bash scripts/bootstrap-repo-lint-toolchain.sh
+# SUCCESS - script works identically
+```
+
+**Compliance Evidence:**
+- ✅ shellcheck: 0 warnings (unchanged)
+- ✅ shfmt: 0 violations (FIXED - was 1 violation)
+- ✅ validate_docstrings: 0 violations (unchanged)
+- ✅ repo-lint check --only bash: exit 0
+
+**Testing:**
+- Removed .venv and ran bootstrap script
+- Verified all functionality works identically
+- No behavioral changes, only formatting
+
+**Commands Run:**
+```bash
+go install mvdan.cc/sh/v3/cmd/shfmt@latest
+source .venv/bin/activate
+repo-lint fix --only bash  # Applied auto-formatting
+repo-lint check --only bash  # Verified compliance
+rm -rf .venv && bash scripts/bootstrap-repo-lint-toolchain.sh  # Tested functionality
+```
+
+**Follow-ups:**
+- Reply to comment #3621392628 confirming fix
+
+---
+
 ### 2025-12-31 20:02 - Phase 1 implementation complete
 **Files Changed:**
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Created new Bash script (13,781 bytes)

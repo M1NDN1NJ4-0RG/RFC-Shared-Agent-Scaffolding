@@ -95,7 +95,7 @@ readonly VENV_DIR=".venv"
 # EXAMPLES:
 #   log "Creating virtual environment"
 log() {
-    echo "[bootstrap] $1"
+	echo "[bootstrap] $1"
 }
 
 # warn - Print warning message to stderr
@@ -112,7 +112,7 @@ log() {
 # EXAMPLES:
 #   warn "Tool not found, using fallback"
 warn() {
-    echo "[bootstrap][WARN] $1" >&2
+	echo "[bootstrap][WARN] $1" >&2
 }
 
 # die - Print error message and exit with code
@@ -132,10 +132,10 @@ warn() {
 # EXAMPLES:
 #   die "Repository root not found" 10
 die() {
-    local msg="$1"
-    local code="${2:-1}"
-    echo "[bootstrap][ERROR] $msg" >&2
-    exit "$code"
+	local msg="$1"
+	local code="${2:-1}"
+	echo "[bootstrap][ERROR] $msg" >&2
+	exit "$code"
 }
 
 # ============================================================================
@@ -167,26 +167,26 @@ die() {
 #   repo_root=$(find_repo_root)
 #   cd "$repo_root"
 find_repo_root() {
-    local current_dir
-    current_dir="$(pwd)"
-    
-    while true; do
-        # Check for repository markers
-        if [[ -d "$current_dir/.git" ]] || \
-           [[ -f "$current_dir/pyproject.toml" ]] || \
-           [[ -f "$current_dir/README.md" ]]; then
-            echo "$current_dir"
-            return 0
-        fi
-        
-        # Check if we've reached filesystem root
-        if [[ "$current_dir" == "/" ]]; then
-            die "Could not find repository root (no .git, pyproject.toml, or README.md found)" 10
-        fi
-        
-        # Move up one directory
-        current_dir="$(dirname "$current_dir")"
-    done
+	local current_dir
+	current_dir="$(pwd)"
+
+	while true; do
+		# Check for repository markers
+		if [[ -d "$current_dir/.git" ]] ||
+			[[ -f "$current_dir/pyproject.toml" ]] ||
+			[[ -f "$current_dir/README.md" ]]; then
+			echo "$current_dir"
+			return 0
+		fi
+
+		# Check if we've reached filesystem root
+		if [[ "$current_dir" == "/" ]]; then
+			die "Could not find repository root (no .git, pyproject.toml, or README.md found)" 10
+		fi
+
+		# Move up one directory
+		current_dir="$(dirname "$current_dir")"
+	done
 }
 
 # ============================================================================
@@ -217,25 +217,25 @@ find_repo_root() {
 # EXAMPLES:
 #   ensure_venv "$repo_root"
 ensure_venv() {
-    local repo_root="$1"
-    local venv_path="$repo_root/$VENV_DIR"
-    
-    if [[ -d "$venv_path" ]] && [[ -x "$venv_path/bin/python3" ]]; then
-        log "Virtual environment already exists: $venv_path"
-        return 0
-    fi
-    
-    log "Creating virtual environment: $venv_path"
-    
-    if ! python3 -m venv "$venv_path"; then
-        die "Failed to create virtual environment at $venv_path" 11
-    fi
-    
-    if [[ ! -x "$venv_path/bin/python3" ]]; then
-        die "Virtual environment created but python3 not executable: $venv_path/bin/python3" 11
-    fi
-    
-    log "Virtual environment created successfully"
+	local repo_root="$1"
+	local venv_path="$repo_root/$VENV_DIR"
+
+	if [[ -d "$venv_path" ]] && [[ -x "$venv_path/bin/python3" ]]; then
+		log "Virtual environment already exists: $venv_path"
+		return 0
+	fi
+
+	log "Creating virtual environment: $venv_path"
+
+	if ! python3 -m venv "$venv_path"; then
+		die "Failed to create virtual environment at $venv_path" 11
+	fi
+
+	if [[ ! -x "$venv_path/bin/python3" ]]; then
+		die "Virtual environment created but python3 not executable: $venv_path/bin/python3" 11
+	fi
+
+	log "Virtual environment created successfully"
 }
 
 # activate_venv - Activate virtual environment for current shell
@@ -263,31 +263,31 @@ ensure_venv() {
 #   activate_venv "$repo_root"
 #   which python3  # Should point to .venv/bin/python3
 activate_venv() {
-    local repo_root="$1"
-    local venv_path="$repo_root/$VENV_DIR"
-    local activate_script="$venv_path/bin/activate"
-    
-    if [[ ! -f "$activate_script" ]]; then
-        die "Activate script not found: $activate_script" 11
-    fi
-    
-    log "Activating virtual environment"
-    
-    # shellcheck disable=SC1090
-    # shellcheck source=/dev/null
-    source "$activate_script"
-    
-    # Verify activation by checking which python3 is in use
-    local active_python
-    active_python="$(command -v python3)"
-    
-    if [[ "$active_python" != "$venv_path/bin/python3" ]]; then
-        warn "Virtual environment may not be properly activated"
-        warn "Expected: $venv_path/bin/python3"
-        warn "Got: $active_python"
-    else
-        log "Virtual environment activated: $active_python"
-    fi
+	local repo_root="$1"
+	local venv_path="$repo_root/$VENV_DIR"
+	local activate_script="$venv_path/bin/activate"
+
+	if [[ ! -f "$activate_script" ]]; then
+		die "Activate script not found: $activate_script" 11
+	fi
+
+	log "Activating virtual environment"
+
+	# shellcheck disable=SC1090
+	# shellcheck source=/dev/null
+	source "$activate_script"
+
+	# Verify activation by checking which python3 is in use
+	local active_python
+	active_python="$(command -v python3)"
+
+	if [[ "$active_python" != "$venv_path/bin/python3" ]]; then
+		warn "Virtual environment may not be properly activated"
+		warn "Expected: $venv_path/bin/python3"
+		warn "Got: $active_python"
+	else
+		log "Virtual environment activated: $active_python"
+	fi
 }
 
 # ============================================================================
@@ -316,15 +316,15 @@ activate_venv() {
 #   install_target=$(determine_install_target "$repo_root")
 #   pip install -e "$install_target"
 determine_install_target() {
-    local repo_root="$1"
-    
-    # Check for pyproject.toml at repo root
-    if [[ -f "$repo_root/pyproject.toml" ]]; then
-        echo "$repo_root"
-        return 0
-    fi
-    
-    die "No valid install target found (no pyproject.toml at repo root)" 12
+	local repo_root="$1"
+
+	# Check for pyproject.toml at repo root
+	if [[ -f "$repo_root/pyproject.toml" ]]; then
+		echo "$repo_root"
+		return 0
+	fi
+
+	die "No valid install target found (no pyproject.toml at repo root)" 12
 }
 
 # install_repo_lint - Install repo-lint package in editable mode
@@ -352,26 +352,26 @@ determine_install_target() {
 # EXAMPLES:
 #   install_repo_lint "$repo_root"
 install_repo_lint() {
-    local repo_root="$1"
-    
-    log "Upgrading pip, setuptools, and wheel"
-    python3 -m pip install --upgrade pip setuptools wheel --quiet
-    
-    local install_target
-    install_target=$(determine_install_target "$repo_root")
-    
-    log "Installing repo-lint from: $install_target"
-    
-    if ! python3 -m pip install -e "$install_target" --quiet; then
-        die "Failed to install repo-lint package" 13
-    fi
-    
-    log "repo-lint package installed successfully"
-    
-    # Verify installation
-    if ! command -v repo-lint >/dev/null 2>&1; then
-        die "repo-lint installed but command not found on PATH" 13
-    fi
+	local repo_root="$1"
+
+	log "Upgrading pip, setuptools, and wheel"
+	python3 -m pip install --upgrade pip setuptools wheel --quiet
+
+	local install_target
+	install_target=$(determine_install_target "$repo_root")
+
+	log "Installing repo-lint from: $install_target"
+
+	if ! python3 -m pip install -e "$install_target" --quiet; then
+		die "Failed to install repo-lint package" 13
+	fi
+
+	log "repo-lint package installed successfully"
+
+	# Verify installation
+	if ! command -v repo-lint >/dev/null 2>&1; then
+		die "repo-lint installed but command not found on PATH" 13
+	fi
 }
 
 # ============================================================================
@@ -400,19 +400,19 @@ install_repo_lint() {
 # EXAMPLES:
 #   verify_repo_lint
 verify_repo_lint() {
-    local repo_lint_path
-    
-    if ! repo_lint_path="$(command -v repo-lint)"; then
-        die "repo-lint command not found on PATH" 13
-    fi
-    
-    log "Found repo-lint: $repo_lint_path"
-    
-    if ! repo-lint --help >/dev/null 2>&1; then
-        die "repo-lint found but --help command failed" 14
-    fi
-    
-    log "repo-lint is functional"
+	local repo_lint_path
+
+	if ! repo_lint_path="$(command -v repo-lint)"; then
+		die "repo-lint command not found on PATH" 13
+	fi
+
+	log "Found repo-lint: $repo_lint_path"
+
+	if ! repo-lint --help >/dev/null 2>&1; then
+		die "repo-lint found but --help command failed" 14
+	fi
+
+	log "repo-lint is functional"
 }
 
 # ============================================================================
@@ -439,46 +439,46 @@ verify_repo_lint() {
 # EXAMPLES:
 #   main
 main() {
-    log "Starting repo-lint toolchain bootstrap"
-    log ""
-    
-    # Phase 1.1: Find repository root
-    local repo_root
-    repo_root=$(find_repo_root)
-    log "Repository root: $repo_root"
-    log ""
-    
-    # Change to repository root
-    cd "$repo_root"
-    
-    # Phase 1.2: Ensure virtual environment exists
-    ensure_venv "$repo_root"
-    log ""
-    
-    # Phase 1.2 (continued): Activate virtual environment
-    activate_venv "$repo_root"
-    log ""
-    
-    # Phase 1.3: Install repo-lint package
-    install_repo_lint "$repo_root"
-    log ""
-    
-    # Phase 1.4: Verify repo-lint installation
-    verify_repo_lint
-    log ""
-    
-    # Success summary
-    log "SUCCESS: Bootstrap complete!"
-    log ""
-    log "Summary:"
-    log "  - Repository root: $repo_root"
-    log "  - Virtual environment: $repo_root/$VENV_DIR"
-    log "  - repo-lint: $(command -v repo-lint)"
-    log ""
-    log "Next steps:"
-    log "  - Virtual environment is activated for this shell session"
-    log "  - Run 'repo-lint --help' to see available commands"
-    log "  - Phase 2 (system tools) will be implemented in future commits"
+	log "Starting repo-lint toolchain bootstrap"
+	log ""
+
+	# Phase 1.1: Find repository root
+	local repo_root
+	repo_root=$(find_repo_root)
+	log "Repository root: $repo_root"
+	log ""
+
+	# Change to repository root
+	cd "$repo_root"
+
+	# Phase 1.2: Ensure virtual environment exists
+	ensure_venv "$repo_root"
+	log ""
+
+	# Phase 1.2 (continued): Activate virtual environment
+	activate_venv "$repo_root"
+	log ""
+
+	# Phase 1.3: Install repo-lint package
+	install_repo_lint "$repo_root"
+	log ""
+
+	# Phase 1.4: Verify repo-lint installation
+	verify_repo_lint
+	log ""
+
+	# Success summary
+	log "SUCCESS: Bootstrap complete!"
+	log ""
+	log "Summary:"
+	log "  - Repository root: $repo_root"
+	log "  - Virtual environment: $repo_root/$VENV_DIR"
+	log "  - repo-lint: $(command -v repo-lint)"
+	log ""
+	log "Next steps:"
+	log "  - Virtual environment is activated for this shell session"
+	log "  - Run 'repo-lint --help' to see available commands"
+	log "  - Phase 2 (system tools) will be implemented in future commits"
 }
 
 # Entry point
