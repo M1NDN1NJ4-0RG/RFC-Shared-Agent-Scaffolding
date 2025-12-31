@@ -66,7 +66,7 @@ def _validate_yaml_structure(file_path: Path, content: str) -> None:
     lines = content.splitlines()
 
     # Check for document start marker (---)
-    if not lines or not lines[0].strip() == "---":
+    if not lines or lines[0].strip() != "---":
         raise ConfigValidationError(
             str(file_path),
             "Missing required YAML document start marker '---' at beginning of file. "
@@ -75,7 +75,7 @@ def _validate_yaml_structure(file_path: Path, content: str) -> None:
         )
 
     # Check for document end marker (...)
-    if not lines or not lines[-1].strip() == "...":
+    if not lines or lines[-1].strip() != "...":
         raise ConfigValidationError(
             str(file_path),
             "Missing required YAML document end marker '...' at end of file. "
