@@ -221,12 +221,18 @@ if ! command -v pwsh >/dev/null 2>&1; then
 	if command -v apt-get >/dev/null 2>&1; then
 		# Install prerequisites
 		sudo apt-get install -y -qq wget apt-transport-https software-properties-common
-		# Download Microsoft repository GPG keys
-		wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" -O /tmp/packages-microsoft-prod.deb
-		sudo dpkg -i /tmp/packages-microsoft-prod.deb
-		rm /tmp/packages-microsoft-prod.deb
-		# Install PowerShell
-		sudo apt-get update -qq && sudo apt-get install -y -qq powershell
+		# Determine Ubuntu release (required for Microsoft package URL)
+		if command -v lsb_release >/dev/null 2>&1; then
+			UBUNTU_RELEASE="$(lsb_release -rs)"
+			# Download Microsoft repository GPG keys
+			wget -q "https://packages.microsoft.com/config/ubuntu/${UBUNTU_RELEASE}/packages-microsoft-prod.deb" -O /tmp/packages-microsoft-prod.deb
+			sudo dpkg -i /tmp/packages-microsoft-prod.deb
+			rm /tmp/packages-microsoft-prod.deb
+			# Install PowerShell
+			sudo apt-get update -qq && sudo apt-get install -y -qq powershell
+		else
+			warn "lsb_release not found; skipping automatic PowerShell installation. Please install PowerShell manually."
+		fi
 	else
 		warn "PowerShell not found and apt-get not available. Please install manually."
 	fi
