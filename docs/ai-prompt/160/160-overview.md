@@ -150,8 +150,8 @@ This plan outlines prioritized phases to address all findings. Each item include
 Each fix above should be committed with clear messages, linking to issues if the repository uses an issue tracker. Prioritize the Phase 1 items immediately, as they address correctness and compliance issues. Phase 2 implements requested features and contract alignments from the "Future Work" document. Phase 3 covers residual improvements and housekeeping.
 
 ## Progress Tracker
-- [ ] Phase 1 – Critical Fixes and Corrections (High Priority)
-  - [ ] Fix repository root detection
+- [x] Phase 1 – Critical Fixes and Corrections (High Priority) - IN PROGRESS
+  - [x] Fix repository root detection - COMPLETED
   - [ ] Clarify exit codes for unsafe mode
   - [ ] Handle partial install failures gracefully
   - [ ] Ensure missing docstring validator is detected
@@ -169,6 +169,13 @@ Each fix above should be committed with clear messages, linking to issues if the
   - [ ] Test coverage for runners (Optional)
 
 ## Session Notes (newest first)
+### 2025-12-31 00:25 - Completed repository root detection fix
+- Fixed `get_repo_root()` and `find_repo_root()` to handle missing .git directory
+- Both functions now return current working directory as fallback
+- All tests pass, code review passed with no comments
+- Ready for PR merge - this is the first item in the epic
+- Next session should address: "Clarify exit codes for unsafe mode" (new PR/branch)
+
 ### 2025-12-31 00:16 - Initial session
 - Created overview and next-steps journal files
 - Reviewed repository structure and identified affected files
