@@ -157,18 +157,36 @@ Each fix above should be committed with clear messages, linking to issues if the
   - [x] Ensure missing docstring validator is detected
   - [x] Validate non-Python unsafe mode behavior
   - [x] Add missing unit tests for error conditions
-- [ ] Phase 2 – Major Enhancements and Alignments (Medium Priority)
-  - [ ] Make `repo_lint` an installable package
-  - [ ] Integrate naming-and-style enforcement
-  - [ ] Pin external tool versions in installer
-  - [ ] Improve CLI usability
-- [ ] Phase 3 – Polish, Nits, and Minor Improvements (Low Priority)
+- [x] Phase 2 – Major Enhancements and Alignments (Partial) ✅ 3/4 COMPLETE
+  - [x] Make `repo_lint` an installable package (✅ P2.1)
+  - [x] Integrate naming-and-style enforcement (✅ P2.2)
+  - [x] Pin external tool versions in installer (✅ P2.3 - already done)
+  - [ ] Improve CLI usability (⏸️ P2.4 - deferred: Click migration is major refactor)
+- [ ] Phase 3 – Polish, Nits, and Minor Improvements (Low Priority) ⏸️ DEFERRED
   - [ ] Code style clean-up
   - [ ] Add or improve docstrings in the code
   - [ ] Update documentation
   - [ ] Test coverage for runners (Optional)
 
 ## Session Notes (newest first)
+
+### 2025-12-31 03:15 - Phase 2 (Partial) Complete ✅
+- Completed P2.1: Make repo_lint installable package
+  - Added entry point to pyproject.toml: `repo-lint` command
+  - Backward compatible with `python3 -m tools.repo_lint`
+  - Tested both invocation methods
+- Completed P2.2: Integrate naming/style enforcement (CHECK-ONLY)
+  - Created 3 external YAML config files with strict validation requirements
+  - Implemented strict config validator with pre-ingest checks
+  - Implemented naming runner (check-only, no auto-renames)
+  - Integrated into CLI workflow
+  - All files pass linting (Black, Ruff, yamllint)
+  - 2 rounds of code review, all issues addressed
+  - CodeQL: 0 security alerts
+- Verified P2.3: Pin external tool versions (already complete from prior work)
+- P2.4 deferred: CLI usability (Click migration) - major refactor beyond scope
+- Phase 3 deferred to future work
+- Total work: Phase 1 (6/6) + Phase 2 (3/4) = 9/10 items complete
 
 ### 2025-12-31 01:25 - Phase 1 Complete ✅
 - All 6 Phase 1 items implemented and tested
