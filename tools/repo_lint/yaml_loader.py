@@ -269,4 +269,13 @@ def _get_legacy_python_tools() -> Dict[str, str]:
 
 
 # Export for backward compatibility (with deprecation)
-PYTHON_TOOLS = property(lambda self: _get_legacy_python_tools())
+def __getattr__(name: str) -> Any:
+    """Provide deprecated module attributes on demand.
+
+    This allows `from tools.repo_lint.yaml_loader import PYTHON_TOOLS`
+    and attribute access to continue working while emitting a
+    DeprecationWarning via `_get_legacy_python_tools()`.
+    """
+    if name == "PYTHON_TOOLS":
+        return _get_legacy_python_tools()
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
