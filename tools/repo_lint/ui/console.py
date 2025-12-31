@@ -30,7 +30,7 @@
 """
 
 import sys
-from typing import Optional
+from typing import Dict, Optional
 
 from rich.console import Console
 
@@ -43,22 +43,29 @@ def is_tty() -> bool:
     return sys.stdout.isatty()
 
 
+# Simple cache keyed by ci_mode to avoid redundant Console creation
+_console_cache: Dict[bool, Console] = {}
+
+
 def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) -> Console:
     """Get or create the configured Rich Console instance.
 
     Creates a Console instance with appropriate configuration for TTY or CI mode.
     In CI mode, colors and interactive features are disabled.
 
-    Design Note: This function intentionally creates a new console on each call rather
-    than caching a singleton. This allows the same process to use different ci_mode
-    values for different operations (e.g., interactive output for user messages, CI
-    output for log files). While this means theme settings aren't shared, console
-    creation is lightweight and each caller gets exactly the configuration they need.
+    Design Note: This function caches Console instances by ci_mode to avoid redundant
+    creation while still allowing the same process to use different ci_mode values
+    for different operations (e.g., interactive output for user messages, CI output
+    for log files). The cache is keyed by ci_mode only (force_terminal is derived).
 
     :param ci_mode: If True, disable colors and interactive features
     :param force_terminal: Override TTY detection (default: auto-detect)
     :returns: Configured Console instance
     """
+    # Check cache first
+    if ci_mode in _console_cache:
+        return _console_cache[ci_mode]
+
     # Determine if we should force terminal mode
     if force_terminal is None:
         # In interactive mode, force terminal if TTY detected
@@ -74,4 +81,6 @@ def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) ->
         emoji=not ci_mode,  # Disable emoji in CI mode (some terminals don't support)
     )
 
+    # Cache and return
+    _console_cache[ci_mode] = console
     return console

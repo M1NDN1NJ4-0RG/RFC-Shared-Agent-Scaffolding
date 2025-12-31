@@ -58,6 +58,19 @@ class Reporter:
         self.console = get_console(ci_mode=ci_mode)
         self.theme = theme or get_theme(ci_mode=ci_mode)
 
+        # Create a dedicated stderr console for error messages
+        # This console is configured separately to write to stderr
+        from rich.console import Console
+
+        self.stderr_console = Console(
+            file=sys.stderr,
+            force_terminal=self.console.is_terminal,
+            no_color=ci_mode,
+            highlight=not ci_mode,
+            markup=True,
+            emoji=not ci_mode,
+        )
+
     def _get_icon(self, status: str) -> str:
         """Get icon for status.
 
@@ -363,13 +376,8 @@ class Reporter:
         else:
             formatted = self._format_with_color(f"ERROR: {message}", "failure", bold=True)
 
-        # Print to stderr using a dedicated stderr console to properly render Rich markup
-        # We can't use self.console.print() with a file= parameter (not supported by Rich),
-        # so we create a temporary Console instance configured for stderr
-        from rich.console import Console as RichConsole
-
-        stderr_console = RichConsole(file=sys.stderr, force_terminal=self.console.is_terminal)
-        stderr_console.print(formatted)
+        # Print to stderr using the pre-configured stderr console to properly render Rich markup
+        self.stderr_console.print(formatted)
 
     def warning(self, message: str) -> None:
         """Print a warning message.

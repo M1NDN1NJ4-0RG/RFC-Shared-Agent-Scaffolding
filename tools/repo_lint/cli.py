@@ -467,14 +467,16 @@ def main():
         sys.exit(ExitCode.MISSING_TOOLS)
     except Exception as e:
         click.echo(f"❌ Internal error: {e}", err=True)
+        import os
         import traceback
 
-        # Check for verbose flag - check sys.argv since we're outside Click context
-        # Note: This handles common cases but won't detect REPO_LINT_VERBOSE env var
-        # or complex bundled options. For those edge cases, users can run with -v explicitly.
+        # Check for verbose flag - check both sys.argv and environment variable
+        # This ensures verbose mode is detected in all scenarios (CLI flag and env var)
         verbose_flags = {"-v", "--verbose"}
-        has_verbose = any(arg in verbose_flags or arg.startswith("--verbose=") for arg in sys.argv[1:])
-        if has_verbose:
+        has_verbose_flag = any(arg in verbose_flags or arg.startswith("--verbose=") for arg in sys.argv[1:])
+        has_verbose_env = os.environ.get("REPO_LINT_VERBOSE", "").lower() in ("1", "true", "yes")
+
+        if has_verbose_flag or has_verbose_env:
             traceback.print_exc()
         sys.exit(ExitCode.INTERNAL_ERROR)
 

@@ -30,6 +30,7 @@
 """
 
 import os
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
@@ -247,14 +248,18 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
     if not selected_theme:
         # If no theme file exists, warn and return default theme
         # This can happen when running outside a repo or if conformance/ is missing
-        import sys
+        # Create a minimal stderr console for warning output
+        # Note: We can't use Reporter here (circular dependency), so we use a minimal
+        # Console instance directly. This is acceptable because theme loading happens
+        # very early in the process, before the Reporter is initialized.
+        from rich.console import Console as RichConsole
 
+        stderr_console = RichConsole(file=sys.stderr, highlight=False)
         default_path = _get_default_theme_path()
-        sys.stderr.write(
-            f"⚠️  Theme file not found (checked {len(candidates)} locations, "
-            f"including {default_path}). Using built-in defaults.\n"
+        stderr_console.print(
+            f"[yellow]⚠️  Theme file not found[/yellow] (checked {len(candidates)} "
+            f"locations, including {default_path}). Using built-in defaults."
         )
-        sys.stderr.flush()
         return UITheme()
 
     # Load and validate theme file
