@@ -1,9 +1,9 @@
+Run python3 -m tools.repo_lint check --ci --only bash 2>&1 | tee bash-lint-output.txt
+  
 🔍 Running repository linters and formatters...
-
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   Bash Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
                          Linting Results                         
                                                                  
   Runner                Status    Files   Violations   Duration  
@@ -12,55 +12,37 @@
   shfmt                 ✅ PASS       -            0          -  
   validate_docstrings   ❌ FAIL       -           18          -  
                                                                  
-
-                          validate_docstrings Failures                          
-  Found 18 violation(s)                                                         
-                                                                                
-                                                                                
-  File   Line   Message                                                         
- ────────────────────────────────────────────────────────────────────────────── 
-  .         -   ❌ Validation FAILED: 17 violation(s) in 2 file(s)              
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-                                                                                
-
-                                    Summary                                     
-  Total Runners: 3                                                              
-    Passed: 2                                                                   
-    Failed: 1                                                                   
-  Total Violations: 18                                                          
-                                                                                
-  Exit Code: 1 (VIOLATIONS)                                                     
-                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          validate_docstrings Failures          
+  Found 18 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                             
+  File   Line   Message                                                                                                                      
+ ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  .         -   ❌ Validation FAILED: 17 violation(s) in 2 file(s)                                                                           
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap-repo-cli.sh:58              
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap-repo-cli.sh:77              
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:66   
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:71   
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:76   
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:89   
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:104  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:115  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:126  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:131  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:187  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:204  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:220  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:301  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:338  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:359  
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/tests/test-bootstrap-repo-cli.sh:380  
+                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    Summary                     
+  Total Runners: 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+    Passed: 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+    Failed: 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+  Total Violations: 18                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+  Exit Code: 1 (VIOLATIONS)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+Error: Process completed with exit code 1.
