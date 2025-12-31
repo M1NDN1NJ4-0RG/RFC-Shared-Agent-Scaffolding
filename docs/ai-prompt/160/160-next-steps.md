@@ -6,14 +6,51 @@ Last Updated: 2025-12-31
 Related: Issue #160, PRs TBD
 
 ## NEXT
-- Add missing unit tests for error conditions (Phase 1, last item)
-- Run code review on current changes
+- Run code review on Phase 1 changes
 - Address any code review feedback
-- Move to Phase 2 items (in future session)
+- Run repo_lint check to verify everything passes
+- Move to Phase 2 items in future session (if requested)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 01:20 - Completed Phase 1 item 6: Add missing unit tests
+**Files Changed:**
+- `tools/repo_lint/tests/test_integration.py`: Created new integration test file (210 lines)
+  - Added 6 integration tests exercising full CLI invocation
+  - Tests cover: missing tools, policy errors, unsafe mode violations, install failures
+  - Tests use subprocess-style invocation (mocking sys.argv and catching SystemExit)
+  - Complements existing unit tests with end-to-end validation
+
+**Changes Made:**
+- **Item 6: Add missing unit tests for error conditions** ✅
+  - Created new `test_integration.py` file with 6 comprehensive integration tests
+  - `test_check_missing_tools_ci`: Full CLI → check --ci → exit code 2 (missing tools)
+  - `test_fix_policy_not_found`: Full CLI → fix → exit code 3 (policy not found)
+  - `test_fix_unsafe_unsupported_language`: Full CLI → fix --unsafe --only=perl → exit code 4
+  - `test_fix_unsafe_forbidden_in_ci`: Full CLI → fix --unsafe --ci → exit code 4
+  - `test_no_command_shows_help`: Full CLI → no command → exit code 0 (help shown)
+  - `test_install_failure_integration`: Full CLI → install failure → exit code 3 + no manual instructions
+  - Tests exercise argument parsing AND command dispatch (integration vs unit testing)
+  - Per epic requirement: "Use subprocess calls or invoke main() directly" - tests invoke main()
+
+**Verification:**
+- Ran `python3 -m unittest tools.repo_lint.tests.test_integration -v`: all 6 tests passed
+- Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes tools.repo_lint.tests.test_integration -v`: all 20 tests passed (14 + 6)
+- Integration tests validate full end-to-end behavior from CLI to exit codes
+- Tests confirm Phase 1 Item 3 requirement: install failure doesn't print manual instructions
+
+**Phase 1 Status:**
+All 6 Phase 1 items are now complete:
+1. ✅ Fix repository root detection (completed in previous session)
+2. ✅ Clarify exit codes for unsafe mode (completed in previous session)
+3. ✅ Handle partial install failures gracefully (completed earlier this session)
+4. ✅ Ensure missing docstring validator is detected (completed earlier this session)
+5. ✅ Validate non-Python unsafe mode behavior (completed earlier this session)
+6. ✅ Add missing unit tests for error conditions (completed just now)
+
+---
 
 ### 2025-12-31 01:15 - Completed Phase 1 items 3, 4, 5
 **Files Changed:**
