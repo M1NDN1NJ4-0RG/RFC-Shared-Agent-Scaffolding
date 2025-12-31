@@ -106,7 +106,7 @@ def cli(ctx):
     with consistent linting rules, docstring validation, and automatic formatting.
     """
     if ctx.invoked_subcommand is None:
-        click.echo(ctx.get_help())
+        console.print(ctx.get_help())
 
 
 # Check command

@@ -320,7 +320,7 @@ go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
 ### Issue: "Auto-fix policy file not found"
 
-**Cause:** The policy file `conformance/repo-lint/autofix-policy.json` is missing.
+**Cause:** The auto-fix policy configuration file is missing.
 
 **Solution:**
 
