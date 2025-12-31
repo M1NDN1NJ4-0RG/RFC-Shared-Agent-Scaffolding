@@ -1173,7 +1173,7 @@ run_verification_gate() {
 
 	# Run verification gate with full output
 	log "Running: repo-lint check --ci"
-	
+
 	# Capture exit code
 	local exit_code=0
 	repo-lint check --ci || exit_code=$?
@@ -1182,7 +1182,7 @@ run_verification_gate() {
 	# Exit code 1: Violations found (tools work, but repo has lint issues - THIS IS OK for verification)
 	# Exit code 2: Missing tools (THIS IS FAILURE)
 	# Exit code 3+: Other errors (THIS IS FAILURE)
-	
+
 	if [ $exit_code -eq 0 ]; then
 		log "  ✓ Verification gate passed (no violations)"
 		return 0
