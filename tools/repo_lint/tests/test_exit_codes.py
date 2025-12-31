@@ -329,21 +329,16 @@ class TestExitCodes(unittest.TestCase):
 
     @patch("tools.repo_lint.cli.load_policy")
     @patch("tools.repo_lint.cli.validate_policy")
-    @patch("os.getenv")
-    def test_fix_unsafe_violation_in_ci(self, mock_getenv, mock_validate, mock_load):
+    def test_fix_unsafe_violation_in_ci(self, mock_validate, mock_load):
         """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe used in CI.
 
         :Purpose:
             Verify EXIT_CODE.UNSAFE_VIOLATION (4) when unsafe mode is used in CI.
 
-        :param mock_getenv: Mocked os.getenv
         :param mock_validate: Mocked validate_policy
         :param mock_load: Mocked load_policy
         """
-        # Mock CI environment
-        mock_getenv.return_value = "true"
-
-        # Create args with unsafe mode
+        # Create args with unsafe mode in CI
         args_unsafe_ci = argparse.Namespace(
             ci=True,
             verbose=False,
