@@ -2,11 +2,58 @@
 
 This directory contains all documentation for the RFC-Shared-Agent-Scaffolding repository.
 
-## Quick Start
+## Start Here
 
-- **New Users:** Start with [Usage Guide](./usage/) to learn how to use the tools
-- **Contributors:** See [CONTRIBUTING.md](../CONTRIBUTING.md) for quick reference, then [Contributing Guide](./contributing/) for detailed guidelines
-- **Maintainers:** Review [Architecture](./architecture/) for design decisions
+Choose your path based on your role:
+
+### 👤 Users (Running the Tools)
+
+**You want to:** Use safe-run, safe-check, or safe-archive in your projects
+
+**Start with:**
+1. [RFC v0.1.0](../rfc-shared-agent-scaffolding-v0.1.0.md) - What the contract does
+2. [Usage Guide](./usage/) - How to use the tools
+3. [Wrapper Discovery](./architecture/wrapper-discovery.md) - How wrappers find the Rust binary
+
+**Quick example:**
+```bash
+# Build the Rust tool
+cd rust/ && cargo build --release
+
+# Run via wrapper
+wrappers/bash/scripts/safe-run.sh echo "Hello World"
+```
+
+### 🔧 Contributors (Adding Features or Fixing Bugs)
+
+**You want to:** Contribute code, documentation, or tests
+
+**Start with:**
+1. **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Quick start guide (GitHub surfaces this)
+2. [Contributing Guide](./contributing/contributing-guide.md) - Detailed workflow, naming conventions, PR process
+3. [Docstring Contracts](./contributing/docstring-contracts/README.md) - Required documentation standards for all languages
+4. [Testing Documentation](./testing/conformance-tests.md) - How to run and write tests
+
+**Before your first PR:**
+- Review [Naming and Style](./contributing/naming-and-style.md) - File naming and symbol conventions
+- Run `python3 -m tools.repo_lint check` - Validate your changes
+- Ensure all tests pass (Rust + wrappers + conformance)
+
+### 🏗️ Maintainers (Architecture and Design)
+
+**You want to:** Understand design decisions, architectural constraints, and long-term structure
+
+**Start with:**
+1. [Canonical Structure](./architecture/canonical-structure.md) - Repository directory layout
+2. [Contract Extraction](./architecture/contract-extraction.md) - Contract definitions and specifications
+3. [Risk Vector Enumeration](./architecture/risk-vector-enumeration.md) - Risk analysis and mitigation
+4. [Rust Canonical Tool](./architecture/rust-canonical-tool.md) - Implementation details
+
+**Decision logs:**
+- [History Index](./history/README.md) - Complete index of epics, milestones, and decisions
+- [Allowed Drift](./contributing/allowed-drift.md) - Behavioral difference policy
+
+---
 
 ## Documentation Structure
 

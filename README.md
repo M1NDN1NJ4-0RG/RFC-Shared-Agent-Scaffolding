@@ -49,6 +49,30 @@ Wrappers act as **invokers**, not independent implementations. They:
 3. Forward exit codes
 4. Provide actionable error messages if Rust binary is missing
 
+## Repository Structure
+
+This repository follows a clear, purpose-driven layout:
+
+```
+RFC-Shared-Agent-Scaffolding/
+├── rust/                    # Canonical Rust implementation (source of truth)
+├── wrappers/                # Language-specific thin wrappers (bash, perl, python3, powershell)
+├── conformance/             # Cross-implementation conformance test vectors
+├── docs/                    # Comprehensive documentation (architecture, usage, contributing, testing)
+├── scripts/                 # Repository validation and linting scripts
+├── tools/                   # Developer tooling (repo_lint Python package)
+├── .github/workflows/       # CI/CD automation
+└── rfc-*.md                 # Contract specification documents
+```
+
+**Key Directories:**
+- **`rust/`** - The canonical tool; all wrappers invoke this
+- **`wrappers/`** - Compatibility layers for Bash, Perl, Python, PowerShell
+- **`conformance/`** - Shared test vectors ensuring behavioral consistency
+- **`docs/`** - All documentation (see [Documentation](#documentation) below)
+- **`scripts/`** - Validation scripts (docstrings, structure, references)
+- **`tools/`** - Packaged developer tools (`repo_lint` CLI)
+
 ## Documentation
 
 📚 **[Documentation Index](./docs/README.md)** - Complete documentation guide
