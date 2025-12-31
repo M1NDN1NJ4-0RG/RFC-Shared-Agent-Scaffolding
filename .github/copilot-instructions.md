@@ -177,14 +177,24 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
 - ❌ Bad: "Run the tests"
 
 
-**Pre-Commit Repo Lint Gate (MANDATORY for scripting changes):**
+**Pre-Commit Repo-CLI Gate (MANDATORY for scripting changes):**
 - If your commit includes **ANY changes** to **scripting/tooling files** (examples: `*.py`, `*.sh`, `*.bash`, `*.pl`, `*.pm`, `*.ps1`, `*.psm1`, `*.rs`, plus any other executable/script files in `tools/` or `scripts/`), you MUST run:
-  - `python3 -m tools.repo_lint check --ci`
+  - `repo-cli check --ci`
+- FIRST (MANDATORY): Install `repo-cli` as a Python package and make it available on `PATH` for the current shell session.
+  - You MUST be able to run: `repo-cli --help`
+  - If `repo-cli` is not found on PATH, you MUST STOP and fix your environment (activate the correct venv / install the package) before proceeding.
+- `repo-cli` installation MUST install its Python dependencies (package deps). If installation is incomplete or import errors occur, that is a **BLOCKER**.
+- You MUST ensure `repo-cli` and all of its required dependencies/tools are installed **before** running this command.
+- If `repo-cli` exits non-zero due to missing tools (e.g., Exit code 2 / `MISSING_TOOLS`), you MUST:
+  1) install the missing tools/packages (e.g., `black`, `ruff`, `pylint`, etc.)
+  2) re-run `repo-cli check --ci`
+  3) repeat until the command exits 0
+- Missing tools are not an excuse to commit. Missing tools are a **BLOCKER**.
 - This command is intended to lint **script/tooling** changes; if you are **only** changing documentation (e.g. `*.md`) or other non-script text files, running it is **recommended** but **not required**.
 - The command MUST exit **0** (PASS).
 - If it fails, you MUST fix the reported issues and re-run it until it passes.
 - Do NOT commit “known failing” work.
-- If you’re unsure whether your change counts as “scripting/tooling”, treat it as **YES** and run the command.
+- If you’re unsure whether your change counts as “scripting/tooling”, treat it as **YES** and run `repo-cli check --ci`.
 
 **New Script File Test Requirement (MANDATORY):**
 - If you introduce **ANY new scripting/tooling file** (examples: `*.py`, `*.sh`, `*.bash`, `*.pl`, `*.pm`, `*.ps1`, `*.psm1`, `*.rs`, plus any new executable/script file under `tools/` or `scripts/`), you MUST add **comprehensive unit tests** for it **in the appropriate test harness** for that language.
@@ -203,7 +213,32 @@ If you implement the same logic **3+ times** within the scope above (copy/paste 
 
 At the start of **EVERY session**, before making changes, the agent MUST ensure the required tooling is installed and available in the working environment.
 
+### Repo-CLI Toolchain Installation (MANDATORY)
+
+`repo-cli` exists to prevent exactly the kind of compliance failures we keep seeing. Treat it as a required toolchain, not a nice-to-have.
+
+**Mandatory order of operations (no exceptions):**
+1) Install `repo-cli` as a Python package in the active environment.
+2) Ensure the environment is active/"sourced" so `repo-cli` is on `PATH` for this shell session.
+3) Verify `repo-cli` works by running `repo-cli --help`.
+4) Only then: use `repo-cli install` (if available) to install/verify any required external tools.
+5) Only then: begin making scripting/tooling changes.
+
+If any step fails, STOP and escalate using `**BLOCKED — HUMAN ACTION REQUIRED**`.
+
+Before making **any** scripting/tooling changes, you MUST ensure:
+- `repo-cli` is installed and runnable on PATH (verify with `repo-cli --help`)
+- all `repo-cli` Python dependencies are installed in the current environment (installed via the `repo-cli` package installation)
+- all external linters/formatters required by `repo-cli` are installed and on PATH (install manually OR via `repo-cli install`, if available)
+
+If you do not know the exact install command for `repo-cli` in this repo, you MUST:
+- search the repo for the canonical install instructions for `repo-cli`, and
+- if still unclear, STOP and escalate using `**BLOCKED — HUMAN ACTION REQUIRED**`.
+
+Do NOT proceed with scripting/tooling work until `repo-cli` is installed, on PATH, and functional.
+
 Required tools (install/verify each session):
+- `repo-cli` toolchain (installed package + required external linters/formatters)
 - `rgrep` (PREFERRED grep tool in this repository)
 - `black`
 - `pylint`
@@ -218,7 +253,7 @@ Required tools (install/verify each session):
 - `PPI`
 
 Rules:
-- If any required tool is missing, install it before proceeding.
+- If any required tool is missing (including any tool required by `repo-cli`), install it before proceeding.
 - If installation is blocked by environment constraints, escalate using `**BLOCKED — HUMAN ACTION REQUIRED**` and list the missing tools.
 - Use `rgrep` as the default grep/search tool for repository work unless a human explicitly instructs otherwise.
 
