@@ -32,7 +32,7 @@
 #     1   Generic failure
 #     10  Repository root could not be located
 #     11  Virtual environment creation failed
-#     12  No valid install target found (no pyproject.toml or tools/repo_lint/)
+#     12  No valid install target found (missing pyproject.toml at repo root)
 #     13  repo-lint not found on PATH after installation
 #     14  repo-lint exists but --help command failed
 #
