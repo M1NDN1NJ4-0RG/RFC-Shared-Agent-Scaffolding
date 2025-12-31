@@ -261,7 +261,7 @@ def _get_legacy_python_tools() -> Dict[str, str]:
     :raises DeprecationWarning: This function is deprecated
     """
     warnings.warn(
-        "Direct import of PYTHON_TOOLS is deprecated. " "Use tools.repo_lint.yaml_loader.get_tool_versions() instead.",
+        "Direct import of PYTHON_TOOLS is deprecated. Use tools.repo_lint.yaml_loader.get_tool_versions() instead.",
         DeprecationWarning,
         stacklevel=2,
     )
