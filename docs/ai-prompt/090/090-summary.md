@@ -281,9 +281,6 @@
     - [x] Rust unit/integration tests (31 passed, 4 ignored)
     - [x] wrapper tests (bash/perl/python3): 89 tests passed
     - [x] conformance harness (passed)
-    - [x] Rust unit/integration tests
-    - [x] wrapper tests (bash/perl/powershell/python3)
-    - [x] conformance harness
   - [x] Sub-Item 1.2.2: Confirm wrapper scripts still invoke Rust binaries with expected behavior.
   - [x] **Verify:** All test suites pass (120+ tests total).
 
