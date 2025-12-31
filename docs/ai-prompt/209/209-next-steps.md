@@ -6,7 +6,7 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
-- Address any remaining feedback from code review
+- Address any remaining code review feedback
 - Phase 2: Tool Installation and Verification (future)
 - Phase 3: Verification Gate and Error Handling (future)
 - Phase 4: Documentation (future)
@@ -14,6 +14,120 @@ Related: Issue #209
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 20:26 - Add comprehensive unit tests for bootstrap script
+**Files Changed:**
+- `scripts/tests/test_bootstrap_repo_lint_toolchain.py`: Created comprehensive test suite (505 lines)
+- `docs/ai-prompt/209/209-next-steps.md`: Updated journal
+
+**Changes Made:**
+Addressed mandatory testing requirement from code review comment #2655857850:
+- Created comprehensive unit tests per repository policy (`.github/copilot-instructions.md` lines 199-204)
+- All new scripting/tooling files MUST have tests before committing
+
+**Test Coverage:**
+Created 9 comprehensive tests covering:
+
+1. **Exit Code Testing (5 tests in TestBootstrapScript)**:
+   - `test_exit_code_10_not_in_repo`: Verifies exit code 10 when not in repository
+   - `test_exit_code_12_no_install_target`: Verifies exit code 12 when no pyproject.toml
+   - `test_finds_repo_root_from_subdirectory`: Integration test for repo root discovery
+   - `test_creates_venv_directory`: Verifies venv creation
+   - `test_idempotency_venv_already_exists`: Verifies idempotent behavior
+
+2. **Repository Discovery Testing (4 tests in TestRepositoryDiscovery)**:
+   - `test_find_repo_root_with_git_directory`: Tests .git marker detection
+   - `test_find_repo_root_with_pyproject_toml`: Tests pyproject.toml marker detection
+   - `test_find_repo_root_with_readme`: Tests README.md marker detection
+   - `test_find_repo_root_exits_10_when_not_in_repo`: Tests failure case
+
+**Test Framework:**
+- Uses Python unittest + pytest (standard for this repository)
+- Follows existing patterns from `test_validate_docstrings.py`
+- Tests are isolated with temporary directories
+- Each test has proper setup/teardown
+- Comprehensive Python docstrings per repository standards
+
+**Test Execution:**
+```bash
+# All tests pass
+pytest scripts/tests/test_bootstrap_repo_lint_toolchain.py -v
+# 9 passed in 26.46s
+
+# Can also run directly
+python3 scripts/tests/test_bootstrap_repo_lint_toolchain.py
+```
+
+**Test Methodology:**
+- **Integration testing**: Tests full script execution with various setups
+- **Isolated function testing**: Extracts and tests individual functions (find_repo_root)
+- **Temporary environments**: Each test creates isolated temp directories
+- **Exit code validation**: Verifies all documented exit codes (0, 10, 12)
+- **Idempotency verification**: Tests can run multiple times safely
+
+**Coverage Details:**
+Tests validate all Phase 1 requirements:
+- ✅ Repository root discovery logic (find_repo_root)
+- ✅ Virtual environment creation (.venv/)
+- ✅ Virtual environment idempotency
+- ✅ Exit code 10 (repo root not found)
+- ✅ Exit code 12 (no install target)
+- ✅ Running from subdirectories
+- ✅ Detecting all repo markers (.git, pyproject.toml, README.md)
+
+**Not Covered (Phase 2+ functionality)**:
+- repo-lint installation (requires actual repo-lint package)
+- Tool installation (shellcheck, shfmt, etc.) - future phases
+- Verification gate (`repo-lint check --ci`) - future phases
+- Exit codes 13, 14 (require full installation)
+
+**Verification:**
+```bash
+# Test discovery
+pytest --collect-only scripts/tests/test_bootstrap_repo_lint_toolchain.py
+# 9 tests found
+
+# Run with verbose output
+pytest scripts/tests/test_bootstrap_repo_lint_toolchain.py -v
+# All tests PASS
+
+# Test file structure
+ls -la scripts/tests/test_bootstrap_repo_lint_toolchain.py
+# -rw-rw-r-- 1 runner runner 16405 Dec 31 20:26
+```
+
+**Design Decisions:**
+1. Used integration testing approach (full script execution) rather than sourcing functions
+   - Avoids issue where sourcing script runs main() automatically
+   - More realistic - tests actual usage patterns
+2. Extracted find_repo_root function for unit testing
+   - Created standalone test scripts with just the function logic
+   - Validates logic in isolation
+3. Used temporary directories for all tests
+   - Ensures no cross-test pollution
+   - Safe cleanup even on test failure
+4. Followed existing test patterns from `test_validate_docstrings.py`
+   - unittest.TestCase base class
+   - setUp/tearDown methods
+   - subprocess.run for script execution
+
+**Commands Run:**
+```bash
+# Install pytest (required test framework)
+pip install pytest
+
+# Run tests
+pytest scripts/tests/test_bootstrap_repo_lint_toolchain.py -v
+
+# Verify all pass
+echo $?  # 0
+```
+
+**Follow-ups:**
+- Reply to comment #2655857850 confirming test coverage
+- Tests are ready for CI integration
+
+---
+
 ### 2025-12-31 20:14 - Fix shfmt formatting compliance
 **Files Changed:**
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Applied shfmt formatting (378 lines changed)
