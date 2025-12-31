@@ -11,6 +11,142 @@ We need THREE complementary UX variants:
 - Output/behavior must be deterministic and testable.
 - Must follow Phase 2.5 Console Output + Rich-Click Help Content Contracts.
 
+## Mandatory: Rich-Click CLI Granularity for `check` / `fix` (Per-language + Per-tool + Summary Modes)
+
+We need extremely granular, Rich-Click-documented options for running **specific tools** and controlling **how much output** is emitted.
+
+### Command surface (minimum)
+These flags MUST apply to `repo-lint check` and `repo-lint fix` (where applicable):
+
+- `--lang <LANG>`
+  - Filters execution to a single language.
+  - Supported values MUST include: `python`, `bash`, `perl`, `powershell`, `rust`, `yaml`, `markdown`, `all`.
+  - If omitted, tool runs the current default behavior (likely all enabled languages).
+
+- `--tool <TOOL>`
+  - Filters execution to a single underlying tool within the selected language.
+  - Example: `repo-lint check --lang python --tool black`
+  - MUST be repeatable: `--tool black --tool ruff` (or accept comma-separated lists, but repeatable is preferred).
+  - MUST validate that the tool is known for the chosen language.
+
+- `--summary` / `--summary-only`
+  - `--summary`: show normal output PLUS a compact summary at the end.
+  - `--summary-only`: show ONLY a compact summary (no per-file/per-line details).
+  - MUST work for full runs and `--tool`-filtered runs.
+
+### Tool availability behavior (non-negotiable)
+When `--tool <TOOL>` is requested and the tool is not available:
+- The command MUST produce a clear, actionable error:
+  - “❌ Tool not installed: <TOOL>”
+  - Include the expected install mechanism:
+    - If it is a Python dependency: recommend `repo-lint install` (and/or `pip install -e .[dev]` if packaging supports extras).
+    - If it is manual/system-level: explicitly say "install manually" and provide the package name(s) we expect (best effort).
+- The command MUST exit with the correct exit code for missing tools (match existing ExitCode contract).
+- If multiple tools are requested and only some are missing:
+  - By default: fail the run (CI-safe)
+  - Optional (nice-to-have): a `--skip-missing-tools` flag that continues running available tools but still prints a missing-tools summary and returns non-zero.
+
+### Fix-mode Safety (Mandatory)
+
+Fixing should be safe and predictable.
+
+- Add `--dry-run` to `repo-lint fix`:
+  - Shows what would change without modifying files.
+- Add `--diff` (TTY-only):
+  - Shows unified diff previews for changes (where possible).
+- Add `--changed-only` (optional but strongly recommended):
+  - If a git worktree is present, restrict checks/fixes to changed files by default when requested.
+  - If git is not present, this flag MUST error with a clear message (do not silently broaden scope).
+
+### Output-detail controls (robust-as-hell; minimum set)
+Add these flags to control verbosity and ergonomics (all must be Rich-Click documented and tested):
+
+- `--max-violations <N>`
+  - Hard cap for detailed items printed (prevents terminal spam).
+  - Summary MUST still include total counts.
+
+- `--show-files` / `--hide-files`
+  - Whether to list per-file breakdown rows in output tables.
+
+- `--show-codes` / `--hide-codes`
+  - Whether to include tool rule IDs/codes (e.g. `ruff:F401`, `pylint:C0114`).
+
+- `--fail-fast`
+  - Stop after the first tool failure (useful for local iteration).
+  - In CI, default should remain “run all tools then summarize”, unless explicitly set.
+
+- `--explain-tool <TOOL>`
+  - Prints what the tool does, what files it targets, how it is invoked, and how to install it.
+  - MUST NOT run linting; informational only.
+
+### Output Formats + Reports (Mandatory)
+
+We need a stable way to capture output for humans and CI artifacts.
+
+Add these flags to `repo-lint check` and `repo-lint fix`:
+
+- `--format <FMT>`
+  - Supported values MUST include: `rich` (TTY default), `plain` (CI default), `json`.
+  - `--ci` MUST force `plain` unless the user explicitly sets `--format`.
+
+- `--report <PATH>`
+  - Writes a single consolidated report to disk.
+  - If `--format json`, output MUST be valid JSON with a stable schema.
+
+- `--reports-dir <DIR>`
+  - Writes per-tool reports (one file per tool, plus an index summary file).
+  - File naming MUST be deterministic and collision-safe.
+
+- `--summary-format <MODE>`
+  - Supported values MUST include: `short`, `by-tool`, `by-file`, `by-code`.
+  - MUST work with `--summary` and `--summary-only`.
+
+Report schema (minimum for JSON):
+- run metadata: repo root, timestamp, platform, python version
+- filters: lang(s), tool(s)
+- results: per-tool exit status, counts, top offending files, codes
+- missing tools summary
+- ignored-by-exceptions counts (if exceptions/pragma logic exists)
+
+### Rich-Click help contract for these flags
+- Help output MUST show:
+  - Examples:
+    - `repo-lint check --lang python --tool black --summary-only`
+    - `repo-lint check --lang yaml --tool yamllint --max-violations 50`
+  - Tool/value enums for `--lang` and `--tool` (where possible).
+  - Clear notes about missing-tool behavior and exit codes.
+
+### Back-compat
+- Existing flags (e.g. `--only` if present) must be supported or cleanly aliased to `--lang`.
+- If both `--only` and `--lang` are provided, error out with a clear message to avoid ambiguity.
+
+### Tool Registry Contract (Source of Truth)
+
+To keep `--tool` robust and to prevent drift, `repo-lint` MUST maintain a single canonical tool registry.
+
+- The tool registry MUST be derived from the conformance linting/docstring configs (not hard-coded in multiple places).
+  - Example: `conformance/repo-lint/repo-lint-linting-rules.yaml` declares tools per language.
+  - Example: `conformance/repo-lint/repo-lint-docstring-rules.yaml` declares the docstring validator(s) per language.
+- `--tool <TOOL>` MUST validate against this registry.
+- Rich-Click help SHOULD enumerate known tools per language (or provide a `--list-tools` command if the list is too long).
+
+### Discoverability (Mandatory)
+
+Add these flags to `repo-lint check` and `repo-lint fix`:
+
+- `--list-langs`
+  - Prints supported `--lang` values (stable output).
+
+- `--list-tools [--lang <LANG>]`
+  - Prints supported tools.
+  - If `--lang` is provided, list only tools for that language.
+  - If `--lang` is omitted, list all tools grouped by language.
+
+- `--tool-help <TOOL>`
+  - Alias of `--explain-tool <TOOL>` (keep both; users will try both names).
+
+These MUST NOT run linting; informational only.
+
 ---
 
 # Shared: Venv + Repo Root Resolution (Used by env/activate/which)
@@ -220,3 +356,12 @@ Wire into Click CLI. Ensure Rich-Click help includes:
 - [ ] Cross-platform behavior validated (Linux/macOS + Windows PowerShell).
 - [ ] Tests added for resolver + snippets + activator command construction + diagnostics output.
 - [ ] Docs updated with examples for all three commands.
+- [ ] `repo-lint check` and `repo-lint fix` support `--lang <LANG>` and repeatable `--tool <TOOL>` with Rich-Click help and examples.
+- [ ] Missing requested tools produce a clear actionable error and the correct exit code (CI-safe, deterministic).
+- [ ] `--summary` and `--summary-only` work for full runs and tool-filtered runs.
+- [ ] Verbosity controls (`--max-violations`, `--show-files/--hide-files`, `--show-codes/--hide-codes`, `--fail-fast`) are implemented, documented, and tested.
+- [ ] `--list-langs` and `--list-tools` exist and do not run linting; output is stable and documented.
+- [ ] `--format` supports at least `rich`, `plain`, and `json`, with `--ci` defaulting to `plain`.
+- [ ] `--report` and `--reports-dir` write deterministic report artifacts; JSON schema is stable and tested.
+- [ ] `--summary-format` supports `short`, `by-tool`, `by-file`, `by-code`.
+- [ ] `repo-lint fix` supports `--dry-run` and `--diff` (TTY-only); behavior is documented and tested.
