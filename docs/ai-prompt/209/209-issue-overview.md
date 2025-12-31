@@ -1,5 +1,9 @@
 # Repo-Lint Toolchain Bootstrapper (Session-Start Compliance Gate)
 
+> **CALL THE TOOL** `copilot_repo_compliance_bootstraper.*`
+> USE THE CORRECT NAMING FOR WHATEVER LANGUAGE YOU BUILD THIS BOOTSTRAPPER IN:
+> i.e.: Bash = `kebab-case`, Python = `snake_case`, PowerShell = `PascalCase`, etc.
+
 ## Problem / Why This Exists
 Copilot repeatedly fails the repository’s mandatory “repo-lint before commit” rules due to environment/tooling drift:
 - `repo-cli` (repo-lint) is not installed / not on PATH
