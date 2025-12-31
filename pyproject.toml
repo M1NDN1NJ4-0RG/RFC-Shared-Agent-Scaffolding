@@ -1,8 +1,19 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "repo_lint"
 version = "0.1.0"
 description = "Unified multi-language lint and docstring validation tool"
 requires-python = ">=3.8"
+
+[project.scripts]
+repo-lint = "tools.repo_lint.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["tools*"]
 
 [project.optional-dependencies]
 # Testing dependencies

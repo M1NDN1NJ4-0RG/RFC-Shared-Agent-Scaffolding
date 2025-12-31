@@ -6,12 +6,45 @@ Last Updated: 2025-12-31
 Related: Issue #160, PRs TBD
 
 ## NEXT
-- None - Phase 1 is complete
-- Awaiting human direction for Phase 2/3 work (if requested)
+- Continue with Phase 2.3: Pin external tool versions in installer
+- Continue with Phase 2.2: Integrate naming/style enforcement (large task)
+- Continue with Phase 2.4: CLI usability improvements (Click migration)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 02:30 - Completed Phase 2.1: Make repo_lint installable package
+**Files Changed:**
+- `pyproject.toml`: Added packaging configuration (lines 1-16)
+  - Added `[build-system]` section with setuptools configuration
+  - Added `[project.scripts]` with `repo-lint` entry point to `tools.repo_lint.cli:main`
+  - Added `[tool.setuptools.packages.find]` to specify only `tools*` packages are included
+  - This prevents accidental inclusion of unwanted directories (rust, logs, wrappers, conformance)
+
+**Changes Made:**
+- **Phase 2.1: Make repo_lint installable package** ✅ COMPLETE
+  - Added entry point configuration to pyproject.toml
+  - Entry point: `repo-lint` command maps to `tools.repo_lint.cli:main`
+  - Package can now be installed with `pip install -e .`
+  - Backward compatibility maintained: `python3 -m tools.repo_lint` still works
+  - Only `tools*` packages included in distribution (excludes rust, logs, wrappers, conformance)
+
+**Verification:**
+- Ran `pip install -e .` - SUCCESS (installed in editable mode)
+- Ran `which repo-lint` - `/home/runner/.local/bin/repo-lint` (entry point created)
+- Ran `repo-lint --help` - SUCCESS (shows help menu)
+- Ran `python3 -m tools.repo_lint --help` - SUCCESS (backward compatibility confirmed)
+- Both invocation methods work identically
+- Entry point properly maps to the main() function in cli.py
+
+**Rationale:**
+- Per locked-in decision #1: "Provide a standard install + entrypoint so contributors can run `repo-lint ...` directly"
+- Maintains backward compatibility during transition period
+- Aligns with Future Work item FW-013
+- Makes tool easier to install and use
+
+---
 
 ### 2025-12-31 01:25 - Final code review iterations complete
 **Files Changed:**

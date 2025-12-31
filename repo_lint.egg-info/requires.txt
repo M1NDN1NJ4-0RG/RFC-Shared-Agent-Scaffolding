@@ -1,0 +1,13 @@
+
+[docstring]
+tree-sitter<0.30.0,>=0.20.0
+tree-sitter-bash<0.30.0,>=0.20.0
+
+[lint]
+black==24.10.0
+ruff==0.8.4
+pylint==3.3.2
+yamllint==1.35.1
+
+[test]
+pytest>=7.0.0
