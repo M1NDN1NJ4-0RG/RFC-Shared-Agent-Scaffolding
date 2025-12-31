@@ -43,6 +43,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Tuple
 
+from tools.repo_lint.common import safe_print
 from tools.repo_lint.unsafe_fixers import UnsafeFixerResult
 
 
@@ -195,14 +196,19 @@ def print_forensics_summary(patch_path: Path, log_path: Path, results: List[Unsa
     print("")
 
     if results:
-        print(f"✓ Changes made: {len(results)} file(s) modified")
+        safe_print(
+            f"✓ Changes made: {len(results)} file(s) modified",
+            f"Changes made: {len(results)} file(s) modified",
+        )
     else:
-        print("✓ No changes made - no files required unsafe fixes")
+        safe_print(
+            "✓ No changes made - no files required unsafe fixes", "No changes made - no files required unsafe fixes"
+        )
 
     print("")
     print("Forensic artifacts generated:")
-    print(f"  📄 Patch: {patch_path}")
-    print(f"  📋 Log:   {log_path}")
+    safe_print(f"  📄 Patch: {patch_path}", f"  Patch: {patch_path}")
+    safe_print(f"  📋 Log:   {log_path}", f"  Log:   {log_path}")
     print("")
-    print("⚠️  REVIEW THESE FILES BEFORE COMMITTING!")
+    safe_print("⚠️  REVIEW THESE FILES BEFORE COMMITTING!", "WARNING: REVIEW THESE FILES BEFORE COMMITTING!")
     print("")
