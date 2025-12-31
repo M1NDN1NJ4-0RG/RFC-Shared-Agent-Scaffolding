@@ -198,7 +198,9 @@ def print_forensics_summary(patch_path: Path, log_path: Path, results: List[Unsa
     if results:
         print(f"✓ Changes made: {len(results)} file(s) modified")
     else:
-        safe_print("✓ No changes made - no files required unsafe fixes", "No changes made - no files required unsafe fixes")
+        safe_print(
+            "✓ No changes made - no files required unsafe fixes", "No changes made - no files required unsafe fixes"
+        )
 
     print("")
     print("Forensic artifacts generated:")

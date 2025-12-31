@@ -39,17 +39,17 @@ from typing import List, Optional
 
 def safe_print(text: str, fallback_text: str = None) -> None:
     """Print text with emoji, falling back to plain text on encoding errors.
-    
+
     This function handles Windows and CI environments that may not support
     Unicode emoji characters. It attempts to print the original text, and
     if that fails due to encoding errors, it either prints a fallback or
     automatically strips/replaces emoji with ASCII equivalents.
-    
+
     :param text: Text to print (may contain emoji)
     :param fallback_text: Fallback text if emoji can't be encoded (optional)
-    
+
     :raises: Never raises - always prints something
-    
+
     :examples:
         >>> safe_print("✓ Success")  # Works everywhere
         >>> safe_print("🔍 Searching...", "Searching...")  # With fallback

@@ -276,7 +276,10 @@ def cmd_fix(args: argparse.Namespace) -> int:
     if not use_json:
         if unsafe_mode:
             print("⚠️  DANGER: Running in UNSAFE FIX MODE")
-            safe_print("⚠️  Review the generated patch/log before committing!", "WARNING: Review the generated patch/log before committing!")
+            safe_print(
+                "⚠️  Review the generated patch/log before committing!",
+                "WARNING: Review the generated patch/log before committing!",
+            )
             print("")
         else:
             safe_print("🔧 Running formatters in fix mode...", "Running formatters in fix mode...")
