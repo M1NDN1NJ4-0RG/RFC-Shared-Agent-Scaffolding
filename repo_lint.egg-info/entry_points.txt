@@ -1,2 +1,0 @@
-[console_scripts]
-repo-lint = tools.repo_lint.cli:main

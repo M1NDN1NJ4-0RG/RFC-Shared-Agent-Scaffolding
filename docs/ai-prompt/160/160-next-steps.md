@@ -6,13 +6,41 @@ Last Updated: 2025-12-31
 Related: Issue #160, PRs TBD
 
 ## NEXT
-- Continue with Phase 2.3: Pin external tool versions in installer
 - Continue with Phase 2.2: Integrate naming/style enforcement (large task)
 - Continue with Phase 2.4: CLI usability improvements (Click migration)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 02:35 - Verified Phase 2.3: Pin external tool versions (ALREADY COMPLETE)
+**Files Changed:**
+- None - verification only
+
+**Changes Made:**
+- **Phase 2.3: Pin external tool versions** ✅ ALREADY COMPLETE (from prior work)
+  - Verified that `install_python_tools()` already uses pinned versions from `version_pins.py`
+  - Verified versions in `version_pins.py` match `pyproject.toml` exactly:
+    - black: 24.10.0
+    - ruff: 0.8.4
+    - pylint: 3.3.2
+    - yamllint: 1.35.1
+  - The installer at lines 164-170 of `install_helpers.py` iterates over `PYTHON_TOOLS.items()` and installs with exact version: `tool_spec = f"{tool}=={version}"`
+  - Single source of truth is `install/version_pins.py` with sync to pyproject.toml documented in docstring
+
+**Verification:**
+- Checked import statement: `from tools.repo_lint.install.version_pins import PYTHON_TOOLS` (line 39)
+- Checked installer loop: `for tool, version in PYTHON_TOOLS.items()` (line 164)
+- Checked version specification: `tool_spec = f"{tool}=={version}"` (line 165)
+- Manually compared versions between version_pins.py and pyproject.toml - all match
+- This work was completed in a prior phase (likely Phase 0 or early work)
+
+**Rationale:**
+- Per locked-in decision #3: "Resolve the current mismatch between install/version_pins.py and requirements-dev.txt so there is one canonical source of truth for tool versions"
+- This is already done - version_pins.py is the source, and pyproject.toml is in sync
+- Installer uses pinned versions, ensuring deterministic linting behavior
+
+---
 
 ### 2025-12-31 02:30 - Completed Phase 2.1: Make repo_lint installable package
 **Files Changed:**
