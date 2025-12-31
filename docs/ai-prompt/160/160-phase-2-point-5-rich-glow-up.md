@@ -1,10 +1,10 @@
-<file name=0 path=160-phase-2.5-rich-glow-up.md># Phase 2.5 — Rich “Glow Up” for `repo_lint` Console Output + Rich-Click Help
+# Phase 2.5 — Rich “Glow Up” for `repo-lint` Console Output + Rich-Click Help
 
-> **Goal:** Make `repo_lint` feel like a polished terminal application.
+> **Goal:** Make `repo-lint` feel like a polished terminal application.
 >
 > - **All user-facing console output** must be rendered with **Python Rich** (tables, panels, progress, status, etc.).
 > - **All CLI help output** must be rendered with **Rich-Click** so `repo-lint --help` is extremely readable and detailed.
-> - **CI output** must remain stable, plain, and greppable.
+> - **CI output** must remain stable, predictable, and greppable.
 >
 > This phase intentionally focuses on **TTY UX** (what humans see) — not internal logging.
 
@@ -27,6 +27,7 @@
   - `repo-lint install --help`
   - Any subcommands/groups introduced later.
 - Shell completion instructions included in docs (`HOW-TO-USE-THIS-TOOL.md`).
+- A user-configurable **Rich UI theme/config YAML** for per-person formatting preferences (colors/icons/box styles/help styling), with strict schema validation.
 
 ### Explicit Non-Goals
 - This phase does **not** redesign lint logic, policy logic, or runner implementations.
@@ -38,7 +39,7 @@
 ## 2.5.1 Console Output Contract (Human UX)
 
 ### Output Modes
-`repo_lint` MUST support two user-visible modes of output:
+`repo-lint` MUST support two user-visible modes of output:
 
 1. **Interactive / TTY mode (default)**
    - Rich output enabled.
@@ -46,15 +47,29 @@
    - Progress/spinners allowed.
    - Panels/tables used for summaries and failures.
 
-
 2. **CI mode (`--ci`)**
-   - Output MUST be **plain** and stable.
+   - Output MUST be stable and predictable.
    - No ANSI colors.
    - No spinners/progress bars.
-   - No reflowing dynamic rendering.
-   - Must remain greppable and predictable.
+   - No dynamic/reflowing live updates.
+   - Tables are allowed (and encouraged) as long as they remain stable.
+   - Output must remain greppable.
 
-> **Rule:** If `--ci` is set, UI rendering must degrade to stable plain text output.
+> **Rule:** If `--ci` is set, UI rendering must degrade to stable, non-interactive output.
+
+### TTY Detection Rules
+- By default, `repo-lint` SHOULD treat output as **interactive** only when stdout is a TTY.
+- If stdout is **not** a TTY (piped output, redirected to a file), `repo-lint` SHOULD behave like CI output (stable, no live rendering).
+- `--ci` MUST force CI behavior regardless of TTY detection.
+
+### CI Output Format (Stable)
+In CI mode (or non-TTY output), output must still include:
+- One-line header
+- Per-runner results (line based; tables are allowed as long as they remain stable)
+- Failure sections (line based)
+- Final summary
+
+**CI output MUST NOT depend on terminal width.**
 
 ### Styling and Theming (Rich UX)
 
@@ -95,23 +110,14 @@
   - Known remediation guides (“How to fix this”)
 
 #### CI mode styling rules
-- In `--ci` mode:
+- In `--ci` mode (or non-TTY output):
   - No colors (render with `no_color=True`).
   - No spinners/progress bars.
   - No dynamic/reflowing live updates.
-  - Output should remain **tabled and nice** (e.g., a summary table with stable columns), but must avoid “fancy” interactive effects.
-  - Emojis/icons **are allowed** in CI output (✅ ❌ ⚠️ etc.), as long as the output remains stable.
+  - Output should remain **tabled and nice** (stable tables and stable ordering), but must avoid interactive effects.
+  - Emojis/icons **are allowed** (✅ ❌ ⚠️ etc.), as long as output stays stable.
   - No hyperlink markup.
-  - Keep output line-based and predictable.
-
-### CI Output Format (Plain)
-In CI mode, output must still include:
-- One-line header
-- Per-runner results (line based; tables are allowed as long as they remain stable)
-- Failure sections (line based)
-- Final summary
-
-**CI output MUST NOT depend on terminal width.**
+  - Keep output predictable and greppable.
 
 #### Theme defaults (initial pick; adjustable later)
 - Primary highlight: **cyan** (headers, running state)
@@ -120,6 +126,8 @@ In CI mode, output must still include:
 - Warning: **yellow**
 - Secondary metadata: **dim**
 - Use `box.ROUNDED` for interactive panels/tables, and `box.SIMPLE` for CI/plain.
+- Theme defaults MUST be overridable via a user-configurable YAML theme file (see 2.5.3-G).
+- CI mode MUST remain deterministic and stable; user theme overrides MUST NOT silently change CI output unless explicitly enabled.
 
 ### Minimum UI Layout (Interactive)
 Every invocation MUST render the following, in this order:
@@ -198,9 +206,10 @@ Help output MUST:
 - Use Rich-Click styling and option grouping
 - Include the Help Content Contract sections
 - Include clickable links to `HOW-TO-USE-THIS-TOOL.md` (TTY mode)
+- Help styling (width, emphasis, minor styling preferences) should be configurable via the UI theme YAML (see 2.5.3-G), without changing the required Help Content Contract sections or option grouping.
 
 #### CI mode (`--ci`) alignment
-- Preserve the same command “shape” in CI mode, but render it as stable, plain output (no spinners, no ANSI colors).
+- Preserve the same command “shape” in CI mode, but render it as stable output (no spinners, no ANSI colors).
 - Tables are allowed in CI mode if they remain stable and do not depend on terminal width.
 
 ---
@@ -219,6 +228,7 @@ Help output MUST:
   - Notes for CI vs interactive mode
   - Clear exit code semantics summary
 - Clickable links to docs and relevant references (where supported by the terminal)
+- Help styling (width, emphasis, minor styling preferences) should be configurable via the UI theme YAML (see 2.5.3-G), without changing the required Help Content Contract sections or option grouping.
 
 ### Help Content Requirements
 Every command must include:
@@ -321,7 +331,7 @@ Minimum fields:
   - `fix`
   - `install`
 - Ensure error messages in interactive mode are Rich panels.
-- Ensure error messages in CI mode are plain lines.
+- Ensure error messages in CI mode are stable output (no colors, no live rendering).
 
 ### 2.5.3-E Rich-Click Integration
 - Integrate Rich-Click and configure:
@@ -339,6 +349,86 @@ Minimum fields:
   - fish
   - PowerShell (if supported)
   - Windows PowerShell and PowerShell 7+ (must be validated; see 2.5.4)
+
+### 2.5.3-G UI Theme Config (YAML) — Per-Person Formatting
+
+**Intent:** Allow users to customize Rich styling (colors, icons, box styles, help formatting) without editing code, while keeping CI output deterministic.
+
+#### Default + override locations
+- A default, repo-committed theme YAML MUST live at:
+  - `conformance/repo-lint/repo-lint-ui-theme.yaml`
+- A per-user override MAY be loaded from (in precedence order):
+  1. CLI flag: `--ui-theme <path>`
+  2. Env var: `REPO_LINT_UI_THEME=<path>`
+  3. User config path: `~/.config/repo-lint/repo-lint-ui-theme.yaml`
+
+**CI determinism rule:**
+- In `--ci` mode, user override loading MUST be disabled by default.
+- If a user explicitly supplies `--ui-theme` in CI, it may be used **only** for non-disruptive, stability-safe settings (e.g., emoji enablement), but it MUST NOT enable ANSI colors, spinners, hyperlinks, or dynamic rendering.
+
+#### YAML requirements (strict)
+- The theme YAML MUST be single-document YAML.
+- YAML start marker `---` is REQUIRED.
+- YAML end marker `...` is REQUIRED.
+- The YAML MUST include:
+  - `config_type: repo-lint-ui-theme`
+  - `version: 1`
+
+#### Schema model (v1)
+The v1 schema MUST support (at minimum):
+- `interactive`:
+  - `colors` (primary/success/failure/warning/info/metadata)
+  - `icons` (pass/fail/warn/skip/running)
+  - `box_style` (e.g., `ROUNDED`)
+  - `hyperlinks_enabled` (bool)
+- `ci`:
+  - `icons_enabled` (bool)
+  - `box_style` (e.g., `SIMPLE`)
+- `help`:
+  - `width` (int)
+  - `show_defaults` (bool)
+
+**Non-negotiable:** The theme YAML MUST NOT be able to override required semantic behavior (exit codes, Help Content Contract sections/order, option group headings). It may only affect presentation.
+
+#### Example `repo-lint-ui-theme.yaml` (v1)
+
+```yaml
+---
+config_type: repo-lint-ui-theme
+version: 1
+
+interactive:
+  box_style: ROUNDED
+  hyperlinks_enabled: true
+  colors:
+    primary: cyan
+    success: green
+    failure: red
+    warning: yellow
+    info: cyan
+    metadata: dim
+  icons:
+    pass: "✅"
+    fail: "❌"
+    warn: "⚠️"
+    skip: "⏭️"
+    running: "⏳"
+
+ci:
+  box_style: SIMPLE
+  icons_enabled: true
+
+help:
+  width: 120
+  show_defaults: true
+...
+```
+
+#### Validation
+- Add a strict theme validator that:
+  - Rejects unknown keys at all nesting levels
+  - Produces file + YAML-path error messages
+  - Fails fast and loudly
 
 ---
 
@@ -359,8 +449,19 @@ Minimum fields:
   - results ordering
   - stable CI output structure
 
-### Cross-Platform / Shell Validation (MANDATORY)
+### Theme Config Validation (MANDATORY)
+- Validate default theme file loads successfully: `conformance/repo-lint/repo-lint-ui-theme.yaml`.
+- Validate user override precedence (flag > env > user path).
+- Validate that `--ci` disables user overrides by default.
+- Validate that a theme file with:
+  - missing `---` / `...`
+  - wrong `config_type`
+  - unsupported `version`
+  - unknown keys
+  - wrong types
+  fails with clear, path-specific error messages.
 
+### Cross-Platform / Shell Validation (MANDATORY)
 The Click + Rich-Click CLI experience MUST be validated on:
 - Linux (bash/zsh)
 - macOS (zsh)
@@ -373,7 +474,7 @@ Minimum validations on Windows:
 - `repo-lint --help` renders correctly (no broken layout, no unreadable styling).
 - `repo-lint check --help` and `repo-lint fix --help` render correctly.
 - Shell completion installation instructions are correct and functional.
-- Running `repo-lint check --ci` produces stable, plain output.
+- Running `repo-lint check --ci` produces stable output.
 
 If Windows validation fails, it is a release blocker for Phase 2.5.
 
@@ -383,11 +484,14 @@ If Windows validation fails, it is a release blocker for Phase 2.5.
 
 - [ ] All user-facing console output is routed through a single Reporter layer.
 - [ ] Interactive mode output uses Rich tables/panels/status.
-- [ ] CI mode output is plain text and stable (no ANSI, no spinners).
+- [ ] CI mode output is stable and predictable (no ANSI colors, no spinners, no dynamic rendering).
 - [ ] `repo-lint --help` and all subcommand help use Rich-Click.
 - [ ] Help output includes examples, config file notes, and CI notes.
-- [ ] Tests added/updated to cover reporter rendering paths.
-- [ ] Documentation updated (`HOW-TO-USE-THIS-TOOL.md`) including shell completion setup.
 - [ ] Help output follows the **Help Content Contract (MANDATORY)** (sections + option grouping + examples format).
 - [ ] Help output and completion instructions are validated on Windows (Windows PowerShell + PowerShell 7+ + Windows Terminal).
 - [ ] Console output follows the **Command Visual Grammar (MANDATORY)** for `check`, `fix`, and `install`.
+- [ ] Tests added/updated to cover reporter rendering paths.
+- [ ] Documentation updated (`HOW-TO-USE-THIS-TOOL.md`) including shell completion setup.
+- [ ] A default UI theme YAML exists at `conformance/repo-lint/repo-lint-ui-theme.yaml` and is validated before use.
+- [ ] Per-user UI theme overrides are supported (flag/env/user path) and are disabled by default in `--ci` mode.
+- [ ] UI theme YAML can customize presentation only (colors/icons/box/help width) and cannot override semantic contracts.
