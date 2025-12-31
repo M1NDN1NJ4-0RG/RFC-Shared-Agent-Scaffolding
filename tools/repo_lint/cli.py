@@ -1,8 +1,8 @@
-"""Click-based CLI entry point for repo_lint with Rich formatting.
+"""Click-based CLI entry point for repo_lint with Rich-Click formatting.
 
 :Purpose:
-    Provides a modern command-line interface using Click with Rich formatting,
-    shell completion support, and improved help text.
+    Provides a modern command-line interface using Click with Rich-Click formatting,
+    shell completion support, and comprehensive help text following Help Content Contract.
 
 :Commands:
     - check: Run linting checks without modifying files
@@ -10,13 +10,14 @@
     - install: Install/bootstrap required linting tools (local only)
 
 :Features:
-    - Rich formatted help output
-    - Shell completion support (bash, zsh, fish)
-    - Improved error messages with colors and formatting
-    - Context-aware help text
+    - Rich-Click formatted help output with option grouping
+    - Shell completion support (bash, zsh, fish, PowerShell)
+    - Reporter-based output routing (TTY vs CI modes)
+    - Comprehensive help following Help Content Contract
 
 :Environment Variables:
     - REPO_LINT_*: Any Click option can be set via environment variables with REPO_LINT_ prefix
+    - REPO_LINT_UI_THEME: Path to custom UI theme YAML file
     - _REPO_LINT_COMPLETE: Used by shell completion systems (bash_source, zsh_source, fish_source)
 
 :Exit Codes:
@@ -55,59 +56,61 @@
 
 import sys
 
-import click
-from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
+import rich_click as click
 
 from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
 from tools.repo_lint.common import ExitCode, MissingToolError
 
-# Initialize Rich console for formatted output
-console = Console()
+# Configure rich-click globally
+click.rich_click.USE_RICH_MARKUP = True
+click.rich_click.USE_MARKDOWN = False
+click.rich_click.SHOW_ARGUMENTS = True
+click.rich_click.GROUP_ARGUMENTS_OPTIONS = True
+click.rich_click.SHOW_METAVARS_COLUMN = False
+click.rich_click.APPEND_METAVARS_HELP = True
+click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
+click.rich_click.ERRORS_SUGGESTION = "Try running the '--help' flag for more information."
+click.rich_click.ERRORS_EPILOGUE = ""
+click.rich_click.MAX_WIDTH = 120
+click.rich_click.COLOR_SYSTEM = "auto"  # Respect NO_COLOR environment variable
 
-
-# Custom Click group with rich help formatting
-class RichGroup(click.Group):
-    """Click Group with Rich-formatted help.
-
-    Provides enhanced help output with Rich formatting including tables and panels.
-    """
-
-    def format_help(self, ctx, formatter):
-        """Format help with Rich styling.
-
-        :param ctx: Click context object
-        :param formatter: Click formatter object
-        """
-        console.print(
-            Panel.fit(
-                f"[bold cyan]{self.name or 'repo-lint'}[/bold cyan]\n\n"
-                f"{self.help or 'Unified multi-language linting and docstring validation'}",
-                title="[bold]Repository Linter[/bold]",
-                border_style="cyan",
-            )
-        )
-
-        if self.commands:
-            table = Table(title="Commands", show_header=True, header_style="bold magenta")
-            table.add_column("Command", style="cyan", no_wrap=True)
-            table.add_column("Description")
-
-            for name in sorted(self.list_commands(ctx)):
-                cmd = self.get_command(ctx, name)
-                if cmd and not cmd.hidden:
-                    table.add_row(name, cmd.get_short_help_str(limit=60))
-
-            console.print(table)
-            console.print()
-
-        console.print("[dim]Use 'repo-lint COMMAND --help' for more information on a specific command.[/dim]")
-        console.print()
-
+# Option groups for all commands (following Help Content Contract)
+click.rich_click.OPTION_GROUPS = {
+    "repo-lint": [],
+    "repo-lint check": [
+        {
+            "name": "Output",
+            "options": ["--ci", "--verbose", "--json"],
+        },
+        {
+            "name": "Filtering",
+            "options": ["--only"],
+        },
+    ],
+    "repo-lint fix": [
+        {
+            "name": "Output",
+            "options": ["--ci", "--verbose", "--json"],
+        },
+        {
+            "name": "Filtering",
+            "options": ["--only"],
+        },
+        {
+            "name": "Safety",
+            "options": ["--unsafe", "--yes-i-know"],
+        },
+    ],
+    "repo-lint install": [
+        {
+            "name": "Execution",
+            "options": ["--cleanup", "--verbose"],
+        },
+    ],
+}
 
 # Main CLI group
-@click.group(cls=RichGroup, invoke_without_command=True)
+@click.group(invoke_without_command=True)
 @click.pass_context
 @click.version_option(version="0.1.0", prog_name="repo-lint")
 def cli(ctx):
@@ -116,10 +119,13 @@ def cli(ctx):
     repo-lint helps maintain code quality across multiple programming languages
     with consistent linting rules, docstring validation, and automatic formatting.
 
-    :param ctx: Click context object
+    For detailed usage instructions, see: HOW-TO-USE-THIS-TOOL.md
+
+    For shell completion setup, run: repo-lint --help
     """
     if ctx.invoked_subcommand is None:
-        console.print(ctx.get_help())
+        ctx.get_help()
+        sys.exit(0)
 
 
 # Check command
@@ -135,7 +141,7 @@ def cli(ctx):
     "--no-install",
     "ci_mode",
     is_flag=True,
-    help="CI mode: fail if tools are missing instead of installing",
+    help="CI mode: stable output, fail if tools missing, no interactive features",
 )
 @click.option(
     "--only",
@@ -151,20 +157,54 @@ def cli(ctx):
 def check(verbose, ci_mode, only, use_json):
     """Run linting checks without modifying files.
 
-    Performs comprehensive linting and docstring validation across all supported
-    languages. By default, checks all languages found in the repository.
-
-    :param verbose: Show verbose output including passed checks
-    :param ci_mode: CI mode - fail if tools are missing instead of installing
-    :param only: Run checks for only the specified language
-    :param use_json: Output results in JSON format for CI debugging
-
     \b
-    Examples:
-        repo-lint check                  # Check all languages
-        repo-lint check --only python    # Check only Python files
-        repo-lint check --ci             # Run in CI mode (fail on missing tools)
-        repo-lint check --json           # Output in JSON format
+    WHAT THIS DOES:
+    Performs comprehensive linting and docstring validation across all supported
+    languages. Scans repository files and reports violations without making changes.
+    
+    \b
+    EXAMPLES:
+    Example 1 — Most common usage:
+      $ repo-lint check
+      Scans all languages, shows violations, installs missing tools if needed
+    
+    Example 2 — CI usage:
+      $ repo-lint check --ci
+      Stable output for CI, fails if tools missing (no auto-install)
+    
+    Example 3 — Focused usage:
+      $ repo-lint check --only python
+      Check only Python files, skip other languages
+    
+    \b
+    OUTPUT MODES:
+    - Interactive (TTY): Rich formatting with colors, panels, and tables
+    - CI mode (--ci): Stable, greppable output without ANSI colors or spinners
+    - JSON mode (--json): Machine-readable JSON output for automation
+    
+    \b
+    CONFIGURATION:
+    Config files loaded from conformance/repo-lint/:
+    - repo-lint-linting-rules.yaml: Tool configurations per language
+    - repo-lint-naming-rules.yaml: Filename conventions
+    - repo-lint-docstring-rules.yaml: Docstring requirements
+    - repo-lint-ui-theme.yaml: UI colors and styling (interactive mode)
+    
+    \b
+    EXIT CODES:
+    - 0: All checks passed (no violations)
+    - 1: Linting violations found
+    - 2: Required tools missing (CI mode only)
+    - 3: Internal error or exception
+    
+    \b
+    TROUBLESHOOTING:
+    - Missing tools: Run 'repo-lint install' to bootstrap Python tools
+    - Config errors: Check YAML syntax in conformance/repo-lint/*.yaml
+    - No files found: Ensure you're running from repository root
+    - CI failures: Add '--ci' locally to reproduce CI environment
+    
+    See HOW-TO-USE-THIS-TOOL.md for detailed usage and examples.
     """
     import argparse  # Local import - only needed for Namespace creation
 
@@ -193,7 +233,7 @@ def check(verbose, ci_mode, only, use_json):
     "--no-install",
     "ci_mode",
     is_flag=True,
-    help="CI mode: fail if tools are missing instead of installing",
+    help="CI mode: stable output, fail if tools missing, no interactive features",
 )
 @click.option(
     "--only",
@@ -221,35 +261,73 @@ def check(verbose, ci_mode, only, use_json):
 def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     """Apply automatic fixes (formatters only).
 
-    Runs auto-formatters to fix code style issues. By default, only runs safe
-    formatters. Unsafe mode is available for advanced users with --unsafe flag.
-
-    :param verbose: Show verbose output including passed checks
-    :param ci_mode: CI mode - fail if tools are missing instead of installing
-    :param only: Run fixes for only the specified language
-    :param use_json: Output results in JSON format for CI debugging
-    :param unsafe: Enable unsafe fixers (REQUIRES --yes-i-know, FORBIDDEN in CI)
-    :param yes_i_know: Confirm unsafe mode execution (REQUIRED with --unsafe)
-
     \b
-    Safe Formatters:
-        - Python: Black, Ruff autofix
-        - YAML: yamllint --fix
-        - PowerShell: PSScriptAnalyzer formatting
-        - Perl: perltidy
-        - Bash: shfmt
-
+    WHAT THIS DOES:
+    Runs auto-formatters to fix code style issues in-place. Only modifies files
+    that need formatting. By default, only runs safe formatters that don't change
+    code behavior. Unsafe mode available for advanced users with explicit confirmation.
+    
     \b
-    Unsafe Mode (⚠️  Use with caution):
-        The --unsafe flag enables experimental fixers that may change code behavior.
-        This mode is FORBIDDEN in CI and requires --yes-i-know confirmation.
-        Always review the generated patch before committing.
-
+    EXAMPLES:
+    Example 1 — Most common usage:
+      $ repo-lint fix
+      Auto-format all files with safe formatters (Black, shfmt, perltidy, etc.)
+    
+    Example 2 — CI usage:
+      $ repo-lint fix --ci
+      Verify formatting in CI (fails if changes needed, doesn't modify files)
+    
+    Example 3 — Focused usage:
+      $ repo-lint fix --only python
+      Fix only Python files, skip other languages
+    
     \b
-    Examples:
-        repo-lint fix                    # Fix all languages (safe mode)
-        repo-lint fix --only python      # Fix only Python files
-        repo-lint fix --unsafe --yes-i-know  # Enable unsafe fixers (LOCAL ONLY)
+    SAFE FORMATTERS:
+    - Python: Black (code formatter), Ruff (auto-fixable rules)
+    - YAML: yamllint --fix (whitespace/indentation)
+    - Bash: shfmt (shell script formatter)
+    - PowerShell: PSScriptAnalyzer formatting rules
+    - Perl: perltidy (code formatter)
+    - Rust: rustfmt (code formatter)
+    
+    \b
+    UNSAFE MODE (⚠️ Use with extreme caution):
+    The --unsafe flag enables experimental fixers that MAY change code behavior.
+    - FORBIDDEN in CI environments (auto-detected via --ci or CI env vars)
+    - REQUIRES --yes-i-know confirmation flag
+    - Generates forensic report in repo-lint-failure-reports/
+    - Always review generated patch before committing
+    - Only supports Python currently (other languages error out)
+    
+    \b
+    OUTPUT MODES:
+    - Interactive (TTY): Rich formatting with action tables and summaries
+    - CI mode (--ci): Stable, greppable output without ANSI colors or spinners
+    - JSON mode (--json): Machine-readable JSON output for automation
+    
+    \b
+    CONFIGURATION:
+    Config files loaded from conformance/repo-lint/:
+    - repo-lint-linting-rules.yaml: Tool configurations per language
+    - repo-lint-ui-theme.yaml: UI colors and styling (interactive mode)
+    
+    \b
+    EXIT CODES:
+    - 0: All fixes applied successfully (or no fixes needed)
+    - 1: Fixes applied but violations remain
+    - 2: Required tools missing (CI mode only)
+    - 3: Internal error or exception
+    - 4: Unsafe mode policy violation (CI or missing confirmation)
+    
+    \b
+    TROUBLESHOOTING:
+    - Unsafe blocked in CI: This is intentional, unsafe mode only works locally
+    - Unsafe without --yes-i-know: Add --yes-i-know to confirm you understand risks
+    - Missing tools: Run 'repo-lint install' to bootstrap Python tools
+    - Fixes not applied: Check file permissions and repo write access
+    - Unsafe with non-Python: --unsafe only supports Python currently
+    
+    See HOW-TO-USE-THIS-TOOL.md for detailed usage, forensic reports, and examples.
     """
     import argparse  # Local import - only needed for Namespace creation
 
@@ -283,23 +361,68 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
 def install(verbose, cleanup):
     """Install/bootstrap required linting tools.
 
-    Installs Python-based linting tools (black, ruff, pylint, yamllint) in a
-    repository-local virtual environment. Also provides installation instructions
-    for language-specific tools (shellcheck, perltidy, etc.).
-
-    :param verbose: Show verbose output during installation
-    :param cleanup: Remove repo-local tool installations
-
     \b
-    What gets installed:
-        - Python tools: black, ruff, pylint, yamllint (auto-installed)
-        - Instructions for: shellcheck, shfmt, perltidy, pwsh, etc.
-
+    WHAT THIS DOES:
+    Installs Python-based linting tools in a repository-local virtual environment
+    (.venv-lint). Also provides installation instructions for language-specific
+    tools that must be installed system-wide or via language package managers.
+    
     \b
-    Examples:
-        repo-lint install                # Install all auto-installable tools
-        repo-lint install --cleanup      # Remove repo-local installations
-        repo-lint install --verbose      # Show detailed progress
+    EXAMPLES:
+    Example 1 — Most common usage:
+      $ repo-lint install
+      Install Python tools and show instructions for other tools
+    
+    Example 2 — Cleanup:
+      $ repo-lint install --cleanup
+      Remove .venv-lint and reset to clean state
+    
+    Example 3 — Verbose mode:
+      $ repo-lint install --verbose
+      Show detailed progress and pip output
+    
+    \b
+    WHAT GETS INSTALLED:
+    Auto-installed (Python tools in .venv-lint):
+    - black (v24.10.0): Python code formatter
+    - ruff (v0.8.4): Fast Python linter
+    - pylint (v3.3.2): Comprehensive Python linter
+    - yamllint (v1.35.1): YAML linter
+    
+    Instructions provided (install manually):
+    - shellcheck: Bash linter (apt/brew/choco)
+    - shfmt: Bash formatter (apt/brew/choco/go install)
+    - perltidy: Perl formatter (cpan)
+    - Perl::Critic: Perl linter (cpan)
+    - pwsh: PowerShell (download from Microsoft)
+    - PSScriptAnalyzer: PowerShell linter (Install-Module)
+    - rustfmt/clippy: Rust tools (rustup component add)
+    
+    \b
+    OUTPUT MODES:
+    - Interactive (TTY): Step-by-step checklist with tool status table
+    - All modes: Clear instructions for manual tool installation
+    
+    \b
+    CONFIGURATION:
+    Tool versions are pinned in:
+    - tools/repo_lint/install/version_pins.py (source of truth)
+    - pyproject.toml [project.optional-dependencies] (synced)
+    
+    \b
+    EXIT CODES:
+    - 0: All auto-installable tools installed successfully
+    - 3: Installation failed (Python tools or venv creation)
+    
+    \b
+    TROUBLESHOOTING:
+    - venv creation fails: Check Python 3.8+ is installed and working
+    - pip install fails: Check network connectivity and pip version
+    - Permission denied: Don't use sudo, installs to local .venv-lint
+    - Cleanup removes everything: Cleanup deletes .venv-lint, you'll need to re-run install
+    - Manual tools not found: Follow provided instructions for your OS
+    
+    See HOW-TO-USE-THIS-TOOL.md for detailed installation guide and OS-specific instructions.
     """
     import argparse  # Local import - only needed for Namespace creation
 
@@ -313,32 +436,21 @@ def install(verbose, cleanup):
     sys.exit(exit_code)
 
 
-# Shell completion command (hidden, used by shell completion systems)
-@cli.command(hidden=True)
-@click.argument("shell", type=click.Choice(["bash", "zsh", "fish"]))
-def completion(shell):
-    """Generate shell completion script.
-
-    This command is used internally by shell completion systems.
-    See HOW-TO-USE-THIS-TOOL.md for setup instructions.
-
-    :param shell: Shell type (bash, zsh, or fish)
-    """
-    # Click's built-in completion support handles this via _REPO_LINT_COMPLETE environment variable
-    # This function exists as a placeholder for the command in help text
-
-
 def main():
-    """Main entry point for Click-based CLI."""
+    """Main entry point for Click-based CLI with error handling."""
     try:
         cli(auto_envvar_prefix="REPO_LINT")  # pylint: disable=no-value-for-parameter
     except MissingToolError as e:
-        # Print to stderr using Click's echo
+        # Use rich-click's echo for consistent output
         click.echo(f"❌ Error: {e}", err=True)
         click.echo("\nRun 'repo-lint install' to install missing tools", err=True)
         sys.exit(ExitCode.MISSING_TOOLS)
     except Exception as e:
         click.echo(f"❌ Internal error: {e}", err=True)
+        import traceback
+
+        if "--verbose" in sys.argv or "-v" in sys.argv:
+            traceback.print_exc()
         sys.exit(ExitCode.INTERNAL_ERROR)
 
 

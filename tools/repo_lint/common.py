@@ -71,12 +71,16 @@ class LintResult:
     :param passed: Whether the check passed (no violations)
     :param violations: List of violations found
     :param error: Error message if the tool failed to run
+    :param file_count: Number of files checked (optional)
+    :param duration: Time taken in seconds (optional)
     """
 
     tool: str
     passed: bool
     violations: List[Violation]
     error: Optional[str] = None
+    file_count: Optional[int] = None
+    duration: Optional[float] = None
 
 
 class RepoLintError(Exception):
