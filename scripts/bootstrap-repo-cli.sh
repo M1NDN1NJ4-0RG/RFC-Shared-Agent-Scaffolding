@@ -235,7 +235,7 @@ fi
 if command -v pwsh >/dev/null 2>&1; then
 	log "Installing PSScriptAnalyzer..."
 	if ! pwsh -Command "Get-Module -ListAvailable -Name PSScriptAnalyzer" >/dev/null 2>&1; then
-		pwsh -Command "Install-Module -Name PSScriptAnalyzer -RequiredVersion 1.23.0 -Scope CurrentUser -Force" || warn "Failed to install PSScriptAnalyzer"
+		pwsh -Command "Install-Module -Name PSScriptAnalyzer -MinimumVersion 1.23.0 -Scope CurrentUser -Force" || warn "Failed to install PSScriptAnalyzer"
 	else
 		log "PSScriptAnalyzer already installed"
 	fi
