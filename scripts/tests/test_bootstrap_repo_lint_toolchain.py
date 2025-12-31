@@ -531,7 +531,7 @@ class TestRepoLintInstallation(unittest.TestCase):
     def _setup_mock_repo(self, repo_root):
         """Create a minimal mock repository with repo-lint package.
 
-        :param repo_root: Path to repository root directory where mock repo will be created.
+        :param repo_root: Path to repository root directory.
         """
         repo_root.mkdir(parents=True, exist_ok=True)
         (repo_root / ".git").mkdir()
