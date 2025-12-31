@@ -67,7 +67,7 @@ class TestIntegration(unittest.TestCase):
         Validates end-to-end behavior from CLI parsing to command execution.
     """
 
-    @patch("tools.repo_lint.cli._run_all_runners")
+    @patch("tools.repo_lint.cli_argparse._run_all_runners")
     @patch("sys.argv", ["repo-lint", "check", "--ci"])
     def test_check_missing_tools_ci(self, mock_run_all):
         """Test full CLI invocation: check --ci with missing tools.
@@ -77,7 +77,7 @@ class TestIntegration(unittest.TestCase):
 
         :param mock_run_all: Mocked _run_all_runners
         """
-        from tools.repo_lint.cli import main
+        from tools.repo_lint.cli_argparse import main
 
         # Mock missing tools
         mock_run_all.return_value = ExitCode.MISSING_TOOLS
@@ -89,7 +89,7 @@ class TestIntegration(unittest.TestCase):
         # Verify exit code 2 (missing tools)
         self.assertEqual(cm.exception.code, ExitCode.MISSING_TOOLS)
 
-    @patch("tools.repo_lint.cli.load_policy")
+    @patch("tools.repo_lint.cli_argparse.load_policy")
     @patch("sys.argv", ["repo-lint", "fix"])
     def test_fix_policy_not_found(self, mock_load):
         """Test full CLI invocation: fix with missing policy file.
@@ -99,7 +99,7 @@ class TestIntegration(unittest.TestCase):
 
         :param mock_load: Mocked load_policy
         """
-        from tools.repo_lint.cli import main
+        from tools.repo_lint.cli_argparse import main
 
         # Mock policy file not found
         mock_load.side_effect = FileNotFoundError()
@@ -119,7 +119,7 @@ class TestIntegration(unittest.TestCase):
         :Purpose:
             Verify integration from CLI parsing to exit code 4 for unsafe violations.
         """
-        from tools.repo_lint.cli import main
+        from tools.repo_lint.cli_argparse import main
 
         # Run full CLI
         with self.assertRaises(SystemExit) as cm:
@@ -135,7 +135,7 @@ class TestIntegration(unittest.TestCase):
         :Purpose:
             Verify integration from CLI parsing to exit code 4 for CI unsafe violation.
         """
-        from tools.repo_lint.cli import main
+        from tools.repo_lint.cli_argparse import main
 
         # Run full CLI
         with self.assertRaises(SystemExit) as cm:
@@ -151,7 +151,7 @@ class TestIntegration(unittest.TestCase):
         :Purpose:
             Verify CLI shows help and exits successfully when no command given.
         """
-        from tools.repo_lint.cli import main
+        from tools.repo_lint.cli_argparse import main
 
         # Run full CLI with no command
         with self.assertRaises(SystemExit) as cm:
@@ -160,10 +160,10 @@ class TestIntegration(unittest.TestCase):
         # Verify exit code 0 (success)
         self.assertEqual(cm.exception.code, ExitCode.SUCCESS)
 
-    @patch("tools.repo_lint.cli.install_python_tools")
-    @patch("tools.repo_lint.cli.print_bash_tool_instructions")
-    @patch("tools.repo_lint.cli.print_powershell_tool_instructions")
-    @patch("tools.repo_lint.cli.print_perl_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.install_python_tools")
+    @patch("tools.repo_lint.cli_argparse.print_bash_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.print_powershell_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.print_perl_tool_instructions")
     @patch("sys.argv", ["repo-lint", "install"])
     def test_install_failure_integration(self, mock_perl, mock_ps, mock_bash, mock_python):
         """Test full CLI invocation: install with Python tools failure.
@@ -176,7 +176,7 @@ class TestIntegration(unittest.TestCase):
         :param mock_bash: Mocked print_bash_tool_instructions
         :param mock_python: Mocked install_python_tools
         """
-        from tools.repo_lint.cli import main
+        from tools.repo_lint.cli_argparse import main
 
         # Mock Python tools install failure
         mock_python.return_value = (False, ["Installation failed"])

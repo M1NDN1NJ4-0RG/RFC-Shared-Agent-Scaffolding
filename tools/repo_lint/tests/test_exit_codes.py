@@ -86,7 +86,7 @@ class TestExitCodes(unittest.TestCase):
         self.args_ci = argparse.Namespace(ci=True, verbose=False, only=None)
         self.args_install = argparse.Namespace(verbose=False, cleanup=False)
 
-    @patch("tools.repo_lint.cli._run_all_runners")
+    @patch("tools.repo_lint.cli_argparse._run_all_runners")
     def test_success_when_no_violations(self, mock_run_all):
         """Test that cmd_check returns SUCCESS when no violations.
 
@@ -104,7 +104,7 @@ class TestExitCodes(unittest.TestCase):
         # Verify success exit code
         self.assertEqual(result, ExitCode.SUCCESS)
 
-    @patch("tools.repo_lint.cli._run_all_runners")
+    @patch("tools.repo_lint.cli_argparse._run_all_runners")
     def test_violations_when_issues_found(self, mock_run_all):
         """Test that cmd_check returns VIOLATIONS when issues found.
 
@@ -122,7 +122,7 @@ class TestExitCodes(unittest.TestCase):
         # Verify violations exit code
         self.assertEqual(result, ExitCode.VIOLATIONS)
 
-    @patch("tools.repo_lint.cli._run_all_runners")
+    @patch("tools.repo_lint.cli_argparse._run_all_runners")
     def test_missing_tools_in_ci_mode(self, mock_run_all):
         """Test that cmd_check returns MISSING_TOOLS in CI mode.
 
@@ -140,9 +140,9 @@ class TestExitCodes(unittest.TestCase):
         # Verify missing tools exit code
         self.assertEqual(result, ExitCode.MISSING_TOOLS)
 
-    @patch("tools.repo_lint.cli._run_all_runners")
-    @patch("tools.repo_lint.cli.load_policy")
-    @patch("tools.repo_lint.cli.validate_policy")
+    @patch("tools.repo_lint.cli_argparse._run_all_runners")
+    @patch("tools.repo_lint.cli_argparse.load_policy")
+    @patch("tools.repo_lint.cli_argparse.validate_policy")
     def test_fix_success_when_all_fixed(self, mock_validate, mock_load, mock_run_all):
         """Test that cmd_fix returns SUCCESS when all fixes applied.
 
@@ -166,9 +166,9 @@ class TestExitCodes(unittest.TestCase):
         # Verify success exit code
         self.assertEqual(result, ExitCode.SUCCESS)
 
-    @patch("tools.repo_lint.cli._run_all_runners")
-    @patch("tools.repo_lint.cli.load_policy")
-    @patch("tools.repo_lint.cli.validate_policy")
+    @patch("tools.repo_lint.cli_argparse._run_all_runners")
+    @patch("tools.repo_lint.cli_argparse.load_policy")
+    @patch("tools.repo_lint.cli_argparse.validate_policy")
     def test_fix_violations_when_issues_remain(self, mock_validate, mock_load, mock_run_all):
         """Test that cmd_fix returns VIOLATIONS when issues remain.
 
@@ -192,8 +192,8 @@ class TestExitCodes(unittest.TestCase):
         # Verify violations exit code
         self.assertEqual(result, ExitCode.VIOLATIONS)
 
-    @patch("tools.repo_lint.cli.load_policy")
-    @patch("tools.repo_lint.cli.validate_policy")
+    @patch("tools.repo_lint.cli_argparse.load_policy")
+    @patch("tools.repo_lint.cli_argparse.validate_policy")
     def test_fix_internal_error_on_policy_failure(self, mock_validate, mock_load):
         """Test that cmd_fix returns INTERNAL_ERROR on policy failure.
 
@@ -213,7 +213,7 @@ class TestExitCodes(unittest.TestCase):
         # Verify internal error exit code
         self.assertEqual(result, ExitCode.INTERNAL_ERROR)
 
-    @patch("tools.repo_lint.cli.load_policy")
+    @patch("tools.repo_lint.cli_argparse.load_policy")
     def test_fix_internal_error_on_policy_not_found(self, mock_load):
         """Test that cmd_fix returns INTERNAL_ERROR when policy not found.
 
@@ -231,10 +231,10 @@ class TestExitCodes(unittest.TestCase):
         # Verify internal error exit code
         self.assertEqual(result, ExitCode.INTERNAL_ERROR)
 
-    @patch("tools.repo_lint.cli.install_python_tools")
-    @patch("tools.repo_lint.cli.print_bash_tool_instructions")
-    @patch("tools.repo_lint.cli.print_powershell_tool_instructions")
-    @patch("tools.repo_lint.cli.print_perl_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.install_python_tools")
+    @patch("tools.repo_lint.cli_argparse.print_bash_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.print_powershell_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.print_perl_tool_instructions")
     def test_install_success(
         self,
         mock_perl_inst,
@@ -261,10 +261,10 @@ class TestExitCodes(unittest.TestCase):
         # Verify success exit code
         self.assertEqual(result, ExitCode.SUCCESS)
 
-    @patch("tools.repo_lint.cli.install_python_tools")
-    @patch("tools.repo_lint.cli.print_bash_tool_instructions")
-    @patch("tools.repo_lint.cli.print_powershell_tool_instructions")
-    @patch("tools.repo_lint.cli.print_perl_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.install_python_tools")
+    @patch("tools.repo_lint.cli_argparse.print_bash_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.print_powershell_tool_instructions")
+    @patch("tools.repo_lint.cli_argparse.print_perl_tool_instructions")
     def test_install_internal_error_on_failure(
         self,
         mock_perl_inst,
@@ -291,7 +291,7 @@ class TestExitCodes(unittest.TestCase):
         # Verify internal error exit code
         self.assertEqual(result, ExitCode.INTERNAL_ERROR)
 
-    @patch("tools.repo_lint.cli.cleanup_repo_local")
+    @patch("tools.repo_lint.cli_argparse.cleanup_repo_local")
     def test_cleanup_success(self, mock_cleanup):
         """Test that cmd_install --cleanup returns SUCCESS on success.
 
@@ -310,7 +310,7 @@ class TestExitCodes(unittest.TestCase):
         # Verify success exit code
         self.assertEqual(result, ExitCode.SUCCESS)
 
-    @patch("tools.repo_lint.cli.cleanup_repo_local")
+    @patch("tools.repo_lint.cli_argparse.cleanup_repo_local")
     def test_cleanup_internal_error_on_failure(self, mock_cleanup):
         """Test that cmd_install --cleanup returns INTERNAL_ERROR on failure.
 
@@ -329,8 +329,8 @@ class TestExitCodes(unittest.TestCase):
         # Verify internal error exit code
         self.assertEqual(result, ExitCode.INTERNAL_ERROR)
 
-    @patch("tools.repo_lint.cli.load_policy")
-    @patch("tools.repo_lint.cli.validate_policy")
+    @patch("tools.repo_lint.cli_argparse.load_policy")
+    @patch("tools.repo_lint.cli_argparse.validate_policy")
     def test_fix_unsafe_violation_in_ci(self, mock_validate, mock_load):
         """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe used in CI.
 
@@ -355,8 +355,8 @@ class TestExitCodes(unittest.TestCase):
         # Verify unsafe violation exit code
         self.assertEqual(result, ExitCode.UNSAFE_VIOLATION)
 
-    @patch("tools.repo_lint.cli.load_policy")
-    @patch("tools.repo_lint.cli.validate_policy")
+    @patch("tools.repo_lint.cli_argparse.load_policy")
+    @patch("tools.repo_lint.cli_argparse.validate_policy")
     def test_fix_unsafe_violation_without_confirmation(self, mock_validate, mock_load):
         """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe without --yes-i-know.
 
@@ -381,8 +381,8 @@ class TestExitCodes(unittest.TestCase):
         # Verify unsafe violation exit code
         self.assertEqual(result, ExitCode.UNSAFE_VIOLATION)
 
-    @patch("tools.repo_lint.cli.load_policy")
-    @patch("tools.repo_lint.cli.validate_policy")
+    @patch("tools.repo_lint.cli_argparse.load_policy")
+    @patch("tools.repo_lint.cli_argparse.validate_policy")
     @patch.dict(os.environ, {}, clear=True)  # Clear environment to ensure CI is not set
     def test_fix_unsafe_violation_non_python_language(self, mock_validate, mock_load):
         """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe with non-Python language.

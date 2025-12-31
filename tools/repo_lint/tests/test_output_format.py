@@ -3,10 +3,11 @@
 """Unit tests for deterministic output format.
 
 :Purpose:
-    Validates Phase 7 Item 7.1.3 - Snapshot/fixture test for deterministic output format:
-    - Output format is stable and deterministic
-    - Violation reporting format is consistent
-    - Summary format is consistent
+    Validates Phase 2.5 Rich UI output format stability:
+    - Rich table output format is stable and deterministic
+    - Violation reporting format is consistent (Rich tables and panels)
+    - Summary format is consistent (Rich panels)
+    - CI mode output is deterministic
 
 :Test Coverage:
     - report_results() produces deterministic output for violations
@@ -14,6 +15,7 @@
     - Violation objects have stable string representation
     - Summary counts are accurate
     - Output does not include unstable fields (timestamps, random data)
+    - CI mode ensures deterministic rendering
 
 :Usage:
     Run tests from repository root::
@@ -44,6 +46,8 @@
     - Tests use fixtures to ensure deterministic output
     - Tests verify output format stability over time
     - Tests ensure no random/unstable data in output
+    - Tests use CI mode to ensure deterministic Rich table rendering
+    - Updated for Phase 2.5 Rich UI migration
 """
 
 import io
@@ -61,10 +65,11 @@ from tools.repo_lint.reporting import report_results  # noqa: E402
 
 
 class TestOutputFormat(unittest.TestCase):
-    """Test output format stability per Phase 7 Item 7.1.3.
+    """Test output format stability for Phase 2.5 Rich UI.
 
     :Purpose:
-        Validates deterministic output format for violations and summaries.
+        Validates deterministic Rich table/panel output format for violations and summaries.
+        Tests use CI mode to ensure deterministic rendering without terminal-specific formatting.
     """
 
     def setUp(self):
@@ -121,14 +126,15 @@ class TestOutputFormat(unittest.TestCase):
         # Capture output
         output = io.StringIO()
         with redirect_stdout(output):
-            exit_code = report_results([], verbose=False)
+            exit_code = report_results([], verbose=False, ci_mode=True)
 
         # Verify exit code
         self.assertEqual(exit_code, 0)  # SUCCESS
 
-        # Verify output
+        # Verify output - Rich table format with Summary section
         output_text = output.getvalue()
-        self.assertIn("All linting checks passed", output_text)
+        self.assertIn("Summary", output_text)
+        self.assertIn("Exit Code: 0 (SUCCESS)", output_text)
 
     def test_violations_output_format(self):
         """Test output format when violations found.
@@ -145,16 +151,21 @@ class TestOutputFormat(unittest.TestCase):
         # Capture output
         output = io.StringIO()
         with redirect_stdout(output):
-            exit_code = report_results(results, verbose=False)
+            exit_code = report_results(results, verbose=False, ci_mode=True)
 
         # Verify exit code
         self.assertEqual(exit_code, 1)  # VIOLATIONS
 
-        # Verify output contains violations
+        # Verify output contains violations in Rich table format
         output_text = output.getvalue()
-        self.assertIn("test.py:10: [ruff]", output_text)
-        self.assertIn("test.py:20: [pylint]", output_text)
-        self.assertIn("2 violation", output_text)
+        # Check for Rich table headers and data
+        self.assertIn("test.py", output_text)
+        self.assertIn("10", output_text)  # Line number
+        self.assertIn("Line too long", output_text)
+        self.assertIn("20", output_text)  # Line number
+        self.assertIn("Missing function docstring", output_text)
+        # Check summary section
+        self.assertIn("Total Violations: 2", output_text)
 
     def test_summary_count_accuracy(self):
         """Test that summary counts violations accurately.
@@ -172,14 +183,14 @@ class TestOutputFormat(unittest.TestCase):
         # Capture output
         output = io.StringIO()
         with redirect_stdout(output):
-            exit_code = report_results(results, verbose=False)
+            exit_code = report_results(results, verbose=False, ci_mode=True)
 
         # Verify exit code
         self.assertEqual(exit_code, 1)  # VIOLATIONS
 
-        # Verify count
+        # Verify count in Rich table Summary section
         output_text = output.getvalue()
-        self.assertIn("3 violation", output_text)
+        self.assertIn("Total Violations: 3", output_text)
 
     def test_verbose_output_includes_passed(self):
         """Test that verbose mode includes passed checks.
@@ -196,13 +207,14 @@ class TestOutputFormat(unittest.TestCase):
         # Capture output in verbose mode
         output = io.StringIO()
         with redirect_stdout(output):
-            exit_code = report_results(results, verbose=True)
+            exit_code = report_results(results, verbose=True, ci_mode=True)
 
         # Verify exit code
         self.assertEqual(exit_code, 1)  # VIOLATIONS
 
-        # Verify both passed and failed are shown
+        # Verify both passed and failed are shown in Rich table
         output_text = output.getvalue()
+        # Both tools should appear in the results table
         self.assertIn("black", output_text.lower())
         self.assertIn("ruff", output_text.lower())
 
@@ -217,17 +229,18 @@ class TestOutputFormat(unittest.TestCase):
             LintResult(tool="ruff", passed=False, violations=[self.violation1]),
         ]
 
-        # Capture output twice
+        # Capture output twice with CI mode for stability
         output1 = io.StringIO()
         output2 = io.StringIO()
 
         with redirect_stdout(output1):
-            report_results(results, verbose=False)
+            report_results(results, verbose=False, ci_mode=True)
 
         with redirect_stdout(output2):
-            report_results(results, verbose=False)
+            report_results(results, verbose=False, ci_mode=True)
 
         # Verify outputs are identical (deterministic)
+        # Note: Rich table rendering should be deterministic in CI mode
         self.assertEqual(output1.getvalue(), output2.getvalue(), "Output should be deterministic")
 
     def test_multiple_violations_same_file(self):
@@ -247,16 +260,17 @@ class TestOutputFormat(unittest.TestCase):
         # Capture output
         output = io.StringIO()
         with redirect_stdout(output):
-            exit_code = report_results(results, verbose=False)
+            exit_code = report_results(results, verbose=False, ci_mode=True)
 
         # Verify exit code
         self.assertEqual(exit_code, 1)  # VIOLATIONS
 
-        # Verify both violations are shown
+        # Verify both violations are shown in Rich table
         output_text = output.getvalue()
-        self.assertIn("test.py:10:", output_text)
-        self.assertIn("test.py:20:", output_text)
-        self.assertIn("2 violation", output_text)
+        self.assertIn("test.py", output_text)
+        self.assertIn("10", output_text)  # Line number
+        self.assertIn("20", output_text)  # Line number
+        self.assertIn("Total Violations: 2", output_text)
 
 
 if __name__ == "__main__":

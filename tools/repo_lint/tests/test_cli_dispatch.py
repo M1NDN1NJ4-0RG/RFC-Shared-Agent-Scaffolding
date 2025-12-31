@@ -80,13 +80,13 @@ class TestRunnerDispatch(unittest.TestCase):
         self.args_only_python = argparse.Namespace(ci=False, verbose=False, only="python")
         self.args_only_unknown = argparse.Namespace(ci=False, verbose=False, only="unknown")
 
-    @patch("tools.repo_lint.cli.PythonRunner")
-    @patch("tools.repo_lint.cli.BashRunner")
-    @patch("tools.repo_lint.cli.PowerShellRunner")
-    @patch("tools.repo_lint.cli.PerlRunner")
-    @patch("tools.repo_lint.cli.YAMLRunner")
-    @patch("tools.repo_lint.cli.RustRunner")
-    @patch("tools.repo_lint.cli.report_results")
+    @patch("tools.repo_lint.cli_argparse.PythonRunner")
+    @patch("tools.repo_lint.cli_argparse.BashRunner")
+    @patch("tools.repo_lint.cli_argparse.PowerShellRunner")
+    @patch("tools.repo_lint.cli_argparse.PerlRunner")
+    @patch("tools.repo_lint.cli_argparse.YAMLRunner")
+    @patch("tools.repo_lint.cli_argparse.RustRunner")
+    @patch("tools.repo_lint.cli_argparse.report_results")
     def test_only_flag_filters_runners(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         mock_report,
@@ -135,13 +135,13 @@ class TestRunnerDispatch(unittest.TestCase):
         # Verify success exit code
         self.assertEqual(result, ExitCode.SUCCESS)
 
-    @patch("tools.repo_lint.cli.PythonRunner")
-    @patch("tools.repo_lint.cli.BashRunner")
-    @patch("tools.repo_lint.cli.PowerShellRunner")
-    @patch("tools.repo_lint.cli.PerlRunner")
-    @patch("tools.repo_lint.cli.YAMLRunner")
-    @patch("tools.repo_lint.cli.RustRunner")
-    @patch("tools.repo_lint.cli.report_results")
+    @patch("tools.repo_lint.cli_argparse.PythonRunner")
+    @patch("tools.repo_lint.cli_argparse.BashRunner")
+    @patch("tools.repo_lint.cli_argparse.PowerShellRunner")
+    @patch("tools.repo_lint.cli_argparse.PerlRunner")
+    @patch("tools.repo_lint.cli_argparse.YAMLRunner")
+    @patch("tools.repo_lint.cli_argparse.RustRunner")
+    @patch("tools.repo_lint.cli_argparse.report_results")
     def test_all_runners_execute_without_only(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         mock_report,
@@ -190,12 +190,12 @@ class TestRunnerDispatch(unittest.TestCase):
         # Verify success exit code
         self.assertEqual(result, ExitCode.SUCCESS)
 
-    @patch("tools.repo_lint.cli.PythonRunner")
-    @patch("tools.repo_lint.cli.BashRunner")
-    @patch("tools.repo_lint.cli.PowerShellRunner")
-    @patch("tools.repo_lint.cli.PerlRunner")
-    @patch("tools.repo_lint.cli.YAMLRunner")
-    @patch("tools.repo_lint.cli.RustRunner")
+    @patch("tools.repo_lint.cli_argparse.PythonRunner")
+    @patch("tools.repo_lint.cli_argparse.BashRunner")
+    @patch("tools.repo_lint.cli_argparse.PowerShellRunner")
+    @patch("tools.repo_lint.cli_argparse.PerlRunner")
+    @patch("tools.repo_lint.cli_argparse.YAMLRunner")
+    @patch("tools.repo_lint.cli_argparse.RustRunner")
     def test_runners_skip_when_no_files(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         mock_rust,
@@ -231,7 +231,7 @@ class TestRunnerDispatch(unittest.TestCase):
         mock_python.return_value = mock_python_instance
 
         # Run without --only
-        with patch("tools.repo_lint.cli.report_results", return_value=ExitCode.SUCCESS):
+        with patch("tools.repo_lint.cli_argparse.report_results", return_value=ExitCode.SUCCESS):
             result = _run_all_runners(self.args_no_only, "Linting", lambda runner: runner.check())
 
         # Verify only Python runner was invoked
@@ -257,12 +257,12 @@ class TestRunnerDispatch(unittest.TestCase):
         # Verify error exit code
         self.assertEqual(result, ExitCode.INTERNAL_ERROR)
 
-    @patch("tools.repo_lint.cli.PythonRunner")
-    @patch("tools.repo_lint.cli.BashRunner")
-    @patch("tools.repo_lint.cli.PowerShellRunner")
-    @patch("tools.repo_lint.cli.PerlRunner")
-    @patch("tools.repo_lint.cli.YAMLRunner")
-    @patch("tools.repo_lint.cli.RustRunner")
+    @patch("tools.repo_lint.cli_argparse.PythonRunner")
+    @patch("tools.repo_lint.cli_argparse.BashRunner")
+    @patch("tools.repo_lint.cli_argparse.PowerShellRunner")
+    @patch("tools.repo_lint.cli_argparse.PerlRunner")
+    @patch("tools.repo_lint.cli_argparse.YAMLRunner")
+    @patch("tools.repo_lint.cli_argparse.RustRunner")
     def test_no_files_for_only_language_returns_error(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         mock_rust,

@@ -4,8 +4,8 @@
     Tests unsafe fix mode guards, forensics, and fixer functionality.
 
 :Test Coverage:
-    - Guard rails (--unsafe without --yes-i-know fails)
-    - CI detection blocks unsafe mode
+    - Guard rails (--unsafe without --yes-i-know fails with exit code 4)
+    - CI detection blocks unsafe mode (exit code 4)
     - Patch and log generation
     - Unsafe fixer execution on test fixtures
     - Deterministic output
@@ -25,6 +25,10 @@
 :Exit Codes:
     0 - All tests passed
     1 - One or more tests failed
+    
+:Notes:
+    - Updated for Phase 1 Item 2: unsafe mode violations now return exit code 4 (UNSAFE_VIOLATION)
+    - Previously returned exit code 2 (MISSING_TOOLS) which was misleading
 """  # noqa: EXITCODES
 
 import os
@@ -40,22 +44,22 @@ class TestUnsafeFixGuardRails(unittest.TestCase):
     """Test guard rails for unsafe fix mode."""
 
     def test_unsafe_without_yes_i_know_fails(self):
-        """Test that --unsafe without --yes-i-know fails with exit code 2."""
+        """Test that --unsafe without --yes-i-know fails with exit code 4."""
         parser = create_parser()
         args = parser.parse_args(["fix", "--unsafe"])
 
         exit_code = cmd_fix(args)
 
-        self.assertEqual(exit_code, 2, "Should fail with MISSING_TOOLS exit code (2)")
+        self.assertEqual(exit_code, 4, "Should fail with UNSAFE_VIOLATION exit code (4)")
 
     def test_unsafe_with_yes_i_know_in_ci_fails(self):
-        """Test that unsafe mode fails in CI environment."""
+        """Test that unsafe mode fails in CI environment with exit code 4."""
         parser = create_parser()
         args = parser.parse_args(["fix", "--unsafe", "--yes-i-know", "--ci"])
 
         exit_code = cmd_fix(args)
 
-        self.assertEqual(exit_code, 2, "Should fail with MISSING_TOOLS exit code (2) in CI mode")
+        self.assertEqual(exit_code, 4, "Should fail with UNSAFE_VIOLATION exit code (4) in CI mode")
 
     def test_unsafe_with_ci_env_var_fails(self):
         """Test that unsafe mode fails when CI environment variable is set."""
@@ -71,7 +75,7 @@ class TestUnsafeFixGuardRails(unittest.TestCase):
 
             exit_code = cmd_fix(args)
 
-            self.assertEqual(exit_code, 2, "Should fail with MISSING_TOOLS exit code (2) when CI=true")
+            self.assertEqual(exit_code, 4, "Should fail with UNSAFE_VIOLATION exit code (4) when CI=true")
 
         finally:
             # Restore original CI env var
@@ -89,8 +93,8 @@ class TestUnsafeFixGuardRails(unittest.TestCase):
         # The actual exit code will depend on repo state, so we don't assert on it
         exit_code = cmd_fix(args)
 
-        # Exit code should be 0, 1, 2, or 3 (valid exit codes)
-        self.assertIn(exit_code, [0, 1, 2, 3], "Should return a valid exit code")
+        # Exit code should be 0, 1, 2, 3, or 4 (valid exit codes)
+        self.assertIn(exit_code, [0, 1, 2, 3, 4], "Should return a valid exit code")
 
 
 class TestUnsafeFixForensics(unittest.TestCase):
