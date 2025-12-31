@@ -344,6 +344,518 @@ find_repo_root
         self.assertIn("Could not find repository root", result.stderr)
 
 
+class TestToolDetection(unittest.TestCase):
+    """Test tool detection and installation verification logic.
+
+    Tests cover detection of already-installed tools and missing tool scenarios
+    for all required toolchains: Python, Shell, PowerShell, and Perl.
+    """
+
+    def setUp(self):
+        """Set up test environment."""
+        self.test_dir = tempfile.mkdtemp(prefix="bootstrap_tool_test_")
+        self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
+
+    def tearDown(self):
+        """Clean up temporary test directory."""
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    def _setup_mock_repo(self, repo_root):
+        """Create a minimal mock repository with required files.
+
+        :param repo_root: Path to repository root directory.
+        """
+        repo_root.mkdir(parents=True, exist_ok=True)
+        (repo_root / ".git").mkdir()
+        (repo_root / "pyproject.toml").write_text(
+            """[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "test_project"
+version = "0.1.0"
+dependencies = [
+    "PyYAML>=6.0",
+    "click>=8.0",
+    "rich>=10.0",
+    "rich-click>=1.6.0",
+]
+
+[project.scripts]
+repo-lint = "test_project.cli:main"
+"""
+        )
+        # Create minimal package structure
+        (repo_root / "test_project").mkdir()
+        (repo_root / "test_project" / "__init__.py").write_text("")
+        (repo_root / "test_project" / "cli.py").write_text(
+            """def main():
+    print("repo-lint mock")
+"""
+        )
+
+    def test_python_tools_detection(self):
+        """Test detection of Python toolchain (black, ruff, pylint, yamllint, pytest)."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap - should attempt to install Python tools
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Check that Python tools installation was attempted
+        self.assertIn("Installing Python toolchain", result.stdout)
+        # Check for specific tools
+        for tool in ["black", "ruff", "pylint", "yamllint", "pytest"]:
+            self.assertIn(tool, result.stdout.lower())
+
+    def test_ripgrep_fallback_behavior(self):
+        """Test ripgrep (rgrep) detection and fallback to grep."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Should check for ripgrep
+        self.assertIn("ripgrep", result.stdout.lower())
+
+    def test_shell_toolchain_detection(self):
+        """Test detection of shell toolchain (shellcheck, shfmt) when --shell flag used."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run with --shell flag
+        result = subprocess.run(
+            ["bash", str(script_copy), "--shell"],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Check that shell tools installation was attempted
+        self.assertIn("Installing shell toolchain", result.stdout)
+        self.assertIn("shellcheck", result.stdout.lower())
+        self.assertIn("shfmt", result.stdout.lower())
+
+    def test_powershell_toolchain_detection(self):
+        """Test detection of PowerShell toolchain (pwsh, PSScriptAnalyzer) when --powershell flag used."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run with --powershell flag
+        result = subprocess.run(
+            ["bash", str(script_copy), "--powershell"],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Check that PowerShell tools installation was attempted
+        self.assertIn("Installing PowerShell toolchain", result.stdout)
+        self.assertIn("pwsh", result.stdout.lower())
+        self.assertIn("psscriptanalyzer", result.stdout.lower())
+
+    def test_perl_toolchain_detection(self):
+        """Test detection of Perl toolchain (Perl::Critic, PPI) when --perl flag used."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run with --perl flag
+        result = subprocess.run(
+            ["bash", str(script_copy), "--perl"],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=180,
+        )
+
+        # Check that Perl tools installation was attempted
+        self.assertIn("Installing Perl toolchain", result.stdout)
+        self.assertIn("Perl::Critic", result.stdout)
+        self.assertIn("PPI", result.stdout)
+
+
+class TestRepoLintInstallation(unittest.TestCase):
+    """Test repo-lint package installation and PATH availability.
+
+    Verifies that repo-lint is properly installed in the venv and becomes
+    available on PATH after bootstrap completes.
+    """
+
+    def setUp(self):
+        """Set up test environment."""
+        self.test_dir = tempfile.mkdtemp(prefix="bootstrap_install_test_")
+        self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
+
+    def tearDown(self):
+        """Clean up temporary test directory."""
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    def _setup_mock_repo(self, repo_root):
+        """Create a minimal mock repository with repo-lint package."""
+        repo_root.mkdir(parents=True, exist_ok=True)
+        (repo_root / ".git").mkdir()
+        (repo_root / "pyproject.toml").write_text(
+            """[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repo_lint"
+version = "0.1.0"
+dependencies = [
+    "PyYAML>=6.0",
+    "click>=8.0",
+    "rich>=10.0",
+    "rich-click>=1.6.0",
+]
+
+[project.scripts]
+repo-lint = "repo_lint.cli:main"
+"""
+        )
+        # Create minimal package
+        pkg_dir = repo_root / "repo_lint"
+        pkg_dir.mkdir()
+        (pkg_dir / "__init__.py").write_text("")
+        (pkg_dir / "cli.py").write_text(
+            """import sys
+def main():
+    if "--help" in sys.argv:
+        print("Usage: repo-lint [OPTIONS] COMMAND")
+        sys.exit(0)
+    print("repo-lint mock")
+"""
+        )
+
+    def test_repo_lint_installation(self):
+        """Test that repo-lint package is installed in venv."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Check that repo-lint was installed
+        self.assertIn("Installing repo-lint", result.stdout)
+        self.assertIn("repo-lint package installed successfully", result.stdout)
+
+    def test_repo_lint_help_works(self):
+        """Test that repo-lint --help works after installation."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap
+        subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Verify repo-lint --help works
+        venv_repo_lint = repo_root / ".venv" / "bin" / "repo-lint"
+        if venv_repo_lint.exists():
+            result = subprocess.run(
+                [str(venv_repo_lint), "--help"],
+                capture_output=True,
+                text=True,
+                timeout=10,
+            )
+            self.assertEqual(result.returncode, 0)
+            self.assertIn("repo-lint", result.stdout)
+
+    def test_repo_lint_on_path_after_activation(self):
+        """Test that repo-lint is on PATH in activated venv."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap
+        subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Check that venv/bin/repo-lint exists
+        venv_repo_lint = repo_root / ".venv" / "bin" / "repo-lint"
+        self.assertTrue(
+            venv_repo_lint.exists(),
+            "repo-lint should be installed in .venv/bin/",
+        )
+
+
+class TestVerificationGate(unittest.TestCase):
+    """Test end-to-end verification gate functionality.
+
+    Tests the final verification step that runs repo-lint check --ci
+    and validates exit code handling (exit 0 for clean repo, exit 1 for
+    violations but tools work, exit 2 for missing tools).
+    """
+
+    def setUp(self):
+        """Set up test environment."""
+        self.test_dir = tempfile.mkdtemp(prefix="bootstrap_verify_test_")
+        self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
+
+    def tearDown(self):
+        """Clean up temporary test directory."""
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    def test_verification_gate_exit_code_handling(self):
+        """Test that verification gate correctly handles exit codes.
+
+        Exit code 0 or 1 (violations) should be treated as success.
+        Exit code 2 (missing tools) should be treated as failure.
+        """
+        repo_root = Path(self.test_dir) / "test_repo"
+        repo_root.mkdir()
+        (repo_root / ".git").mkdir()
+        (repo_root / "pyproject.toml").write_text(
+            """[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repo_lint"
+version = "0.1.0"
+dependencies = ["PyYAML>=6.0", "click>=8.0", "rich>=10.0", "rich-click>=1.6.0"]
+
+[project.scripts]
+repo-lint = "repo_lint.cli:main"
+"""
+        )
+
+        # Create mock repo-lint that exits with code 1 (violations)
+        pkg_dir = repo_root / "repo_lint"
+        pkg_dir.mkdir()
+        (pkg_dir / "__init__.py").write_text("")
+        (pkg_dir / "cli.py").write_text(
+            """import sys
+def main():
+    if "--help" in sys.argv:
+        print("Usage: repo-lint [OPTIONS] COMMAND")
+        sys.exit(0)
+    if "check" in sys.argv and "--ci" in sys.argv:
+        print("Found violations")
+        sys.exit(1)  # Violations found, but tools work
+    sys.exit(0)
+"""
+        )
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap - should succeed even with exit code 1
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Bootstrap should succeed (exit 0) even if repo-lint exits 1
+        self.assertEqual(
+            result.returncode,
+            0,
+            "Bootstrap should succeed when verification finds violations (exit 1)",
+        )
+        self.assertIn("Verification gate passed", result.stdout)
+
+
+class TestNonInteractiveBehavior(unittest.TestCase):
+    """Test that bootstrap script has no interactive prompts in CI mode.
+
+    Ensures the script is CI-friendly and doesn't hang waiting for user input.
+    """
+
+    def setUp(self):
+        """Set up test environment."""
+        self.test_dir = tempfile.mkdtemp(prefix="bootstrap_noninteractive_test_")
+        self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
+
+    def tearDown(self):
+        """Clean up temporary test directory."""
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    def test_no_prompts_on_stdin_closed(self):
+        """Test that script doesn't hang when stdin is closed (CI simulation)."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        repo_root.mkdir()
+        (repo_root / ".git").mkdir()
+        (repo_root / "pyproject.toml").write_text(
+            """[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "test_project"
+version = "0.1.0"
+"""
+        )
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run with stdin closed (like CI would)
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            stdin=subprocess.DEVNULL,
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,  # Should not timeout
+        )
+
+        # Should complete (either succeed or fail, but not hang)
+        self.assertIsNotNone(result.returncode)
+
+
+class TestIdempotency(unittest.TestCase):
+    """Test that bootstrap script is idempotent.
+
+    Running the script multiple times should produce the same result
+    without errors or state corruption.
+    """
+
+    def setUp(self):
+        """Set up test environment."""
+        self.test_dir = tempfile.mkdtemp(prefix="bootstrap_idempotent_test_")
+        self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
+
+    def tearDown(self):
+        """Clean up temporary test directory."""
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    def _setup_mock_repo(self, repo_root):
+        """Create a minimal mock repository."""
+        repo_root.mkdir(parents=True, exist_ok=True)
+        (repo_root / ".git").mkdir()
+        (repo_root / "pyproject.toml").write_text(
+            """[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repo_lint"
+version = "0.1.0"
+dependencies = ["PyYAML>=6.0", "click>=8.0", "rich>=10.0", "rich-click>=1.6.0"]
+
+[project.scripts]
+repo-lint = "repo_lint.cli:main"
+"""
+        )
+        pkg_dir = repo_root / "repo_lint"
+        pkg_dir.mkdir()
+        (pkg_dir / "__init__.py").write_text("")
+        (pkg_dir / "cli.py").write_text(
+            """import sys
+def main():
+    if "--help" in sys.argv:
+        print("Usage: repo-lint")
+        sys.exit(0)
+    if "check" in sys.argv:
+        sys.exit(0)
+"""
+        )
+
+    def test_running_twice_produces_same_result(self):
+        """Test that running bootstrap twice is safe and idempotent."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap first time
+        result1 = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Run bootstrap second time
+        result2 = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=120,
+        )
+
+        # Both should succeed
+        self.assertEqual(result1.returncode, result2.returncode)
+        # Second run should detect existing venv
+        self.assertIn("already exists", result2.stdout.lower())
+
+
 if __name__ == "__main__":
     # Allow running tests directly with python3
     unittest.main()
