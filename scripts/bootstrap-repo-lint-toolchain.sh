@@ -11,6 +11,7 @@
 #   - Python virtual environment (.venv) creation and activation
 #   - repo-lint package installation in editable mode
 #   - Verification that repo-lint is functional and on PATH
+#   - Python toolchain installation (black, ruff, pylint, yamllint, pytest)
 #
 #   Future phases will add installation of system tools (shellcheck, shfmt,
 #   ripgrep, PowerShell, Perl modules) and final verification gate.
@@ -35,6 +36,7 @@
 #     12  No valid install target found (missing pyproject.toml at repo root)
 #     13  repo-lint not found on PATH after installation
 #     14  repo-lint exists but --help command failed
+#     15  Python toolchain installation failed
 #
 #   Stdout:
 #     Progress messages prefixed with [bootstrap]
@@ -65,7 +67,7 @@
 #   - Script is idempotent: safe to run multiple times
 #   - Requires Python 3 with venv module
 #   - Must be run from within the repository
-#   - Phase 1 implementation (core functionality only)
+#   - Phase 1 + Phase 2 implementation (core + Python toolchain)
 #
 # PLATFORM COMPATIBILITY:
 #   - Linux (tested on Ubuntu/Debian)
@@ -416,6 +418,76 @@ verify_repo_lint() {
 }
 
 # ============================================================================
+# Python Toolchain Installation (Phase 2)
+# ============================================================================
+
+# install_python_tools - Install Python linting and testing tools
+#
+# DESCRIPTION:
+#   Installs required Python development tools (black, ruff, pylint, yamllint,
+#   pytest) into the active virtual environment. Installs tools directly to
+#   ensure they're available in the main .venv environment.
+#
+# INPUTS:
+#   None (uses active venv)
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   All Python tools installed successfully
+#     15  One or more Python tools failed to install
+#
+#   Stdout:
+#     Installation progress and version information for each tool
+#
+#   Side Effects:
+#     Installs packages in active virtual environment
+#
+# EXAMPLES:
+#   install_python_tools
+install_python_tools() {
+	log "Installing Python toolchain (black, ruff, pylint, yamllint, pytest)"
+
+	# Install tools directly into the main venv
+	log "Installing Python tools via pip"
+
+	# Install tools
+	local tools=("black" "ruff" "pylint" "yamllint" "pytest")
+	local failed_tools=()
+
+	for tool in "${tools[@]}"; do
+		log "Installing $tool..."
+		if python3 -m pip install "$tool" --quiet; then
+			# Verify installation
+			if command -v "$tool" >/dev/null 2>&1; then
+				local version
+				case "$tool" in
+				black | ruff | pylint | yamllint)
+					version=$($tool --version 2>&1 | head -n1)
+					;;
+				pytest)
+					version=$(pytest --version 2>&1 | head -n1)
+					;;
+				esac
+				log "  ✓ $tool installed: $version"
+			else
+				warn "  ✗ $tool installed but not found on PATH"
+				failed_tools+=("$tool")
+			fi
+		else
+			warn "  ✗ Failed to install $tool"
+			failed_tools+=("$tool")
+		fi
+	done
+
+	# Check if any tools failed
+	if [ ${#failed_tools[@]} -gt 0 ]; then
+		die "Failed to install Python tools: ${failed_tools[*]}" 15
+	fi
+
+	log "Python toolchain installed successfully"
+}
+
+# ============================================================================
 # Main Execution
 # ============================================================================
 
@@ -467,6 +539,10 @@ main() {
 	verify_repo_lint
 	log ""
 
+	# Phase 2.2: Install Python toolchain
+	install_python_tools
+	log ""
+
 	# Success summary
 	log "SUCCESS: Bootstrap complete!"
 	log ""
@@ -474,11 +550,12 @@ main() {
 	log "  - Repository root: $repo_root"
 	log "  - Virtual environment: $repo_root/$VENV_DIR"
 	log "  - repo-lint: $(command -v repo-lint)"
+	log "  - Python tools: black, ruff, pylint, yamllint, pytest"
 	log ""
 	log "Next steps:"
 	log "  - Virtual environment is activated for this shell session"
 	log "  - Run 'repo-lint --help' to see available commands"
-	log "  - Phase 2 (system tools) will be implemented in future commits"
+	log "  - Phase 3 (verification gate) will be implemented in future commits"
 }
 
 # Entry point

@@ -6,14 +6,113 @@ Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
-- Address any remaining code review feedback
-- Phase 2: Tool Installation and Verification (future)
 - Phase 3: Verification Gate and Error Handling (future)
 - Phase 4: Documentation (future)
+- Consider adding shell toolchain (shellcheck, shfmt) installation
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+### 2025-12-31 20:48 - Implement Phase 2.2: Python toolchain installation
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Added install_python_tools function and Phase 2.2 implementation
+- `docs/ai-prompt/209/209-next-steps.md`: Updated journal
+
+**Changes Made:**
+Implemented Phase 2.2 (Python Toolchain Installation) per comment #3702876746:
+- Added `install_python_tools()` function
+- Installs all required Python tools: black, ruff, pylint, yamllint, **pytest**
+- **NEW REQUIREMENT**: pytest MUST be installed as part of Python toolchain (confirmed working)
+
+**Implementation Details:**
+
+1. **New Function: install_python_tools** (lines 424-490):
+   - Installs Python tools directly into main .venv environment
+   - Tools installed: black, ruff, pylint, yamllint, pytest
+   - Each tool verified after installation
+   - Version information logged for each tool
+   - Exit code 15 if any tool fails to install
+
+2. **Updated Script Header Documentation**:
+   - Added exit code 15 (Python toolchain installation failed)
+   - Updated DESCRIPTION to mention Python toolchain installation
+   - Updated NOTES to reflect Phase 1 + Phase 2 implementation
+
+3. **Updated main() Function**:
+   - Added Phase 2.2 call after Phase 1.4
+   - Updated success summary to list installed Python tools
+   - Updated "Next steps" message
+
+**Python Tools Installed:**
+- ✅ black (25.12.0) - Code formatter
+- ✅ ruff (0.14.10) - Fast Python linter
+- ✅ pylint (4.0.4) - Python linter  
+- ✅ yamllint (1.37.1) - YAML linter
+- ✅ **pytest (9.0.2)** - Testing framework (**NEW REQUIREMENT**)
+
+**Design Decisions:**
+1. **Direct pip installation instead of `repo-lint install`**:
+   - `repo-lint install` creates separate `.venv-lint` directory
+   - We need tools in main `.venv` for bootstrap script's environment
+   - Direct installation ensures tools are on PATH immediately
+   
+2. **Individual tool verification**:
+   - Each tool checked with `command -v` after install
+   - Version logged for troubleshooting
+   - Clear failure messages if tool not found on PATH
+
+3. **Exit code 15 for failures**:
+   - Consistent with other tool installation failures
+   - Allows scripts to detect Python toolchain issues specifically
+
+**Testing:**
+```bash
+# Clean test
+rm -rf .venv .venv-lint
+bash scripts/bootstrap-repo-lint-toolchain.sh
+# SUCCESS - all tools installed
+
+# Verify pytest
+source .venv/bin/activate
+pytest --version
+# pytest 9.0.2 ✓
+
+# Verify other tools
+black --version  # black, 25.12.0 ✓
+ruff --version   # ruff 0.14.10 ✓
+pylint --version # pylint 4.0.4 ✓
+yamllint --version # yamllint 1.37.1 ✓
+```
+
+**Verification:**
+```bash
+# Script runs successfully
+bash scripts/bootstrap-repo-lint-toolchain.sh
+# Exit 0
+
+# All Python tools available
+source .venv/bin/activate
+which black ruff pylint yamllint pytest
+# All found in .venv/bin/ ✓
+
+# Can run tests
+pytest --version
+# pytest 9.0.2 ✓
+```
+
+**Compliance:**
+- Script formatted with shfmt (no violations)
+- All functions have comprehensive Bash docstrings
+- Exit codes documented
+- Idempotent (safe to run multiple times)
+
+**Follow-ups:**
+- Phase 3: Verification gate (`repo-lint check --ci`)
+- Shell toolchain (shellcheck, shfmt) - may add later
+- Reply to comment #3702876746 confirming pytest installation
+
+---
+
 ### 2025-12-31 20:26 - Add comprehensive unit tests for bootstrap script
 **Files Changed:**
 - `scripts/tests/test_bootstrap_repo_lint_toolchain.py`: Created comprehensive test suite (505 lines)
