@@ -386,12 +386,12 @@ def cmd_install(args: argparse.Namespace) -> int:
         print(f"  source {venv_path}/bin/activate  # Linux/macOS")
         print(f"  {venv_path}\\Scripts\\activate     # Windows")
         print("")
-        
+
         # Print manual install instructions for other tools
         print_bash_tool_instructions()
         print_powershell_tool_instructions()
         print_perl_tool_instructions()
-        
+
         print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
         print("")
         print("✓ Installation complete")
