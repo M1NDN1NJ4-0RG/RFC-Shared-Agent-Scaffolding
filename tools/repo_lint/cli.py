@@ -1,22 +1,23 @@
-"""CLI entry point and command handling for repo_lint.
+"""Click-based CLI entry point for repo_lint with Rich formatting.
 
 :Purpose:
-    Provides the command-line interface for repo_lint, handling argument parsing
-    and dispatching to appropriate command handlers.
+    Provides a modern command-line interface using Click with Rich formatting,
+    shell completion support, and improved help text.
 
 :Commands:
     - check: Run linting checks without modifying files
     - fix: Apply automatic fixes where possible (formatters only)
     - install: Install/bootstrap required linting tools (local only)
 
-:Flags:
-    - --ci/--no-install: CI mode - fail if tools are missing instead of installing
-    - --verbose: Show verbose output including passed checks
-    - --only <language>: Run checks for only the specified language
-    - --json: Output results in JSON format for CI debugging
+:Features:
+    - Rich formatted help output
+    - Shell completion support (bash, zsh, fish)
+    - Improved error messages with colors and formatting
+    - Context-aware help text
 
 :Environment Variables:
-    None - all configuration via command-line arguments
+    - REPO_LINT_*: Any Click option can be set via environment variables with REPO_LINT_ prefix
+    - _REPO_LINT_COMPLETE: Used by shell completion systems (bash_source, zsh_source, fish_source)
 
 :Exit Codes:
     - 0: All checks passed
@@ -28,459 +29,316 @@
 :Examples:
     Run checks in local mode::
 
-        python3 -m tools.repo_lint check
+        repo-lint check
 
     Run checks in CI mode::
 
-        python3 -m tools.repo_lint check --ci
+        repo-lint check --ci
 
     Apply fixes::
 
-        python3 -m tools.repo_lint fix
+        repo-lint fix
+
+    Enable shell completion::
+
+        # For Bash
+        _REPO_LINT_COMPLETE=bash_source repo-lint > ~/.repo-lint-complete.bash
+        source ~/.repo-lint-complete.bash
+
+        # For Zsh
+        _REPO_LINT_COMPLETE=zsh_source repo-lint > ~/.repo-lint-complete.zsh
+        source ~/.repo-lint-complete.zsh
+
+        # For Fish
+        _REPO_LINT_COMPLETE=fish_source repo-lint > ~/.config/fish/completions/repo-lint.fish
 """
 
-import argparse
 import sys
 
+import click
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+
+from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
 from tools.repo_lint.common import ExitCode, MissingToolError
-from tools.repo_lint.install.install_helpers import (
-    cleanup_repo_local,
-    get_venv_path,
-    install_python_tools,
-    print_bash_tool_instructions,
-    print_perl_tool_instructions,
-    print_powershell_tool_instructions,
-)
-from tools.repo_lint.policy import get_policy_summary, load_policy, validate_policy
-from tools.repo_lint.reporting import print_install_instructions, report_results
-from tools.repo_lint.runners.bash_runner import BashRunner
-from tools.repo_lint.runners.naming_runner import NamingRunner
-from tools.repo_lint.runners.perl_runner import PerlRunner
-from tools.repo_lint.runners.powershell_runner import PowerShellRunner
-from tools.repo_lint.runners.python_runner import PythonRunner
-from tools.repo_lint.runners.rust_runner import RustRunner
-from tools.repo_lint.runners.yaml_runner import YAMLRunner
+
+# Initialize Rich console for formatted output
+console = Console()
 
 
-def create_parser() -> argparse.ArgumentParser:
-    """Create argument parser for repo_lint CLI.
+# Custom Click group with rich help formatting
+class RichGroup(click.Group):
+    """Click Group with Rich-formatted help.
 
-    :returns: Configured ArgumentParser instance
+    Provides enhanced help output with Rich formatting including tables and panels.
     """
-    parser = argparse.ArgumentParser(
-        prog="repo-lint",
-        description="Unified multi-language linting and docstring validation",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-    )
 
-    # Subcommands
-    subparsers = parser.add_subparsers(dest="command", help="Command to run")
+    def format_help(self, ctx, formatter):
+        """Format help with Rich styling.
 
-    # check command
-    check_parser = subparsers.add_parser("check", help="Run linting checks without modifying files")
-    check_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
-    check_parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
-    check_parser.add_argument(
-        "--only",
-        choices=["python", "bash", "powershell", "perl", "yaml", "rust"],
-        help="Run checks for only the specified language",
-    )
-    check_parser.add_argument("--json", action="store_true", help="Output results in JSON format for CI debugging")
-
-    # fix command
-    fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
-    fix_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
-    fix_parser.add_argument("--ci", "--no-install", action="store_true", help="CI mode: fail if tools are missing")
-    fix_parser.add_argument(
-        "--only",
-        choices=["python", "bash", "powershell", "perl", "yaml", "rust"],
-        help="Run fixes for only the specified language",
-    )
-    fix_parser.add_argument("--json", action="store_true", help="Output results in JSON format for CI debugging")
-    fix_parser.add_argument(
-        "--unsafe",
-        action="store_true",
-        help=(
-            "DANGER: Enable unsafe fixers "
-            "(REQUIRES --yes-i-know, FORBIDDEN in CI, see docs/contributing/ai-constraints.md)"
-        ),
-    )
-    fix_parser.add_argument(
-        "--yes-i-know",
-        action="store_true",
-        help=(
-            "DANGER: Confirm unsafe mode execution "
-            "(REQUIRED with --unsafe, review generated patch before committing)"
-        ),
-    )
-
-    # install command
-    install_parser = subparsers.add_parser("install", help="Install/bootstrap required linting tools")
-    install_parser.add_argument("--verbose", "-v", action="store_true", help="Show verbose output")
-    install_parser.add_argument("--cleanup", action="store_true", help="Remove repo-local tool installations")
-
-    return parser
-
-
-def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> int:
-    """Run all language runners with common logic.
-
-    :param args: Parsed command-line arguments
-    :param mode: Mode description for output ("Linting" or "Formatting")
-    :param action_callback: Callable that takes a runner and returns results
-    :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
-    """
-    all_results = []
-    use_json = getattr(args, "json", False)
-
-    # Define all runners
-    all_runners = [
-        ("python", "Python", PythonRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("bash", "Bash", BashRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("powershell", "PowerShell", PowerShellRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("perl", "Perl", PerlRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("yaml", "YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
-        ("rust", "Rust", RustRunner(ci_mode=args.ci, verbose=args.verbose)),
-    ]
-
-    # Add cross-language runners (run on all files, not language-specific)
-    # Naming runner runs separately after language-specific checks
-    cross_language_runners = []
-    try:
-        cross_language_runners.append(("naming", "Naming Conventions", NamingRunner()))
-    except Exception as e:
-        # If naming runner fails to initialize (e.g., config missing), skip it
-        if args.verbose and not use_json:
-            print(f"⚠️  Naming validation skipped: {e}")
-            print("")
-
-    # Filter runners based on --only flag
-    only_language = getattr(args, "only", None)
-    if only_language:
-        runners = [(key, name, runner) for key, name, runner in all_runners if key == only_language]
-    else:
-        runners = all_runners
-
-    # If --only was used, ensure there is something to run
-    if only_language:
-        if not runners:
-            print(f"Error: unknown language '{only_language}' for --only flag.", file=sys.stderr)
-            return ExitCode.INTERNAL_ERROR
-        if not any(runner.has_files() for _, _, runner in runners):
-            print(
-                f"Error: No files found for language '{only_language}'. " f"Nothing to {mode.lower()}.",
-                file=sys.stderr,
+        :param ctx: Click context object
+        :param formatter: Click formatter object
+        """
+        console.print(
+            Panel.fit(
+                f"[bold cyan]{self.name or 'repo-lint'}[/bold cyan]\n\n"
+                f"{self.help or 'Unified multi-language linting and docstring validation'}",
+                title="[bold]Repository Linter[/bold]",
+                border_style="cyan",
             )
-            return ExitCode.INTERNAL_ERROR
-    # Run each runner if it has files
-    for key, name, runner in runners:
-        if runner.has_files():
-            # Skip progress output in JSON mode
-            if not use_json:
-                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                print(f"  {name} {mode}")
-                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+        )
 
-            missing_tools = runner.check_tools()
-            if missing_tools:
-                if args.ci:
-                    print_install_instructions(missing_tools)
-                    return ExitCode.MISSING_TOOLS
-                print(f"⚠️  Missing tools: {', '.join(missing_tools)}")
-                print("   Run 'python3 -m tools.repo_lint install' to install them")
-                print("")
-                return ExitCode.MISSING_TOOLS
+        if self.commands:
+            table = Table(title="Commands", show_header=True, header_style="bold magenta")
+            table.add_column("Command", style="cyan", no_wrap=True)
+            table.add_column("Description")
 
-            results = action_callback(runner)
-            all_results.extend(results)
-        else:
-            if args.verbose and not use_json:
-                print(f"No {name} files found. Skipping {name} {mode.lower()}.")
+            for name in sorted(self.list_commands(ctx)):
+                cmd = self.get_command(ctx, name)
+                if cmd and not cmd.hidden:
+                    table.add_row(name, cmd.get_short_help_str(limit=60))
 
-    # Run cross-language runners (only if --only not specified)
-    if not only_language:
-        for key, name, runner in cross_language_runners:
-            if not use_json:
-                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-                print(f"  {name} {mode}")
-                print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+            console.print(table)
+            console.print()
 
-            results = action_callback(runner)
-            all_results.extend(results)
-
-    # Report results
-    if not use_json:
-        print("")
-
-    # Use JSON or standard reporting based on flag
-    if use_json:
-        from tools.repo_lint.reporting import report_results_json
-
-        return report_results_json(all_results, verbose=args.verbose)
-    else:
-        return report_results(all_results, verbose=args.verbose)
+        console.print("[dim]Use 'repo-lint COMMAND --help' for more information on a specific command.[/dim]")
+        console.print()
 
 
-def cmd_check(args: argparse.Namespace) -> int:
+# Main CLI group
+@click.group(cls=RichGroup, invoke_without_command=True)
+@click.pass_context
+@click.version_option(version="0.1.0", prog_name="repo-lint")
+def cli(ctx):
+    """Unified multi-language linting and docstring validation tool.
+
+    repo-lint helps maintain code quality across multiple programming languages
+    with consistent linting rules, docstring validation, and automatic formatting.
+
+    :param ctx: Click context object
+    """
+    if ctx.invoked_subcommand is None:
+        console.print(ctx.get_help())
+
+
+# Check command
+@cli.command()
+@click.option(
+    "--verbose",
+    "-v",
+    is_flag=True,
+    help="Show verbose output including passed checks",
+)
+@click.option(
+    "--ci",
+    "--no-install",
+    "ci_mode",
+    is_flag=True,
+    help="CI mode: fail if tools are missing instead of installing",
+)
+@click.option(
+    "--only",
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust"], case_sensitive=False),
+    help="Run checks for only the specified language",
+)
+@click.option(
+    "--json",
+    "use_json",
+    is_flag=True,
+    help="Output results in JSON format for CI debugging",
+)
+def check(verbose, ci_mode, only, use_json):
     """Run linting checks without modifying files.
 
-    :param args: Parsed command-line arguments
-    :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
+    Performs comprehensive linting and docstring validation across all supported
+    languages. By default, checks all languages found in the repository.
+
+    :param verbose: Show verbose output including passed checks
+    :param ci_mode: CI mode - fail if tools are missing instead of installing
+    :param only: Run checks for only the specified language
+    :param use_json: Output results in JSON format for CI debugging
+
+    \b
+    Examples:
+        repo-lint check                  # Check all languages
+        repo-lint check --only python    # Check only Python files
+        repo-lint check --ci             # Run in CI mode (fail on missing tools)
+        repo-lint check --json           # Output in JSON format
     """
-    use_json = getattr(args, "json", False)
-    if not use_json:
-        print("🔍 Running repository linters and formatters...")
-        print("")
+    import argparse  # Local import - only needed for Namespace creation
 
-    return _run_all_runners(args, "Linting", lambda runner: runner.check())
+    # Create a namespace object compatible with the existing cmd_check function
+    args = argparse.Namespace(
+        verbose=verbose,
+        ci=ci_mode,
+        only=only,
+        json=use_json,
+    )
+
+    exit_code = cmd_check(args)
+    sys.exit(exit_code)
 
 
-def cmd_fix(args: argparse.Namespace) -> int:
-    """Apply automatic fixes where possible (formatters only).
+# Fix command
+@cli.command()
+@click.option(
+    "--verbose",
+    "-v",
+    is_flag=True,
+    help="Show verbose output including passed checks",
+)
+@click.option(
+    "--ci",
+    "--no-install",
+    "ci_mode",
+    is_flag=True,
+    help="CI mode: fail if tools are missing instead of installing",
+)
+@click.option(
+    "--only",
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust"], case_sensitive=False),
+    help="Run fixes for only the specified language",
+)
+@click.option(
+    "--json",
+    "use_json",
+    is_flag=True,
+    help="Output results in JSON format for CI debugging",
+)
+@click.option(
+    "--unsafe",
+    is_flag=True,
+    help="⚠️  DANGER: Enable unsafe fixers (REQUIRES --yes-i-know, FORBIDDEN in CI)",
+)
+@click.option(
+    "--yes-i-know",
+    "yes_i_know",
+    is_flag=True,
+    help="⚠️  DANGER: Confirm unsafe mode execution (REQUIRED with --unsafe)",
+)
+# pylint: disable=too-many-arguments,too-many-positional-arguments
+def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
+    """Apply automatic fixes (formatters only).
 
-    :param args: Parsed command-line arguments
-    :returns: Exit code (0=success, 1=violations remain, 2=missing tools, 3=error, 4=unsafe violation)
+    Runs auto-formatters to fix code style issues. By default, only runs safe
+    formatters. Unsafe mode is available for advanced users with --unsafe flag.
+
+    :param verbose: Show verbose output including passed checks
+    :param ci_mode: CI mode - fail if tools are missing instead of installing
+    :param only: Run fixes for only the specified language
+    :param use_json: Output results in JSON format for CI debugging
+    :param unsafe: Enable unsafe fixers (REQUIRES --yes-i-know, FORBIDDEN in CI)
+    :param yes_i_know: Confirm unsafe mode execution (REQUIRED with --unsafe)
+
+    \b
+    Safe Formatters:
+        - Python: Black, Ruff autofix
+        - YAML: yamllint --fix
+        - PowerShell: PSScriptAnalyzer formatting
+        - Perl: perltidy
+        - Bash: shfmt
+
+    \b
+    Unsafe Mode (⚠️  Use with caution):
+        The --unsafe flag enables experimental fixers that may change code behavior.
+        This mode is FORBIDDEN in CI and requires --yes-i-know confirmation.
+        Always review the generated patch before committing.
+
+    \b
+    Examples:
+        repo-lint fix                    # Fix all languages (safe mode)
+        repo-lint fix --only python      # Fix only Python files
+        repo-lint fix --unsafe --yes-i-know  # Enable unsafe fixers (LOCAL ONLY)
     """
-    import os
+    import argparse  # Local import - only needed for Namespace creation
 
-    use_json = getattr(args, "json", False)
-    unsafe_mode = getattr(args, "unsafe", False)
-    yes_i_know = getattr(args, "yes_i_know", False)
+    # Create a namespace object compatible with the existing cmd_fix function
+    args = argparse.Namespace(
+        verbose=verbose,
+        ci=ci_mode,
+        only=only,
+        json=use_json,
+        unsafe=unsafe,
+        yes_i_know=yes_i_know,
+    )
 
-    # Detect CI environment
-    is_ci = args.ci or os.getenv("CI", "").lower() in ("true", "1", "yes")
-
-    # Guard: Unsafe mode is forbidden in CI
-    if unsafe_mode and is_ci:
-        print("❌ UNSAFE MODE FORBIDDEN IN CI")
-        print("")
-        print("Unsafe fixes are not allowed in CI environments.")
-        print("See: docs/contributing/ai-constraints.md")
-        print("")
-        return ExitCode.UNSAFE_VIOLATION  # Exit code 4 for policy violations
-
-    # Guard: --unsafe requires --yes-i-know
-    if unsafe_mode and not yes_i_know:
-        print("❌ UNSAFE MODE BLOCKED FOR SAFETY")
-        print("")
-        print("The --unsafe flag requires --yes-i-know to actually execute.")
-        print("Unsafe fixes can change behavior and MUST be reviewed before committing.")
-        print("")
-        print("To proceed (LOCAL ONLY, AFTER READING THE WARNINGS):")
-        print("  python3 -m tools.repo_lint fix --unsafe --yes-i-know")
-        print("")
-        print("See: docs/contributing/ai-constraints.md")
-        print("")
-        return ExitCode.UNSAFE_VIOLATION  # Exit code 4 for policy violations
-
-    if not use_json:
-        if unsafe_mode:
-            print("⚠️  DANGER: Running in UNSAFE FIX MODE")
-            print("⚠️  Review the generated patch/log before committing!")
-            print("")
-        else:
-            print("🔧 Running formatters in fix mode...")
-            print("")
-
-    # Load and validate auto-fix policy
-    try:
-        policy = load_policy()
-        policy_errors = validate_policy(policy)
-        if policy_errors:
-            print("❌ Auto-fix policy validation failed:")
-            for error in policy_errors:
-                print(f"   {error}")
-            print("")
-            return ExitCode.INTERNAL_ERROR
-
-        # Display policy summary
-        if args.verbose:
-            print(get_policy_summary(policy))
-            print("")
-
-    except FileNotFoundError:
-        print("❌ Auto-fix policy file not found")
-        print("   Expected: conformance/repo-lint/autofix-policy.json")
-        print("")
-        return ExitCode.INTERNAL_ERROR
-    except Exception as e:
-        print(f"❌ Failed to load auto-fix policy: {e}")
-        print("")
-        return ExitCode.INTERNAL_ERROR
-
-    # If unsafe mode is enabled, run unsafe fixers
-    if unsafe_mode:
-        from datetime import datetime
-        from pathlib import Path
-
-        from tools.repo_lint.forensics import print_forensics_summary, save_forensics
-        from tools.repo_lint.unsafe_fixers import apply_unsafe_fixes
-
-        # Guard: Unsafe fixes only supported for Python
-        only_language = getattr(args, "only", None)
-        if only_language and only_language != "python":
-            print("❌ Unsafe fixes not supported for this language", file=sys.stderr)
-            print("", file=sys.stderr)
-            print("Unsafe mode currently only supports Python files.", file=sys.stderr)
-            print(f"You specified: --only={only_language}", file=sys.stderr)
-            print("", file=sys.stderr)
-            print("Remove --unsafe flag or use --only=python", file=sys.stderr)
-            print("", file=sys.stderr)
-            return ExitCode.UNSAFE_VIOLATION
-
-        # Collect all Python files to process
-        # At this point, only_language is either "python" or None (all languages)
-        repo_root = Path.cwd()
-        all_files = []
-
-        if only_language == "python" or only_language is None:
-            all_files.extend(repo_root.rglob("*.py"))
-
-        # Filter out common non-source directories and test fixtures
-        all_files = [
-            f
-            for f in all_files
-            if not any(
-                part in f.parts
-                for part in [".venv", ".venv-lint", "venv", "__pycache__", ".git", "dist", "conformance"]
-            )
-        ]
-
-        start_time = datetime.now()
-        results = apply_unsafe_fixes(all_files)
-        end_time = datetime.now()
-
-        # Generate forensics
-        patch_path, log_path = save_forensics(results, start_time, end_time)
-        print_forensics_summary(patch_path, log_path, results)
-
-        # After unsafe fixes, run normal fix to clean up formatting
-        if results:
-            if not use_json:
-                print("Running safe formatters to clean up after unsafe fixes...")
-                print("")
-
-    # Pass policy to runners via callback
-    return _run_all_runners(args, "Formatting", lambda runner: runner.fix(policy=policy))
+    exit_code = cmd_fix(args)
+    sys.exit(exit_code)
 
 
-def cmd_install(args: argparse.Namespace) -> int:
+# Install command
+@cli.command()
+@click.option(
+    "--verbose",
+    "-v",
+    is_flag=True,
+    help="Show verbose output during installation",
+)
+@click.option(
+    "--cleanup",
+    is_flag=True,
+    help="Remove repo-local tool installations",
+)
+def install(verbose, cleanup):
     """Install/bootstrap required linting tools.
 
-    :param args: Parsed command-line arguments
-    :returns: Exit code (0=success, 3=error)
+    Installs Python-based linting tools (black, ruff, pylint, yamllint) in a
+    repository-local virtual environment. Also provides installation instructions
+    for language-specific tools (shellcheck, perltidy, etc.).
+
+    :param verbose: Show verbose output during installation
+    :param cleanup: Remove repo-local tool installations
+
+    \b
+    What gets installed:
+        - Python tools: black, ruff, pylint, yamllint (auto-installed)
+        - Instructions for: shellcheck, shfmt, perltidy, pwsh, etc.
+
+    \b
+    Examples:
+        repo-lint install                # Install all auto-installable tools
+        repo-lint install --cleanup      # Remove repo-local installations
+        repo-lint install --verbose      # Show detailed progress
     """
-    # Handle cleanup mode
-    if args.cleanup:
-        print("🧹 Cleaning up repo-local tool installations...")
-        print("")
+    import argparse  # Local import - only needed for Namespace creation
 
-        success, messages = cleanup_repo_local(verbose=args.verbose)
+    # Create a namespace object compatible with the existing cmd_install function
+    args = argparse.Namespace(
+        verbose=verbose,
+        cleanup=cleanup,
+    )
 
-        for msg in messages:
-            print(msg)
-
-        print("")
-        if success:
-            print("✓ Cleanup complete")
-            return ExitCode.SUCCESS
-        else:
-            print("✗ Cleanup completed with errors")
-            return ExitCode.INTERNAL_ERROR
-
-    # Normal install mode
-    print("📦 Installing linting tools...")
-    print("")
-
-    # Install Python tools (auto-installable)
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    print("  Python Tools - Auto-Install")
-    print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-    print("")
-
-    success, errors = install_python_tools(verbose=args.verbose)
-
-    if success:
-        venv_path = get_venv_path()
-        print("")
-        print(f"✓ Python tools installed successfully in {venv_path}")
-        print("")
-        print("To use these tools in your shell:")
-        print(f"  source {venv_path}/bin/activate  # Linux/macOS")
-        print(f"  {venv_path}\\Scripts\\activate     # Windows")
-        print("")
-
-        # Print manual install instructions for other tools
-        print_bash_tool_instructions()
-        print_powershell_tool_instructions()
-        print_perl_tool_instructions()
-
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        print("")
-        print("✓ Installation complete")
-        print("")
-        print("Next steps:")
-        print("  1. Follow the manual installation instructions above")
-        print("  2. Run 'python3 -m tools.repo_lint check' to verify")
-        return ExitCode.SUCCESS
-    else:
-        print("")
-        print("✗ Python tool installation failed:")
-        for error in errors:
-            print(f"  {error}")
-        print("")
-        print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
-        print("")
-        print("⚠️  Python tools are required for repo_lint to function.")
-        print("   Please fix the errors above and try again.")
-        print("")
-        print("Common issues:")
-        print("  - Python 3.8+ required")
-        print("  - Ensure pip is up to date: python3 -m pip install --upgrade pip")
-        print("  - Check network connectivity for package downloads")
-        return ExitCode.INTERNAL_ERROR
+    exit_code = cmd_install(args)
+    sys.exit(exit_code)
 
 
-def main() -> None:
-    """Main entry point for repo_lint CLI.
+# Shell completion command (hidden, used by shell completion systems)
+@cli.command(hidden=True)
+@click.argument("shell", type=click.Choice(["bash", "zsh", "fish"]))
+def completion(shell):
+    """Generate shell completion script.
 
-    :returns: None (exits with appropriate code)
+    This command is used internally by shell completion systems.
+    See HOW-TO-USE-THIS-TOOL.md for setup instructions.
+
+    :param shell: Shell type (bash, zsh, or fish)
     """
-    parser = create_parser()
-    args = parser.parse_args()
+    # Click's built-in completion support handles this via _REPO_LINT_COMPLETE environment variable
+    # This function exists as a placeholder for the command in help text
 
-    # If no command specified, show help
-    if not args.command:
-        parser.print_help()
-        sys.exit(ExitCode.SUCCESS)
 
-    # Dispatch to command handlers
+def main():
+    """Main entry point for Click-based CLI."""
     try:
-        if args.command == "check":
-            exit_code = cmd_check(args)
-        elif args.command == "fix":
-            exit_code = cmd_fix(args)
-        elif args.command == "install":
-            exit_code = cmd_install(args)
-        else:
-            parser.print_help()
-            exit_code = ExitCode.INTERNAL_ERROR
-
-        sys.exit(exit_code)
-
+        cli(auto_envvar_prefix="REPO_LINT")  # pylint: disable=no-value-for-parameter
     except MissingToolError as e:
-        print(f"❌ Error: {e}", file=sys.stderr)
-        if getattr(args, "ci", False):
-            sys.exit(ExitCode.MISSING_TOOLS)
-        print("\nRun 'python3 -m tools.repo_lint install' to install missing tools", file=sys.stderr)
+        # Print to stderr using Click's echo
+        click.echo(f"❌ Error: {e}", err=True)
+        click.echo("\nRun 'repo-lint install' to install missing tools", err=True)
         sys.exit(ExitCode.MISSING_TOOLS)
-
     except Exception as e:
-        print(f"❌ Internal error: {e}", file=sys.stderr)
-        if args.verbose:
-            import traceback
-
-            traceback.print_exc()
+        click.echo(f"❌ Internal error: {e}", err=True)
         sys.exit(ExitCode.INTERNAL_ERROR)
 
 

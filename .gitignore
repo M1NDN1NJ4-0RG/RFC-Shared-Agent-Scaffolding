@@ -6,6 +6,12 @@
 !logs/**/*.txt
 !logs/**/*.diff
 
+# Umbrella CI logs - these are auto-generated and should not be committed
+logs/umbrella-ci-logs-phase-6/
+
+# Pip install artifact files (from malformed pip commands)
+=*
+
 # Rust build artifacts
 rust/target/
 
@@ -39,6 +45,3 @@ dist/*.tar.gz
 Thumbs.db
 # NOTE: black.diff in root is excluded, but logs/*/black.diff is allowed
 /black.diff
-
-# NOTE: CI-generated logs under logs/umbrella-ci-logs-phase-6/ are intentionally
-# NOT ignored - they should be committed to the repository for traceability

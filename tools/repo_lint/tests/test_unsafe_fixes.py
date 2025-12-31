@@ -33,7 +33,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from tools.repo_lint.cli import cmd_fix, create_parser
+from tools.repo_lint.cli_argparse import cmd_fix, create_parser
 
 
 class TestUnsafeFixGuardRails(unittest.TestCase):

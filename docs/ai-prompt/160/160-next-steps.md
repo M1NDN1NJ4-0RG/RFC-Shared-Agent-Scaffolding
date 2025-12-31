@@ -1,22 +1,92 @@
 MUST READ: `.github/copilot-instructions.md` FIRST!
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
-Status: Complete
+Status: Phase 2 Complete
 Last Updated: 2025-12-31
-Related: Issue #160, PRs TBD
+Related: Issue #160, PRs #176
 
 ## NEXT
-- Run final code_review after this commit (MANDATORY)
+- Run final code_review (MANDATORY before ending session)
 - Run codeql_checker if available (MANDATORY after code_review)
 - Update session journal overview before ending session
-- Phase 2.4 deferred to future work (Click migration is major refactor)
-- Phase 3 items deferred to future work
+- Phase 3 items deferred to future work per human decision
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
 
-### 2025-12-31 03:10 - Second round of code review fixes
+### 2025-12-31 04:00 - Completed Phase 2.4: Click CLI migration with Rich formatting
+
+**Files Changed:**
+- `pyproject.toml`: Added Click>=8.0 and Rich>=10.0 as required dependencies (lines 11-13)
+- `tools/repo_lint/cli.py`: Complete rewrite to use Click framework (300+ lines)
+  - Replaced argparse with Click decorators (@cli.command, @click.option)
+  - Added RichGroup class for formatted help output with tables and panels
+  - All three commands (check, fix, install) migrated to Click
+  - Delegates to cli_argparse functions to preserve existing logic
+  - Added shell completion support via Click's built-in mechanism
+  - Rich console for colored error messages
+  - Version option: --version shows 0.1.0
+  - Auto env var prefix: REPO_LINT_* environment variables supported
+- `tools/repo_lint/cli_argparse.py`: Renamed from cli.py (original argparse implementation)
+  - Preserved ALL existing command logic (cmd_check, cmd_fix, cmd_install)
+  - No functional changes, just file rename
+  - New Click CLI delegates to these functions for backward compatibility
+- `.github/workflows/repo-lint-and-docstring-enforcement.yml`: Added PyYAML>=6.0 to pip install (2 locations)
+  - Line 94: Auto-Fix Black job now installs PyYAML
+  - Line 438: Repo Lint Python job now installs PyYAML
+  - Fixes ModuleNotFoundError in all non-Python lint jobs
+- `.github/workflows/repo-lint-weekly-full-scan.yml`: Added PyYAML>=6.0 to pip install (line 70)
+  - Ensures weekly scan has PyYAML dependency
+- `HOW-TO-USE-THIS-TOOL.md`: Created comprehensive user guide (380+ lines)
+  - Installation instructions (pip install -e . and repo-lint install)
+  - Basic usage examples for all commands
+  - Common command patterns with real examples
+  - Shell completion setup for bash, zsh, and fish
+  - Detailed troubleshooting section with 10+ common issues and solutions
+  - Advanced usage: pre-commit hooks, CI/CD integration, environment variables
+  - Exit code reference table
+  - Forensics and debugging guide for unsafe mode
+
+**Changes Made:**
+- **Phase 2.4: Improve CLI usability** ✅ COMPLETE
+  - Migrated from argparse to Click framework (✅ requirement)
+  - Added Rich formatting for beautiful help output (✅ requirement)
+    - Rich panels with borders for main help
+    - Tables for command lists
+    - Colored text and formatting
+    - Better UX than plain argparse
+  - Enabled shell completion support (✅ requirement)
+    - Bash: _REPO_LINT_COMPLETE=bash_source repo-lint
+    - Zsh: _REPO_LINT_COMPLETE=zsh_source repo-lint  
+    - Fish: _REPO_LINT_COMPLETE=fish_source repo-lint
+  - Created HOW-TO-USE-THIS-TOOL.md (✅ requirement)
+    - Installation guide
+    - Common commands and examples
+    - Shell completion setup per shell
+    - Comprehensive troubleshooting
+  - Fixed PyYAML CI issue by adding to ALL workflow pip install commands
+  - Backward compatible: both `repo-lint` and `python3 -m tools.repo_lint` work
+
+**Verification:**
+- `python3 -m tools.repo_lint --help` - Shows Rich-formatted help with table
+- `python3 -m tools.repo_lint check --help` - Shows command-specific help
+- `python3 -m tools.repo_lint check --only yaml` - Runs successfully
+- `python3 -c "from tools.repo_lint.cli_argparse import cmd_check"` - Imports work
+- All existing functionality preserved through delegation pattern
+- PyYAML added to 3 locations in CI workflows
+- HOW-TO doc includes all required sections
+
+**Rationale:**
+- Per human decision #4: "CLI usability: Adopt Click + Rich help menus + shell autocomplete (APPROVED)"
+- Click provides better UX, cleaner code, and built-in completion support
+- Rich makes help output beautiful and easier to read
+- Delegation pattern preserves all existing logic (minimal changes to actual commands)
+- HOW-TO doc provides comprehensive user guidance
+- PyYAML fix resolves CI failures across all non-Python linter jobs
+- Phase 2 is now 100% complete (4/4 items)
+
+---
 **Files Changed:**
 - `tools/repo_lint/config_validator.py`:
   - Added module-level constant `SEMANTIC_VERSION_PATTERN` for version regex (line 34)

@@ -19,8 +19,10 @@
         config = load_validated_config('conformance/repo-lint/repo-lint-naming-rules.yaml')
 
 :Exit Codes:
-    Functions raise ConfigValidationError on validation failure:
-    - Caller should exit with ExitCode.INTERNAL_ERROR (3)
+    This module raises ConfigValidationError rather than exiting directly.
+    Callers should catch exceptions and exit with appropriate codes:
+    - 0: Success (no exceptions raised)
+    - 3: ConfigValidationError raised (caller should use ExitCode.INTERNAL_ERROR)
 """
 
 import re

@@ -58,7 +58,7 @@ from unittest.mock import MagicMock, patch
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.cli import _run_all_runners  # noqa: E402
+from tools.repo_lint.cli_argparse import _run_all_runners  # noqa: E402
 from tools.repo_lint.common import ExitCode  # noqa: E402
 
 
