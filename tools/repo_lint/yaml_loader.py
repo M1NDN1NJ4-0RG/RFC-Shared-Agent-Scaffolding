@@ -275,6 +275,11 @@ def __getattr__(name: str) -> Any:
     This allows `from tools.repo_lint.yaml_loader import PYTHON_TOOLS`
     and attribute access to continue working while emitting a
     DeprecationWarning via `_get_legacy_python_tools()`.
+
+    :param name: Attribute name being accessed
+    :returns: Attribute value from legacy functions
+
+    :raises AttributeError: If attribute doesn't exist
     """
     if name == "PYTHON_TOOLS":
         return _get_legacy_python_tools()

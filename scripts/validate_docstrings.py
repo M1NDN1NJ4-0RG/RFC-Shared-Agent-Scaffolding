@@ -264,7 +264,8 @@ def get_tracked_files() -> List[Path]:
     exclude_patterns = _get_exclude_patterns()
 
     # Filter files by patterns
-    current_dir = Path.cwd()
+    # Note: Using repository root to construct absolute paths from git ls-files relative paths
+    repo_root_dir = Path.cwd()
     matched_files = []
 
     # Directories to exclude (test fixtures with intentional violations)
@@ -303,7 +304,7 @@ def get_tracked_files() -> List[Path]:
         # Check if file matches any in-scope pattern (from YAML)
         for pattern in in_scope_patterns:
             if p.match(pattern):
-                matched_files.append(current_dir / p)
+                matched_files.append(repo_root_dir / p)
                 break
 
     return matched_files

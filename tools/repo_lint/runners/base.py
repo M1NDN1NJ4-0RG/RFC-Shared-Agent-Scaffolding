@@ -42,12 +42,21 @@ from tools.repo_lint.common import LintResult, MissingToolError
 # DEPRECATED (Phase 2.9): Use get_excluded_paths() instead
 # This constant is maintained for backward compatibility only
 def __getattr__(name):
-    """Provide backward compatibility for EXCLUDED_PATHS with deprecation warning.
+    """Provide backward compatibility for deprecated module-level constants.
+
+    This module-level __getattr__ function enables smooth migration from hardcoded
+    constants to YAML-first configuration (Phase 2.9). It intercepts attribute
+    access to deprecated constants and redirects to the new YAML-based functions
+    while emitting deprecation warnings.
+
+    This pattern allows existing code that imports deprecated constants to continue
+    working during the transition period, giving users time to update their code
+    before the constants are completely removed in a future release.
 
     :param name: Attribute name being accessed
-    :returns: List of excluded paths from YAML config
+    :returns: List of excluded paths from YAML config (for EXCLUDED_PATHS)
 
-    :raises AttributeError: If attribute doesn't exist
+    :raises AttributeError: If the requested attribute doesn't exist or isn't deprecated
     """
     if name == "EXCLUDED_PATHS":
         warnings.warn(
