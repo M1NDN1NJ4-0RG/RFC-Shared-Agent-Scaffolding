@@ -47,15 +47,21 @@ EXCLUDED_PATHS = [
 def find_repo_root() -> Path:
     """Find the repository root directory.
 
-    :returns: Path to repository root
-    :raises RuntimeError: If repository root cannot be found
+    Falls back to current working directory if .git is not found,
+    allowing repo_lint to work in non-Git directories.
+
+    :returns: Path to repository root (or cwd if .git not found)
     """
     current = Path.cwd().resolve()
+    start_dir = current
+
     while current != current.parent:
         if (current / ".git").exists():
             return current
         current = current.parent
-    raise RuntimeError("Could not find repository root (no .git directory)")
+
+    # Fallback: return starting directory if .git not found
+    return start_dir
 
 
 def command_exists(command: str) -> bool:

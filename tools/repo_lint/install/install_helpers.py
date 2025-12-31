@@ -42,11 +42,14 @@ from tools.repo_lint.install.version_pins import BASH_TOOLS, PIP_VERSION, POWERS
 def get_repo_root() -> Path:
     """Get the repository root directory.
 
-    :returns: Path to repository root
-    :raises RuntimeError: If repository root cannot be determined
+    Falls back to current working directory if .git is not found,
+    allowing repo_lint to work in non-Git directories.
+
+    :returns: Path to repository root (or cwd if .git not found)
     """
-    # Start from current file's directory
-    current = Path(__file__).resolve().parent
+    # Start from current working directory (consistent with find_repo_root)
+    current = Path.cwd().resolve()
+    start_dir = current
 
     # Walk up until we find .git directory
     while current != current.parent:
@@ -54,7 +57,8 @@ def get_repo_root() -> Path:
             return current
         current = current.parent
 
-    raise RuntimeError("Could not find repository root (no .git directory)")
+    # Fallback: return starting directory if .git not found
+    return start_dir
 
 
 def get_venv_path() -> Path:
