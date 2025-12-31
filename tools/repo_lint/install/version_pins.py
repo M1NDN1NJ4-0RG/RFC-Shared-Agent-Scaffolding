@@ -15,15 +15,15 @@
     - Direct constant access will trigger deprecation warnings
     - Backward compatibility maintained during transition period
 
-:Usage:
+:Environment Variables:
+    None
+
+:Examples:
     Get all tool versions (RECOMMENDED)::
 
         from tools.repo_lint.install.version_pins import get_all_versions
         versions = get_all_versions()
         print(f"Black version: {versions['black']}")
-
-:Environment Variables:
-    None
 
 :Exit Codes:
     - 0: Success (when used in scripts)

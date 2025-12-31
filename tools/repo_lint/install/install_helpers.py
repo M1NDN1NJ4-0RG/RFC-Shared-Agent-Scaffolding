@@ -36,7 +36,14 @@ import sys
 from pathlib import Path
 from typing import List, Optional, Tuple
 
-from tools.repo_lint.install.version_pins import BASH_TOOLS, PIP_VERSION, POWERSHELL_TOOLS, PYTHON_TOOLS
+from tools.repo_lint.install.version_pins import PIP_VERSION, get_all_versions
+
+# Load tool versions from YAML (Phase 2.9 YAML-first)
+_ALL_VERSIONS = get_all_versions()
+PYTHON_TOOLS = {k: v for k, v in _ALL_VERSIONS.items() if k in ["black", "ruff", "pylint", "yamllint"]}
+BASH_TOOLS = {k: v for k, v in _ALL_VERSIONS.items() if k in ["shellcheck", "shfmt"]}
+POWERSHELL_TOOLS = {k: v for k, v in _ALL_VERSIONS.items() if k == "PSScriptAnalyzer"}
+PERL_TOOLS = {k: v for k, v in _ALL_VERSIONS.items() if k == "Perl::Critic"}
 
 
 def get_repo_root() -> Path:

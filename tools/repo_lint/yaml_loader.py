@@ -194,7 +194,7 @@ def get_tool_versions() -> Dict[str, str]:
     rules = load_linting_rules()
     versions = {}
 
-    for language, lang_config in rules.get("languages", {}).items():
+    for lang_config in rules.get("languages", {}).values():
         if not lang_config.get("enabled", True):
             continue
 

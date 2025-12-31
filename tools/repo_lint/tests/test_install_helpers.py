@@ -65,7 +65,10 @@ from tools.repo_lint.install.install_helpers import (  # noqa: E402
     install_python_tools,
     venv_exists,
 )
-from tools.repo_lint.install.version_pins import PIP_VERSION, PYTHON_TOOLS  # noqa: E402
+from tools.repo_lint.install.version_pins import PIP_VERSION, get_all_versions  # noqa: E402
+
+# Load Python tools for tests (Phase 2.9 compatibility)
+PYTHON_TOOLS = {k: v for k, v in get_all_versions().items() if k in ["black", "ruff", "pylint", "yamllint"]}
 
 
 class TestRepoRootDetection(unittest.TestCase):
