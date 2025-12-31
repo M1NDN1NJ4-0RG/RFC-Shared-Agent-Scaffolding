@@ -15,6 +15,10 @@
     - Improved error messages with colors and formatting
     - Context-aware help text
 
+:Environment Variables:
+    - REPO_LINT_*: Any Click option can be set via environment variables with REPO_LINT_ prefix
+    - _REPO_LINT_COMPLETE: Used by shell completion systems (bash_source, zsh_source, fish_source)
+
 :Exit Codes:
     - 0: All checks passed
     - 1: Linting violations found
@@ -41,7 +45,7 @@
         _REPO_LINT_COMPLETE=bash_source repo-lint > ~/.repo-lint-complete.bash
         source ~/.repo-lint-complete.bash
 
-        # For Zsh  
+        # For Zsh
         _REPO_LINT_COMPLETE=zsh_source repo-lint > ~/.repo-lint-complete.zsh
         source ~/.repo-lint-complete.zsh
 
@@ -49,14 +53,15 @@
         _REPO_LINT_COMPLETE=fish_source repo-lint > ~/.config/fish/completions/repo-lint.fish
 """
 
+import argparse
 import sys
-from pathlib import Path
 
 import click
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 
+from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
 from tools.repo_lint.common import ExitCode, MissingToolError
 
 # Initialize Rich console for formatted output
@@ -65,10 +70,17 @@ console = Console()
 
 # Custom Click group with rich help formatting
 class RichGroup(click.Group):
-    """Click Group with Rich-formatted help."""
+    """Click Group with Rich-formatted help.
+
+    Provides enhanced help output with Rich formatting including tables and panels.
+    """
 
     def format_help(self, ctx, formatter):
-        """Format help with Rich styling."""
+        """Format help with Rich styling.
+
+        :param ctx: Click context object
+        :param formatter: Click formatter object
+        """
         console.print(
             Panel.fit(
                 f"[bold cyan]{self.name or 'repo-lint'}[/bold cyan]\n\n"
@@ -104,6 +116,8 @@ def cli(ctx):
 
     repo-lint helps maintain code quality across multiple programming languages
     with consistent linting rules, docstring validation, and automatic formatting.
+
+    :param ctx: Click context object
     """
     if ctx.invoked_subcommand is None:
         console.print(ctx.get_help())
@@ -141,6 +155,11 @@ def check(verbose, ci_mode, only, use_json):
     Performs comprehensive linting and docstring validation across all supported
     languages. By default, checks all languages found in the repository.
 
+    :param verbose: Show verbose output including passed checks
+    :param ci_mode: CI mode - fail if tools are missing instead of installing
+    :param only: Run checks for only the specified language
+    :param use_json: Output results in JSON format for CI debugging
+
     \b
     Examples:
         repo-lint check                  # Check all languages
@@ -148,9 +167,6 @@ def check(verbose, ci_mode, only, use_json):
         repo-lint check --ci             # Run in CI mode (fail on missing tools)
         repo-lint check --json           # Output in JSON format
     """
-    from tools.repo_lint.cli_argparse import cmd_check
-    import argparse
-
     # Create a namespace object compatible with the existing cmd_check function
     args = argparse.Namespace(
         verbose=verbose,
@@ -200,11 +216,19 @@ def check(verbose, ci_mode, only, use_json):
     is_flag=True,
     help="⚠️  DANGER: Confirm unsafe mode execution (REQUIRED with --unsafe)",
 )
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     """Apply automatic fixes (formatters only).
 
     Runs auto-formatters to fix code style issues. By default, only runs safe
     formatters. Unsafe mode is available for advanced users with --unsafe flag.
+
+    :param verbose: Show verbose output including passed checks
+    :param ci_mode: CI mode - fail if tools are missing instead of installing
+    :param only: Run fixes for only the specified language
+    :param use_json: Output results in JSON format for CI debugging
+    :param unsafe: Enable unsafe fixers (REQUIRES --yes-i-know, FORBIDDEN in CI)
+    :param yes_i_know: Confirm unsafe mode execution (REQUIRED with --unsafe)
 
     \b
     Safe Formatters:
@@ -226,9 +250,6 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
         repo-lint fix --only python      # Fix only Python files
         repo-lint fix --unsafe --yes-i-know  # Enable unsafe fixers (LOCAL ONLY)
     """
-    from tools.repo_lint.cli_argparse import cmd_fix
-    import argparse
-
     # Create a namespace object compatible with the existing cmd_fix function
     args = argparse.Namespace(
         verbose=verbose,
@@ -263,6 +284,9 @@ def install(verbose, cleanup):
     repository-local virtual environment. Also provides installation instructions
     for language-specific tools (shellcheck, perltidy, etc.).
 
+    :param verbose: Show verbose output during installation
+    :param cleanup: Remove repo-local tool installations
+
     \b
     What gets installed:
         - Python tools: black, ruff, pylint, yamllint (auto-installed)
@@ -274,9 +298,6 @@ def install(verbose, cleanup):
         repo-lint install --cleanup      # Remove repo-local installations
         repo-lint install --verbose      # Show detailed progress
     """
-    from tools.repo_lint.cli_argparse import cmd_install
-    import argparse
-
     # Create a namespace object compatible with the existing cmd_install function
     args = argparse.Namespace(
         verbose=verbose,
@@ -295,22 +316,25 @@ def completion(shell):
 
     This command is used internally by shell completion systems.
     See HOW-TO-USE-THIS-TOOL.md for setup instructions.
+
+    :param shell: Shell type (bash, zsh, or fish)
     """
-    # Click's built-in completion support handles this
-    # Users activate it via environment variable: _REPO_LINT_COMPLETE
-    pass
+    # Click's built-in completion support handles this via _REPO_LINT_COMPLETE environment variable
+    # This function exists as a placeholder for the command in help text
+    return
 
 
 def main():
     """Main entry point for Click-based CLI."""
     try:
-        cli(auto_envvar_prefix="REPO_LINT")
+        cli(auto_envvar_prefix="REPO_LINT")  # pylint: disable=no-value-for-parameter
     except MissingToolError as e:
-        console.print(f"[bold red]❌ Error:[/bold red] {e}", file=sys.stderr)
-        console.print("\n[yellow]Run 'repo-lint install' to install missing tools[/yellow]", file=sys.stderr)
+        # Print to stderr using Click's echo
+        click.echo(f"❌ Error: {e}", err=True)
+        click.echo("\nRun 'repo-lint install' to install missing tools", err=True)
         sys.exit(ExitCode.MISSING_TOOLS)
     except Exception as e:
-        console.print(f"[bold red]❌ Internal error:[/bold red] {e}", file=sys.stderr)
+        click.echo(f"❌ Internal error: {e}", err=True)
         sys.exit(ExitCode.INTERNAL_ERROR)
 
 
