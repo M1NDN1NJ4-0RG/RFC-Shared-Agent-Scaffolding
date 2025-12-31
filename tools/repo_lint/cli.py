@@ -288,13 +288,13 @@ def check(verbose, ci_mode, only, use_json):
 @click.option(
     "--unsafe",
     is_flag=True,
-    help="⚠️  DANGER: Enable unsafe fixers (REQUIRES --yes-i-know, FORBIDDEN in CI)",
+    help="WARNING: DANGER: Enable unsafe fixers (REQUIRES --yes-i-know, FORBIDDEN in CI)",
 )
 @click.option(
     "--yes-i-know",
     "yes_i_know",
     is_flag=True,
-    help="⚠️  DANGER: Confirm unsafe mode execution (REQUIRED with --unsafe)",
+    help="WARNING: DANGER: Confirm unsafe mode execution (REQUIRED with --unsafe)",
 )
 # pylint: disable=too-many-arguments,too-many-positional-arguments
 def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
@@ -330,7 +330,7 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
     - Rust: rustfmt (code formatter)
 
     \b
-    UNSAFE MODE (⚠️ Use with extreme caution):
+    UNSAFE MODE (WARNING: Use with extreme caution):
     The --unsafe flag enables experimental fixers that MAY change code behavior.
     - FORBIDDEN in CI environments (auto-detected via --ci or CI env vars)
     - REQUIRES --yes-i-know confirmation flag

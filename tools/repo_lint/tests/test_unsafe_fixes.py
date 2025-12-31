@@ -25,7 +25,7 @@
 :Exit Codes:
     0 - All tests passed
     1 - One or more tests failed
-    
+
 :Notes:
     - Updated for Phase 1 Item 2: unsafe mode violations now return exit code 4 (UNSAFE_VIOLATION)
     - Previously returned exit code 2 (MISSING_TOOLS) which was misleading
