@@ -245,7 +245,16 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
             break
 
     if not selected_theme:
-        # If no theme file exists, return default theme
+        # If no theme file exists, warn and return default theme
+        # This can happen when running outside a repo or if conformance/ is missing
+        import sys
+
+        default_path = _get_default_theme_path()
+        sys.stderr.write(
+            f"⚠️  Theme file not found (checked {len(candidates)} locations, "
+            f"including {default_path}). Using built-in defaults.\n"
+        )
+        sys.stderr.flush()
         return UITheme()
 
     # Load and validate theme file
@@ -334,8 +343,16 @@ def get_theme(ci_mode: bool = False) -> UITheme:
     """Get the active theme configuration.
 
     Always delegates to load_theme() so that different ci_mode values produce
-    appropriately configured theme instances. The previous caching approach
-    could cause issues if the same process needed themes with different ci_mode settings.
+    appropriately configured theme instances.
+
+    Design Note: This function intentionally reloads the theme on each call rather
+    than caching. While this adds file I/O overhead, it ensures:
+    1. Different ci_mode values get appropriate theme configurations
+    2. Theme file changes during development are picked up immediately
+    3. No stale theme data if environment variables change
+
+    For production use where theme loading is called frequently, consider adding
+    a caching layer with cache invalidation based on (ci_mode, theme_path) tuples.
 
     :param ci_mode: If True, load with CI mode restrictions
     :returns: Active UITheme instance

@@ -49,9 +49,11 @@ def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) ->
     Creates a Console instance with appropriate configuration for TTY or CI mode.
     In CI mode, colors and interactive features are disabled.
 
-    Note: This function creates a new console each time to ensure ci_mode changes
-    are respected. The previous singleton pattern cached the first console created,
-    which could cause issues if the same process needed both CI and interactive modes.
+    Design Note: This function intentionally creates a new console on each call rather
+    than caching a singleton. This allows the same process to use different ci_mode
+    values for different operations (e.g., interactive output for user messages, CI
+    output for log files). While this means theme settings aren't shared, console
+    creation is lightweight and each caller gets exactly the configuration they need.
 
     :param ci_mode: If True, disable colors and interactive features
     :param force_terminal: Override TTY detection (default: auto-detect)

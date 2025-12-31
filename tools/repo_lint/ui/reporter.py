@@ -363,9 +363,13 @@ class Reporter:
         else:
             formatted = self._format_with_color(f"ERROR: {message}", "failure", bold=True)
 
-        # Print to stderr using sys.stderr.write since Rich Console.print doesn't accept file parameter
-        sys.stderr.write(f"{formatted}\n")
-        sys.stderr.flush()
+        # Print to stderr using a dedicated stderr console to properly render Rich markup
+        # We can't use self.console.print() with a file= parameter (not supported by Rich),
+        # so we create a temporary Console instance configured for stderr
+        from rich.console import Console as RichConsole
+
+        stderr_console = RichConsole(file=sys.stderr, force_terminal=self.console.is_terminal)
+        stderr_console.print(formatted)
 
     def warning(self, message: str) -> None:
         """Print a warning message.

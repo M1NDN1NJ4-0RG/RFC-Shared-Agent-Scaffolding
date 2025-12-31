@@ -71,6 +71,8 @@ click.rich_click.APPEND_METAVARS_HELP = True
 click.rich_click.STYLE_ERRORS_SUGGESTION = "magenta italic"
 click.rich_click.ERRORS_SUGGESTION = "Try running the '--help' flag for more information."
 click.rich_click.ERRORS_EPILOGUE = ""
+# Note: MAX_WIDTH controls help text formatting. This is independent of theme.help.width,
+# which is stored in the theme YAML but not currently used (both set to 120 for consistency).
 click.rich_click.MAX_WIDTH = 120
 click.rich_click.COLOR_SYSTEM = "auto"  # Respect NO_COLOR environment variable
 
@@ -467,7 +469,9 @@ def main():
         click.echo(f"❌ Internal error: {e}", err=True)
         import traceback
 
-        # Check for verbose flag in various forms
+        # Check for verbose flag - check sys.argv since we're outside Click context
+        # Note: This handles common cases but won't detect REPO_LINT_VERBOSE env var
+        # or complex bundled options. For those edge cases, users can run with -v explicitly.
         verbose_flags = {"-v", "--verbose"}
         has_verbose = any(arg in verbose_flags or arg.startswith("--verbose=") for arg in sys.argv[1:])
         if has_verbose:
