@@ -28,7 +28,7 @@ languages:
         config_file: "pyproject.toml"
         fix_capable: false
         description: "Comprehensive Python code analyzer"
-    
+
   bash:
     description: "Bash linting tools and rules"
     enabled: true
@@ -47,7 +47,7 @@ languages:
           - "--indent=2"
           - "--binary-next-line"
           - "--case-indent"
-    
+
   powershell:
     description: "PowerShell linting tools and rules"
     enabled: true
@@ -63,7 +63,7 @@ languages:
           # Avoid hardcoded credentials
           - PSAvoidUsingPlainTextForPassword
           # Other standard rules enabled by default
-    
+
   perl:
     description: "Perl linting tools and rules"
     enabled: true
@@ -75,7 +75,7 @@ languages:
         fix_capable: false
         description: "Perl code quality analyzer"
         severity: 5  # Gentle (1=brutal, 5=gentle)
-    
+
   yaml:
     description: "YAML linting tools and rules"
     enabled: true
@@ -86,7 +86,7 @@ languages:
         config_file: ".yamllint"
         fix_capable: false
         description: "YAML syntax and style checker"
-    
+
   rust:
     description: "Rust linting tools and rules"
     enabled: true

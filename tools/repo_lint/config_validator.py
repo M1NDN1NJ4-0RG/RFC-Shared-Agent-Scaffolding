@@ -227,9 +227,7 @@ def validate_config_file(file_path: Path, config_type: str, allowed_keys: Option
         raise ConfigValidationError(str(file_path), f"YAML parsing error: {e}") from e
 
     if not isinstance(data, dict):
-        raise ConfigValidationError(
-            str(file_path), f"Config must be a YAML mapping/dict, got {type(data).__name__}"
-        )
+        raise ConfigValidationError(str(file_path), f"Config must be a YAML mapping/dict, got {type(data).__name__}")
 
     # Validate required fields
     _validate_required_fields(file_path, data, config_type)

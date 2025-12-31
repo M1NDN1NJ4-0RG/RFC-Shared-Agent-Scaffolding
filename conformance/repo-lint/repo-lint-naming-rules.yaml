@@ -27,7 +27,7 @@ languages:
           invalid:
             - "safe-run.py"  # kebab-case
             - "SafeRun.py"   # PascalCase
-    
+
   bash:
     description: "Bash naming conventions (Unix/Linux)"
     file_patterns:
@@ -41,7 +41,7 @@ languages:
           invalid:
             - "safe_run.sh"  # snake_case
             - "SafeRun.sh"   # PascalCase
-    
+
   powershell:
     description: "PowerShell naming conventions"
     file_patterns:
@@ -62,7 +62,7 @@ languages:
             - "SafeArchive.psm1"
           invalid:
             - "safe-archive.psm1"
-    
+
   perl:
     description: "Perl naming conventions"
     file_patterns:
@@ -83,7 +83,7 @@ languages:
             - "SafeRun.pm"
           invalid:
             - "test-util.pm"  # kebab-case for modules
-    
+
   yaml:
     description: "YAML file naming conventions"
     file_patterns:
@@ -97,7 +97,7 @@ languages:
           invalid:
             - "naming_rules.yaml"  # snake_case
             - "NamingRules.yaml"   # PascalCase
-    
+
   markdown:
     description: "Markdown documentation naming"
     file_patterns:
@@ -113,7 +113,7 @@ languages:
           invalid:
             - "contributing_guide.md"  # snake_case
             - "ContributingGuide.md"   # PascalCase
-    
+
   json:
     description: "JSON file naming conventions"
     file_patterns:

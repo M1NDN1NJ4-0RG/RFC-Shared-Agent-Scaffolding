@@ -30,7 +30,7 @@ from typing import Dict, List
 
 from tools.repo_lint.common import LintResult, MissingToolError, Violation
 from tools.repo_lint.config_validator import ConfigValidationError, load_validated_config
-from tools.repo_lint.runners.base import Runner, find_repo_root
+from tools.repo_lint.runners.base import Runner
 
 
 class NamingRunner(Runner):
@@ -205,7 +205,6 @@ class NamingRunner(Runner):
         for lang, patterns in applicable_rules.items():
             for pattern_def in patterns:
                 pattern = pattern_def["pattern"]
-                description = pattern_def["description"]
 
                 if re.match(pattern, filename):
                     # File matches pattern - valid
@@ -222,20 +221,10 @@ class NamingRunner(Runner):
             print(f"     {violation_msg}")
 
         # Create a Violation object
-        violation = Violation(
-            tool="naming",
-            file=str(relative_path),
-            line=None,
-            message=violation_msg
-        )
+        violation = Violation(tool="naming", file=str(relative_path), line=None, message=violation_msg)
 
         # Create a LintResult with the violation
-        return LintResult(
-            tool="naming",
-            passed=False,
-            violations=[violation],
-            error=None
-        )
+        return LintResult(tool="naming", passed=False, violations=[violation], error=None)
 
     def _get_applicable_rules(self, extension: str) -> Dict[str, List[Dict]]:
         """Get naming rules applicable to a file extension.
