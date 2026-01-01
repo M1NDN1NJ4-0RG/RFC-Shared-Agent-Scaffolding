@@ -24,21 +24,21 @@ Related: Issue #160, PRs #176, #180
 - [x] Dry-run mode detection
 
 **In Progress:**
-- [ ] Phase 2.7.1 - Tool filtering backend logic
-- [ ] Phase 2.7.1 - Changed-only filtering backend logic
+- [x] Phase 2.7.1 - Tool filtering backend logic (COMPLETE - cli_argparse.py + base.py)
+- [x] Phase 2.7.1 - Changed-only filtering backend logic (COMPLETE - cli_argparse.py + base.py)
+- [ ] Phase 2.7.1 - Runner integration (apply filters in individual runners)
 - [ ] Phase 2.7.2 - Summary modes backend logic
 - [ ] Phase 2.7.3 - Show/hide files/codes backend logic
 - [ ] Phase 2.7.4 - Output format handlers (JSON/YAML/CSV/XLSX)
 - [ ] Phase 2.7.5 - Diff preview backend logic
 
 **Next Actions:**
-1. Implement tool filtering in runners
-2. Implement changed-only git integration
-3. Implement summary generation logic
-4. Implement output format handlers
-5. Implement diff preview for dry-run
-6. Add comprehensive unit tests
-7. Update HOW-TO-USE-THIS-TOOL.md
+1. Update Python/Bash/Perl/PowerShell runners to use tool filter and changed-only
+2. Implement summary generation logic
+3. Implement output format handlers
+4. Implement diff preview for dry-run
+5. Add comprehensive unit tests
+6. Update HOW-TO-USE-THIS-TOOL.md
 
 ---
 
