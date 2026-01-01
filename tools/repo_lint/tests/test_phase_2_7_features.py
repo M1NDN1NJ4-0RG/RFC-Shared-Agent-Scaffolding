@@ -101,16 +101,16 @@ class TestPhase27ToolFiltering(unittest.TestCase):
 
         files = self.runner._get_changed_files(patterns=["*.py"])
         self.assertEqual(len(files), 2)
-        self.assertIn(Path("file1.py"), files)
-        self.assertIn(Path("file2.py"), files)
+        self.assertIn("file1.py", files)
+        self.assertIn("file2.py", files)
 
     @patch("subprocess.run")
     def test_get_changed_files_no_git(self, mock_run):
         """Test _get_changed_files() handles no git repo gracefully."""
         mock_run.return_value = Mock(returncode=128)
 
-        files = self.runner._get_changed_files()
-        self.assertEqual(files, [])
+        with self.assertRaises(RuntimeError):
+            self.runner._get_changed_files()
 
     @patch("subprocess.run")
     def test_get_changed_files_with_pattern_filter(self, mock_run):
@@ -119,8 +119,8 @@ class TestPhase27ToolFiltering(unittest.TestCase):
 
         files = self.runner._get_changed_files(patterns=["*.py"])
         # Should filter to only .py files
-        self.assertIn(Path("file1.py"), files)
-        self.assertIn(Path("file3.py"), files)
+        self.assertIn("file1.py", files)
+        self.assertIn("file3.py", files)
 
 
 class TestPhase27SummaryModes(unittest.TestCase):

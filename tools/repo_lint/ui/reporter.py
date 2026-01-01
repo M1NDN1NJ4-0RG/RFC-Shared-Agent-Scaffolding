@@ -353,10 +353,14 @@ class Reporter:
             warn_icon = self._get_icon("warn")
             warn_color = self._get_color("warning")
             self.console.print()
-            self.console.print(
-                f"[{warn_color}]{warn_icon} Maximum violations limit reached ({max_violations}). "
-                f"Additional violations not displayed.[/{warn_color}]"
+            message = (
+                f"{warn_icon} Maximum violations limit reached ({max_violations}). "
+                "Additional violations not displayed."
             )
+            if self.ci_mode:
+                self.console.print(message)
+            else:
+                self.console.print(f"[{warn_color}]{message}[/{warn_color}]")
             self.console.print()
 
     def render_final_summary(self, results: List[LintResult], exit_code: ExitCode) -> None:
@@ -423,8 +427,14 @@ class Reporter:
 
         if format_type == "short":
             # Short format: single line summary
-            summary = f"{status_icon} {tools_run} tool(s) run, {total_violations} violation(s), {total_errors} error(s)"
-            self.console.print(f"[{status_color}]{summary}[/{status_color}]")
+            summary_line = f"{status_icon} {tools_run} tool(s) run, {total_violations} violation(s), {total_errors} error(s)"
+            if self.ci_mode:
+                self.console.print("\nSummary:")
+                self.console.print(summary_line)
+            else:
+                self.console.print()
+                self.console.print(f"[bold]Summary:[/bold]")
+                self.console.print(f"[{status_color}]{summary_line}[/{status_color}]")
 
         elif format_type == "by-tool":
             # By-tool format: violations grouped by tool
@@ -442,16 +452,20 @@ class Reporter:
 
             for result in results:
                 if result.error:
-                    status = f"[{self._get_color('failure')}]ERROR[/{self._get_color('failure')}]"
+                    status = self._styled("ERROR", "failure") if not self.ci_mode else "ERROR"
                     violations_count = "N/A"
                 elif result.passed:
                     status = (
-                        f"[{self._get_color('success')}]{self._get_icon('pass')} PASS[/{self._get_color('success')}]"
+                        self._styled(f"{self._get_icon('pass')} PASS", "success")
+                        if not self.ci_mode
+                        else f"{self._get_icon('pass')} PASS"
                     )
                     violations_count = "0"
                 else:
                     status = (
-                        f"[{self._get_color('failure')}]{self._get_icon('fail')} FAIL[/{self._get_color('failure')}]"
+                        self._styled(f"{self._get_icon('fail')} FAIL", "failure")
+                        if not self.ci_mode
+                        else f"{self._get_icon('fail')} FAIL"
                     )
                     violations_count = str(len(result.violations))
 
@@ -461,7 +475,10 @@ class Reporter:
             self.console.print()
             self.console.print(table)
             self.console.print()
-            self.console.print(f"[{status_color}]Total: {total_violations} violation(s)[/{status_color}]")
+            if self.ci_mode:
+                self.console.print(f"Total: {total_violations} violation(s)")
+            else:
+                self.console.print(f"[{status_color}]Total: {total_violations} violation(s)[/{status_color}]")
 
         elif format_type == "by-file":
             # By-file format: violations grouped by file
@@ -491,7 +508,10 @@ class Reporter:
             self.console.print()
             self.console.print(table)
             self.console.print()
-            self.console.print(f"[{status_color}]{len(files_dict)} file(s) with violations[/{status_color}]")
+            if self.ci_mode:
+                self.console.print(f"{len(files_dict)} file(s) with violations")
+            else:
+                self.console.print(f"[{status_color}]{len(files_dict)} file(s) with violations[/{status_color}]")
 
         elif format_type == "by-code":
             # By-code format: violations grouped by error code
@@ -505,6 +525,11 @@ class Reporter:
                         code = "UNKNOWN"
                         if ":" in violation.message:
                             code = violation.message.split(":")[0].strip()
+                        else:
+                            # No colon - use first word or entire message if short
+                            words = violation.message.split()
+                            if words:
+                                code = words[0] if len(violation.message) <= 50 else violation.message[:30] + "..."
                         codes_dict[f"{result.tool}:{code}"] += 1
 
             table = Table(
@@ -523,7 +548,10 @@ class Reporter:
             self.console.print()
             self.console.print(table)
             self.console.print()
-            self.console.print(f"[{status_color}]{len(codes_dict)} unique code(s)[/{status_color}]")
+            if self.ci_mode:
+                self.console.print(f"{len(codes_dict)} unique code(s)")
+            else:
+                self.console.print(f"[{status_color}]{len(codes_dict)} unique code(s)[/{status_color}]")
 
         # Add exit code
         self.console.print()
