@@ -165,11 +165,11 @@ Found 1 error."""
         # Run check
         result = self.runner._run_ruff_check()
 
-        # Verify unsafe fixes warning is included with check context
-        self.assertFalse(result.passed)
-        unsafe_violation = [v for v in result.violations if "unsafe-fixes" in v.message]
-        self.assertEqual(len(unsafe_violation), 1, "Should include unsafe fixes warning")
-        self.assertIn("Review before applying", unsafe_violation[0].message, "Should use check context message")
+        # Verify we have 1 actual violation (E501) plus info message
+        self.assertFalse(result.passed)  # Should fail - has E501 violation
+        self.assertEqual(len(result.violations), 1)  # One E501 violation
+        self.assertIsNotNone(result.info_message)  # Info message present
+        self.assertIn("Review before applying", result.info_message, "Should use check context message")
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
     def test_fix_handles_unsafe_fixes_warning(self, mock_run):
@@ -189,11 +189,12 @@ Found 1 error."""
         # Run fix
         result = self.runner._run_ruff_fix()
 
-        # Verify unsafe fixes warning is included with fix context
+        # Verify unsafe fixes warning is in info_message, not violations
+        # One actual violation remains (E501), so should fail
         self.assertFalse(result.passed)
-        unsafe_violation = [v for v in result.violations if "unsafe-fixes" in v.message]
-        self.assertEqual(len(unsafe_violation), 1, "Should include unsafe fixes warning")
-        self.assertIn("not applied automatically", unsafe_violation[0].message, "Should use fix context message")
+        self.assertEqual(len(result.violations), 1)  # One E501 violation
+        self.assertIsNotNone(result.info_message)  # Info message present
+        self.assertIn("not applied automatically", result.info_message, "Should use fix context message")
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
     def test_fix_command_sequences_black_and_ruff(self, mock_run):
@@ -207,10 +208,14 @@ Found 1 error."""
         # Mock successful Black and Ruff runs
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
-        # Mock tool checks
+        # Create policy that allows both Black and Ruff fixes
+        policy = {"allowed_categories": [{"category": "FORMAT.BLACK"}, {"category": "LINT.RUFF.SAFE"}]}
+
+        # Mock tool checks and has_files
         with patch("tools.repo_lint.runners.python_runner.command_exists", return_value=True):
-            # Run fix
-            self.runner.fix()
+            with patch.object(self.runner, "has_files", return_value=True):
+                # Run fix with policy
+                self.runner.fix(policy=policy)
 
         # Verify Black was called
         black_calls = [call for call in mock_run.call_args_list if "black" in str(call)]
@@ -246,7 +251,7 @@ class TestParseRuffOutput(unittest.TestCase):
         :Purpose:
             Verify empty output returns no violations.
         """
-        violations = self.runner._parse_ruff_output("", context="check")
+        violations, _ = self.runner._parse_ruff_output("", context="check")
         self.assertEqual(len(violations), 0, "Empty output should have no violations")
 
     def test_parse_check_context_unsafe_message(self):
@@ -285,7 +290,7 @@ class TestParseRuffOutput(unittest.TestCase):
         """
         output = """tools/cli.py:10:1: E501 Line too long
 Found 1 error."""
-        violations, info_message = self.runner._parse_ruff_output(output, context="check")
+        violations, _ = self.runner._parse_ruff_output(output, context="check")
 
         # Should only parse the actual violation, not the "Found" line
         self.assertEqual(len(violations), 1)

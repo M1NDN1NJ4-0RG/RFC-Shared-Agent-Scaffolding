@@ -279,7 +279,7 @@ class PythonRunner(Runner):
                 if "hidden fixes can be enabled with the `--unsafe-fixes` option" in line:
                     info_message = f"⚠️  {line.strip()} {unsafe_msg}"
                     continue
-                elif not line.startswith("Found") and not line.startswith("[*]"):
+                if not line.startswith("Found") and not line.startswith("[*]"):
                     # Ruff output format: path:line:col: code message
                     # Example: tools/repo_lint/ui/reporter.py:447:36: F541 [*] f-string without any placeholders
                     # Skip context lines (start with |, -->, help:, numbers only, etc.)
@@ -313,10 +313,9 @@ class PythonRunner(Runner):
 
         violations, info_message = self._parse_ruff_output(result.stdout, context="check")
 
-        if result.returncode == 0:
-            return LintResult(tool="ruff", passed=True, violations=[], info_message=info_message)
-
-        return LintResult(tool="ruff", passed=False, violations=violations, info_message=info_message)
+        # info_message doesn't affect pass/fail - only violations count
+        passed = len(violations) == 0
+        return LintResult(tool="ruff", passed=passed, violations=violations, info_message=info_message)
 
     def _run_ruff_fix(self) -> LintResult:
         """Run Ruff linter with safe auto-fixes.
@@ -333,10 +332,9 @@ class PythonRunner(Runner):
 
         violations, info_message = self._parse_ruff_output(result.stdout, context="fix")
 
-        if result.returncode == 0:
-            return LintResult(tool="ruff", passed=True, violations=[], info_message=info_message)
-
-        return LintResult(tool="ruff", passed=False, violations=violations, info_message=info_message)
+        # info_message doesn't affect pass/fail - only violations count
+        passed = len(violations) == 0
+        return LintResult(tool="ruff", passed=passed, violations=violations, info_message=info_message)
 
     def _run_pylint(self) -> LintResult:
         """Run Pylint.
