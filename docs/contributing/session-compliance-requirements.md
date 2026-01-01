@@ -79,9 +79,10 @@ This document exists to **prevent those failures** by establishing clear, non-ne
      - `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-overview.md`
      - `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-next-steps.md`
      - Copy the ORIGINAL GitHub issue text into `<ISSUE_NUMBER>-overview.md` in Markdown, preserving checkboxes/tasks
+        - This document needs to be updated with boxes checked as you go.
    - **MANDATORY FIRST LINE in every `<ISSUE_NUMBER>-next-steps.md` file:**
      ```
-     MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL session start requirements in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
+     MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
      ```
    - Update journals EVERY session, even for minor changes
 
