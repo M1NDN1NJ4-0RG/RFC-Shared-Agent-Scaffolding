@@ -26,6 +26,7 @@
     Standard pytest exit codes (0 = all tests passed)
 """
 
+import os
 import shutil
 import subprocess
 import tempfile
@@ -34,8 +35,8 @@ from pathlib import Path
 import pytest
 
 # Repo root detection
-REPO_ROOT = Path(__file__).parent.parent
-FIXTURES_DIR = REPO_ROOT / "tests" / "fixtures"
+REPO_ROOT = Path(__file__).parent.parent.parent.parent
+FIXTURES_DIR = REPO_ROOT / "tools" / "repo_lint" / "tests" / "fixtures"
 
 
 @pytest.fixture
@@ -62,13 +63,25 @@ def run_repo_lint(cwd: Path, *args) -> subprocess.CompletedProcess:
 
     :returns: CompletedProcess result from subprocess.run
 
-    :note: Uses repo-lint from .venv/bin/ if available, falls back to system
+    :note: Uses repo-lint from .venv if available
     """
-    repo_lint_path = REPO_ROOT / ".venv" / "bin" / "repo-lint"
-    if not repo_lint_path.exists():
-        repo_lint_path = "repo-lint"  # Try system path
-
-    cmd = [str(repo_lint_path)] + list(args)
+    # Use repo-lint from venv if it exists, otherwise use system path
+    venv_repo_lint = REPO_ROOT / ".venv" / "bin" / "repo-lint"
+    if venv_repo_lint.exists():
+        cmd = [str(venv_repo_lint)] + list(args)
+    else:
+        # Fall back to running as module with PYTHONPATH set
+        cmd = ["python3", "-m", "tools.repo_lint.cli_argparse"] + list(args)
+        env = dict(os.environ)
+        env["PYTHONPATH"] = str(REPO_ROOT)
+        return subprocess.run(
+            cmd,
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            check=False,
+            env=env,
+        )
 
     return subprocess.run(
         cmd,
@@ -76,6 +89,35 @@ def run_repo_lint(cwd: Path, *args) -> subprocess.CompletedProcess:
         capture_output=True,
         text=True,
         check=False,
+    )
+
+
+def init_git_repo(cwd: Path):
+    """Initialize a git repository with basic config.
+
+    :param cwd: Directory to initialize repo in
+
+    :note: Required for repo-lint to work properly
+    """
+    subprocess.run(["git", "init"], cwd=cwd, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "config", "user.email", "test@example.com"],
+        cwd=cwd,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(
+        ["git", "config", "user.name", "Test User"],
+        cwd=cwd,
+        check=True,
+        capture_output=True,
+    )
+    subprocess.run(["git", "add", "."], cwd=cwd, check=True, capture_output=True)
+    subprocess.run(
+        ["git", "commit", "-m", "Initial commit", "--allow-empty"],
+        cwd=cwd,
+        check=True,
+        capture_output=True,
     )
 
 
@@ -90,15 +132,7 @@ def test_normal_mode_excludes_fixtures(temp_fixtures_dir):
     :assert: repo-lint check returns 0 violations from fixture files
     """
     # Initialize git repo in temp dir (required for repo-lint)
-    subprocess.run(["git", "init"], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(["git", "add", "."], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(
-        ["git", "commit", "-m", "Initial commit"],
-        cwd=temp_fixtures_dir,
-        check=True,
-        capture_output=True,
-    )
-
+    init_git_repo(temp_fixtures_dir)
     # Run repo-lint check in normal mode (no --include-fixtures)
     result = run_repo_lint(temp_fixtures_dir, "check", "--only", "python", "--ci")
 
@@ -115,22 +149,12 @@ def test_vector_mode_includes_fixtures(temp_fixtures_dir):
     :Purpose:
         Verifies Phase 2 requirement: --include-fixtures enables vector mode
 
-    :param temp_fixtures_dir: Temporary directory with fixture copies
+    :param temp_fixtures_dir: Temporary directory (unused - test runs from repo root)
 
     :assert: repo-lint check detects violations in fixture files
     """
-    # Initialize git repo in temp dir
-    subprocess.run(["git", "init"], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(["git", "add", "."], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(
-        ["git", "commit", "-m", "Initial commit"],
-        cwd=temp_fixtures_dir,
-        check=True,
-        capture_output=True,
-    )
-
-    # Run repo-lint check in vector mode (with --include-fixtures)
-    result = run_repo_lint(temp_fixtures_dir, "check", "--include-fixtures", "--only", "python", "--ci")
+    # Run from REPO_ROOT instead of temp dir since repo-lint needs conformance configs
+    result = run_repo_lint(REPO_ROOT, "check", "--include-fixtures", "--only", "python", "--ci")
 
     # Should report violations from fixture files
     assert result.returncode != 0, "Vector mode should detect violations in fixtures"
@@ -162,14 +186,7 @@ def test_vector_mode_populates_file_and_line_fields(temp_fixtures_dir):
     :assert: Violations contain valid file paths and line numbers
     """
     # Initialize git repo in temp dir
-    subprocess.run(["git", "init"], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(["git", "add", "."], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(
-        ["git", "commit", "-m", "Initial commit"],
-        cwd=temp_fixtures_dir,
-        check=True,
-        capture_output=True,
-    )
+    init_git_repo(temp_fixtures_dir)
 
     # Run repo-lint in vector mode with JSON output for easier parsing
     result = run_repo_lint(temp_fixtures_dir, "check", "--include-fixtures", "--only", "python", "--json")
@@ -222,14 +239,7 @@ def test_all_languages_support_vector_mode(temp_fixtures_dir):
     :assert: Each language can scan fixtures in vector mode
     """
     # Initialize git repo in temp dir
-    subprocess.run(["git", "init"], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(["git", "add", "."], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(
-        ["git", "commit", "-m", "Initial commit"],
-        cwd=temp_fixtures_dir,
-        check=True,
-        capture_output=True,
-    )
+    init_git_repo(temp_fixtures_dir)
 
     # Test each language
     languages = ["python", "bash", "perl", "powershell", "yaml", "rust"]
@@ -267,14 +277,7 @@ def test_language_specific_fixtures_scanned(temp_fixtures_dir, language, expecte
     :assert: Language-specific fixtures are scanned when --include-fixtures is set
     """
     # Initialize git repo in temp dir
-    subprocess.run(["git", "init"], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(["git", "add", "."], cwd=temp_fixtures_dir, check=True, capture_output=True)
-    subprocess.run(
-        ["git", "commit", "-m", "Initial commit"],
-        cwd=temp_fixtures_dir,
-        check=True,
-        capture_output=True,
-    )
+    init_git_repo(temp_fixtures_dir)
 
     # Verify fixture file exists in temp dir
     fixture_path = temp_fixtures_dir / "tests" / "fixtures" / language / expected_fixture

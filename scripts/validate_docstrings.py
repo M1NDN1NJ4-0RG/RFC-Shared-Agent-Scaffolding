@@ -280,7 +280,7 @@ def get_tracked_files(include_fixtures: bool = False) -> List[Path]:
         Path("conformance/repo-lint/fixtures/violations"),
         Path("scripts/tests/fixtures"),
         Path("conformance/repo-lint/unsafe-fix-fixtures"),
-        Path("tests/fixtures"),
+        Path("tools/repo_lint/tests/fixtures"),
     ]
 
     for file_path in all_files:

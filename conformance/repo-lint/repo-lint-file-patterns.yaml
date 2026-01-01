@@ -70,7 +70,7 @@ exclusions:
       - "conformance/repo-lint/unsafe-fix-fixtures/**"
       - "conformance/repo-lint/fixtures/**"
       - "scripts/tests/fixtures/**"
-      - "tests/fixtures/**"
+      - "tools/repo_lint/tests/fixtures/**"
 
   cache_and_temp:
     description: "Cache directories and temporary files"

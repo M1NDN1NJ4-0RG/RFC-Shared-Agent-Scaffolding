@@ -102,7 +102,7 @@ jobs:
           # These files contain INTENTIONAL violations for testing and must NEVER be auto-fixed
           # Black's --exclude uses Python regex patterns (NOT glob patterns)
           # Multiple patterns must be combined with | (OR operator)
-          EXCLUDE_REGEX='(tests/fixtures/|conformance/repo-lint/fixtures/|conformance/repo-lint/vectors/|conformance/repo-lint/unsafe-fix-fixtures/|scripts/tests/fixtures/)'
+          EXCLUDE_REGEX='(tools/repo_lint/tests/fixtures/|conformance/repo-lint/fixtures/|conformance/repo-lint/vectors/|conformance/repo-lint/unsafe-fix-fixtures/|scripts/tests/fixtures/)'
           
           echo "Excluded regex for safety: ${EXCLUDE_REGEX}"
           
