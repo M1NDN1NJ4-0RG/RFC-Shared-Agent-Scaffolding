@@ -259,8 +259,6 @@ class Runner(ABC):
             Retrieves files with uncommitted changes from git. Used when --changed-only
             is specified to limit linting scope.
         """
-        import subprocess  # pylint: disable=import-outside-toplevel,redefined-outer-name
-
         # Get files changed in working tree (unstaged + staged)
         result = subprocess.run(
             ["git", "diff", "--name-only", "HEAD"],
