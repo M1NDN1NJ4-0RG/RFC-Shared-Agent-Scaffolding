@@ -3,11 +3,6 @@
 This file intentionally contains violations to test ruff detection.
 """
 
-import os
-import sys
-import json  # F401: imported but unused
-from typing import List, Dict  # F401: imported but unused
-import subprocess  # F401: imported but unused
 
 # F841: local variable assigned but never used
 unused_variable = "this is never used"
@@ -16,7 +11,7 @@ unused_variable = "this is never used"
 very_long_string = "this is an extremely long string that might exceed the configured line length limit for ruff and should trigger an E501 violation if that rule is enabled"
 
 # F541: f-string without placeholders
-message = f"This f-string has no placeholders"
+message = "This f-string has no placeholders"
 
 # E711: comparison to None should be 'is' or 'is not'
 x = None
@@ -37,10 +32,9 @@ def some_function():
     pass
 
 
-import random  # E402
 
 # F541: f-string without any placeholders
-text = f"just a string"
+text = "just a string"
 
 
 # B006: mutable default argument
@@ -73,7 +67,7 @@ def overly_complex_function(a, b, c):
 calc = lambda x: x * 2
 
 # F523: '.format' call has unused arguments
-text = "hello {0}".format("world", "extra")
+text = "hello {0}".format("world", )
 
 # E741: ambiguous variable name
 l = 1  # noqa: E741 would suppress

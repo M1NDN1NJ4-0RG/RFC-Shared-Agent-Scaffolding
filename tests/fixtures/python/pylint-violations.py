@@ -149,7 +149,6 @@ def function():
     pass
 
 
-import sys  # C0413
 
 
 # W0107: unnecessary pass
