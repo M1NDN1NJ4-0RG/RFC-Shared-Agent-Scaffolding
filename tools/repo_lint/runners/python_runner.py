@@ -258,14 +258,15 @@ class PythonRunner(Runner):
             tool="black", passed=False, violations=[], error=f"Black failed with exit code {result.returncode}"
         )
 
-    def _parse_ruff_output(self, stdout: str, context: str = "check") -> List[Violation]:
-        """Parse Ruff output into violations.
+    def _parse_ruff_output(self, stdout: str, context: str = "check") -> tuple[List[Violation], Optional[str]]:
+        """Parse Ruff output into violations and info message.
 
         :param stdout: Ruff command stdout output
         :param context: Context for unsafe fixes message ('check' or 'fix')
-        :returns: List of parsed violations
+        :returns: Tuple of (violations list, info_message or None)
         """
         violations = []
+        info_message = None
         unsafe_msg = (
             "(Review before applying with --unsafe-fixes)"
             if context == "check"
@@ -274,15 +275,10 @@ class PythonRunner(Runner):
 
         for line in stdout.splitlines():
             if line.strip():
+                # Capture informational message about unsafe fixes
                 if "hidden fixes can be enabled with the `--unsafe-fixes` option" in line:
-                    violations.append(
-                        Violation(
-                            tool="ruff",
-                            file=".",
-                            line=None,
-                            message=f"⚠️  {line.strip()} {unsafe_msg}",
-                        )
-                    )
+                    info_message = f"⚠️  {line.strip()} {unsafe_msg}"
+                    continue
                 elif not line.startswith("Found") and not line.startswith("[*]"):
                     # Ruff output format: path:line:col: code message
                     # Example: tools/repo_lint/ui/reporter.py:447:36: F541 [*] f-string without any placeholders
@@ -301,7 +297,7 @@ class PythonRunner(Runner):
                                 )
                             )
 
-        return violations
+        return violations, info_message
 
     def _run_ruff_check(self) -> LintResult:
         """Run Ruff linter in check-only mode (non-mutating).
@@ -315,11 +311,12 @@ class PythonRunner(Runner):
             ["ruff", "check", ".", "--no-fix"], cwd=self.repo_root, capture_output=True, text=True, check=False
         )
 
+        violations, info_message = self._parse_ruff_output(result.stdout, context="check")
+        
         if result.returncode == 0:
-            return LintResult(tool="ruff", passed=True, violations=[])
+            return LintResult(tool="ruff", passed=True, violations=[], info_message=info_message)
 
-        violations = self._parse_ruff_output(result.stdout, context="check")
-        return LintResult(tool="ruff", passed=False, violations=violations)
+        return LintResult(tool="ruff", passed=False, violations=violations, info_message=info_message)
 
     def _run_ruff_fix(self) -> LintResult:
         """Run Ruff linter with safe auto-fixes.
@@ -334,11 +331,12 @@ class PythonRunner(Runner):
             ["ruff", "check", ".", "--fix"], cwd=self.repo_root, capture_output=True, text=True, check=False
         )
 
+        violations, info_message = self._parse_ruff_output(result.stdout, context="fix")
+        
         if result.returncode == 0:
-            return LintResult(tool="ruff", passed=True, violations=[])
+            return LintResult(tool="ruff", passed=True, violations=[], info_message=info_message)
 
-        violations = self._parse_ruff_output(result.stdout, context="fix")
-        return LintResult(tool="ruff", passed=False, violations=violations)
+        return LintResult(tool="ruff", passed=False, violations=violations, info_message=info_message)
 
     def _run_pylint(self) -> LintResult:
         """Run Pylint.
