@@ -70,6 +70,7 @@ exclusions:
       - "conformance/repo-lint/unsafe-fix-fixtures/**"
       - "conformance/repo-lint/fixtures/**"
       - "scripts/tests/fixtures/**"
+      - "tests/fixtures/**"
 
   cache_and_temp:
     description: "Cache directories and temporary files"
@@ -95,19 +96,15 @@ exclusions:
       - "docs/_build/**"
       - "site/**"
 
-# Exclusions specific to docstring validation
-# These are paths excluded from EXCLUDED_PATHS in base.py
-linting_exclusions:
-  description: "Paths excluded from linting checks (base.py EXCLUDED_PATHS)"
-  patterns:
-    - "conformance/repo-lint/unsafe-fix-fixtures/"
-
 # Metadata
 metadata:
   schema_version: "1.0.0"
-  last_updated: "2025-12-31"
+  last_updated: "2026-01-01"
   migration_from:
     - "scripts/validate_docstrings.py (IN_SCOPE_PATTERNS, EXCLUDE_PATTERNS)"
     - "tools/repo_lint/runners/base.py (EXCLUDED_PATHS)"
+  notes:
+    - "All exclusions are now aggregated from the 'exclusions' categories above"
+    - "The separate 'linting_exclusions' section has been removed (redundant)"
 
 ...

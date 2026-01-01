@@ -51,7 +51,7 @@ class PythonRunner(Runner):
             return len(changed_files) > 0
 
         # Otherwise check all tracked Python files
-        files = get_tracked_files(["**/*.py"], self.repo_root)
+        files = get_tracked_files(["**/*.py"], self.repo_root, include_fixtures=self._include_fixtures)
         return len(files) > 0
 
     def _is_ruff_context_line(self, line: str) -> bool:
@@ -350,7 +350,7 @@ class PythonRunner(Runner):
         if self._changed_only:
             py_files = self._get_changed_files(patterns=["*.py", "**/*.py"])
         else:
-            py_files = get_tracked_files(["**/*.py"], self.repo_root)
+            py_files = get_tracked_files(["**/*.py"], self.repo_root, include_fixtures=self._include_fixtures)
 
         if not py_files:
             return LintResult(tool="pylint", passed=True, violations=[])

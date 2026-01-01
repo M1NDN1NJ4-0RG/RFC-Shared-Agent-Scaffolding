@@ -168,7 +168,6 @@ def load_file_patterns() -> Dict[str, Any]:
         "languages",  # Required by validator
         "in_scope",
         "exclusions",
-        "linting_exclusions",
         "metadata",
     ]
     return load_yaml_config("repo-lint-file-patterns.yaml", allowed_keys=allowed_keys)
@@ -247,9 +246,24 @@ def get_linting_exclusion_paths() -> List[str]:
 
     :Note:
         This function replaces EXCLUDED_PATHS from base.py (Phase 2.9 migration).
+        It aggregates all patterns from all exclusion categories in the YAML config
+        to provide a single source of truth.
     """
     patterns_config = load_file_patterns()
-    return patterns_config.get("linting_exclusions", {}).get("patterns", [])
+
+    # Aggregate patterns from all exclusion categories
+    all_patterns = []
+    exclusions = patterns_config.get("exclusions", {})
+
+    # Iterate through each category and collect patterns
+    for category_name, category_config in exclusions.items():
+        if category_name == "description":
+            # Skip the top-level description field
+            continue
+        if isinstance(category_config, dict) and "patterns" in category_config:
+            all_patterns.extend(category_config["patterns"])
+
+    return all_patterns
 
 
 # Backward compatibility layer with deprecation warnings

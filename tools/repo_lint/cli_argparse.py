@@ -86,6 +86,11 @@ def create_parser() -> argparse.ArgumentParser:
         help="Run checks for only the specified language",
     )
     check_parser.add_argument("--json", action="store_true", help="Output results in JSON format for CI debugging")
+    check_parser.add_argument(
+        "--include-fixtures",
+        action="store_true",
+        help="Include test fixture files in scans (vector mode for testing)",
+    )
 
     # fix command
     fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
@@ -97,6 +102,11 @@ def create_parser() -> argparse.ArgumentParser:
         help="Run fixes for only the specified language",
     )
     fix_parser.add_argument("--json", action="store_true", help="Output results in JSON format for CI debugging")
+    fix_parser.add_argument(
+        "--include-fixtures",
+        action="store_true",
+        help="Include test fixture files in scans (vector mode for testing)",
+    )
     fix_parser.add_argument(
         "--unsafe",
         action="store_true",
@@ -187,6 +197,13 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         for _, _, runner in runners:
             if hasattr(runner, "set_changed_only"):
                 runner.set_changed_only(True)
+
+    # Apply include-fixtures filtering if --include-fixtures was specified
+    include_fixtures = getattr(args, "include_fixtures", False)
+    if include_fixtures:
+        for _, _, runner in runners:
+            if hasattr(runner, "set_include_fixtures"):
+                runner.set_include_fixtures(True)
 
     # Check for fail-fast mode
     fail_fast = getattr(args, "fail_fast", False)
