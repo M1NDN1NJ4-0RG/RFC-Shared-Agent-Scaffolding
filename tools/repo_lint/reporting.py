@@ -436,6 +436,7 @@ def report_results_xlsx(results: List[LintResult], report_path: str) -> int:
         return int(ExitCode.INTERNAL_ERROR)
 
     from pathlib import Path
+
     all_passed = True
     has_errors = False
     total_violations = 0
@@ -543,14 +544,18 @@ def _write_reports_dir(results: List[LintResult], reports_dir: str) -> None:
         tool_data = {
             "tool": result.tool,
             "passed": result.passed,
-            "violations": [] if result.error else [
-                {
-                    "file": v.file,
-                    "line": v.line,
-                    "message": v.message,
-                }
-                for v in result.violations
-            ],
+            "violations": (
+                []
+                if result.error
+                else [
+                    {
+                        "file": v.file,
+                        "line": v.line,
+                        "message": v.message,
+                    }
+                    for v in result.violations
+                ]
+            ),
             "error": result.error,
         }
         tool_report_path.write_text(json.dumps(tool_data, indent=2))
