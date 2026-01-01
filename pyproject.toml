@@ -53,8 +53,10 @@ exclude = '''
   | \.venv
   | \.venv-lint
   | dist
-  | conformance/repo-lint/fixtures/violations
-  | conformance/repo-lint/vectors/fixtures
+  | tools/repo_lint/tests/fixtures
+  | conformance/repo-lint/fixtures
+  | conformance/repo-lint/vectors
+  | conformance/repo-lint/unsafe-fix-fixtures
   | scripts/tests/fixtures
 )/
 '''
@@ -72,8 +74,10 @@ exclude = [
     ".venv",
     ".venv-lint",
     "dist",
-    "conformance/repo-lint/fixtures/violations",
-    "conformance/repo-lint/vectors/fixtures",
+    "tools/repo_lint/tests/fixtures",
+    "conformance/repo-lint/fixtures",
+    "conformance/repo-lint/vectors",
+    "conformance/repo-lint/unsafe-fix-fixtures",
     "scripts/tests/fixtures",
 ]
 
@@ -95,8 +99,10 @@ max-line-length = 120
 init-hook = 'import sys; sys.path.insert(0, ".")'
 # Ignore test fixtures with intentional violations
 ignore-paths = [
-    "conformance/repo-lint/fixtures/violations/.*",
-    "conformance/repo-lint/vectors/fixtures/.*",
+    "tools/repo_lint/tests/fixtures/.*",
+    "conformance/repo-lint/fixtures/.*",
+    "conformance/repo-lint/vectors/.*",
+    "conformance/repo-lint/unsafe-fix-fixtures/.*",
     "scripts/tests/fixtures/.*",
 ]
 

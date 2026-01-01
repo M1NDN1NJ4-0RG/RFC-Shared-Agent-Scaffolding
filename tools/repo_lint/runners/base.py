@@ -109,32 +109,45 @@ def get_excluded_paths() -> List[str]:
     return get_linting_exclusion_paths()
 
 
-def get_git_pathspec_excludes() -> List[str]:
+def get_git_pathspec_excludes(include_fixtures: bool = False) -> List[str]:
     """Get git pathspec exclude patterns for linting (YAML-first, Phase 2.9).
 
+    :param include_fixtures: Whether to include test fixture files (vector mode)
     :returns: List of exclude patterns for git ls-files
 
     :Note:
         Updated in Phase 2.9 to use YAML configuration instead of hardcoded EXCLUDED_PATHS.
+        In vector mode (include_fixtures=True), test fixtures are included in scans.
     """
     excludes = []
     for path in get_excluded_paths():
+        # Skip fixture exclusions when in vector mode
+        # Check if path is any fixture pattern (ends with fixtures/** or fixtures/)
+        if include_fixtures and ("fixtures/**" in path or "fixtures/" == path.rstrip("*")):
+            continue
         # Git pathspec format: ':(exclude)pattern'
         excludes.append(f":(exclude){path}")
     return excludes
 
 
-def get_tracked_files(patterns: List[str], repo_root: Optional[Path] = None) -> List[str]:
+def get_tracked_files(
+    patterns: List[str], repo_root: Optional[Path] = None, include_fixtures: bool = False
+) -> List[str]:
     """Get tracked files matching patterns, excluding lint test fixtures.
 
     :param patterns: List of file patterns (e.g., ["**/*.py", "**/*.sh"])
     :param repo_root: Repository root path (auto-detected if None)
+    :param include_fixtures: Whether to include test fixture files (vector mode)
     :returns: List of file paths (empty list if none found)
+
+    :Note:
+        When include_fixtures=True (vector mode), test fixture files under tests/fixtures/
+        are included in the results. This is used for vector-based conformance testing.
     """
     if repo_root is None:
         repo_root = find_repo_root()
 
-    excludes = get_git_pathspec_excludes()
+    excludes = get_git_pathspec_excludes(include_fixtures=include_fixtures)
     result = subprocess.run(
         ["git", "ls-files"] + patterns + excludes,
         cwd=repo_root,
@@ -169,6 +182,7 @@ class Runner(ABC):
         self.verbose = verbose
         self._tool_filter = None  # List of specific tools to run (None = run all)
         self._changed_only = False  # Only check git-changed files
+        self._include_fixtures = False  # Include test fixtures in scans (vector mode)
 
     @abstractmethod
     def has_files(self) -> bool:
@@ -233,6 +247,19 @@ class Runner(ABC):
             Requires git repository (will error if not in git repo).
         """
         self._changed_only = enabled
+
+    def set_include_fixtures(self, enabled: bool = True) -> None:
+        """Enable/disable fixture inclusion (vector mode).
+
+        :param enabled: Whether to include test fixture files in scans
+
+        :Purpose:
+            Includes test fixture files (tests/fixtures/**) in linting scans.
+            Used for vector-based conformance testing to verify that repo-lint
+            correctly detects violations in intentionally-bad fixture files.
+            When disabled (default), fixtures are excluded from all scans.
+        """
+        self._include_fixtures = enabled
 
     def _should_run_tool(self, tool_name: str) -> bool:
         """Check if a specific tool should run based on tool filter.

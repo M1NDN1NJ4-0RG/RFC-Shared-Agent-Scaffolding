@@ -72,6 +72,13 @@ jobs:
             suffix = p.suffix.lower()
             stem = p.stem
 
+            # Skip specific naming-violations test files (intentionally violate naming conventions)
+            if path.endswith("/naming-violations.py") or \
+               path.endswith("/naming-violations.pl") or \
+               path.endswith("/naming-violations.ps1") or \
+               path.endswith("/naming_violations.sh"):
+              continue
+
             # Skip special files
             if stem.startswith("__") and stem.endswith("__"):
               continue

@@ -1,0 +1,64 @@
+# Test fixture for yamllint violations
+
+# line-length: line too long
+very_long_key: "this is an extremely long value that exceeds the maximum line length configured for yamllint and should trigger a violation when the file is linted"
+
+# indentation: wrong indentation
+incorrect_indent:
+  nested:
+   bad_indent: value
+    worse_indent: value
+
+# trailing-spaces: lines with trailing spaces
+key_with_trailing: "value"   
+
+# comments: missing space after #
+#bad comment
+good_comment: value
+
+# document-start: missing document start marker
+# (should have --- at top)
+
+# empty-lines: too many empty lines
+
+
+key_after_blanks: value
+
+# brackets: wrong spacing in brackets
+list_bad_spacing: [1,2,3,4]
+list_good: [ 1, 2, 3, 4 ]
+
+# braces: wrong spacing in braces
+dict_bad_spacing: {a:1,b:2}
+
+# colons: spacing around colons
+bad_colon_spacing:value
+another_bad:  value
+
+# commas: spacing after commas
+inline_list: [one,two,three]
+
+# truthy: avoid bare yes/no
+enabled: yes
+disabled: no
+use_bool: true
+
+# quoted-strings: inconsistent quoting
+string1: "double"
+string2: 'single'
+string3: unquoted
+
+# key-duplicates: duplicate keys
+duplicate: first
+other_key: value
+duplicate: second
+
+# empty-values: empty value
+empty_key:
+should_have_value: null
+
+# new-lines: wrong line endings
+# (end-of-file marker)
+
+# trailing-newlines: missing final newline
+final_key: value

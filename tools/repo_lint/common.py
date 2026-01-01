@@ -115,6 +115,7 @@ class LintResult:
     :param error: Error message if the tool failed to run
     :param file_count: Number of files checked (optional)
     :param duration: Time taken in seconds (optional)
+    :param info_message: Informational message (displayed but doesn't affect pass/fail)
     """
 
     tool: str
@@ -123,6 +124,7 @@ class LintResult:
     error: Optional[str] = None
     file_count: Optional[int] = None
     duration: Optional[float] = None
+    info_message: Optional[str] = None
 
 
 class RepoLintError(Exception):

@@ -114,7 +114,7 @@ click.rich_click.OPTION_GROUPS = {
     "repo-lint check": [
         {
             "name": "Filtering",
-            "options": ["--lang", "--only", "--tool", "--changed-only"],
+            "options": ["--lang", "--only", "--tool", "--changed-only", "--include-fixtures"],
         },
         {
             "name": "Output",
@@ -132,7 +132,7 @@ click.rich_click.OPTION_GROUPS = {
     "repo-lint fix": [
         {
             "name": "Filtering",
-            "options": ["--lang", "--only", "--tool", "--changed-only"],
+            "options": ["--lang", "--only", "--tool", "--changed-only", "--include-fixtures"],
         },
         {
             "name": "Output",
@@ -242,6 +242,11 @@ def cli(ctx):
     help="Only check files changed in git (requires git repository)",
 )
 @click.option(
+    "--include-fixtures",
+    is_flag=True,
+    help="Include test fixture files in scans (vector mode for testing)",
+)
+@click.option(
     "--json",
     "use_json",
     is_flag=True,
@@ -306,6 +311,7 @@ def check(
     lang,
     tool,
     changed_only,
+    include_fixtures,
     use_json,
     output_format,
     summary,
@@ -409,6 +415,7 @@ def check(
         json=use_json,
         tool=list(tool) if tool else None,
         changed_only=changed_only,
+        include_fixtures=include_fixtures,
         format=output_format,
         summary=summary,
         summary_only=summary_only,
@@ -461,6 +468,11 @@ def check(
     help="Only fix files changed in git (requires git repository)",
 )
 @click.option(
+    "--include-fixtures",
+    is_flag=True,
+    help="Include test fixture files in scans (vector mode for testing)",
+)
+@click.option(
     "--json",
     "use_json",
     is_flag=True,
@@ -501,6 +513,7 @@ def fix(
     lang,
     tool,
     changed_only,
+    include_fixtures,
     use_json,
     output_format,
     unsafe,
@@ -608,6 +621,7 @@ def fix(
         json=use_json,
         tool=list(tool) if tool else None,
         changed_only=changed_only,
+        include_fixtures=include_fixtures,
         format=output_format,
         unsafe=unsafe,
         yes_i_know=yes_i_know,

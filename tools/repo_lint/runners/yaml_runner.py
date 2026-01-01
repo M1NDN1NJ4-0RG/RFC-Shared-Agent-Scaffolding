@@ -44,7 +44,7 @@ class YAMLRunner(Runner):
             return len(changed_files) > 0
 
         # Otherwise check all tracked YAML files
-        files = get_tracked_files(["**/*.yml", "**/*.yaml"], self.repo_root)
+        files = get_tracked_files(["**/*.yml", "**/*.yaml"], self.repo_root, include_fixtures=self._include_fixtures)
         return len(files) > 0
 
     def check_tools(self) -> List[str]:
@@ -97,7 +97,9 @@ class YAMLRunner(Runner):
             LintResult for yamllint
         """
         # Get all YAML files, excluding test fixtures
-        yaml_files = get_tracked_files(["**/*.yml", "**/*.yaml"], self.repo_root)
+        yaml_files = get_tracked_files(
+            ["**/*.yml", "**/*.yaml"], self.repo_root, include_fixtures=self._include_fixtures
+        )
 
         if not yaml_files:
             return LintResult(tool="yamllint", passed=True, violations=[])

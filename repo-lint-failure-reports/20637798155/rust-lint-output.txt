@@ -1,0 +1,3 @@
+🔍 Running repository linters and formatters...
+
+❌ Internal error: name 'get_tracked_files' is not defined

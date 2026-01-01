@@ -1,0 +1,97 @@
+--- a/tests/fixtures/python/black-violations.py+++ b/tools/repo_lint/tests/fixtures/python/black_violations.py@@ -3,51 +3,66 @@ This file intentionally contains formatting violations to test black detection.
+ """
+ 
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+ # Black violation: line too long
+ x = "this is a very long string that exceeds the maximum line length configured for black and should trigger a violation"
+ 
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+ # Black violation: inconsistent quotes
+-y='single quotes when double are preferred'
++y = "single quotes when double are preferred"
+ 
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+ # Black violation: missing whitespace around operators
+-z=1+2+3+4+5
++z = 1 + 2 + 3 + 4 + 5
+ 
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+ # Black violation: trailing comma missing in multiline structure
+-data = {
+-    "key1": "value1",
+-    "key2": "value2",
+-    "key3": "value3"
+-}
+-
+-# Black violation: improper spacing
+-def badly_formatted(  a,b  ,  c  ):
+-    return a+b+c
+-
+-# Black violation: multiple statements on one line
+-if True: x = 1; y = 2
+-
+-# Black violation: inconsistent indentation style
+-class BadClass:
+-  def method1(self):
+-    pass
+-    
+-  def method2(self):
+-      pass
+-
+-# Black violation: extra blank lines
+-def function_with_extra_blanks():
++data = {"key1": "value1", "key2": "value2", "key3": "value3"}
+ 
+ 
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++# Black violation: improper spacing
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++def badly_formatted(a, b, c):
++    return a + b + c
++
++
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++# Black violation: multiple statements on one line
++if True:
++    x = 1
++    y = 2
++
++
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++# Black violation: inconsistent indentation style
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++class BadClass:
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++    def method1(self):
++        pass
++
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++    def method2(self):
++        pass
++
++
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++# Black violation: extra blank lines
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++def function_with_extra_blanks():
+ 
+     pass
+ 
+ 
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++# Black violation: no space after comma
++list_items = [1, 2, 3, 4, 5]
+ 
+-# Black violation: no space after comma
+-list_items=[1,2,3,4,5]
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
++# Black violation: dictionary formatting
++bad_dict = {"a": 1, "b": 2, "c": 3}
+ 
+-# Black violation: dictionary formatting
+-bad_dict={"a":1,"b":2,"c":3}
+-
++# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+ # Black violation: function call formatting
+-result=function_call(arg1,arg2,arg3)
++result = function_call(arg1, arg2, arg3)

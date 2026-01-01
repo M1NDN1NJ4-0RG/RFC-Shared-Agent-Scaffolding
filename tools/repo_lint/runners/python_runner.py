@@ -51,7 +51,7 @@ class PythonRunner(Runner):
             return len(changed_files) > 0
 
         # Otherwise check all tracked Python files
-        files = get_tracked_files(["**/*.py"], self.repo_root)
+        files = get_tracked_files(["**/*.py"], self.repo_root, include_fixtures=self._include_fixtures)
         return len(files) > 0
 
     def _is_ruff_context_line(self, line: str) -> bool:
@@ -258,14 +258,15 @@ class PythonRunner(Runner):
             tool="black", passed=False, violations=[], error=f"Black failed with exit code {result.returncode}"
         )
 
-    def _parse_ruff_output(self, stdout: str, context: str = "check") -> List[Violation]:
-        """Parse Ruff output into violations.
+    def _parse_ruff_output(self, stdout: str, context: str = "check") -> tuple[List[Violation], Optional[str]]:
+        """Parse Ruff output into violations and info message.
 
         :param stdout: Ruff command stdout output
         :param context: Context for unsafe fixes message ('check' or 'fix')
-        :returns: List of parsed violations
+        :returns: Tuple of (violations list, info_message or None)
         """
         violations = []
+        info_message = None
         unsafe_msg = (
             "(Review before applying with --unsafe-fixes)"
             if context == "check"
@@ -274,16 +275,11 @@ class PythonRunner(Runner):
 
         for line in stdout.splitlines():
             if line.strip():
+                # Capture informational message about unsafe fixes
                 if "hidden fixes can be enabled with the `--unsafe-fixes` option" in line:
-                    violations.append(
-                        Violation(
-                            tool="ruff",
-                            file=".",
-                            line=None,
-                            message=f"⚠️  {line.strip()} {unsafe_msg}",
-                        )
-                    )
-                elif not line.startswith("Found") and not line.startswith("[*]"):
+                    info_message = f"⚠️  {line.strip()} {unsafe_msg}"
+                    continue
+                if not line.startswith("Found") and not line.startswith("[*]"):
                     # Ruff output format: path:line:col: code message
                     # Example: tools/repo_lint/ui/reporter.py:447:36: F541 [*] f-string without any placeholders
                     # Skip context lines (start with |, -->, help:, numbers only, etc.)
@@ -301,7 +297,7 @@ class PythonRunner(Runner):
                                 )
                             )
 
-        return violations
+        return violations, info_message
 
     def _run_ruff_check(self) -> LintResult:
         """Run Ruff linter in check-only mode (non-mutating).
@@ -315,11 +311,11 @@ class PythonRunner(Runner):
             ["ruff", "check", ".", "--no-fix"], cwd=self.repo_root, capture_output=True, text=True, check=False
         )
 
-        if result.returncode == 0:
-            return LintResult(tool="ruff", passed=True, violations=[])
+        violations, info_message = self._parse_ruff_output(result.stdout, context="check")
 
-        violations = self._parse_ruff_output(result.stdout, context="check")
-        return LintResult(tool="ruff", passed=False, violations=violations)
+        # info_message doesn't affect pass/fail - only violations count
+        passed = len(violations) == 0
+        return LintResult(tool="ruff", passed=passed, violations=violations, info_message=info_message)
 
     def _run_ruff_fix(self) -> LintResult:
         """Run Ruff linter with safe auto-fixes.
@@ -334,11 +330,11 @@ class PythonRunner(Runner):
             ["ruff", "check", ".", "--fix"], cwd=self.repo_root, capture_output=True, text=True, check=False
         )
 
-        if result.returncode == 0:
-            return LintResult(tool="ruff", passed=True, violations=[])
+        violations, info_message = self._parse_ruff_output(result.stdout, context="fix")
 
-        violations = self._parse_ruff_output(result.stdout, context="fix")
-        return LintResult(tool="ruff", passed=False, violations=violations)
+        # info_message doesn't affect pass/fail - only violations count
+        passed = len(violations) == 0
+        return LintResult(tool="ruff", passed=passed, violations=violations, info_message=info_message)
 
     def _run_pylint(self) -> LintResult:
         """Run Pylint.
@@ -350,7 +346,7 @@ class PythonRunner(Runner):
         if self._changed_only:
             py_files = self._get_changed_files(patterns=["*.py", "**/*.py"])
         else:
-            py_files = get_tracked_files(["**/*.py"], self.repo_root)
+            py_files = get_tracked_files(["**/*.py"], self.repo_root, include_fixtures=self._include_fixtures)
 
         if not py_files:
             return LintResult(tool="pylint", passed=True, violations=[])
@@ -406,8 +402,13 @@ class PythonRunner(Runner):
                 "This check was not executed.",
             )
 
+        # Build command with include-fixtures flag if in vector mode
+        cmd = [sys.executable, str(validator_script), "--language", "python"]
+        if self._include_fixtures:
+            cmd.append("--include-fixtures")
+
         result = subprocess.run(
-            [sys.executable, str(validator_script), "--language", "python"],
+            cmd,
             cwd=self.repo_root,
             capture_output=True,
             text=True,

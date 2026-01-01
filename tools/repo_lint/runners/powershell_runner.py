@@ -47,7 +47,7 @@ class PowerShellRunner(Runner):
             return len(changed_files) > 0
 
         # Otherwise check all tracked PowerShell files
-        files = get_tracked_files(["**/*.ps1"], self.repo_root)
+        files = get_tracked_files(["**/*.ps1"], self.repo_root, include_fixtures=self._include_fixtures)
         return len(files) > 0
 
     def check_tools(self) -> List[str]:
@@ -123,7 +123,7 @@ class PowerShellRunner(Runner):
         :returns:
             List of PowerShell file paths (empty list if none found)
         """
-        all_files = get_tracked_files(["**/*.ps1"], self.repo_root)
+        all_files = get_tracked_files(["**/*.ps1"], self.repo_root, include_fixtures=self._include_fixtures)
         return filter_excluded_paths(all_files)
 
     def _run_psscriptanalyzer(self) -> LintResult:
@@ -190,8 +190,12 @@ class PowerShellRunner(Runner):
             return LintResult(tool="validate_docstrings", passed=True, violations=[])
 
         # Run validator for powershell language only (no need for --file args with --language flag)
+        cmd = [sys.executable, str(validator_script), "--language", "powershell"]
+        if self._include_fixtures:
+            cmd.append("--include-fixtures")
+
         result = subprocess.run(
-            [sys.executable, str(validator_script), "--language", "powershell"],
+            cmd,
             cwd=self.repo_root,
             capture_output=True,
             text=True,

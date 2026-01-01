@@ -34,7 +34,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
-from tools.repo_lint.runners.base import Runner, command_exists
+from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
 class RustRunner(Runner):
@@ -57,10 +57,8 @@ class RustRunner(Runner):
             return len(changed_files) > 0
 
         # Otherwise check all tracked Rust files
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.rs"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-        return bool(result.stdout.strip())
+        files = get_tracked_files(["**/*.rs"], self.repo_root, include_fixtures=self._include_fixtures)
+        return len(files) > 0
 
     def check_tools(self) -> List[str]:
         """Check which Rust tools are missing.
@@ -316,8 +314,12 @@ class RustRunner(Runner):
                 print("  Docstring validator script not found, skipping")
             return LintResult(tool="rust-docstrings", passed=True, violations=[])
 
+        cmd = ["python3", str(validator_script), "--language", "rust"]
+        if self._include_fixtures:
+            cmd.append("--include-fixtures")
+
         result = subprocess.run(
-            ["python3", str(validator_script), "--language", "rust"],
+            cmd,
             cwd=self.repo_root,
             capture_output=True,
             text=True,
