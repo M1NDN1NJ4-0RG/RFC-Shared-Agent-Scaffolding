@@ -31,24 +31,31 @@ if flag == True:
 # F821: undefined name
 result = undefined_variable + 10
 
+
 # E402: module level import not at top of file
 def some_function():
     pass
+
 
 import random  # E402
 
 # F541: f-string without any placeholders
 text = f"just a string"
 
+
 # B006: mutable default argument
 def bad_default(items=[]):
     items.append(1)
     return items
 
+
 # B008: function call in argument defaults
 import datetime
+
+
 def bad_time(when=datetime.datetime.now()):
     return when
+
 
 # C901: function is too complex (McCabe complexity)
 def overly_complex_function(a, b, c):
@@ -60,6 +67,7 @@ def overly_complex_function(a, b, c):
                         if c > 15:
                             return "nested"
     return "default"
+
 
 # E731: do not assign lambda
 calc = lambda x: x * 2
@@ -78,9 +86,12 @@ for i in range(10):
 
 # UP: outdated typing syntax
 from typing import Optional
+
+
 def old_style(x: Optional[str]) -> Optional[int]:
     pass
 
+
 # RUF: ruff-specific rules
-class MyClass():  # RUF012: mutable class attributes should use typing.ClassVar
+class MyClass:  # RUF012: mutable class attributes should use typing.ClassVar
     default_list = []
