@@ -72,6 +72,16 @@ jobs:
             suffix = p.suffix.lower()
             stem = p.stem
 
+            # Skip fixture/vector directories (contain intentional violations for testing)
+            if any(part in path for part in [
+              "tests/fixtures/",
+              "conformance/repo-lint/fixtures/",
+              "conformance/repo-lint/vectors/",
+              "conformance/repo-lint/unsafe-fix-fixtures/",
+              "scripts/tests/fixtures/"
+            ]):
+              continue
+
             # Skip special files
             if stem.startswith("__") and stem.endswith("__"):
               continue

@@ -6,7 +6,7 @@ Last Updated: 2026-01-01
 Related: Issue #221, PR #222
 
 ## NEXT
-- Wait for CI to run with corrected Black exclusion regex - MUST verify fixtures remain untouched
+- Wait for CI to run with ALL workflow exclusions fixed - MUST verify fixtures remain untouched
 - Phase 3: Debug integration tests, verify they pass
 - Phase 4: Review existing runner unit tests
 - Phase 5: Verification and CI Integration
@@ -15,6 +15,48 @@ Related: Issue #221, PR #222
 <>><------- NEXT STEPS DELIMITER BETWEEN COMPLETED STEPS -------><<>
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-01 12:08 - CRITICAL: Add fixture exclusions to naming enforcement workflow
+**Files Changed:**
+- `.github/workflows/naming-enforcement.yml`: Added fixture/vector path exclusions
+
+**Changes Made:**
+- Added exclusion logic in the Python validation script to skip fixture/vector directories
+- Excluded paths (same as Black auto-fix exclusions):
+  - `tests/fixtures/`
+  - `conformance/repo-lint/fixtures/`
+  - `conformance/repo-lint/vectors/`
+  - `conformance/repo-lint/unsafe-fix-fixtures/`
+  - `scripts/tests/fixtures/`
+- Used substring matching: `if any(part in path for part in [...]): continue`
+
+**Rationale:**
+- Naming enforcement workflow was flagging fixture files for violating naming conventions
+- Fixture files intentionally use kebab-case (e.g., `black-violations.py`, `all-docstring-violations.py`) instead of snake_case/PascalCase
+- These files are test artifacts with intentional violations, not production code
+- Must be excluded from ALL enforcement workflows to maintain test integrity
+
+**Verification:**
+- All 8 reported violations are now in excluded paths
+- Next CI run should pass naming enforcement
+
+**Commands Run:**
+```bash
+# Identified issue from CI failure output
+# Modified naming-enforcement.yml to add fixture exclusions
+```
+
+**CI Impact:**
+- Naming enforcement will now pass
+- Fixtures remain immutable across all workflows (Black auto-fix + naming enforcement)
+
+**Known Issues:**
+- None
+
+**Follow-ups:**
+- Wait for CI to verify all workflows pass with fixture exclusions
+
+---
 
 ### 2026-01-01 12:00 - COMPREHENSIVE FIXTURE RESET: All Auto-Fix Damage Undone
 **Files Changed:**
