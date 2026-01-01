@@ -49,7 +49,7 @@ class BashRunner(Runner):
             return len(changed_files) > 0
 
         # Otherwise check all tracked Bash files
-        files = get_tracked_files(["**/*.sh"], self.repo_root)
+        files = get_tracked_files(["**/*.sh"], self.repo_root, include_fixtures=self._include_fixtures)
         return len(files) > 0
 
     def check_tools(self) -> List[str]:
@@ -126,7 +126,7 @@ class BashRunner(Runner):
         :returns:
             List of Bash file paths (empty list if none found)
         """
-        all_files = get_tracked_files(["**/*.sh"], self.repo_root)
+        all_files = get_tracked_files(["**/*.sh"], self.repo_root, include_fixtures=self._include_fixtures)
         return filter_excluded_paths(all_files)
 
     def _run_shellcheck(self) -> LintResult:

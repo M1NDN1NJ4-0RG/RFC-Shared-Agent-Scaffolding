@@ -57,10 +57,8 @@ class RustRunner(Runner):
             return len(changed_files) > 0
 
         # Otherwise check all tracked Rust files
-        result = subprocess.run(
-            ["git", "ls-files", "**/*.rs"], cwd=self.repo_root, capture_output=True, text=True, check=False
-        )
-        return bool(result.stdout.strip())
+        files = get_tracked_files(["**/*.rs"], self.repo_root, include_fixtures=self._include_fixtures)
+        return len(files) > 0
 
     def check_tools(self) -> List[str]:
         """Check which Rust tools are missing.
