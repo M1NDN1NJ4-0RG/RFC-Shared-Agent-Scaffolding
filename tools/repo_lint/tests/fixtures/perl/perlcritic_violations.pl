@@ -34,6 +34,7 @@ $/ = "\n\n";
 our $global_var = 1;
 
 # RequireArgUnpacking: unpack @_ at start
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub no_unpack {
     my $result = $_[0] + $_[1];
     return $result;
@@ -49,6 +50,7 @@ for my $i (1..10) {
 }
 
 # RequireFinalReturn: missing explicit return
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub no_return {
     my ($x) = @_;
     $x + 1;
@@ -59,6 +61,7 @@ print "test" unless $debug;
 do_something() if $condition;
 
 # RequireCarping: use Carp instead of warn/die
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub may_fail {
     my ($input) = @_;
     die "error" if !$input;
@@ -71,6 +74,7 @@ my @lines = <$fh>;
 close $fh;
 
 # ProhibitCascadingIfElse: too many elsif
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub cascading {
     my ($x) = @_;
     if ($x == 1) {

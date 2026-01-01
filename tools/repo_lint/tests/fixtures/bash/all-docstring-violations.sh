@@ -2,17 +2,20 @@
 # Missing module docstring
 
 # Function without docstring
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 no_doc() {
     echo "no documentation"
 }
 
 # Function with incomplete docstring
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 partial_doc() {
     # Just a comment, not a proper docstring
     echo "incomplete"
 }
 
 # Function missing parameter documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 missing_params() {
     # Summary: Does something
     local x=$1
@@ -21,12 +24,14 @@ missing_params() {
 }
 
 # Function missing return documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 missing_return() {
     # Summary: Computes value
     echo 42
 }
 
 # Function missing examples
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 no_examples() {
     # Summary: Complex function
     # Params: $1 - input value
@@ -35,8 +40,10 @@ no_examples() {
 }
 
 # Nested function without docstring
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 outer_func() {
     # Outer docstring
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     inner_func() {
         echo "nested"
     }
@@ -44,6 +51,7 @@ outer_func() {
 }
 
 # Function with wrong docstring format
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 wrong_format() {
     : 'This is wrong format
     Should use # comments'
@@ -51,6 +59,7 @@ wrong_format() {
 }
 
 # Missing usage information for complex function
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 complex_func() {
     # Does complex things
     local input="$1"
@@ -62,6 +71,7 @@ complex_func() {
 }
 
 # Missing environment variable documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 uses_env() {
     # Uses environment variables
     echo "$UNDOCUMENTED_VAR"
@@ -69,6 +79,7 @@ uses_env() {
 }
 
 # Missing error handling documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 can_fail() {
     # Might fail
     risky_command
@@ -76,6 +87,7 @@ can_fail() {
 }
 
 # Function with side effects not documented
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 has_side_effects() {
     # Does something
     echo "output" > /tmp/file
@@ -83,6 +95,7 @@ has_side_effects() {
 }
 
 # Missing notes about complexity
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 complex_algorithm() {
     # Processes data
     local data="$1"

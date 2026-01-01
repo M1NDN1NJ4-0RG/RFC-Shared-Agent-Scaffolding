@@ -1,12 +1,14 @@
 # Missing module docstring
 
 # Function without help
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Invoke-NoHelp {
     param([string]$Name)
     Write-Output $Name
 }
 
 # Function with incomplete help
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Get-PartialHelp {
     <#
     .SYNOPSIS
@@ -20,6 +22,7 @@ function Get-PartialHelp {
 }
 
 # Missing parameter descriptions
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Test-MissingParams {
     <#
     .SYNOPSIS
@@ -35,6 +38,7 @@ function Test-MissingParams {
 }
 
 # Missing examples
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Invoke-NoExamples {
     <#
     .SYNOPSIS
@@ -46,6 +50,7 @@ function Invoke-NoExamples {
 }
 
 # Missing outputs documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Get-NoOutputs {
     <#
     .SYNOPSIS
@@ -55,6 +60,7 @@ function Get-NoOutputs {
 }
 
 # Class without documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 class NoDocClass {
     [string]$Property
     
@@ -68,6 +74,7 @@ class NoDocClass {
 }
 
 # Method without help
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 class PartialClass {
     <#
     .SYNOPSIS
@@ -82,6 +89,7 @@ class PartialClass {
 }
 
 # Missing notes section
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Invoke-Complex {
     <#
     .SYNOPSIS
@@ -95,6 +103,7 @@ function Invoke-Complex {
 }
 
 # Missing link references
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Get-RelatedInfo {
     <#
     .SYNOPSIS
@@ -105,6 +114,7 @@ function Get-RelatedInfo {
 }
 
 # Missing inputs documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Process-PipelineInput {
     <#
     .SYNOPSIS
@@ -120,6 +130,7 @@ function Process-PipelineInput {
 }
 
 # Wrong help format
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Bad-HelpFormat {
     # This is a comment, not proper help
     # Parameters: $Name
@@ -129,6 +140,7 @@ function Bad-HelpFormat {
 }
 
 # Missing component/role/functionality metadata
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Install-CustomComponent {
     <#
     .SYNOPSIS

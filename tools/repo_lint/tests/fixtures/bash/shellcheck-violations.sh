@@ -44,6 +44,7 @@ cd /tmp
 cd ..
 
 # SC2112: function keyword is non-standard
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function bad_func() {
     echo "hello"
 }

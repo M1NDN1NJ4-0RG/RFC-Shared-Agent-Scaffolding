@@ -8,16 +8,19 @@ InvalidVariableName = "bad"
 
 
 # C0111: missing docstring
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def no_docstring():
     pass
 
 
 # R0913: too many arguments
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def too_many_args(a, b, c, d, e, f, g):
     return a + b + c + d + e + f + g
 
 
 # R0914: too many local variables
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def too_many_locals():
     var1 = 1
     var2 = 2
@@ -39,6 +42,7 @@ def too_many_locals():
 
 
 # W0612: unused variable
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def unused_var():
     """Function with unused variable."""
     x = 10
@@ -47,12 +51,14 @@ def unused_var():
 
 
 # W0613: unused argument
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def unused_arg(x, y, z):
     """Function with unused arguments."""
     return x
 
 
 # R0915: too many statements
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def too_many_statements():
     """Function with too many statements."""
     x = 1
@@ -122,6 +128,7 @@ print(item)
 
 
 # R1705: unnecessary else after return
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def unnecessary_else(x):
     """Function with unnecessary else."""
     if x > 0:
@@ -131,10 +138,12 @@ def unnecessary_else(x):
 
 
 # W0621: redefining name from outer scope
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def outer():
     """Outer function."""
     x = 1
 
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def inner():
         """Inner function."""
         x = 2  # W0621
@@ -144,6 +153,7 @@ def outer():
 
 
 # C0413: import should be at top
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def function():
     """Function with import inside."""
     pass
@@ -152,6 +162,7 @@ def function():
 
 
 # W0107: unnecessary pass
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def empty_function():
     """Empty function."""
     pass
@@ -164,6 +175,7 @@ if True:
 
 
 # W0104: statement seems to have no effect
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def no_effect():
     """Function with no-effect statement."""
     x = 10

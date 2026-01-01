@@ -14,6 +14,7 @@ $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
 $unusedVar = "not used"
 
 # PSUseShouldProcessForStateChangingFunctions: missing ShouldProcess
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Remove-CustomItem {
     param([string]$Path)
     Remove-Item $Path
@@ -23,18 +24,21 @@ function Remove-CustomItem {
 $global:MyGlobal = "value"
 
 # PSUseSingularNouns: cmdlet nouns should be singular
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Get-Items {
     param()
     Get-ChildItem
 }
 
 # PSProvideCommentHelp: missing comment-based help
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Invoke-Something {
     param([string]$Name)
     Write-Output "Hello $Name"
 }
 
 # PSAvoidDefaultValueForMandatoryParameter: mandatory param with default
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Test-Function {
     param(
         [Parameter(Mandatory=$true)]
@@ -43,11 +47,13 @@ function Test-Function {
 }
 
 # PSReservedCmdletChar: invalid characters in cmdlet name
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Get-My_Item {
     param()
 }
 
 # PSAvoidUsingWriteHost: use Write-Output instead
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Show-Message {
     Write-Host "This is a message"
 }
@@ -57,6 +63,7 @@ $cmd = "Get-Process"
 Invoke-Expression $cmd
 
 # PSUsePSCredentialType: use PSCredential instead of string
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Connect-System {
     param(
         [string]$Username,
@@ -75,6 +82,7 @@ Invoke-Command -ComputerName "PROD-SERVER" -ScriptBlock {}
 if ($null -eq $variable) { }
 
 # PSUseApprovedVerbs: use approved verbs only
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Do-Something {
     param()
 }
@@ -95,6 +103,7 @@ Get-Process | Out-Null | Where-Object {$_.Name -eq "test"}
 $veryLongVariable = "This is an extremely long line that exceeds the recommended maximum line length and should trigger a PSScriptAnalyzer warning about line length"
 
 # PSAvoidDefaultValueSwitchParameter: switch param should not have default
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function Test-Switch {
     param(
         [switch]$Enable = $true

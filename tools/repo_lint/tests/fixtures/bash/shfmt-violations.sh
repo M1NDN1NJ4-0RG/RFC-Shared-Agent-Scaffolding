@@ -2,6 +2,7 @@
 # Test fixture for shfmt violations
 
 # Bad indentation (inconsistent tabs/spaces)
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function bad_indent() {
   echo "two spaces"
     echo "four spaces"
@@ -28,10 +29,12 @@ three
 )
 
 # Inconsistent brace style
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function style1() {
 echo "braces on same line"
 }
 
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function style2()
 {
 echo "braces on new line"
@@ -59,12 +62,15 @@ var2='single'
 var3=unquoted
 
 # Bad function definition style
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function func1 {
     echo "style 1"
 }
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 func2() {
     echo "style 2"
 }
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 function func3() {
     echo "style 3"
 }

@@ -28,6 +28,7 @@ result = undefined_variable + 10
 
 
 # E402: module level import not at top of file
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def some_function():
     pass
 
@@ -38,6 +39,7 @@ text = "just a string"
 
 
 # B006: mutable default argument
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def bad_default(items=[]):
     items.append(1)
     return items
@@ -47,11 +49,13 @@ def bad_default(items=[]):
 import datetime
 
 
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def bad_time(when=datetime.datetime.now()):
     return when
 
 
 # C901: function is too complex (McCabe complexity)
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def overly_complex_function(a, b, c):
     if a:
         if b:
@@ -82,10 +86,12 @@ for i in range(10):
 from typing import Optional
 
 
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 def old_style(x: Optional[str]) -> Optional[int]:
     pass
 
 
 # RUF: ruff-specific rules
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 class MyClass:  # RUF012: mutable class attributes should use typing.ClassVar
     default_list = []

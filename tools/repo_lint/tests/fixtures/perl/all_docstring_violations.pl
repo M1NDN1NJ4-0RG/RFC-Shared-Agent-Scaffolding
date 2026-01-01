@@ -5,12 +5,14 @@ use strict;
 use warnings;
 
 # Subroutine without POD
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub no_pod {
     my ($x) = @_;
     return $x * 2;
 }
 
 # Subroutine with incomplete POD
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub partial_pod {
 =head1 NAME
 
@@ -22,6 +24,7 @@ Just a name
 }
 
 # Missing parameter documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub missing_params {
 =head1 SYNOPSIS
 
@@ -33,6 +36,7 @@ Does something
 }
 
 # Missing return documentation
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub missing_return {
 =head1 DESCRIPTION
 
@@ -52,6 +56,7 @@ Computes a value based on input
 }
 
 # Missing examples
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub no_examples {
 =head1 NAME
 
@@ -67,6 +72,7 @@ Performs complex operations on input
 }
 
 # Wrong POD format
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub wrong_format {
     # This is a comment, not POD
     # Parameters: $x, $y
@@ -76,6 +82,7 @@ sub wrong_format {
 }
 
 # Missing SYNOPSIS section
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub missing_synopsis {
 =head1 NAME
 
@@ -90,8 +97,10 @@ Does things
 }
 
 # Package without POD
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 package NoDocPackage;
 
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub method {
     my ($self) = @_;
     return $self->{value};
@@ -100,6 +109,7 @@ sub method {
 1;
 
 # Method without POD in package
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 package PartialPackage;
 
 =head1 NAME
@@ -108,12 +118,14 @@ PartialPackage - Partially documented
 
 =cut
 
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub new {
     my ($class) = @_;
     return bless {}, $class;
 }
 
 # Missing POD for this method
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub process {
     my ($self, $data) = @_;
     return $data;
@@ -122,6 +134,7 @@ sub process {
 1;
 
 # Missing AUTHOR section
+# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 sub missing_author {
 =head1 NAME
 
