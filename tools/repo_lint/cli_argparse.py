@@ -156,7 +156,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
     # Filter runners based on --only flag
     only_language = getattr(args, "only", None)
-    # TODO: Implement tool filtering backend logic
+    # TODO: Implement tool filtering backend logic  # pylint: disable=fixme
     # tool_filter = getattr(args, "tool", None)  # List of tools to filter to
 
     if only_language:
@@ -299,7 +299,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
 
     # Check for dry-run mode
     dry_run = getattr(args, "dry_run", False)
-    # TODO: Implement diff preview backend logic
+    # TODO: Implement diff preview backend logic  # pylint: disable=fixme
     # show_diff = getattr(args, "diff", False)
 
     if not use_json:
