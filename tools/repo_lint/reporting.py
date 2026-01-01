@@ -93,11 +93,11 @@ def report_results(
         return report_results_csv(results, report_path or "report.csv")
     elif output_format == "xlsx":
         return report_results_xlsx(results, report_path or "report.xlsx")
-    
+
     # Use plain mode for CI if format is "plain"
     if output_format == "plain":
         ci_mode = True
-    
+
     # Create reporter
     reporter = Reporter(ci_mode=ci_mode)
 
@@ -143,7 +143,7 @@ def report_results(
     # Write report files if requested
     if report_path:
         _write_report_file(results, report_path, output_format)
-    
+
     if reports_dir:
         _write_reports_dir(results, reports_dir)
 
@@ -255,6 +255,7 @@ def report_results_json(results: List[LintResult], verbose: bool = False, report
     json_str = json.dumps(output, indent=2)
     if report_path:
         from pathlib import Path
+
         Path(report_path).write_text(json_str)
         print(f"Report written to {report_path}", file=sys.stderr)
     else:
@@ -338,9 +339,11 @@ def report_results_yaml(results: List[LintResult], verbose: bool = False, report
     # Output YAML
     try:
         import yaml
+
         yaml_str = yaml.dump(output, default_flow_style=False, sort_keys=False)
         if report_path:
             from pathlib import Path
+
             Path(report_path).write_text(yaml_str)
             print(f"Report written to {report_path}", file=sys.stderr)
         else:
@@ -382,14 +385,16 @@ def report_results_csv(results: List[LintResult], report_path: str) -> int:
                 all_passed = False
                 total_violations += len(result.violations)
 
-            writer.writerow({
-                "tool": result.tool,
-                "passed": result.passed,
-                "violations": len(result.violations) if not result.error else "N/A",
-                "files": result.file_count if result.file_count is not None else "N/A",
-                "duration": result.duration if result.duration is not None else "N/A",
-                "error": result.error or "",
-            })
+            writer.writerow(
+                {
+                    "tool": result.tool,
+                    "passed": result.passed,
+                    "violations": len(result.violations) if not result.error else "N/A",
+                    "files": result.file_count if result.file_count is not None else "N/A",
+                    "duration": result.duration if result.duration is not None else "N/A",
+                    "error": result.error or "",
+                }
+            )
 
     # Write violations CSV
     with open(violations_path, "w", newline="") as f:
@@ -398,12 +403,14 @@ def report_results_csv(results: List[LintResult], report_path: str) -> int:
         for result in results:
             if not result.error:
                 for violation in result.violations:
-                    writer.writerow({
-                        "tool": result.tool,
-                        "file": violation.file,
-                        "line": violation.line or "",
-                        "message": violation.message,
-                    })
+                    writer.writerow(
+                        {
+                            "tool": result.tool,
+                            "file": violation.file,
+                            "line": violation.line or "",
+                            "message": violation.message,
+                        }
+                    )
 
     print(f"Reports written to {summary_path} and {violations_path}", file=sys.stderr)
 
@@ -438,12 +445,12 @@ def report_results_xlsx(results: List[LintResult], report_path: str) -> int:
 
     # Create workbook
     wb = Workbook()
-    
+
     # Summary sheet
     ws_summary = wb.active
     ws_summary.title = "Summary"
     ws_summary.append(["Tool", "Passed", "Violations", "Files", "Duration", "Error"])
-    
+
     for result in results:
         if result.error:
             has_errors = True
@@ -451,28 +458,32 @@ def report_results_xlsx(results: List[LintResult], report_path: str) -> int:
             all_passed = False
             total_violations += len(result.violations)
 
-        ws_summary.append([
-            result.tool,
-            "Yes" if result.passed else "No",
-            len(result.violations) if not result.error else "N/A",
-            result.file_count if result.file_count is not None else "N/A",
-            result.duration if result.duration is not None else "N/A",
-            result.error or "",
-        ])
+        ws_summary.append(
+            [
+                result.tool,
+                "Yes" if result.passed else "No",
+                len(result.violations) if not result.error else "N/A",
+                result.file_count if result.file_count is not None else "N/A",
+                result.duration if result.duration is not None else "N/A",
+                result.error or "",
+            ]
+        )
 
     # Violations sheet
     ws_violations = wb.create_sheet("Violations")
     ws_violations.append(["Tool", "File", "Line", "Message"])
-    
+
     for result in results:
         if not result.error:
             for violation in result.violations:
-                ws_violations.append([
-                    result.tool,
-                    violation.file,
-                    violation.line or "",
-                    violation.message,
-                ])
+                ws_violations.append(
+                    [
+                        result.tool,
+                        violation.file,
+                        violation.line or "",
+                        violation.message,
+                    ]
+                )
 
     # Save workbook
     wb.save(report_path)
@@ -494,7 +505,7 @@ def _write_report_file(results: List[LintResult], report_path: str, output_forma
     :param output_format: Output format (auto-detected from extension if not specified)
     """
     from pathlib import Path
-    
+
     # Auto-detect format from file extension if format is 'rich' or 'plain'
     if output_format in ("rich", "plain"):
         ext = Path(report_path).suffix.lower()
@@ -506,7 +517,7 @@ def _write_report_file(results: List[LintResult], report_path: str, output_forma
             output_format = "csv"
         elif ext == ".xlsx":
             output_format = "xlsx"
-    
+
     # Write report (these functions handle the file writing internally)
     if output_format == "json":
         report_results_json(results, verbose=False, report_path=report_path)
@@ -525,28 +536,32 @@ def _write_reports_dir(results: List[LintResult], reports_dir: str) -> None:
     :param reports_dir: Directory to write reports
     """
     from pathlib import Path
-    
+
     reports_path = Path(reports_dir)
     reports_path.mkdir(parents=True, exist_ok=True)
-    
+
     # Write per-tool JSON reports
     for result in results:
         tool_report_path = reports_path / f"{result.tool}.json"
         tool_data = {
             "tool": result.tool,
             "passed": result.passed,
-            "violations": [
-                {
-                    "file": v.file,
-                    "line": v.line,
-                    "message": v.message,
-                }
-                for v in result.violations
-            ] if not result.error else [],
+            "violations": (
+                [
+                    {
+                        "file": v.file,
+                        "line": v.line,
+                        "message": v.message,
+                    }
+                    for v in result.violations
+                ]
+                if not result.error
+                else []
+            ),
             "error": result.error,
         }
         tool_report_path.write_text(json.dumps(tool_data, indent=2))
-    
+
     # Write index summary
     index_path = reports_path / "index.json"
     index_data = {
@@ -558,7 +573,7 @@ def _write_reports_dir(results: List[LintResult], reports_dir: str) -> None:
         "tools": [r.tool for r in results],
     }
     index_path.write_text(json.dumps(index_data, indent=2))
-    
+
     print(f"Per-tool reports written to {reports_dir}/", file=sys.stderr)
     output["summary"] = {
         "passed": all_passed and not has_errors,
