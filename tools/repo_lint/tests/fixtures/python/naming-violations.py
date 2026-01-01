@@ -5,7 +5,6 @@ This file intentionally violates Python PEP 8 naming conventions.
 It uses kebab-case instead of snake_case to test naming enforcement.
 """
 
-
 # This file name itself (naming-violations.py) violates snake_case
 # Expected: naming_violations.py
 # Actual: naming-violations.py (kebab-case - WRONG for Python)
@@ -18,6 +17,7 @@ def ThisFunctionShouldBeSnakeCase():
 
 class lowercase_class:
     """Class names should be PascalCase, not snake_case."""
+
     pass
 
 
