@@ -30,6 +30,7 @@
 import sys
 from typing import Any, Dict, List, Optional
 
+from rich.markup import escape
 from rich.panel import Panel
 from rich.table import Table
 
@@ -39,6 +40,10 @@ from tools.repo_lint.ui.theme import UITheme, get_box_style, get_theme
 
 # Maximum number of violations to display per tool (to avoid overwhelming output)
 MAX_VIOLATIONS_PER_TOOL = 50
+
+# Constants for error code extraction
+MAX_MESSAGE_LENGTH_FOR_CODE = 50
+TRUNCATED_CODE_LENGTH = 30
 
 
 class Reporter:
@@ -332,8 +337,6 @@ class Reporter:
 
                     # Escape Rich markup in messages to prevent rendering errors
                     # (violation messages may contain code snippets with bracket syntax)
-                    from rich.markup import escape
-
                     message = escape(message)
 
                     if show_files:
@@ -460,18 +463,18 @@ class Reporter:
 
             for result in results:
                 if result.error:
-                    status = self._styled("ERROR", "failure") if not self.ci_mode else "ERROR"
+                    status = self._format_with_color("ERROR", "failure") if not self.ci_mode else "ERROR"
                     violations_count = "N/A"
                 elif result.passed:
                     status = (
-                        self._styled(f"{self._get_icon('pass')} PASS", "success")
+                        self._format_with_color(f"{self._get_icon('pass')} PASS", "success")
                         if not self.ci_mode
                         else f"{self._get_icon('pass')} PASS"
                     )
                     violations_count = "0"
                 else:
                     status = (
-                        self._styled(f"{self._get_icon('fail')} FAIL", "failure")
+                        self._format_with_color(f"{self._get_icon('fail')} FAIL", "failure")
                         if not self.ci_mode
                         else f"{self._get_icon('fail')} FAIL"
                     )
@@ -537,7 +540,11 @@ class Reporter:
                             # No colon - use first word or entire message if short
                             words = violation.message.split()
                             if words:
-                                code = words[0] if len(violation.message) <= 50 else violation.message[:30] + "..."
+                                code = (
+                                    words[0]
+                                    if len(violation.message) <= MAX_MESSAGE_LENGTH_FOR_CODE
+                                    else violation.message[:TRUNCATED_CODE_LENGTH] + "..."
+                                )
                         codes_dict[f"{result.tool}:{code}"] += 1
 
             table = Table(
