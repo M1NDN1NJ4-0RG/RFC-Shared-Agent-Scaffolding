@@ -249,6 +249,7 @@ def cli(ctx):
 )
 @click.option(
     "--format",
+    "output_format",
     type=click.Choice(["rich", "plain", "json", "yaml", "csv", "xlsx"], case_sensitive=False),
     help="Output format (rich=TTY default, plain=CI default, json/yaml/csv/xlsx=structured)",
 )
@@ -306,7 +307,7 @@ def check(
     tool,
     changed_only,
     use_json,
-    format,
+    output_format,
     summary,
     summary_only,
     summary_format,
@@ -384,7 +385,7 @@ def check(
     :param tool: Filter to specific tool(s) (repeatable)
     :param changed_only: Only check files changed in git
     :param use_json: Output results in JSON format (deprecated: use --format json)
-    :param format: Output format (rich|plain|json|yaml|csv|xlsx)
+    :param output_format: Output format (rich|plain|json|yaml|csv|xlsx)
     :param summary: Show summary after results
     :param summary_only: Show ONLY summary (no individual violations)
     :param summary_format: Summary format (short|by-tool|by-file|by-code)
@@ -408,7 +409,7 @@ def check(
         json=use_json,
         tool=list(tool) if tool else None,
         changed_only=changed_only,
-        format=format,
+        format=output_format,
         summary=summary,
         summary_only=summary_only,
         summary_format=summary_format,
@@ -467,6 +468,7 @@ def check(
 )
 @click.option(
     "--format",
+    "output_format",
     type=click.Choice(["rich", "plain", "json", "yaml"], case_sensitive=False),
     help="Output format (rich=TTY default, plain=CI default, json/yaml=structured)",
 )
@@ -492,7 +494,20 @@ def check(
     help="Show unified diff previews (TTY-only)",
 )
 # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
-def fix(verbose, ci_mode, only, lang, tool, changed_only, use_json, format, unsafe, yes_i_know, dry_run, diff):
+def fix(
+    verbose,
+    ci_mode,
+    only,
+    lang,
+    tool,
+    changed_only,
+    use_json,
+    output_format,
+    unsafe,
+    yes_i_know,
+    dry_run,
+    diff,
+):
     """Apply automatic fixes (formatters only).
 
     \b
@@ -574,7 +589,7 @@ def fix(verbose, ci_mode, only, lang, tool, changed_only, use_json, format, unsa
     :param tool: Filter to specific tool(s) (repeatable)
     :param changed_only: Only fix files changed in git
     :param use_json: Output results in JSON format (deprecated: use --format json)
-    :param format: Output format (rich|plain|json|yaml)
+    :param output_format: Output format (rich|plain|json|yaml)
     :param unsafe: Enable unsafe experimental fixers (DANGER - requires --yes-i-know)
     :param yes_i_know: Confirmation flag required for unsafe mode
     :param dry_run: Show what would be changed without modifying files
@@ -593,7 +608,7 @@ def fix(verbose, ci_mode, only, lang, tool, changed_only, use_json, format, unsa
         json=use_json,
         tool=list(tool) if tool else None,
         changed_only=changed_only,
-        format=format,
+        format=output_format,
         unsafe=unsafe,
         yes_i_know=yes_i_know,
         dry_run=dry_run,
@@ -698,7 +713,6 @@ def install(verbose, cleanup):
     sys.exit(exit_code)
 
 
-# Doctor command
 @cli.command()
 @click.option(
     "--ci",
@@ -707,6 +721,7 @@ def install(verbose, cleanup):
 )
 @click.option(
     "--format",
+    "output_format",
     type=click.Choice(["rich", "plain", "json", "yaml"], case_sensitive=False),
     help="Output format (rich=TTY default, plain=CI default, json/yaml=structured)",
 )
@@ -715,7 +730,7 @@ def install(verbose, cleanup):
     type=click.Path(),
     help="Write diagnostic report to file (format auto-detected from extension)",
 )
-def doctor(ci, format, report):
+def doctor(ci, output_format, report):
     """Diagnose repo-lint installation and configuration.
 
     \b
@@ -770,7 +785,7 @@ def doctor(ci, format, report):
     See HOW-TO-USE-THIS-TOOL.md for detailed troubleshooting guide.
 
     :param ci: CI mode - stable output, fail on any errors
-    :param format: Output format (rich|plain|json|yaml)
+    :param output_format: Output format (rich|plain|json|yaml)
     :param report: Write diagnostic report to file
     """
     import argparse  # Local import
@@ -779,7 +794,7 @@ def doctor(ci, format, report):
 
     args = argparse.Namespace(
         ci=ci,
-        format=format,
+        format=output_format,
         report=report,
     )
 
@@ -810,10 +825,19 @@ def list_langs():
 
     :returns: Exit code 0
     """
-    langs = ["python", "bash", "powershell", "perl", "yaml", "rust"]
-    for lang in langs:
-        print(lang)
-    sys.exit(0)
+    from tools.repo_lint.yaml_loader import load_linting_rules
+
+    try:
+        rules = load_linting_rules()
+        languages = rules.get("languages", {})
+
+        for lang in sorted(languages.keys()):
+            print(lang)
+
+        sys.exit(0)
+    except Exception as e:
+        print(f"❌ Error loading language registry: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 # List-tools command

@@ -16,6 +16,9 @@
     - PATH sanity checks
     - Config file validity (YAML syntax, required fields, schema)
 
+:Environment Variables:
+    None - all configuration via command-line arguments
+
 :Exit Codes:
     - 0: All checks passed (environment healthy)
     - 1: Some checks failed (issues detected)
@@ -176,7 +179,11 @@ def check_path_sanity() -> Tuple[bool, str, str]:
         venv_bin = venv_path / "bin" if os.name != "nt" else venv_path / "Scripts"
 
         if venv_path.exists():
-            venv_in_path = any(str(venv_bin) in entry for entry in path_entries)
+            venv_bin_str = os.fspath(venv_bin)
+            normalized_venv_bin = os.path.normcase(os.path.normpath(venv_bin_str))
+            venv_in_path = any(
+                os.path.normcase(os.path.normpath(entry)) == normalized_venv_bin for entry in path_entries if entry
+            )
             if venv_in_path:
                 return True, f"Virtual environment in PATH: {venv_bin}", str(venv_bin)
             else:

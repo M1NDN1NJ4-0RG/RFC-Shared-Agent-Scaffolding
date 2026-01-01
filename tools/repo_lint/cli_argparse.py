@@ -205,9 +205,6 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 )
                 print("   Run 'repo-lint install' to install them")
                 print("")
-                # If fail-fast is enabled, stop on first error
-                if fail_fast:
-                    return ExitCode.MISSING_TOOLS
                 return ExitCode.MISSING_TOOLS
 
             results = action_callback(runner)
