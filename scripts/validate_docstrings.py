@@ -238,14 +238,16 @@ def __getattr__(name):
     raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 
-def get_tracked_files() -> List[Path]:
+def get_tracked_files(include_fixtures: bool = False) -> List[Path]:
     """Get all tracked files matching in-scope patterns using git (YAML-first, Phase 2.9).
 
+    :param include_fixtures: Whether to include test fixture files (vector mode)
     :returns: List of Path objects for files that match in-scope patterns and are not excluded
 
     :Note:
         Updated in Phase 2.9 to load patterns from YAML configuration instead of
-        hardcoded constants.
+        hardcoded constants. When include_fixtures=True (vector mode), test fixture
+        files are included in the results.
     """
     try:
         result = subprocess.run(
@@ -287,11 +289,13 @@ def get_tracked_files() -> List[Path]:
         # Check if file is in an excluded directory
         # Compatibility-friendly check: treat file as excluded if it is the
         # directory itself or is located within that directory.
+        # Skip fixture exclusions when in vector mode (include_fixtures=True)
         excluded = False
-        for exclude_dir in exclude_dirs:
-            if p == exclude_dir or exclude_dir in p.parents:
-                excluded = True
-                break
+        if not include_fixtures:
+            for exclude_dir in exclude_dirs:
+                if p == exclude_dir or exclude_dir in p.parents:
+                    excluded = True
+                    break
 
         if excluded:
             continue
@@ -418,6 +422,11 @@ Examples:
         default="all",
         help="Restrict validation to specific language files only. Default: all",
     )
+    parser.add_argument(
+        "--include-fixtures",
+        action="store_true",
+        help="Include test fixture files in validation (vector mode for testing)",
+    )
 
     args = parser.parse_args()
 
@@ -438,7 +447,7 @@ Examples:
         print(f"Validating {len(files)} specified file(s)\n")
     else:
         # Full repository scan
-        files = get_tracked_files()
+        files = get_tracked_files(include_fixtures=args.include_fixtures)
         print(f"Found {len(files)} files in scope\n")
 
     # Apply language filter

@@ -190,8 +190,12 @@ class PowerShellRunner(Runner):
             return LintResult(tool="validate_docstrings", passed=True, violations=[])
 
         # Run validator for powershell language only (no need for --file args with --language flag)
+        cmd = [sys.executable, str(validator_script), "--language", "powershell"]
+        if self._include_fixtures:
+            cmd.append("--include-fixtures")
+
         result = subprocess.run(
-            [sys.executable, str(validator_script), "--language", "powershell"],
+            cmd,
             cwd=self.repo_root,
             capture_output=True,
             text=True,

@@ -406,8 +406,13 @@ class PythonRunner(Runner):
                 "This check was not executed.",
             )
 
+        # Build command with include-fixtures flag if in vector mode
+        cmd = [sys.executable, str(validator_script), "--language", "python"]
+        if self._include_fixtures:
+            cmd.append("--include-fixtures")
+
         result = subprocess.run(
-            [sys.executable, str(validator_script), "--language", "python"],
+            cmd,
             cwd=self.repo_root,
             capture_output=True,
             text=True,

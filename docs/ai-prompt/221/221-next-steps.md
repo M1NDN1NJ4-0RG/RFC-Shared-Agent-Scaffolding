@@ -6,7 +6,6 @@ Last Updated: 2026-01-01
 Related: Issue #221, PR #222
 
 ## NEXT
-- Phase 2: Fix docstring validators to respect include_fixtures flag
 - Phase 2: Test --include-fixtures flag works correctly with all runners
 - Phase 3: Add vector integration tests
 - Phase 4: Review existing runner unit tests
@@ -16,6 +15,33 @@ Related: Issue #221, PR #222
 <>><------- NEXT STEPS DELIMITER BETWEEN COMPLETED STEPS -------><<>
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-01 10:00 - Phase 2 Complete: Docstring Validators Now Respect --include-fixtures
+**Files Changed:**
+- `scripts/validate_docstrings.py`: Added `--include-fixtures` CLI argument
+- `scripts/validate_docstrings.py`: Modified `get_tracked_files()` to accept `include_fixtures` parameter
+- `scripts/validate_docstrings.py`: Updated exclusion logic to skip fixture dirs only when NOT in vector mode
+- `scripts/validate_docstrings.py`: Pass `args.include_fixtures` to `get_tracked_files()` call
+- `tools/repo_lint/runners/python_runner.py`: Updated `_run_docstring_validation()` to pass --include-fixtures flag
+- `tools/repo_lint/runners/bash_runner.py`: Updated `_run_docstring_validation()` to pass --include-fixtures flag
+- `tools/repo_lint/runners/perl_runner.py`: Updated `_run_docstring_validation()` to pass --include-fixtures flag
+- `tools/repo_lint/runners/powershell_runner.py`: Updated `_run_docstring_validation()` to pass --include-fixtures flag
+- `tools/repo_lint/runners/rust_runner.py`: Updated `_run_docstring_validation()` to pass --include-fixtures flag
+
+**Changes Made:**
+- Added `--include-fixtures` flag to validate_docstrings.py script
+- Modified exclusion logic in validate_docstrings.py to respect the flag (skip fixture exclusions when flag is set)
+- Updated all 5 language runners (Python, Bash, Perl, PowerShell, Rust) to pass --include-fixtures flag when calling docstring validator
+- Each runner checks `self._include_fixtures` and appends the flag to the command if True
+
+**Verification:**
+- Normal mode: `repo-lint check --ci` - passes, all docstring validators pass (fixtures excluded)
+- Vector mode: `repo-lint check --include-fixtures --only python` - correctly detects violations in fixture files
+  - validate_docstrings now reports 20 violations from fixture files
+  - pylint reports violations from black-violations.py and pylint-violations.py
+- Docstring validators now fully support vector mode across all languages
+
+---
 
 ### 2026-01-01 09:00 - Phase 2 Partial: Fixed Exclusion Duplication & Added --include-fixtures Flag
 **Files Changed:**

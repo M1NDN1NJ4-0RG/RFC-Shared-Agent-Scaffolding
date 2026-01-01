@@ -316,8 +316,12 @@ class RustRunner(Runner):
                 print("  Docstring validator script not found, skipping")
             return LintResult(tool="rust-docstrings", passed=True, violations=[])
 
+        cmd = ["python3", str(validator_script), "--language", "rust"]
+        if self._include_fixtures:
+            cmd.append("--include-fixtures")
+
         result = subprocess.run(
-            ["python3", str(validator_script), "--language", "rust"],
+            cmd,
             cwd=self.repo_root,
             capture_output=True,
             text=True,

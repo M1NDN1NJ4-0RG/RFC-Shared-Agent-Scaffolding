@@ -156,8 +156,12 @@ class PerlRunner(Runner):
             return LintResult(tool="validate_docstrings", passed=True, violations=[])
 
         # Run validator for perl language only (no need for --file args with --language flag)
+        cmd = [sys.executable, str(validator_script), "--language", "perl"]
+        if self._include_fixtures:
+            cmd.append("--include-fixtures")
+
         result = subprocess.run(
-            [sys.executable, str(validator_script), "--language", "perl"],
+            cmd,
             cwd=self.repo_root,
             capture_output=True,
             text=True,
