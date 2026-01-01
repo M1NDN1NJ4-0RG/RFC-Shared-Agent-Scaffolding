@@ -30,6 +30,7 @@
 import sys
 from typing import Any, Dict, List, Optional
 
+from rich.markup import escape
 from rich.panel import Panel
 from rich.table import Table
 
@@ -39,6 +40,10 @@ from tools.repo_lint.ui.theme import UITheme, get_box_style, get_theme
 
 # Maximum number of violations to display per tool (to avoid overwhelming output)
 MAX_VIOLATIONS_PER_TOOL = 50
+
+# Constants for error code extraction
+MAX_MESSAGE_LENGTH_FOR_CODE = 50
+TRUNCATED_CODE_LENGTH = 30
 
 
 class Reporter:
@@ -109,6 +114,29 @@ class Reporter:
             "metadata": colors.metadata,
         }
         return color_map.get(color_type, "")
+
+    def _extract_error_code(self, message: str) -> str:
+        """Extract error code from violation message.
+
+        Attempts to extract a meaningful code identifier from the message.
+        If the message contains a colon, assumes format "CODE: description".
+        Otherwise, uses the first word if the message is short enough
+        (MAX_MESSAGE_LENGTH_FOR_CODE=50 chars), or truncates longer messages
+        to TRUNCATED_CODE_LENGTH=30 chars to keep table columns readable.
+
+        :param message: Violation message
+        :returns: Error code or first word of message
+        """
+        if ":" in message:
+            return message.split(":")[0].strip()
+
+        # No colon - use first word or entire message if short
+        words = message.split()
+        if words:
+            if len(message) <= MAX_MESSAGE_LENGTH_FOR_CODE:
+                return words[0]
+            return message[:TRUNCATED_CODE_LENGTH] + "..."
+        return "UNKNOWN"
 
     def _format_with_color(self, text: str, color_type: str, bold: bool = False) -> str:
         """Format text with color and optional bold.
@@ -330,8 +358,12 @@ class Reporter:
                         # Strip code from message (e.g., "E501: line too long" -> "line too long")
                         message = message.split(":", 1)[1].strip()
 
+                    # Escape Rich markup in messages to prevent rendering errors
+                    # (violation messages may contain code snippets with bracket syntax)
+                    message = escape(message)
+
                     if show_files:
-                        violations_table.add_row(violation.file, line_str, message)
+                        violations_table.add_row(escape(violation.file), line_str, message)
                     else:
                         # Include file in message when not showing file column
                         full_message = (
@@ -339,7 +371,7 @@ class Reporter:
                             if line_str != "-"
                             else f"{violation.file} - {message}"
                         )
-                        violations_table.add_row(line_str, full_message)
+                        violations_table.add_row(line_str, escape(full_message))
 
                     violations_displayed += 1
 
@@ -353,10 +385,14 @@ class Reporter:
             warn_icon = self._get_icon("warn")
             warn_color = self._get_color("warning")
             self.console.print()
-            self.console.print(
-                f"[{warn_color}]{warn_icon} Maximum violations limit reached ({max_violations}). "
-                f"Additional violations not displayed.[/{warn_color}]"
+            message = (
+                f"{warn_icon} Maximum violations limit reached ({max_violations}). "
+                "Additional violations not displayed."
             )
+            if self.ci_mode:
+                self.console.print(message)
+            else:
+                self.console.print(f"[{warn_color}]{message}[/{warn_color}]")
             self.console.print()
 
     def render_final_summary(self, results: List[LintResult], exit_code: ExitCode) -> None:
@@ -397,7 +433,14 @@ class Reporter:
             border_style = self._get_color("failure") if not self.ci_mode else "white"
 
         box_style = get_box_style(self.theme, self.ci_mode)
-        panel = Panel(content, title=title_formatted, border_style=border_style, box=box_style)
+        panel = Panel(
+            content,
+            title=title_formatted,
+            border_style=border_style,
+            box=box_style,
+            expand=False,
+            padding=(0, 1),
+        )
 
         self.console.print(panel)
 
@@ -423,8 +466,16 @@ class Reporter:
 
         if format_type == "short":
             # Short format: single line summary
-            summary = f"{status_icon} {tools_run} tool(s) run, {total_violations} violation(s), {total_errors} error(s)"
-            self.console.print(f"[{status_color}]{summary}[/{status_color}]")
+            summary_line = (
+                f"{status_icon} {tools_run} tool(s) run, {total_violations} violation(s), {total_errors} error(s)"
+            )
+            if self.ci_mode:
+                self.console.print("\nSummary:")
+                self.console.print(summary_line)
+            else:
+                self.console.print()
+                self.console.print("[bold]Summary:[/bold]")
+                self.console.print(f"[{status_color}]{summary_line}[/{status_color}]")
 
         elif format_type == "by-tool":
             # By-tool format: violations grouped by tool
@@ -442,16 +493,20 @@ class Reporter:
 
             for result in results:
                 if result.error:
-                    status = f"[{self._get_color('failure')}]ERROR[/{self._get_color('failure')}]"
+                    status = self._format_with_color("ERROR", "failure") if not self.ci_mode else "ERROR"
                     violations_count = "N/A"
                 elif result.passed:
                     status = (
-                        f"[{self._get_color('success')}]{self._get_icon('pass')} PASS[/{self._get_color('success')}]"
+                        self._format_with_color(f"{self._get_icon('pass')} PASS", "success")
+                        if not self.ci_mode
+                        else f"{self._get_icon('pass')} PASS"
                     )
                     violations_count = "0"
                 else:
                     status = (
-                        f"[{self._get_color('failure')}]{self._get_icon('fail')} FAIL[/{self._get_color('failure')}]"
+                        self._format_with_color(f"{self._get_icon('fail')} FAIL", "failure")
+                        if not self.ci_mode
+                        else f"{self._get_icon('fail')} FAIL"
                     )
                     violations_count = str(len(result.violations))
 
@@ -461,7 +516,10 @@ class Reporter:
             self.console.print()
             self.console.print(table)
             self.console.print()
-            self.console.print(f"[{status_color}]Total: {total_violations} violation(s)[/{status_color}]")
+            if self.ci_mode:
+                self.console.print(f"Total: {total_violations} violation(s)")
+            else:
+                self.console.print(f"[{status_color}]Total: {total_violations} violation(s)[/{status_color}]")
 
         elif format_type == "by-file":
             # By-file format: violations grouped by file
@@ -491,7 +549,10 @@ class Reporter:
             self.console.print()
             self.console.print(table)
             self.console.print()
-            self.console.print(f"[{status_color}]{len(files_dict)} file(s) with violations[/{status_color}]")
+            if self.ci_mode:
+                self.console.print(f"{len(files_dict)} file(s) with violations")
+            else:
+                self.console.print(f"[{status_color}]{len(files_dict)} file(s) with violations[/{status_color}]")
 
         elif format_type == "by-code":
             # By-code format: violations grouped by error code
@@ -501,10 +562,7 @@ class Reporter:
             for result in results:
                 if not result.error and not result.passed:
                     for violation in result.violations:
-                        # Extract error code from message if available (e.g., "E501: line too long")
-                        code = "UNKNOWN"
-                        if ":" in violation.message:
-                            code = violation.message.split(":")[0].strip()
+                        code = self._extract_error_code(violation.message)
                         codes_dict[f"{result.tool}:{code}"] += 1
 
             table = Table(
@@ -523,7 +581,10 @@ class Reporter:
             self.console.print()
             self.console.print(table)
             self.console.print()
-            self.console.print(f"[{status_color}]{len(codes_dict)} unique code(s)[/{status_color}]")
+            if self.ci_mode:
+                self.console.print(f"{len(codes_dict)} unique code(s)")
+            else:
+                self.console.print(f"[{status_color}]{len(codes_dict)} unique code(s)[/{status_color}]")
 
         # Add exit code
         self.console.print()

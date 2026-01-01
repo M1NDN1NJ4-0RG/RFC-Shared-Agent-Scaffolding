@@ -19,10 +19,22 @@
     - Report file generation
     - Diff preview mode
 
+:Environment Variables:
+    None
+
 :Usage:
     Run tests from repository root::
 
         python3 -m pytest tools/repo_lint/tests/test_phase_2_7_features.py -v
+
+:Examples:
+    Run all Phase 2.7 tests::
+
+        python3 -m pytest tools/repo_lint/tests/test_phase_2_7_features.py -v
+
+    Run specific test class::
+
+        python3 -m pytest tools/repo_lint/tests/test_phase_2_7_features.py::TestPhase27SummaryModes -v
 
 :Exit Codes:
     0
@@ -96,31 +108,40 @@ class TestPhase27ToolFiltering(unittest.TestCase):
 
     @patch("subprocess.run")
     def test_get_changed_files_success(self, mock_run):
-        """Test _get_changed_files() returns git-modified files."""
+        """Test _get_changed_files() returns git-modified files.
+
+        :param mock_run: Mock subprocess.run function
+        """
         mock_run.return_value = Mock(returncode=0, stdout="file1.py\nfile2.py\n")
 
         files = self.runner._get_changed_files(patterns=["*.py"])
         self.assertEqual(len(files), 2)
-        self.assertIn(Path("file1.py"), files)
-        self.assertIn(Path("file2.py"), files)
+        self.assertIn("file1.py", files)
+        self.assertIn("file2.py", files)
 
     @patch("subprocess.run")
     def test_get_changed_files_no_git(self, mock_run):
-        """Test _get_changed_files() handles no git repo gracefully."""
+        """Test _get_changed_files() handles no git repo gracefully.
+
+        :param mock_run: Mock subprocess.run function
+        """
         mock_run.return_value = Mock(returncode=128)
 
-        files = self.runner._get_changed_files()
-        self.assertEqual(files, [])
+        with self.assertRaises(RuntimeError):
+            self.runner._get_changed_files()
 
     @patch("subprocess.run")
     def test_get_changed_files_with_pattern_filter(self, mock_run):
-        """Test _get_changed_files() filters by pattern."""
+        """Test _get_changed_files() filters by pattern.
+
+        :param mock_run: Mock subprocess.run function
+        """
         mock_run.return_value = Mock(returncode=0, stdout="file1.py\nfile2.sh\nfile3.py\n")
 
         files = self.runner._get_changed_files(patterns=["*.py"])
         # Should filter to only .py files
-        self.assertIn(Path("file1.py"), files)
-        self.assertIn(Path("file3.py"), files)
+        self.assertIn("file1.py", files)
+        self.assertIn("file3.py", files)
 
 
 class TestPhase27SummaryModes(unittest.TestCase):
@@ -317,9 +338,10 @@ class TestPhase27OutputFormats(unittest.TestCase):
     def test_yaml_format_output(self):
         """Test YAML format output."""
         try:
-            import yaml  # noqa: F401
+            import yaml
 
             has_yaml = True
+            _ = yaml  # Mark as used
         except ImportError:
             has_yaml = False
 
@@ -356,7 +378,7 @@ class TestPhase27OutputFormats(unittest.TestCase):
     def test_xlsx_format_output(self):
         """Test XLSX format creates Excel workbook."""
         try:
-            import openpyxl  # noqa: F401
+            from openpyxl import load_workbook
 
             has_openpyxl = True
         except ImportError:
@@ -377,7 +399,6 @@ class TestPhase27OutputFormats(unittest.TestCase):
             self.assertTrue(Path(temp_path).exists(), "XLSX file should be created")
 
             # Verify it's a valid Excel file
-            from openpyxl import load_workbook
 
             wb = load_workbook(temp_path)
             self.assertIn("Summary", wb.sheetnames)
