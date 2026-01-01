@@ -334,7 +334,11 @@ class Reporter:
                         violations_table.add_row(violation.file, line_str, message)
                     else:
                         # Include file in message when not showing file column
-                        full_message = f"{violation.file}:{line_str} - {message}" if line_str != "-" else f"{violation.file} - {message}"
+                        full_message = (
+                            f"{violation.file}:{line_str} - {message}"
+                            if line_str != "-"
+                            else f"{violation.file} - {message}"
+                        )
                         violations_table.add_row(line_str, full_message)
 
                     violations_displayed += 1
