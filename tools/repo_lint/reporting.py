@@ -494,6 +494,7 @@ def report_results_xlsx(results: List[LintResult], report_path: str) -> int:
     else:
         return int(ExitCode.VIOLATIONS)
 
+
 def _write_report_file(results: List[LintResult], report_path: str, output_format: str) -> None:
     """Write consolidated report to file based on format.
 
