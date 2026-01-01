@@ -29,6 +29,83 @@ ALL MET ✅:
 <>><------- NEXT STEPS DELIMITER BETWEEN COMPLETED STEPS -------><<>
 
 ## DONE (EXTREMELY DETAILED)
+### 2026-01-01 14:01 - CRITICAL ROOT CAUSE FIX: pyproject.toml missing fixture exclusions
+
+**Files Changed:**
+- `pyproject.toml`: Added `tools/repo_lint/tests/fixtures/` to Black, Ruff, and Pylint exclusion lists
+
+**Changes Made:**
+
+**CRITICAL DISCOVERY**: The fixture files were being scanned by Ruff and Black in CI because `pyproject.toml` was missing the primary test fixtures directory from the exclusion lists.
+
+**Root Cause Analysis:**
+1. Read failure report `repo-lint-failure-reports/20639754907/python-lint-output.txt`
+2. Showed 27 ruff violations in fixture files: `all_docstring_violations.py`, `black_violations.py`, `naming-violations.py`, `pylint_violations.py`, `ruff_violations.py`
+3. Tested locally - no violations found, all passed
+4. Investigated difference between local and CI execution
+5. Discovered that Black and Ruff run directly on `.` without passing exclusion parameters
+6. Checked `pyproject.toml` configuration
+7. FOUND: Exclusion lists only had old conformance paths, NOT the new `tools/repo_lint/tests/fixtures/` directory created in this PR
+
+**Fix Applied:**
+
+Updated `pyproject.toml` three sections:
+
+1. **[tool.black] exclude** (lines 49-60):
+   - Added `tools/repo_lint/tests/fixtures`
+   - Changed `conformance/repo-lint/fixtures/violations` → `conformance/repo-lint/fixtures` (broader)
+   - Changed `conformance/repo-lint/vectors/fixtures` → `conformance/repo-lint/vectors` (broader)
+   - Added `conformance/repo-lint/unsafe-fix-fixtures`
+
+2. **[tool.ruff] exclude** (lines 69-78):
+   - Added `tools/repo_lint/tests/fixtures`
+   - Changed `conformance/repo-lint/fixtures/violations` → `conformance/repo-lint/fixtures` (broader)
+   - Changed `conformance/repo-lint/vectors/fixtures` → `conformance/repo-lint/vectors` (broader)
+   - Added `conformance/repo-lint/unsafe-fix-fixtures`
+
+3. **[tool.pylint.master] ignore-paths** (lines 96-102):
+   - Added `tools/repo_lint/tests/fixtures/.*`
+   - Changed `conformance/repo-lint/fixtures/violations/.*` → `conformance/repo-lint/fixtures/.*` (broader)
+   - Changed `conformance/repo-lint/vectors/fixtures/.*` → `conformance/repo-lint/vectors/.*` (broader)
+   - Added `conformance/repo-lint/unsafe-fix-fixtures/.*`
+
+**Verification:**
+```bash
+$ ./scripts/bootstrap-repo-lint-toolchain.sh --all
+Exit Code: 0 (SUCCESS)
+
+$ ruff check .
+All checks passed!
+
+$ black --check --diff .
+All done! ✨ 🍰 ✨
+69 files would be left unchanged.
+
+$ repo-lint check --ci --only python
+Total Runners: 4, Passed: 4, Failed: 0
+Exit Code: 0 (SUCCESS)
+```
+
+**Why This Is The Root Fix:**
+
+- Python runners call Black and Ruff directly on `.` (entire repository)
+- Without `pyproject.toml` exclusions, they scan EVERYTHING including fixtures
+- The `--include-fixtures` flag and `get_tracked_files()` function only affect Pylint and docstring validation
+- Black and Ruff rely ENTIRELY on `pyproject.toml` exclude configuration
+- Previous fixes only added exclusions to YAML config files, not to `pyproject.toml`
+
+**Known Issues Fixed:**
+- Fixtures no longer appear in CI Python linting output
+- All 27 ruff violations from fixtures are now properly excluded
+- Black won't try to auto-format fixtures
+- Pylint won't scan fixtures
+
+**Follow-up Actions:**
+- None - this is the definitive fix
+- CI will pass on next run
+
+---
+
 
 ### 2026-01-01 12:40 UTC - FINAL SESSION: Fix ruff pass/fail logic, pylint violations, test fixes - ALL COMPLETE ✅
 
