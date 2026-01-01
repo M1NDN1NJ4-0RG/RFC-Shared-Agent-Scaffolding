@@ -1,0 +1,101 @@
+# Test fixture for actionlint violations
+# GitHub Actions workflow with intentional errors
+
+name: Test Workflow
+
+on:
+  # Unknown event type
+  unknown_event:
+    branches: [main]
+  
+  push:
+    # Invalid branch pattern
+    branches: ["***invalid***"]
+
+jobs:
+  bad-job:
+    # Unknown runner
+    runs-on: nonexistent-runner
+    
+    steps:
+      # Missing required 'uses' or 'run'
+      - name: Invalid step
+      
+      # Unknown action
+      - uses: fake/nonexistent-action@v999
+      
+      # Invalid version format
+      - uses: actions/checkout@invalid-version
+      
+      # Typo in standard action
+      - uses: actions/checkot@v3
+      
+      # Missing required input
+      - uses: actions/github-script@v6
+        # Missing 'script' input
+      
+      # Invalid shell type
+      - run: echo "test"
+        shell: invalidshell
+      
+      # Undefined environment variable
+      - run: echo $UNDEFINED_VAR
+      
+      # Invalid expression syntax
+      - run: echo "test"
+        if: ${{ invalid expression }}
+      
+      # Unknown context
+      - run: echo ${{ contexts.unknown }}
+      
+      # Deprecated command
+      - run: echo "::set-env name=VAR::value"
+      
+      # Invalid matrix reference
+      - run: echo ${{ matrix.nonexistent }}
+      
+      # Type mismatch in expression
+      - run: echo "test"
+        if: ${{ 'string' + 42 }}
+
+  needs-validation:
+    runs-on: ubuntu-latest
+    # Invalid needs reference
+    needs: [nonexistent-job]
+    
+    steps:
+      - run: echo "test"
+
+  env-issues:
+    runs-on: ubuntu-latest
+    
+    env:
+      # Duplicate env var
+      MYVAR: "value1"
+      MYVAR: "value2"
+    
+    steps:
+      - run: echo "test"
+
+  output-issues:
+    runs-on: ubuntu-latest
+    
+    outputs:
+      # Invalid output reference
+      result: ${{ steps.nonexistent.outputs.value }}
+    
+    steps:
+      - id: step1
+        run: echo "test"
+
+  permissions-issues:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      # Invalid permission value
+      contents: invalid-permission
+      # Unknown permission type
+      unknown: read
+    
+    steps:
+      - run: echo "test"
