@@ -1,130 +1,149 @@
-# Repo Lint Summary
+@copilot
 
-**Workflow Run:** https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20637798155
-**Timestamp:** 2026-01-01 11:32:07 UTC
-**Branch:** 222/merge
-**Commit:** b72b2d1214a8df2b4f97cfed1f938ed78a985e2f
+🚨 **MANDATORY FIRST STEP (NO EXCEPTIONS): RUN FULL BOOTSTRAP TOOLCHAIN**
+- You MUST run the repo’s documented full bootstrap sequence FIRST.
+- Do not begin analysis, debugging, test-writing, or code changes until bootstrap completes successfully.
+- Any “verified” statement without bootstrap output is invalid.
 
-## Job Results
+---
 
-| Job | Status |
-|-----|--------|
-| Auto-Fix: Black | success |
-| Detect Changed Files | success |
-| Repo Lint: Python | failure |
-| Repo Lint: Bash | success |
-| Repo Lint: PowerShell | success |
-| Repo Lint: Perl | success |
-| Repo Lint: YAML | success |
-| Repo Lint: Rust | failure |
-| Vector Tests: Conformance | success |
+# TASK: FIX fixture filtering + prove every fixture-related path works (NO HAND-WAVING)
 
-## Python Linting Failures
+## Primary evidence file (MUST REVIEW IN FULL)
+After bootstrap completes, you MUST open and read this file in the repo and treat it as the source-of-truth for current failures:
 
-```
-🔍 Running repository linters and formatters...
+- `repo-lint-failure-reports/20638414426/python-lint-output.txt`
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Python Linting
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+You MUST extract:
+- every fixture-related violation
+- every instance where fixture paths appear when they should be excluded
+- every instance of runner isolation failure (e.g., cross-language paths leaking)
+- any contradictions vs what this PR claims is “done”
 
-                         Linting Results                         
-                                                                 
-  Runner                Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────────── 
-  black                 ❌ FAIL       -            1          -  
-  ruff                  ❌ FAIL       -           30          -  
-  pylint                ❌ FAIL       -            7          -  
-  validate_docstrings   ❌ FAIL       -            2          -  
-                                                                 
+---
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 black Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 1 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                  
-  File   Line   Message                                                                                           
- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   Code formatting does not match Black style. Run 'python3 -m tools.repo_lint fix' to auto-format.  
-                                                                                                                  
+## Non-negotiable deliverable
+You must **IDENTIFY AND FIX** the underlying causes. Do not write a “forensic report” as the primary output. The primary output is:
+1) code fixes  
+2) proof (commands + outputs) that the fixes work
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ruff Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-  Found 30 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                                                              
-  File                          Line   Message                                                                                                                                
- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  rust_runner.py                  60   F821 Undefined name `get_tracked_files`                                                                                                
-  all_docstring_violations.py    131   E731 Do not assign a `lambda` expression, use a `def`                                                                                  
-  black_violations.py              8   E501 Line too long (121 > 120)                                                                                                         
-  black_violations.py             68   F821 Undefined name `function_call`                                                                                                    
-  black_violations.py             68   F821 Undefined name `arg1`                                                                                                             
-  black_violations.py             68   F821 Undefined name `arg2`                                                                                                             
-  black_violations.py             68   F821 Undefined name `arg3`                                                                                                             
-  naming-violations.py            13   N802 Function name `ThisFunctionShouldBeSnakeCase` should be lowercase                                                                 
-  naming-violations.py            18   N801 Class name `lowercase_class` should use CapWords convention                                                                       
-  pylint_violations.py            35   F841 Local variable `var11` is assigned to but never used                                                                              
-  pylint_violations.py            36   F841 Local variable `var12` is assigned to but never used                                                                              
-  pylint_violations.py            37   F841 Local variable `var13` is assigned to but never used                                                                              
-  pylint_violations.py            38   F841 Local variable `var14` is assigned to but never used                                                                              
-  pylint_violations.py            39   F841 Local variable `var15` is assigned to but never used                                                                              
-  pylint_violations.py            40   F841 Local variable `var16` is assigned to but never used                                                                              
-  pylint_violations.py            48   F841 Local variable `x` is assigned to but never used                                                                                  
-  pylint_violations.py            49   F841 Local variable `y` is assigned to but never used                                                                                  
-  pylint_violations.py           144   F841 Local variable `x` is assigned to but never used                                                                                  
-  ruff_violations.py              11   E501 Line too long (174 > 120)                                                                                                         
-  ruff_violations.py              18   E711 Comparison to `None` should be `cond is None`                                                                                     
-  ruff_violations.py              23   E712 Avoid equality comparisons to `True`; use `if flag:` for truth checks                                                             
-  ruff_violations.py              27   F821 Undefined name `undefined_variable`                                                                                               
-  ruff_violations.py              49   E402 Module level import not at top of file                                                                                            
-  ruff_violations.py              71   E731 Do not assign a `lambda` expression, use a `def`                                                                                  
-  ruff_violations.py              74   UP030 Use implicit references for positional format fields                                                                             
-  ruff_violations.py              78   E741 Ambiguous variable name: `O`                                                                                                      
-  ruff_violations.py              79   E741 Ambiguous variable name: `I`                                                                                                      
-  ruff_violations.py              86   E402 Module level import not at top of file                                                                                            
-  test_fixture_vector_mode.py    220   F841 Local variable `result` is assigned to but never used                                                                             
-  .                                -   ⚠️  No fixes available (15 hidden fixes can be enabled with the `--unsafe-fixes` option). (Review before applying with --unsafe-fixes)  
-                                                                                                                                                                              
+---
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pylint Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 7 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                     
-  File                          Line   Message                                                                                       
- ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  rust_runner.py                  60   E0602: Undefined variable 'get_tracked_files' (undefined-variable)                            
-  test_fixture_vector_mode.py    124   W0621: Redefining name 'temp_fixtures_dir' from outer scope (line 43) (redefined-outer-name)  
-  test_fixture_vector_mode.py    146   W0621: Redefining name 'temp_fixtures_dir' from outer scope (line 43) (redefined-outer-name)  
-  test_fixture_vector_mode.py    178   W0621: Redefining name 'temp_fixtures_dir' from outer scope (line 43) (redefined-outer-name)  
-  test_fixture_vector_mode.py    220   W0612: Unused variable 'result' (unused-variable)                                             
-  test_fixture_vector_mode.py    231   W0621: Redefining name 'temp_fixtures_dir' from outer scope (line 43) (redefined-outer-name)  
-  test_fixture_vector_mode.py    267   W0621: Redefining name 'temp_fixtures_dir' from outer scope (line 43) (redefined-outer-name)  
-                                                                                                                                     
+## Required verification coverage (ALL PATHS — CI + NORMAL UX)
+You MUST verify **every code path in `tools/repo_lint` that can include/exclude fixtures or filter file sets**, across BOTH:
+- **CI-only paths** (explicitly `--ci` mode and anything gated by CI behavior), AND
+- **normal user UX paths** (local/default behavior without `--ci`, plus typical user CLI flows)
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          validate_docstrings Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-  Found 2 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                                  
-  File   Line   Message                                                                                                                           
- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   ❌ Validation FAILED: 1 violation(s) in 1 file(s)                                                                                 
-  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/tools/repo_lint/tests/test_fixture_vector_mode.py  
-                                                                                                                                                  
+### A) Mode + flag combinations (MUST TEST ALL)
+You MUST validate exact file selection results for each of these modes:
+- `--ci` (default CI mode)
+- `--include-fixtures` (local UX, explicit include)
+- neither flag (normal local UX default)
+- `--ci` + `--include-fixtures` (explicit override)
 
-           Summary           
-  Total Runners: 4           
-    Passed: 0                
-    Failed: 4                
-  Total Violations: 40       
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
-```
+**Invariants (MUST ENFORCE):**
+- Default `--ci` MUST exclude fixtures everywhere.
+- In normal UX mode, fixtures MUST NOT appear unless `--include-fixtures` is explicitly set.
+- `--include-fixtures` MUST be the ONLY mechanism that allows fixtures to appear (in any mode).
+- If any code path includes fixtures without `--include-fixtures`, that is a FAIL.
 
-## Rust Linting Failures
+### B) File discovery / selection mechanisms (MUST COVER ALL THAT EXIST)
+You MUST cover every file-discovery mechanism supported by this repo-lint toolchain in BOTH CI + normal UX contexts:
+- “all tracked files”
+- “changed-only” / detect-changed path (if supported)
+- `--only <language>`
+- any vector/conformance mode (if present)
+- any direct helper usage paths (e.g., `get_tracked_files(...)`)
+- any glob-based filters and any YAML-config-based patterns
 
-```
-🔍 Running repository linters and formatters...
+### C) Runner isolation + consistency (ALL RUNNERS, ALL MODES)
+For each runner (Python/Bash/PowerShell/Perl/YAML/Rust + any shared/meta runners), in BOTH CI + normal UX:
+- Assert it only receives files matching its language patterns.
+- Assert it never receives files from another language, even if fixtures exist.
+- Assert runner `has_files()` logic uses the SAME filtered set as runner execution inputs (no mismatch allowed).
+- Assert `check` and `fix` do NOT diverge in selection scope (fix must not broaden inputs).
 
-❌ Internal error: name 'get_tracked_files' is not defined
-```
+If you believe an outcome “cannot happen,” you MUST prove it via a test that would fail if it did happen.
 
+---
+
+## Testing requirements (MUST BE UNIT-LEVEL, DETERMINISTIC)
+You MUST add or extend unit tests that validate both:
+1) **file selection** (exact included/excluded path sets)  
+2) **runner isolation** (no cross-language leakage)
+
+Existing test file that must remain clean and compliant if modified:
+- `tools/repo_lint/tests/test_fixture_vector_mode.py`
+
+Any test files you touch or create MUST pass:
+- repo-lint linting  
+- docstring contract validation  
+
+MANDATORY: **Do not commit** until lint + docstrings + tests all pass locally.
+
+---
+
+## Proof required (MUST INCLUDE RAW COMMANDS + OUTPUT SNIPPETS)
+Your final response MUST include:
+
+### 1) Bootstrap proof
+- The exact bootstrap command(s) you ran
+- A success output snippet
+
+### 2) Failure reproduction (before fix)
+- The exact command(s) used to reproduce failures from:
+  `repo-lint-failure-reports/20638414426/python-lint-output.txt`
+- Output snippet showing fixture-related failures BEFORE the fix
+
+### 3) Fix verification (after fix)
+- Commands + outputs proving:
+  - fixtures are excluded in `--ci` by default
+  - fixtures do NOT appear in normal UX mode unless `--include-fixtures` is provided
+  - fixtures ONLY appear when `--include-fixtures` is set
+  - runner isolation is enforced for ALL runners
+  - `has_files()` and execution inputs match
+  - `check` and `fix` selection scopes match
+- Passing pytest output
+- Passing lint + docstring validation output
+
+---
+
+## NO-WIGGLE-RULES
+- No “I believe”, “should”, “seems”, or “likely”.
+- No claiming completion without command outputs.
+- No relying on CI logs for correctness.
+- No partial fixes.
+
+---
+
+## Journaling is mandatory (EVERY SESSION, SUCCESS OR FAILURE)
+At the end of **EVERY** session (even if everything is fixed and passing), you MUST update this file:
+
+- `docs/ai-prompt/221/221-next-steps.md`
+
+This update MUST include:
+- what you did this session (bulleted, concrete)
+- what is now verified working (with commands run)
+- what remains broken (if anything) and why
+- the exact next commands to run and files to inspect for the next session
+- acceptance criteria for declaring the work DONE
+
+No exceptions. No “already covered above.” The journal must stand alone.
+
+---
+
+## Session limit contingency (MANDATORY)
+If you are approaching session/context limits before completing this task:
+
+1) **STOP making changes immediately.**  
+2) Write **EXTREMELY DETAILED** next steps into **THIS FILE** (no substitutes, no summaries):  
+   - `docs/ai-prompt/221/221-next-steps.md`
+3) The next steps MUST include:
+   - exact files to open
+   - exact functions to inspect
+   - exact commands to run to reproduce
+   - exact hypotheses to validate or falsify
+   - exact tests to add or extend (with matrix coverage)
+   - explicit acceptance criteria for declaring the task DONE
+
+These instructions must allow a new session to resume work immediately with zero interpretation or guesswork.
