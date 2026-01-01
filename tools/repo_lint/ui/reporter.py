@@ -247,17 +247,32 @@ class Reporter:
         self.console.print(table)
         self.console.print()
 
-    def render_failures(self, results: List[LintResult]) -> None:
+    def render_failures(
+        self,
+        results: List[LintResult],
+        show_files: bool = True,
+        show_codes: bool = True,
+        max_violations: int = None,
+    ) -> None:
         """Render detailed failure information.
 
         :param results: List of LintResult objects (only failed ones will be shown)
+        :param show_files: Whether to show per-file breakdown
+        :param show_codes: Whether to show tool rule IDs/codes
+        :param max_violations: Maximum violations to display (None = unlimited)
         """
         failed_results = [r for r in results if not r.passed]
 
         if not failed_results:
             return
 
+        violations_displayed = 0
+        max_reached = False
+
         for result in failed_results:
+            if max_reached:
+                break
+
             # Create failure panel header
             box_style = get_box_style(self.theme, self.ci_mode)
             title = f"{result.tool} Failures"
@@ -272,7 +287,21 @@ class Reporter:
                 self.console.print(panel)
             else:
                 # For violations, show a panel with header and then a table
-                panel_content = f"Found {len(result.violations)} violation(s)"
+                tool_violations = result.violations
+
+                # Apply max_violations limit if set
+                if max_violations:
+                    remaining_quota = max_violations - violations_displayed
+                    if remaining_quota <= 0:
+                        max_reached = True
+                        break
+                    if len(tool_violations) > remaining_quota:
+                        tool_violations = tool_violations[:remaining_quota]
+                        max_reached = True
+
+                panel_content = f"Found {len(tool_violations)} violation(s)"
+                if max_violations and len(result.violations) > len(tool_violations):
+                    panel_content += f" (showing first {len(tool_violations)})"
                 panel = Panel(panel_content, title=title_formatted, border_style=border_style, box=box_style)
                 self.console.print(panel)
 
@@ -282,25 +311,52 @@ class Reporter:
                 file_column_kwargs = {}
                 if self.ci_mode:
                     file_column_kwargs = {"no_wrap": False, "overflow": "fold"}
-                violations_table.add_column(
-                    "File", style=self._get_color("metadata") if not self.ci_mode else None, **file_column_kwargs
-                )
+
+                # Add columns based on show_files
+                if show_files:
+                    violations_table.add_column(
+                        "File", style=self._get_color("metadata") if not self.ci_mode else None, **file_column_kwargs
+                    )
                 violations_table.add_column("Line", justify="right")
                 violations_table.add_column("Message")
 
-                # Add violations (limit to avoid overwhelming output)
-                for violation in result.violations[:MAX_VIOLATIONS_PER_TOOL]:
+                # Add violations
+                for violation in tool_violations:
                     line_str = str(violation.line) if violation.line else "-"
-                    violations_table.add_row(violation.file, line_str, violation.message)
 
-                if len(result.violations) > MAX_VIOLATIONS_PER_TOOL:
-                    remaining = len(result.violations) - MAX_VIOLATIONS_PER_TOOL
-                    note = self._format_with_color(f"... and {remaining} more violations", "warning")
-                    violations_table.add_row("", "", note)
+                    # Process message based on show_codes
+                    message = violation.message
+                    if not show_codes and ":" in message:
+                        # Strip code from message (e.g., "E501: line too long" -> "line too long")
+                        message = message.split(":", 1)[1].strip()
+
+                    if show_files:
+                        violations_table.add_row(violation.file, line_str, message)
+                    else:
+                        # Include file in message when not showing file column
+                        full_message = (
+                            f"{violation.file}:{line_str} - {message}"
+                            if line_str != "-"
+                            else f"{violation.file} - {message}"
+                        )
+                        violations_table.add_row(line_str, full_message)
+
+                    violations_displayed += 1
 
                 # Render the table
                 self.console.print(violations_table)
 
+            self.console.print()
+
+        # Show message if max violations reached
+        if max_reached:
+            warn_icon = self._get_icon("warn")
+            warn_color = self._get_color("warning")
+            self.console.print()
+            self.console.print(
+                f"[{warn_color}]{warn_icon} Maximum violations limit reached ({max_violations}). "
+                f"Additional violations not displayed.[/{warn_color}]"
+            )
             self.console.print()
 
     def render_final_summary(self, results: List[LintResult], exit_code: ExitCode) -> None:
@@ -344,6 +400,134 @@ class Reporter:
         panel = Panel(content, title=title_formatted, border_style=border_style, box=box_style)
 
         self.console.print(panel)
+
+    def render_summary(self, results: List[LintResult], exit_code: ExitCode, format_type: str = "short") -> None:
+        """Render summary in specified format.
+
+        :param results: List of linting results
+        :param exit_code: Final exit code
+        :param format_type: Summary format (short|by-tool|by-file|by-code)
+        """
+        # Count violations
+        total_violations = sum(len(r.violations) for r in results if not r.error)
+        total_errors = sum(1 for r in results if r.error)
+        tools_run = len([r for r in results if not r.error])
+
+        # Determine status
+        if exit_code == ExitCode.SUCCESS:
+            status_icon = self._get_icon("pass")
+            status_color = self._get_color("success")
+        else:
+            status_icon = self._get_icon("fail")
+            status_color = self._get_color("failure")
+
+        if format_type == "short":
+            # Short format: single line summary
+            summary = f"{status_icon} {tools_run} tool(s) run, {total_violations} violation(s), {total_errors} error(s)"
+            self.console.print(f"[{status_color}]{summary}[/{status_color}]")
+
+        elif format_type == "by-tool":
+            # By-tool format: violations grouped by tool
+            table = Table(
+                title="Summary by Tool",
+                show_header=True,
+                header_style=self._get_color("primary"),
+                border_style=self._get_color("metadata"),
+                box=get_box_style(self.theme, self.ci_mode),
+            )
+            table.add_column("Tool", style=self._get_color("primary"))
+            table.add_column("Files", justify="right", style=self._get_color("metadata"))
+            table.add_column("Violations", justify="right", style=self._get_color("info"))
+            table.add_column("Status", justify="center")
+
+            for result in results:
+                if result.error:
+                    status = f"[{self._get_color('failure')}]ERROR[/{self._get_color('failure')}]"
+                    violations_count = "N/A"
+                elif result.passed:
+                    status = (
+                        f"[{self._get_color('success')}]{self._get_icon('pass')} PASS[/{self._get_color('success')}]"
+                    )
+                    violations_count = "0"
+                else:
+                    status = (
+                        f"[{self._get_color('failure')}]{self._get_icon('fail')} FAIL[/{self._get_color('failure')}]"
+                    )
+                    violations_count = str(len(result.violations))
+
+                file_count = str(getattr(result, "file_count", "-"))
+                table.add_row(result.tool, file_count, violations_count, status)
+
+            self.console.print()
+            self.console.print(table)
+            self.console.print()
+            self.console.print(f"[{status_color}]Total: {total_violations} violation(s)[/{status_color}]")
+
+        elif format_type == "by-file":
+            # By-file format: violations grouped by file
+            from collections import defaultdict
+
+            files_dict = defaultdict(list)
+            for result in results:
+                if not result.error and not result.passed:
+                    for violation in result.violations:
+                        files_dict[violation.file].append((result.tool, violation))
+
+            table = Table(
+                title="Summary by File",
+                show_header=True,
+                header_style=self._get_color("primary"),
+                border_style=self._get_color("metadata"),
+                box=get_box_style(self.theme, self.ci_mode),
+            )
+            table.add_column("File", style=self._get_color("primary"))
+            table.add_column("Violations", justify="right", style=self._get_color("info"))
+            table.add_column("Tools", style=self._get_color("metadata"))
+
+            for file_path, violations in sorted(files_dict.items()):
+                tool_names = ", ".join(sorted(set(tool for tool, _ in violations)))
+                table.add_row(file_path, str(len(violations)), tool_names)
+
+            self.console.print()
+            self.console.print(table)
+            self.console.print()
+            self.console.print(f"[{status_color}]{len(files_dict)} file(s) with violations[/{status_color}]")
+
+        elif format_type == "by-code":
+            # By-code format: violations grouped by error code
+            from collections import defaultdict
+
+            codes_dict = defaultdict(int)
+            for result in results:
+                if not result.error and not result.passed:
+                    for violation in result.violations:
+                        # Extract error code from message if available (e.g., "E501: line too long")
+                        code = "UNKNOWN"
+                        if ":" in violation.message:
+                            code = violation.message.split(":")[0].strip()
+                        codes_dict[f"{result.tool}:{code}"] += 1
+
+            table = Table(
+                title="Summary by Code",
+                show_header=True,
+                header_style=self._get_color("primary"),
+                border_style=self._get_color("metadata"),
+                box=get_box_style(self.theme, self.ci_mode),
+            )
+            table.add_column("Tool:Code", style=self._get_color("primary"))
+            table.add_column("Count", justify="right", style=self._get_color("info"))
+
+            for code, count in sorted(codes_dict.items(), key=lambda x: x[1], reverse=True):
+                table.add_row(code, str(count))
+
+            self.console.print()
+            self.console.print(table)
+            self.console.print()
+            self.console.print(f"[{status_color}]{len(codes_dict)} unique code(s)[/{status_color}]")
+
+        # Add exit code
+        self.console.print()
+        self.console.print(f"Exit Code: {int(exit_code)}")
 
     def render_config_validation_errors(self, errors: List[str]) -> None:
         """Render configuration validation errors.

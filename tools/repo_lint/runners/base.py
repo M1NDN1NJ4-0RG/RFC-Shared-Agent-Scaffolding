@@ -167,6 +167,8 @@ class Runner(ABC):
         self.repo_root = repo_root or find_repo_root()
         self.ci_mode = ci_mode
         self.verbose = verbose
+        self._tool_filter = None  # List of specific tools to run (None = run all)
+        self._changed_only = False  # Only check git-changed files
 
     @abstractmethod
     def has_files(self) -> bool:
@@ -207,6 +209,83 @@ class Runner(ABC):
         :raises MissingToolError: If required tools are not installed (CI mode only)
         """
         pass  # pylint: disable=unnecessary-pass  # Abstract method
+
+    def set_tool_filter(self, tools: List[str]) -> None:
+        """Set tool filter to run only specific tools.
+
+        :param tools: List of tool names to run (e.g., ["black", "ruff"])
+
+        :Purpose:
+            Enables granular tool filtering so users can run specific linters/formatters
+            without running the full suite. Runners should check this filter in their
+            check() and fix() methods.
+        """
+        self._tool_filter = tools
+
+    def set_changed_only(self, enabled: bool = True) -> None:
+        """Enable/disable changed-only mode.
+
+        :param enabled: Whether to only check git-changed files
+
+        :Purpose:
+            Restricts linting to files that have been modified according to git.
+            Useful for pre-commit hooks and iterative development.
+            Requires git repository (will error if not in git repo).
+        """
+        self._changed_only = enabled
+
+    def _should_run_tool(self, tool_name: str) -> bool:
+        """Check if a specific tool should run based on tool filter.
+
+        :param tool_name: Name of tool to check
+        :returns: True if tool should run, False if filtered out
+
+        :Purpose:
+            Helper method for runners to check tool filter. If no filter is set,
+            all tools run. If filter is set, only tools in the filter run.
+        """
+        if self._tool_filter is None:
+            return True
+        return tool_name in self._tool_filter
+
+    def _get_changed_files(self, patterns: Optional[List[str]] = None) -> List[str]:
+        """Get list of files changed in git working tree.
+
+        :param patterns: Optional file patterns to filter (e.g., ["*.py"])
+        :returns: List of changed file paths
+        :raises RuntimeError: If not in a git repository
+
+        :Purpose:
+            Retrieves files with uncommitted changes from git. Used when --changed-only
+            is specified to limit linting scope.
+        """
+        # Get files changed in working tree (unstaged + staged)
+        result = subprocess.run(
+            ["git", "diff", "--name-only", "HEAD"],
+            cwd=self.repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        if result.returncode != 0:
+            raise RuntimeError("Not in a git repository. --changed-only requires git repository.")
+
+        files = result.stdout.strip().split("\n") if result.stdout.strip() else []
+
+        # Apply pattern filtering if requested
+        if patterns:
+            import fnmatch  # pylint: disable=import-outside-toplevel
+
+            filtered = []
+            for file in files:
+                for pattern in patterns:
+                    if fnmatch.fnmatch(file, pattern):
+                        filtered.append(file)
+                        break
+            return filtered
+
+        return files
 
     def _ensure_tools(self, required_tools: List[str]) -> None:
         """Ensure required tools are installed.

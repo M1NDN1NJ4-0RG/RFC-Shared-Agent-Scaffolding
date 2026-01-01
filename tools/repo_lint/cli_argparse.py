@@ -156,13 +156,18 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
     # Filter runners based on --only flag
     only_language = getattr(args, "only", None)
-    # TODO: Implement tool filtering backend logic  # pylint: disable=fixme
-    # tool_filter = getattr(args, "tool", None)  # List of tools to filter to
+    tool_filter = getattr(args, "tool", None)  # List of tools to filter to
 
     if only_language:
         runners = [(key, name, runner) for key, name, runner in all_runners if key == only_language]
     else:
         runners = all_runners
+
+    # Apply tool filtering: pass tool filter to each runner
+    if tool_filter:
+        for _, _, runner in runners:
+            if hasattr(runner, "set_tool_filter"):
+                runner.set_tool_filter(tool_filter)
 
     # If --only was used, ensure there is something to run
     if only_language:
@@ -176,10 +181,12 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             )
             return ExitCode.INTERNAL_ERROR
 
-    # Apply tool filtering if --tool was specified
-    # Note: Tool filtering will be passed to runners that support it
-    # For now, we'll just pass it through args and let individual runners handle it
-    # This is a placeholder for backend implementation
+    # Apply changed-only filtering if --changed-only was specified
+    changed_only = getattr(args, "changed_only", False)
+    if changed_only:
+        for _, _, runner in runners:
+            if hasattr(runner, "set_changed_only"):
+                runner.set_changed_only(True)
 
     # Check for fail-fast mode
     fail_fast = getattr(args, "fail_fast", False)
@@ -237,12 +244,29 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         print("")
 
     # Use JSON or standard reporting based on flag
-    if use_json:
+    if use_json or getattr(args, "format", "rich") == "json":
         from tools.repo_lint.reporting import report_results_json
 
-        return report_results_json(all_results, verbose=args.verbose)
+        return report_results_json(
+            all_results,
+            verbose=args.verbose,
+            report_path=getattr(args, "report", None),
+        )
     else:
-        return report_results(all_results, verbose=args.verbose, ci_mode=args.ci)
+        return report_results(
+            all_results,
+            verbose=args.verbose,
+            ci_mode=args.ci,
+            summary=getattr(args, "summary", False),
+            summary_only=getattr(args, "summary_only", False),
+            summary_format=getattr(args, "summary_format", "short"),
+            show_files=getattr(args, "show_files", True),
+            show_codes=getattr(args, "show_codes", True),
+            max_violations=getattr(args, "max_violations", None),
+            output_format=getattr(args, "format", "rich"),
+            report_path=getattr(args, "report", None),
+            reports_dir=getattr(args, "reports_dir", None),
+        )
 
 
 def cmd_check(args: argparse.Namespace) -> int:
@@ -299,8 +323,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
 
     # Check for dry-run mode
     dry_run = getattr(args, "dry_run", False)
-    # TODO: Implement diff preview backend logic  # pylint: disable=fixme
-    # show_diff = getattr(args, "diff", False)
+    show_diff = getattr(args, "diff", False)
 
     if not use_json:
         if dry_run:
@@ -308,6 +331,11 @@ def cmd_fix(args: argparse.Namespace) -> int:
                 "🔍 DRY RUN: Showing what would be changed (no files modified)",
                 "DRY RUN: Showing what would be changed",
             )
+            if show_diff:
+                safe_print(
+                    "   Unified diffs will be shown for each change",
+                    "   Unified diffs will be shown for each change",
+                )
             print("")
         elif unsafe_mode:
             safe_print("⚠️  DANGER: Running in UNSAFE FIX MODE", "WARNING: DANGER: Running in UNSAFE FIX MODE")

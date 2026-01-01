@@ -43,6 +43,12 @@ class BashRunner(Runner):
         :returns:
             True if Bash files exist, False otherwise
         """
+        # If changed-only mode, check for changed Bash files
+        if self._changed_only:
+            changed_files = self._get_changed_files(patterns=["*.sh", "**/*.sh"])
+            return len(changed_files) > 0
+
+        # Otherwise check all tracked Bash files
         files = get_tracked_files(["**/*.sh"], self.repo_root)
         return len(files) > 0
 
@@ -64,9 +70,16 @@ class BashRunner(Runner):
         self._ensure_tools(["shellcheck", "shfmt"])
 
         results = []
-        results.append(self._run_shellcheck())
-        results.append(self._run_shfmt_check())
-        results.append(self._run_docstring_validation())
+
+        # Apply tool filtering
+        if self._should_run_tool("shellcheck"):
+            results.append(self._run_shellcheck())
+
+        if self._should_run_tool("shfmt"):
+            results.append(self._run_shfmt_check())
+
+        if self._should_run_tool("validate_docstrings"):
+            results.append(self._run_docstring_validation())
 
         return results
 
@@ -87,13 +100,16 @@ class BashRunner(Runner):
         if policy is None:
             policy = {"allowed_categories": []}
 
-        # Apply shfmt formatting (if allowed by policy)
-        if is_category_allowed(policy, "FORMAT.SHFMT"):
+        # Apply shfmt formatting (if allowed by policy AND tool filter)
+        if self._should_run_tool("shfmt") and is_category_allowed(policy, "FORMAT.SHFMT"):
             shfmt_result = self._run_shfmt_fix()
             results.append(shfmt_result)
         else:
             if self.verbose:
-                print("  ⊘ Skipping shfmt (denied by policy)")
+                if not self._should_run_tool("shfmt"):
+                    print("  ⊘ Skipping shfmt (filtered out)")
+                else:
+                    print("  ⊘ Skipping shfmt (denied by policy)")
             shfmt_result = LintResult(tool="shfmt", passed=True, violations=[])
             results.append(shfmt_result)
 

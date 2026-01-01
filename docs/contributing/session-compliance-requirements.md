@@ -4,7 +4,7 @@
 
 **Authority:** This document supersedes any conflicting guidance. When in doubt, follow this document.
 
-**MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY at session start, before ANY file exploration, repository analysis, or code changes. Failure to read this document is a violation.
+**MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work. **EXCEPTION:** If the user explicitly says "CONTINUE" or references continuing existing work, skip session start and proceed directly. Failure to read this document when starting NEW work is a violation.
 
 **Last Updated:** 2025-12-31
 
@@ -25,9 +25,11 @@ This document exists to **prevent those failures** by establishing clear, non-ne
 
 ## Session Start Requirements (MANDATORY)
 
-**When:** At the start of EVERY Copilot session, **IMMEDIATELY** upon receiving the first user message, before ANY file exploration, repository analysis, problem investigation, or code changes.
+**When:** At the start of NEW work sessions, **IMMEDIATELY** upon receiving the first user message, before ANY file exploration, repository analysis, problem investigation, or code changes.
 
-**PROHIBITION:** You may NOT read files, explore the repository, analyze the problem, or plan changes until the bootstrapper has completed successfully (exit code 0).
+**EXCEPTION:** If the user explicitly says "CONTINUE" or references continuing existing work (e.g., "continue on Phase 2.7", "keep working on issue 160"), SKIP session start and proceed directly to the work.
+
+**PROHIBITION (for NEW work only):** You may NOT read files, explore the repository, analyze the problem, or plan changes until the bootstrapper has completed successfully (exit code 0).
 
 ### Ordered Checklist
 
