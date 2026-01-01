@@ -7,6 +7,13 @@ This guide covers installation, common commands, shell completion, and troublesh
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Common Commands](#common-commands)
+- [Test Fixtures and Vector Mode](#test-fixtures-and-vector-mode)
+  - [What Are Fixture Files?](#what-are-fixture-files)
+  - [Where Fixture Files Live](#where-fixture-files-live)
+  - [Vector Mode (--include-fixtures)](#vector-mode---include-fixtures)
+  - [Fixture Immutability Guarantees](#fixture-immutability-guarantees)
+  - [Per-Language Fixture Breakdown](#per-language-fixture-breakdown)
+  - [Common Mistakes and Warnings](#common-mistakes-and-warnings)
 - [Shell Completion](#shell-completion)
   - [Bash, Zsh, Fish](#bash-completion)
   - [PowerShell (Windows)](#powershell-completion-windows)
@@ -185,6 +192,459 @@ repo-lint fix --unsafe --yes-i-know
 # - Check logs/unsafe-fix-forensics/ for detailed logs
 # - Review the .patch file carefully
 ```
+
+---
+
+## Test Fixtures and Vector Mode
+
+### What Are Fixture Files?
+
+**Fixture files** in `repo-lint` are **intentionally broken** code files that serve as **canonical test vectors** for validating that the linting infrastructure correctly detects violations.
+
+#### Purpose
+
+These files exist to:
+- **Test the linters themselves**: Ensure `repo-lint` runners correctly invoke tools like `black`, `ruff`, `shellcheck`, `clippy`, etc.
+- **Validate violation detection**: Confirm that violation messages, file names, and line numbers are accurately reported
+- **Provide conformance testing**: Enable "vector mode" testing where the tool scans intentionally bad code
+- **Document expected behavior**: Serve as living examples of what each linter should catch
+
+#### Critical Understanding
+
+⚠️ **FIXTURES ARE NOT PRODUCTION CODE** ⚠️
+
+- Fixtures contain **intentional violations** (unused variables, missing docstrings, bad formatting, etc.)
+- Every violation is **deliberate** and **required** for testing
+- These files should **NEVER** be "fixed" or reviewed as if they were production code
+- Running formatters or linters directly on fixtures would destroy their purpose
+
+#### Why CI Excludes Fixtures by Default
+
+In normal operation (including `--ci` mode), `repo-lint` **automatically excludes** all fixture files from scanning. This prevents:
+- False positive violations in CI builds
+- Confusion about code quality ("Why are there 40 violations in the repo?")
+- Accidental "fixes" that would break the test suite
+- Performance overhead from scanning test artifacts
+
+Fixtures are **only** scanned when explicitly requested via `--include-fixtures` (vector mode).
+
+---
+
+### Where Fixture Files Live
+
+All fixture files are located within the `repo-lint` package itself:
+
+```
+tools/repo_lint/tests/fixtures/
+├── bash/
+│   ├── all-docstring-violations.sh
+│   ├── shellcheck-violations.sh
+│   ├── shfmt-violations.sh
+│   └── naming_violations.sh          # Intentionally violates Bash naming (snake_case)
+├── perl/
+│   ├── all_docstring_violations.pl
+│   ├── perlcritic_violations.pl
+│   └── naming-violations.pl          # Intentionally violates Perl naming (kebab-case)
+├── powershell/
+│   ├── AllDocstringViolations.ps1
+│   ├── PsScriptAnalyzerViolations.ps1
+│   └── naming-violations.ps1         # Intentionally violates PowerShell naming (kebab-case)
+├── python/
+│   ├── all_docstring_violations.py
+│   ├── black_violations.py
+│   ├── pylint_violations.py
+│   ├── ruff_violations.py
+│   ├── naming-violations.py          # Intentionally violates Python naming (kebab-case)
+│   ├── *.RESET.diff                  # Audit trail diffs (see below)
+├── rust/
+│   ├── all-docstring-violations.rs
+│   ├── clippy-violations.rs
+│   └── rustfmt-violations.rs
+└── yaml/
+    ├── all-docstring-violations.yaml
+    ├── actionlint-violations.yaml
+    └── yamllint-violations.yaml
+```
+
+#### Why Fixtures Are Colocated with Tests
+
+Fixtures live in `tools/repo_lint/tests/fixtures/` (not in a top-level `examples/` or `samples/` directory) because:
+- They are **test artifacts**, not user-facing examples
+- They are tightly coupled to the integration tests in `tools/repo_lint/tests/test_fixture_vector_mode.py`
+- They must be excluded from normal repository scans
+- They are part of the `repo-lint` package's internal test infrastructure
+
+This location makes it clear these are **testing tools**, not documentation or samples.
+
+---
+
+### Vector Mode (`--include-fixtures`)
+
+**Vector mode** is a special operating mode where `repo-lint` includes fixture files in its scans. This mode exists exclusively for **testing and validating** the linting infrastructure itself.
+
+#### What Vector Mode Is
+
+When you run `repo-lint` with the `--include-fixtures` flag:
+- All fixture files under `tools/repo_lint/tests/fixtures/` are **included** in the scan
+- The tool runs all configured linters against these intentionally broken files
+- Violations are detected and reported just like they would be for normal code
+- This validates that the linting infrastructure is working correctly
+
+#### Why Vector Mode Exists
+
+Vector mode enables:
+1. **Conformance testing**: Verify that `repo-lint` correctly detects all expected violations
+2. **Regression testing**: Ensure linter integration doesn't break over time
+3. **CI validation**: Automated tests can verify the fixture system works as expected
+4. **Development debugging**: When adding new linters, test against known bad code
+
+#### When to Use `--include-fixtures`
+
+Use vector mode when:
+- Running integration tests (`pytest tools/repo_lint/tests/test_fixture_vector_mode.py`)
+- Debugging linter integration issues
+- Validating that a new linter correctly detects violations
+- Testing changes to runner code
+
+**DO NOT** use vector mode for:
+- Normal development workflows
+- Pre-commit hooks
+- CI builds (unless explicitly testing the fixture system)
+- Code quality checks
+
+#### How Vector Mode Changes Behavior
+
+| Mode | Fixtures Scanned? | Use Case |
+|------|-------------------|----------|
+| **Normal** (`repo-lint check`) | ❌ No | Daily development |
+| **CI Mode** (`repo-lint check --ci`) | ❌ No | CI/CD pipelines |
+| **Vector Mode** (`repo-lint check --include-fixtures`) | ✅ **Yes** | Testing linting infrastructure |
+
+---
+
+### Concrete CLI Examples
+
+#### Normal Mode (Fixtures Excluded)
+
+```bash
+# Standard development check - fixtures are automatically excluded
+$ repo-lint check
+🔍 Running repository linters and formatters...
+✅ All checks passed! (0 violations)
+```
+
+Fixtures are **not scanned**. Only production code is checked.
+
+#### CI Mode (Fixtures Excluded)
+
+```bash
+# CI pipeline check - fixtures are automatically excluded
+$ repo-lint check --ci
+🔍 Running repository linters and formatters...
+✅ All checks passed! (0 violations)
+```
+
+Same as normal mode - fixtures remain excluded. This is the **correct** behavior for CI.
+
+If you see fixture violations in CI output, that indicates a **bug** in the exclusion logic.
+
+#### Vector Mode (Fixtures Included)
+
+```bash
+# Test mode - explicitly include fixtures to validate linting infrastructure
+$ repo-lint check --include-fixtures --only python
+🔍 Running repository linters and formatters...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Python Linting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  Runner                Status    Files   Violations   Duration
+ ─────────────────────────────────────────────────────────────── 
+  black                 ✅ PASS      20            0       0.2s
+  ruff                  ❌ FAIL      20           45       0.3s
+  pylint                ❌ FAIL      20           67       1.2s
+  validate_docstrings   ❌ FAIL      20           23       0.1s
+
+❌ Found 135 violations across 4 runners
+```
+
+Fixtures **are scanned**, and violations **are expected**. This validates that the linters are working correctly.
+
+#### Vector Mode for All Languages
+
+```bash
+# Scan all fixture files across all languages
+$ repo-lint check --include-fixtures
+
+# Expected output: hundreds of intentional violations detected
+# This is CORRECT - it proves the linters are working
+```
+
+#### Vector Mode with Specific Languages
+
+```bash
+# Test only Bash fixtures
+$ repo-lint check --include-fixtures --only bash
+
+# Test only Rust fixtures
+$ repo-lint check --include-fixtures --only rust
+
+# Test Python and YAML fixtures
+$ repo-lint check --include-fixtures --only python --only yaml
+```
+
+---
+
+### Fixture Immutability Guarantees
+
+Fixture files are considered **canonical test vectors** and must **never** be modified by automated tools.
+
+#### Why Fixtures Are Canonical
+
+- Each violation in a fixture file is **deliberate** and **documented**
+- Changing a fixture could break integration tests
+- Fixtures serve as the "source of truth" for what violations should be detected
+- Auto-fixing a fixture would destroy its value as a test vector
+
+#### How CI Enforces Immutability
+
+The repository has **multiple safeguards** to prevent fixtures from being modified:
+
+1. **Black Auto-Fix Workflow**: Hardcoded regex exclusion
+   ```yaml
+   --exclude='(tools/repo_lint/tests/fixtures/|conformance/repo-lint/fixtures/|...)'
+   ```
+   Black's auto-formatter will **never** touch fixture files, even if they violate formatting rules.
+
+2. **Naming Enforcement Workflow**: Explicit file exclusions
+   ```python
+   if any(part in path for part in ['naming-violations.py', 'naming-violations.pl', ...]):
+       continue  # Skip naming violation test files
+   ```
+   The naming enforcer skips dedicated `naming-violations.*` test files (which intentionally use wrong naming conventions).
+
+3. **Default Exclusion in repo-lint**: Built-in protection
+   - All runners have `include_fixtures=False` by default
+   - Fixtures are excluded unless `--include-fixtures` is explicitly provided
+   - This prevents accidental scanning or fixing
+
+#### What Are `*.RESET.diff` Files?
+
+In the Python fixtures directory, you'll find files like:
+- `all-docstring-violations.py.RESET.diff`
+- `black-violations.py.RESET.diff`
+- `pylint-violations.py.RESET.diff`
+- `ruff-violations.py.RESET.diff`
+
+These are **audit trail artifacts** that document the complete history of changes to fixture files:
+- They show the diff from the original fixture state to the current state
+- They serve as a record of intentional modifications (e.g., adding disclaimers, renaming files)
+- They help maintainers understand what changed and why
+- They are regenerated whenever fixtures are intentionally updated
+
+**These diff files are for reference only** - they are not executed or parsed by the tool.
+
+---
+
+### Per-Language Fixture Breakdown
+
+This section details **exactly** what fixture files exist for each language, what they test, and why.
+
+#### Python Fixtures
+
+**Location**: `tools/repo_lint/tests/fixtures/python/`
+
+| File | Tool(s) Tested | Violation Categories | Purpose |
+|------|----------------|---------------------|---------|
+| `all_docstring_violations.py` | `validate_docstrings` | Missing module docstring, missing function docstrings, missing class docstrings, missing method docstrings, incomplete docstrings | Validates docstring enforcement across all Python construct types (module, function, class, method) |
+| `black_violations.py` | `black` | Line length violations, inconsistent quotes, missing trailing commas, improper spacing, extra blank lines, dictionary formatting | Tests Black formatter detection across various formatting issues |
+| `pylint_violations.py` | `pylint` | Unused variables, unused imports, too many local variables, missing docstrings, unnecessary pass statements, comparison to True/False/None | Validates pylint's detection of code quality issues and style violations |
+| `ruff_violations.py` | `ruff` | Unused imports (F401), undefined names (F821), unused local variables (F841), f-strings without placeholders (F541), comparison to None/True/False (E711/E712), import not at top (E402), line too long (E501), mutable default argument (B006) | Tests ruff's comprehensive linting rules including Pyflakes, pycodestyle, and flake8-bugbear rules |
+| `naming-violations.py` | Naming enforcement (CI workflow) | Uses kebab-case filename instead of snake_case | **Intentionally** violates Python naming conventions to test that naming enforcement correctly identifies violations (but is excluded from CI via workflow configuration) |
+
+**Key Violations Tested**:
+- **Unused imports**: `import os` when `os` is never used
+- **Undefined variables**: References to variables that don't exist
+- **Bad comparisons**: `if x == None:` instead of `if x is None:`
+- **Missing docstrings**: Functions/classes without documentation
+- **Formatting**: Lines that are too long, inconsistent indentation, etc.
+
+**Why These Violations**: These are the most common Python code quality issues that linters should catch. By testing against these specific patterns, we ensure the runners correctly invoke and parse tool output.
+
+#### Bash Fixtures
+
+**Location**: `tools/repo_lint/tests/fixtures/bash/`
+
+| File | Tool(s) Tested | Violation Categories | Purpose |
+|------|----------------|---------------------|---------|
+| `all-docstring-violations.sh` | `validate_docstrings` | Missing file-level comments, missing function documentation | Validates Bash docstring enforcement for scripts and functions |
+| `shellcheck-violations.sh` | `shellcheck` | SC2086 (unquoted variable expansion), SC2068 (unquoted array expansion), SC2155 (declare and assign separately), SC2034 (unused variable), SC2046 (unquoted command substitution), SC2006 (legacy backticks), SC2116 (useless echo) | Tests shellcheck's detection of common Bash scripting pitfalls and best practice violations |
+| `shfmt-violations.sh` | `shfmt` | Inconsistent indentation, missing spaces around operators, improper case statement formatting | Validates shfmt's formatting checks for Bash scripts |
+| `naming_violations.sh` | Naming enforcement (CI workflow) | Uses snake_case filename instead of kebab-case | **Intentionally** violates Bash naming conventions to test naming enforcement |
+
+**Key Violations Tested**:
+- **Unquoted variables**: `cat $file` instead of `cat "$file"` (can cause word splitting/globbing issues)
+- **Unused variables**: Variables declared but never referenced
+- **Legacy syntax**: Backticks instead of `$(...)` for command substitution
+- **Array handling**: Incorrect array expansion that can cause bugs
+
+**Why These Violations**: Shellcheck catches critical bugs that can cause scripts to fail in production. These test cases ensure the Bash runner correctly identifies these issues.
+
+#### Perl Fixtures
+
+**Location**: `tools/repo_lint/tests/fixtures/perl/`
+
+| File | Tool(s) Tested | Violation Categories | Purpose |
+|------|----------------|---------------------|---------|
+| `all_docstring_violations.pl` | `validate_docstrings` | Missing POD documentation, missing subroutine documentation | Validates Perl docstring enforcement using POD (Plain Old Documentation) format |
+| `perlcritic_violations.pl` | `perlcritic` | Use of bareword file handles, missing `use strict`, missing `use warnings`, postfix control structures, unnecessary quotes, complex expressions, hard-coded values | Tests perlcritic's "Perl Best Practices" policy enforcement |
+| `naming-violations.pl` | Naming enforcement (CI workflow) | Uses kebab-case filename instead of snake_case | **Intentionally** violates Perl naming conventions to test naming enforcement |
+
+**Key Violations Tested**:
+- **Missing pragmas**: Not using `strict` and `warnings`
+- **Bareword filehandles**: Old-style file handling instead of lexical filehandles
+- **Complex conditionals**: Overly complicated logic
+- **Hard-coded values**: Magic numbers without explanation
+
+**Why These Violations**: Perlcritic enforces best practices that make Perl code more maintainable and less error-prone. These fixtures test that the Perl runner correctly applies these policies.
+
+#### PowerShell Fixtures
+
+**Location**: `tools/repo_lint/tests/fixtures/powershell/`
+
+| File | Tool(s) Tested | Violation Categories | Purpose |
+|------|----------------|---------------------|---------|
+| `AllDocstringViolations.ps1` | `validate_docstrings` | Missing function comments, missing parameter documentation, missing `.SYNOPSIS`, `.DESCRIPTION`, `.EXAMPLE` blocks | Validates PowerShell docstring enforcement using comment-based help |
+| `PsScriptAnalyzerViolations.ps1` | `PSScriptAnalyzer` | Use of unapproved verbs, missing parameter validation, using aliases instead of full cmdlet names, avoid using Write-Host, missing error handling | Tests PSScriptAnalyzer's PowerShell best practices and cmdlet development standards |
+| `naming-violations.ps1` | Naming enforcement (CI workflow) | Uses kebab-case filename instead of PascalCase | **Intentionally** violates PowerShell naming conventions to test naming enforcement |
+
+**Key Violations Tested**:
+- **Unapproved verbs**: Functions using non-standard verbs like `Do-Something` instead of approved verbs
+- **Missing validation**: Parameters without proper validation attributes
+- **Aliases**: Using `gci` instead of `Get-ChildItem`
+- **Write-Host usage**: Using `Write-Host` (which bypasses the pipeline) instead of `Write-Output`
+
+**Why These Violations**: PowerShell has strict conventions for module and cmdlet development. These fixtures ensure the PowerShell runner enforces these standards.
+
+#### YAML Fixtures
+
+**Location**: `tools/repo_lint/tests/fixtures/yaml/`
+
+| File | Tool(s) Tested | Violation Categories | Purpose |
+|------|----------------|---------------------|---------|
+| `all-docstring-violations.yaml` | `validate_docstrings` | Missing file-level comments | Validates YAML docstring enforcement (expecting top-of-file comments) |
+| `actionlint-violations.yaml` | `actionlint` | Invalid GitHub Actions workflow syntax, unknown action versions, missing required fields, type mismatches | Tests actionlint's validation of GitHub Actions workflow files |
+| `yamllint-violations.yaml` | `yamllint` | Inconsistent indentation, trailing spaces, line too long, missing document start marker (`---`), duplicate keys | Validates yamllint's YAML formatting and style enforcement |
+
+**Key Violations Tested**:
+- **Indentation**: Mixing 2-space and 4-space indentation
+- **Line length**: Lines exceeding configured maximum
+- **Trailing whitespace**: Spaces at end of lines
+- **Invalid workflow syntax**: GitHub Actions-specific validation errors
+
+**Why These Violations**: YAML is whitespace-sensitive and easy to break. These fixtures test that the YAML runner catches common formatting and syntax errors.
+
+#### Rust Fixtures
+
+**Location**: `tools/repo_lint/tests/fixtures/rust/`
+
+| File | Tool(s) Tested | Violation Categories | Purpose |
+|------|----------------|---------------------|---------|
+| `all-docstring-violations.rs` | `validate_docstrings` | Missing module docs (`//!`), missing public item docs (`///`), missing function docs, missing struct docs | Validates Rust docstring enforcement for modules, functions, structs, and public APIs |
+| `clippy-violations.rs` | `clippy` | Needless borrow, redundant pattern matching, single-character string usage, unnecessary `mut`, missing error handling, inefficient string concatenation | Tests clippy's lint suggestions for idiomatic Rust code |
+| `rustfmt-violations.rs` | `rustfmt` | Inconsistent indentation, missing trailing commas in multi-line constructs, improper brace placement, inconsistent spacing | Validates rustfmt's formatting checks for Rust code |
+
+**Key Violations Tested**:
+- **Missing docs**: Public functions without `///` doc comments
+- **Clippy lints**: Non-idiomatic code patterns that clippy flags
+- **Formatting**: Code that doesn't match `rustfmt` style
+
+**Why These Violations**: Rust has strong conventions for documentation and idiomatic code. These fixtures ensure the Rust runner enforces these standards and correctly integrates with `clippy` and `rustfmt`.
+
+---
+
+### Common Mistakes and Warnings
+
+#### ⚠️ DO NOT Submit PRs to "Fix" Fixture Violations
+
+**WRONG**:
+```bash
+# DO NOT DO THIS
+$ repo-lint fix
+# Sees fixture violations and "fixes" them
+$ git add tools/repo_lint/tests/fixtures/
+$ git commit -m "fix: resolve linting violations in test fixtures"
+```
+
+**This would break the test suite!** Fixtures are **intentionally broken**. "Fixing" them destroys their purpose.
+
+#### ⚠️ Fixtures Are NOT Examples
+
+Do **NOT** use fixture files as examples of how to write code. They demonstrate **anti-patterns** and **bad practices**.
+
+**For examples**, see:
+- Repository's actual source code (`tools/repo_lint/`)
+- Documentation in `docs/`
+- Test files in `tests/` (excluding `fixtures/`)
+
+Fixtures show **what NOT to do**, not best practices.
+
+#### ⚠️ DO NOT Run Formatters Directly on Fixture Paths
+
+**WRONG**:
+```bash
+# DO NOT DO THIS
+$ black tools/repo_lint/tests/fixtures/python/
+$ ruff check --fix tools/repo_lint/tests/fixtures/python/
+$ shellcheck --fix tools/repo_lint/tests/fixtures/bash/*.sh
+```
+
+Running formatters or auto-fixers directly on fixture files will destroy their intentional violations.
+
+**CORRECT**:
+```bash
+# Use repo-lint in normal mode (fixtures are automatically excluded)
+$ repo-lint check
+$ repo-lint fix
+
+# Or explicitly exclude fixtures when using tools directly
+$ black --exclude='tests/fixtures' .
+```
+
+#### ⚠️ If You See Fixture Violations in CI, That's a Bug
+
+**CORRECT CI OUTPUT**:
+```bash
+$ repo-lint check --ci
+✅ All checks passed! (0 violations)
+```
+
+**INCORRECT CI OUTPUT (BUG)**:
+```bash
+$ repo-lint check --ci
+❌ Found 135 violations
+  - tools/repo_lint/tests/fixtures/python/ruff_violations.py: 45 violations
+  - tools/repo_lint/tests/fixtures/python/pylint_violations.py: 67 violations
+  - ...
+```
+
+If you see fixture violations in CI logs (without `--include-fixtures`), this indicates:
+- A bug in the exclusion logic
+- A regression in the `include_fixtures` parameter handling
+- An incorrect workflow configuration
+
+**Report this immediately** - it violates the fixture immutability contract.
+
+#### ⚠️ DO NOT Modify Fixtures Without Updating Tests
+
+If you need to modify a fixture file (e.g., to add a new violation category):
+1. Update the fixture file
+2. Update integration tests in `tools/repo_lint/tests/test_fixture_vector_mode.py`
+3. Regenerate `*.RESET.diff` files for audit trail
+4. Document the change in the commit message
+
+**Never** modify fixtures casually - they are part of the test infrastructure.
 
 ---
 
