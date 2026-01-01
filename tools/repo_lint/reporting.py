@@ -50,12 +50,22 @@ def format_violation(violation: Violation) -> str:
     return f"{violation.file}: [{violation.tool}] {violation.message}"
 
 
-def report_results(results: List[LintResult], verbose: bool = False, ci_mode: bool = False) -> int:
+def report_results(
+    results: List[LintResult],
+    verbose: bool = False,
+    ci_mode: bool = False,
+    summary: bool = False,
+    summary_only: bool = False,
+    summary_format: str = "short",
+) -> int:
     """Report linting results using Reporter and return appropriate exit code.
 
     :param results: List of linting results from all runners
     :param verbose: Whether to print verbose output
     :param ci_mode: Whether to use CI mode output
+    :param summary: Show summary after results (normal output + summary)
+    :param summary_only: Show ONLY summary (no individual violations)
+    :param summary_format: Summary format (short|by-tool|by-file|by-code)
     :returns: Exit code (0 for success, 1 for violations, 3 for errors)
     """
     # Create reporter
@@ -73,11 +83,13 @@ def report_results(results: List[LintResult], verbose: bool = False, ci_mode: bo
             all_passed = False
             total_violations += len(result.violations)
 
-    # Render results table
-    reporter.render_results_table(results)
+    # If summary-only mode, skip detailed output
+    if not summary_only:
+        # Render results table
+        reporter.render_results_table(results)
 
-    # Render failures (if any)
-    reporter.render_failures(results)
+        # Render failures (if any)
+        reporter.render_failures(results)
 
     # Determine exit code
     if has_errors:
@@ -87,8 +99,11 @@ def report_results(results: List[LintResult], verbose: bool = False, ci_mode: bo
     else:
         exit_code = ExitCode.VIOLATIONS
 
-    # Render final summary
-    reporter.render_final_summary(results, exit_code)
+    # Render final summary (always shown, or in specific format if requested)
+    if summary or summary_only:
+        reporter.render_summary(results, exit_code, summary_format)
+    else:
+        reporter.render_final_summary(results, exit_code)
 
     return int(exit_code)
 

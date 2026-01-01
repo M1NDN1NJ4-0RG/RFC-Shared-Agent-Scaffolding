@@ -249,7 +249,14 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
         return report_results_json(all_results, verbose=args.verbose)
     else:
-        return report_results(all_results, verbose=args.verbose, ci_mode=args.ci)
+        return report_results(
+            all_results,
+            verbose=args.verbose,
+            ci_mode=args.ci,
+            summary=getattr(args, "summary", False),
+            summary_only=getattr(args, "summary_only", False),
+            summary_format=getattr(args, "summary_format", "short"),
+        )
 
 
 def cmd_check(args: argparse.Namespace) -> int:
