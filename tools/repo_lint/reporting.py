@@ -256,7 +256,7 @@ def report_results_json(results: List[LintResult], verbose: bool = False, report
     if report_path:
         from pathlib import Path
 
-        Path(report_path).write_text(json_str)
+        Path(report_path).write_text(json_str, encoding="utf-8")
         print(f"Report written to {report_path}", file=sys.stderr)
     else:
         print(json_str)
@@ -344,7 +344,7 @@ def report_results_yaml(results: List[LintResult], verbose: bool = False, report
         if report_path:
             from pathlib import Path
 
-            Path(report_path).write_text(yaml_str)
+            Path(report_path).write_text(yaml_str, encoding="utf-8")
             print(f"Report written to {report_path}", file=sys.stderr)
         else:
             print(yaml_str)
@@ -558,7 +558,7 @@ def _write_reports_dir(results: List[LintResult], reports_dir: str) -> None:
             ),
             "error": result.error,
         }
-        tool_report_path.write_text(json.dumps(tool_data, indent=2))
+        tool_report_path.write_text(json.dumps(tool_data, indent=2), encoding="utf-8")
 
     # Write index summary
     index_path = reports_path / "index.json"
@@ -570,29 +570,6 @@ def _write_reports_dir(results: List[LintResult], reports_dir: str) -> None:
         "total_violations": sum(len(r.violations) for r in results if not r.error),
         "tools": [r.tool for r in results],
     }
-    index_path.write_text(json.dumps(index_data, indent=2))
+    index_path.write_text(json.dumps(index_data, indent=2), encoding="utf-8")
 
     print(f"Per-tool reports written to {reports_dir}/", file=sys.stderr)
-    output["summary"] = {
-        "passed": all_passed and not has_errors,
-        "total_violations": total_violations,
-        "failed_tools": len([r for r in results if not r.passed]),
-        "errored_tools": len([r for r in results if r.error]),
-    }
-
-    # Verbose mode: add tool names in summary
-    if verbose:
-        output["summary"]["tools_run"] = [r.tool for r in results]
-        output["summary"]["failed_tool_names"] = [r.tool for r in results if not r.passed]
-        output["summary"]["errored_tool_names"] = [r.tool for r in results if r.error]
-
-    # Print JSON output (no Reporter needed for JSON)
-    print(json.dumps(output, indent=2, sort_keys=True))
-
-    # Return appropriate exit code
-    if has_errors:
-        return 3
-    elif all_passed:
-        return 0
-    else:
-        return 1
