@@ -86,7 +86,9 @@ def _resolve_language_filter(lang, only):
 
     # Handle --lang / --only precedence: --lang takes priority
     # "all" is same as not specifying a language (run all)
-    return lang if lang and lang != "all" else only
+    if lang:
+        return None if lang == "all" else lang
+    return only
 
 
 # Configure rich-click globally
