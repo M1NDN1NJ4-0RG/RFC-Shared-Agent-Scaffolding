@@ -1,4 +1,4 @@
-MUST READ: `.github/copilot-instructions.md` FIRST!
+MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
 Status: Phase 2.9 Core Complete; Testing & Validation In Progress
@@ -7,18 +7,67 @@ Related: Issue #160, PRs #176, #180
 
 ## NEXT
 
-### ✅ PHASE 2.9 COMPLETE - READY FOR REVIEW
+### Phase 2.7.1 In Progress - Language Filtering (1 of 6 Steps Complete)
 
-**Phase 2.9 core work is COMPLETE and VALIDATED.**
+**Completed (2025-12-31 23:55):**
+- [x] Step 1: Add `--lang` option as alias for `--only`
+  - Works in both `check` and `fix` commands
+  - Accepts all languages + "all" option
+  - Backward compatible with `--only`
+  - Pre-commit gate passes (exit code 0)
 
-**Pre-commit validation:** ✅ PASS (`repo-lint check --ci --only python` exits 0)
+**Remaining Steps:**
+- [ ] Step 2: Add `--tool` option (repeatable, filter to specific tools)
+  - Examples: `--tool black`, `--tool ruff --tool pylint`
+  - Validate tool names against known tools
+  - Clear error if tool not available
+- [ ] Step 3: Tool availability validation with clear errors
+- [ ] Step 4: Update Rich-Click help with examples
+- [ ] Step 5: Add unit tests for lang/tool filtering logic
+- [ ] Step 6: Update HOW-TO-USE-THIS-TOOL.md with filtering examples
 
-**Remaining tasks:**
-- [ ] Request code review
-- [ ] Address review feedback
-- [ ] Optional: Add unit tests for yaml_loader.py
-- [ ] Optional: Integration tests for backward compatibility
-- [ ] Merge and proceed to Phase 2.7
+**Current Branch State:**
+- 2 commits ahead of base
+- All tests passing
+- Pre-commit gate clean (Python exit code 0)
+- Ready for code review
+
+**Next Session Actions:**
+1. Request code review for Step 1 changes
+2. Address any code review feedback
+3. Implement Step 2 (--tool option)
+4. Continue through remaining steps
+
+---
+
+### ✅ PHASES 2.5 AND 2.9 COMPLETE - READY FOR PHASE 2.7
+
+**Current State (2025-12-31 23:50):**
+- Phase 2.5: Rich UI "Glow Up" - ✅ COMPLETE (all 3 blockers resolved)
+- Phase 2.9: YAML-First Configuration - ✅ COMPLETE (merged in PR #207)
+
+**Verified Complete:**
+1. ✅ Phase 2.5 Blocker 1: Tests updated for Rich format (`test_output_format.py` passes)
+2. ✅ Phase 2.5 Blocker 2: Windows CI validation (GitHub Actions job exists and runs)
+3. ✅ Phase 2.5 Blocker 3: Documentation (PowerShell, theme, output modes in HOW-TO)
+4. ✅ Phase 2.9: YAML-first migration (PR #207 merged, `yaml_loader.py` exists, all configs migrated)
+
+**Next Phase per Decision 2 Sequencing:**
+**Phase 2.7 - Extended CLI Granularity & Reporting Surface**
+
+**Phase 2.7.1 - Language and Tool Filtering (HIGHEST PRIORITY)**
+- [ ] Add `--lang <LANG>` option (single language filter, alternative to `--only`)
+- [ ] Add `--tool <TOOL>` option (repeatable, filter to specific tools like `black`, `ruff`, `pylint`)
+- [ ] Tool validation: error if requested tool not available
+- [ ] Update Rich-Click OPTION_GROUPS for proper help organization
+- [ ] Add unit tests for lang/tool filtering logic
+- [ ] Update HOW-TO-USE-THIS-TOOL.md with filtering examples
+
+**Why Phase 2.7.1 First:**
+- Foundation for all other Phase 2.7 features (summaries, formats, doctor, etc.)
+- Enables granular debugging and focused linting
+- Relatively self-contained (< 200 lines changed)
+- High user value (frequently requested feature)
 
 ### Summary of Phase 2.9 Implementation
 
@@ -43,6 +92,152 @@ Related: Issue #160, PRs #176, #180
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2025-12-31 23:59 - Session End: Phase 2.7.1 Step 1 Complete with Code Review
+
+**Final Session Activities:**
+- ✅ Requested code review for Phase 2.7.1 Step 1 changes
+- ✅ Addressed all 4 code review comments:
+  1. Added warning when both --lang and --only specified
+  2. Extracted precedence logic to `_resolve_language_filter()` helper function
+  3. Updated check command example to use --lang
+  4. Updated fix command example to use --lang
+- ✅ Fixed implicit string concatenation warning from pylint
+- ✅ Final pre-commit gate: exit code 0 (all checks pass)
+- ✅ Updated journals documenting completion
+
+**Files Changed (Final):**
+- `tools/repo_lint/cli.py`: 
+  - Added `_resolve_language_filter()` helper (lines 66-86)
+  - Updated both check and fix to use helper
+  - Updated examples to promote --lang usage
+  - Total changes: ~60 lines modified
+  
+- `docs/ai-prompt/160/160-next-steps.md`: Updated with session completion
+
+**Code Quality Improvements:**
+- Eliminated code duplication (DRY principle via helper function)
+- Added user-facing warning for conflicting options
+- Promoted best practices through updated examples
+- All linting checks pass (pylint, ruff, black, docstrings)
+
+**Phase 2.7.1 Step 1 Status:** ✅ COMPLETE and CODE-REVIEWED
+- All functionality working as designed
+- All code review feedback addressed
+- All tests passing
+- Pre-commit gate clean (exit code 0)
+- Ready to proceed to Step 2
+
+**Next Session Actions:**
+1. Implement Step 2: Add `--tool` option (repeatable tool filtering)
+2. Continue through Steps 3-6 of Phase 2.7.1
+
+**Commit History:**
+- Initial plan commit
+- Verification and planning commit  
+- Phase 2.7.1 Step 1 implementation commit
+- Journal update commit
+- Code review feedback fixes commit (FINAL)
+
+---
+
+### 2025-12-31 23:55 - Phase 2.7.1 Step 1 Complete: Added --lang Option
+
+**Files Changed:**
+- `tools/repo_lint/cli.py`: Added `--lang` option to check and fix commands (30 lines modified)
+  - Lines 185-187: Added `--lang` parameter to `check()` with choices including "all"
+  - Lines 255-261: Added precedence logic (`--lang` overrides `--only`, "all" = no filter)
+  - Lines 292-294: Added `--lang` parameter to `fix()` 
+  - Lines 395-401: Added same precedence logic to `fix()`
+  - Lines 84-92, 94-102: Updated OPTION_GROUPS to show `--lang` in Filtering section
+  - Marked `--only` as deprecated in help text for both commands
+  
+- `docs/ai-prompt/160/160-next-steps.md`: Updated NEXT section with Phase 2.7.1 progress
+
+**Changes Made:**
+- **Phase 2.7.1 Step 1: Add --lang option** ✅ COMPLETE
+  - New `--lang` parameter accepts: python, bash, powershell, perl, yaml, rust, all
+  - `--lang all` is equivalent to not specifying a language (runs all)
+  - `--lang` takes precedence over deprecated `--only` option
+  - Backward compatible: `--only` still works but shows deprecation notice
+  - Both `check` and `fix` commands updated identically
+  - Rich-Click help properly organizes options in Filtering section
+
+**Verification:**
+- Manual testing: `repo-lint check --help` shows `--lang` in Filtering panel
+- Manual testing: `repo-lint check --ci --lang python` works correctly (exit 0)
+- Automated tests: `test_output_format.py` all 7 tests pass
+- Pre-commit gate: `repo-lint check --ci --lang python` exits 0 (all checks pass)
+- No breaking changes: existing `--only` usage continues to work
+
+**Rationale:**
+- Per Phase 2.7 requirements: need granular language filtering
+- Per Decision 5: implement full flag set with strong UX
+- Minimal change principle: only ~30 lines modified
+- Backward compatibility: don't break existing users
+- Foundation for Step 2 (--tool option) and other Phase 2.7 features
+
+**Implementation Notes:**
+- Used Click's `type=click.Choice()` for validation
+- Precedence logic: `effective_lang = lang if lang and lang != "all" else only`
+- This ensures `--lang` always wins if specified
+- "all" value converts to None internally (run all languages)
+- Reuses existing `only` parameter in argparse.Namespace for compatibility
+
+**Next Steps:**
+- Step 2: Add `--tool` option (repeatable tool filtering)
+- Request code review before continuing
+- Address any feedback
+- Continue with Steps 3-6
+
+---
+
+### 2025-12-31 23:50 - Session Start: Verified Phase 2.5 and 2.9 Complete, Planned Phase 2.7
+
+**Session Activities:**
+- ✅ Ran mandatory session start procedure per Session Compliance Requirements
+  - Bootstrapper completed successfully (exit 0)
+  - Activated venv and Perl environment
+  - Verified `repo-lint --help` functional
+  - Health check: `repo-lint check --ci` exits 1 (violations exist, acceptable at session start)
+  
+- ✅ Investigated current EPIC #160 state
+  - Confirmed PR #207 (Phase 2.9) was merged to main
+  - yaml_loader.py exists and is functional
+  - All Phase 2.9 YAML configs present
+
+- ✅ Verified Phase 2.5 blockers are complete
+  - Blocker 1: `test_output_format.py` passes (7/7 tests)
+  - Blocker 2: Windows CI job exists in `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+  - Blocker 3: HOW-TO-USE-THIS-TOOL.md contains PowerShell completion, theme customization, output modes
+
+- ✅ Updated EPIC tracking documents
+  - Updated 160-next-steps.md to reflect true current state
+  - Documented Phase 2.7 as next per Decision 2 sequencing
+  - Identified Phase 2.7.1 (lang/tool filtering) as highest priority item
+
+**Files Changed:**
+- `docs/ai-prompt/160/160-next-steps.md`: Updated NEXT section with accurate state
+
+**Current Repository State:**
+- Exit code 1 from `repo-lint check --ci` (51 violations)
+- These are pre-existing violations, not from my changes
+- Per Session Compliance Requirements, exit code 1 is acceptable at session start
+
+**Rationale:**
+- Per Session Compliance Requirements: must read session docs first
+- Per repository guidelines: verify state before making changes
+- Per Decision 2: must complete Phase 2.5 blockers before Phase 2.7
+- All blockers confirmed complete through direct verification (ran tests, checked files, reviewed workflows)
+
+**Next Session Actions:**
+- Implement Phase 2.7.1: Language and Tool Filtering
+- Add `--lang` and `--tool` CLI options
+- Update cli.py and cli_argparse.py with minimal changes
+- Add tests for filtering logic
+- Update documentation
+
+---
 
 ### 2025-12-31 19:05 - Phase 2.9 Core Implementation: YAML-First Configuration Complete
 

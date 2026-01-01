@@ -61,6 +61,36 @@ import rich_click as click
 from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
 from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
 
+
+def _resolve_language_filter(lang, only):
+    """Resolve language filter from --lang and --only options.
+
+    :Purpose:
+        Handles precedence between --lang and deprecated --only options.
+        Issues warning if both are specified.
+
+    :param lang: Value from --lang option (or None)
+    :param only: Value from --only option (or None)
+    :returns: Resolved language filter (or None for all languages)
+
+    :Notes:
+        - --lang takes precedence over --only
+        - "all" is treated as None (run all languages)
+        - Warns if both options specified simultaneously
+    """
+    if lang and only:
+        print(
+            "⚠️  Warning: Both --lang and --only specified. Using --lang (--only is deprecated).",
+            file=sys.stderr,
+        )
+
+    # Handle --lang / --only precedence: --lang takes priority
+    # "all" is same as not specifying a language (run all)
+    if lang:
+        return None if lang == "all" else lang
+    return only
+
+
 # Configure rich-click globally
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.USE_MARKDOWN = False
@@ -88,7 +118,7 @@ click.rich_click.OPTION_GROUPS = {
         },
         {
             "name": "Filtering",
-            "options": ["--only"],
+            "options": ["--lang", "--only"],
         },
     ],
     "repo-lint fix": [
@@ -98,7 +128,7 @@ click.rich_click.OPTION_GROUPS = {
         },
         {
             "name": "Filtering",
-            "options": ["--only"],
+            "options": ["--lang", "--only"],
         },
         {
             "name": "Safety",
@@ -180,7 +210,12 @@ def cli(ctx):
 @click.option(
     "--only",
     type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust"], case_sensitive=False),
-    help="Run checks for only the specified language",
+    help="Run checks for only the specified language (deprecated: use --lang)",
+)
+@click.option(
+    "--lang",
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "all"], case_sensitive=False),
+    help="Filter checks to specified language (python|bash|powershell|perl|yaml|rust|all)",
 )
 @click.option(
     "--json",
@@ -188,7 +223,7 @@ def cli(ctx):
     is_flag=True,
     help="Output results in JSON format for CI debugging",
 )
-def check(verbose, ci_mode, only, use_json):
+def check(verbose, ci_mode, only, lang, use_json):
     """Run linting checks without modifying files.
 
     \b
@@ -207,7 +242,7 @@ def check(verbose, ci_mode, only, use_json):
       Stable output for CI, fails if tools missing (no auto-install)
 
     Example 3 — Focused usage:
-      $ repo-lint check --only python
+      $ repo-lint check --lang python
       Check only Python files, skip other languages
 
     \b
@@ -242,16 +277,20 @@ def check(verbose, ci_mode, only, use_json):
 
     :param verbose: Show verbose output including passed checks
     :param ci_mode: CI mode - stable output, fail if tools missing
-    :param only: Run only for specific language (python, bash, etc.)
+    :param only: (Deprecated) Run only for specific language - use --lang instead
+    :param lang: Filter checks to specified language
     :param use_json: Output results in JSON format for CI debugging
     """
     import argparse  # Local import - only needed for Namespace creation
+
+    # Resolve language filter with precedence and warning
+    effective_lang = _resolve_language_filter(lang, only)
 
     # Create a namespace object compatible with the existing cmd_check function
     args = argparse.Namespace(
         verbose=verbose,
         ci=ci_mode,
-        only=only,
+        only=effective_lang,
         json=use_json,
     )
 
@@ -277,7 +316,12 @@ def check(verbose, ci_mode, only, use_json):
 @click.option(
     "--only",
     type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust"], case_sensitive=False),
-    help="Run fixes for only the specified language",
+    help="Run fixes for only the specified language (deprecated: use --lang)",
+)
+@click.option(
+    "--lang",
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "all"], case_sensitive=False),
+    help="Filter fixes to specified language (python|bash|powershell|perl|yaml|rust|all)",
 )
 @click.option(
     "--json",
@@ -297,7 +341,7 @@ def check(verbose, ci_mode, only, use_json):
     help="WARNING: DANGER: Confirm unsafe mode execution (REQUIRED with --unsafe)",
 )
 # pylint: disable=too-many-arguments,too-many-positional-arguments
-def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
+def fix(verbose, ci_mode, only, lang, use_json, unsafe, yes_i_know):
     """Apply automatic fixes (formatters only).
 
     \b
@@ -317,7 +361,7 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
       Verify formatting in CI (fails if changes needed, doesn't modify files)
 
     Example 3 — Focused usage:
-      $ repo-lint fix --only python
+      $ repo-lint fix --lang python
       Fix only Python files, skip other languages
 
     \b
@@ -370,18 +414,22 @@ def fix(verbose, ci_mode, only, use_json, unsafe, yes_i_know):
 
     :param verbose: Show verbose output including passed checks
     :param ci_mode: CI mode - stable output, fail if tools missing
-    :param only: Run only for specific language (python, bash, etc.)
+    :param only: (Deprecated) Run only for specific language - use --lang instead
+    :param lang: Filter fixes to specified language
     :param use_json: Output results in JSON format for CI debugging
     :param unsafe: Enable unsafe experimental fixers (DANGER - requires --yes-i-know)
     :param yes_i_know: Confirmation flag required for unsafe mode
     """
     import argparse  # Local import - only needed for Namespace creation
 
+    # Resolve language filter with precedence and warning
+    effective_lang = _resolve_language_filter(lang, only)
+
     # Create a namespace object compatible with the existing cmd_fix function
     args = argparse.Namespace(
         verbose=verbose,
         ci=ci_mode,
-        only=only,
+        only=effective_lang,
         json=use_json,
         unsafe=unsafe,
         yes_i_know=yes_i_know,
