@@ -375,7 +375,7 @@ def report_results_csv(results: List[LintResult], report_path: str) -> int:
     total_violations = 0
 
     # Write summary CSV
-    with open(summary_path, "w", newline="") as f:
+    with open(summary_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["tool", "passed", "violations", "files", "duration", "error"])
         writer.writeheader()
         for result in results:
@@ -397,7 +397,7 @@ def report_results_csv(results: List[LintResult], report_path: str) -> int:
             )
 
     # Write violations CSV
-    with open(violations_path, "w", newline="") as f:
+    with open(violations_path, "w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=["tool", "file", "line", "message"])
         writer.writeheader()
         for result in results:
@@ -430,9 +430,7 @@ def report_results_xlsx(results: List[LintResult], report_path: str) -> int:
     :returns: Exit code (0 for success, 1 for violations, 3 for errors)
     """
     try:
-        import openpyxl
         from openpyxl import Workbook
-        from openpyxl.styles import Font, PatternFill
     except ImportError:
         print("Error: openpyxl not installed. Install with: pip install openpyxl", file=sys.stderr)
         return int(ExitCode.INTERNAL_ERROR)
