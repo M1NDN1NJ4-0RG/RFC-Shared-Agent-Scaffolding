@@ -247,17 +247,32 @@ class Reporter:
         self.console.print(table)
         self.console.print()
 
-    def render_failures(self, results: List[LintResult]) -> None:
+    def render_failures(
+        self,
+        results: List[LintResult],
+        show_files: bool = True,
+        show_codes: bool = True,
+        max_violations: int = None,
+    ) -> None:
         """Render detailed failure information.
 
         :param results: List of LintResult objects (only failed ones will be shown)
+        :param show_files: Whether to show per-file breakdown
+        :param show_codes: Whether to show tool rule IDs/codes
+        :param max_violations: Maximum violations to display (None = unlimited)
         """
         failed_results = [r for r in results if not r.passed]
 
         if not failed_results:
             return
 
+        violations_displayed = 0
+        max_reached = False
+
         for result in failed_results:
+            if max_reached:
+                break
+
             # Create failure panel header
             box_style = get_box_style(self.theme, self.ci_mode)
             title = f"{result.tool} Failures"
@@ -272,7 +287,21 @@ class Reporter:
                 self.console.print(panel)
             else:
                 # For violations, show a panel with header and then a table
-                panel_content = f"Found {len(result.violations)} violation(s)"
+                tool_violations = result.violations
+
+                # Apply max_violations limit if set
+                if max_violations:
+                    remaining_quota = max_violations - violations_displayed
+                    if remaining_quota <= 0:
+                        max_reached = True
+                        break
+                    if len(tool_violations) > remaining_quota:
+                        tool_violations = tool_violations[:remaining_quota]
+                        max_reached = True
+
+                panel_content = f"Found {len(tool_violations)} violation(s)"
+                if max_violations and len(result.violations) > len(tool_violations):
+                    panel_content += f" (showing first {len(tool_violations)})"
                 panel = Panel(panel_content, title=title_formatted, border_style=border_style, box=box_style)
                 self.console.print(panel)
 
@@ -282,25 +311,48 @@ class Reporter:
                 file_column_kwargs = {}
                 if self.ci_mode:
                     file_column_kwargs = {"no_wrap": False, "overflow": "fold"}
-                violations_table.add_column(
-                    "File", style=self._get_color("metadata") if not self.ci_mode else None, **file_column_kwargs
-                )
+
+                # Add columns based on show_files
+                if show_files:
+                    violations_table.add_column(
+                        "File", style=self._get_color("metadata") if not self.ci_mode else None, **file_column_kwargs
+                    )
                 violations_table.add_column("Line", justify="right")
                 violations_table.add_column("Message")
 
-                # Add violations (limit to avoid overwhelming output)
-                for violation in result.violations[:MAX_VIOLATIONS_PER_TOOL]:
+                # Add violations
+                for violation in tool_violations:
                     line_str = str(violation.line) if violation.line else "-"
-                    violations_table.add_row(violation.file, line_str, violation.message)
 
-                if len(result.violations) > MAX_VIOLATIONS_PER_TOOL:
-                    remaining = len(result.violations) - MAX_VIOLATIONS_PER_TOOL
-                    note = self._format_with_color(f"... and {remaining} more violations", "warning")
-                    violations_table.add_row("", "", note)
+                    # Process message based on show_codes
+                    message = violation.message
+                    if not show_codes and ":" in message:
+                        # Strip code from message (e.g., "E501: line too long" -> "line too long")
+                        message = message.split(":", 1)[1].strip()
+
+                    if show_files:
+                        violations_table.add_row(violation.file, line_str, message)
+                    else:
+                        # Include file in message when not showing file column
+                        full_message = f"{violation.file}:{line_str} - {message}" if line_str != "-" else f"{violation.file} - {message}"
+                        violations_table.add_row(line_str, full_message)
+
+                    violations_displayed += 1
 
                 # Render the table
                 self.console.print(violations_table)
 
+            self.console.print()
+
+        # Show message if max violations reached
+        if max_reached:
+            warn_icon = self._get_icon("warn")
+            warn_color = self._get_color("warning")
+            self.console.print()
+            self.console.print(
+                f"[{warn_color}]{warn_icon} Maximum violations limit reached ({max_violations}). "
+                f"Additional violations not displayed.[/{warn_color}]"
+            )
             self.console.print()
 
     def render_final_summary(self, results: List[LintResult], exit_code: ExitCode) -> None:
