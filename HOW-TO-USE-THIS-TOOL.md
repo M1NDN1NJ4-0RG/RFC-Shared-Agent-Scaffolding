@@ -1302,4 +1302,4 @@ If you encounter bugs or have feature requests:
 
 **Version:** 0.1.0  
 **Last Updated:** 2025-12-31  
-**Maintained by:** M1NDN1NJ4-0RG
+**Maintained by:** Ryan Bell
