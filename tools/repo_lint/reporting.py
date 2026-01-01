@@ -543,18 +543,14 @@ def _write_reports_dir(results: List[LintResult], reports_dir: str) -> None:
         tool_data = {
             "tool": result.tool,
             "passed": result.passed,
-            "violations": (
-                [
-                    {
-                        "file": v.file,
-                        "line": v.line,
-                        "message": v.message,
-                    }
-                    for v in result.violations
-                ]
-                if not result.error
-                else []
-            ),
+            "violations": [] if result.error else [
+                {
+                    "file": v.file,
+                    "line": v.line,
+                    "message": v.message,
+                }
+                for v in result.violations
+            ],
             "error": result.error,
         }
         tool_report_path.write_text(json.dumps(tool_data, indent=2))
