@@ -31,7 +31,7 @@ def missing_raises():
 # Class without docstring
 # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 class NoDoc:
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def method(self):
         pass
 
@@ -41,11 +41,11 @@ class NoDoc:
 class PartialDocs:
     """Class has docstring."""
 
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def no_doc_method(self):
         pass
 
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def another_no_doc(self):
         return 1
 
@@ -73,11 +73,11 @@ def wrong_format(a, b, c):
 class MethodMissing:
     """Class docstring present."""
 
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def __init__(self):
         pass
 
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def compute(self, x):
         return x * 2
 
@@ -88,7 +88,7 @@ class PropertyMissing:
     """Class docstring present."""
 
     @property
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def value(self):
         return 42
 
@@ -99,7 +99,7 @@ class StaticMissing:
     """Class docstring present."""
 
     @staticmethod
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def helper():
         return "help"
 
@@ -110,7 +110,7 @@ class ClassMethodMissing:
     """Class docstring present."""
 
     @classmethod
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def create(cls):
         return cls()
 
@@ -120,7 +120,7 @@ class ClassMethodMissing:
 def outer():
     """Outer function."""
 
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def inner():
         return 1
 

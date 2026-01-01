@@ -143,7 +143,7 @@ def outer():
     """Outer function."""
     x = 1
 
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def inner():
         """Inner function."""
         x = 2  # W0621
@@ -157,8 +157,6 @@ def outer():
 def function():
     """Function with import inside."""
     pass
-
-
 
 
 # W0107: unnecessary pass

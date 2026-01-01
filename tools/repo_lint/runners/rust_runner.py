@@ -34,7 +34,7 @@ from pathlib import Path
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
-from tools.repo_lint.runners.base import Runner, command_exists
+from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
 class RustRunner(Runner):

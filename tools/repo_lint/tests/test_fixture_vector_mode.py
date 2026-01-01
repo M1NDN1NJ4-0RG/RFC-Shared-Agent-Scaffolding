@@ -13,6 +13,9 @@
 :Requirements:
     Phase 3 of Issue #221 - Add Vector Integration Tests
 
+:Environment Variables:
+    None
+
 :Examples:
     Run all fixture vector mode tests::
 
@@ -121,7 +124,7 @@ def init_git_repo(cwd: Path):
     )
 
 
-def test_normal_mode_excludes_fixtures(temp_fixtures_dir):
+def test_normal_mode_excludes_fixtures(temp_fixtures_dir):  # pylint: disable=redefined-outer-name
     """Test that normal mode (without --include-fixtures) excludes fixture files.
 
     :Purpose:
@@ -143,7 +146,7 @@ def test_normal_mode_excludes_fixtures(temp_fixtures_dir):
     assert "pylint_violations.py" not in result.stdout, "Fixture files should not be scanned"
 
 
-def test_vector_mode_includes_fixtures(temp_fixtures_dir):
+def test_vector_mode_includes_fixtures(temp_fixtures_dir):  # pylint: disable=redefined-outer-name
     """Test that vector mode (with --include-fixtures) includes fixture files.
 
     :Purpose:
@@ -175,7 +178,7 @@ def test_vector_mode_includes_fixtures(temp_fixtures_dir):
     assert has_violations, f"Vector mode should detect violations in fixtures.\nOutput:\n{output}"
 
 
-def test_vector_mode_populates_file_and_line_fields(temp_fixtures_dir):
+def test_vector_mode_populates_file_and_line_fields(temp_fixtures_dir):  # pylint: disable=redefined-outer-name
     """Test that violations have correctly populated File and Line fields.
 
     :Purpose:
@@ -217,7 +220,7 @@ def test_fix_mode_does_not_modify_original_fixtures():
 
     # Run fix mode (this should NOT modify the actual fixture files)
     # Note: In normal mode, fixtures are excluded, so this verifies exclusion works
-    result = run_repo_lint(REPO_ROOT, "fix", "--only", "python", "--ci")
+    _ = run_repo_lint(REPO_ROOT, "fix", "--only", "python", "--ci")
 
     # Verify original fixture files are unchanged
     for fixture_file, original_checksum in original_checksums.items():
@@ -228,7 +231,7 @@ def test_fix_mode_does_not_modify_original_fixtures():
             assert current_checksum == original_checksum, f"Fixture file {fixture_file} was modified by fix mode!"
 
 
-def test_all_languages_support_vector_mode(temp_fixtures_dir):
+def test_all_languages_support_vector_mode(temp_fixtures_dir):  # pylint: disable=redefined-outer-name
     """Test that --include-fixtures works for all supported languages.
 
     :Purpose:
@@ -264,7 +267,9 @@ def test_all_languages_support_vector_mode(temp_fixtures_dir):
         ("rust", "clippy-violations.rs"),
     ],
 )
-def test_language_specific_fixtures_scanned(temp_fixtures_dir, language, expected_fixture):
+def test_language_specific_fixtures_scanned(
+    temp_fixtures_dir, language, expected_fixture
+):  # pylint: disable=redefined-outer-name
     """Test that language-specific fixtures are scanned in vector mode.
 
     :Purpose:

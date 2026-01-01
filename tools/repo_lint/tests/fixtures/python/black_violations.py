@@ -38,11 +38,11 @@ if True:
 # Black violation: inconsistent indentation style
 # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 class BadClass:
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def method1(self):
         pass
 
-# INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
+    # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
     def method2(self):
         pass
 
