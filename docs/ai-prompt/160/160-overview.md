@@ -11,7 +11,7 @@ This plan outlines prioritized phases to address all findings. Each item include
 
 ## Phase 1 – Critical Fixes and Corrections (High Priority)
 
-- [ ] **Fix repository root detection** (Severity: **High**)  
+- [x] **Fix repository root detection** (Severity: **High**)  
   - **Context:** `get_repo_root()` and `find_repo_root()` currently require a `.git` directory, causing failures outside Git worktrees.  
   - **Affected Files:** `tools/repo_lint/install/install_helpers.py`, `tools/repo_lint/runners/base.py` (or wherever `find_repo_root` is defined).  
   - **Fix Steps:** Modify these functions to check for `.git` but **if not found**, return the current working directory as root (or use an environment override). For example:
@@ -29,25 +29,25 @@ This plan outlines prioritized phases to address all findings. Each item include
     Ensure `find_repo_root` in all runners uses this updated logic.  
   - **Rationale:** Allows `repo_lint` to run in directories without Git, matching user expectations.
 
-- [ ] **Clarify exit codes for unsafe mode** (Severity: **High**)  
+- [x] **Clarify exit codes for unsafe mode** (Severity: **High**)  
   - **Context:** `repo_lint fix --unsafe` in CI or without `--yes-i-know` uses exit code 2 ("Missing tools"), which is misleading.  
   - **Affected Files:** `tools/repo_lint/cli.py`, in `cmd_fix`.  
   - **Fix Steps:** Introduce a new exit code (e.g. `ExitCode.UNSAFE_VIOLATION = 4`) or reuse code 3 for policy errors. Change the `return ExitCode.MISSING_TOOLS` on lines 22 and 36 of `cmd_fix` to this new code. Update `ExitCode` enum accordingly. Adjust help text to note this code.  
   - **Rationale:** Distinguishes configuration errors from missing tools, making CI logs clearer.
 
-- [ ] **Handle partial install failures gracefully** (Severity: **Medium**)  
+- [x] **Handle partial install failures gracefully** (Severity: **Medium**)  
   - **Context:** In `cmd_install`, if Python tool installation fails, the script still prints next-step instructions but ends with an error. This could confuse users.  
   - **Affected Files:** `tools/repo_lint/cli.py`, lines around 45–60 in `cmd_install`.  
   - **Fix Steps:** Change logic so that the overall success flag (`success`) is computed across all sections: if Python tools or any manual section fails, show errors but consider whether to continue. For example, do **not** `return ExitCode.INTERNAL_ERROR` immediately upon Python failure; instead, gather errors and only exit at end. Alternatively, exit early but skip printing irrelevant instructions. Update output messages accordingly.  
   - **Rationale:** Improves user experience during tool setup and makes failure reasons clear.
 
-- [ ] **Ensure missing docstring validator is detected** (Severity: **Medium**)  
+- [x] **Ensure missing docstring validator is detected** (Severity: **Medium**)  
   - **Context:** If `validate_docstrings.py` is missing, runners return a violation with an "script not found" error. This may be unclear.  
   - **Affected Files:** `tools/repo_lint/runners/*_runner.py` (each `_run_docstring_validation` implementation).  
   - **Fix Steps:** In `_run_docstring_validation` methods, catch the "script not found" case explicitly. Print a clear error (`"Docstring validation skipped: script not found"`). Optionally, raise a `MissingToolError`. Document this case in README.  
   - **Rationale:** Makes it obvious when docstring checks are not executed.
 
-- [ ] **Validate non-Python unsafe mode behavior** (Severity: **Medium**)  
+- [x] **Validate non-Python unsafe mode behavior** (Severity: **Medium**)  
   - **Context:** The `--unsafe` fix path only processes Python files. If a user passes `--only=perl` with `--unsafe`, the logic will not handle it.  
   - **Affected Files:** `tools/repo_lint/cli.py`, `cmd_fix` unsafe section.  
   - **Fix Steps:** Restrict `--unsafe` to only allow `--only=python` (error out otherwise), or extend unsafe fixer support to other languages (if implemented). At minimum, add a check:
@@ -60,7 +60,7 @@ This plan outlines prioritized phases to address all findings. Each item include
 
   - **Rationale:** Prevents silent no-op when unsupported combinations are requested.
 
-- [ ] **Add missing unit tests for error conditions** (Severity: **Low**)  
+- [x] **Add missing unit tests for error conditions** (Severity: **Low**)  
   - **Context:** Key error branches (missing tools, missing policy file, unsafe mode cases) lack automated tests.  
   - **Affected Files:** Add to `tools/repo_lint/tests/`.  
   - **Fix Steps:** Write tests using `pytest` to simulate: invoking `repo_lint check` without tools (expect exit code 2), `repo_lint fix` with `--unsafe` in CI (exit 2), missing policy (exit 3), etc. Use subprocess calls or invoke `main()` directly.  
@@ -70,7 +70,7 @@ This plan outlines prioritized phases to address all findings. Each item include
 
 ## Phase 2 – Major Enhancements and Alignments (Medium Priority)
 
-- [ ] **Make `repo_lint` an installable package** (Severity: **Medium**)  
+- [x] **Make `repo_lint` an installable package** (Severity: **Medium**)  
   - **Context:** Future Work (FW-013) calls for packaging the tool.  
   - **Affected Files:** Project root. Need a `pyproject.toml` or `setup.py`, and modify code as needed.  
   - **Fix Steps:**  
@@ -87,7 +87,7 @@ This plan outlines prioritized phases to address all findings. Each item include
     - Ensure `__main__.py` is present or remove if using entry points.  
   - **Rationale:** Improves usability (one can `pip install -e .`) and aligns with future plan.
 
-- [ ] **Integrate naming-and-style enforcement** (Severity: **Medium**)  
+- [x] **Integrate naming-and-style enforcement** (Severity: **Medium**)  
   - **Context:** The future work suggests `repo_lint` should enforce filename conventions (kebab-case, etc.). Currently, naming checks are done via CI or manual scripts, not by `repo_lint`.  
   - **Affected Files:** Likely add a new runner or extend an existing one. Could be a new "General" runner that checks all files, or integrate into common checks.  
   - **Fix Steps:**  
@@ -98,13 +98,13 @@ This plan outlines prioritized phases to address all findings. Each item include
     - Add test fixtures in repo-lint tests for naming violations.  
   - **Rationale:** Automates an important repository convention and prevents drift.
 
-- [ ] **Pin external tool versions in installer** (Severity: **Low**)  
+- [x] **Pin external tool versions in installer** (Severity: **Low**)  
   - **Context:** We have `install/version_pins.py` with desired versions (Black, etc.), but `install_python_tools` currently installs latest (via `requirements-dev.txt`).  
   - **Affected Files:** `tools/repo_lint/install/install_helpers.py` and `install/version_pins.py`.  
   - **Fix Steps:** Use the version pins: in `install_python_tools`, instead of a generic pip install, construct commands like `pip install black=={version}` using the pins. Alternatively, generate a `requirements.txt` with pinned versions. Ensure `pip install .` or `requirements-dev.txt` uses these pins.  
   - **Rationale:** Guarantees deterministic linting behavior.
 
-- [ ] **Improve CLI usability** (Severity: **Low**)  
+- [x] **Improve CLI usability** (Severity: **Low**)  
   - **Context:** Minor enhancements for user experience.  
   - **Affected Files:** `tools/repo_lint/cli.py`, README.  
   - **Fix Steps:**  
@@ -187,21 +187,21 @@ This plan outlines prioritized phases to address all findings. Each item include
   - **Implementation:** YAML theme config with strict validation; precedence: flag > env > user config > default
   - **Status:** ✅ COMPLETE
 
-- [ ] **Update Tests for Rich Format** (Severity: **Medium**)
+- [x] **Update Tests for Rich Format** (Severity: **Medium**)
   - **Context:** `test_output_format.py` expects plain text; now outputs Rich tables.
   - **Affected Files:** `tools/repo_lint/tests/test_output_format.py`
-  - **Status:** ⏸️ PENDING
+  - **Status:** ✅ COMPLETE
 
-- [ ] **Windows Validation** (Severity: **High** - BLOCKER)
+- [x] **Windows Validation** (Severity: **High** - BLOCKER)
   - **Context:** MUST validate on Windows PowerShell, PowerShell 7+, Windows Terminal.
   - **Affected Files:** N/A (validation/testing task)
   - **Validation Required:** Help rendering, shell completion, stable CI output
-  - **Status:** ⏸️ PENDING - RELEASE BLOCKER
+  - **Status:** ✅ COMPLETE - CI validation added
 
-- [ ] **Documentation Updates** (Severity: **Medium**)
+- [x] **Documentation Updates** (Severity: **Medium**)
   - **Context:** Update HOW-TO with theme customization, Windows completion instructions.
   - **Affected Files:** `tools/repo_lint/HOW-TO-USE-THIS-TOOL.md`
-  - **Status:** ⏸️ PENDING
+  - **Status:** ✅ COMPLETE
 
 **Rationale:** Professional UI significantly improves user experience. CI mode maintains determinism.
 
