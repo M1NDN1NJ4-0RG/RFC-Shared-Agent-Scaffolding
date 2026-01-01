@@ -118,6 +118,12 @@ class Reporter:
     def _extract_error_code(self, message: str) -> str:
         """Extract error code from violation message.
 
+        Attempts to extract a meaningful code identifier from the message.
+        If the message contains a colon, assumes format "CODE: description".
+        Otherwise, uses the first word if the message is short enough
+        (MAX_MESSAGE_LENGTH_FOR_CODE=50 chars), or truncates longer messages
+        to TRUNCATED_CODE_LENGTH=30 chars to keep table columns readable.
+
         :param message: Violation message
         :returns: Error code or first word of message
         """
@@ -427,7 +433,14 @@ class Reporter:
             border_style = self._get_color("failure") if not self.ci_mode else "white"
 
         box_style = get_box_style(self.theme, self.ci_mode)
-        panel = Panel(content, title=title_formatted, border_style=border_style, box=box_style)
+        panel = Panel(
+            content,
+            title=title_formatted,
+            border_style=border_style,
+            box=box_style,
+            expand=False,
+            padding=(0, 1),
+        )
 
         self.console.print(panel)
 

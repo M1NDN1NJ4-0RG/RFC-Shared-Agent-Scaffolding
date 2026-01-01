@@ -26,6 +26,7 @@
     - 1: Violations found (LintResult.passed = False)
 """
 
+import os
 import subprocess
 import sys
 from typing import List, Optional
@@ -81,8 +82,6 @@ class PythonRunner(Runner):
         :param line: Raw linter output line
         :returns: Dict with 'file' (basename), 'line' (int or None), 'message' (str)
         """
-        import os
-
         # Try to parse path:line:col: format (ruff, pylint)
         if ":" in line:
             parts = line.split(":", 3)
@@ -291,8 +290,8 @@ class PythonRunner(Runner):
                     stripped = line.strip()
                     if not self._is_ruff_context_line(stripped):
                         parsed = self._parse_lint_output(stripped)
-                        # Only add if we successfully parsed a file and line
-                        if parsed["file"] != "." or parsed["line"] is not None:
+                        # Only add if we successfully parsed both file and line
+                        if parsed["file"] != "." and parsed["line"] is not None:
                             violations.append(
                                 Violation(
                                     tool="ruff",
