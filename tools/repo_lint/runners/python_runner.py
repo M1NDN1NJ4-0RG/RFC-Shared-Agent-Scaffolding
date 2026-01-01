@@ -109,8 +109,16 @@ class PythonRunner(Runner):
                         "line": line_num,
                         "message": message,
                     }
-                except (ValueError, IndexError):
-                    pass
+                except ValueError:
+                    # If the second segment is not an integer (for example,
+                    # "Error: Missing: Something" -> ["Error", " Missing", " Something"]),
+                    # we intentionally fall back to treating the entire line as a
+                    # generic message without file/line information.
+                    return {
+                        "file": ".",
+                        "line": None,
+                        "message": line,
+                    }
 
         # Fallback: couldn't parse, return original line as message
         return {
