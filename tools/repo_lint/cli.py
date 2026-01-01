@@ -113,32 +113,46 @@ click.rich_click.OPTION_GROUPS = {
     "repo-lint": [],
     "repo-lint check": [
         {
-            "name": "Output",
-            "options": ["--ci", "--verbose", "--json"],
+            "name": "Filtering",
+            "options": ["--lang", "--only", "--tool", "--changed-only"],
         },
         {
-            "name": "Filtering",
-            "options": ["--lang", "--only"],
+            "name": "Output",
+            "options": ["--ci", "--verbose", "--json", "--format", "--summary", "--summary-only", "--summary-format"],
+        },
+        {
+            "name": "Reporting",
+            "options": ["--report", "--reports-dir", "--show-files", "--hide-files", "--show-codes", "--hide-codes"],
+        },
+        {
+            "name": "Execution",
+            "options": ["--max-violations", "--fail-fast"],
         },
     ],
     "repo-lint fix": [
         {
-            "name": "Output",
-            "options": ["--ci", "--verbose", "--json"],
+            "name": "Filtering",
+            "options": ["--lang", "--only", "--tool", "--changed-only"],
         },
         {
-            "name": "Filtering",
-            "options": ["--lang", "--only"],
+            "name": "Output",
+            "options": ["--ci", "--verbose", "--json", "--format"],
         },
         {
             "name": "Safety",
-            "options": ["--unsafe", "--yes-i-know"],
+            "options": ["--unsafe", "--yes-i-know", "--dry-run", "--diff"],
         },
     ],
     "repo-lint install": [
         {
             "name": "Execution",
             "options": ["--cleanup", "--verbose"],
+        },
+    ],
+    "repo-lint doctor": [
+        {
+            "name": "Output",
+            "options": ["--ci", "--format", "--report"],
         },
     ],
 }
@@ -218,12 +232,92 @@ def cli(ctx):
     help="Filter checks to specified language (python|bash|powershell|perl|yaml|rust|all)",
 )
 @click.option(
+    "--tool",
+    multiple=True,
+    help="Filter to specific tool(s) - repeatable (e.g., --tool black --tool ruff)",
+)
+@click.option(
+    "--changed-only",
+    is_flag=True,
+    help="Only check files changed in git (requires git repository)",
+)
+@click.option(
     "--json",
     "use_json",
     is_flag=True,
     help="Output results in JSON format for CI debugging",
 )
-def check(verbose, ci_mode, only, lang, use_json):
+@click.option(
+    "--format",
+    "output_format",
+    type=click.Choice(["rich", "plain", "json", "yaml", "csv", "xlsx"], case_sensitive=False),
+    help="Output format (rich=TTY default, plain=CI default, json/yaml/csv/xlsx=structured)",
+)
+@click.option(
+    "--summary",
+    is_flag=True,
+    help="Show summary after results",
+)
+@click.option(
+    "--summary-only",
+    is_flag=True,
+    help="Show ONLY summary (no individual violations)",
+)
+@click.option(
+    "--summary-format",
+    type=click.Choice(["short", "by-tool", "by-file", "by-code"], case_sensitive=False),
+    help="Summary format (short=counts only, by-tool/by-file/by-code=grouped)",
+)
+@click.option(
+    "--report",
+    type=click.Path(),
+    help="Write consolidated report to file (format auto-detected from extension)",
+)
+@click.option(
+    "--reports-dir",
+    type=click.Path(),
+    help="Write per-tool reports + index summary to directory",
+)
+@click.option(
+    "--show-files/--hide-files",
+    default=True,
+    help="Show/hide per-file breakdown in output",
+)
+@click.option(
+    "--show-codes/--hide-codes",
+    default=True,
+    help="Show/hide tool rule IDs/codes in output",
+)
+@click.option(
+    "--max-violations",
+    type=int,
+    help="Stop after N violations (for limiting output)",
+)
+@click.option(
+    "--fail-fast",
+    is_flag=True,
+    help="Stop after first tool failure",
+)
+# pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
+def check(
+    verbose,
+    ci_mode,
+    only,
+    lang,
+    tool,
+    changed_only,
+    use_json,
+    output_format,
+    summary,
+    summary_only,
+    summary_format,
+    report,
+    reports_dir,
+    show_files,
+    show_codes,
+    max_violations,
+    fail_fast,
+):
     """Run linting checks without modifying files.
 
     \b
@@ -242,14 +336,23 @@ def check(verbose, ci_mode, only, lang, use_json):
       Stable output for CI, fails if tools missing (no auto-install)
 
     Example 3 — Focused usage:
-      $ repo-lint check --lang python
-      Check only Python files, skip other languages
+      $ repo-lint check --lang python --tool black --tool ruff
+      Check only Python files with specific tools
+
+    Example 4 — Summary usage:
+      $ repo-lint check --summary-only --summary-format by-tool
+      Show only summary grouped by tool
+
+    Example 5 — Report generation:
+      $ repo-lint check --report report.json --format json
+      Generate JSON report for CI artifacts
 
     \b
     OUTPUT MODES:
     - Interactive (TTY): Rich formatting with colors, panels, and tables
     - CI mode (--ci): Stable, greppable output without ANSI colors or spinners
-    - JSON mode (--json): Machine-readable JSON output for automation
+    - JSON mode (--json or --format json): Machine-readable JSON output
+    - YAML/CSV/XLSX: Structured formats for reporting and analysis
 
     \b
     CONFIGURATION:
@@ -279,7 +382,19 @@ def check(verbose, ci_mode, only, lang, use_json):
     :param ci_mode: CI mode - stable output, fail if tools missing
     :param only: (Deprecated) Run only for specific language - use --lang instead
     :param lang: Filter checks to specified language
-    :param use_json: Output results in JSON format for CI debugging
+    :param tool: Filter to specific tool(s) (repeatable)
+    :param changed_only: Only check files changed in git
+    :param use_json: Output results in JSON format (deprecated: use --format json)
+    :param output_format: Output format (rich|plain|json|yaml|csv|xlsx)
+    :param summary: Show summary after results
+    :param summary_only: Show ONLY summary (no individual violations)
+    :param summary_format: Summary format (short|by-tool|by-file|by-code)
+    :param report: Write consolidated report to file
+    :param reports_dir: Write per-tool reports + index to directory
+    :param show_files: Show per-file breakdown in output
+    :param show_codes: Show tool rule IDs/codes in output
+    :param max_violations: Stop after N violations
+    :param fail_fast: Stop after first tool failure
     """
     import argparse  # Local import - only needed for Namespace creation
 
@@ -292,6 +407,18 @@ def check(verbose, ci_mode, only, lang, use_json):
         ci=ci_mode,
         only=effective_lang,
         json=use_json,
+        tool=list(tool) if tool else None,
+        changed_only=changed_only,
+        format=output_format,
+        summary=summary,
+        summary_only=summary_only,
+        summary_format=summary_format,
+        report=report,
+        reports_dir=reports_dir,
+        show_files=show_files,
+        show_codes=show_codes,
+        max_violations=max_violations,
+        fail_fast=fail_fast,
     )
 
     exit_code = cmd_check(args)
@@ -324,10 +451,26 @@ def check(verbose, ci_mode, only, lang, use_json):
     help="Filter fixes to specified language (python|bash|powershell|perl|yaml|rust|all)",
 )
 @click.option(
+    "--tool",
+    multiple=True,
+    help="Filter to specific tool(s) - repeatable (e.g., --tool black --tool ruff)",
+)
+@click.option(
+    "--changed-only",
+    is_flag=True,
+    help="Only fix files changed in git (requires git repository)",
+)
+@click.option(
     "--json",
     "use_json",
     is_flag=True,
     help="Output results in JSON format for CI debugging",
+)
+@click.option(
+    "--format",
+    "output_format",
+    type=click.Choice(["rich", "plain", "json", "yaml"], case_sensitive=False),
+    help="Output format (rich=TTY default, plain=CI default, json/yaml=structured)",
 )
 @click.option(
     "--unsafe",
@@ -340,8 +483,31 @@ def check(verbose, ci_mode, only, lang, use_json):
     is_flag=True,
     help="WARNING: DANGER: Confirm unsafe mode execution (REQUIRED with --unsafe)",
 )
-# pylint: disable=too-many-arguments,too-many-positional-arguments
-def fix(verbose, ci_mode, only, lang, use_json, unsafe, yes_i_know):
+@click.option(
+    "--dry-run",
+    is_flag=True,
+    help="Show what would be changed without modifying files",
+)
+@click.option(
+    "--diff",
+    is_flag=True,
+    help="Show unified diff previews (TTY-only)",
+)
+# pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
+def fix(
+    verbose,
+    ci_mode,
+    only,
+    lang,
+    tool,
+    changed_only,
+    use_json,
+    output_format,
+    unsafe,
+    yes_i_know,
+    dry_run,
+    diff,
+):
     """Apply automatic fixes (formatters only).
 
     \b
@@ -356,13 +522,17 @@ def fix(verbose, ci_mode, only, lang, use_json, unsafe, yes_i_know):
       $ repo-lint fix
       Auto-format all files with safe formatters (Black, shfmt, perltidy, etc.)
 
-    Example 2 — CI usage:
-      $ repo-lint fix --ci
-      Verify formatting in CI (fails if changes needed, doesn't modify files)
+    Example 2 — Dry-run usage:
+      $ repo-lint fix --dry-run --diff
+      Preview what would be changed without modifying files
 
     Example 3 — Focused usage:
-      $ repo-lint fix --lang python
-      Fix only Python files, skip other languages
+      $ repo-lint fix --lang python --tool black
+      Fix only Python files with Black formatter
+
+    Example 4 — Changed files only:
+      $ repo-lint fix --changed-only
+      Fix only files changed in git (requires git repository)
 
     \b
     SAFE FORMATTERS:
@@ -416,9 +586,14 @@ def fix(verbose, ci_mode, only, lang, use_json, unsafe, yes_i_know):
     :param ci_mode: CI mode - stable output, fail if tools missing
     :param only: (Deprecated) Run only for specific language - use --lang instead
     :param lang: Filter fixes to specified language
-    :param use_json: Output results in JSON format for CI debugging
+    :param tool: Filter to specific tool(s) (repeatable)
+    :param changed_only: Only fix files changed in git
+    :param use_json: Output results in JSON format (deprecated: use --format json)
+    :param output_format: Output format (rich|plain|json|yaml)
     :param unsafe: Enable unsafe experimental fixers (DANGER - requires --yes-i-know)
     :param yes_i_know: Confirmation flag required for unsafe mode
+    :param dry_run: Show what would be changed without modifying files
+    :param diff: Show unified diff previews (TTY-only)
     """
     import argparse  # Local import - only needed for Namespace creation
 
@@ -431,8 +606,13 @@ def fix(verbose, ci_mode, only, lang, use_json, unsafe, yes_i_know):
         ci=ci_mode,
         only=effective_lang,
         json=use_json,
+        tool=list(tool) if tool else None,
+        changed_only=changed_only,
+        format=output_format,
         unsafe=unsafe,
         yes_i_know=yes_i_know,
+        dry_run=dry_run,
+        diff=diff,
     )
 
     exit_code = cmd_fix(args)
@@ -531,6 +711,251 @@ def install(verbose, cleanup):
 
     exit_code = cmd_install(args)
     sys.exit(exit_code)
+
+
+@cli.command()
+@click.option(
+    "--ci",
+    is_flag=True,
+    help="CI mode: stable output, fail on any errors",
+)
+@click.option(
+    "--format",
+    "output_format",
+    type=click.Choice(["rich", "plain", "json", "yaml"], case_sensitive=False),
+    help="Output format (rich=TTY default, plain=CI default, json/yaml=structured)",
+)
+@click.option(
+    "--report",
+    type=click.Path(),
+    help="Write diagnostic report to file (format auto-detected from extension)",
+)
+def doctor(ci, output_format, report):
+    """Diagnose repo-lint installation and configuration.
+
+    \b
+    WHAT THIS DOES:
+    Performs comprehensive diagnostic checks of repo-lint's environment, configuration,
+    and tool availability. Reports status of each check and suggests fixes for issues.
+
+    \b
+    EXAMPLES:
+    Example 1 — Most common usage:
+      $ repo-lint doctor
+      Check everything and show detailed status
+
+    Example 2 — CI usage:
+      $ repo-lint doctor --ci
+      Fail if any check fails (non-zero exit code)
+
+    Example 3 — Report generation:
+      $ repo-lint doctor --report doctor-report.json --format json
+      Generate JSON diagnostic report for troubleshooting
+
+    \b
+    CHECKS PERFORMED:
+    - Repository root detection
+    - Virtual environment (.venv) existence and activation
+    - Python version and sys.prefix validation
+    - Tool registry loading (conformance/repo-lint/*.yaml configs)
+    - Tool availability (black, ruff, pylint, shellcheck, etc.)
+    - PATH sanity checks
+    - Config file validity (YAML syntax, required fields, schema)
+
+    \b
+    OUTPUT MODES:
+    - Interactive (TTY): Rich table with green/red status indicators
+    - CI mode (--ci): Stable checklist output, fails on first error
+    - JSON/YAML: Structured diagnostic data for automation
+
+    \b
+    EXIT CODES:
+    - 0: All checks passed (environment healthy)
+    - 1: Some checks failed (issues detected)
+    - 3: Internal error or exception
+
+    \b
+    TROUBLESHOOTING:
+    If doctor reports issues:
+    - Missing tools: Run 'repo-lint install'
+    - Config errors: Check YAML syntax in conformance/repo-lint/*.yaml
+    - PATH issues: Ensure venv is activated or tools are on PATH
+    - Venv not found: Run from repository root
+
+    See HOW-TO-USE-THIS-TOOL.md for detailed troubleshooting guide.
+
+    :param ci: CI mode - stable output, fail on any errors
+    :param output_format: Output format (rich|plain|json|yaml)
+    :param report: Write diagnostic report to file
+    """
+    import argparse  # Local import
+
+    from tools.repo_lint.doctor import cmd_doctor
+
+    args = argparse.Namespace(
+        ci=ci,
+        format=output_format,
+        report=report,
+    )
+
+    exit_code = cmd_doctor(args)
+    sys.exit(exit_code)
+
+
+# List-langs command
+@cli.command("list-langs")
+def list_langs():
+    """List supported languages.
+
+    \b
+    WHAT THIS DOES:
+    Prints a list of all programming languages supported by repo-lint.
+
+    \b
+    EXAMPLES:
+      $ repo-lint list-langs
+      python
+      bash
+      powershell
+      perl
+      yaml
+      rust
+
+    Use with --lang option: repo-lint check --lang <LANGUAGE>
+
+    :returns: Exit code 0
+    """
+    from tools.repo_lint.yaml_loader import load_linting_rules
+
+    try:
+        rules = load_linting_rules()
+        languages = rules.get("languages", {})
+
+        for lang in sorted(languages.keys()):
+            print(lang)
+
+        sys.exit(0)
+    except Exception as e:
+        print(f"❌ Error loading language registry: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+# List-tools command
+@cli.command("list-tools")
+@click.option(
+    "--lang",
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust"], case_sensitive=False),
+    help="Filter tools to specific language",
+)
+def list_tools(lang):
+    """List available linting tools.
+
+    \b
+    WHAT THIS DOES:
+    Prints a list of all linting tools available in repo-lint, optionally filtered
+    by language. Shows tool name, description, and whether it's a formatter or linter.
+
+    \b
+    EXAMPLES:
+    Example 1 — All tools:
+      $ repo-lint list-tools
+
+    Example 2 — Python tools only:
+      $ repo-lint list-tools --lang python
+      black: Python code formatter (fix-capable)
+      ruff: Fast Python linter (fix-capable)
+      pylint: Comprehensive Python code analyzer
+
+    Use with --tool option: repo-lint check --tool <TOOL>
+
+    :param lang: Filter tools to specific language
+    :returns: Exit code 0
+    """
+    from tools.repo_lint.yaml_loader import load_linting_rules
+
+    try:
+        rules = load_linting_rules()
+        languages = rules.get("languages", {})
+
+        if lang:
+            if lang not in languages:
+                print(f"❌ Unknown language: {lang}", file=sys.stderr)
+                sys.exit(1)
+            languages = {lang: languages[lang]}
+
+        for lang_name, lang_config in sorted(languages.items()):
+            if not lang or lang_name == lang:
+                tools = lang_config.get("tools", {})
+                if tools:
+                    if not lang:  # Only print language header if showing all
+                        print(f"\n{lang_name}:")
+                    for tool_name, tool_config in sorted(tools.items()):
+                        desc = tool_config.get("description", "")
+                        fix_capable = tool_config.get("fix_capable", False)
+                        fix_label = " (fix-capable)" if fix_capable else ""
+                        print(f"  {tool_name}: {desc}{fix_label}")
+
+        sys.exit(0)
+    except Exception as e:
+        print(f"❌ Error loading tool registry: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+# Tool-help command
+@cli.command("tool-help")
+@click.argument("tool")
+def tool_help(tool):
+    """Show help for a specific tool.
+
+    \b
+    WHAT THIS DOES:
+    Displays detailed information about a specific linting tool, including:
+    - Tool description and purpose
+    - Which language(s) it supports
+    - Whether it can auto-fix issues
+    - Configuration file location
+    - Version (if pinned)
+
+    \b
+    EXAMPLES:
+      $ repo-lint tool-help black
+      Tool: black
+      Language: python
+      Description: Python code formatter
+      Fix capable: Yes
+      Version: 24.10.0
+      Config: pyproject.toml
+
+    :param tool: Tool name (e.g., black, ruff, shellcheck)
+    :returns: Exit code 0 if tool found, 1 if not found
+    """
+    from tools.repo_lint.yaml_loader import load_linting_rules
+
+    try:
+        rules = load_linting_rules()
+        languages = rules.get("languages", {})
+
+        for lang_name, lang_config in languages.items():
+            tools = lang_config.get("tools", {})
+            if tool in tools:
+                tool_config = tools[tool]
+                print(f"Tool: {tool}")
+                print(f"Language: {lang_name}")
+                print(f"Description: {tool_config.get('description', 'N/A')}")
+                print(f"Fix capable: {'Yes' if tool_config.get('fix_capable', False) else 'No'}")
+                version = tool_config.get("version")
+                print(f"Version: {version if version else 'System version'}")
+                config_file = tool_config.get("config_file")
+                if config_file:
+                    print(f"Config: {config_file}")
+                sys.exit(0)
+
+        print(f"❌ Tool not found: {tool}", file=sys.stderr)
+        print("\nAvailable tools: Run 'repo-lint list-tools' to see all tools", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Error loading tool registry: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 def main():

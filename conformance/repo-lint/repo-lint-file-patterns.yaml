@@ -51,6 +51,7 @@ exclusions:
     patterns:
       - "dist/**"
       - "target/**"
+      - "rust/target/**"
       - "build/**"
       - "*.egg-info/**"
 

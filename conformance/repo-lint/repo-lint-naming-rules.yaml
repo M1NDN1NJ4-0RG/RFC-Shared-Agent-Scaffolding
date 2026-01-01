@@ -101,18 +101,28 @@ languages:
   markdown:
     description: "Markdown documentation naming"
     file_patterns:
-      - pattern: "^([A-Z][A-Z0-9_]*|[a-z0-9]+(-[a-z0-9]+)*(-v[0-9]+\\.[0-9]+\\.[0-9]+)?)\\.md$"
-        description: "Markdown files: kebab-case (optionally with -vX.Y.Z suffix) or UPPER_SNAKE_CASE (special files)"
+      - pattern: "^(HOW-TO-USE-THIS-TOOL|black\\.diff)\\.md$"
+        description: "Temporary exceptions for tool documentation and diff files (to be renamed later)"
         examples:
           valid:
-            - "contributing-guide.md"  # kebab-case
-            - "naming-and-style.md"    # kebab-case
-            - "project-v1.0.0.md"      # kebab-case with version
-            - "README.md"              # UPPER_SNAKE_CASE (special)
-            - "CONTRIBUTING.md"        # UPPER_SNAKE_CASE (special)
+            - "HOW-TO-USE-THIS-TOOL.md"
+            - "black.diff.md"
+      - pattern: "^([A-Z][A-Z0-9_]*|[a-z0-9]+(-[a-z0-9]+)*(-v[0-9]+\\.[0-9]+\\.[0-9]+)?|[a-z0-9]+(-[a-z0-9]+)*-[0-9]+\\.[0-9]+(-[a-z0-9]+)*|[0-9]+-[a-z]+(-[a-z0-9]+)*-[0-9]+\\.[0-9]+(-[a-z]+)*|[a-z]+(-[a-z]+)*-[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z]+(-[a-z]+)*)?|p[0-9]+-p[0-9]+\\.[0-9]+(-[a-z]+(-[a-z]+)*)?)\\.md$"
+        description: "Markdown files: kebab-case (optionally with version numbers like -X.Y or -X.Y.Z) or UPPER_SNAKE_CASE (special files)"
+        examples:
+          valid:
+            - "contributing-guide.md"       # kebab-case
+            - "naming-and-style.md"         # kebab-case
+            - "project-v1.0.0.md"           # kebab-case with version
+            - "phase-2.5-summary.md"        # kebab-case with X.Y version
+            - "phase-5-5.5-completion.md"   # kebab-case with X.Y version
+            - "160-phase-2.5-summary.md"    # number prefix with X.Y version
+            - "p0-p3.5-verification.md"     # p-notation with X.Y version
+            - "README.md"                   # UPPER_SNAKE_CASE (special)
+            - "CONTRIBUTING.md"             # UPPER_SNAKE_CASE (special)
           invalid:
-            - "contributing_guide.md"  # snake_case
-            - "ContributingGuide.md"   # PascalCase
+            - "contributing_guide.md"       # snake_case
+            - "ContributingGuide.md"        # PascalCase
 
   json:
     description: "JSON file naming conventions"
@@ -138,6 +148,8 @@ exclusions:
   - "*.egg-info/"
   - "build/"
   - "dist/"
+  - "rust/target/"
+  - "target/"
   - "conformance/repo-lint/fixtures/"
   - "conformance/repo-lint/vectors/fixtures/"
   - "scripts/tests/fixtures/"

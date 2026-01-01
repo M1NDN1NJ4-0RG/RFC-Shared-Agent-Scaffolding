@@ -7,87 +7,46 @@ Related: Issue #160, PRs #176, #180
 
 ## NEXT
 
-### Phase 2.7.1 In Progress - Language Filtering (1 of 6 Steps Complete)
+### Phase 2.7 - Extended CLI Granularity & Reporting - IN PROGRESS
 
-**Completed (2025-12-31 23:55):**
-- [x] Step 1: Add `--lang` option as alias for `--only`
-  - Works in both `check` and `fix` commands
-  - Accepts all languages + "all" option
-  - Backward compatible with `--only`
-  - Pre-commit gate passes (exit code 0)
+**Current Status (2026-01-01 00:49):**
+- CLI Layer: ✅ 100% COMPLETE
+- Backend Implementation: ⏳ 60% COMPLETE
+- Testing: Not started
+- Documentation: Not started
 
-**Remaining Steps:**
-- [ ] Step 2: Add `--tool` option (repeatable, filter to specific tools)
-  - Examples: `--tool black`, `--tool ruff --tool pylint`
-  - Validate tool names against known tools
-  - Clear error if tool not available
-- [ ] Step 3: Tool availability validation with clear errors
-- [ ] Step 4: Update Rich-Click help with examples
-- [ ] Step 5: Add unit tests for lang/tool filtering logic
-- [ ] Step 6: Update HOW-TO-USE-THIS-TOOL.md with filtering examples
+**Completed:**
+- [x] Phase 2.7.6 - doctor command (COMPLETE)
+- [x] Phase 2.7.7 - Discovery commands (list-langs, list-tools, tool-help) (COMPLETE)
+- [x] All CLI options added to check and fix commands
+- [x] Fail-fast logic implemented
+- [x] Max-violations logic implemented
+- [x] Dry-run mode detection
 
-**Current Branch State:**
-- 2 commits ahead of base
-- All tests passing
-- Pre-commit gate clean (Python exit code 0)
-- Ready for code review
+**In Progress:**
+- [ ] Phase 2.7.1 - Tool filtering backend logic
+- [ ] Phase 2.7.1 - Changed-only filtering backend logic
+- [ ] Phase 2.7.2 - Summary modes backend logic
+- [ ] Phase 2.7.3 - Show/hide files/codes backend logic
+- [ ] Phase 2.7.4 - Output format handlers (JSON/YAML/CSV/XLSX)
+- [ ] Phase 2.7.5 - Diff preview backend logic
 
-**Next Session Actions:**
-1. Request code review for Step 1 changes
-2. Address any code review feedback
-3. Implement Step 2 (--tool option)
-4. Continue through remaining steps
+**Next Actions:**
+1. Implement tool filtering in runners
+2. Implement changed-only git integration
+3. Implement summary generation logic
+4. Implement output format handlers
+5. Implement diff preview for dry-run
+6. Add comprehensive unit tests
+7. Update HOW-TO-USE-THIS-TOOL.md
 
 ---
 
-### ✅ PHASES 2.5 AND 2.9 COMPLETE - READY FOR PHASE 2.7
-
-**Current State (2025-12-31 23:50):**
-- Phase 2.5: Rich UI "Glow Up" - ✅ COMPLETE (all 3 blockers resolved)
-- Phase 2.9: YAML-First Configuration - ✅ COMPLETE (merged in PR #207)
+### ✅ PHASES 2.5 AND 2.9 COMPLETE
 
 **Verified Complete:**
-1. ✅ Phase 2.5 Blocker 1: Tests updated for Rich format (`test_output_format.py` passes)
-2. ✅ Phase 2.5 Blocker 2: Windows CI validation (GitHub Actions job exists and runs)
-3. ✅ Phase 2.5 Blocker 3: Documentation (PowerShell, theme, output modes in HOW-TO)
-4. ✅ Phase 2.9: YAML-first migration (PR #207 merged, `yaml_loader.py` exists, all configs migrated)
-
-**Next Phase per Decision 2 Sequencing:**
-**Phase 2.7 - Extended CLI Granularity & Reporting Surface**
-
-**Phase 2.7.1 - Language and Tool Filtering (HIGHEST PRIORITY)**
-- [ ] Add `--lang <LANG>` option (single language filter, alternative to `--only`)
-- [ ] Add `--tool <TOOL>` option (repeatable, filter to specific tools like `black`, `ruff`, `pylint`)
-- [ ] Tool validation: error if requested tool not available
-- [ ] Update Rich-Click OPTION_GROUPS for proper help organization
-- [ ] Add unit tests for lang/tool filtering logic
-- [ ] Update HOW-TO-USE-THIS-TOOL.md with filtering examples
-
-**Why Phase 2.7.1 First:**
-- Foundation for all other Phase 2.7 features (summaries, formats, doctor, etc.)
-- Enables granular debugging and focused linting
-- Relatively self-contained (< 200 lines changed)
-- High user value (frequently requested feature)
-
-### Summary of Phase 2.9 Implementation
-
-**What was accomplished:**
-1. ✅ Audited all helper scripts and integration status
-2. ✅ Created comprehensive integration audit document
-3. ✅ Migrated all hardcoded configuration to YAML
-4. ✅ Eliminated version duplication (YAML is single source)
-5. ✅ Centralized file patterns in YAML
-6. ✅ Backward compatibility via deprecation warnings
-7. ✅ All linting checks pass (Black, Ruff, Pylint, Docstrings)
-
-**YAML-First Contracts Enforced:**
-- Tool versions: `conformance/repo-lint/repo-lint-linting-rules.yaml`
-- File patterns: `conformance/repo-lint/repo-lint-file-patterns.yaml`  
-- Naming rules: `conformance/repo-lint/repo-lint-naming-rules.yaml`
-- Docstring rules: `conformance/repo-lint/repo-lint-docstring-rules.yaml`
-- UI theme: `conformance/repo-lint/repo-lint-ui-theme.yaml`
-
-**Ready for Phase 2.7:** CLI Granularity & Reporting Surface
+1. ✅ Phase 2.5: Rich UI "Glow Up" - ALL blockers resolved
+2. ✅ Phase 2.9: YAML-First Configuration - PR #207 merged, all configs migrated
 
 ---
 

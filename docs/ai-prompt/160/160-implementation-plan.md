@@ -222,14 +222,8 @@
 
 ---
 
-## BLOCKED ITEMS - DO NOT PROCEED WITHOUT HUMAN APPROVAL
+## COMPLETED PHASES - READY TO PROCEED
 
-The following are explicitly BLOCKED until Phase 2.5 blockers are complete:
+Phase 2.5 (Rich UI "Glow Up") and Phase 2.9 (YAML-First Configuration) are COMPLETE.
 
-- ❌ Any Phase 2.6 work (centralized exceptions)
-- ❌ Any Phase 2.7 work (CLI granularity)
-- ❌ Any Phase 2.8 work (env commands)
-- ❌ Any Phase 2.9 work (contracts)
-- ❌ Any Phase 3 work (polish)
-
-**Next Action:** Complete Phase 2.5 blockers (test updates + Windows CI + docs).
+All Phase 2.7 work is now UNBLOCKED and IN PROGRESS.
