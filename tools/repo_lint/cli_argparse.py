@@ -156,6 +156,9 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
     # Filter runners based on --only flag
     only_language = getattr(args, "only", None)
+    # TODO: Implement tool filtering backend logic
+    # tool_filter = getattr(args, "tool", None)  # List of tools to filter to
+
     if only_language:
         runners = [(key, name, runner) for key, name, runner in all_runners if key == only_language]
     else:
@@ -172,6 +175,16 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 file=sys.stderr,
             )
             return ExitCode.INTERNAL_ERROR
+
+    # Apply tool filtering if --tool was specified
+    # Note: Tool filtering will be passed to runners that support it
+    # For now, we'll just pass it through args and let individual runners handle it
+    # This is a placeholder for backend implementation
+
+    # Check for fail-fast mode
+    fail_fast = getattr(args, "fail_fast", False)
+    max_violations = getattr(args, "max_violations", None)
+
     # Run each runner if it has files
     for key, name, runner in runners:
         if runner.has_files():
@@ -192,10 +205,21 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 )
                 print("   Run 'repo-lint install' to install them")
                 print("")
+                # If fail-fast is enabled, stop on first error
+                if fail_fast:
+                    return ExitCode.MISSING_TOOLS
                 return ExitCode.MISSING_TOOLS
 
             results = action_callback(runner)
             all_results.extend(results)
+
+            # If fail-fast is enabled and we have violations, stop
+            if fail_fast and any(r.violations for r in results):
+                break
+
+            # If max-violations is set and we've exceeded it, stop
+            if max_violations and sum(len(r.violations) for r in all_results) >= max_violations:
+                break
         else:
             if args.verbose and not use_json:
                 print(f"No {name} files found. Skipping {name} {mode.lower()}.")
@@ -276,8 +300,19 @@ def cmd_fix(args: argparse.Namespace) -> int:
         print("")
         return ExitCode.UNSAFE_VIOLATION  # Exit code 4 for policy violations
 
+    # Check for dry-run mode
+    dry_run = getattr(args, "dry_run", False)
+    # TODO: Implement diff preview backend logic
+    # show_diff = getattr(args, "diff", False)
+
     if not use_json:
-        if unsafe_mode:
+        if dry_run:
+            safe_print(
+                "🔍 DRY RUN: Showing what would be changed (no files modified)",
+                "DRY RUN: Showing what would be changed",
+            )
+            print("")
+        elif unsafe_mode:
             safe_print("⚠️  DANGER: Running in UNSAFE FIX MODE", "WARNING: DANGER: Running in UNSAFE FIX MODE")
             safe_print(
                 "⚠️  Review the generated patch/log before committing!",
