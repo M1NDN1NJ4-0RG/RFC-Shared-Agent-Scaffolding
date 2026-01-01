@@ -51,6 +51,12 @@ class RustRunner(Runner):
         :returns:
             True if Rust files exist, False otherwise
         """
+        # If changed-only mode, check for changed Rust files
+        if self._changed_only:
+            changed_files = self._get_changed_files(patterns=["*.rs", "**/*.rs"])
+            return len(changed_files) > 0
+        
+        # Otherwise check all tracked Rust files
         result = subprocess.run(
             ["git", "ls-files", "**/*.rs"], cwd=self.repo_root, capture_output=True, text=True, check=False
         )
