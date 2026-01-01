@@ -54,7 +54,7 @@ def format_violation(violation: Violation) -> str:
     return f"{violation.file}: [{violation.tool}] {violation.message}"
 
 
-def report_results(
+def report_results(  # pylint: disable=too-many-arguments,too-many-positional-arguments
     results: List[LintResult],
     verbose: bool = False,
     ci_mode: bool = False,
