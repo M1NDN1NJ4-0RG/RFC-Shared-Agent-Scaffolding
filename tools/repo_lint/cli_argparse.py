@@ -156,13 +156,18 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
     # Filter runners based on --only flag
     only_language = getattr(args, "only", None)
-    # TODO: Implement tool filtering backend logic  # pylint: disable=fixme
-    # tool_filter = getattr(args, "tool", None)  # List of tools to filter to
+    tool_filter = getattr(args, "tool", None)  # List of tools to filter to
 
     if only_language:
         runners = [(key, name, runner) for key, name, runner in all_runners if key == only_language]
     else:
         runners = all_runners
+    
+    # Apply tool filtering: pass tool filter to each runner
+    if tool_filter:
+        for _, _, runner in runners:
+            if hasattr(runner, 'set_tool_filter'):
+                runner.set_tool_filter(tool_filter)
 
     # If --only was used, ensure there is something to run
     if only_language:
@@ -176,11 +181,13 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             )
             return ExitCode.INTERNAL_ERROR
 
-    # Apply tool filtering if --tool was specified
-    # Note: Tool filtering will be passed to runners that support it
-    # For now, we'll just pass it through args and let individual runners handle it
-    # This is a placeholder for backend implementation
-
+    # Apply changed-only filtering if --changed-only was specified
+    changed_only = getattr(args, "changed_only", False)
+    if changed_only:
+        for _, _, runner in runners:
+            if hasattr(runner, 'set_changed_only'):
+                runner.set_changed_only(True)
+    
     # Check for fail-fast mode
     fail_fast = getattr(args, "fail_fast", False)
     max_violations = getattr(args, "max_violations", None)
