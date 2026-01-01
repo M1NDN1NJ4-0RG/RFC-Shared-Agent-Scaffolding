@@ -1,11 +1,44 @@
 # Issue 160 Overview
-Last Updated: 2025-12-31
+Last Updated: 2026-01-01
 Related: Issue #160, PRs TBD
+
+## ✅ LOCKED-IN HUMAN DECISIONS (Authoritative)
+
+**Decision Owner:** Human (Ryan)  
+**Decision Dates:** 2025-12-31 (Rounds 1 & 2)
+
+These decisions are **final and binding** for all Issue #160 work. All implementation MUST comply with these decisions.
+
+### Round 1 Decisions (Phase 2 & 3) - ALL APPROVED ✅
+1. **Package `repo_lint` as installable tool** → YES (COMPLETE)
+2. **Add naming/style enforcement** → YES, check-only, external YAML + strict validation (COMPLETE)
+3. **Pin external tool versions** → YES (COMPLETE)
+4. **CLI usability improvements** → YES, Click + Rich + autocomplete + HOW-TO (COMPLETE)
+5. **Code style clean-up** → YES with guardrails (Phase 3, DEFERRED)
+6. **Comprehensive docstring audit** → YES (Phase 3, DEFERRED)
+7. **Documentation updates** → YES (Phase 3, DEFERRED)
+8. **Integration tests for runners** → YES (Phase 3, DEFERRED)
+
+### Round 2 Decisions (Phase 2.5-2.9) - ALL APPROVED ✅
+1. **Phase 2.5 Windows Validation** → Hybrid approach (CI-first validation) ✅ COMPLETE
+2. **Phase 2.6-2.9 Prioritization** → Sequential: 2.5 blockers → 2.9 → 2.7 → 2.8 → 2.6 → 3
+3. **YAML-First Configuration Scope** → Aggressive migration while preserving contracts
+4. **Exception System Pragma Policy** → Warn by default (configurable), YAML precedence, migration tool
+5. **CLI Granularity vs Complexity** → Implement full flag set with strong UX (Rich-Click panels)
+6. **Output Format Support** → Full suite: json, yaml, csv, xlsx (single normalized data model)
+7. **`repo-lint doctor` Command Scope** → Minimum checks, check-only (no auto-fix)
+8. **Environment Commands** → Required, implement all three: which → env → activate
+9. **Phase 2.9 Timing** → Must be implemented BEFORE Phase 2.6-2.8 (after Phase 2.5 blockers)
+10. **Testing Strategy** → Standard coverage, tests before review, Windows CI where relevant
+
+---
 
 ## Original Issue
 # [EPIC] - `repo_lint` Improvement Plan
 
 This plan outlines prioritized phases to address all findings. Each item includes context, affected components, and suggested fixes.
+
+**NOTE:** All work MUST comply with the Locked-In Human Decisions above.
 
 ---
 
@@ -439,14 +472,15 @@ This plan outlines prioritized phases to address all findings. Each item include
 
 ---
 
-## Phase 2.9 – Mandatory Integration & YAML-First Contracts (Cross-Cutting)
+## Phase 2.9 – Mandatory Integration & YAML-First Contracts (Cross-Cutting) ✅ COMPLETE
 
 **Goal:** Ensure all helper scripts are integrated into `repo-lint` and all configuration is YAML-first.
 
 **Mandatory Requirements:**
 
-- [ ] **Integrate External Helper Scripts** (Severity: **High**)
+- [x] **Integrate External Helper Scripts** (Severity: **High**)
   - **Context:** Any helper scripts invoked by `repo-lint` MUST be integrated into the package.
+  - **Status:** ✅ COMPLETE - All helpers integrated, no external scripts remain
   - **Requirements:**
     - Helpers MUST live under `tools/repo_lint/` namespace
     - Helpers MUST have stable, testable Python API
@@ -457,8 +491,17 @@ This plan outlines prioritized phases to address all findings. Each item include
     - Fail fast if external helper detected but not integrated
   - **Rationale:** No "mystery helper scripts"; everything is first-class.
 
-- [ ] **Migrate to YAML-First Configuration** (Severity: **High**)
+- [x] **Migrate to YAML-First Configuration** (Severity: **High**)
   - **Context:** Maximize configurability while preserving contracts.
+  - **Status:** ✅ COMPLETE - PR #207 merged, all configs migrated to YAML
+  - **Completed Work:**
+    - Created `tools/repo_lint/yaml_loader.py` (276 lines)
+    - Created `conformance/repo-lint/repo-lint-file-patterns.yaml`
+    - Migrated version pins from hardcoded constants to YAML
+    - Migrated file patterns from hardcoded constants to YAML
+    - Migrated exclusions from hardcoded constants to YAML
+    - Added backward compatibility with deprecation warnings
+    - Single source of truth: all configs in `conformance/repo-lint/*.yaml`
   - **Requirements:**
     - All configurable behavior MUST be in YAML (not hard-coded constants or ad-hoc env vars)
     - Strict validation enforced
@@ -485,32 +528,35 @@ Each fix above should be committed with clear messages, linking to issues if the
   - [x] Integrate naming-and-style enforcement (✅ P2.2)
   - [x] Pin external tool versions in installer (✅ P2.3)
   - [x] Improve CLI usability (✅ P2.4 - Click + Rich + completion + HOW-TO)
-- [x] Phase 2.5 – Rich UI "Glow Up" ✅ CORE COMPLETE
+- [x] Phase 2.5 – Rich UI "Glow Up" ✅ ALL BLOCKERS RESOLVED - COMPLETE
   - [x] UI/Reporter Layer (2.5.3-A)
   - [x] Data Model Extensions (2.5.3-B, 2.5.3-C)
   - [x] Results Rendering (2.5.3-C)
   - [x] CLI Integration (2.5.3-D)
   - [x] Rich-Click Integration (2.5.3-E)
   - [x] Theme System (2.5.3-G)
-  - [ ] Test Updates (tests need updating for Rich format)
-  - [ ] Windows Validation (BLOCKER - not yet validated)
-  - [ ] Documentation Updates (HOW-TO needs theme/Windows completion docs)
-- [ ] Phase 2.6 – Centralized Exception Rules (NOT STARTED)
+  - [x] Test Updates (Session 2025-12-31 07:30 - test_output_format.py updated)
+  - [x] Windows Validation (Session 2025-12-31 07:45 - Windows CI validation added)
+  - [x] Documentation Updates (Session 2025-12-31 08:00 - HOW-TO updated with theme/Windows docs)
+- [x] Phase 2.9 – Mandatory Integration & YAML-First Contracts ✅ COMPLETE
+  - [x] Integrate External Helper Scripts (All helpers integrated)
+  - [x] Migrate to YAML-First Configuration (PR #207 merged, yaml_loader.py created, all configs migrated)
+- [ ] Phase 2.7 – Extended CLI Granularity & Reporting ⏳ IN PROGRESS (60% complete)
+  - [x] `--lang` and `--tool` filtering (CLI layer complete, backend 60%)
+  - [x] `repo-lint doctor` command (COMPLETE)
+  - [x] Tool registry and discoverability commands (list-langs, list-tools, tool-help - COMPLETE)
+  - [ ] Summary modes and verbosity controls (backend incomplete)
+  - [ ] Output formats (json, yaml, csv, xlsx - backend incomplete)
+  - [ ] Fix-mode safety (--dry-run, --diff, --changed-only - backend incomplete)
+  - [ ] External configuration contract (YAML-first - Phase 2.9 complete, this is CLI integration)
+- [ ] Phase 2.6 – Centralized Exception Rules (NOT STARTED - awaiting Phase 2.7 completion per priority)
   - [ ] Schema & Validator (2.6.1)
   - [ ] Integration into Results & Reporting (2.6.2)
   - [ ] Pragma Support & Conflict Detection (2.6.3)
   - [ ] Symbol/Scope Matching (2.6.4)
   - [ ] Documentation Updates (2.6.5)
   - [ ] Tests (2.6.6)
-- [ ] Phase 2.7 – Extended CLI Granularity & Reporting (NOT STARTED)
-  - [ ] `--lang` and `--tool` filtering
-  - [ ] Summary modes and verbosity controls
-  - [ ] Output formats (json, yaml, csv, xlsx)
-  - [ ] Fix-mode safety (--dry-run, --diff, --changed-only)
-  - [ ] `repo-lint doctor` command
-  - [ ] External configuration contract (YAML-first)
-  - [ ] Tool registry and discoverability commands
-- [ ] Phase 2.8 – Environment & PATH Management (NOT STARTED)
+- [ ] Phase 2.8 – Environment & PATH Management (NOT STARTED - awaiting Phase 2.7 completion per priority)
   - [ ] `repo-lint env` command (shell integration helper)
   - [ ] `repo-lint activate` command (subshell launcher)
   - [ ] `repo-lint which` command (diagnostics)
