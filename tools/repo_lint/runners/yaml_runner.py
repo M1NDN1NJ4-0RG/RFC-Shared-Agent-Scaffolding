@@ -42,7 +42,7 @@ class YAMLRunner(Runner):
         if self._changed_only:
             changed_files = self._get_changed_files(patterns=["*.yml", "*.yaml", "**/*.yml", "**/*.yaml"])
             return len(changed_files) > 0
-        
+
         # Otherwise check all tracked YAML files
         files = get_tracked_files(["**/*.yml", "**/*.yaml"], self.repo_root)
         return len(files) > 0
@@ -65,7 +65,7 @@ class YAMLRunner(Runner):
         self._ensure_tools(["yamllint"])
 
         results = []
-        
+
         # Apply tool filtering
         if self._should_run_tool("yamllint"):
             results.append(self._run_yamllint())

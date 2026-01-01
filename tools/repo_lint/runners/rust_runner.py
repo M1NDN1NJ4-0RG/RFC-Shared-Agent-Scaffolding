@@ -55,7 +55,7 @@ class RustRunner(Runner):
         if self._changed_only:
             changed_files = self._get_changed_files(patterns=["*.rs", "**/*.rs"])
             return len(changed_files) > 0
-        
+
         # Otherwise check all tracked Rust files
         result = subprocess.run(
             ["git", "ls-files", "**/*.rs"], cwd=self.repo_root, capture_output=True, text=True, check=False
@@ -97,14 +97,14 @@ class RustRunner(Runner):
         self._ensure_tools(["cargo"])
 
         results = []
-        
+
         # Apply tool filtering
         if self._should_run_tool("rustfmt"):
             results.append(self._run_rustfmt_check())
-        
+
         if self._should_run_tool("clippy"):
             results.append(self._run_clippy())
-        
+
         if self._should_run_tool("validate_docstrings"):
             results.append(self._run_docstring_validation())
 

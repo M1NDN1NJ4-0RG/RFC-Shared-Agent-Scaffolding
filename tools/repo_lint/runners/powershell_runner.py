@@ -45,7 +45,7 @@ class PowerShellRunner(Runner):
         if self._changed_only:
             changed_files = self._get_changed_files(patterns=["*.ps1", "**/*.ps1"])
             return len(changed_files) > 0
-        
+
         # Otherwise check all tracked PowerShell files
         files = get_tracked_files(["**/*.ps1"], self.repo_root)
         return len(files) > 0
@@ -88,11 +88,11 @@ class PowerShellRunner(Runner):
         self._ensure_tools(["pwsh"])
 
         results = []
-        
+
         # Apply tool filtering
         if self._should_run_tool("PSScriptAnalyzer"):
             results.append(self._run_psscriptanalyzer())
-        
+
         if self._should_run_tool("validate_docstrings"):
             results.append(self._run_docstring_validation())
 

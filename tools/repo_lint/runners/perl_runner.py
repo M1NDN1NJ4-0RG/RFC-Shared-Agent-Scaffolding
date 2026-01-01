@@ -45,7 +45,7 @@ class PerlRunner(Runner):
         if self._changed_only:
             changed_files = self._get_changed_files(patterns=["*.pl", "**/*.pl"])
             return len(changed_files) > 0
-        
+
         # Otherwise check all tracked Perl files
         files = get_tracked_files(["**/*.pl"], self.repo_root)
         return len(files) > 0
@@ -68,11 +68,11 @@ class PerlRunner(Runner):
         self._ensure_tools(["perlcritic"])
 
         results = []
-        
+
         # Apply tool filtering
         if self._should_run_tool("perlcritic"):
             results.append(self._run_perlcritic())
-        
+
         if self._should_run_tool("validate_docstrings"):
             results.append(self._run_docstring_validation())
 
