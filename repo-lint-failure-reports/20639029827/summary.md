@@ -1,88 +1,107 @@
-# Repo Lint Summary
+@copilot 🚨 **MANDATORY FIRST STEP (NON-NEGOTIABLE): RUN THE FULL BOOTSTRAP TOOLCHAIN**
 
-**Workflow Run:** https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/actions/runs/20639029827
-**Timestamp:** 2026-01-01 13:07:43 UTC
-**Branch:** 222/merge
-**Commit:** ce9a9f5fcb9f157d553beb754078d6aec7c12910
+**Do not write tests. Do not claim fixes. Do not analyze.**  
+Run the repo’s documented bootstrap sequence **FIRST**, and paste the **exact commands + success output snippet**.
 
-## Job Results
+---
 
-| Job | Status |
-|-----|--------|
-| Auto-Fix: Black | success |
-| Detect Changed Files | success |
-| Repo Lint: Python | failure |
-| Repo Lint: Bash | success |
-| Repo Lint: PowerShell | success |
-| Repo Lint: Perl | success |
-| Repo Lint: YAML | success |
-| Repo Lint: Rust | success |
-| Vector Tests: Conformance | success |
+# 🔥 BLOCKER: Fixtures/Vectors are leaking into `--ci` mode
 
-## Python Linting Failures
+I am looking at **repo-lint-failure-reports/20639029827/python-lint-output.txt** and it shows **fixture/vector violation files being linted** in CI mode. Example files in the output include:
 
-```
-🔍 Running repository linters and formatters...
+- `all_docstring_violations.py`
+- `black_violations.py`
+- `pylint_violations.py`
+- `ruff_violations.py`
+- `naming-violations.py`
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-  Python Linting
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+These are fixture/vector files and **MUST NOT** appear in `--ci` mode or normal user mode unless `--include-fixtures` is explicitly set.
 
-                         Linting Results                         
-                                                                 
-  Runner                Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────────── 
-  black                 ✅ PASS       -            0          -  
-  ruff                  ❌ FAIL       -           27          -  
-  pylint                ✅ PASS       -            0          -  
-  validate_docstrings   ✅ PASS       -            0          -  
-                                                                 
+---
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ruff Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-  Found 27 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                   
-  File                          Line   Message                                                                     
- ───────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  all_docstring_violations.py    131   E731 Do not assign a `lambda` expression, use a `def`                       
-  black_violations.py              8   E501 Line too long (121 > 120)                                              
-  black_violations.py             68   F821 Undefined name `function_call`                                         
-  black_violations.py             68   F821 Undefined name `arg1`                                                  
-  black_violations.py             68   F821 Undefined name `arg2`                                                  
-  black_violations.py             68   F821 Undefined name `arg3`                                                  
-  naming-violations.py            13   N802 Function name `ThisFunctionShouldBeSnakeCase` should be lowercase      
-  naming-violations.py            18   N801 Class name `lowercase_class` should use CapWords convention            
-  pylint_violations.py            35   F841 Local variable `var11` is assigned to but never used                   
-  pylint_violations.py            36   F841 Local variable `var12` is assigned to but never used                   
-  pylint_violations.py            37   F841 Local variable `var13` is assigned to but never used                   
-  pylint_violations.py            38   F841 Local variable `var14` is assigned to but never used                   
-  pylint_violations.py            39   F841 Local variable `var15` is assigned to but never used                   
-  pylint_violations.py            40   F841 Local variable `var16` is assigned to but never used                   
-  pylint_violations.py            48   F841 Local variable `x` is assigned to but never used                       
-  pylint_violations.py            49   F841 Local variable `y` is assigned to but never used                       
-  pylint_violations.py           144   F841 Local variable `x` is assigned to but never used                       
-  ruff_violations.py              10   E501 Line too long (174 > 120)                                              
-  ruff_violations.py              17   E711 Comparison to `None` should be `cond is None`                          
-  ruff_violations.py              22   E712 Avoid equality comparisons to `True`; use `if flag:` for truth checks  
-  ruff_violations.py              26   F821 Undefined name `undefined_variable`                                    
-  ruff_violations.py              47   E402 Module level import not at top of file                                 
-  ruff_violations.py              69   E731 Do not assign a `lambda` expression, use a `def`                       
-  ruff_violations.py              72   UP030 Use implicit references for positional format fields                  
-  ruff_violations.py              78   E741 Ambiguous variable name: `O`                                           
-  ruff_violations.py              79   E741 Ambiguous variable name: `I`                                           
-  ruff_violations.py              86   E402 Module level import not at top of file                                 
-                                                                                                                   
+# ✅ REQUIRED BEHAVIOR (INVARIANTS)
 
-  ⚠️  No fixes available (14 hidden fixes can be enabled with the `--unsafe-fixes` option). (Review before applying with --unsafe-fixes)
+1. **Default `--ci` MUST exclude fixtures everywhere.**
+2. **`--include-fixtures` MUST be the only way fixtures appear (in any mode).**
+3. If fixtures appear without `--include-fixtures`, that is a **FAIL**.
+4. **Runner isolation MUST hold**:
+   - Python runner never receives Rust files
+   - Rust runner never receives Python files
+   - etc. for all supported runners
 
+---
 
-           Summary           
-  Total Runners: 4           
-    Passed: 3                
-    Failed: 1                
-  Total Violations: 27       
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
-```
+# 🧪 REQUIRED DELIVERABLE: EXHAUSTIVE FIXTURE/ISOLATION TEST MATRIX
 
+Create a **unit test suite** under `tools/repo_lint/tests/` that validates *computed file lists* (no external tool execution; no CI log parsing).
+
+The suite MUST cover the full matrix:
+
+## A) Flag combos (fixtures)
+For each selection mode below, assert the **exact final file set**:
+- `--ci`
+- `--include-fixtures`
+- neither flag (local default)
+- `--ci --include-fixtures`
+
+## B) Runners (ALL of them)
+For each runner (Python/Bash/PowerShell/Perl/YAML/Rust + any meta/shared runners):
+- Assert it only receives files matching its language patterns
+- Assert it never receives another language’s files
+- Assert `has_files()` is based on the **same filtered file set** as execution
+
+## C) Selection modes (ALL discovery paths)
+Cover every file-discovery mechanism present:
+- “all tracked files”
+- “changed-only” / detect-changed path (if present)
+- `--only <language>`
+- any “vector mode / conformance” path
+- any direct `get_tracked_files(...)` usage
+- glob-based filters + YAML-config-based patterns
+
+## D) Fixture path + glob edge cases
+Fixtures must be excluded/included correctly for:
+- nested fixtures directories
+- fixtures that match language globs (`**/*.py`, `**/*.rs`, etc.)
+- fixture names resembling real files (`*_runner.py`, `*_violations.*`)
+- “surprising” fixture locations (if supported)
+- case-sensitivity edge cases (if relevant)
+- hyphen/underscore/mixed naming patterns
+
+## E) Prove “impossible” outcomes are impossible
+Add tests proving:
+- Python files cannot appear in Rust inputs
+- Rust files cannot appear in Python inputs
+- Fixtures cannot appear in CI without `--include-fixtures`
+- Runner-specific code paths cannot bypass exclusions
+
+## F) Regression traps
+Add tests for:
+- double exclusion / duplicate filtering bugs
+- missing imports / NameError in runners (e.g., `get_tracked_files`)
+- mismatch between `has_files()` and actual execution file list
+- mismatch between `check` and `fix` selection (fix must not broaden scope)
+
+---
+
+# 🧾 PROOF REQUIRED IN YOUR RESPONSE
+
+After implementing, you MUST provide:
+
+1. **Bootstrap commands** you ran + **success output snippet**
+2. **Exact test commands** you ran
+3. A brief summary of the **coverage matrix** (flag combos × runners × selection modes)
+4. Evidence that tests **fail before the fix** (if any code changes required) and **pass after**
+
+---
+
+# 🚫 HARD STOP
+
+Do NOT claim “complete” unless the test suite explicitly covers:
+- **all runners**
+- **all selection modes**
+- **all flag combos**
+- **negative “impossible outcome” proofs**
+- **edge-case fixture paths/globs**
+
+Now: run bootstrap, paste output, then implement the matrix tests + fix the leak.
