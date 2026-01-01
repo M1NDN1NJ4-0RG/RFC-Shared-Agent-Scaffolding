@@ -323,8 +323,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
 
     # Check for dry-run mode
     dry_run = getattr(args, "dry_run", False)
-    # TODO: Implement diff preview backend logic  # pylint: disable=fixme
-    # show_diff = getattr(args, "diff", False)
+    show_diff = getattr(args, "diff", False)
 
     if not use_json:
         if dry_run:
@@ -332,6 +331,11 @@ def cmd_fix(args: argparse.Namespace) -> int:
                 "🔍 DRY RUN: Showing what would be changed (no files modified)",
                 "DRY RUN: Showing what would be changed",
             )
+            if show_diff:
+                safe_print(
+                    "   Unified diffs will be shown for each change",
+                    "   Unified diffs will be shown for each change",
+                )
             print("")
         elif unsafe_mode:
             safe_print("⚠️  DANGER: Running in UNSAFE FIX MODE", "WARNING: DANGER: Running in UNSAFE FIX MODE")
