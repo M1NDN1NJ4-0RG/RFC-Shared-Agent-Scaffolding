@@ -167,6 +167,8 @@ class Runner(ABC):
         self.repo_root = repo_root or find_repo_root()
         self.ci_mode = ci_mode
         self.verbose = verbose
+        self._tool_filter = None  # List of specific tools to run (None = run all)
+        self._changed_only = False  # Only check git-changed files
 
     @abstractmethod
     def has_files(self) -> bool:
