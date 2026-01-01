@@ -100,18 +100,14 @@ jobs:
           
           # CRITICAL SAFETY: Exclude fixture and vector directories from auto-fix
           # These files contain INTENTIONAL violations for testing and must NEVER be auto-fixed
-          EXCLUDE_PATTERNS=(
-            --exclude='tests/fixtures/'
-            --exclude='conformance/repo-lint/fixtures/'
-            --exclude='conformance/repo-lint/vectors/'
-            --exclude='conformance/repo-lint/unsafe-fix-fixtures/'
-            --exclude='scripts/tests/fixtures/'
-          )
+          # Black's --exclude uses Python regex patterns (NOT glob patterns)
+          # Multiple patterns must be combined with | (OR operator)
+          EXCLUDE_REGEX='(tests/fixtures/|conformance/repo-lint/fixtures/|conformance/repo-lint/vectors/|conformance/repo-lint/unsafe-fix-fixtures/|scripts/tests/fixtures/)'
           
-          echo "Excluded patterns for safety: ${EXCLUDE_PATTERNS[@]}"
+          echo "Excluded regex for safety: ${EXCLUDE_REGEX}"
           
-          black --line-length 120 --check --diff "${EXCLUDE_PATTERNS[@]}" . > black_check.log 2>&1 || true
-          black --line-length 120 "${EXCLUDE_PATTERNS[@]}" . > black_fix.log 2>&1 || true
+          black --line-length 120 --check --diff --exclude="${EXCLUDE_REGEX}" . > black_check.log 2>&1 || true
+          black --line-length 120 --exclude="${EXCLUDE_REGEX}" . > black_fix.log 2>&1 || true
           echo "Black formatting complete."
 
       - name: Generate forensic artifacts

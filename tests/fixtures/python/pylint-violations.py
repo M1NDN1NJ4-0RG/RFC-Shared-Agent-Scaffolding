@@ -149,6 +149,8 @@ def function():
     pass
 
 
+
+
 # W0107: unnecessary pass
 def empty_function():
     """Empty function."""

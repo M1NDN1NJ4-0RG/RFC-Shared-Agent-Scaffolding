@@ -6,7 +6,7 @@ Last Updated: 2026-01-01
 Related: Issue #221, PR #222
 
 ## NEXT
-- Phase 3: Add vector integration tests (IN PROGRESS - tests created, need debugging)
+- Phase 3: Debug integration tests, verify they pass
 - Phase 4: Review existing runner unit tests
 - Phase 5: Verification and CI Integration
 - **FINAL TASK**: Add extremely detailed documentation about tests/fixtures/ and --include-fixtures vector mode to HOW-TO-USE-THIS-TOOL.md
@@ -14,6 +14,46 @@ Related: Issue #221, PR #222
 <>><------- NEXT STEPS DELIMITER BETWEEN COMPLETED STEPS -------><<>
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-01 11:45 - CRITICAL FIX: Black Exclusion Regex Corrected + Fixtures Restored
+**Files Changed:**
+- `.github/workflows/repo-lint-and-docstring-enforcement.yml`: Fixed Black exclusion syntax (CRITICAL BUG FIX)
+- `tests/fixtures/python/pylint-violations.py`: Reverted unauthorized CI auto-format changes
+- `tests/fixtures/python/ruff-violations.py`: Reverted unauthorized CI auto-format changes
+
+**Problem Identified:**
+- Commit `122b3fc` (Auto-format by github-actions[bot]) modified fixture files DESPITE exclusions in commit `fd2d570`
+- Root cause: Black's `--exclude` flag uses Python REGEX patterns, NOT shell glob patterns
+- Previous implementation used multiple `--exclude='tests/fixtures/'` flags, which Black didn't process correctly
+- Black still formatted fixture files, removing blank lines and reformatting code
+
+**Changes Made:**
+1. **Fixed Black exclusion syntax**:
+   - Changed from: Multiple `--exclude` flags in array (WRONG - doesn't work with Black)
+   - Changed to: Single `--exclude` with combined regex pattern using | (OR operator)
+   - New pattern: `'(tests/fixtures/|conformance/repo-lint/fixtures/|conformance/repo-lint/vectors/|conformance/repo-lint/unsafe-fix-fixtures/|scripts/tests/fixtures/)'`
+   - This is the CORRECT syntax for Black's regex-based exclusion
+
+2. **Reverted fixture files**:
+   - Used `git checkout 122b3fc~1 -- tests/fixtures/python/pylint-violations.py tests/fixtures/python/ruff-violations.py`
+   - Restored original intentional violations (blank lines, formatting issues)
+   - Verified with `git diff 122b3fc~1` (empty diff = successful revert)
+
+3. **Added detailed comments**:
+   - Documented that Black uses Python regex, NOT glob patterns
+   - Explained the | (OR) operator for combining multiple exclusions
+   - Made it clear these are CRITICAL SAFETY exclusions
+
+**Verification:**
+- Checked for other auto-fix tools in workflows (ruff --fix, shfmt -w, prettier --write): NONE found
+- Only Black auto-fix exists, now properly configured
+
+**Impact:**
+- Fixtures are NOW truly immutable in CI
+- Previous auto-format damage has been undone
+- Next CI run will respect exclusions correctly
+
+---
 
 ### 2026-01-01 11:00 - CI Safety: Hardcoded Fixture Exclusions in Auto-Fix Workflow
 **Files Changed:**
