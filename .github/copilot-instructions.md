@@ -2,9 +2,11 @@
 
 ## ⚠️ MANDATORY FIRST STEP ⚠️
 
-**BEFORE DOING ANYTHING ELSE:** Read `docs/contributing/session-compliance-requirements.md` IMMEDIATELY at session start.
+**EXCEPTION:** If the user explicitly says "CONTINUE" or references continuing existing work, SKIP the session start procedure and proceed directly to the work.
 
-This is **MANDATORY** and **NON-NEGOTIABLE**. You may NOT:
+**OTHERWISE:** Read `docs/contributing/session-compliance-requirements.md` IMMEDIATELY at session start.
+
+This is **MANDATORY** for NEW work sessions. You may NOT:
 - Explore files
 - Analyze the problem
 - Read repository contents
