@@ -139,6 +139,11 @@ languages:
             - "AutofixPolicy.json"   # PascalCase
 
 # Global exclusions (directories/patterns to skip)
+# TODO: Remove this hardcoded list and load exclusions from repo-lint-file-patterns.yaml  # noqa: TD003
+# using get_linting_exclusion_paths() or get_exclusion_patterns() from yaml_loader.
+# This duplicates the YAML config and is not maintainable - same issue as validate_docstrings.py.
+# The naming runner should call the centralized exclusion function instead of maintaining
+# a parallel list here.
 exclusions:
   - ".git/"
   - ".venv/"

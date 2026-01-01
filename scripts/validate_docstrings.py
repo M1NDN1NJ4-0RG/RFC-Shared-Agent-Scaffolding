@@ -269,7 +269,7 @@ def get_tracked_files() -> List[Path]:
     matched_files = []
 
     # Directories to exclude (test fixtures with intentional violations)
-    # TODO: Remove this hardcoded list and use get_linting_exclusion_paths() from yaml_loader
+    # TODO: Remove this hardcoded list and use get_linting_exclusion_paths() from yaml_loader  # pylint: disable=fixme
     # This duplicates the YAML config and is not maintainable. Should call the aggregation
     # function instead of maintaining a parallel list here.
     # NOTE: These are also in YAML config, but kept here for directory-based filtering

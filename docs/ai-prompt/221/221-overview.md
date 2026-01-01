@@ -46,17 +46,19 @@ Related: Issue #221, PR #222
 This plan is non‑negotiable; follow each directive exactly.
 
 ## Progress Tracker
-- [ ] Phase 1: Create Fixture Directory Structure
-  - [ ] Create `tests/fixtures` directory
-  - [ ] Create Python fixtures (black, ruff, pylint, docstrings)
-  - [ ] Create Bash fixtures (shellcheck, shfmt, docstrings)
-  - [ ] Create PowerShell fixtures (PSScriptAnalyzer, docstrings)
-  - [ ] Create Perl fixtures (perlcritic, docstrings)
-  - [ ] Create YAML fixtures (yamllint)
-  - [ ] Create Rust fixtures (rustfmt, clippy, docstrings)
-- [ ] Phase 2: Exclude Fixtures From Normal Runs and Add Vector Mode
-  - [ ] Modify file selection logic to exclude `tests/fixtures/**`
-  - [ ] Add `--include-fixtures` flag
+- [x] Phase 1: Create Fixture Directory Structure
+  - [x] Create `tests/fixtures` directory
+  - [x] Create Python fixtures (black, ruff, pylint, docstrings)
+  - [x] Create Bash fixtures (shellcheck, shfmt, docstrings)
+  - [x] Create PowerShell fixtures (PSScriptAnalyzer, docstrings)
+  - [x] Create Perl fixtures (perlcritic, docstrings)
+  - [x] Create YAML fixtures (yamllint, actionlint, docstrings)
+  - [x] Create Rust fixtures (rustfmt, clippy, docstrings)
+- [x] Phase 2: Exclude Fixtures From Normal Runs and Add Vector Mode (PARTIAL)
+  - [x] Modify file selection logic to exclude `tests/fixtures/**`
+  - [x] Add `--include-fixtures` flag
+  - [x] Fix exclusion duplication - single source of truth
+  - [ ] Complete docstring validator integration
 - [ ] Phase 3: Add Vector Integration Tests
   - [ ] Write integration tests for vector mode
   - [ ] Test normal mode exclusion

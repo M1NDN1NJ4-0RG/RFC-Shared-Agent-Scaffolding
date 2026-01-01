@@ -122,7 +122,8 @@ def get_git_pathspec_excludes(include_fixtures: bool = False) -> List[str]:
     excludes = []
     for path in get_excluded_paths():
         # Skip fixture exclusions when in vector mode
-        if include_fixtures and path == "tests/fixtures/":
+        # Check if path is any fixture pattern (ends with fixtures/** or fixtures/)
+        if include_fixtures and ("fixtures/**" in path or "fixtures/" == path.rstrip("*")):
             continue
         # Git pathspec format: ':(exclude)pattern'
         excludes.append(f":(exclude){path}")

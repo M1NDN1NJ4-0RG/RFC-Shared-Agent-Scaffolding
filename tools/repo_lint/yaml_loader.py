@@ -226,15 +226,19 @@ def get_exclusion_patterns() -> List[str]:
 
     :Note:
         This function replaces EXCLUDE_PATTERNS from validate_docstrings.py
-        (Phase 2.9 migration).
+        (Phase 2.9 migration). It aggregates all patterns from all exclusion
+        categories in the YAML config.
     """
     patterns_config = load_file_patterns()
     exclusions_config = patterns_config.get("exclusions", {})
 
     all_patterns = []
-    for category in exclusions_config.values():
-        if isinstance(category, dict) and "patterns" in category:
-            all_patterns.extend(category["patterns"])
+    for category_config in exclusions_config.values():
+        # Skip non-dict items (like top-level description field)
+        if not isinstance(category_config, dict):
+            continue
+        if "patterns" in category_config:
+            all_patterns.extend(category_config["patterns"])
 
     return all_patterns
 
@@ -246,24 +250,9 @@ def get_linting_exclusion_paths() -> List[str]:
 
     :Note:
         This function replaces EXCLUDED_PATHS from base.py (Phase 2.9 migration).
-        It aggregates all patterns from all exclusion categories in the YAML config
-        to provide a single source of truth.
+        It delegates to get_exclusion_patterns() to avoid duplication.
     """
-    patterns_config = load_file_patterns()
-
-    # Aggregate patterns from all exclusion categories
-    all_patterns = []
-    exclusions = patterns_config.get("exclusions", {})
-
-    # Iterate through each category and collect patterns
-    for category_name, category_config in exclusions.items():
-        if category_name == "description":
-            # Skip the top-level description field
-            continue
-        if isinstance(category_config, dict) and "patterns" in category_config:
-            all_patterns.extend(category_config["patterns"])
-
-    return all_patterns
+    return get_exclusion_patterns()
 
 
 # Backward compatibility layer with deprecation warnings
