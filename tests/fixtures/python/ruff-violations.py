@@ -3,7 +3,6 @@
 This file intentionally contains violations to test ruff detection.
 """
 
-
 # F841: local variable assigned but never used
 unused_variable = "this is never used"
 
@@ -30,7 +29,6 @@ result = undefined_variable + 10
 # E402: module level import not at top of file
 def some_function():
     pass
-
 
 
 # F541: f-string without any placeholders
@@ -67,7 +65,9 @@ def overly_complex_function(a, b, c):
 calc = lambda x: x * 2
 
 # F523: '.format' call has unused arguments
-text = "hello {0}".format("world", )
+text = "hello {0}".format(
+    "world",
+)
 
 # E741: ambiguous variable name
 l = 1  # noqa: E741 would suppress
