@@ -253,27 +253,29 @@ class TestParseRuffOutput(unittest.TestCase):
         """Test parsing unsafe fixes message in check context.
 
         :Purpose:
-            Verify check context uses correct message.
+            Verify check context uses correct message in info_message.
         """
         output = "No fixes available (1 hidden fixes can be enabled with the `--unsafe-fixes` option)."
-        violations = self.runner._parse_ruff_output(output, context="check")
+        violations, info_message = self.runner._parse_ruff_output(output, context="check")
 
-        self.assertEqual(len(violations), 1)
-        self.assertIn("Review before applying", violations[0].message)
-        self.assertNotIn("not applied automatically", violations[0].message)
+        self.assertEqual(len(violations), 0)  # No actual violations
+        self.assertIsNotNone(info_message)
+        self.assertIn("Review before applying", info_message)
+        self.assertNotIn("not applied automatically", info_message)
 
     def test_parse_fix_context_unsafe_message(self):
         """Test parsing unsafe fixes message in fix context.
 
         :Purpose:
-            Verify fix context uses correct message.
+            Verify fix context uses correct message in info_message.
         """
         output = "No fixes available (1 hidden fixes can be enabled with the `--unsafe-fixes` option)."
-        violations = self.runner._parse_ruff_output(output, context="fix")
+        violations, info_message = self.runner._parse_ruff_output(output, context="fix")
 
-        self.assertEqual(len(violations), 1)
-        self.assertIn("not applied automatically", violations[0].message)
-        self.assertNotIn("Review before applying", violations[0].message)
+        self.assertEqual(len(violations), 0)  # No actual violations
+        self.assertIsNotNone(info_message)
+        self.assertIn("not applied automatically", info_message)
+        self.assertNotIn("Review before applying", info_message)
 
     def test_parse_filters_found_lines(self):
         """Test that 'Found N errors' lines are filtered out.
@@ -283,7 +285,7 @@ class TestParseRuffOutput(unittest.TestCase):
         """
         output = """tools/cli.py:10:1: E501 Line too long
 Found 1 error."""
-        violations = self.runner._parse_ruff_output(output, context="check")
+        violations, info_message = self.runner._parse_ruff_output(output, context="check")
 
         # Should only parse the actual violation, not the "Found" line
         self.assertEqual(len(violations), 1)
