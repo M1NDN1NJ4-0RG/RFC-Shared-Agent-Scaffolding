@@ -345,6 +345,130 @@ class Reporter:
 
         self.console.print(panel)
 
+    def render_summary(self, results: List[LintResult], exit_code: ExitCode, format_type: str = "short") -> None:
+        """Render summary in specified format.
+
+        :param results: List of linting results
+        :param exit_code: Final exit code
+        :param format_type: Summary format (short|by-tool|by-file|by-code)
+        """
+        # Count violations
+        total_violations = sum(len(r.violations) for r in results if not r.error)
+        total_errors = sum(1 for r in results if r.error)
+        tools_run = len([r for r in results if not r.error])
+
+        # Determine status
+        if exit_code == ExitCode.SUCCESS:
+            status_icon = self._get_icon("pass")
+            status_color = self._get_color("success")
+        else:
+            status_icon = self._get_icon("fail")
+            status_color = self._get_color("failure")
+
+        if format_type == "short":
+            # Short format: single line summary
+            summary = f"{status_icon} {tools_run} tool(s) run, {total_violations} violation(s), {total_errors} error(s)"
+            self.console.print(f"[{status_color}]{summary}[/{status_color}]")
+
+        elif format_type == "by-tool":
+            # By-tool format: violations grouped by tool
+            table = Table(
+                title="Summary by Tool",
+                show_header=True,
+                header_style=self._get_color("primary"),
+                border_style=self._get_color("metadata"),
+                box=get_box_style(self.theme, self.ci_mode),
+            )
+            table.add_column("Tool", style=self._get_color("primary"))
+            table.add_column("Files", justify="right", style=self._get_color("metadata"))
+            table.add_column("Violations", justify="right", style=self._get_color("info"))
+            table.add_column("Status", justify="center")
+
+            for result in results:
+                if result.error:
+                    status = f"[{self._get_color('failure')}]ERROR[/{self._get_color('failure')}]"
+                    violations_count = "N/A"
+                elif result.passed:
+                    status = f"[{self._get_color('success')}]{self._get_icon('pass')} PASS[/{self._get_color('success')}]"
+                    violations_count = "0"
+                else:
+                    status = f"[{self._get_color('failure')}]{self._get_icon('fail')} FAIL[/{self._get_color('failure')}]"
+                    violations_count = str(len(result.violations))
+
+                file_count = str(getattr(result, "file_count", "-"))
+                table.add_row(result.tool, file_count, violations_count, status)
+
+            self.console.print()
+            self.console.print(table)
+            self.console.print()
+            self.console.print(f"[{status_color}]Total: {total_violations} violation(s)[/{status_color}]")
+
+        elif format_type == "by-file":
+            # By-file format: violations grouped by file
+            from collections import defaultdict
+
+            files_dict = defaultdict(list)
+            for result in results:
+                if not result.error and not result.passed:
+                    for violation in result.violations:
+                        files_dict[violation.file].append((result.tool, violation))
+
+            table = Table(
+                title="Summary by File",
+                show_header=True,
+                header_style=self._get_color("primary"),
+                border_style=self._get_color("metadata"),
+                box=get_box_style(self.theme, self.ci_mode),
+            )
+            table.add_column("File", style=self._get_color("primary"))
+            table.add_column("Violations", justify="right", style=self._get_color("info"))
+            table.add_column("Tools", style=self._get_color("metadata"))
+
+            for file_path, violations in sorted(files_dict.items()):
+                tool_names = ", ".join(sorted(set(tool for tool, _ in violations)))
+                table.add_row(file_path, str(len(violations)), tool_names)
+
+            self.console.print()
+            self.console.print(table)
+            self.console.print()
+            self.console.print(f"[{status_color}]{len(files_dict)} file(s) with violations[/{status_color}]")
+
+        elif format_type == "by-code":
+            # By-code format: violations grouped by error code
+            from collections import defaultdict
+
+            codes_dict = defaultdict(int)
+            for result in results:
+                if not result.error and not result.passed:
+                    for violation in result.violations:
+                        # Extract error code from message if available (e.g., "E501: line too long")
+                        code = "UNKNOWN"
+                        if ":" in violation.message:
+                            code = violation.message.split(":")[0].strip()
+                        codes_dict[f"{result.tool}:{code}"] += 1
+
+            table = Table(
+                title="Summary by Code",
+                show_header=True,
+                header_style=self._get_color("primary"),
+                border_style=self._get_color("metadata"),
+                box=get_box_style(self.theme, self.ci_mode),
+            )
+            table.add_column("Tool:Code", style=self._get_color("primary"))
+            table.add_column("Count", justify="right", style=self._get_color("info"))
+
+            for code, count in sorted(codes_dict.items(), key=lambda x: x[1], reverse=True):
+                table.add_row(code, str(count))
+
+            self.console.print()
+            self.console.print(table)
+            self.console.print()
+            self.console.print(f"[{status_color}]{len(codes_dict)} unique code(s)[/{status_color}]")
+
+        # Add exit code
+        self.console.print()
+        self.console.print(f"Exit Code: {int(exit_code)}")
+
     def render_config_validation_errors(self, errors: List[str]) -> None:
         """Render configuration validation errors.
 
