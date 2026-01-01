@@ -61,6 +61,34 @@ import rich_click as click
 from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
 from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
 
+
+def _resolve_language_filter(lang, only):
+    """Resolve language filter from --lang and --only options.
+
+    :Purpose:
+        Handles precedence between --lang and deprecated --only options.
+        Issues warning if both are specified.
+
+    :param lang: Value from --lang option (or None)
+    :param only: Value from --only option (or None)
+    :returns: Resolved language filter (or None for all languages)
+
+    :Notes:
+        - --lang takes precedence over --only
+        - "all" is treated as None (run all languages)
+        - Warns if both options specified simultaneously
+    """
+    if lang and only:
+        print(
+            "⚠️  Warning: Both --lang and --only specified. Using --lang (--only is deprecated).",
+            file=sys.stderr,
+        )
+
+    # Handle --lang / --only precedence: --lang takes priority
+    # "all" is same as not specifying a language (run all)
+    return lang if lang and lang != "all" else only
+
+
 # Configure rich-click globally
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.USE_MARKDOWN = False
@@ -212,7 +240,7 @@ def check(verbose, ci_mode, only, lang, use_json):
       Stable output for CI, fails if tools missing (no auto-install)
 
     Example 3 — Focused usage:
-      $ repo-lint check --only python
+      $ repo-lint check --lang python
       Check only Python files, skip other languages
 
     \b
@@ -253,9 +281,8 @@ def check(verbose, ci_mode, only, lang, use_json):
     """
     import argparse  # Local import - only needed for Namespace creation
 
-    # Handle --lang / --only precedence: --lang takes priority
-    # "all" is same as not specifying a language (run all)
-    effective_lang = lang if lang and lang != "all" else only
+    # Resolve language filter with precedence and warning
+    effective_lang = _resolve_language_filter(lang, only)
 
     # Create a namespace object compatible with the existing cmd_check function
     args = argparse.Namespace(
@@ -332,7 +359,7 @@ def fix(verbose, ci_mode, only, lang, use_json, unsafe, yes_i_know):
       Verify formatting in CI (fails if changes needed, doesn't modify files)
 
     Example 3 — Focused usage:
-      $ repo-lint fix --only python
+      $ repo-lint fix --lang python
       Fix only Python files, skip other languages
 
     \b
@@ -393,9 +420,8 @@ def fix(verbose, ci_mode, only, lang, use_json, unsafe, yes_i_know):
     """
     import argparse  # Local import - only needed for Namespace creation
 
-    # Handle --lang / --only precedence: --lang takes priority
-    # "all" is same as not specifying a language (run all)
-    effective_lang = lang if lang and lang != "all" else only
+    # Resolve language filter with precedence and warning
+    effective_lang = _resolve_language_filter(lang, only)
 
     # Create a namespace object compatible with the existing cmd_fix function
     args = argparse.Namespace(
