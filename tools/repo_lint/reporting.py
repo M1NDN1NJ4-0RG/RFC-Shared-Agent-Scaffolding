@@ -57,6 +57,9 @@ def report_results(
     summary: bool = False,
     summary_only: bool = False,
     summary_format: str = "short",
+    show_files: bool = True,
+    show_codes: bool = True,
+    max_violations: int = None,
 ) -> int:
     """Report linting results using Reporter and return appropriate exit code.
 
@@ -66,6 +69,9 @@ def report_results(
     :param summary: Show summary after results (normal output + summary)
     :param summary_only: Show ONLY summary (no individual violations)
     :param summary_format: Summary format (short|by-tool|by-file|by-code)
+    :param show_files: Whether to show per-file breakdown in violations
+    :param show_codes: Whether to show tool rule IDs/codes in violations
+    :param max_violations: Maximum number of violations to display (None = unlimited)
     :returns: Exit code (0 for success, 1 for violations, 3 for errors)
     """
     # Create reporter
@@ -88,8 +94,13 @@ def report_results(
         # Render results table
         reporter.render_results_table(results)
 
-        # Render failures (if any)
-        reporter.render_failures(results)
+        # Render failures (if any) with display controls
+        reporter.render_failures(
+            results,
+            show_files=show_files,
+            show_codes=show_codes,
+            max_violations=max_violations,
+        )
 
     # Determine exit code
     if has_errors:

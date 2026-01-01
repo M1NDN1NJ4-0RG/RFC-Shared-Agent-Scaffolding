@@ -256,6 +256,9 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             summary=getattr(args, "summary", False),
             summary_only=getattr(args, "summary_only", False),
             summary_format=getattr(args, "summary_format", "short"),
+            show_files=getattr(args, "show_files", True),
+            show_codes=getattr(args, "show_codes", True),
+            max_violations=getattr(args, "max_violations", None),
         )
 
 
