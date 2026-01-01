@@ -389,10 +389,14 @@ class Reporter:
                     status = f"[{self._get_color('failure')}]ERROR[/{self._get_color('failure')}]"
                     violations_count = "N/A"
                 elif result.passed:
-                    status = f"[{self._get_color('success')}]{self._get_icon('pass')} PASS[/{self._get_color('success')}]"
+                    status = (
+                        f"[{self._get_color('success')}]{self._get_icon('pass')} PASS[/{self._get_color('success')}]"
+                    )
                     violations_count = "0"
                 else:
-                    status = f"[{self._get_color('failure')}]{self._get_icon('fail')} FAIL[/{self._get_color('failure')}]"
+                    status = (
+                        f"[{self._get_color('failure')}]{self._get_icon('fail')} FAIL[/{self._get_color('failure')}]"
+                    )
                     violations_count = str(len(result.violations))
 
                 file_count = str(getattr(result, "file_count", "-"))
