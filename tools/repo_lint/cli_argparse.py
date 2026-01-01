@@ -162,11 +162,11 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         runners = [(key, name, runner) for key, name, runner in all_runners if key == only_language]
     else:
         runners = all_runners
-    
+
     # Apply tool filtering: pass tool filter to each runner
     if tool_filter:
         for _, _, runner in runners:
-            if hasattr(runner, 'set_tool_filter'):
+            if hasattr(runner, "set_tool_filter"):
                 runner.set_tool_filter(tool_filter)
 
     # If --only was used, ensure there is something to run
@@ -185,9 +185,9 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     changed_only = getattr(args, "changed_only", False)
     if changed_only:
         for _, _, runner in runners:
-            if hasattr(runner, 'set_changed_only'):
+            if hasattr(runner, "set_changed_only"):
                 runner.set_changed_only(True)
-    
+
     # Check for fail-fast mode
     fail_fast = getattr(args, "fail_fast", False)
     max_violations = getattr(args, "max_violations", None)

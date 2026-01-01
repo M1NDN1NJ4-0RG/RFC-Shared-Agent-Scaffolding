@@ -48,7 +48,7 @@ class PythonRunner(Runner):
         if self._changed_only:
             changed_files = self._get_changed_files(patterns=["*.py", "**/*.py"])
             return len(changed_files) > 0
-        
+
         # Otherwise check all tracked Python files
         files = get_tracked_files(["**/*.py"], self.repo_root)
         return len(files) > 0
@@ -71,17 +71,17 @@ class PythonRunner(Runner):
         self._ensure_tools(["black", "ruff", "pylint"])
 
         results = []
-        
+
         # Apply tool filtering: only run tools that pass the filter
         if self._should_run_tool("black"):
             results.append(self._run_black_check())
-        
+
         if self._should_run_tool("ruff"):
             results.append(self._run_ruff_check())
-        
+
         if self._should_run_tool("pylint"):
             results.append(self._run_pylint())
-        
+
         if self._should_run_tool("validate_docstrings"):
             results.append(self._run_docstring_validation())
 

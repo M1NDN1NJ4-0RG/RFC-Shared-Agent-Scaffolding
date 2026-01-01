@@ -214,7 +214,7 @@ class Runner(ABC):
         """Set tool filter to run only specific tools.
 
         :param tools: List of tool names to run (e.g., ["black", "ruff"])
-        
+
         :Purpose:
             Enables granular tool filtering so users can run specific linters/formatters
             without running the full suite. Runners should check this filter in their
@@ -226,7 +226,7 @@ class Runner(ABC):
         """Enable/disable changed-only mode.
 
         :param enabled: Whether to only check git-changed files
-        
+
         :Purpose:
             Restricts linting to files that have been modified according to git.
             Useful for pre-commit hooks and iterative development.
@@ -239,7 +239,7 @@ class Runner(ABC):
 
         :param tool_name: Name of tool to check
         :returns: True if tool should run, False if filtered out
-        
+
         :Purpose:
             Helper method for runners to check tool filter. If no filter is set,
             all tools run. If filter is set, only tools in the filter run.
@@ -254,13 +254,13 @@ class Runner(ABC):
         :param patterns: Optional file patterns to filter (e.g., ["*.py"])
         :returns: List of changed file paths
         :raises RuntimeError: If not in a git repository
-        
+
         :Purpose:
             Retrieves files with uncommitted changes from git. Used when --changed-only
             is specified to limit linting scope.
         """
         import subprocess  # pylint: disable=import-outside-toplevel,redefined-outer-name
-        
+
         # Get files changed in working tree (unstaged + staged)
         result = subprocess.run(
             ["git", "diff", "--name-only", "HEAD"],
@@ -269,18 +269,16 @@ class Runner(ABC):
             text=True,
             check=False,
         )
-        
+
         if result.returncode != 0:
-            raise RuntimeError(
-                "Not in a git repository. --changed-only requires git repository."
-            )
-        
+            raise RuntimeError("Not in a git repository. --changed-only requires git repository.")
+
         files = result.stdout.strip().split("\n") if result.stdout.strip() else []
-        
+
         # Apply pattern filtering if requested
         if patterns:
             import fnmatch  # pylint: disable=import-outside-toplevel
-            
+
             filtered = []
             for file in files:
                 for pattern in patterns:
@@ -288,7 +286,7 @@ class Runner(ABC):
                         filtered.append(file)
                         break
             return filtered
-        
+
         return files
 
     def _ensure_tools(self, required_tools: List[str]) -> None:
