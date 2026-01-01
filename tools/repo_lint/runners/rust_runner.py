@@ -97,9 +97,16 @@ class RustRunner(Runner):
         self._ensure_tools(["cargo"])
 
         results = []
-        results.append(self._run_rustfmt_check())
-        results.append(self._run_clippy())
-        results.append(self._run_docstring_validation())
+        
+        # Apply tool filtering
+        if self._should_run_tool("rustfmt"):
+            results.append(self._run_rustfmt_check())
+        
+        if self._should_run_tool("clippy"):
+            results.append(self._run_clippy())
+        
+        if self._should_run_tool("validate_docstrings"):
+            results.append(self._run_docstring_validation())
 
         return results
 
