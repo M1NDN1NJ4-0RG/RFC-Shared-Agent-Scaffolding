@@ -13,7 +13,7 @@ Related: Issue #221, PR #222
 - Phase 5: Verification and CI Integration
 - **FINAL TASK**: Add extremely detailed documentation about tests/fixtures/ and --include-fixtures vector mode to HOW-TO-USE-THIS-TOOL.md
 
----
+<>><------- NEXT STEPS DELIMITER BETWEEN COMPLETED STEPS -------><<>
 
 ## DONE (EXTREMELY DETAILED)
 
