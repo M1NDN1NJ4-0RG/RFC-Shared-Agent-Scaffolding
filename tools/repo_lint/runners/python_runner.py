@@ -53,6 +53,72 @@ class PythonRunner(Runner):
         files = get_tracked_files(["**/*.py"], self.repo_root)
         return len(files) > 0
 
+    def _is_ruff_context_line(self, line: str) -> bool:
+        """Check if a line is a ruff context line (not an actual violation).
+
+        :param line: Stripped line from ruff output
+        :returns: True if this is a context line to skip
+        """
+        # Skip various ruff context/formatting lines
+        if line.startswith(("|", "-->", "=", "help:")):
+            return True
+        # Skip line-number-only lines
+        if line.replace(" ", "").replace("|", "").isdigit():
+            return True
+        # Skip caret/pointer lines
+        if all(c in "^ " for c in line):
+            return True
+        return False
+
+    def _parse_lint_output(self, line: str) -> dict:
+        """Parse linter output to extract file, line, and message.
+
+        Handles multiple formats:
+        - path:line:col: code message (ruff, pylint)
+        - path:line: code message
+        - message only (fallback)
+
+        :param line: Raw linter output line
+        :returns: Dict with 'file' (basename), 'line' (int or None), 'message' (str)
+        """
+        import os
+
+        # Try to parse path:line:col: format (ruff, pylint)
+        if ":" in line:
+            parts = line.split(":", 3)
+            if len(parts) >= 3:
+                # Check if second part is a number (line number)
+                try:
+                    file_path = parts[0].strip()
+                    line_num = int(parts[1].strip())
+                    # parts[2] could be column or part of message
+                    # If parts[2] is numeric, it's column; otherwise part of message
+                    try:
+                        int(parts[2].strip())
+                        # Has column number, message starts at parts[3]
+                        message = parts[3].strip() if len(parts) > 3 else line
+                    except ValueError:
+                        # No column, parts[2] is start of message
+                        message = ":".join(parts[2:]).strip()
+
+                    # Extract basename from file path
+                    file_basename = os.path.basename(file_path) if file_path else "."
+
+                    return {
+                        "file": file_basename,
+                        "line": line_num,
+                        "message": message,
+                    }
+                except (ValueError, IndexError):
+                    pass
+
+        # Fallback: couldn't parse, return original line as message
+        return {
+            "file": ".",
+            "line": None,
+            "message": line,
+        }
+
     def check_tools(self) -> List[str]:
         """Check which Python tools are missing.
 
@@ -210,9 +276,23 @@ class PythonRunner(Runner):
                             message=f"⚠️  {line.strip()} {unsafe_msg}",
                         )
                     )
-                elif not line.startswith("Found"):
+                elif not line.startswith("Found") and not line.startswith("[*]"):
                     # Ruff output format: path:line:col: code message
-                    violations.append(Violation(tool="ruff", file=".", line=None, message=line.strip()))
+                    # Example: tools/repo_lint/ui/reporter.py:447:36: F541 [*] f-string without any placeholders
+                    # Skip context lines (start with |, -->, help:, numbers only, etc.)
+                    stripped = line.strip()
+                    if not self._is_ruff_context_line(stripped):
+                        parsed = self._parse_lint_output(stripped)
+                        # Only add if we successfully parsed a file and line
+                        if parsed["file"] != "." or parsed["line"] is not None:
+                            violations.append(
+                                Violation(
+                                    tool="ruff",
+                                    file=parsed["file"],
+                                    line=parsed["line"],
+                                    message=parsed["message"],
+                                )
+                            )
 
         return violations
 
@@ -284,7 +364,21 @@ class PythonRunner(Runner):
         violations = []
         for line in result.stdout.splitlines():
             if line.strip() and not line.startswith("----") and not line.startswith("Your code"):
-                violations.append(Violation(tool="pylint", file=".", line=None, message=line.strip()))
+                # Parse the pylint output
+                # Format: path:line:col: code: message
+                # or module banner: ************* Module module.name
+                if line.strip().startswith("*"):
+                    # Module banner - skip or could be used for context
+                    continue
+                parsed = self._parse_lint_output(line.strip())
+                violations.append(
+                    Violation(
+                        tool="pylint",
+                        file=parsed["file"],
+                        line=parsed["line"],
+                        message=parsed["message"],
+                    )
+                )
 
         return LintResult(tool="pylint", passed=False, violations=violations[:20])  # Limit output
 
@@ -319,6 +413,19 @@ class PythonRunner(Runner):
         violations = []
         for line in result.stdout.splitlines():
             if "❌" in line or "ERROR" in line or "violation" in line.lower():
-                violations.append(Violation(tool="validate_docstrings", file=".", line=None, message=line.strip()))
+                # Parse docstring validator output
+                # Format can be:
+                # ❌ /path/to/file.py:123
+                # ❌ /path/to/file.py
+                # ❌ Validation FAILED: ...
+                parsed = self._parse_lint_output(line.strip())
+                violations.append(
+                    Violation(
+                        tool="validate_docstrings",
+                        file=parsed["file"],
+                        line=parsed["line"],
+                        message=parsed["message"],
+                    )
+                )
 
         return LintResult(tool="validate_docstrings", passed=False, violations=violations[:20])  # Limit output
