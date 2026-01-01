@@ -435,8 +435,6 @@ def report_results_xlsx(results: List[LintResult], report_path: str) -> int:
         print("Error: openpyxl not installed. Install with: pip install openpyxl", file=sys.stderr)
         return int(ExitCode.INTERNAL_ERROR)
 
-    from pathlib import Path
-
     all_passed = True
     has_errors = False
     total_violations = 0
@@ -509,7 +507,7 @@ def _write_report_file(results: List[LintResult], report_path: str, output_forma
         ext = Path(report_path).suffix.lower()
         if ext == ".json":
             output_format = "json"
-        elif ext == ".yaml" or ext == ".yml":
+        elif ext in (".yaml", ".yml"):
             output_format = "yaml"
         elif ext == ".csv":
             output_format = "csv"
