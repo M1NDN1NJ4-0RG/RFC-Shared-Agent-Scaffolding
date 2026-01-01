@@ -29,15 +29,18 @@ Related: Issue #160, PRs #176, #180
 - [x] Phase 2.7.1 - Runner integration (COMPLETE - all 6 language runners)
 - [x] Phase 2.7.2 - Summary modes backend logic (COMPLETE)
 - [x] Phase 2.7.3 - Show/hide files/codes backend logic (COMPLETE)
-- [ ] Phase 2.7.4 - Output format handlers (JSON/YAML/CSV/XLSX) - IN PROGRESS
-- [ ] Phase 2.7.5 - Diff preview backend logic - IN PROGRESS
+- [x] Phase 2.7.4 - Output format handlers (JSON/YAML/CSV/XLSX) (COMPLETE)
+- [x] Phase 2.7.5 - Diff preview backend logic (COMPLETE)
 
-**Next Actions:**
-1. ✅ **Phases 2.7.1, 2.7.2, 2.7.3 COMPLETE - 3 of 5 sub-phases done!**
-2. Implement output format handlers backend (--format, --report, --reports-dir)
-3. Implement diff preview backend (--diff for fix command)
-4. Update HOW-TO-USE-THIS-TOOL.md
-5. Phase 2.7 COMPLETE!
+**Completed:**
+✅ **ALL 5 Phase 2.7 sub-phases COMPLETE - 100% DONE!**
+✅ Tool filtering + changed-only mode (2.7.1)
+✅ Summary modes with 4 formats (2.7.2)
+✅ Show/hide display controls (2.7.3)
+✅ Output formats: JSON/YAML/CSV/XLSX (2.7.4)
+✅ Diff preview support (2.7.5)
+
+**Phase 2.7 Status: PRODUCTION READY ✅**
 
 ---
 
