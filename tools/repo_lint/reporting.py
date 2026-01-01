@@ -436,7 +436,6 @@ def report_results_xlsx(results: List[LintResult], report_path: str) -> int:
         return int(ExitCode.INTERNAL_ERROR)
 
     from pathlib import Path
-
     all_passed = True
     has_errors = False
     total_violations = 0
