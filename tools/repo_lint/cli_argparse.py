@@ -244,10 +244,14 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         print("")
 
     # Use JSON or standard reporting based on flag
-    if use_json:
+    if use_json or getattr(args, "format", "rich") == "json":
         from tools.repo_lint.reporting import report_results_json
 
-        return report_results_json(all_results, verbose=args.verbose)
+        return report_results_json(
+            all_results,
+            verbose=args.verbose,
+            report_path=getattr(args, "report", None),
+        )
     else:
         return report_results(
             all_results,
@@ -259,6 +263,9 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             show_files=getattr(args, "show_files", True),
             show_codes=getattr(args, "show_codes", True),
             max_violations=getattr(args, "max_violations", None),
+            output_format=getattr(args, "format", "rich"),
+            report_path=getattr(args, "report", None),
+            reports_dir=getattr(args, "reports_dir", None),
         )
 
 

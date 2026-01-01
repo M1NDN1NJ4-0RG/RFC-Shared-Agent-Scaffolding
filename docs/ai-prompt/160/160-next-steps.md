@@ -29,15 +29,15 @@ Related: Issue #160, PRs #176, #180
 - [x] Phase 2.7.1 - Runner integration (COMPLETE - all 6 language runners)
 - [x] Phase 2.7.2 - Summary modes backend logic (COMPLETE)
 - [x] Phase 2.7.3 - Show/hide files/codes backend logic (COMPLETE)
-- [ ] Phase 2.7.4 - Output format handlers (JSON/YAML/CSV/XLSX)
-- [ ] Phase 2.7.5 - Diff preview backend logic
+- [ ] Phase 2.7.4 - Output format handlers (JSON/YAML/CSV/XLSX) - IN PROGRESS
+- [ ] Phase 2.7.5 - Diff preview backend logic - IN PROGRESS
 
 **Next Actions:**
 1. ✅ **Phases 2.7.1, 2.7.2, 2.7.3 COMPLETE - 3 of 5 sub-phases done!**
-2. Implement output format handlers (JSON, YAML, CSV, XLSX)
-3. Implement diff preview for dry-run (--diff)
-4. Add comprehensive unit tests
-5. Update HOW-TO-USE-THIS-TOOL.md
+2. Implement output format handlers backend (--format, --report, --reports-dir)
+3. Implement diff preview backend (--diff for fix command)
+4. Update HOW-TO-USE-THIS-TOOL.md
+5. Phase 2.7 COMPLETE!
 
 ---
 
