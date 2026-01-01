@@ -44,6 +44,12 @@ class PythonRunner(Runner):
         :returns:
             True if Python files exist, False otherwise
         """
+        # If changed-only mode, check for changed Python files
+        if self._changed_only:
+            changed_files = self._get_changed_files(patterns=["*.py", "**/*.py"])
+            return len(changed_files) > 0
+        
+        # Otherwise check all tracked Python files
         files = get_tracked_files(["**/*.py"], self.repo_root)
         return len(files) > 0
 
@@ -65,10 +71,19 @@ class PythonRunner(Runner):
         self._ensure_tools(["black", "ruff", "pylint"])
 
         results = []
-        results.append(self._run_black_check())
-        results.append(self._run_ruff_check())
-        results.append(self._run_pylint())
-        results.append(self._run_docstring_validation())
+        
+        # Apply tool filtering: only run tools that pass the filter
+        if self._should_run_tool("black"):
+            results.append(self._run_black_check())
+        
+        if self._should_run_tool("ruff"):
+            results.append(self._run_ruff_check())
+        
+        if self._should_run_tool("pylint"):
+            results.append(self._run_pylint())
+        
+        if self._should_run_tool("validate_docstrings"):
+            results.append(self._run_docstring_validation())
 
         return results
 
@@ -91,23 +106,29 @@ class PythonRunner(Runner):
         if policy is None:
             policy = {"allowed_categories": []}
 
-        # Apply Black formatting (if allowed by policy)
-        if is_category_allowed(policy, "FORMAT.BLACK"):
+        # Apply Black formatting (if allowed by policy AND tool filter)
+        if self._should_run_tool("black") and is_category_allowed(policy, "FORMAT.BLACK"):
             black_result = self._run_black_fix()
             results.append(black_result)
         else:
             if self.verbose:
-                print("  ⊘ Skipping Black (denied by policy)")
+                if not self._should_run_tool("black"):
+                    print("  ⊘ Skipping Black (filtered out)")
+                else:
+                    print("  ⊘ Skipping Black (denied by policy)")
             black_result = LintResult(tool="black", passed=True, violations=[])
             results.append(black_result)
 
-        # Apply Ruff safe fixes (if allowed by policy)
-        if is_category_allowed(policy, "LINT.RUFF.SAFE"):
+        # Apply Ruff safe fixes (if allowed by policy AND tool filter)
+        if self._should_run_tool("ruff") and is_category_allowed(policy, "LINT.RUFF.SAFE"):
             ruff_result = self._run_ruff_fix()
             results.append(ruff_result)
         else:
             if self.verbose:
-                print("  ⊘ Skipping Ruff safe fixes (denied by policy)")
+                if not self._should_run_tool("ruff"):
+                    print("  ⊘ Skipping Ruff safe fixes (filtered out)")
+                else:
+                    print("  ⊘ Skipping Ruff safe fixes (denied by policy)")
             ruff_result = LintResult(tool="ruff", passed=True, violations=[])
             results.append(ruff_result)
 
