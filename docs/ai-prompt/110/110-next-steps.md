@@ -1,3 +1,5 @@
+MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL session start requirements in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
+<!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 110 AI Journal
 Status: In Progress
 Last Updated: 2025-12-30
