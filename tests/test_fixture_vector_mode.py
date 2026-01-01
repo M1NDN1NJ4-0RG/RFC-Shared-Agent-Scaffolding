@@ -105,8 +105,8 @@ def test_normal_mode_excludes_fixtures(temp_fixtures_dir):
     # Should not report violations from fixture files
     # (Fixtures are under tests/fixtures/ which should be excluded)
     assert "tests/fixtures" not in result.stdout, "Fixture files should be excluded in normal mode"
-    assert "black-violations.py" not in result.stdout, "Fixture files should not be scanned"
-    assert "pylint-violations.py" not in result.stdout, "Fixture files should not be scanned"
+    assert "black_violations.py" not in result.stdout, "Fixture files should not be scanned"
+    assert "pylint_violations.py" not in result.stdout, "Fixture files should not be scanned"
 
 
 def test_vector_mode_includes_fixtures(temp_fixtures_dir):
@@ -141,9 +141,9 @@ def test_vector_mode_includes_fixtures(temp_fixtures_dir):
 
     # Verify violations are detected (output should mention fixture files or violations)
     has_violations = (
-        "black-violations.py" in output
-        or "pylint-violations.py" in output
-        or "ruff-violations.py" in output
+        "black_violations.py" in output
+        or "pylint_violations.py" in output
+        or "ruff_violations.py" in output
         or "FAIL" in output
         or "violation" in output.lower()
     )
@@ -246,10 +246,10 @@ def test_all_languages_support_vector_mode(temp_fixtures_dir):
 @pytest.mark.parametrize(
     "language,expected_fixture",
     [
-        ("python", "black-violations.py"),
+        ("python", "black_violations.py"),
         ("bash", "shellcheck-violations.sh"),
-        ("perl", "perlcritic-violations.pl"),
-        ("powershell", "psscriptanalyzer-violations.ps1"),
+        ("perl", "perlcritic_violations.pl"),
+        ("powershell", "PsScriptAnalyzerViolations.ps1"),
         ("yaml", "yamllint-violations.yaml"),
         ("rust", "clippy-violations.rs"),
     ],

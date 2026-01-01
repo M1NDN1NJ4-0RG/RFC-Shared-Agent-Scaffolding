@@ -16,6 +16,72 @@ Related: Issue #221, PR #222
 
 ## DONE (EXTREMELY DETAILED)
 
+### 2026-01-01 12:15 - FINAL FIX: Rename all fixtures to follow language conventions + create naming violation test files
+**Files Changed:**
+- **Python fixtures renamed (kebab → snake_case):**
+  - `black-violations.py` → `black_violations.py`
+  - `pylint-violations.py` → `pylint_violations.py`
+  - `ruff-violations.py` → `ruff_violations.py`
+  - `all-docstring-violations.py` → `all_docstring_violations.py`
+- **Perl fixtures renamed (kebab → snake_case):**
+  - `perlcritic-violations.pl` → `perlcritic_violations.pl`
+  - `all-docstring-violations.pl` → `all_docstring_violations.pl`
+- **PowerShell fixtures renamed (kebab → PascalCase):**
+  - `psscriptanalyzer-violations.ps1` → `PsScriptAnalyzerViolations.ps1`
+  - `all-docstring-violations.ps1` → `AllDocstringViolations.ps1`
+- **Bash fixtures:** Already correct kebab-case, no changes needed
+
+**New naming violation test files created:**
+- `tests/fixtures/python/naming-violations.py` (kebab-case - WRONG for Python)
+- `tests/fixtures/perl/naming-violations.pl` (kebab-case - WRONG for Perl)
+- `tests/fixtures/powershell/naming-violations.ps1` (kebab-case - WRONG for PowerShell)
+- `tests/fixtures/bash/naming_violations.sh` (snake_case - WRONG for Bash)
+
+**Workflow updated:**
+- `.github/workflows/naming-enforcement.yml`: Now excludes only specific naming-violations test files
+- Changed from broad directory exclusions to targeted file exclusions
+- Excludes: `naming-violations.py`, `naming-violations.pl`, `naming-violations.ps1`, `naming_violations.sh`
+
+**Test file updated:**
+- `tests/test_fixture_vector_mode.py`: Updated all filename references to use new names
+
+**Rationale:**
+- User requested fixture files follow repository naming conventions for their language
+- Only files specifically testing naming violations should violate naming rules
+- This ensures naming enforcement applies to all production fixture files
+- Naming violation test files are explicitly excluded by exact filename match
+
+**Verification:**
+- 17 fixture files now follow correct naming conventions
+- 4 new naming-violations test files created with intentional violations
+- Naming enforcement will pass for all non-naming-violation fixtures
+- Integration tests updated to reference correct filenames
+
+**Commands Run:**
+```bash
+# Renamed files with git mv
+git mv tests/fixtures/python/black-violations.py tests/fixtures/python/black_violations.py
+# ... (repeated for all files)
+
+# Created new naming-violations test files
+# Updated naming-enforcement.yml to exclude only specific files
+# Updated test_fixture_vector_mode.py with new filenames
+```
+
+**CI Impact:**
+- Naming enforcement will now pass (all fixtures follow conventions except naming-violations files)
+- Black auto-fix exclusions still in place from previous commit
+- Fixtures remain immutable, now also follow naming conventions
+
+**Known Issues:**
+- Diff artifacts (*.RESET.diff files) still reference old filenames - acceptable as historical record
+
+**Follow-ups:**
+- Wait for CI to verify naming enforcement passes
+- Integration tests may need git config updates for temp repos
+
+---
+
 ### 2026-01-01 12:08 - CRITICAL: Add fixture exclusions to naming enforcement workflow
 **Files Changed:**
 - `.github/workflows/naming-enforcement.yml`: Added fixture/vector path exclusions
