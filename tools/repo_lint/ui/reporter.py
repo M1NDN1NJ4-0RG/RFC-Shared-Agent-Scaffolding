@@ -115,6 +115,23 @@ class Reporter:
         }
         return color_map.get(color_type, "")
 
+    def _extract_error_code(self, message: str) -> str:
+        """Extract error code from violation message.
+
+        :param message: Violation message
+        :returns: Error code or first word of message
+        """
+        if ":" in message:
+            return message.split(":")[0].strip()
+
+        # No colon - use first word or entire message if short
+        words = message.split()
+        if words:
+            if len(message) <= MAX_MESSAGE_LENGTH_FOR_CODE:
+                return words[0]
+            return message[:TRUNCATED_CODE_LENGTH] + "..."
+        return "UNKNOWN"
+
     def _format_with_color(self, text: str, color_type: str, bold: bool = False) -> str:
         """Format text with color and optional bold.
 
@@ -444,7 +461,7 @@ class Reporter:
                 self.console.print(summary_line)
             else:
                 self.console.print()
-                self.console.print(f"[bold]Summary:[/bold]")
+                self.console.print("[bold]Summary:[/bold]")
                 self.console.print(f"[{status_color}]{summary_line}[/{status_color}]")
 
         elif format_type == "by-tool":
@@ -532,19 +549,7 @@ class Reporter:
             for result in results:
                 if not result.error and not result.passed:
                     for violation in result.violations:
-                        # Extract error code from message if available (e.g., "E501: line too long")
-                        code = "UNKNOWN"
-                        if ":" in violation.message:
-                            code = violation.message.split(":")[0].strip()
-                        else:
-                            # No colon - use first word or entire message if short
-                            words = violation.message.split()
-                            if words:
-                                code = (
-                                    words[0]
-                                    if len(violation.message) <= MAX_MESSAGE_LENGTH_FOR_CODE
-                                    else violation.message[:TRUNCATED_CODE_LENGTH] + "..."
-                                )
+                        code = self._extract_error_code(violation.message)
                         codes_dict[f"{result.tool}:{code}"] += 1
 
             table = Table(
