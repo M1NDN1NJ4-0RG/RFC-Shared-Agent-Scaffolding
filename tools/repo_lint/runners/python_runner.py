@@ -259,8 +259,11 @@ class PythonRunner(Runner):
         :returns:
             LintResult for Pylint check
         """
-        # Get all Python files, excluding test fixtures
-        py_files = get_tracked_files(["**/*.py"], self.repo_root)
+        # Get all Python files, excluding test fixtures (respecting changed-only mode)
+        if self._changed_only:
+            py_files = self._get_changed_files(patterns=["*.py", "**/*.py"])
+        else:
+            py_files = get_tracked_files(["**/*.py"], self.repo_root)
 
         if not py_files:
             return LintResult(tool="pylint", passed=True, violations=[])
