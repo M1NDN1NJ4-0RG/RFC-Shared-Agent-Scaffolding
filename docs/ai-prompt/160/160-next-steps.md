@@ -27,18 +27,17 @@ Related: Issue #160, PRs #176, #180
 - [x] Phase 2.7.1 - Tool filtering backend logic (COMPLETE)
 - [x] Phase 2.7.1 - Changed-only filtering backend logic (COMPLETE)
 - [x] Phase 2.7.1 - Runner integration (COMPLETE - all 6 language runners)
-- [ ] Phase 2.7.2 - Summary modes backend logic
-- [ ] Phase 2.7.3 - Show/hide files/codes backend logic
+- [x] Phase 2.7.2 - Summary modes backend logic (COMPLETE)
+- [x] Phase 2.7.3 - Show/hide files/codes backend logic (COMPLETE)
 - [ ] Phase 2.7.4 - Output format handlers (JSON/YAML/CSV/XLSX)
 - [ ] Phase 2.7.5 - Diff preview backend logic
 
 **Next Actions:**
-1. ✅ **Phase 2.7.1 COMPLETE - Tool and changed-only filtering fully integrated**
-2. Implement summary generation logic (--summary, --summary-only, --summary-format)
-3. Implement output format handlers (JSON, YAML, CSV, XLSX)
-4. Implement diff preview for dry-run (--diff)
-5. Add comprehensive unit tests
-6. Update HOW-TO-USE-THIS-TOOL.md
+1. ✅ **Phases 2.7.1, 2.7.2, 2.7.3 COMPLETE - 3 of 5 sub-phases done!**
+2. Implement output format handlers (JSON, YAML, CSV, XLSX)
+3. Implement diff preview for dry-run (--diff)
+4. Add comprehensive unit tests
+5. Update HOW-TO-USE-THIS-TOOL.md
 
 ---
 
