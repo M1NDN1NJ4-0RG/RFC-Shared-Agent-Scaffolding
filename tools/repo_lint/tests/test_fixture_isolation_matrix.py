@@ -1,8 +1,13 @@
-"""
-Exhaustive fixture isolation and runner file selection tests.
+"""Exhaustive fixture isolation and runner file selection tests.
 
 This module provides comprehensive coverage of the fixture inclusion/exclusion
 matrix across all runners, flag combinations, and file selection modes.
+
+:Purpose:
+    Validates that fixture files are correctly excluded from normal/CI mode runs
+    and only included when --include-fixtures flag is explicitly set. Provides
+    comprehensive test coverage across all 6 language runners, all flag combinations,
+    and all file selection modes to prevent regression bugs.
 
 :Test Coverage Matrix:
     - Flag combinations: --ci, --include-fixtures, neither, both
@@ -18,7 +23,30 @@ matrix across all runners, flag combinations, and file selection modes.
     - MUST be excluded from normal and CI modes
     - MUST be included ONLY with --include-fixtures flag
 
-:Environment Variables: None
+:Test Classes:
+    - TestFixtureExclusionMatrix: Validates fixture exclusion across all runners
+    - TestRunnerLanguageIsolation: Validates language file isolation
+    - TestFixturePathEdgeCases: Validates edge cases in fixture path matching
+    - TestHasFilesConsistency: Validates has_files() matches actual file sets
+    - TestCIModeFixtureExclusion: Validates CI mode behavior
+    - TestNegativeInvariants: Validates impossible outcomes never occur
+    - TestRegressionTraps: Validates protection against known regression bugs
+
+:Exit Codes:
+    - 0: All tests pass
+    - 1: One or more tests fail
+
+:Environment Variables:
+    None
+
+:Examples:
+    Run all tests::
+
+        pytest tools/repo_lint/tests/test_fixture_isolation_matrix.py -v
+
+    Run specific test class::
+
+        pytest tools/repo_lint/tests/test_fixture_isolation_matrix.py::TestFixtureExclusionMatrix -v
 
 :Author: GitHub Copilot
 :Date: 2026-01-01
@@ -56,7 +84,11 @@ class TestFixtureExclusionMatrix:
     def test_python_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
     ):  # pylint: disable=redefined-outer-name
-        """Test Python runner excludes fixtures unless --include-fixtures."""
+        """Test Python runner excludes fixtures unless --include-fixtures.
+
+        :param include_fixtures: Whether to include fixture files
+        :param expected_has_fixtures: Whether fixtures should be present in results
+        """
         files = get_tracked_files(["**/*.py"], str(REPO_ROOT), include_fixtures=include_fixtures)
         fixture_files = [f for f in files if "tests/fixtures/python" in f or "/fixtures/python/" in f]
 
@@ -75,7 +107,11 @@ class TestFixtureExclusionMatrix:
     def test_bash_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
     ):  # pylint: disable=redefined-outer-name
-        """Test Bash runner excludes fixtures unless --include-fixtures."""
+        """Test Bash runner excludes fixtures unless --include-fixtures.
+
+        :param include_fixtures: Whether to include fixture files
+        :param expected_has_fixtures: Whether fixtures should be present in results
+        """
         files = get_tracked_files(["**/*.sh"], str(REPO_ROOT), include_fixtures=include_fixtures)
         fixture_files = [f for f in files if "tests/fixtures/bash" in f or "/fixtures/bash/" in f]
 
@@ -94,7 +130,11 @@ class TestFixtureExclusionMatrix:
     def test_powershell_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
     ):  # pylint: disable=redefined-outer-name
-        """Test PowerShell runner excludes fixtures unless --include-fixtures."""
+        """Test PowerShell runner excludes fixtures unless --include-fixtures.
+
+        :param include_fixtures: Whether to include fixture files
+        :param expected_has_fixtures: Whether fixtures should be present in results
+        """
         files = get_tracked_files(
             ["**/*.ps1", "**/*.psm1"],
             str(REPO_ROOT),
@@ -117,7 +157,11 @@ class TestFixtureExclusionMatrix:
     def test_perl_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
     ):  # pylint: disable=redefined-outer-name
-        """Test Perl runner excludes fixtures unless --include-fixtures."""
+        """Test Perl runner excludes fixtures unless --include-fixtures.
+
+        :param include_fixtures: Whether to include fixture files
+        :param expected_has_fixtures: Whether fixtures should be present in results
+        """
         files = get_tracked_files(["**/*.pl", "**/*.pm"], str(REPO_ROOT), include_fixtures=include_fixtures)
         fixture_files = [f for f in files if "tests/fixtures/perl" in f or "/fixtures/perl/" in f]
 
@@ -136,7 +180,11 @@ class TestFixtureExclusionMatrix:
     def test_yaml_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
     ):  # pylint: disable=redefined-outer-name
-        """Test YAML runner excludes fixtures unless --include-fixtures."""
+        """Test YAML runner excludes fixtures unless --include-fixtures.
+
+        :param include_fixtures: Whether to include fixture files
+        :param expected_has_fixtures: Whether fixtures should be present in results
+        """
         files = get_tracked_files(
             ["**/*.yaml", "**/*.yml"],
             str(REPO_ROOT),
@@ -159,7 +207,11 @@ class TestFixtureExclusionMatrix:
     def test_rust_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
     ):  # pylint: disable=redefined-outer-name
-        """Test Rust runner excludes fixtures unless --include-fixtures."""
+        """Test Rust runner excludes fixtures unless --include-fixtures.
+
+        :param include_fixtures: Whether to include fixture files
+        :param expected_has_fixtures: Whether fixtures should be present in results
+        """
         files = get_tracked_files(["**/*.rs"], str(REPO_ROOT), include_fixtures=include_fixtures)
         fixture_files = [f for f in files if "tests/fixtures/rust" in f or "/fixtures/rust/" in f]
 
@@ -232,7 +284,12 @@ class TestFixturePathEdgeCases:
         assert len(fixture_files) == 0, f"Nested fixture directories not excluded: {fixture_files}"
 
     def test_fixture_files_matching_production_patterns_excluded(self):
-        """Fixture files matching production glob patterns must still be excluded."""
+        """Fixture files matching production glob patterns must still be excluded.
+
+        :Purpose:
+            Ensures that even if fixture files match production patterns like
+            *_runner.py, they are still excluded from normal mode scans.
+        """
         files = get_tracked_files(["**/*_runner.py"], str(REPO_ROOT), include_fixtures=False)
 
         # Even though fixtures might match *_runner.py pattern, they should be excluded
@@ -240,7 +297,12 @@ class TestFixturePathEdgeCases:
         assert len(fixture_runners) == 0, f"Fixture files matching production patterns not excluded: {fixture_runners}"
 
     def test_fixture_violation_files_excluded(self):
-        """Fixture violation files must be excluded in normal mode."""
+        """Fixture violation files must be excluded in normal mode.
+
+        :Purpose:
+            Validates that all fixture violation files (black_violations.py,
+            ruff_violations.py, etc.) are excluded from normal mode scans.
+        """
         files = get_tracked_files(["**/*.py"], str(REPO_ROOT), include_fixtures=False)
 
         violation_patterns = [
@@ -261,7 +323,13 @@ class TestRunnerHasFilesConsistency:
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
     def test_python_runner_has_files_matches_execution(self, mock_run):
-        """Python runner has_files() must match actual execution file set."""
+        """Python runner has_files() must match actual execution file set.
+
+        :param mock_run: Mock for subprocess.run to avoid actual tool execution
+        :Purpose:
+            Ensures has_files() uses the same file selection logic as actual
+            runner execution, preventing inconsistent behavior.
+        """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
         runner = PythonRunner(str(REPO_ROOT), ci_mode=True)
@@ -278,7 +346,13 @@ class TestRunnerHasFilesConsistency:
 
     @patch("tools.repo_lint.runners.rust_runner.subprocess.run")
     def test_rust_runner_has_files_matches_execution(self, mock_run):
-        """Rust runner has_files() must match actual execution file set."""
+        """Rust runner has_files() must match actual execution file set.
+
+        :param mock_run: Mock for subprocess.run to avoid actual tool execution
+        :Purpose:
+            Ensures has_files() uses the same file selection logic as actual
+            runner execution, preventing inconsistent behavior.
+        """
         mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
 
         runner = RustRunner(str(REPO_ROOT), ci_mode=True)
