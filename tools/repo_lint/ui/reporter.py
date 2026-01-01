@@ -330,8 +330,14 @@ class Reporter:
                         # Strip code from message (e.g., "E501: line too long" -> "line too long")
                         message = message.split(":", 1)[1].strip()
 
+                    # Escape Rich markup in messages to prevent rendering errors
+                    # (violation messages may contain code snippets with bracket syntax)
+                    from rich.markup import escape
+
+                    message = escape(message)
+
                     if show_files:
-                        violations_table.add_row(violation.file, line_str, message)
+                        violations_table.add_row(escape(violation.file), line_str, message)
                     else:
                         # Include file in message when not showing file column
                         full_message = (
@@ -339,7 +345,7 @@ class Reporter:
                             if line_str != "-"
                             else f"{violation.file} - {message}"
                         )
-                        violations_table.add_row(line_str, full_message)
+                        violations_table.add_row(line_str, escape(full_message))
 
                     violations_displayed += 1
 
@@ -427,7 +433,9 @@ class Reporter:
 
         if format_type == "short":
             # Short format: single line summary
-            summary_line = f"{status_icon} {tools_run} tool(s) run, {total_violations} violation(s), {total_errors} error(s)"
+            summary_line = (
+                f"{status_icon} {tools_run} tool(s) run, {total_violations} violation(s), {total_errors} error(s)"
+            )
             if self.ci_mode:
                 self.console.print("\nSummary:")
                 self.console.print(summary_line)
