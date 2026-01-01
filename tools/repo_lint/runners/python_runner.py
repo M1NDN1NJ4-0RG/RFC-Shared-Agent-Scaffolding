@@ -312,7 +312,7 @@ class PythonRunner(Runner):
         )
 
         violations, info_message = self._parse_ruff_output(result.stdout, context="check")
-        
+
         if result.returncode == 0:
             return LintResult(tool="ruff", passed=True, violations=[], info_message=info_message)
 
@@ -332,7 +332,7 @@ class PythonRunner(Runner):
         )
 
         violations, info_message = self._parse_ruff_output(result.stdout, context="fix")
-        
+
         if result.returncode == 0:
             return LintResult(tool="ruff", passed=True, violations=[], info_message=info_message)
 

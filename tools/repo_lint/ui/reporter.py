@@ -377,7 +377,7 @@ class Reporter:
 
                 # Render the table
                 self.console.print(violations_table)
-                
+
                 # Display info message if present
                 if result.info_message:
                     info_text = self._format_with_color(result.info_message, "warning" if not self.ci_mode else None)
