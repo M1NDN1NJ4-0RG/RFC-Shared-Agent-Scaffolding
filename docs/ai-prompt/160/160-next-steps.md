@@ -1,31 +1,97 @@
 MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
-Status: Phase 2.7 COMPLETE (8/8) ✅
+Status: Phase 2.7 COMPLETE (8/8) ✅ - Ready for Phase 2.8
 Last Updated: 2026-01-05
-Related: Issue #160, PRs #176, #180
+Related: Issue #160, PRs #176, #180, #225
 
 ## NEXT
 
-### Phase 2.7 - COMPLETE ✅
+### Phase 2.8 - Environment & PATH Management (NEXT PRIORITY)
 
-**Status:** 8/8 items COMPLETE
+**Status:** NOT STARTED
 
-All Phase 2.7 requirements implemented:
-1. ✅ Language and tool filtering
-2. ✅ Summary modes (all 4 formats)
-3. ✅ Verbosity controls
-4. ✅ Output formats (json, yaml, csv, xlsx)
-5. ✅ Fix-mode safety features
-6. ✅ `repo-lint doctor` command
-7. ✅ Tool registry commands
-8. ✅ External configuration contract (dump-config, validate-config)
+Per the prioritization decision (Round 2, Decision 2), the sequence is:
+- ✅ Phase 2.5 (Windows Validation) - COMPLETE
+- ✅ Phase 2.9 (YAML-First & Integration) - COMPLETE  
+- ✅ Phase 2.7 (Extended CLI Granularity) - COMPLETE
+- ⏭️ **Phase 2.8 (Environment & PATH Management) - NEXT**
+- Phase 2.6 (Centralized Exception Rules) - After 2.8
+- Phase 3 (Polish) - Deferred
 
-**Next Phase:** Phase 2.6 (Centralized Exception Rules) per priority order
+**Phase 2.8 Mandatory Features:**
+
+1. **`repo-lint env` command** - Shell integration helper
+   - `--print` (default): print instructions + shell snippet
+   - `--install`: write snippet file to user config dir + print manual rc line
+   - `--shell [bash|zsh|fish|powershell]`: select snippet type
+   - `--venv <path>`: explicit venv path
+   - `--path-only`: print ONLY PATH line (automation-friendly)
+   - MUST NOT auto-edit rc files
+
+2. **`repo-lint activate` command** - Convenience launcher
+   - `--venv <path>`: explicit venv path
+   - `--shell [bash|zsh|fish|powershell|cmd]`: subshell to launch
+   - `--command "<cmd>"`: run single command (no interactive shell)
+   - `--no-rc`: start subshell without loading user rc files
+   - `--print`: print exact underlying command
+   - `--ci`: disallow interactive subshell; require `--command`
+
+3. **`repo-lint which` command** - Diagnostic helper
+   - Print table: repo root, resolved venv, bin/scripts dir, activation script, repo-lint executable, Python executable, sys.prefix/base_prefix, detected shell
+   - `--json`: machine-readable output
+
+4. **Shared venv resolution utility** - Single source of truth
+   - Precedence: `--venv` flag > `.venv/` under repo root > current Python venv > error
+   - Cross-platform path detection (bin/ vs Scripts/)
+
+5. **Cross-platform validation** (BLOCKER)
+   - MUST validate on Linux/macOS + Windows (PowerShell, PowerShell 7+, Windows Terminal)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-05 13:30 - Phase 2.7 Code Review Fixes (Session 4)
+
+**Files Changed:**
+- `tools/repo_lint/cli.py`: Fixed Ruff I001 import formatting violation
+- `HOW-TO-USE-THIS-TOOL.md`: Corrected --config flag documentation
+- `docs/ai-prompt/160/160-overview.md`: Updated phase priorities
+- `docs/ai-prompt/160/160-next-steps.md`: Updated next phase to 2.8
+
+**Changes Made:**
+
+1. **Bootstrap Compliance:**
+   - Ran bootstrap: `./scripts/bootstrap-repo-lint-toolchain.sh --all` (exit 0) ✅
+
+2. **Import Formatting Fix (cli.py):**
+   - Added blank line between regular imports (`import json`, `import sys`) and `from...import` statements
+   - Resolves Ruff I001 violation per PEP 8 and isort conventions
+   - Before: `import sys` followed immediately by `from pathlib import Path`
+   - After: Blank line separates import types
+
+3. **Documentation Fix (HOW-TO):**
+   - Corrected misleading example showing `repo-lint check --config /path/to/configs`
+   - The `--config` flag is ONLY available on `dump-config` command, NOT on `check`
+   - Updated to show environment variable (`REPO_LINT_CONFIG_DIR`) as the method for custom configs with `check`
+   - Clarified that `--config` flag is specific to `dump-config`
+
+4. **Journal Updates:**
+   - Updated `160-overview.md` to reorder phases: 2.8 is now next (not 2.6)
+   - Updated `160-next-steps.md` to specify Phase 2.8 as next priority
+   - Aligned with Round 2 Decision 2 prioritization: 2.5 → 2.9 → 2.7 → 2.8 → 2.6 → 3
+
+**Verification:**
+- Pre-commit gate: `repo-lint check --ci` → Exit 0 ✅
+- All linters passing ✅
+
+**Impact:**
+- Resolves both code review comments from PR #225
+- Documentation now accurately reflects CLI capabilities
+- Import formatting complies with Python standards
+
+---
 
 ### 2026-01-05 12:30 - Phase 2.7 Config Commands Complete (Session 3)
 

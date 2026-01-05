@@ -564,19 +564,19 @@ Each fix above should be committed with clear messages, linking to issues if the
   - [x] Output formats (json, yaml, csv, xlsx - COMPLETE)
   - [x] Fix-mode safety (--dry-run, --diff, --changed-only - COMPLETE)
   - [x] External configuration contract (dump-config, validate-config - COMPLETE)
-- [ ] Phase 2.6 – Centralized Exception Rules (NOT STARTED - next priority after Phase 2.7)
+- [ ] Phase 2.8 – Environment & PATH Management (NEXT PRIORITY - after Phase 2.7)
+  - [ ] `repo-lint env` command (shell integration helper)
+  - [ ] `repo-lint activate` command (subshell launcher)
+  - [ ] `repo-lint which` command (diagnostics)
+  - [ ] Shared venv resolution utility
+  - [ ] Cross-platform validation (Linux/macOS/Windows)
+- [ ] Phase 2.6 – Centralized Exception Rules (NOT STARTED - after Phase 2.8)
   - [ ] Schema & Validator (2.6.1)
   - [ ] Integration into Results & Reporting (2.6.2)
   - [ ] Pragma Support & Conflict Detection (2.6.3)
   - [ ] Symbol/Scope Matching (2.6.4)
   - [ ] Documentation Updates (2.6.5)
   - [ ] Tests (2.6.6)
-- [ ] Phase 2.8 – Environment & PATH Management (NOT STARTED - after Phase 2.6)
-  - [ ] `repo-lint env` command (shell integration helper)
-  - [ ] `repo-lint activate` command (subshell launcher)
-  - [ ] `repo-lint which` command (diagnostics)
-  - [ ] Shared venv resolution utility
-  - [ ] Cross-platform validation (Linux/macOS/Windows)
 - [ ] Phase 3 – Polish, Nits, and Minor Improvements (Low Priority) ⏸️ DEFERRED
   - [ ] Code style clean-up
   - [ ] Add or improve docstrings in the code
