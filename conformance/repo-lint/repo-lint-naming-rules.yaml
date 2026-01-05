@@ -101,11 +101,11 @@ languages:
   markdown:
     description: "Markdown documentation naming"
     file_patterns:
-      - pattern: "^(HOW-TO-USE-THIS-TOOL|black\\.diff)\\.md$"
+      - pattern: "^(REPO-LINT-USER-MANUAL|black\\.diff)\\.md$"
         description: "Temporary exceptions for tool documentation and diff files (to be renamed later)"
         examples:
           valid:
-            - "HOW-TO-USE-THIS-TOOL.md"
+            - "REPO-LINT-USER-MANUAL.md"
             - "black.diff.md"
       - pattern: "^([A-Z][A-Z0-9_]*|[a-z0-9]+(-[a-z0-9]+)*(-v[0-9]+\\.[0-9]+\\.[0-9]+)?|[a-z0-9]+(-[a-z0-9]+)*-[0-9]+\\.[0-9]+(-[a-z0-9]+)*|[0-9]+-[a-z]+(-[a-z0-9]+)*-[0-9]+\\.[0-9]+(-[a-z]+)*|[a-z]+(-[a-z]+)*-[0-9]+\\.[0-9]+\\.[0-9]+(-[a-z]+(-[a-z]+)*)?|p[0-9]+-p[0-9]+\\.[0-9]+(-[a-z]+(-[a-z]+)*)?)\\.md$"
         description: "Markdown files: kebab-case (optionally with version numbers like -X.Y or -X.Y.Z) or UPPER_SNAKE_CASE (special files)"

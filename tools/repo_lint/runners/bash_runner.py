@@ -233,7 +233,7 @@ class BashRunner(Runner):
 
         if not validator_script.exists():
             return LintResult(
-                tool="validate_docstrings",
+                tool="bash-docstrings",
                 passed=False,
                 violations=[],
                 error=f"Docstring validation SKIPPED: validator script not found at {validator_script}. "
@@ -242,7 +242,7 @@ class BashRunner(Runner):
 
         bash_files = self._get_bash_files()
         if not bash_files:
-            return LintResult(tool="validate_docstrings", passed=True, violations=[])
+            return LintResult(tool="bash-docstrings", passed=True, violations=[])
 
         # Run validator for bash language only (no need for --file args with --language flag)
         cmd = [sys.executable, str(validator_script), "--language", "bash"]
@@ -258,11 +258,11 @@ class BashRunner(Runner):
         )
 
         if result.returncode == 0:
-            return LintResult(tool="validate_docstrings", passed=True, violations=[])
+            return LintResult(tool="bash-docstrings", passed=True, violations=[])
 
         violations = []
         for line in result.stdout.splitlines():
             if "❌" in line or "ERROR" in line or "violation" in line.lower():
-                violations.append(Violation(tool="validate_docstrings", file=".", line=None, message=line.strip()))
+                violations.append(Violation(tool="bash-docstrings", file=".", line=None, message=line.strip()))
 
-        return LintResult(tool="validate_docstrings", passed=False, violations=violations[:20])  # Limit output
+        return LintResult(tool="bash-docstrings", passed=False, violations=violations[:20])  # Limit output

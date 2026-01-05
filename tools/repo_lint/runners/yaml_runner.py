@@ -72,6 +72,24 @@ class YAMLRunner(Runner):
         if self._should_run_tool("yamllint"):
             results.append(self._run_yamllint())
 
+        # TODO(Phase 2.8+): Add actionlint check
+        # actionlint is a linter for GitHub Actions workflow files (.github/workflows/*.yml).
+        # It validates GitHub Actions syntax, expressions, and references.
+        # Should be implemented as _run_actionlint() method similar to _run_yamllint().
+        # The tool should only run on files matching .github/workflows/*.yml pattern.
+        # Tool name should be "actionlint" to match the actual tool name.
+        # Reference: https://github.com/rhysd/actionlint
+        # Note: actionlint does not have auto-fix capability, check-only.
+
+        # TODO(Phase 2.8+): Add yaml-docstrings check
+        # YAML files have docstring contracts in the repository that should be validated.
+        # Need to implement _run_docstring_validation() method similar to other language
+        # runners (Python, Bash, Perl, PowerShell) that calls validate_docstrings.py
+        # with YAML-specific file filtering. The tool name should be "yaml-docstrings"
+        # to match the language-specific naming pattern established in this phase.
+        # Related: All other runners have been updated to use language-specific names
+        # (python-docstrings, bash-docstrings, etc.) instead of generic validate_docstrings.
+
         return results
 
     def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
@@ -89,6 +107,11 @@ class YAMLRunner(Runner):
         # yamllint does not have auto-fix, so just run checks
         results = []
         results.append(self._run_yamllint())
+
+        # TODO(Phase 2.8+): Add actionlint to fix method
+        # actionlint does not have auto-fix capability (check-only tool).
+        # However, it should still be called in fix mode to report issues.
+        # When implemented, should call _run_actionlint() here if the tool filter allows it.
 
         return results
 
