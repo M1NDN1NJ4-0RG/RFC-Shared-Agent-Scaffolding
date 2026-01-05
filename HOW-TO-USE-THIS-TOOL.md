@@ -1108,12 +1108,12 @@ repo-lint loads configuration in this order (highest priority first):
 Example using custom configuration:
 
 ```bash
-# Use configs from a different location
+# Use configs from a different location via environment variable
 export REPO_LINT_CONFIG_DIR=/path/to/custom/configs
 repo-lint check
 
-# Or use the flag
-repo-lint check --config /path/to/custom/configs
+# The --config flag is available only for dump-config command
+repo-lint dump-config --config /path/to/custom/configs
 ```
 
 ### Integrating with Pre-Commit Hooks
