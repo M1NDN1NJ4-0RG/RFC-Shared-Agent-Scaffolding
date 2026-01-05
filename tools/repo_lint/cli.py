@@ -1701,14 +1701,23 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                     f'source "{activation_script}" && {command}',
                 ]
             else:
-                # Interactive shell
+                # Interactive shell: source activation script, then exec a new interactive shell
                 if no_rc:
-                    shell_cmd = [shell, "--noprofile", "--norc"]
+                    shell_cmd = [
+                        shell,
+                        "--noprofile",
+                        "--norc",
+                        "-i",
+                        "-c",
+                        f'source "{activation_script}"; exec {shell} --noprofile --norc -i',
+                    ]
                 else:
-                    shell_cmd = [shell]
-                # Set up environment to activate on launch
-                # We'll modify PATH in subprocess env instead of sourcing
-                # This is cleaner for interactive shells
+                    shell_cmd = [
+                        shell,
+                        "-i",
+                        "-c",
+                        f'source "{activation_script}"; exec {shell} -i',
+                    ]
 
         elif shell == "fish":
             if command:
@@ -1718,19 +1727,36 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                     f'source "{activation_script}"; {command}',
                 ]
             else:
+                # Interactive fish shell: ensure activation script is sourced
+                # so that VIRTUAL_ENV, PATH, and prompt customizations are
+                # applied consistently with non-interactive usage.
                 if no_rc:
-                    shell_cmd = ["fish", "--no-config"]
+                    shell_cmd = [
+                        "fish",
+                        "--no-config",
+                        "-C",
+                        f'source "{activation_script}"',
+                    ]
                 else:
-                    shell_cmd = ["fish"]
+                    shell_cmd = [
+                        "fish",
+                        "-C",
+                        f'source "{activation_script}"',
+                    ]
 
         elif shell == "powershell":
             if command:
                 shell_cmd = [
                     "pwsh" if platform.system() != "Windows" else "powershell",
-                    "-NoProfile" if no_rc else "-File",
-                    "-Command",
-                    f'. "{activation_script}"; {command}',
                 ]
+                if no_rc:
+                    shell_cmd.append("-NoProfile")
+                shell_cmd.extend(
+                    [
+                        "-Command",
+                        f'. "{activation_script}"; {command}',
+                    ]
+                )
             else:
                 shell_cmd = [
                     "pwsh" if platform.system() != "Windows" else "powershell",

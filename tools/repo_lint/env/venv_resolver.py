@@ -146,7 +146,9 @@ def get_activation_script(venv_path: Path, shell: Optional[str] = None) -> Path:
             raise ValueError("CMD is only supported on Windows")
         return bin_dir / "activate.bat"
     else:
-        raise ValueError(f"Unsupported shell: {shell}. " f"Supported: bash, zsh, fish, powershell, cmd")
+        raise ValueError(
+            f"Unsupported shell: {shell}. Supported: bash, zsh, fish, powershell, cmd"
+        )
 
 
 def resolve_venv(
@@ -187,6 +189,8 @@ def resolve_venv(
         if (
             not (get_venv_bin_dir(venv_path) / "python").exists()
             and not (get_venv_bin_dir(venv_path) / "python.exe").exists()
+            and not (get_venv_bin_dir(venv_path) / "python3").exists()
+            and not (get_venv_bin_dir(venv_path) / "python3.exe").exists()
         ):
             raise VenvNotFoundError(
                 f"Path exists but is not a valid virtual environment: {venv_path}",
