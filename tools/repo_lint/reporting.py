@@ -165,7 +165,7 @@ def print_install_instructions(missing_tools: List[str], ci_mode: bool = False) 
         reporter.print(f"  - {tool}")
     reporter.print("\nTo install missing tools, run:")
     reporter.print("  repo-lint install")
-    reporter.print("\nOr install manually following the instructions in HOW-TO-USE-THIS-TOOL.md")
+    reporter.print("\nOr install manually following the instructions in REPO-LINT-USER-MANUAL.md")
 
 
 def report_results_json(results: List[LintResult], verbose: bool = False, report_path: str = None) -> int:

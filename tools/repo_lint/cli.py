@@ -236,7 +236,7 @@ def cli(ctx):
     repo-lint helps maintain code quality across multiple programming languages
     with consistent linting rules, docstring validation, and automatic formatting.
 
-    For detailed usage instructions, see: HOW-TO-USE-THIS-TOOL.md
+    For detailed usage instructions, see: REPO-LINT-USER-MANUAL.md
 
     For shell completion setup, run: repo-lint --help
 
@@ -423,7 +423,7 @@ def check(
     - No files found: Ensure you're running from repository root
     - CI failures: Add '--ci' locally to reproduce CI environment
 
-    See HOW-TO-USE-THIS-TOOL.md for detailed usage and examples.
+    See REPO-LINT-USER-MANUAL.md for detailed usage and examples.
 
     :param verbose: Show verbose output including passed checks
     :param ci_mode: CI mode - stable output, fail if tools missing
@@ -634,7 +634,7 @@ def fix(
     - Fixes not applied: Check file permissions and repo write access
     - Unsafe with non-Python: --unsafe only supports Python currently
 
-    See HOW-TO-USE-THIS-TOOL.md for detailed usage, forensic reports, and examples.
+    See REPO-LINT-USER-MANUAL.md for detailed usage, forensic reports, and examples.
 
     :param verbose: Show verbose output including passed checks
     :param ci_mode: CI mode - stable output, fail if tools missing
@@ -751,7 +751,7 @@ def install(verbose, cleanup):
     - Cleanup removes everything: Cleanup deletes .venv-lint, you'll need to re-run install
     - Manual tools not found: Follow provided instructions for your OS
 
-    See HOW-TO-USE-THIS-TOOL.md for detailed installation guide and OS-specific instructions.
+    See REPO-LINT-USER-MANUAL.md for detailed installation guide and OS-specific instructions.
 
     :param verbose: Show verbose output during installation
     :param cleanup: Remove repo-local tool installations (.venv-lint)
@@ -837,7 +837,7 @@ def doctor(ci, output_format, report):
     - PATH issues: Ensure venv is activated or tools are on PATH
     - Venv not found: Run from repository root
 
-    See HOW-TO-USE-THIS-TOOL.md for detailed troubleshooting guide.
+    See REPO-LINT-USER-MANUAL.md for detailed troubleshooting guide.
 
     :param ci: CI mode - stable output, fail on any errors
     :param output_format: Output format (rich|plain|json|yaml)

@@ -9,6 +9,7 @@ This guide covers installation, common commands, shell completion, and troublesh
 - [Common Commands](#common-commands)
   - [Tool Discovery and Help](#6-tool-discovery-and-help)
   - [Environment Diagnostics](#7-environment-diagnostics)
+  - [Environment and PATH Management](#8-environment-and-path-management)
 - [Test Fixtures and Vector Mode](#test-fixtures-and-vector-mode)
   - [What Are Fixture Files?](#what-are-fixture-files)
   - [Where Fixture Files Live](#where-fixture-files-live)
@@ -255,6 +256,122 @@ The `doctor` command checks:
 - Config file validity
 - Tool availability (black, ruff, shellcheck, etc.)
 - PATH configuration
+
+---
+
+### 8. Environment and PATH Management
+
+`repo-lint` provides three commands to help manage your virtual environment and make `repo-lint` available in your shell.
+
+#### Show Environment Information (`which`)
+
+Displays diagnostic information about your repo-lint installation:
+
+```bash
+# Show human-readable environment info
+repo-lint which
+
+# Get JSON output for scripting
+repo-lint which --json
+```
+
+Output includes:
+- Repository root directory
+- Resolved virtual environment path
+- Bin/Scripts directory (where executables live)
+- Activation script path
+- repo-lint executable location
+- Python executable location
+- sys.prefix and sys.base_prefix (venv detection)
+- Detected shell (for completion setup)
+
+**Use cases:**
+- Debug PATH or venv configuration issues
+- Verify repo-lint installation location
+- Check which Python is being used
+- Identify current shell for completion setup
+
+#### Generate Shell Integration (`env`)
+
+Generates shell snippets to add repo-lint to your PATH:
+
+```bash
+# Show instructions for current shell
+repo-lint env
+
+# Generate PowerShell snippet
+repo-lint env --shell powershell
+
+# Save snippet to config directory (Linux/macOS: ~/.config/repo-lint/shell/)
+repo-lint env --install --shell bash
+
+# Get just the PATH line for scripting (automation-friendly)
+repo-lint env --path-only
+```
+
+**Important:** The `env` command does NOT automatically edit your shell rc files (by design). You must manually add the snippet to make it permanent.
+
+**Manual RC editing:**
+- **Bash:** Add to `~/.bashrc`
+- **Zsh:** Add to `~/.zshrc`
+- **Fish:** Add to `~/.config/fish/config.fish`
+- **PowerShell:** Add to `$PROFILE`
+
+Example workflow:
+```bash
+# 1. Generate and save snippet
+repo-lint env --install --shell bash
+
+# 2. Follow printed instructions to add to ~/.bashrc
+source ~/.config/repo-lint/shell/repo-lint.bash
+
+# 3. Reload shell
+source ~/.bashrc
+```
+
+#### Launch Subshell with Venv (`activate`)
+
+Spawns a new shell with the repo-lint virtual environment activated:
+
+```bash
+# Launch interactive bash with venv activated
+repo-lint activate
+
+# Run single command in venv (non-interactive)
+repo-lint activate --command "repo-lint check --ci"
+
+# Launch PowerShell with venv activated
+repo-lint activate --shell powershell
+
+# CI mode: run command without interactive shell
+repo-lint activate --ci --command "pytest"
+
+# Print command without executing
+repo-lint activate --print
+```
+
+**Use cases:**
+- Quickly activate venv without manual source command
+- Run single command in venv context (use `--command`)
+- Test venv activation in different shells
+- CI/CD automation (use `--ci --command`)
+
+**Options:**
+- `--venv <path>`: Use explicit venv path (overrides auto-detection)
+- `--shell <shell>`: Launch specific shell (bash, zsh, fish, powershell, cmd)
+- `--command "<cmd>"`: Run single command, exit when done
+- `--no-rc`: Start shell without loading user rc files
+- `--print`: Show command without executing
+- `--ci`: CI mode - requires `--command`, blocks interactive shells
+
+**Virtual Environment Resolution:**
+
+All three commands (`which`, `env`, `activate`) use the same venv resolution precedence:
+
+1. Explicit `--venv` flag (highest priority)
+2. `.venv/` directory under repository root
+3. Currently active Python virtual environment (sys.prefix)
+4. Error if none found (lowest priority)
 
 ---
 

@@ -3,24 +3,39 @@
 This module provides a single source of truth for detecting and resolving
 Python virtual environments used by repo-lint.
 
-Resolution Precedence:
+:Purpose:
+    Provide consistent virtual environment resolution across all repo-lint commands.
+    Implements a clear precedence hierarchy for venv detection and provides
+    cross-platform support for activation scripts and bin directories.
+
+:Resolution Precedence:
     1. Explicit --venv flag (highest priority)
     2. .venv/ directory under repository root
     3. Currently active Python virtual environment (sys.prefix)
     4. Error if none found (lowest priority)
 
-Functions:
-    resolve_venv: Resolve virtual environment path with precedence rules
-    get_venv_bin_dir: Get the bin/ or Scripts/ directory for a venv
-    get_activation_script: Get the activation script path for a venv
-    is_venv_active: Check if a virtual environment is currently active
-    get_current_venv: Get the currently active virtual environment, if any
+:Functions:
+    - resolve_venv: Resolve virtual environment path with precedence rules
+    - get_venv_bin_dir: Get the bin/ or Scripts/ directory for a venv
+    - get_activation_script: Get the activation script path for a venv
+    - is_venv_active: Check if a virtual environment is currently active
+    - get_current_venv: Get the currently active virtual environment, if any
 
-Example:
+:Environment Variables:
+    None. This module does not read environment variables directly.
+
+:Examples:
     >>> from tools.repo_lint.env.venv_resolver import resolve_venv
     >>> venv_path = resolve_venv(explicit_path=None, repo_root="/path/to/repo")
     >>> print(venv_path)
     /path/to/repo/.venv
+
+:Exit Codes:
+    This module raises VenvNotFoundError on failure; it does not use exit codes directly.
+    Exit codes are handled by the calling CLI commands (which, env, activate).
+
+    - 0: Not applicable (utility module raises exceptions instead)
+    - 1: Not applicable (utility module raises exceptions instead)
 """
 
 from __future__ import annotations
@@ -41,9 +56,8 @@ class VenvNotFoundError(Exception):
     def __init__(self, message: str, remediation: str):
         """Initialize VenvNotFoundError.
 
-        Args:
-            message: Human-readable error message
-            remediation: Suggested remediation steps
+        :param message: Human-readable error message
+        :param remediation: Suggested remediation steps
         """
         self.message = message
         self.remediation = remediation
@@ -53,10 +67,9 @@ class VenvNotFoundError(Exception):
 def is_venv_active() -> bool:
     """Check if a virtual environment is currently active.
 
-    Returns:
-        True if a virtual environment is active, False otherwise
+    :returns: True if a virtual environment is active, False otherwise
 
-    Note:
+    :Note:
         This checks if sys.prefix differs from sys.base_prefix, which is
         the standard Python mechanism for detecting venv activation.
     """
@@ -66,10 +79,9 @@ def is_venv_active() -> bool:
 def get_current_venv() -> Optional[Path]:
     """Get the currently active virtual environment, if any.
 
-    Returns:
-        Path to the active virtual environment, or None if not in a venv
+    :returns: Path to the active virtual environment, or None if not in a venv
 
-    Note:
+    :Note:
         This returns sys.prefix if a venv is active. sys.prefix points to
         the root of the virtual environment directory.
     """
@@ -81,13 +93,10 @@ def get_current_venv() -> Optional[Path]:
 def get_venv_bin_dir(venv_path: Path) -> Path:
     """Get the bin/ or Scripts/ directory for a virtual environment.
 
-    Args:
-        venv_path: Path to the virtual environment root directory
+    :param venv_path: Path to the virtual environment root directory
+    :returns: Path to the bin/ (Unix) or Scripts/ (Windows) directory
 
-    Returns:
-        Path to the bin/ (Unix) or Scripts/ (Windows) directory
-
-    Note:
+    :Note:
         On Unix-like systems (Linux, macOS), the bin directory is 'bin/'.
         On Windows, the bin directory is 'Scripts/'.
     """
@@ -99,18 +108,13 @@ def get_venv_bin_dir(venv_path: Path) -> Path:
 def get_activation_script(venv_path: Path, shell: Optional[str] = None) -> Path:
     """Get the activation script path for a virtual environment.
 
-    Args:
-        venv_path: Path to the virtual environment root directory
-        shell: Optional shell type (bash, zsh, fish, powershell, cmd)
-               If None, uses platform default (activate on Unix, activate.bat on Windows)
+    :param venv_path: Path to the virtual environment root directory
+    :param shell: Optional shell type (bash, zsh, fish, powershell, cmd).
+                  If None, uses platform default (activate on Unix, activate.bat on Windows)
+    :returns: Path to the activation script
+    :raises ValueError: If the shell type is unsupported
 
-    Returns:
-        Path to the activation script
-
-    Raises:
-        ValueError: If the shell type is unsupported
-
-    Note:
+    :Note:
         Supported shells:
         - bash/zsh: activate (Unix) or activate.bat (Windows)
         - fish: activate.fish (Unix only)
@@ -157,17 +161,12 @@ def resolve_venv(
         3. Currently active Python venv (sys.prefix)
         4. Error (no venv found)
 
-    Args:
-        explicit_path: Explicit venv path from --venv flag (highest priority)
-        repo_root: Repository root directory (for finding .venv/)
+    :param explicit_path: Explicit venv path from --venv flag (highest priority)
+    :param repo_root: Repository root directory (for finding .venv/)
+    :returns: Resolved Path to the virtual environment
+    :raises VenvNotFoundError: If no virtual environment can be resolved
 
-    Returns:
-        Resolved Path to the virtual environment
-
-    Raises:
-        VenvNotFoundError: If no virtual environment can be resolved
-
-    Example:
+    :Example:
         >>> resolve_venv(explicit_path="/custom/venv")
         Path('/custom/venv')
 

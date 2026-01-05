@@ -2,6 +2,21 @@
 
 This module tests the venv_resolver module to ensure correct virtual
 environment detection and resolution across platforms.
+
+:Purpose:
+    Validate venv_resolver functionality with comprehensive unit tests.
+    Tests cover precedence rules, cross-platform behavior, and error handling.
+
+:Environment Variables:
+    None. Tests use mocking for environment simulation.
+
+:Examples:
+    Run tests with::
+
+        python3 -m unittest tools.repo_lint.tests.test_venv_resolver
+
+:Exit Codes:
+    Standard unittest exit codes (0 for success, 1 for failures).
 """
 
 from __future__ import annotations
