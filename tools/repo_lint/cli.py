@@ -77,7 +77,6 @@ import yaml
 from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
 from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
 
-
 # Config-type-specific allowed keys mapping
 # Used by validate-config command to support custom schemas
 CONFIG_TYPE_ALLOWED_KEYS = {
