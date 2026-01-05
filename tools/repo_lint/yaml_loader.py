@@ -9,9 +9,10 @@
     - Cached loading for performance
     - Validation via config_validator
     - Backward compatibility support
+    - Support for custom config paths via --config flag
 
 :Environment Variables:
-    None
+    REPO_LINT_CONFIG_DIR: Custom directory for config files (overrides default)
 
 :Examples:
     Load linting rules::
@@ -26,25 +27,69 @@
         patterns = load_file_patterns()
         in_scope = patterns['in_scope']['patterns']
 
+    Load with custom config directory::
+
+        from tools.repo_lint.yaml_loader import set_config_directory
+        set_config_directory('/custom/path')
+        rules = load_linting_rules()  # Loads from /custom/path
+
 :Exit Codes:
     - 0: Success
     - 1: YAML file not found or invalid
 
 :Notes:
     - Configurations are cached per process (singleton pattern)
-    - File paths are relative to repository root
+    - File paths are relative to repository root by default
     - All YAML files must pass config_validator checks
+    - Custom config directory can be set globally via set_config_directory()
 """
 
+import os
 import warnings
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import yaml
 
 from tools.repo_lint.config_validator import validate_config_file
 from tools.repo_lint.repo_utils import find_repo_root
+
+# Global config directory override (set via --config or set_config_directory)
+_CUSTOM_CONFIG_DIR: Optional[Path] = None
+
+
+def set_config_directory(config_dir: Optional[Path]) -> None:
+    """Set custom config directory for YAML file loading.
+
+    :Purpose:
+        Allows overriding the default conformance/repo-lint directory.
+        Used by --config CLI flag to load configs from custom locations.
+
+    :param config_dir: Path to custom config directory, or None to reset to default
+
+    :Examples:
+        Set custom directory::
+
+            set_config_directory(Path('/custom/configs'))
+
+        Reset to default::
+
+            set_config_directory(None)
+
+    :Notes:
+        - Clears all cached config loads when changed
+        - Affects all subsequent load_*() calls in current process
+        - Thread-safety: This is a global singleton, not thread-safe
+    """
+    global _CUSTOM_CONFIG_DIR  # pylint: disable=global-statement
+    _CUSTOM_CONFIG_DIR = config_dir
+    # Clear all caches when config directory changes
+    _get_conformance_dir.cache_clear()
+    load_linting_rules.cache_clear()
+    load_naming_rules.cache_clear()
+    load_docstring_rules.cache_clear()
+    load_file_patterns.cache_clear()
 
 
 @lru_cache(maxsize=None)
@@ -54,7 +99,28 @@ def _get_conformance_dir() -> Path:
     :returns: Path to conformance/repo-lint directory
 
     :raises FileNotFoundError: If conformance directory doesn't exist
+
+    :Notes:
+        - Checks custom config directory first (set via set_config_directory)
+        - Falls back to REPO_LINT_CONFIG_DIR environment variable
+        - Falls back to repo_root/conformance/repo-lint
     """
+    # Check custom config directory (set via --config or set_config_directory)
+    if _CUSTOM_CONFIG_DIR is not None:
+        conformance_dir = _CUSTOM_CONFIG_DIR
+        if not conformance_dir.exists():
+            raise FileNotFoundError(f"Custom config directory not found: {conformance_dir}")
+        return conformance_dir
+
+    # Check environment variable
+    env_config_dir = os.environ.get("REPO_LINT_CONFIG_DIR")
+    if env_config_dir:
+        conformance_dir = Path(env_config_dir)
+        if not conformance_dir.exists():
+            raise FileNotFoundError(f"Config directory from REPO_LINT_CONFIG_DIR not found: {conformance_dir}")
+        return conformance_dir
+
+    # Default: repo_root/conformance/repo-lint
     repo_root = find_repo_root()
     conformance_dir = repo_root / "conformance" / "repo-lint"
     if not conformance_dir.exists():
@@ -253,6 +319,59 @@ def get_linting_exclusion_paths() -> List[str]:
         It delegates to get_exclusion_patterns() to avoid duplication.
     """
     return get_exclusion_patterns()
+
+
+def get_all_configs() -> Dict[str, Dict[str, Any]]:
+    """Get all loaded configurations in a single dictionary.
+
+    :Purpose:
+        Provides consolidated view of all repo-lint configurations.
+        Used by dump-config command to show complete resolved config.
+
+    :returns: Dictionary with keys: linting_rules, naming_rules, docstring_rules, file_patterns
+
+    :Examples:
+        Get all configs::
+
+            all_configs = get_all_configs()
+            print(all_configs['linting_rules']['languages']['python'])
+            print(all_configs['naming_rules']['languages']['python'])
+
+    :Notes:
+        - Returns resolved configs from current config directory
+        - Config directory can be customized via set_config_directory()
+        - All configs pass validation before being returned
+    """
+    return {
+        "linting_rules": load_linting_rules(),
+        "naming_rules": load_naming_rules(),
+        "docstring_rules": load_docstring_rules(),
+        "file_patterns": load_file_patterns(),
+    }
+
+
+def get_config_source() -> str:
+    """Get the current config directory source.
+
+    :Purpose:
+        Shows where configurations are being loaded from.
+        Used by dump-config to show config precedence.
+
+    :returns: String describing config source (custom, env, or default)
+
+    :Examples:
+        Show config source::
+
+            source = get_config_source()
+            print(f"Loading configs from: {source}")
+    """
+    if _CUSTOM_CONFIG_DIR is not None:
+        return f"Custom: {_CUSTOM_CONFIG_DIR}"
+    env_config_dir = os.environ.get("REPO_LINT_CONFIG_DIR")
+    if env_config_dir:
+        return f"Environment: {env_config_dir}"
+    repo_root = find_repo_root()
+    return f"Default: {repo_root}/conformance/repo-lint"
 
 
 # Backward compatibility layer with deprecation warnings

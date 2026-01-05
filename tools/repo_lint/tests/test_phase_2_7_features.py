@@ -441,5 +441,178 @@ class TestPhase27DiffPreview(unittest.TestCase):
         self.assertTrue(hasattr(reporting, "report_results"))
 
 
+class TestPhase27ConfigCommands(unittest.TestCase):
+    """Test Phase 2.7 - Config management commands (dump-config, validate-config)."""
+
+    def setUp(self):
+        """Set up test fixtures."""
+        self.repo_root = repo_root
+        self.conformance_dir = self.repo_root / "conformance" / "repo-lint"
+
+    def test_dump_config_command_exists(self):
+        """Test that dump-config command exists in CLI."""
+        from tools.repo_lint.cli import cli
+
+        # Verify dump-config is registered as a command
+        self.assertIn("dump-config", cli.commands)
+
+    def test_validate_config_command_exists(self):
+        """Test that validate-config command exists in CLI."""
+        from tools.repo_lint.cli import cli
+
+        # Verify validate-config is registered as a command
+        self.assertIn("validate-config", cli.commands)
+
+    def test_yaml_loader_set_config_directory(self):
+        """Test set_config_directory() function."""
+        from tools.repo_lint.yaml_loader import set_config_directory
+
+        # Test setting custom directory
+        custom_dir = Path("/tmp/custom-configs")
+        set_config_directory(custom_dir)
+
+        # Test resetting to default
+        set_config_directory(None)
+
+        # Verify no exceptions were raised (test passes if we get here)
+
+    def test_yaml_loader_get_all_configs(self):
+        """Test get_all_configs() returns all config dictionaries."""
+        from tools.repo_lint.yaml_loader import get_all_configs
+
+        all_configs = get_all_configs()
+
+        # Verify all expected config types are present
+        self.assertIn("linting_rules", all_configs)
+        self.assertIn("naming_rules", all_configs)
+        self.assertIn("docstring_rules", all_configs)
+        self.assertIn("file_patterns", all_configs)
+
+        # Verify each config is a dictionary
+        for config_name, config in all_configs.items():
+            self.assertIsInstance(config, dict, f"{config_name} should be a dict")
+
+    def test_yaml_loader_get_config_source(self):
+        """Test get_config_source() returns source description."""
+        from tools.repo_lint.yaml_loader import get_config_source
+
+        source = get_config_source()
+
+        # Should return a string
+        self.assertIsInstance(source, str)
+
+        # Should mention "Default" for default config location
+        self.assertIn("Default", source)
+
+    def test_validate_config_valid_file(self):
+        """Test validate-config command with valid config file."""
+        import subprocess
+
+        config_file = self.conformance_dir / "repo-lint-linting-rules.yaml"
+        result = subprocess.run(
+            ["repo-lint", "validate-config", str(config_file)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        # Should exit 0 for valid config
+        self.assertEqual(result.returncode, 0)
+        self.assertIn("Configuration valid", result.stdout)
+
+    def test_validate_config_all_config_types(self):
+        """Test validate-config with all config file types."""
+        import subprocess
+
+        config_files = [
+            "repo-lint-linting-rules.yaml",
+            "repo-lint-naming-rules.yaml",
+            "repo-lint-docstring-rules.yaml",
+            "repo-lint-file-patterns.yaml",
+        ]
+
+        for config_filename in config_files:
+            config_file = self.conformance_dir / config_filename
+            if config_file.exists():
+                result = subprocess.run(
+                    ["repo-lint", "validate-config", str(config_file)],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+
+                # Should exit 0 for valid config
+                self.assertEqual(
+                    result.returncode,
+                    0,
+                    f"Config validation failed for {config_filename}: {result.stderr}",
+                )
+
+    def test_dump_config_yaml_format(self):
+        """Test dump-config command with YAML format."""
+        import subprocess
+
+        result = subprocess.run(
+            ["repo-lint", "dump-config", "--format", "yaml"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        # Should exit 0
+        self.assertEqual(result.returncode, 0)
+
+        # Should contain YAML markers
+        self.assertIn("---", result.stdout)
+        self.assertIn("...", result.stdout)
+
+        # Should mention config source
+        self.assertIn("Config source:", result.stdout)
+
+    def test_dump_config_json_format(self):
+        """Test dump-config command with JSON format."""
+        import subprocess
+
+        result = subprocess.run(
+            ["repo-lint", "dump-config", "--format", "json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        # Should exit 0
+        self.assertEqual(result.returncode, 0)
+
+        # Should be valid JSON
+        try:
+            config_data = json.loads(result.stdout)
+            self.assertIn("config_source", config_data)
+            self.assertIn("configs", config_data)
+        except json.JSONDecodeError as e:
+            self.fail(f"dump-config --format json produced invalid JSON: {e}")
+
+    def test_dump_config_contains_all_configs(self):
+        """Test dump-config includes all config types."""
+        import subprocess
+
+        result = subprocess.run(
+            ["repo-lint", "dump-config", "--format", "json"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(result.returncode, 0)
+
+        config_data = json.loads(result.stdout)
+        configs = config_data["configs"]
+
+        # Verify all config types present
+        self.assertIn("linting_rules", configs)
+        self.assertIn("naming_rules", configs)
+        self.assertIn("docstring_rules", configs)
+        self.assertIn("file_patterns", configs)
+
+
 if __name__ == "__main__":
     unittest.main()
