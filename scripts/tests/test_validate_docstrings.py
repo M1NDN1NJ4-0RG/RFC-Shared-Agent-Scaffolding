@@ -39,7 +39,6 @@ Run specific test::
 - Add more tests as validation rules evolve
 """
 
-
 from __future__ import annotations
 
 import sys
