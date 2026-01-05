@@ -227,30 +227,49 @@ class PythonRunner(Runner):
         if result.returncode == 0:
             return LintResult(tool="black", passed=True, violations=[])
 
-        # Parse Black output to extract violations
+        # Parse Black output to extract per-file violations
         violations = []
         if result.stdout:
-            # Black outputs diffs, we'll create a summary violation
-            # TODO(Phase 2.8): Fix black formatting table display issue
-            # When black reports violations, the table shows ` .  -` for filename/line
-            # instead of proper file information. This is because we're using "." as
-            # the file and None as the line. We should either:
-            # 1. Parse black's output to extract actual file names and create
-            #    per-file violations, OR
-            # 2. Update the reporter to handle "summary" violations differently
-            #    (e.g., show them in a separate section without file/line columns)
-            # Related: tools/repo_lint/ui/reporter.py render_failures() method
-            violations.append(
-                Violation(
-                    tool="black",
-                    file=".",
-                    line=None,
-                    message=(
-                        "Code formatting does not match Black style. "
-                        "Run 'python3 -m tools.repo_lint fix' to auto-format."
-                    ),
+            # Black outputs "would reformat <filename>" for each file
+            # Parse these lines to create per-file violations
+            import re
+            from pathlib import Path as PathLib
+
+            for line in result.stdout.splitlines():
+                match = re.match(r"would reformat (.+)$", line)
+                if match:
+                    filepath = match.group(1)
+                    # Convert absolute path to relative path from repo root
+                    try:
+                        rel_path = PathLib(filepath).relative_to(self.repo_root)
+                        file_str = str(rel_path)
+                    except ValueError:
+                        # If file is outside repo root, use basename
+                        file_str = PathLib(filepath).name
+
+                    violations.append(
+                        Violation(
+                            tool="black",
+                            file=file_str,
+                            line=1,  # Black doesn't give line numbers, use 1 as placeholder
+                            message="Code formatting does not match Black style",
+                        )
+                    )
+
+            # If we couldn't parse any files (unexpected output format),
+            # fall back to summary violation
+            if not violations:
+                violations.append(
+                    Violation(
+                        tool="black",
+                        file="<multiple files>",
+                        line=None,
+                        message=(
+                            "Code formatting does not match Black style. "
+                            "Run 'python3 -m tools.repo_lint fix' to auto-format."
+                        ),
+                    )
                 )
-            )
 
         return LintResult(tool="black", passed=False, violations=violations)
 
@@ -406,7 +425,7 @@ class PythonRunner(Runner):
 
         if not validator_script.exists():
             return LintResult(
-                tool="validate_docstrings",
+                tool="python-docstrings",
                 passed=False,
                 violations=[],
                 error=f"Docstring validation SKIPPED: validator script not found at {validator_script}. "
@@ -427,7 +446,7 @@ class PythonRunner(Runner):
         )
 
         if result.returncode == 0:
-            return LintResult(tool="validate_docstrings", passed=True, violations=[])
+            return LintResult(tool="python-docstrings", passed=True, violations=[])
 
         violations = []
         for line in result.stdout.splitlines():
@@ -440,11 +459,11 @@ class PythonRunner(Runner):
                 parsed = self._parse_lint_output(line.strip())
                 violations.append(
                     Violation(
-                        tool="validate_docstrings",
+                        tool="python-docstrings",
                         file=parsed["file"],
                         line=parsed["line"],
                         message=parsed["message"],
                     )
                 )
 
-        return LintResult(tool="validate_docstrings", passed=False, violations=violations[:20])  # Limit output
+        return LintResult(tool="python-docstrings", passed=False, violations=violations[:20])  # Limit output

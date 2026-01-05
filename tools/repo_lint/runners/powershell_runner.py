@@ -180,7 +180,7 @@ class PowerShellRunner(Runner):
 
         if not validator_script.exists():
             return LintResult(
-                tool="validate_docstrings",
+                tool="powershell-docstrings",
                 passed=False,
                 violations=[],
                 error=f"Docstring validation SKIPPED: validator script not found at {validator_script}. "
@@ -189,7 +189,7 @@ class PowerShellRunner(Runner):
 
         ps_files = self._get_powershell_files()
         if not ps_files:
-            return LintResult(tool="validate_docstrings", passed=True, violations=[])
+            return LintResult(tool="powershell-docstrings", passed=True, violations=[])
 
         # Run validator for powershell language only (no need for --file args with --language flag)
         cmd = [sys.executable, str(validator_script), "--language", "powershell"]
@@ -205,11 +205,11 @@ class PowerShellRunner(Runner):
         )
 
         if result.returncode == 0:
-            return LintResult(tool="validate_docstrings", passed=True, violations=[])
+            return LintResult(tool="powershell-docstrings", passed=True, violations=[])
 
         violations = []
         for line in result.stdout.splitlines():
             if "❌" in line or "ERROR" in line or "violation" in line.lower():
-                violations.append(Violation(tool="validate_docstrings", file=".", line=None, message=line.strip()))
+                violations.append(Violation(tool="powershell-docstrings", file=".", line=None, message=line.strip()))
 
-        return LintResult(tool="validate_docstrings", passed=False, violations=violations[:20])  # Limit output
+        return LintResult(tool="powershell-docstrings", passed=False, violations=violations[:20])  # Limit output

@@ -350,6 +350,20 @@ class Reporter:
                 violations_table.add_column("Line", justify="right")
                 violations_table.add_column("Message")
 
+                # Duplicate filename disambiguation: track basenames to detect duplicates
+                # If a basename appears multiple times, show relative path for those files
+                basename_counts: Dict[str, int] = {}
+                basename_to_violations: Dict[str, List] = {}
+
+                for violation in tool_violations:
+                    from pathlib import Path as PathLib
+
+                    basename = PathLib(violation.file).name
+                    basename_counts[basename] = basename_counts.get(basename, 0) + 1
+                    if basename not in basename_to_violations:
+                        basename_to_violations[basename] = []
+                    basename_to_violations[basename].append(violation)
+
                 # Add violations
                 for violation in tool_violations:
                     line_str = str(violation.line) if violation.line else "-"
@@ -365,7 +379,19 @@ class Reporter:
                     message = escape(message)
 
                     if show_files:
-                        violations_table.add_row(escape(violation.file), line_str, message)
+                        # Determine display name: basename if unique, relative path if duplicated
+                        from pathlib import Path as PathLib
+
+                        basename = PathLib(violation.file).name
+
+                        if basename_counts.get(basename, 0) > 1:
+                            # Duplicate basename: show relative path from repo root
+                            display_file = violation.file
+                        else:
+                            # Unique basename: show just the filename
+                            display_file = basename
+
+                        violations_table.add_row(escape(display_file), line_str, message)
                     else:
                         # Include file in message when not showing file column
                         full_message = (

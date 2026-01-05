@@ -146,7 +146,7 @@ class PerlRunner(Runner):
 
         if not validator_script.exists():
             return LintResult(
-                tool="validate_docstrings",
+                tool="perl-docstrings",
                 passed=False,
                 violations=[],
                 error=f"Docstring validation SKIPPED: validator script not found at {validator_script}. "
@@ -155,7 +155,7 @@ class PerlRunner(Runner):
 
         perl_files = self._get_perl_files()
         if not perl_files:
-            return LintResult(tool="validate_docstrings", passed=True, violations=[])
+            return LintResult(tool="perl-docstrings", passed=True, violations=[])
 
         # Run validator for perl language only (no need for --file args with --language flag)
         cmd = [sys.executable, str(validator_script), "--language", "perl"]
@@ -171,11 +171,11 @@ class PerlRunner(Runner):
         )
 
         if result.returncode == 0:
-            return LintResult(tool="validate_docstrings", passed=True, violations=[])
+            return LintResult(tool="perl-docstrings", passed=True, violations=[])
 
         violations = []
         for line in result.stdout.splitlines():
             if "❌" in line or "ERROR" in line or "violation" in line.lower():
-                violations.append(Violation(tool="validate_docstrings", file=".", line=None, message=line.strip()))
+                violations.append(Violation(tool="perl-docstrings", file=".", line=None, message=line.strip()))
 
-        return LintResult(tool="validate_docstrings", passed=False, violations=violations[:20])  # Limit output
+        return LintResult(tool="perl-docstrings", passed=False, violations=violations[:20])  # Limit output
