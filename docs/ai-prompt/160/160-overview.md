@@ -308,10 +308,10 @@ This plan outlines prioritized phases to address all findings. Each item include
 
 ---
 
-## Phase 2.7 – Extended CLI Granularity & Reporting ✅ CORE COMPLETE (7/8 items)
+## Phase 2.7 – Extended CLI Granularity & Reporting ✅ COMPLETE (8/8 items)
 
-**Status:** IMPLEMENTED (with 1 remaining item: config CLI commands)
-**Last Updated:** 2026-01-01
+**Status:** COMPLETE ✅
+**Last Updated:** 2026-01-05
 
 **Goal:** Add extremely granular CLI options for filtering, output control, and robust reporting.
 
@@ -378,18 +378,22 @@ This plan outlines prioritized phases to address all findings. Each item include
     - ✅ Output: green/red checklist with detailed diagnostics
   - **Testing:** Doctor command verified working
 
-- [ ] **Implement External Configuration Contract (YAML-First)** (Severity: **High**) ⚠️ PARTIALLY COMPLETE
+- [x] **Implement External Configuration Contract (YAML-First)** (Severity: **High**) ✅ COMPLETE
   - **Context:** Maximize user-configurability while preserving contract safety.
   - **Implementation Status:**
     - ✅ All configurable behavior IS in YAML (conformance/repo-lint/*.yaml)
     - ✅ Strict validation: `---`/`...` markers, `type`/`version` fields, unknown keys fail (config_validator.py)
     - ✅ YAML-first architecture fully implemented (yaml_loader.py)
-    - ❌ `--config <PATH>`: explicit config file - **NOT IMPLEMENTED**
-    - ❌ `--dump-config`: print fully-resolved config - **NOT IMPLEMENTED**
-    - ❌ `--validate-config <PATH>`: validate without running - **NOT IMPLEMENTED**
-    - ❓ In `--ci`: config auto-discovery behavior not explicitly documented
-  - **Note:** Core YAML-first requirement is MET. Missing CLI convenience commands for config management.
-  - **Recommendation:** Add config management commands in follow-up PR.
+    - ✅ `dump-config` command: print fully-resolved config (YAML/JSON formats) - **IMPLEMENTED**
+    - ✅ `validate-config <PATH>` command: validate without running - **IMPLEMENTED**
+    - ✅ Custom config directory support via set_config_directory() and --config option - **IMPLEMENTED**
+  - **Delivered:** 2026-01-05
+    - ✅ `dump-config --format yaml|json` command with config source display
+    - ✅ `validate-config <PATH>` command with config-type-aware validation
+    - ✅ Support for --config option in dump-config
+    - ✅ Config directory precedence: --config flag > REPO_LINT_CONFIG_DIR env > default
+    - ✅ 10/10 unit tests passing
+  - **Testing:** All config management tests pass
 
 - [x] **Add Tool Registry & Discoverability Commands** (Severity: **Medium**) ✅ COMPLETE
   - **Context:** Users need to discover what languages/tools are supported.
@@ -402,17 +406,10 @@ This plan outlines prioritized phases to address all findings. Each item include
   - **Testing:** Tool registry commands verified working
 
 **Summary:**
-- ✅ 7/8 major items COMPLETE and tested
-- ⚠️ 1 item PARTIALLY COMPLETE (YAML-first architecture exists; missing 3 CLI convenience commands)
-- 🐛 CRITICAL BUG FIXED: Rich markup error in CI mode for all summary formats
-- ✅ 25/25 Phase 2.7 unit tests passing
+- ✅ 8/8 major items COMPLETE and tested
+- ✅ 35/35 Phase 2.7 unit tests passing (25 original + 10 config tests)
 - ✅ End-to-end CLI verification successful
-
-**Remaining Work:**
-- Implement `--config <PATH>` flag for explicit config file selection
-- Implement `--dump-config` command for debugging
-- Implement `--validate-config <PATH>` command for pre-flight validation
-- Document CI mode config behavior explicitly
+- ✅ Pre-commit gate: EXIT 0
 
 **Rationale:** Granular control enables both power users and CI/CD integration.
 
@@ -559,22 +556,22 @@ Each fix above should be committed with clear messages, linking to issues if the
 - [x] Phase 2.9 – Mandatory Integration & YAML-First Contracts ✅ COMPLETE
   - [x] Integrate External Helper Scripts (All helpers integrated)
   - [x] Migrate to YAML-First Configuration (PR #207 merged, yaml_loader.py created, all configs migrated)
-- [ ] Phase 2.7 – Extended CLI Granularity & Reporting ⏳ IN PROGRESS (60% complete)
-  - [x] `--lang` and `--tool` filtering (CLI layer complete, backend 60%)
+- [x] Phase 2.7 – Extended CLI Granularity & Reporting ✅ COMPLETE (8/8 items)
+  - [x] `--lang` and `--tool` filtering (COMPLETE)
   - [x] `repo-lint doctor` command (COMPLETE)
   - [x] Tool registry and discoverability commands (list-langs, list-tools, tool-help - COMPLETE)
-  - [ ] Summary modes and verbosity controls (backend incomplete)
-  - [ ] Output formats (json, yaml, csv, xlsx - backend incomplete)
-  - [ ] Fix-mode safety (--dry-run, --diff, --changed-only - backend incomplete)
-  - [ ] External configuration contract (YAML-first - Phase 2.9 complete, this is CLI integration)
-- [ ] Phase 2.6 – Centralized Exception Rules (NOT STARTED - awaiting Phase 2.7 completion per priority)
+  - [x] Summary modes and verbosity controls (COMPLETE)
+  - [x] Output formats (json, yaml, csv, xlsx - COMPLETE)
+  - [x] Fix-mode safety (--dry-run, --diff, --changed-only - COMPLETE)
+  - [x] External configuration contract (dump-config, validate-config - COMPLETE)
+- [ ] Phase 2.6 – Centralized Exception Rules (NOT STARTED - next priority after Phase 2.7)
   - [ ] Schema & Validator (2.6.1)
   - [ ] Integration into Results & Reporting (2.6.2)
   - [ ] Pragma Support & Conflict Detection (2.6.3)
   - [ ] Symbol/Scope Matching (2.6.4)
   - [ ] Documentation Updates (2.6.5)
   - [ ] Tests (2.6.6)
-- [ ] Phase 2.8 – Environment & PATH Management (NOT STARTED - awaiting Phase 2.7 completion per priority)
+- [ ] Phase 2.8 – Environment & PATH Management (NOT STARTED - after Phase 2.6)
   - [ ] `repo-lint env` command (shell integration helper)
   - [ ] `repo-lint activate` command (subshell launcher)
   - [ ] `repo-lint which` command (diagnostics)

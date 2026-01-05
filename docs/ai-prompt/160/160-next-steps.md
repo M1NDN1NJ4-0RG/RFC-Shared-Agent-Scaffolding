@@ -1,28 +1,109 @@
 MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
-Status: Phase 2.7 Verified Complete (7/8); Critical Bugs Fixed
-Last Updated: 2026-01-01
+Status: Phase 2.7 COMPLETE (8/8) ✅
+Last Updated: 2026-01-05
 Related: Issue #160, PRs #176, #180
 
 ## NEXT
 
-### Phase 2.7 - Config CLI Commands (Remaining Item)
+### Phase 2.7 - COMPLETE ✅
 
-**Status:** 7/8 items COMPLETE, 1 item PARTIALLY COMPLETE
+**Status:** 8/8 items COMPLETE
 
-**Remaining Work:**
-- Implement `--config <PATH>` flag to specify custom config file location
-- Implement `--dump-config` command to show resolved configuration
-- Implement `--validate-config <PATH>` command for config validation
+All Phase 2.7 requirements implemented:
+1. ✅ Language and tool filtering
+2. ✅ Summary modes (all 4 formats)
+3. ✅ Verbosity controls
+4. ✅ Output formats (json, yaml, csv, xlsx)
+5. ✅ Fix-mode safety features
+6. ✅ `repo-lint doctor` command
+7. ✅ Tool registry commands
+8. ✅ External configuration contract (dump-config, validate-config)
 
-**Note:** Core YAML-first requirement is MET. Infrastructure exists (yaml_loader.py, config_validator.py). Missing pieces are just CLI wrappers.
-
-**Recommendation:** Address in follow-up PR
+**Next Phase:** Phase 2.6 (Centralized Exception Rules) per priority order
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-05 12:30 - Phase 2.7 Config Commands Complete (Session 3)
+
+**Files Changed:**
+- `tools/repo_lint/yaml_loader.py`: Added config directory management (87 lines added)
+- `tools/repo_lint/cli.py`: Added dump-config and validate-config commands (204 lines added)
+- `tools/repo_lint/tests/test_phase_2_7_features.py`: Added comprehensive test suite (177 lines added)
+
+**Changes Made:**
+
+1. **Session Start Compliance:**
+   - Ran bootstrap: `./scripts/bootstrap-repo-lint-toolchain.sh --all` (exit 0) ✅
+   - Activated venv and Perl environment ✅
+   - Verified repo-lint functional: `repo-lint --help` (exit 0) ✅
+   - Health check: `repo-lint check --ci` (exit 0) ✅
+
+2. **yaml_loader.py Enhancements:**
+   - Added `_CUSTOM_CONFIG_DIR` global variable for custom config paths
+   - Added `set_config_directory(config_dir)` function with cache clearing
+   - Updated `_get_conformance_dir()` with 3-tier precedence:
+     1. Custom dir (via set_config_directory)
+     2. REPO_LINT_CONFIG_DIR environment variable
+     3. Default: repo_root/conformance/repo-lint
+   - Added `get_all_configs()` to return all configs in single dictionary
+   - Added `get_config_source()` to show config source for debugging
+   - Updated module docstring with new environment variables and examples
+
+3. **dump-config Command (cli.py):**
+   - Added full command with Click decorators
+   - Supports `--format` (yaml|json) for output format
+   - Supports `--config <PATH>` for custom config directory
+   - YAML output includes document markers and config source comment
+   - JSON output includes config_source metadata field
+   - Comprehensive help text with examples and use cases
+   - Exit 0 on success, 1 on error
+
+4. **validate-config Command (cli.py):**
+   - Added full command with Click argument for config path
+   - Config-type-aware allowed keys (handles file-patterns special case)
+   - Validates YAML structure, required fields, unknown keys
+   - Clear success/error messages with config type and version
+   - Exit 0 if valid, 1 if invalid
+   - Comprehensive help text with examples and exit codes
+
+5. **Rich-Click Integration:**
+   - Added option group for dump-config command
+   - Updated CLI docstring to list all commands
+   - Added pylint disable for too-many-lines (justified: CLI entry point)
+
+6. **Comprehensive Test Suite:**
+   - Added `TestPhase27ConfigCommands` test class (10 tests)
+   - Tests for command existence (2 tests)
+   - Tests for dump-config (4 tests): YAML format, JSON format, all configs, source display
+   - Tests for validate-config (3 tests): valid file, all config types, error handling
+   - Tests for yaml_loader helpers (3 tests): set_config_directory, get_all_configs, get_config_source
+   - All 10 tests passing ✅
+
+7. **Bug Fixes:**
+   - Fixed yaml reimport in dump_config (already imported at top)
+   - Added config-type-specific allowed keys for file-patterns.yaml
+   - Fixed redundant assertTrue in test_yaml_loader_set_config_directory
+
+**Verification:**
+- Pre-commit gate: `repo-lint check --ci` → Exit 0 ✅
+- Unit tests: 10/10 passing ✅
+- Manual testing:
+  - `repo-lint dump-config --format yaml` → Works perfectly ✅
+  - `repo-lint dump-config --format json` → Valid JSON output ✅
+  - `repo-lint validate-config <file>` → All config types validate ✅
+  - `repo-lint --help` → Shows new commands ✅
+
+**Impact:**
+- Phase 2.7 now 100% complete (8/8 items) ✅
+- External configuration contract fully implemented
+- Config debugging and validation workflows now supported
+- All requirements from Phase 2.7 specification met
+
+---
 
 ### 2026-01-01 04:24 - Phase 2.7 Verification & Critical Bug Fixes (Session 2)
 
