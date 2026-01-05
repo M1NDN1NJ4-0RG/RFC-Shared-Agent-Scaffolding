@@ -38,6 +38,69 @@ Per the prioritization decision (Round 2, Decision 2), the sequence is:
 
 ## DONE (EXTREMELY DETAILED)
 
+### 2026-01-05 22:17 - Code Review Round 5 Fixes (Session 8)
+
+**Files Changed:**
+- `tools/repo_lint/cli.py`: Fixed shell command construction and quoting
+- `tools/repo_lint/ui/reporter.py`: Optimized PathLib import placement
+- `docs/ai-prompt/160/160-next-steps.md`: Updated journal with session details
+
+**Changes Made:**
+
+1. **Fish Shell Quoting Fix** (cli.py line 1766-1778):
+   - Changed from POSIX-style `'\\''` to Fish-native `''` for single quote escaping
+   - Fish shell has different quoting rules than POSIX shells
+   - Updated docstring: changed `\ ` to "backslash" to avoid Python escape sequence warnings
+   - Added r-string prefix to docstring for safety
+
+2. **Bash/Zsh Command Execution** (cli.py line 1778-1787):
+   - Removed `shlex.split(command)` approach that broke shell semantics
+   - Changed from `exec "$@"` pattern to direct `&& {command}` execution
+   - Now preserves globs, redirections, pipelines (e.g., `ls *.py | grep foo`)
+   - Added comment documenting this is intentional design
+   - Matches standard behavior of `bash -c "command"`, `fish -c "command"`, etc.
+
+3. **PowerShell Activation Script Quoting** (cli.py line 1848-1851):
+   - Changed from double quotes to single quotes around activation script path
+   - Simplifies escaping (backtick escaping is complex inside double quotes in PowerShell)
+   - Added detailed comment explaining the trade-off
+
+4. **CMD Command Quoting** (cli.py line 1871-1878):
+   - Wrapped escaped command in quotes: `"{activation_script}" && "{escaped_command}"`
+   - Ensures robust handling of spaces and complex commands
+   - CMD has unique quoting rules different from Unix shells
+
+5. **PathLib Import Optimization** (reporter.py line 353-389):
+   - Moved `from pathlib import Path as PathLib` outside both loops
+   - Was being imported on every iteration (performance issue)
+   - Now single import at section start before first loop
+   - Eliminates redundant imports
+
+**Verification:**
+- Bootstrap toolchain executed successfully
+- `repo-lint check --ci` → EXIT 0
+- All 15 runners passing
+- No syntax warnings
+- Python: black, ruff, pylint, python-docstrings all passing
+
+**Code Review Responses:**
+- Replied to comment 2662945423 (Fish quoting)
+- Replied to comment 2662945435 (PowerShell quoting)
+- Replied to comment 2662945448 (CMD quoting)
+- Replied to comment 2662945458 (PathLib import)
+- Replied to comment 2662945469 (Bash command execution)
+
+**Design Rationale:**
+The command execution model intentionally preserves full shell semantics to match user expectations. When users pass `--command "ls *.py | grep foo"`, they expect glob expansion and pipe functionality. The activation script path is always properly quoted/escaped for security, but the user command executes with full shell interpretation. This matches the behavior of standard shell `-c` flags and is documented in help text and code comments. Users should not pass untrusted input to the `--command` flag.
+
+**Known Issues:**
+None
+
+**Follow-up:**
+All code review comments from rounds 1-5 have been addressed. Ready for Phase 2.6 or Phase 3.
+
+---
+
 ### 2026-01-05 21:52 - CI Linting Fixes & Code Review Round 4 (Session 7)
 
 **Files Changed:**
