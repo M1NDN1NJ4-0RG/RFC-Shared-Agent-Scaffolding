@@ -186,6 +186,28 @@ die() {
 	exit "$code"
 }
 
+# has_sudo - Check if sudo access is available
+#
+# DESCRIPTION:
+#   Checks if the current user is root or has passwordless sudo access.
+#   Used before attempting system package installations.
+#
+# INPUTS:
+#   None
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   User is root or has passwordless sudo access
+#     1   No sudo access available
+#
+# EXAMPLES:
+#   if has_sudo; then
+#       sudo apt-get install package
+#   fi
+has_sudo() {
+	[ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null
+}
+
 # show_banner - Display a prominent banner message
 #
 # DESCRIPTION:
@@ -720,7 +742,7 @@ install_rgrep() {
 	# Detect package manager and install
 	if command -v apt-get >/dev/null 2>&1; then
 		log "Detected apt-get package manager"
-		if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+		if has_sudo; then
 			log "Installing ripgrep via apt-get..."
 			if sudo apt-get update -qq && sudo apt-get install -y ripgrep; then
 				log "  ✓ ripgrep installed successfully"
@@ -796,7 +818,7 @@ install_shell_tools() {
 	else
 		# Attempt to install shellcheck
 		if command -v apt-get >/dev/null 2>&1; then
-			if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+			if has_sudo; then
 				log "Installing shellcheck via apt-get..."
 				if sudo apt-get update -qq && sudo apt-get install -y shellcheck; then
 					local version
@@ -835,7 +857,7 @@ install_shell_tools() {
 	else
 		# Attempt to install shfmt
 		if command -v apt-get >/dev/null 2>&1; then
-			if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+			if has_sudo; then
 				log "Installing shfmt via apt-get..."
 				if sudo apt-get update -qq && sudo apt-get install -y shfmt; then
 					local version
@@ -1206,7 +1228,7 @@ install_actionlint() {
 		if ! command -v go >/dev/null 2>&1; then
 			log "Go not found, attempting to install..."
 			if command -v apt-get >/dev/null 2>&1; then
-				if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+				if has_sudo; then
 					log "Installing golang-go via apt-get..."
 					if sudo apt-get update -qq && sudo apt-get install -y golang-go; then
 						log "  ✓ Go installed successfully"
@@ -1227,7 +1249,7 @@ install_actionlint() {
 		# Ensure GOPATH/bin is in PATH for this session
 		export PATH="$HOME/go/bin:$PATH"
 
-		# Install actionlint using go install with pinned version
+		# Install actionlint using go install
 		log "Running: go install github.com/rhysd/actionlint/cmd/actionlint@latest"
 		if go install github.com/rhysd/actionlint/cmd/actionlint@latest; then
 			# Verify installation
@@ -1409,13 +1431,13 @@ main() {
 		log ""
 	fi
 
-	# Phase 2.4: Install PowerShell toolchain (if requested)
+	# Phase 2.5: Install PowerShell toolchain (if requested)
 	if [ "$INSTALL_POWERSHELL" = true ]; then
 		install_powershell_tools
 		log ""
 	fi
 
-	# Phase 2.5: Install Perl toolchain (if requested)
+	# Phase 2.6: Install Perl toolchain (if requested)
 	if [ "$INSTALL_PERL" = true ]; then
 		install_perl_tools
 		log ""
