@@ -1138,8 +1138,23 @@ def validate_config(config_path):
 
         config_type = config.get("config_type", "unknown")
 
+        # Determine allowed keys based on config type
+        # Some config types have custom allowed keys beyond the defaults
+        allowed_keys = None
+        if config_type == "repo-lint-file-patterns":
+            # File patterns config has custom allowed keys
+            allowed_keys = [
+                "config_type",
+                "version",
+                "description",
+                "languages",  # Required by validator
+                "in_scope",
+                "exclusions",
+                "metadata",
+            ]
+
         # Validate config file
-        validate_config_file(config_path, config_type)
+        validate_config_file(config_path, config_type, allowed_keys=allowed_keys)
 
         # Success
         print(f"✅ Configuration valid: {config_path}")
