@@ -125,7 +125,6 @@ Using with TOKEN environment variable::
 - GitHub API Authentication: https://docs.github.com/en/rest/authentication
 """
 
-
 from __future__ import annotations
 
 import json

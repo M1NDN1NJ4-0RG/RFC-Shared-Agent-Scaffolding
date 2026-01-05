@@ -42,7 +42,6 @@
     - Tests verify fallback behavior for non-Git directories
 """
 
-
 from __future__ import annotations
 
 import sys

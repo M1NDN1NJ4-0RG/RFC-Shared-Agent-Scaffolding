@@ -133,7 +133,6 @@ def find_insertion_point(content: str) -> Tuple[int, int]:
 
     # Track what we've seen
     seen_encoding = False
-    seen_docstring = False
     insert_line = 1
     insert_col = 0
 
@@ -152,7 +151,7 @@ def find_insertion_point(content: str) -> Tuple[int, int]:
 
     # Now look for module docstring using tokens
     for i, token in enumerate(tokens):
-        if token.type == tokenize.STRING and not seen_docstring:
+        if token.type == tokenize.STRING:
             # This could be a module docstring
             # It's a module docstring if it's the first statement
             # Check if there are only ENCODING, NEWLINE, NL, COMMENT, or INDENT tokens before it
@@ -170,7 +169,6 @@ def find_insertion_point(content: str) -> Tuple[int, int]:
                     break
 
             if is_module_docstring:
-                seen_docstring = True
                 # Insert after the docstring
                 # The docstring ends at token.end[0], insert after it
                 insert_line = token.end[0] + 1
@@ -202,31 +200,41 @@ def add_future_import(content: str) -> str:
     import_stmt = "from __future__ import annotations"
 
     # Insert the import at the correct position
-    # If inserting after a docstring or header, ensure proper spacing
+    # PEP 8: Exactly one blank line between module docstring and first import
     if insert_line > len(lines):
         # Append to end (shouldn't happen but handle it)
         lines.append("")
         lines.append(import_stmt)
     else:
         # Insert at the specified line
-        # Check if there's already content at insert_line - 1
         if 1 < insert_line <= len(lines):
-            # Insert blank line before import if the previous line is not blank
-            prev_line = lines[insert_line - 2] if insert_line > 1 else ""
-            if prev_line.strip():
+            # insert_line points to the line after the docstring
+            # Check what's at that position and before
+            line_before = lines[insert_line - 2] if insert_line >= 2 else ""
+            current_line = lines[insert_line - 1] if insert_line <= len(lines) else ""
+
+            # If current line is blank, insert import there and keep the spacing
+            if not current_line.strip():
+                # There's already a blank line - insert the import after it
+                lines.insert(insert_line, import_stmt)
+            elif line_before.strip():
+                # Previous line has content (docstring end), add blank line then import
                 lines.insert(insert_line - 1, "")
                 lines.insert(insert_line, import_stmt)
             else:
+                # Previous line is blank, just insert import
                 lines.insert(insert_line - 1, import_stmt)
         else:
             # Insert at the beginning
             lines.insert(0, import_stmt)
 
         # Ensure blank line after import if there's content following
-        if insert_line < len(lines):
-            next_line_idx = insert_line  # After insertion, next line is at insert_line
-            if next_line_idx < len(lines) and lines[next_line_idx].strip():
-                lines.insert(next_line_idx, "")
+        # Find where the import actually ended up
+        import_idx = lines.index(import_stmt)
+        next_idx = import_idx + 1
+        if next_idx < len(lines) and lines[next_idx].strip():
+            # There's content immediately after, insert blank line
+            lines.insert(next_idx, "")
 
     return "\n".join(lines)
 

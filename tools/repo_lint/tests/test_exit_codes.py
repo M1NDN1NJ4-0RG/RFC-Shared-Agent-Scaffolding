@@ -53,7 +53,6 @@
     - Tests cover both local and CI modes
 """
 
-
 from __future__ import annotations
 
 import argparse

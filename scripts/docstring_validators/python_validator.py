@@ -22,7 +22,6 @@ docstrings and symbol-level documentation (functions, classes, methods).
     N/A - This is a library module, not an executable script
 """
 
-
 from __future__ import annotations
 
 import ast

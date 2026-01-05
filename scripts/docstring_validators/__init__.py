@@ -22,7 +22,6 @@ contracts across the repository.
     N/A - This is a library package, not an executable script
 """
 
-
 from __future__ import annotations
 
 from .common import ValidationError, check_pragma_ignore, validate_exit_codes_content

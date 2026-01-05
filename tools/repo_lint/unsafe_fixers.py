@@ -41,7 +41,6 @@
     - Phase 7 requirements in new-requirement-phase-7.md
 """
 
-
 from __future__ import annotations
 
 import re

@@ -29,7 +29,6 @@ ability to correctly identify and validate function and class documentation.
         Failure - validation errors found
 """
 
-
 from __future__ import annotations
 
 import asyncio

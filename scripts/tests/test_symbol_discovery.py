@@ -31,7 +31,6 @@ outputs match expected symbols.
         One or more tests failed
 """
 
-
 from __future__ import annotations
 
 import sys

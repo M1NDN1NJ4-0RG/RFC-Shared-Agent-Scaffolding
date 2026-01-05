@@ -1,6 +1,5 @@
 """Test fixture: intentionally bad Python code with missing docstrings."""
 
-
 from __future__ import annotations
 
 

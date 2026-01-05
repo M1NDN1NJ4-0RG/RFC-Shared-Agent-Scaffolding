@@ -38,7 +38,6 @@
     - Phase 7 Item 2 (Forensics) requirements
 """
 
-
 from __future__ import annotations
 
 import difflib

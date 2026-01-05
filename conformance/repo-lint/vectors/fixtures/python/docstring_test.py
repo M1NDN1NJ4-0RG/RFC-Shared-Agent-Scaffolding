@@ -16,7 +16,6 @@
     N/A - This is a test fixture file, not executable
 """
 
-
 from __future__ import annotations
 
 

@@ -47,7 +47,6 @@
     - Tests validate pip version pinning per Phase 4 requirements
 """
 
-
 from __future__ import annotations
 
 import sys

@@ -3,7 +3,6 @@
 This file intentionally contains violations to test pylint detection.
 """
 
-
 from __future__ import annotations
 
 # C0103: invalid variable name (should be lowercase_with_underscores)

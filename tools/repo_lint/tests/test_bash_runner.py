@@ -45,7 +45,6 @@
     - Tests check that file modifications only happen during fix, not check
 """
 
-
 from __future__ import annotations
 
 import sys

@@ -48,7 +48,6 @@
     - Tests verify has_files() gating logic
 """
 
-
 from __future__ import annotations
 
 import argparse

@@ -7,7 +7,6 @@ fixer.
 NOTE: This file is INTENTIONALLY non-conformant. Do not fix manually.
 """
 
-
 from __future__ import annotations
 
 

@@ -3,7 +3,6 @@
 This file intentionally contains violations to test ruff detection.
 """
 
-
 from __future__ import annotations
 
 # F841: local variable assigned but never used

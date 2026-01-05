@@ -3,7 +3,6 @@
 This file intentionally contains formatting violations to test black detection.
 """
 
-
 from __future__ import annotations
 
 # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
