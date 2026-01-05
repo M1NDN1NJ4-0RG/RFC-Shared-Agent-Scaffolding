@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=too-many-lines
 """Unit tests for bootstrap-repo-lint-toolchain.sh script.
 
 This module provides comprehensive unit tests for the repo-lint toolchain
@@ -862,6 +863,186 @@ def main():
         self.assertEqual(result1.returncode, result2.returncode)
         # Second run should detect existing venv
         self.assertIn("already exists", result2.stdout.lower())
+
+
+class TestActionlintInstallation(unittest.TestCase):
+    """Test actionlint installation as part of required toolchain.
+
+    Tests that actionlint is installed automatically, is idempotent,
+    and is properly integrated into the bootstrap process.
+    """
+
+    def setUp(self):
+        """Set up test environment."""
+        self.test_dir = tempfile.mkdtemp(prefix="bootstrap_actionlint_test_")
+        self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
+
+    def tearDown(self):
+        """Clean up temporary test directory."""
+        if os.path.exists(self.test_dir):
+            shutil.rmtree(self.test_dir)
+
+    def _setup_mock_repo(self, repo_root):
+        """Create a minimal mock repository.
+
+        :param repo_root: Path to repository root directory.
+        """
+        repo_root.mkdir(parents=True, exist_ok=True)
+        (repo_root / ".git").mkdir()
+        (repo_root / "pyproject.toml").write_text(
+            """[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repo_lint"
+version = "0.1.0"
+dependencies = ["PyYAML>=6.0", "click>=8.0", "rich>=10.0", "rich-click>=1.6.0"]
+
+[project.scripts]
+repo-lint = "repo_lint.cli:main"
+"""
+        )
+        pkg_dir = repo_root / "repo_lint"
+        pkg_dir.mkdir()
+        (pkg_dir / "__init__.py").write_text("")
+        (pkg_dir / "cli.py").write_text(
+            """import sys
+def main():
+    if "--help" in sys.argv:
+        print("Usage: repo-lint")
+        sys.exit(0)
+    if "check" in sys.argv:
+        sys.exit(0)
+"""
+        )
+
+    def test_actionlint_installation_attempted(self):
+        """Test that actionlint installation is attempted as part of bootstrap."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=180,
+        )
+
+        # Check that actionlint installation was attempted
+        self.assertIn("Installing actionlint", result.stdout)
+        # Should mention it's a GitHub Actions workflow linter
+        self.assertIn("GitHub Actions", result.stdout)
+
+    def test_actionlint_in_summary(self):
+        """Test that actionlint appears in the bootstrap success summary."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=180,
+        )
+
+        # Check that actionlint appears in summary
+        self.assertIn("actionlint", result.stdout)
+        # Check for success summary section
+        if result.returncode == 0:
+            self.assertIn("Summary:", result.stdout)
+
+    def test_actionlint_idempotency(self):
+        """Test that actionlint installation is idempotent when already present."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        # Create a mock actionlint binary in a temp bin directory
+        temp_bin = Path(self.test_dir) / "bin"
+        temp_bin.mkdir()
+        mock_actionlint = temp_bin / "actionlint"
+        mock_actionlint.write_text(
+            """#!/bin/bash
+echo "v1.7.10"
+"""
+        )
+        mock_actionlint.chmod(0o755)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap with PATH modified to include mock actionlint
+        env = os.environ.copy()
+        env["PATH"] = f"{temp_bin}:{env.get('PATH', '')}"
+
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=180,
+            env=env,
+        )
+
+        # Should detect existing actionlint
+        self.assertIn("actionlint already installed", result.stdout)
+
+    def test_actionlint_phase_ordering(self):
+        """Test that actionlint is installed in the correct phase (Phase 2.3)."""
+        repo_root = Path(self.test_dir) / "test_repo"
+        self._setup_mock_repo(repo_root)
+
+        script_copy = repo_root / "bootstrap.sh"
+        shutil.copy(self.script_path, script_copy)
+        script_copy.chmod(0o755)
+
+        # Run bootstrap
+        result = subprocess.run(
+            ["bash", str(script_copy)],
+            capture_output=True,
+            text=True,
+            cwd=str(repo_root),
+            timeout=180,
+        )
+
+        # Check phase structure
+        self.assertIn("PHASE 2", result.stdout)
+        # actionlint should come after Python tools
+        python_pos = result.stdout.find("Installing Python toolchain")
+        actionlint_pos = result.stdout.find("Installing actionlint")
+        if python_pos != -1 and actionlint_pos != -1:
+            self.assertLess(
+                python_pos,
+                actionlint_pos,
+                "actionlint should be installed after Python toolchain",
+            )
+
+    def test_actionlint_exit_code_20_documented(self):
+        """Test that exit code 20 is used for actionlint installation failure.
+
+        This is a documentation test to ensure the exit code contract is clear.
+        """
+        # This test validates the documented exit code
+        # Actual failure testing would require mocking Go installation failure
+        # which is complex in integration tests
+
+        # Read the script to verify exit code 20 is used for actionlint failures
+        script_content = self.script_path.read_text()
+        self.assertIn("exit 20", script_content)
+        self.assertIn("actionlint", script_content)
 
 
 if __name__ == "__main__":
