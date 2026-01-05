@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access
+
 """Comprehensive unit tests for Phase 2.7 features.
+
+from __future__ import annotations
+
 
 :Purpose:
     Validates all Phase 2.7 functionality:

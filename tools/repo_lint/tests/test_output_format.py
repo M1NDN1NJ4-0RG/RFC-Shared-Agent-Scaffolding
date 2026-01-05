@@ -1,54 +1,28 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
-"""Unit tests for deterministic output format.
+
+"""Tests for Output Format.
 
 :Purpose:
-    Validates Phase 2.5 Rich UI output format stability:
-    - Rich table output format is stable and deterministic
-    - Violation reporting format is consistent (Rich tables and panels)
-    - Summary format is consistent (Rich panels)
-    - CI mode output is deterministic
-
-:Test Coverage:
-    - report_results() produces deterministic output for violations
-    - report_results() produces deterministic summary format
-    - Violation objects have stable string representation
-    - Summary counts are accurate
-    - Output does not include unstable fields (timestamps, random data)
-    - CI mode ensures deterministic rendering
-
-:Usage:
-    Run tests from repository root::
-
-        python3 -m pytest tools/repo_lint/tests/test_output_format.py
-        # or
-        python3 tools/repo_lint/tests/test_output_format.py
+    Unit tests for Output Format functionality.
 
 :Environment Variables:
-    None. Tests are self-contained with fixtures.
-
-:Exit Codes:
-    0
-        All tests passed
-    1
-        One or more tests failed
+    None directly used. Tests may set environment variables temporarily via patching.
 
 :Examples:
     Run all tests::
 
-        python3 -m pytest tools/repo_lint/tests/test_output_format.py -v
+        python3 -m pytest test_output_format.py -v
 
-    Run specific test::
-
-        python3 -m pytest tools/repo_lint/tests/test_output_format.py::TestOutputFormat::test_violation_format_stable -v
-
-:Notes:
-    - Tests use fixtures to ensure deterministic output
-    - Tests verify output format stability over time
-    - Tests ensure no random/unstable data in output
-    - Tests use CI mode to ensure deterministic Rich table rendering
-    - Updated for Phase 2.5 Rich UI migration
+:Exit Codes:
+    Uses pytest exit codes:
+    - 0: All tests passed
+    - 1: Tests failed
+    - 2: Test execution error
 """
+
+from __future__ import annotations
+
 
 import io
 import sys

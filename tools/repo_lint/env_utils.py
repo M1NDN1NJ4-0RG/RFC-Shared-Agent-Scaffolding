@@ -28,6 +28,16 @@
     - powershell: POWERSHELL_VERSION or process name (pwsh/powershell)
     - cmd: Windows CMD (COMSPEC)
 
+:Environment Variables:
+    - BASH_VERSION: Set by bash shell
+    - ZSH_VERSION: Set by zsh shell
+    - FISH_VERSION: Set by fish shell
+    - PSModulePath: Set by PowerShell
+    - COMSPEC: Set by Windows CMD
+    - SHELL: Shell executable path (Unix-like systems)
+    - XDG_CONFIG_HOME: User config directory (Unix-like systems)
+    - APPDATA: Application data directory (Windows)
+
 :Examples:
     Resolve venv with precedence::
 
@@ -43,7 +53,14 @@
 
         from tools.repo_lint.env_utils import generate_shell_snippet
         snippet = generate_shell_snippet(venv_path, shell="bash")
+
+:Exit Codes:
+    Not applicable - utility module returns values or raises exceptions:
+    - 0: Not applicable (functions return values)
+    - 1: Not applicable (functions raise RuntimeError or ValueError on errors)
 """
+
+from __future__ import annotations
 
 import os
 import platform
@@ -52,11 +69,7 @@ from pathlib import Path
 from typing import Optional, Tuple
 
 
-def temporary_test_function():
-    """Temporary test function with bad formatting."""
-    x = 1 + 2 + 3
-    y = 4 + 5 + 6
-    return x + y
+def resolve_venv(explicit_venv: Optional[Path] = None) -> Path:
     """Resolve virtual environment path using precedence rules.
 
     Precedence:

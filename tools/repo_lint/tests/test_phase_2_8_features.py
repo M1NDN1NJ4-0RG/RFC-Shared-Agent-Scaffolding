@@ -30,6 +30,8 @@ This module tests the environment management commands added in Phase 2.8:
     - 2: Test execution error
 """
 
+from __future__ import annotations
+
 import json
 import subprocess
 import tempfile

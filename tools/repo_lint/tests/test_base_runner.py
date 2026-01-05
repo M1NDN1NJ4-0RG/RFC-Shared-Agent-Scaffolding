@@ -1,46 +1,27 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
-"""Unit tests for base runner functions.
+
+"""Tests for Base Runner.
 
 :Purpose:
-    Validates base.py functionality including:
-    - Repository root detection with and without .git
-    - Fallback behavior for non-Git directories
-
-:Test Coverage:
-    - find_repo_root() finds .git when present
-    - find_repo_root() falls back to cwd when .git not found
-    - find_repo_root() walks up directory tree correctly
-
-:Usage:
-    Run tests from repository root::
-
-        python3 -m pytest tools/repo_lint/tests/test_base_runner.py
-        # or
-        python3 tools/repo_lint/tests/test_base_runner.py
+    Unit tests for Base Runner functionality.
 
 :Environment Variables:
-    None. Tests are self-contained with mocked Path operations.
-
-:Exit Codes:
-    0
-        All tests passed
-    1
-        One or more tests failed
+    None directly used. Tests may set environment variables temporarily via patching.
 
 :Examples:
     Run all tests::
 
-        python3 -m pytest tools/repo_lint/tests/test_base_runner.py -v
+        python3 -m pytest test_base_runner.py -v
 
-    Run specific test::
-
-        python3 -m pytest tools/repo_lint/tests/test_base_runner.py::TestFindRepoRoot::test_finds_git_directory -v
-
-:Notes:
-    - Tests use unittest.mock to avoid filesystem operations
-    - Tests verify fallback behavior for non-Git directories
+:Exit Codes:
+    Uses pytest exit codes:
+    - 0: All tests passed
+    - 1: Tests failed
+    - 2: Test execution error
 """
+
+from __future__ import annotations
 
 import sys
 import unittest

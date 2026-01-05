@@ -1,5 +1,9 @@
 # noqa: EXITCODES
+
 """Unsafe fixers for repo_lint.
+
+from __future__ import annotations
+
 
 :Purpose:
     Implements unsafe fixers that can modify code behavior or semantics.

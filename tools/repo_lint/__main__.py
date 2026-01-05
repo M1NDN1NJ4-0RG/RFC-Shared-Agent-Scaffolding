@@ -22,6 +22,8 @@
     - 3: Internal error
 """
 
+from __future__ import annotations
+
 from tools.repo_lint.cli import main
 
 if __name__ == "__main__":

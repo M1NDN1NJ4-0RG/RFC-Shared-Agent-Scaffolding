@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # pylint: disable=redefined-outer-name  # Expected for pytest fixtures
+
 """Tests for Rust language runner.
+
+from __future__ import annotations
+
 
 :Purpose:
     Validate RustRunner functionality including file detection, tool checking,

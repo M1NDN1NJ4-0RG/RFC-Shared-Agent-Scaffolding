@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
+
 """Unit tests for Python runner (Ruff check/fix behavior).
+
+from __future__ import annotations
+
 
 :Purpose:
     Validates that the Python runner correctly implements Phase 0 Item 0.9.1:

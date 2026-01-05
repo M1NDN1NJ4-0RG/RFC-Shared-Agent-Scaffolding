@@ -1,4 +1,3 @@
-# noqa: EXITCODES
 """Forensics and artifact generation for unsafe fixes.
 
 :Purpose:
@@ -37,6 +36,10 @@
     - docs/contributing/ai-constraints.md - AI safety constraints
     - Phase 7 Item 2 (Forensics) requirements
 """
+
+# noqa: EXITCODES
+
+from __future__ import annotations
 
 import difflib
 from datetime import datetime

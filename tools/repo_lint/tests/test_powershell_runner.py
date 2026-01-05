@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
+
 """Unit tests for PowerShell runner (PSScriptAnalyzer, docstring validation).
+
+from __future__ import annotations
+
 
 :Purpose:
     Validates that the PowerShell runner correctly integrates with PSScriptAnalyzer

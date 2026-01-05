@@ -1,49 +1,28 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
-"""Unit tests for Perl runner (Perl::Critic, docstring validation).
+
+"""Tests for Perl Runner.
 
 :Purpose:
-    Validates that the Perl runner correctly integrates with Perl::Critic
-    and docstring validation.
-
-:Test Coverage:
-    - _get_perl_files() returns file list or empty list
-    - _run_perlcritic() runs with correct arguments
-    - Perl::Critic uses --verbose 8 flag
-    - _run_docstring_validation() calls validator with correct args
-    - Empty file lists are handled correctly
-
-:Usage:
-    Run tests from repository root::
-
-        python3 -m pytest tools/repo_lint/tests/test_perl_runner.py
-        # or
-        python3 tools/repo_lint/tests/test_perl_runner.py
+    Unit tests for Perl Runner functionality.
 
 :Environment Variables:
-    None. Tests are self-contained with mocked subprocess calls.
-
-:Exit Codes:
-    0
-        All tests passed
-    1
-        One or more tests failed
+    None directly used. Tests may set environment variables temporarily via patching.
 
 :Examples:
     Run all tests::
 
-        python3 -m pytest tools/repo_lint/tests/test_perl_runner.py -v
+        python3 -m pytest test_perl_runner.py -v
 
-    Run specific test::
-
-        python3 -m pytest tools/repo_lint/tests/test_perl_runner.py::TestPerlRunner \
-            ::test_perlcritic_uses_verbose_flag -v
-
-:Notes:
-    - Tests use unittest.mock to avoid executing actual linters
-    - Tests verify command-line arguments passed to subprocess
-    - Tests verify exit code handling (0 = success, 2 = violations)
+:Exit Codes:
+    Uses pytest exit codes:
+    - 0: All tests passed
+    - 1: Tests failed
+    - 2: Test execution error
 """
+
+from __future__ import annotations
+
 
 import sys
 import unittest

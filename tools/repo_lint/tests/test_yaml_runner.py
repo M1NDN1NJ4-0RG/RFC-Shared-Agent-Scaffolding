@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
+
 """Unit tests for YAML runner (yamllint).
+
+from __future__ import annotations
+
 
 :Purpose:
     Validates that the YAML runner correctly integrates with yamllint.

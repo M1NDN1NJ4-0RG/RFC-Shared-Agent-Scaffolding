@@ -27,6 +27,8 @@
         reporter.render_results_table(results)
 """
 
+from __future__ import annotations
+
 import sys
 from typing import Any, Dict, List, Optional
 

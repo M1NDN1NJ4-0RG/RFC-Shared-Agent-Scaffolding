@@ -26,7 +26,10 @@
     - 1: Violations found (LintResult.passed = False)
 """
 
+from __future__ import annotations
+
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -35,6 +38,43 @@ from typing import List, Optional
 from tools.repo_lint.common import LintResult, Violation
 from tools.repo_lint.policy import is_category_allowed
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
+
+# Constants for unified diff parsing
+_DIFF_FILE_PREFIX = "---"
+_DEV_NULL = "---/dev/null"
+
+# Regex for parsing unified diff hunk headers: @@ -52,13 +52,13 @@
+_HUNK_RE = re.compile(r"^@@\s+-(\d+)(?:,\d+)?\s+\+(\d+)(?:,\d+)?\s+@@")
+
+
+def _extract_filename_from_diff_header(line: str) -> str:
+    """Extract the filename (basename only) from a unified diff file header line.
+
+    :param line: Diff header line (e.g., "--- tools/repo_lint/env_utils.py")
+    :returns: Basename of the file (e.g., "env_utils.py")
+
+    Example input: '--- tools/repo_lint/env_utils.py\t(revision xyz)'
+    """
+    file_path = line.split(None, 1)[1].split("\t", 1)[0].strip()
+    return Path(file_path).name
+
+
+def _extract_old_start_line_from_hunk(line: str) -> Optional[int]:
+    """Extract the OLD-file starting line number from a unified diff hunk header.
+
+    :param line: Hunk header line (e.g., "@@ -52,13 +52,13 @@")
+    :returns: Old file starting line number, or None if parse fails
+
+    Example input: '@@ -52,13 +52,13 @@'
+    Returns: 52
+    """
+    match = _HUNK_RE.match(line)
+    if not match:
+        return None
+    try:
+        return int(match.group(1))
+    except ValueError:
+        return None
 
 
 class PythonRunner(Runner):
@@ -228,61 +268,73 @@ class PythonRunner(Runner):
 
         # Parse Black output to extract files and line numbers
         violations = []
-        if result.stdout or result.stderr:
-            output = result.stdout + result.stderr
-
-            # Track file info: filename -> first_line
-            file_violations = {}
-            current_file = None
-
-            for line in output.splitlines():
-                # Match diff file headers like: "--- tools/repo_lint/env_utils.py"
-                if line.startswith("---") and not line.startswith("---/dev/null"):
-                    # Extract filename from "--- path/to/file.py"
-                    file_path = line.split(None, 1)[1].split("\t")[0].strip()
-                    current_file = Path(file_path).name  # Just the filename
-                    if current_file not in file_violations:
-                        file_violations[current_file] = None
-
-                # Match diff headers like: "@@ -52,13 +52,13 @@"
-                elif line.startswith("@@") and current_file:
-                    if file_violations[current_file] is None:  # Only capture first line
-                        # Extract the first line number from the diff header
-                        parts = line.split()
-                        if len(parts) >= 2:
-                            old_part = parts[1]
-                            if old_part.startswith("-"):
-                                line_info = old_part[1:]
-                                line_num_str = line_info.split(",")[0]
-                                try:
-                                    file_violations[current_file] = int(line_num_str)
-                                except ValueError:
-                                    pass
-
-            # Create violations from collected file info
-            for file_name, line_num in file_violations.items():
-                violations.append(
-                    Violation(
-                        tool="black",
-                        file=file_name,
-                        line=line_num,
-                        message="Code formatting does not match Black style.",
-                    )
+        if not (result.stdout or result.stderr):
+            # No output but non-zero exit - should not happen, but handle gracefully
+            violations.append(
+                Violation(
+                    tool="black",
+                    file=".",
+                    line=None,
+                    message=(
+                        "Code formatting does not match Black style. "
+                        "Run 'python3 -m tools.repo_lint fix' to auto-format."
+                    ),
                 )
+            )
+            return LintResult(tool="black", passed=False, violations=violations)
 
-            # Fallback if no files found
-            if not violations:
-                violations.append(
-                    Violation(
-                        tool="black",
-                        file=".",
-                        line=None,
-                        message=(
-                            "Code formatting does not match Black style. "
-                            "Run 'python3 -m tools.repo_lint fix' to auto-format."
-                        ),
-                    )
+        # Parse diff output line by line
+        output = (result.stdout or "") + (result.stderr or "")
+        file_violations: dict[str, Optional[int]] = {}
+        current_file: Optional[str] = None
+
+        for line in output.splitlines():
+            # File header: "--- path/to/file"
+            if line.startswith(_DIFF_FILE_PREFIX):
+                if line.startswith(_DEV_NULL):
+                    current_file = None
+                    continue
+
+                current_file = _extract_filename_from_diff_header(line)
+                file_violations.setdefault(current_file, None)
+                continue
+
+            # Hunk header: "@@ -old,+new @@"
+            if not line.startswith("@@"):
+                continue
+            if not current_file:
+                continue
+            if file_violations.get(current_file) is not None:
+                continue  # Already captured first hunk for this file
+
+            first_line = _extract_old_start_line_from_hunk(line)
+            if first_line is not None:
+                file_violations[current_file] = first_line
+
+        # Create violations from collected file info
+        for file_name, line_num in file_violations.items():
+            violations.append(
+                Violation(
+                    tool="black",
+                    file=file_name,
+                    line=line_num,
+                    message="Code formatting does not match Black style.",
                 )
+            )
+
+        # Fallback if no files found
+        if not violations:
+            violations.append(
+                Violation(
+                    tool="black",
+                    file=".",
+                    line=None,
+                    message=(
+                        "Code formatting does not match Black style. "
+                        "Run 'python3 -m tools.repo_lint fix' to auto-format."
+                    ),
+                )
+            )
 
         return LintResult(tool="black", passed=False, violations=violations)
 

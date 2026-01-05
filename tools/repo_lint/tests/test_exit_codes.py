@@ -1,57 +1,27 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
-"""Unit tests for exit code behavior.
+
+"""Tests for Exit Codes.
 
 :Purpose:
-    Validates Phase 7 Item 7.1.2 - Test exit codes:
-    - ExitCode.SUCCESS (0) when all checks pass
-    - ExitCode.VIOLATIONS (1) when violations found
-    - ExitCode.MISSING_TOOLS (2) in CI mode when tools missing
-    - ExitCode.INTERNAL_ERROR (3) for internal errors
-    - ExitCode.UNSAFE_VIOLATION (4) for unsafe mode policy violations
-
-:Test Coverage:
-    - cmd_check() returns SUCCESS when no violations
-    - cmd_check() returns VIOLATIONS when violations found
-    - cmd_check() returns MISSING_TOOLS in CI mode when tools missing
-    - cmd_fix() returns SUCCESS when fixes applied successfully
-    - cmd_fix() returns VIOLATIONS when violations remain after fix
-    - cmd_fix() returns UNSAFE_VIOLATION when --unsafe used in CI
-    - cmd_fix() returns UNSAFE_VIOLATION when --unsafe without --yes-i-know
-    - cmd_fix() returns UNSAFE_VIOLATION when --unsafe with non-Python language
-    - cmd_install() returns SUCCESS on successful install
-    - cmd_install() returns INTERNAL_ERROR on install failure
-
-:Usage:
-    Run tests from repository root::
-
-        python3 -m pytest tools/repo_lint/tests/test_exit_codes.py
-        # or
-        python3 tools/repo_lint/tests/test_exit_codes.py
+    Unit tests for Exit Codes functionality.
 
 :Environment Variables:
-    None. Tests are self-contained with mocked components.
-
-:Exit Codes:
-    0
-        All tests passed
-    1
-        One or more tests failed
+    None directly used. Tests may set environment variables temporarily via patching.
 
 :Examples:
     Run all tests::
 
-        python3 -m pytest tools/repo_lint/tests/test_exit_codes.py -v
+        python3 -m pytest test_exit_codes.py -v
 
-    Run specific test::
-
-        python3 -m pytest tools/repo_lint/tests/test_exit_codes.py::TestExitCodes::test_success_when_no_violations -v
-
-:Notes:
-    - Tests use unittest.mock to avoid executing actual linters
-    - Tests verify correct exit codes for all scenarios
-    - Tests cover both local and CI modes
+:Exit Codes:
+    Uses pytest exit codes:
+    - 0: All tests passed
+    - 1: Tests failed
+    - 2: Test execution error
 """
+
+from __future__ import annotations
 
 import argparse
 import os

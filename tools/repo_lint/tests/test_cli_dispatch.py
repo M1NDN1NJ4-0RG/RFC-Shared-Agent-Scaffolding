@@ -1,52 +1,27 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
-"""Unit tests for CLI dispatch logic and runner selection.
+
+"""Tests for CLI Dispatch.
 
 :Purpose:
-    Validates Phase 7 Item 7.1.1 - Test runner dispatch logic:
-    - --only flag filters to correct runner
-    - Runners skip when no files present
-    - All runners execute when files present and no --only flag
-
-:Test Coverage:
-    - _run_all_runners() filters runners based on --only flag
-    - _run_all_runners() skips runners when has_files() returns False
-    - _run_all_runners() executes all runners when files present
-    - Unknown language for --only flag returns INTERNAL_ERROR
-    - No files for specified --only language returns INTERNAL_ERROR
-
-:Usage:
-    Run tests from repository root::
-
-        python3 -m pytest tools/repo_lint/tests/test_cli_dispatch.py
-        # or
-        python3 tools/repo_lint/tests/test_cli_dispatch.py
+    Unit tests for CLI Dispatch functionality.
 
 :Environment Variables:
-    None. Tests are self-contained with mocked runners.
-
-:Exit Codes:
-    0
-        All tests passed
-    1
-        One or more tests failed
+    None directly used. Tests may set environment variables temporarily via patching.
 
 :Examples:
     Run all tests::
 
-        python3 -m pytest tools/repo_lint/tests/test_cli_dispatch.py -v
+        python3 -m pytest test_cli_dispatch.py -v
 
-    Run specific test::
-
-        python3 -m pytest \\
-            tools/repo_lint/tests/test_cli_dispatch.py::TestRunnerDispatch:: \
-                test_only_flag_filters_runners -v
-
-:Notes:
-    - Tests use unittest.mock to avoid executing actual runners
-    - Tests verify correct runners are invoked based on --only flag
-    - Tests verify has_files() gating logic
+:Exit Codes:
+    Uses pytest exit codes:
+    - 0: All tests passed
+    - 1: Tests failed
+    - 2: Test execution error
 """
+
+from __future__ import annotations
 
 import argparse
 import sys

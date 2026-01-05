@@ -31,6 +31,8 @@
     - Previously returned exit code 2 (MISSING_TOOLS) which was misleading
 """  # noqa: EXITCODES
 
+from __future__ import annotations
+
 import os
 import shutil
 import tempfile

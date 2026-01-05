@@ -1,50 +1,28 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position  # Test file needs special setup
-"""Integration tests for repo_lint CLI.
+
+"""Tests for Integration Tests.
 
 :Purpose:
-    Validates Phase 1 Item 1.6 - Integration tests for error conditions:
-    - Missing tools scenarios
-    - Policy errors
-    - Unsafe mode violations
-    - Full CLI argument parsing and dispatch
-
-:Test Coverage:
-    - Full CLI invocation with missing tools returns correct exit code
-    - Full CLI invocation with policy errors returns correct exit code
-    - Full CLI invocation with unsafe mode violations returns correct exit code
-    - Argument parsing handles all flags correctly
-
-:Usage:
-    Run tests from repository root::
-
-        python3 -m pytest tools/repo_lint/tests/test_integration.py
-        # or
-        python3 tools/repo_lint/tests/test_integration.py
+    Unit tests for Integration Tests functionality.
 
 :Environment Variables:
-    None. Tests are self-contained with mocked components where needed.
-
-:Exit Codes:
-    0
-        All tests passed
-    1
-        One or more tests failed
+    None directly used. Tests may set environment variables temporarily via patching.
 
 :Examples:
     Run all tests::
 
-        python3 -m pytest tools/repo_lint/tests/test_integration.py -v
+        python3 -m pytest test_integration.py -v
 
-    Run specific test::
-
-        python3 -m pytest tools/repo_lint/tests/test_integration.py::TestIntegration::test_check_missing_tools_ci -v
-
-:Notes:
-    - Tests simulate full CLI invocation (argument parsing + command dispatch)
-    - Tests verify integration between CLI parsing and command handlers
-    - Complements unit tests in test_exit_codes.py
+:Exit Codes:
+    Uses pytest exit codes:
+    - 0: All tests passed
+    - 1: Tests failed
+    - 2: Test execution error
 """
+
+from __future__ import annotations
+
 
 import os
 import sys

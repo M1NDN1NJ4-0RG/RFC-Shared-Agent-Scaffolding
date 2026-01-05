@@ -19,3 +19,5 @@
     - 0: Success (when functions return True)
     - 1: Error (when functions return False)
 """
+
+from __future__ import annotations

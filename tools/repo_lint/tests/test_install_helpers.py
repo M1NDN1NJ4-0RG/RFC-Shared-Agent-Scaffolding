@@ -1,51 +1,27 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position,protected-access,unused-variable  # Test file needs special setup
-"""Unit tests for install module (install/cleanup functionality).
+
+"""Tests for Install Helpers.
 
 :Purpose:
-    Validates install_helpers.py functionality including:
-    - Virtual environment creation
-    - Python tool installation with pinned versions
-    - Cleanup of repo-local installations
-    - Error handling and verbose output
-
-:Test Coverage:
-    - create_venv() creates venv and upgrades pip to pinned version
-    - install_python_tools() installs tools with correct versions
-    - cleanup_repo_local() removes only repo-local directories
-    - Error handling for failed installations
-    - Platform-specific path handling (Windows vs Unix)
-
-:Usage:
-    Run tests from repository root::
-
-        python3 -m pytest tools/repo_lint/tests/test_install_helpers.py
-        # or
-        python3 tools/repo_lint/tests/test_install_helpers.py
+    Unit tests for Install Helpers functionality.
 
 :Environment Variables:
-    None. Tests are self-contained with mocked subprocess calls.
-
-:Exit Codes:
-    0
-        All tests passed
-    1
-        One or more tests failed
+    None directly used. Tests may set environment variables temporarily via patching.
 
 :Examples:
     Run all tests::
 
-        python3 -m pytest tools/repo_lint/tests/test_install_helpers.py -v
+        python3 -m pytest test_install_helpers.py -v
 
-    Run specific test::
-
-        python3 -m pytest tools/repo_lint/tests/test_install_helpers.py::TestInstallHelpers::test_create_venv_success -v
-
-:Notes:
-    - Tests use unittest.mock to avoid filesystem operations
-    - Tests verify subprocess arguments and error handling
-    - Tests validate pip version pinning per Phase 4 requirements
+:Exit Codes:
+    Uses pytest exit codes:
+    - 0: All tests passed
+    - 1: Tests failed
+    - 2: Test execution error
 """
+
+from __future__ import annotations
 
 import sys
 import unittest
