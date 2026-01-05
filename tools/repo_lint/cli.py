@@ -8,6 +8,12 @@
     - check: Run linting checks without modifying files
     - fix: Apply automatic fixes where possible (formatters only)
     - install: Install/bootstrap required linting tools (local only)
+    - doctor: Diagnose installation and configuration
+    - list-langs: List supported languages
+    - list-tools: List available linting tools
+    - tool-help: Show help for a specific tool
+    - dump-config: Print fully-resolved configuration
+    - validate-config: Validate a YAML configuration file
 
 :Features:
     - Rich-Click formatted help output with option grouping
@@ -52,11 +58,20 @@
 
         # For Fish
         _REPO_LINT_COMPLETE=fish_source repo-lint > ~/.config/fish/completions/repo-lint.fish
+
+:Notes:
+    This module contains multiple CLI commands and naturally exceeds 1000 lines.
+    The too-many-lines pylint warning is disabled as splitting this file would
+    reduce cohesion of the CLI interface.
 """
 
+# pylint: disable=too-many-lines
+
 import sys
+from pathlib import Path
 
 import rich_click as click
+import yaml
 
 from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
 from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
@@ -153,6 +168,12 @@ click.rich_click.OPTION_GROUPS = {
         {
             "name": "Output",
             "options": ["--ci", "--format", "--report"],
+        },
+    ],
+    "repo-lint dump-config": [
+        {
+            "name": "Output",
+            "options": ["--format", "--config"],
         },
     ],
 }
@@ -969,6 +990,173 @@ def tool_help(tool):
         sys.exit(1)
     except Exception as e:
         print(f"❌ Error loading tool registry: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+# Dump Config command
+@cli.command("dump-config")
+@click.option(
+    "--format",
+    "output_format",
+    type=click.Choice(["yaml", "json"], case_sensitive=False),
+    default="yaml",
+    help="Output format (yaml or json)",
+)
+@click.option(
+    "--config",
+    "config_dir",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    help="Custom config directory to load from",
+)
+def dump_config(output_format, config_dir):
+    """Print fully-resolved configuration.
+
+    \b
+    WHAT THIS DOES:
+    Displays the complete resolved configuration from all YAML config files,
+    including:
+    - Linting rules (tools, versions, settings)
+    - Naming rules (file naming conventions)
+    - Docstring rules (validation requirements)
+    - File patterns (in-scope and exclusions)
+    - Config source (where configs are loaded from)
+
+    \b
+    USE CASES:
+    - Debug configuration issues
+    - Verify custom configs are loaded correctly
+    - Export configs for documentation
+    - Understand default values and precedence
+
+    \b
+    EXAMPLES:
+      # Show default config in YAML format
+      $ repo-lint dump-config
+
+      # Show config in JSON format
+      $ repo-lint dump-config --format json
+
+      # Show config from custom directory
+      $ repo-lint dump-config --config /path/to/configs
+
+    \b
+    CONFIG PRECEDENCE:
+    1. --config flag (explicit path)
+    2. REPO_LINT_CONFIG_DIR environment variable
+    3. Default: <repo_root>/conformance/repo-lint
+
+    :param output_format: Output format (yaml or json)
+    :param config_dir: Custom config directory path
+    :returns: Exit code 0 on success, 1 on error
+    """
+    import json
+
+    from tools.repo_lint.yaml_loader import get_all_configs, get_config_source, set_config_directory
+
+    try:
+        # Set custom config directory if provided
+        if config_dir:
+            set_config_directory(config_dir)
+
+        # Get config source and all configs
+        config_source = get_config_source()
+        all_configs = get_all_configs()
+
+        # Prepare output
+        output = {"config_source": config_source, "configs": all_configs}
+
+        # Print in requested format
+        if output_format == "json":
+            print(json.dumps(output, indent=2))
+        else:  # yaml
+            print(f"# Config source: {config_source}")
+            print("---")
+            yaml.dump(all_configs, sys.stdout, default_flow_style=False, sort_keys=False)
+            print("...")
+
+        sys.exit(0)
+    except Exception as e:
+        print(f"❌ Error loading configuration: {e}", file=sys.stderr)
+        if _is_verbose_enabled():
+            import traceback
+
+            traceback.print_exc()
+        sys.exit(1)
+
+
+# Validate Config command
+@cli.command("validate-config")
+@click.argument(
+    "config_path",
+    type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path),
+)
+def validate_config(config_path):
+    """Validate a YAML configuration file.
+
+    \b
+    WHAT THIS DOES:
+    Validates a repo-lint YAML configuration file without running any checks.
+    Checks for:
+    - Required YAML document markers (--- and ...)
+    - Required fields (config_type, version, languages)
+    - Unknown keys (strict validation)
+    - Semantic version format
+    - Config-type-specific schema requirements
+
+    \b
+    USE CASES:
+    - Pre-flight validation before committing config changes
+    - CI/CD config validation gates
+    - Verify custom configs before using with --config
+    - Debug config syntax/structure errors
+
+    \b
+    EXAMPLES:
+      # Validate linting rules config
+      $ repo-lint validate-config conformance/repo-lint/repo-lint-linting-rules.yaml
+
+      # Validate custom config file
+      $ repo-lint validate-config /path/to/custom-config.yaml
+
+      # Use in CI (exits 0 if valid, 1 if invalid)
+      $ repo-lint validate-config my-config.yaml && echo "Config valid!"
+
+    \b
+    EXIT CODES:
+      0 = Configuration valid
+      1 = Configuration invalid (validation errors printed)
+
+    :param config_path: Path to YAML config file to validate
+    :returns: Exit code 0 if valid, 1 if invalid
+    """
+    from tools.repo_lint.config_validator import ConfigValidationError, validate_config_file
+
+    try:
+        # Load YAML to get config_type
+        with open(config_path, encoding="utf-8") as f:
+            config = yaml.safe_load(f)
+
+        config_type = config.get("config_type", "unknown")
+
+        # Validate config file
+        validate_config_file(config_path, config_type)
+
+        # Success
+        print(f"✅ Configuration valid: {config_path}")
+        print(f"   Config type: {config_type}")
+        print(f"   Version: {config.get('version', 'N/A')}")
+        sys.exit(0)
+
+    except ConfigValidationError as e:
+        print(f"❌ Configuration validation failed: {config_path}", file=sys.stderr)
+        print(f"   {e}", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"❌ Error validating configuration: {e}", file=sys.stderr)
+        if _is_verbose_enabled():
+            import traceback
+
+            traceback.print_exc()
         sys.exit(1)
 
 
