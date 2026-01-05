@@ -154,7 +154,7 @@ def _escape_powershell_command(command: str) -> str:
 
     :param command: The command string to escape
     :returns: Escaped command safe for PowerShell -Command execution
-    
+
     :Notes:
         This provides basic protection against injection via PowerShell metacharacters.
         Users should still avoid passing untrusted input to the --command flag.
@@ -1764,7 +1764,7 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
         # Helper function for Fish shell quoting
         def _fish_shell_quote(text: str) -> str:
             """Minimal Fish-safe quoting using single quotes and split-quote pattern.
-            
+
             :param text: The text to quote for Fish shell
             :returns: Quoted string safe for Fish shell
             """
