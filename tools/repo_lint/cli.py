@@ -1763,29 +1763,33 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
 
         # Helper function for Fish shell quoting
         def _fish_shell_quote(text: str) -> str:
-            """Minimal Fish-safe quoting using single quotes and split-quote pattern.
+            r"""Minimal Fish-safe quoting using single quotes with Fish-style escaping.
+
+            In Fish, embedded single quotes inside a single-quoted string are escaped
+            by doubling them (''), and characters like $, `, and backslash are treated
+            literally inside single quotes.
 
             :param text: The text to quote for Fish shell
             :returns: Quoted string safe for Fish shell
             """
             if text == "":
                 return "''"
-            return "'" + text.replace("'", "'\\''") + "'"
+            # Fish escapes single quotes by doubling them inside a single-quoted string.
+            return "'" + text.replace("'", "''") + "'"
 
         if shell in ("bash", "zsh"):
             # Use shlex.quote() to prevent injection via activation_script path
             quoted_script = shlex.quote(str(activation_script))
             if command:
                 # Run single command:
-                # - keep the -c script constant (only sourcing the activation script and exec'ing "$@")
-                # - pass the user-provided command as separate arguments to avoid shell injection
-                command_args = shlex.split(command)
+                # - keep the -c script constant (only sourcing the activation script)
+                # - delegate full parsing and execution of the user command to the shell
+                # NOTE: User command is executed as-is to preserve shell semantics (globs,
+                #       redirections, pipelines). Users should not pass untrusted input here.
                 shell_cmd = [
                     shell,
                     "-c",
-                    f'source {quoted_script} && exec "$@"',
-                    "repo-lint-activate",
-                    *command_args,
+                    f"source {quoted_script} && {command}",
                 ]
             else:
                 # Interactive shell: source activation script, then exec a new interactive shell
@@ -1843,11 +1847,13 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                 # PowerShell command construction:
                 # - The activation script path is quoted to handle spaces/special chars
                 # - The user command is escaped to prevent injection via PowerShell metacharacters
+                # NOTE: PowerShell backtick escaping is complex inside double quotes.
+                #       We use single quotes for the entire command block to simplify escaping.
                 escaped_command = _escape_powershell_command(command)
                 shell_cmd.extend(
                     [
                         "-Command",
-                        f'. "{activation_script}"; {escaped_command}',
+                        f". '{activation_script}'; {escaped_command}",
                     ]
                 )
             else:
@@ -1871,11 +1877,12 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
             if command:
                 # CMD uses different quoting - the activation script path is already quoted.
                 # Escape the user-supplied command to avoid injection via CMD metacharacters.
+                # The escaped command is wrapped in quotes for robust handling of spaces.
                 escaped_command = _escape_cmd_argument(command)
                 shell_cmd = [
                     "cmd",
                     "/C",
-                    f'"{activation_script}" && {escaped_command}',
+                    f'"{activation_script}" && "{escaped_command}"',
                 ]
             else:
                 shell_cmd = ["cmd", "/K", str(activation_script)]

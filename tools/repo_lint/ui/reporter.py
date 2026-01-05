@@ -350,13 +350,14 @@ class Reporter:
                 violations_table.add_column("Line", justify="right")
                 violations_table.add_column("Message")
 
+                # Import PathLib once at the top of this section for efficiency
+                from pathlib import Path as PathLib
+
                 # Duplicate filename disambiguation: track basenames to detect duplicates
                 # If a basename appears multiple times, show relative path for those files
                 basename_counts: Dict[str, int] = {}
 
                 for violation in tool_violations:
-                    from pathlib import Path as PathLib
-
                     basename = PathLib(violation.file).name
                     basename_counts[basename] = basename_counts.get(basename, 0) + 1
 
@@ -376,8 +377,6 @@ class Reporter:
 
                     if show_files:
                         # Determine display name: basename if unique, relative path if duplicated
-                        from pathlib import Path as PathLib
-
                         basename = PathLib(violation.file).name
 
                         if basename_counts.get(basename, 0) > 1:
