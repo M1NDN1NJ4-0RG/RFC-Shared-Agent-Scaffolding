@@ -43,12 +43,26 @@ in the correct location, respecting shebangs, encoding cookies, and module docst
     2
         Invalid arguments or internal error
 
+:Environment Variables:
+    None. Script operates on current directory and repository structure.
+
+:Examples:
+    Check which files would be modified::
+
+        python3 scripts/add_future_annotations.py --check --verbose
+
+    Apply changes::
+
+        python3 scripts/add_future_annotations.py --apply
+
 :Notes:
     - Skips virtualenvs, build directories, and git internals
     - Preserves shebang lines, encoding cookies, and module docstrings
     - Never creates duplicate imports
     - Never reorders existing imports except to insert this one line
 """
+
+from __future__ import annotations
 
 import argparse
 import io
@@ -118,7 +132,6 @@ def find_insertion_point(content: str) -> Tuple[int, int]:
     tokens = list(tokenize.generate_tokens(io.StringIO(content).readline))
 
     # Track what we've seen
-    seen_shebang = False
     seen_encoding = False
     seen_docstring = False
     insert_line = 1
@@ -129,7 +142,6 @@ def find_insertion_point(content: str) -> Tuple[int, int]:
     for i, line in enumerate(lines, 1):
         stripped = line.strip()
         if i == 1 and stripped.startswith("#!"):
-            seen_shebang = True
             insert_line = i + 1
         elif not seen_encoding and stripped.startswith("#") and ("coding" in stripped or "encoding" in stripped):
             seen_encoding = True
@@ -198,7 +210,7 @@ def add_future_import(content: str) -> str:
     else:
         # Insert at the specified line
         # Check if there's already content at insert_line - 1
-        if insert_line <= len(lines) and insert_line > 1:
+        if 1 < insert_line <= len(lines):
             # Insert blank line before import if the previous line is not blank
             prev_line = lines[insert_line - 2] if insert_line > 1 else ""
             if prev_line.strip():

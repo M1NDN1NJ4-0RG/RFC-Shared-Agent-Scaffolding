@@ -77,7 +77,6 @@ This script verifies conformance with:
 - docs/rust-canonical-tool.md: Canonical contract specification
 """
 
-
 from __future__ import annotations
 
 import glob

@@ -91,7 +91,6 @@ The Rust binary implements the conformance contracts:
 - Releases: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases
 """
 
-
 from __future__ import annotations
 
 import os

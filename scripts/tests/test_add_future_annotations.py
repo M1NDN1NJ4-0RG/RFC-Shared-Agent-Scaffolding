@@ -43,6 +43,8 @@ insertion script, covering all edge cases and insertion scenarios.
     - Tests both --check and --apply modes
 """
 
+from __future__ import annotations
+
 import sys
 import tempfile
 import unittest
@@ -51,6 +53,7 @@ from pathlib import Path
 # Add parent directory to path to import the script module
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+# pylint: disable=wrong-import-position  # Must modify sys.path before import
 from add_future_annotations import (  # noqa: E402
     add_future_import,
     find_insertion_point,
@@ -120,37 +123,37 @@ class TestFindInsertionPoint(unittest.TestCase):
     def test_empty_file(self):
         """Empty file should insert at line 1."""
         content = ""
-        line, col = find_insertion_point(content)
+        line, _ = find_insertion_point(content)
         self.assertEqual(line, 1)
 
     def test_simple_file(self):
         """Simple file without headers should insert at line 1."""
         content = "import sys\n"
-        line, col = find_insertion_point(content)
+        line, _ = find_insertion_point(content)
         self.assertEqual(line, 1)
 
     def test_file_with_shebang(self):
         """File with shebang should insert after it."""
         content = "#!/usr/bin/env python3\nimport sys\n"
-        line, col = find_insertion_point(content)
+        line, _ = find_insertion_point(content)
         self.assertEqual(line, 2)
 
     def test_file_with_encoding(self):
         """File with encoding cookie should insert after it."""
         content = "# -*- coding: utf-8 -*-\nimport sys\n"
-        line, col = find_insertion_point(content)
+        line, _ = find_insertion_point(content)
         self.assertEqual(line, 2)
 
     def test_file_with_shebang_and_encoding(self):
         """File with both shebang and encoding should insert after both."""
         content = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\nimport sys\n"
-        line, col = find_insertion_point(content)
+        line, _ = find_insertion_point(content)
         self.assertEqual(line, 3)
 
     def test_file_with_docstring(self):
         """File with module docstring should insert after it."""
         content = '"""Module docstring."""\nimport sys\n'
-        line, col = find_insertion_point(content)
+        line, _ = find_insertion_point(content)
         self.assertGreater(line, 1)  # Should be after docstring
 
     def test_file_with_multiline_docstring(self):
@@ -161,13 +164,13 @@ This is a longer docstring.
 """
 import sys
 '''
-        line, col = find_insertion_point(content)
+        line, _ = find_insertion_point(content)
         self.assertGreater(line, 1)  # Should be after docstring
 
     def test_file_with_shebang_and_docstring(self):
         """File with shebang and docstring should insert after docstring."""
         content = '#!/usr/bin/env python3\n"""Module docstring."""\nimport sys\n'
-        line, col = find_insertion_point(content)
+        line, _ = find_insertion_point(content)
         self.assertGreater(line, 2)  # Should be after both shebang and docstring
 
 
@@ -248,7 +251,7 @@ class TestProcessFile(unittest.TestCase):
             self.assertTrue(result)
 
             # File should be unchanged
-            with open(temp_path) as f:
+            with open(temp_path, encoding="utf-8") as f:
                 content = f.read()
             self.assertEqual(content, "import sys\n")
         finally:
@@ -277,7 +280,7 @@ class TestProcessFile(unittest.TestCase):
             self.assertTrue(result)
 
             # File should be modified
-            with open(temp_path) as f:
+            with open(temp_path, encoding="utf-8") as f:
                 content = f.read()
             self.assertIn("from __future__ import annotations", content)
         finally:
@@ -296,7 +299,7 @@ import sys
         try:
             process_file(temp_path, apply=True, verbose=False)
 
-            with open(temp_path) as f:
+            with open(temp_path, encoding="utf-8") as f:
                 content = f.read()
 
             # Check all parts are present
