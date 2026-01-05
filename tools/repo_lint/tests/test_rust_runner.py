@@ -18,6 +18,9 @@
     Pytest exit codes (0 = success, 1+ = failures)
 """
 
+
+from __future__ import annotations
+
 import subprocess
 from unittest.mock import MagicMock, patch
 

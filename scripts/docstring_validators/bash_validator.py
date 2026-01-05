@@ -25,6 +25,9 @@ Uses tree-sitter with pinned Bash grammar for structure-aware parsing
     N/A - This is a library module, not an executable script
 """
 
+
+from __future__ import annotations
+
 import re
 import sys
 from pathlib import Path

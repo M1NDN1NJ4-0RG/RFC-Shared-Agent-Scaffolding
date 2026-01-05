@@ -42,6 +42,9 @@
     - Tests verify fallback behavior for non-Git directories
 """
 
+
+from __future__ import annotations
+
 import sys
 import unittest
 from pathlib import Path

@@ -30,6 +30,8 @@
     - 1: Error (when used in scripts)
 """
 
+from __future__ import annotations
+
 import warnings
 
 from tools.repo_lint.yaml_loader import get_tool_versions

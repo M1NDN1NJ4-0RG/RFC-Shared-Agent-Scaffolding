@@ -39,6 +39,8 @@
     Standard pytest exit codes (0 = all tests passed)
 """
 
+from __future__ import annotations
+
 import json
 import os
 import re

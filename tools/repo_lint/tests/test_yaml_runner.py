@@ -43,6 +43,9 @@
     - Tests verify both .yml and .yaml extensions are handled
 """
 
+
+from __future__ import annotations
+
 import sys
 import unittest
 from pathlib import Path

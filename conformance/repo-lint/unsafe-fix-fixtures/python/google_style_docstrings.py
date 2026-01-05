@@ -8,6 +8,9 @@ NOTE: This file is INTENTIONALLY non-conformant. Do not fix manually.
 """
 
 
+from __future__ import annotations
+
+
 def calculate_sum(numbers, initial_value):
     """Calculate the sum of a list of numbers.
 

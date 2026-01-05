@@ -17,6 +17,9 @@
 """
 
 
+from __future__ import annotations
+
+
 def function_with_doc():
     """This function has a docstring (should pass)."""
     return "ok"

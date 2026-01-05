@@ -22,6 +22,9 @@ including module-level documentation and public item documentation.
     N/A - This is a library module, not an executable script
 """
 
+
+from __future__ import annotations
+
 import re
 from pathlib import Path
 from typing import List

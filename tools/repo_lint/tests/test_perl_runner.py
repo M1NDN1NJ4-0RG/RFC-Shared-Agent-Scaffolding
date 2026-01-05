@@ -45,6 +45,9 @@
     - Tests verify exit code handling (0 = success, 2 = violations)
 """
 
+
+from __future__ import annotations
+
 import sys
 import unittest
 from pathlib import Path

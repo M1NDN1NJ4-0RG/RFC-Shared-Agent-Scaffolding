@@ -104,6 +104,10 @@ See Also
 - scripts/python3/safe_run.py: Generates failure logs for archival
 - scripts/python3/safe_check.py: Verifies archival contract conformance
 """
+
+
+from __future__ import annotations
+
 import gzip
 import os
 import shutil

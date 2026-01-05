@@ -3,6 +3,9 @@
 This file intentionally contains formatting violations to test black detection.
 """
 
+
+from __future__ import annotations
+
 # INTENTIONAL VIOLATION - FOR TESTING ONLY - NOT FOR REVIEW
 # Black violation: line too long
 x = "this is a very long string that exceeds the maximum line length configured for black and should trigger a violation"

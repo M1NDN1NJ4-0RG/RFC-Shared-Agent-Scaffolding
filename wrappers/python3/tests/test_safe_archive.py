@@ -61,6 +61,8 @@ All tests use temporary directories for isolation.
 - All tests are platform-independent (Linux, macOS, Windows compatible)
 """
 
+from __future__ import annotations
+
 import gzip
 import os
 import subprocess

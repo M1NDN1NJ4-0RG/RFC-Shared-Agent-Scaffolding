@@ -32,6 +32,8 @@
     - 4: UNSAFE_VIOLATION - Unsafe mode policy violation (CI or missing confirmation)
 """
 
+from __future__ import annotations
+
 from dataclasses import dataclass
 from enum import IntEnum
 from typing import List, Optional

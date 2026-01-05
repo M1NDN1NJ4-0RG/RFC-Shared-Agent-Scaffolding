@@ -65,8 +65,9 @@
     reduce cohesion of the CLI interface.
 """
 
-# pylint: disable=too-many-lines
+from __future__ import annotations
 
+# pylint: disable=too-many-lines
 import json
 import sys
 from pathlib import Path

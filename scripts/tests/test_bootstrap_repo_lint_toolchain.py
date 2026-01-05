@@ -41,6 +41,9 @@ Run specific test::
 - Integration tests verify end-to-end functionality
 """
 
+
+from __future__ import annotations
+
 import os
 import shutil
 import subprocess

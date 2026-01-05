@@ -41,6 +41,9 @@
     - Phase 7 requirements in new-requirement-phase-7.md
 """
 
+
+from __future__ import annotations
+
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -63,7 +66,7 @@ class UnsafeFixer(Protocol):
         """
         ...  # pylint: disable=unnecessary-ellipsis
 
-    def fix(self, file_path: Path) -> Optional["UnsafeFixerResult"]:
+    def fix(self, file_path: Path) -> Optional[UnsafeFixerResult]:
         """Apply the unsafe fix to the file.
 
         :param file_path: Path to file to fix

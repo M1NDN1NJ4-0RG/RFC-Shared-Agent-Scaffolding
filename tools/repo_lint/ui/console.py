@@ -29,6 +29,8 @@
         console.print("Success!")  # No colors in CI
 """
 
+from __future__ import annotations
+
 import sys
 from typing import Dict, Optional, Tuple
 

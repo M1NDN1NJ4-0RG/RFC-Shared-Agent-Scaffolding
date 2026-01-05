@@ -29,6 +29,8 @@
     Standard pytest exit codes (0 = all tests passed)
 """
 
+from __future__ import annotations
+
 import os
 import shutil
 import subprocess

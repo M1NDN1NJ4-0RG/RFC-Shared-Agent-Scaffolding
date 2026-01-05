@@ -46,6 +46,9 @@
     - Tests verify security measures (no command injection)
 """
 
+
+from __future__ import annotations
+
 import sys
 import unittest
 from pathlib import Path

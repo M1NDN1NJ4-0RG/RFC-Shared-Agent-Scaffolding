@@ -43,6 +43,9 @@
         One or more tests failed
 """
 
+
+from __future__ import annotations
+
 import io
 import json
 import sys

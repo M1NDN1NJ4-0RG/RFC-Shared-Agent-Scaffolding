@@ -18,3 +18,5 @@
     - 0: All tests passed
     - 1: Tests failed
 """
+
+from __future__ import annotations

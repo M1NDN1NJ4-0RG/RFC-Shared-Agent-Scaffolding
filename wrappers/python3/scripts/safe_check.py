@@ -76,6 +76,10 @@ This script verifies conformance with:
 - scripts/python3/safe_archive.py: Archival tool under test
 - docs/rust-canonical-tool.md: Canonical contract specification
 """
+
+
+from __future__ import annotations
+
 import glob
 import os
 import subprocess

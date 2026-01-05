@@ -39,6 +39,8 @@
         python3 -m tools.repo_lint fix
 """
 
+from __future__ import annotations
+
 import argparse
 import sys
 
