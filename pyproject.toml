@@ -91,6 +91,12 @@ select = [
     "N",   # pep8-naming
     "UP",  # pyupgrade
 ]
+
+# Ignore pyupgrade rules that conflict with Python 3.8+ compatibility
+# UP006: Use `list` instead of `List` - keep typing imports for 3.8 compatibility
+# UP007: Use `X | Y` instead of `Optional[X]` - keep Optional for 3.8 compatibility  
+# UP035: deprecated-import - allow typing imports for compatibility
+ignore = ["UP006", "UP007", "UP035"]
 [tool.pylint.format]
 max-line-length = 120
 
