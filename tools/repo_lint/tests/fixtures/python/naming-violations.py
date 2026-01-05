@@ -4,6 +4,7 @@ Intentional naming convention violations for Python.
 This file intentionally violates Python PEP 8 naming conventions.
 It uses kebab-case instead of snake_case to test naming enforcement.
 """
+from __future__ import annotations
 
 # This file name itself (naming-violations.py) violates snake_case
 # Expected: naming_violations.py

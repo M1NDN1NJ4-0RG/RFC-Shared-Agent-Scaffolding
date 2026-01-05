@@ -44,6 +44,7 @@ from __future__ import annotations
     - docs/contributing/ai-constraints.md - AI safety constraints
     - Phase 7 requirements in new-requirement-phase-7.md
 """
+from __future__ import annotations
 
 import re
 from dataclasses import dataclass

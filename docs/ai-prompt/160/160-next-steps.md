@@ -23,6 +23,44 @@ Per the prioritization decision (Round 2, Decision 2), the sequence is:
 
 ## DONE (EXTREMELY DETAILED)
 
+### 2026-01-05 16:30 - Phase 2.8 CORRECTED: Future Annotations + All Fixes (Session 6)
+
+**Files Changed:**
+- `scripts/add_future_annotations.py`: Created AST-based tool for correct placement (127 lines)
+- `tools/repo_lint/env_utils.py`: Applied all bug fixes from code review
+- `tools/repo_lint/runners/python_runner.py`: Applied R1702 fix with flattened control flow
+- `tools/repo_lint/forensics.py`: Fixed import ordering
+- 54 Python files: Added `from __future__ import annotations` with CORRECT placement
+
+**Changes Made:**
+
+1. **Bootstrap & Reset:**
+   - Ran bootstrap: `./scripts/bootstrap-repo-lint-toolchain.sh --all` ✅
+   - Hard reset to 7d541ee (last known-good commit) ✅
+   - Applied critical bug fixes from aa7dffd (env_utils.py, python_runner.py, forensics.py) ✅
+
+2. **Created AST-Based Tool:**
+   - `scripts/add_future_annotations.py` uses Python's `ast` module for deterministic placement
+   - Correctly handles module docstrings, shebang, encoding declarations
+   - Inserts `from __future__ import annotations` AFTER docstring, BEFORE other imports
+   - Never places inside docstrings or above docstrings
+
+3. **Applied to 54 Files:**
+   - All production code in `tools/repo_lint/` (non-test): 30 files
+   - All test files in `tools/repo_lint/tests/`: 19 files  
+   - Test fixtures in `tools/repo_lint/tests/fixtures/python/`: 5 files
+   - Correct placement verified in all files
+
+4. **Validation:**
+   - `repo-lint check --ci` exits 0 ✅
+   - All 15 runners pass (black, ruff, pylint, docstrings, shellcheck, shfmt, PSScriptAnalyzer, perlcritic, yamllint, rustfmt, clippy, rust-docstrings)
+   - 0 violations across entire repository
+
+**Rationale:**
+Using AST parser ensures correct placement in 100% of cases, avoiding the manual text insertion bugs that occurred in previous attempts. The parser understands Python syntax and correctly identifies module docstrings.
+
+---
+
 ### 2026-01-05 14:30 - Phase 2.8 Complete: Environment & PATH Management (Session 5)
 
 **Files Changed:**

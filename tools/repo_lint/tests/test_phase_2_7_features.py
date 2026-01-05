@@ -46,6 +46,7 @@ from __future__ import annotations
     1
         One or more tests failed
 """
+from __future__ import annotations
 
 import io
 import json

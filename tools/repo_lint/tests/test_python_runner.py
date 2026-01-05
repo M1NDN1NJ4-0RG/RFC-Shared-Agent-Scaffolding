@@ -49,6 +49,7 @@ from __future__ import annotations
     - Tests verify command-line arguments passed to subprocess
     - Tests check that file modifications only happen during fix, not check
 """
+from __future__ import annotations
 
 import sys
 import unittest

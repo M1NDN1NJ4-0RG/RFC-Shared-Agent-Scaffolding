@@ -20,6 +20,7 @@
     - 1: Tests failed
     - 2: Test execution error
 """
+from __future__ import annotations
 
 from __future__ import annotations
 
