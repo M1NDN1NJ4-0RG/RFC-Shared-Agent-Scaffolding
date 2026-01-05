@@ -1,4 +1,11 @@
 ---
+# File: repo-lint-naming-rules.yaml
+# Purpose: Defines filename and casing conventions for all supported languages
+# Usage: Loaded by naming runner to validate file naming conventions
+# Inputs: None (config file)
+# Outputs: Naming patterns and validation rules per language
+# Side effects: None (read-only configuration)
+# Notes: Part of Phase 2.2 naming and style enforcement (check-only, no auto-renames)
 config_type: repo-lint-naming-rules
 version: "1.0.0"
 

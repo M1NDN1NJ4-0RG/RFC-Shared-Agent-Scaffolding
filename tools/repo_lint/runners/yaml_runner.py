@@ -1,10 +1,12 @@
-"""YAML language runner for yamllint.
+"""YAML language runner for yamllint, actionlint, and docstring validation.
 
 :Purpose:
     Runs all YAML linting tools as defined in the repository standards.
 
 :Tools:
-    - yamllint: YAML linter
+    - yamllint: YAML linter (required)
+    - actionlint: GitHub Actions workflow linter (optional)
+    - yaml-docstrings: YAML docstring contract validator (required)
 
 :Environment Variables:
     None
@@ -56,6 +58,7 @@ class YAMLRunner(Runner):
             List of missing tool names
         """
         required = ["yamllint"]
+        # actionlint is optional - only report as missing if it would be used
         return [tool for tool in required if not command_exists(tool)]
 
     def check(self) -> List[LintResult]:
@@ -72,31 +75,20 @@ class YAMLRunner(Runner):
         if self._should_run_tool("yamllint"):
             results.append(self._run_yamllint())
 
-        # TODO(Phase 2.8+): Add actionlint check
-        # actionlint is a linter for GitHub Actions workflow files (.github/workflows/*.yml).
-        # It validates GitHub Actions syntax, expressions, and references.
-        # Should be implemented as _run_actionlint() method similar to _run_yamllint().
-        # The tool should only run on files matching .github/workflows/*.yml pattern.
-        # Tool name should be "actionlint" to match the actual tool name.
-        # Reference: https://github.com/rhysd/actionlint
-        # Note: actionlint does not have auto-fix capability, check-only.
+        # Run actionlint if available and requested
+        if self._should_run_tool("actionlint") and command_exists("actionlint"):
+            results.append(self._run_actionlint())
 
-        # TODO(Phase 2.8+): Add yaml-docstrings check
-        # YAML files have docstring contracts in the repository that should be validated.
-        # Need to implement _run_docstring_validation() method similar to other language
-        # runners (Python, Bash, Perl, PowerShell) that calls validate_docstrings.py
-        # with YAML-specific file filtering. The tool name should be "yaml-docstrings"
-        # to match the language-specific naming pattern established in this phase.
-        # Related: All other runners have been updated to use language-specific names
-        # (python-docstrings, bash-docstrings, etc.) instead of generic validate_docstrings.
+        # Run YAML docstring validation
+        if self._should_run_tool("yaml-docstrings"):
+            results.append(self._run_docstring_validation())
 
         return results
 
     def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
         """Apply YAML auto-fixes where possible.
 
-        Note: yamllint does not have an auto-fix mode.
-
+        Note: yamllint and actionlint do not have auto-fix modes.
 
         :param policy: Auto-fix policy dictionary (unused)
         :returns:
@@ -104,14 +96,13 @@ class YAMLRunner(Runner):
         """
         self._ensure_tools(["yamllint"])
 
-        # yamllint does not have auto-fix, so just run checks
+        # yamllint and actionlint do not have auto-fix, so just run checks
         results = []
-        results.append(self._run_yamllint())
+        if self._should_run_tool("yamllint"):
+            results.append(self._run_yamllint())
 
-        # TODO(Phase 2.8+): Add actionlint to fix method
-        # actionlint does not have auto-fix capability (check-only tool).
-        # However, it should still be called in fix mode to report issues.
-        # When implemented, should call _run_actionlint() here if the tool filter allows it.
+        if self._should_run_tool("actionlint") and command_exists("actionlint"):
+            results.append(self._run_actionlint())
 
         return results
 
@@ -147,3 +138,100 @@ class YAMLRunner(Runner):
                 violations.append(Violation(tool="yamllint", file=".", line=None, message=line.strip()))
 
         return LintResult(tool="yamllint", passed=False, violations=violations[:20])  # Limit output
+
+    def _run_actionlint(self) -> LintResult:
+        """Run actionlint on GitHub Actions workflow files.
+
+        actionlint validates GitHub Actions workflow syntax, expressions, and references.
+        It only runs on files matching .github/workflows/*.yml pattern.
+
+        Reference: https://github.com/rhysd/actionlint
+
+        :returns:
+            LintResult for actionlint
+        """
+        # Get GitHub Actions workflow files only
+        workflow_files = get_tracked_files(
+            [".github/workflows/*.yml", ".github/workflows/*.yaml"],
+            self.repo_root,
+            include_fixtures=self._include_fixtures,
+        )
+
+        if not workflow_files:
+            return LintResult(tool="actionlint", passed=True, violations=[])
+
+        # Run actionlint
+        result = subprocess.run(
+            ["actionlint"] + workflow_files,
+            cwd=self.repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        if result.returncode == 0:
+            return LintResult(tool="actionlint", passed=True, violations=[])
+
+        violations = []
+        for line in result.stdout.splitlines():
+            if line.strip():
+                # actionlint output format: file:line:col: message
+                violations.append(Violation(tool="actionlint", file=".", line=None, message=line.strip()))
+
+        return LintResult(tool="actionlint", passed=False, violations=violations[:20])  # Limit output
+
+    def _run_docstring_validation(self) -> LintResult:
+        """Run YAML docstring contract validation.
+
+        Validates that YAML configuration files follow the repository's
+        docstring contract requirements.
+
+        :returns:
+            LintResult for yaml-docstrings
+        """
+        validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
+
+        if not validator_script.exists():
+            return LintResult(
+                tool="yaml-docstrings",
+                passed=False,
+                violations=[
+                    Violation(
+                        tool="yaml-docstrings",
+                        file=".",
+                        line=None,
+                        message=(
+                            f"Docstring validation SKIPPED: validator script not found at "
+                            f"{validator_script}. This check was not executed."
+                        ),
+                    )
+                ],
+            )
+
+        # Get YAML files to validate
+        yaml_files = get_tracked_files(
+            ["**/*.yml", "**/*.yaml"], self.repo_root, include_fixtures=self._include_fixtures
+        )
+
+        if not yaml_files:
+            return LintResult(tool="yaml-docstrings", passed=True, violations=[])
+
+        # Run validator with --language yaml flag
+        result = subprocess.run(
+            ["python3", str(validator_script), "--language", "yaml"]
+            + (["--include-fixtures"] if self._include_fixtures else []),
+            cwd=self.repo_root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        if result.returncode == 0:
+            return LintResult(tool="yaml-docstrings", passed=True, violations=[])
+
+        violations = []
+        for line in result.stdout.splitlines():
+            if line.strip() and not line.startswith("Checking"):
+                violations.append(Violation(tool="yaml-docstrings", file=".", line=None, message=line.strip()))
+
+        return LintResult(tool="yaml-docstrings", passed=False, violations=violations[:20])  # Limit output

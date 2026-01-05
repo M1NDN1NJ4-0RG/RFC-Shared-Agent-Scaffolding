@@ -1,4 +1,11 @@
 ---
+# File: repo-lint-file-patterns.yaml
+# Purpose: Centralize file discovery patterns and exclusions for linting
+# Usage: Loaded by repo-lint to determine which files to scan
+# Inputs: None (config file)
+# Outputs: File patterns for inclusion and exclusion
+# Side effects: None (read-only configuration)
+# Notes: Part of Phase 2.9 YAML-first migration
 config_type: repo-lint-file-patterns
 version: "1.0.0"
 
