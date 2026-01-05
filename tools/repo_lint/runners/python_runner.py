@@ -29,6 +29,7 @@
 import os
 import subprocess
 import sys
+from pathlib import Path
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
@@ -225,21 +226,63 @@ class PythonRunner(Runner):
         if result.returncode == 0:
             return LintResult(tool="black", passed=True, violations=[])
 
-        # Parse Black output to extract violations
+        # Parse Black output to extract files and line numbers
         violations = []
-        if result.stdout:
-            # Black outputs diffs, we'll create a summary violation
-            violations.append(
-                Violation(
-                    tool="black",
-                    file=".",
-                    line=None,
-                    message=(
-                        "Code formatting does not match Black style. "
-                        "Run 'python3 -m tools.repo_lint fix' to auto-format."
-                    ),
+        if result.stdout or result.stderr:
+            output = result.stdout + result.stderr
+
+            # Track file info: filename -> first_line
+            file_violations = {}
+            current_file = None
+
+            for line in output.splitlines():
+                # Match diff file headers like: "--- tools/repo_lint/env_utils.py"
+                if line.startswith("---") and not line.startswith("---/dev/null"):
+                    # Extract filename from "--- path/to/file.py"
+                    file_path = line.split(None, 1)[1].split("\t")[0].strip()
+                    current_file = Path(file_path).name  # Just the filename
+                    if current_file not in file_violations:
+                        file_violations[current_file] = None
+
+                # Match diff headers like: "@@ -52,13 +52,13 @@"
+                elif line.startswith("@@") and current_file:
+                    if file_violations[current_file] is None:  # Only capture first line
+                        # Extract the first line number from the diff header
+                        parts = line.split()
+                        if len(parts) >= 2:
+                            old_part = parts[1]
+                            if old_part.startswith("-"):
+                                line_info = old_part[1:]
+                                line_num_str = line_info.split(",")[0]
+                                try:
+                                    file_violations[current_file] = int(line_num_str)
+                                except ValueError:
+                                    pass
+
+            # Create violations from collected file info
+            for file_name, line_num in file_violations.items():
+                violations.append(
+                    Violation(
+                        tool="black",
+                        file=file_name,
+                        line=line_num,
+                        message="Code formatting does not match Black style.",
+                    )
                 )
-            )
+
+            # Fallback if no files found
+            if not violations:
+                violations.append(
+                    Violation(
+                        tool="black",
+                        file=".",
+                        line=None,
+                        message=(
+                            "Code formatting does not match Black style. "
+                            "Run 'python3 -m tools.repo_lint fix' to auto-format."
+                        ),
+                    )
+                )
 
         return LintResult(tool="black", passed=False, violations=violations)
 

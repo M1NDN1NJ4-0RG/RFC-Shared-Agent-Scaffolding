@@ -5,17 +5,37 @@ This module tests the environment management commands added in Phase 2.8:
 - repo-lint env: Shell integration snippet generation
 - repo-lint activate: Subshell launcher with venv activation
 
-:Module: tools.repo_lint.tests.test_phase_2_8_features
-:Purpose: Validate Phase 2.8 implementation
+:Purpose:
+    Validate Phase 2.8 implementation of environment and PATH management utilities.
+    Tests cover venv resolution, shell detection, PATH snippet generation, and all
+    three new CLI commands (which, env, activate).
+
+:Environment Variables:
+    None directly used. Tests may set environment variables temporarily via patching
+    to test shell detection and config directory resolution.
+
+:Examples:
+    Run all Phase 2.8 tests::
+
+        python3 -m pytest tools/repo_lint/tests/test_phase_2_8_features.py -v
+
+    Run specific test class::
+
+        python3 -m pytest tools/repo_lint/tests/test_phase_2_8_features.py::TestWhichCommand -v
+
+:Exit Codes:
+    Uses pytest exit codes:
+    - 0: All tests passed
+    - 1: Tests failed
+    - 2: Test execution error
 """
 
 import json
 import subprocess
-import sys
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from tools.repo_lint.env_utils import (
     detect_shell,
