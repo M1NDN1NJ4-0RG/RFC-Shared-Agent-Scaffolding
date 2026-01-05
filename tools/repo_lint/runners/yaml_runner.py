@@ -27,6 +27,7 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 from typing import List, Optional
 
 from tools.repo_lint.common import LintResult, Violation
@@ -89,6 +90,7 @@ class YAMLRunner(Runner):
         """Apply YAML auto-fixes where possible.
 
         Note: yamllint and actionlint do not have auto-fix modes.
+        yaml-docstrings is included for consistency with other language runners.
 
         :param policy: Auto-fix policy dictionary (unused)
         :returns:
@@ -103,6 +105,9 @@ class YAMLRunner(Runner):
 
         if self._should_run_tool("actionlint") and command_exists("actionlint"):
             results.append(self._run_actionlint())
+
+        if self._should_run_tool("yaml-docstrings"):
+            results.append(self._run_docstring_validation())
 
         return results
 
@@ -195,17 +200,11 @@ class YAMLRunner(Runner):
             return LintResult(
                 tool="yaml-docstrings",
                 passed=False,
-                violations=[
-                    Violation(
-                        tool="yaml-docstrings",
-                        file=".",
-                        line=None,
-                        message=(
-                            f"Docstring validation SKIPPED: validator script not found at "
-                            f"{validator_script}. This check was not executed."
-                        ),
-                    )
-                ],
+                violations=[],
+                error=(
+                    f"Docstring validation SKIPPED: validator script not found at "
+                    f"{validator_script}. This check was not executed."
+                ),
             )
 
         # Get YAML files to validate
@@ -218,7 +217,7 @@ class YAMLRunner(Runner):
 
         # Run validator with --language yaml flag
         result = subprocess.run(
-            ["python3", str(validator_script), "--language", "yaml"]
+            [sys.executable, str(validator_script), "--language", "yaml"]
             + (["--include-fixtures"] if self._include_fixtures else []),
             cwd=self.repo_root,
             capture_output=True,
@@ -230,8 +229,14 @@ class YAMLRunner(Runner):
             return LintResult(tool="yaml-docstrings", passed=True, violations=[])
 
         violations = []
+        error_indicators = ("❌", "ERROR", "violation")
         for line in result.stdout.splitlines():
-            if line.strip() and not line.startswith("Checking"):
-                violations.append(Violation(tool="yaml-docstrings", file=".", line=None, message=line.strip()))
+            stripped = line.strip()
+            if (
+                stripped
+                and not stripped.startswith("Checking")
+                and any(indicator in stripped for indicator in error_indicators)
+            ):
+                violations.append(Violation(tool="yaml-docstrings", file=".", line=None, message=stripped))
 
         return LintResult(tool="yaml-docstrings", passed=False, violations=violations[:20])  # Limit output
