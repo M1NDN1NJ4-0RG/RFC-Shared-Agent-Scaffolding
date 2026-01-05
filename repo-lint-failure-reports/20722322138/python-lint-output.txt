@@ -1,0 +1,258 @@
+🔍 Running repository linters and formatters...
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Python Linting
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+                         Linting Results                         
+                                                                 
+  Runner                Status    Files   Violations   Duration  
+ ─────────────────────────────────────────────────────────────── 
+  black                 ✅ PASS       -            0          -  
+  ruff                  ❌ FAIL       -          195          -  
+  pylint                ❌ FAIL       -            9          -  
+  validate_docstrings   ❌ FAIL       -            3          -  
+                                                                 
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ruff Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+  Found 195 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                             
+  File                      Line   Message                                                   
+ ─────────────────────────────────────────────────────────────────────────────────────────── 
+  cli.py                      71   I001 [*] Import block is un-sorted or un-formatted        
+  common.py                  106   UP007 Use `X | Y` for type annotations                    
+  common.py                  125   UP006 Use `list` instead of `List` for type annotation    
+  common.py                  126   UP007 Use `X | Y` for type annotations                    
+  common.py                  127   UP007 Use `X | Y` for type annotations                    
+  common.py                  128   UP007 Use `X | Y` for type annotations                    
+  common.py                  129   UP007 Use `X | Y` for type annotations                    
+  common.py                  139   UP007 Use `X | Y` for type annotations                    
+  common.py                  160   UP006 Use `list` instead of `List` for type annotation    
+  common.py                  160   UP007 Use `X | Y` for type annotations                    
+  common.py                  160   UP006 Use `list` instead of `List` for type annotation    
+  common.py                  160   UP006 Use `list` instead of `List` for type annotation    
+  common.py                  185   UP006 Use `list` instead of `List` for type annotation    
+  config_validator.py         51   UP007 Use `X | Y` for type annotations                    
+  config_validator.py        106   UP006 Use `dict` instead of `Dict` for type annotation    
+  config_validator.py        151   UP006 Use `dict` instead of `Dict` for type annotation    
+  config_validator.py        182   UP006 Use `dict` instead of `Dict` for type annotation    
+  config_validator.py        182   UP006 Use `list` instead of `List` for type annotation    
+  config_validator.py        205   UP007 Use `X | Y` for type annotations                    
+  config_validator.py        205   UP006 Use `list` instead of `List` for type annotation    
+  config_validator.py        205   UP006 Use `dict` instead of `Dict` for type annotation    
+  config_validator.py        257   UP006 Use `dict` instead of `Dict` for type annotation    
+  doctor.py                   51   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                   63   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                   78   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                   92   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  125   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  125   UP006 Use `list` instead of `List` for type annotation    
+  doctor.py                  125   UP006 Use `dict` instead of `Dict` for type annotation    
+  doctor.py                  170   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  260   UP006 Use `list` instead of `List` for type annotation    
+  doctor.py                  260   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  260   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  284   UP006 Use `list` instead of `List` for type annotation    
+  doctor.py                  284   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  284   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  319   UP006 Use `list` instead of `List` for type annotation    
+  doctor.py                  319   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  319   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  347   UP006 Use `list` instead of `List` for type annotation    
+  doctor.py                  347   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  doctor.py                  347   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  env_utils.py                72   UP007 Use `X | Y` for type annotations                    
+  env_utils.py               229   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  forensics.py                64   UP006 Use `list` instead of `List` for type annotation    
+  forensics.py               101   UP006 Use `list` instead of `List` for type annotation    
+  forensics.py               162   UP006 Use `list` instead of `List` for type annotation    
+  forensics.py               162   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  forensics.py               188   UP006 Use `list` instead of `List` for type annotation    
+  install_helpers.py         105   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  install_helpers.py         105   UP007 Use `X | Y` for type annotations                    
+  install_helpers.py         148   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  install_helpers.py         148   UP006 Use `list` instead of `List` for type annotation    
+  install_helpers.py         244   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  install_helpers.py         244   UP006 Use `list` instead of `List` for type annotation    
+  policy.py                   68   UP006 Use `dict` instead of `Dict` for type annotation    
+  policy.py                   80   UP006 Use `dict` instead of `Dict` for type annotation    
+  policy.py                   95   UP006 Use `dict` instead of `Dict` for type annotation    
+  policy.py                   95   UP006 Use `list` instead of `List` for type annotation    
+  policy.py                  105   UP006 Use `dict` instead of `Dict` for type annotation    
+  policy.py                  105   UP007 Use `X | Y` for type annotations                    
+  policy.py                  105   UP006 Use `dict` instead of `Dict` for type annotation    
+  policy.py                  119   UP006 Use `dict` instead of `Dict` for type annotation    
+  policy.py                  146   UP006 Use `dict` instead of `Dict` for type annotation    
+  policy.py                  146   UP006 Use `list` instead of `List` for type annotation    
+  reporting.py                60   UP006 Use `list` instead of `List` for type annotation    
+  reporting.py               155   UP006 Use `list` instead of `List` for type annotation    
+  reporting.py               171   UP006 Use `list` instead of `List` for type annotation    
+  reporting.py               189   UP006 Use `dict` instead of `Dict` for type annotation    
+  reporting.py               197   UP006 Use `dict` instead of `Dict` for type annotation    
+  reporting.py               219   UP006 Use `dict` instead of `Dict` for type annotation    
+  reporting.py               269   UP006 Use `list` instead of `List` for type annotation    
+  reporting.py               282   UP006 Use `dict` instead of `Dict` for type annotation    
+  reporting.py               289   UP006 Use `dict` instead of `Dict` for type annotation    
+  reporting.py               309   UP006 Use `dict` instead of `Dict` for type annotation    
+  reporting.py               360   UP006 Use `list` instead of `List` for type annotation    
+  reporting.py               427   UP006 Use `list` instead of `List` for type annotation    
+  reporting.py               498   UP006 Use `list` instead of `List` for type annotation    
+  reporting.py               530   UP006 Use `list` instead of `List` for type annotation    
+  base.py                     99   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    114   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    136   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    136   UP007 Use `X | Y` for type annotations                    
+  base.py                    137   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    175   UP007 Use `X | Y` for type annotations                    
+  base.py                    199   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    208   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    220   UP007 Use `X | Y` for type annotations                    
+  base.py                    220   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    229   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    280   UP007 Use `X | Y` for type annotations                    
+  base.py                    280   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    280   UP006 Use `list` instead of `List` for type annotation    
+  base.py                    319   UP006 Use `list` instead of `List` for type annotation    
+  bash_runner.py              57   UP006 Use `list` instead of `List` for type annotation    
+  bash_runner.py              66   UP006 Use `list` instead of `List` for type annotation    
+  bash_runner.py              88   UP007 Use `X | Y` for type annotations                    
+  bash_runner.py              88   UP006 Use `list` instead of `List` for type annotation    
+  bash_runner.py             125   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py            74   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py            81   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py           126   UP007 Use `X | Y` for type annotations                    
+  naming_runner.py           126   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py           142   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py           154   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py           154   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py           188   UP007 Use `X | Y` for type annotations                    
+  naming_runner.py           231   UP006 Use `dict` instead of `Dict` for type annotation    
+  naming_runner.py           231   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py           231   UP006 Use `dict` instead of `Dict` for type annotation    
+  naming_runner.py           262   UP006 Use `dict` instead of `Dict` for type annotation    
+  naming_runner.py           262   UP006 Use `list` instead of `List` for type annotation    
+  naming_runner.py           262   UP006 Use `dict` instead of `Dict` for type annotation    
+  perl_runner.py              55   UP006 Use `list` instead of `List` for type annotation    
+  perl_runner.py              64   UP006 Use `list` instead of `List` for type annotation    
+  perl_runner.py              83   UP007 Use `X | Y` for type annotations                    
+  perl_runner.py              83   UP006 Use `list` instead of `List` for type annotation    
+  perl_runner.py             100   UP006 Use `list` instead of `List` for type annotation    
+  powershell_runner.py        55   UP006 Use `list` instead of `List` for type annotation    
+  powershell_runner.py        84   UP006 Use `list` instead of `List` for type annotation    
+  powershell_runner.py       103   UP007 Use `X | Y` for type annotations                    
+  powershell_runner.py       103   UP006 Use `list` instead of `List` for type annotation    
+  powershell_runner.py       122   UP006 Use `list` instead of `List` for type annotation    
+  python_runner.py            62   UP007 Use `X | Y` for type annotations                    
+  python_runner.py           170   UP006 Use `list` instead of `List` for type annotation    
+  python_runner.py           179   UP006 Use `list` instead of `List` for type annotation    
+  python_runner.py           204   UP007 Use `X | Y` for type annotations                    
+  python_runner.py           204   UP006 Use `list` instead of `List` for type annotation    
+  python_runner.py           288   UP007 Use `X | Y` for type annotations                    
+  python_runner.py           289   UP007 Use `X | Y` for type annotations                    
+  python_runner.py           356   UP006 Use `list` instead of `List` for type annotation    
+  python_runner.py           356   UP007 Use `X | Y` for type annotations                    
+  rust_runner.py              65   UP006 Use `list` instead of `List` for type annotation    
+  rust_runner.py              91   UP006 Use `list` instead of `List` for type annotation    
+  rust_runner.py             113   UP007 Use `X | Y` for type annotations                    
+  rust_runner.py             113   UP006 Use `list` instead of `List` for type annotation    
+  rust_runner.py             231   UP007 Use `X | Y` for type annotations                    
+  yaml_runner.py              52   UP006 Use `list` instead of `List` for type annotation    
+  yaml_runner.py              61   UP006 Use `list` instead of `List` for type annotation    
+  yaml_runner.py              77   UP007 Use `X | Y` for type annotations                    
+  yaml_runner.py              77   UP006 Use `list` instead of `List` for type annotation    
+  test_base_runner.py         23   I001 [*] Import block is un-sorted or un-formatted        
+  test_bash_runner.py         23   I001 [*] Import block is un-sorted or un-formatted        
+  test_cli_dispatch.py        23   I001 [*] Import block is un-sorted or un-formatted        
+  test_exit_codes.py          23   I001 [*] Import block is un-sorted or un-formatted        
+  test_install_helpers.py     23   I001 [*] Import block is un-sorted or un-formatted        
+  test_integration.py         23   I001 [*] Import block is un-sorted or un-formatted        
+  test_output_format.py       23   I001 [*] Import block is un-sorted or un-formatted        
+  test_perl_runner.py         23   I001 [*] Import block is un-sorted or un-formatted        
+  test_vectors.py             74   UP007 Use `X | Y` for type annotations                    
+  test_vectors.py             74   UP006 Use `dict` instead of `Dict` for type annotation    
+  test_vectors.py            124   UP006 Use `list` instead of `List` for type annotation    
+  test_vectors.py            124   UP006 Use `dict` instead of `Dict` for type annotation    
+  test_vectors.py            190   UP006 Use `list` instead of `List` for type annotation    
+  test_vectors.py            190   UP006 Use `dict` instead of `Dict` for type annotation    
+  test_vectors.py            215   UP006 Use `list` instead of `List` for type annotation    
+  test_vectors.py            215   UP006 Use `dict` instead of `Dict` for type annotation    
+  test_vectors.py            215   UP006 Use `list` instead of `List` for type annotation    
+  test_vectors.py            215   UP006 Use `dict` instead of `Dict` for type annotation    
+  console.py                  49   UP006 Use `dict` instead of `Dict` for type annotation    
+  console.py                  49   UP006 Use `tuple` instead of `Tuple` for type annotation  
+  console.py                  49   UP007 Use `X | Y` for type annotations                    
+  console.py                  52   UP007 Use `X | Y` for type annotations                    
+  reporter.py                 58   UP007 Use `X | Y` for type annotations                    
+  reporter.py                159   UP006 Use `dict` instead of `Dict` for type annotation    
+  reporter.py                230   UP006 Use `list` instead of `List` for type annotation    
+  reporter.py                282   UP006 Use `list` instead of `List` for type annotation    
+  reporter.py                405   UP006 Use `list` instead of `List` for type annotation    
+  reporter.py                454   UP006 Use `list` instead of `List` for type annotation    
+  reporter.py                600   UP006 Use `list` instead of `List` for type annotation    
+  theme.py                   142   UP007 Use `X | Y` for type annotations                    
+  theme.py                   210   UP007 Use `X | Y` for type annotations                    
+  theme.py                   228   UP007 Use `X | Y` for type annotations                    
+  unsafe_fixers.py            71   UP007 Use `X | Y` for type annotations                    
+  unsafe_fixers.py            71   UP037 [*] Remove quotes from type annotation              
+  unsafe_fixers.py           132   UP007 Use `X | Y` for type annotations                    
+  unsafe_fixers.py           221   UP006 Use `list` instead of `List` for type annotation    
+  unsafe_fixers.py           226   UP006 Use `list` instead of `List` for type annotation    
+  unsafe_fixers.py           234   UP006 Use `list` instead of `List` for type annotation    
+  unsafe_fixers.py           234   UP006 Use `list` instead of `List` for type annotation    
+  yaml_loader.py              61   UP007 Use `X | Y` for type annotations                    
+  yaml_loader.py              64   UP007 Use `X | Y` for type annotations                    
+  yaml_loader.py             133   UP006 Use `list` instead of `List` for type annotation    
+  yaml_loader.py             133   UP006 Use `dict` instead of `Dict` for type annotation    
+  yaml_loader.py             172   UP006 Use `dict` instead of `Dict` for type annotation    
+  yaml_loader.py             187   UP006 Use `dict` instead of `Dict` for type annotation    
+  yaml_loader.py             202   UP006 Use `dict` instead of `Dict` for type annotation    
+  yaml_loader.py             217   UP006 Use `dict` instead of `Dict` for type annotation    
+  yaml_loader.py             244   UP006 Use `dict` instead of `Dict` for type annotation    
+  yaml_loader.py             277   UP006 Use `list` instead of `List` for type annotation    
+  yaml_loader.py             290   UP006 Use `list` instead of `List` for type annotation    
+  yaml_loader.py             314   UP006 Use `list` instead of `List` for type annotation    
+  yaml_loader.py             326   UP006 Use `dict` instead of `Dict` for type annotation    
+  yaml_loader.py             326   UP006 Use `dict` instead of `Dict` for type annotation    
+  yaml_loader.py             380   UP006 Use `dict` instead of `Dict` for type annotation    
+                                                                                             
+
+  ⚠️  [*] 10 fixable with the `--fix` option (185 hidden fixes can be enabled with the `--unsafe-fixes` option). (Review before applying with --unsafe-fixes)
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pylint Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+  Found 9 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                  
+  File                      Line   Message                                                        
+ ──────────────────────────────────────────────────────────────────────────────────────────────── 
+  cli.py                      75   W0404: Reimport 'annotations' (imported line 71) (reimported)  
+  test_base_runner.py         25   W0404: Reimport 'annotations' (imported line 23) (reimported)  
+  test_bash_runner.py         25   W0404: Reimport 'annotations' (imported line 23) (reimported)  
+  test_cli_dispatch.py        25   W0404: Reimport 'annotations' (imported line 23) (reimported)  
+  test_exit_codes.py          25   W0404: Reimport 'annotations' (imported line 23) (reimported)  
+  test_install_helpers.py     25   W0404: Reimport 'annotations' (imported line 23) (reimported)  
+  test_integration.py         25   W0404: Reimport 'annotations' (imported line 23) (reimported)  
+  test_output_format.py       25   W0404: Reimport 'annotations' (imported line 23) (reimported)  
+  test_perl_runner.py         25   W0404: Reimport 'annotations' (imported line 23) (reimported)  
+                                                                                                  
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          validate_docstrings Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+  Found 3 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                                                                                     
+  File   Line   Message                                                                                                              
+ ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
+  .         -   ❌ Validation FAILED: 2 violation(s) in 1 file(s)                                                                    
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/add_future_annotations.py     
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/add_future_annotations.py:15  
+                                                                                                                                     
+
+           Summary           
+  Total Runners: 4           
+    Passed: 1                
+    Failed: 3                
+  Total Violations: 207      
+                             
+  Exit Code: 1 (VIOLATIONS)  
+                             
