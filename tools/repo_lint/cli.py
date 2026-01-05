@@ -14,6 +14,9 @@
     - tool-help: Show help for a specific tool
     - dump-config: Print fully-resolved configuration
     - validate-config: Validate a YAML configuration file
+    - which: Show repo-lint environment and PATH information
+    - env: Generate shell integration snippet for repo-lint
+    - activate: Launch subshell with repo-lint venv activated
 
 :Features:
     - Rich-Click formatted help output with option grouping
@@ -1178,6 +1181,529 @@ def validate_config(config_path):
         sys.exit(1)
     except Exception as e:
         print(f"❌ Error validating configuration: {e}", file=sys.stderr)
+        if _is_verbose_enabled():
+            import traceback
+
+            traceback.print_exc()
+        sys.exit(1)
+
+
+# Environment & PATH Management Commands (Phase 2.8)
+
+
+@cli.command("which")
+@click.option(
+    "--json",
+    "output_json",
+    is_flag=True,
+    help="Output in JSON format for machine parsing",
+)
+def which(output_json):
+    """Show repo-lint environment and PATH information.
+
+    \b
+    WHAT THIS DOES:
+    Diagnostic helper that displays detailed information about your repo-lint
+    installation, Python environment, and virtual environment configuration.
+    Useful for debugging PATH issues and venv confusion.
+
+    \b
+    INFORMATION DISPLAYED:
+    - Repository root directory
+    - Resolved virtual environment path
+    - Virtual environment bin/Scripts directory
+    - Virtual environment activation script path
+    - Resolved repo-lint executable path
+    - Python executable path
+    - Python sys.prefix and sys.base_prefix
+    - Detected shell type
+    - Whether currently in a venv
+
+    \b
+    OUTPUT FORMATS:
+    - Default: Human-readable table with colored output
+    - JSON (--json): Machine-readable JSON for automation
+
+    \b
+    EXAMPLES:
+      # Show environment information
+      $ repo-lint which
+
+      # Get JSON output for scripting
+      $ repo-lint which --json | jq '.venv_path'
+
+      # Debug PATH issues
+      $ repo-lint which  # Check if repo-lint is from expected venv
+
+    \b
+    USE CASES:
+    - Debugging "repo-lint not found" errors
+    - Verifying venv activation
+    - Checking if running correct repo-lint installation
+    - Generating environment report for bug reports
+
+    :param output_json: Output in JSON format instead of human-readable table
+    :returns: Exit code 0
+    """
+    from tools.repo_lint.env_utils import (
+        detect_shell,
+        get_venv_activate_script,
+        get_venv_bin_dir,
+        is_in_venv,
+        resolve_venv,
+    )
+    from tools.repo_lint.repo_utils import find_repo_root
+
+    try:
+        # Gather environment information
+        repo_root = find_repo_root()
+        shell = detect_shell()
+        in_venv = is_in_venv()
+
+        # Try to resolve venv (may fail if no venv exists)
+        venv_error = None  # Initialize venv_error
+        try:
+            venv_path = resolve_venv()
+            bin_dir = get_venv_bin_dir(venv_path)
+            activate_script = get_venv_activate_script(venv_path)
+        except RuntimeError as e:
+            venv_path = None
+            bin_dir = None
+            activate_script = None
+            venv_error = str(e)
+
+        # Get repo-lint executable path
+        import shutil
+
+        repo_lint_exe = shutil.which("repo-lint")
+
+        # Collect all information
+        info = {
+            "repo_root": str(repo_root),
+            "venv_path": str(venv_path) if venv_path else None,
+            "venv_error": venv_error if venv_path is None else None,
+            "venv_bin_dir": str(bin_dir) if bin_dir else None,
+            "venv_activate_script": str(activate_script) if activate_script else None,
+            "repo_lint_executable": repo_lint_exe,
+            "python_executable": sys.executable,
+            "python_prefix": sys.prefix,
+            "python_base_prefix": sys.base_prefix,
+            "in_venv": in_venv,
+            "detected_shell": shell,
+        }
+
+        if output_json:
+            # JSON output
+            print(json.dumps(info, indent=2))
+        else:
+            # Human-readable table
+            print("\n📋 repo-lint Environment Information\n")
+            print(f"  Repository root:          {info['repo_root']}")
+            print(f"  Detected shell:           {info['detected_shell']}")
+            print(f"  Currently in venv:        {'✅ Yes' if info['in_venv'] else '❌ No'}")
+            print()
+
+            if info["venv_path"]:
+                print(f"  Virtual environment:      {info['venv_path']}")
+                print(f"  Venv bin directory:       {info['venv_bin_dir']}")
+                print(f"  Venv activation script:   {info['venv_activate_script']}")
+            else:
+                print("  Virtual environment:      ❌ Not found")
+                print(f"  Error: {info['venv_error']}")
+
+            print()
+            print(f"  repo-lint executable:     {info['repo_lint_executable'] or '❌ Not in PATH'}")
+            print(f"  Python executable:        {info['python_executable']}")
+            print(f"  Python sys.prefix:        {info['python_prefix']}")
+            print(f"  Python sys.base_prefix:   {info['python_base_prefix']}")
+            print()
+
+            # Warning if repo-lint not from expected venv
+            if info["venv_path"] and info["repo_lint_executable"]:
+                expected_in_venv = str(info["venv_bin_dir"]) in info["repo_lint_executable"]
+                if not expected_in_venv:
+                    print("  ⚠️  WARNING: repo-lint executable is not from the detected venv!")
+                    print(f"     Expected in: {info['venv_bin_dir']}")
+                    print(f"     Actually at: {info['repo_lint_executable']}")
+                    print()
+
+        sys.exit(0)
+
+    except Exception as e:
+        print(f"❌ Error gathering environment information: {e}", file=sys.stderr)
+        if _is_verbose_enabled():
+            import traceback
+
+            traceback.print_exc()
+        sys.exit(1)
+
+
+@cli.command("env")
+@click.option(
+    "--print",
+    "print_snippet",
+    is_flag=True,
+    default=True,
+    help="Print instructions and shell snippet (default)",
+)
+@click.option(
+    "--install",
+    "install_snippet",
+    is_flag=True,
+    help="Write snippet to user config directory",
+)
+@click.option(
+    "--shell",
+    type=click.Choice(["bash", "zsh", "fish", "powershell"], case_sensitive=False),
+    help="Shell type (auto-detected if not specified)",
+)
+@click.option(
+    "--venv",
+    "venv_path",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    help="Explicit venv path (default: auto-detect)",
+)
+@click.option(
+    "--path-only",
+    is_flag=True,
+    help="Print ONLY the PATH line (for automation)",
+)
+def env(print_snippet, install_snippet, shell, venv_path, path_only):
+    """Generate shell integration snippet for repo-lint.
+
+    \b
+    WHAT THIS DOES:
+    Generates shell-specific PATH snippets to make repo-lint available in your
+    shell. Does NOT automatically edit rc files - you must manually add the
+    snippet to your shell configuration.
+
+    \b
+    MODES:
+    --print (default): Print instructions and shell snippet
+    --install: Write snippet to ~/.config/repo-lint/shell/ (manual rc edit still required)
+    --path-only: Print ONLY the PATH export line (for automation)
+
+    \b
+    SHELL DETECTION:
+    Automatically detects your shell from environment variables. Override with --shell
+    if detection is incorrect. Supported shells: bash, zsh, fish, powershell
+
+    \b
+    EXAMPLES:
+      # Generate snippet for current shell (auto-detected)
+      $ repo-lint env
+
+      # Generate snippet for specific shell
+      $ repo-lint env --shell bash
+
+      # Write snippet to config directory
+      $ repo-lint env --install
+
+      # Get just the PATH line for automation
+      $ repo-lint env --path-only
+
+      # Use with explicit venv
+      $ repo-lint env --venv /path/to/venv
+
+    \b
+    MANUAL INSTALLATION:
+    After running --install, you must add this line to your shell rc file:
+      - Bash: source ~/.config/repo-lint/shell/repo-lint.bash
+      - Zsh: source ~/.config/repo-lint/shell/repo-lint.zsh
+      - Fish: source ~/.config/repo-lint/shell/repo-lint.fish
+      - PowerShell: . ~/.config/repo-lint/shell/repo-lint.ps1
+
+    \b
+    WHY NO AUTO-EDIT?
+    This tool does NOT automatically edit rc files to avoid:
+    - Accidentally breaking shell configuration
+    - Creating duplicate entries
+    - Modifying files without explicit user consent
+
+    :param print_snippet: Print instructions and snippet (default: True)
+    :param install_snippet: Write snippet to user config directory
+    :param shell: Shell type (auto-detected if None)
+    :param venv_path: Explicit venv path (auto-detected if None)
+    :param path_only: Print ONLY the PATH line
+    :returns: Exit code 0 on success, 1 on error
+    """
+    from tools.repo_lint.env_utils import (
+        detect_shell,
+        generate_shell_snippet,
+        get_user_config_dir,
+        resolve_venv,
+    )
+
+    try:
+        # Detect or use provided shell
+        if shell is None:
+            shell = detect_shell()
+            if shell == "unknown":
+                print("❌ Could not detect shell type. Use --shell to specify.", file=sys.stderr)
+                sys.exit(1)
+
+        # Resolve venv
+        try:
+            venv = resolve_venv(explicit_venv=venv_path)
+        except RuntimeError as e:
+            print(f"❌ {e}", file=sys.stderr)
+            sys.exit(1)
+
+        # Generate snippet
+        snippet_content, file_ext = generate_shell_snippet(venv, shell)
+
+        # Path-only mode (for automation)
+        if path_only:
+            # Extract just the PATH line (first non-comment line)
+            for line in snippet_content.split("\n"):
+                if line and not line.strip().startswith("#") and not line.strip().startswith("REM"):
+                    print(line)
+                    break
+            sys.exit(0)
+
+        # Install mode
+        if install_snippet:
+            config_dir = get_user_config_dir()
+            shell_dir = config_dir / "shell"
+            shell_dir.mkdir(exist_ok=True)
+
+            snippet_file = shell_dir / f"repo-lint{file_ext}"
+            snippet_file.write_text(snippet_content, encoding="utf-8")
+
+            print(f"✅ Snippet written to: {snippet_file}\n")
+            print("To activate, add this line to your shell rc file:")
+            print()
+
+            if shell == "bash":
+                print(f'  echo "source {snippet_file}" >> ~/.bashrc')
+            elif shell == "zsh":
+                print(f'  echo "source {snippet_file}" >> ~/.zshrc')
+            elif shell == "fish":
+                print(f'  echo "source {snippet_file}" >> ~/.config/fish/config.fish')
+            elif shell == "powershell":
+                print(f"  Add-Content $PROFILE '. {snippet_file}'")
+
+            print()
+            print("Then reload your shell or run:")
+            if shell in ["bash", "zsh"]:
+                print(f"  source {snippet_file}")
+            elif shell == "fish":
+                print(f"  source {snippet_file}")
+            elif shell == "powershell":
+                print(f"  . {snippet_file}")
+
+        else:
+            # Print mode (default)
+            print(f"\n📝 Shell Integration Snippet for {shell}\n")
+            print("Add the following to your shell configuration file:\n")
+            print(snippet_content)
+            print("\nConfiguration files:")
+            if shell == "bash":
+                print("  - ~/.bashrc (Linux)")
+                print("  - ~/.bash_profile (macOS)")
+            elif shell == "zsh":
+                print("  - ~/.zshrc")
+            elif shell == "fish":
+                print("  - ~/.config/fish/config.fish")
+            elif shell == "powershell":
+                print("  - $PROFILE (run `$PROFILE` in PowerShell to see path)")
+
+            print("\nAfter adding, reload your shell:")
+            if shell in ["bash", "zsh"]:
+                print("  source ~/.[shell]rc")
+            elif shell == "fish":
+                print("  source ~/.config/fish/config.fish")
+            elif shell == "powershell":
+                print("  . $PROFILE")
+
+        sys.exit(0)
+
+    except Exception as e:
+        print(f"❌ Error generating shell snippet: {e}", file=sys.stderr)
+        if _is_verbose_enabled():
+            import traceback
+
+            traceback.print_exc()
+        sys.exit(1)
+
+
+@cli.command("activate")
+@click.option(
+    "--venv",
+    "venv_path",
+    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    help="Explicit venv path (default: auto-detect)",
+)
+@click.option(
+    "--shell",
+    type=click.Choice(["bash", "zsh", "fish", "powershell", "cmd"], case_sensitive=False),
+    help="Shell type to launch (auto-detected if not specified)",
+)
+@click.option(
+    "--command",
+    "-c",
+    help="Run single command instead of interactive shell",
+)
+@click.option(
+    "--no-rc",
+    is_flag=True,
+    help="Start shell without loading user rc files",
+)
+@click.option(
+    "--print",
+    "print_command",
+    is_flag=True,
+    help="Print the activation command instead of executing it",
+)
+@click.option(
+    "--ci",
+    "ci_mode",
+    is_flag=True,
+    help="CI mode: disallow interactive shell, require --command",
+)
+def activate(
+    venv_path, shell, command, no_rc, print_command, ci_mode
+):  # pylint: disable=too-many-arguments,too-many-positional-arguments
+    """Launch subshell with repo-lint venv activated.
+
+    \b
+    WHAT THIS DOES:
+    Spawns a new shell with the repo-lint virtual environment activated, making
+    repo-lint and all Python tools available without manual activation.
+
+    \b
+    MODES:
+    Interactive (default): Launches interactive subshell with venv active
+    Command mode (--command): Runs single command with venv active, then exits
+    Print mode (--print): Shows the underlying command without executing
+
+    \b
+    EXAMPLES:
+      # Launch interactive shell with venv active
+      $ repo-lint activate
+
+      # Run a single command with venv active
+      $ repo-lint activate --command "repo-lint check"
+
+      # Use specific venv
+      $ repo-lint activate --venv /path/to/venv
+
+      # Launch specific shell type
+      $ repo-lint activate --shell bash
+
+      # Start shell without loading rc files
+      $ repo-lint activate --no-rc
+
+      # Show the activation command (for debugging)
+      $ repo-lint activate --print
+
+      # CI mode: requires --command, no interactive shell
+      $ repo-lint activate --ci --command "repo-lint check --ci"
+
+    \b
+    INTERACTIVE SHELL:
+    When launched interactively, you'll be in a new shell with:
+    - repo-lint available on PATH
+    - All Python tools available (black, ruff, pylint, etc.)
+    - Same environment as "source .venv/bin/activate"
+    - Type 'exit' to return to parent shell
+
+    \b
+    CI MODE:
+    When --ci is specified:
+    - Interactive shells are disallowed (prevents hanging CI jobs)
+    - --command is required
+    - Exits with command's exit code
+
+    :param venv_path: Explicit venv path (auto-detected if None)
+    :param shell: Shell type to launch (auto-detected if None)
+    :param command: Single command to run (interactive shell if None)
+    :param no_rc: Start shell without loading user rc files
+    :param print_command: Print command instead of executing
+    :param ci_mode: CI mode (disallow interactive, require --command)
+    :returns: Exit code from subshell or command
+    """
+    import subprocess
+
+    from tools.repo_lint.env_utils import detect_shell, get_venv_activate_script, resolve_venv
+
+    try:
+        # CI mode validation
+        if ci_mode and not command:
+            print(
+                "❌ Error: --ci mode requires --command (interactive shells not allowed in CI)",
+                file=sys.stderr,
+            )
+            sys.exit(1)
+
+        # Detect or use provided shell
+        if shell is None:
+            shell = detect_shell()
+            if shell == "unknown":
+                print("❌ Could not detect shell type. Use --shell to specify.", file=sys.stderr)
+                sys.exit(1)
+
+        # Resolve venv
+        try:
+            venv = resolve_venv(explicit_venv=venv_path)
+        except RuntimeError as e:
+            print(f"❌ {e}", file=sys.stderr)
+            sys.exit(1)
+
+        activate_script = get_venv_activate_script(venv)
+
+        # Build activation command
+        if shell in ["bash", "zsh"]:
+            if command:
+                # Run single command
+                cmd = [shell, "-c", f'source "{activate_script}" && {command}']
+            else:
+                # Interactive shell
+                if no_rc:
+                    cmd = [shell, "--noprofile", "--norc", "-c", f'source "{activate_script}"; exec {shell}']
+                else:
+                    cmd = [shell, "-c", f'source "{activate_script}"; exec {shell}']
+
+        elif shell == "fish":
+            if command:
+                cmd = [shell, "-c", f'source "{activate_script}"; {command}']
+            else:
+                if no_rc:
+                    cmd = [shell, "--no-config", "-c", f'source "{activate_script}"; exec {shell}']
+                else:
+                    cmd = [shell, "-c", f'source "{activate_script}"; exec {shell}']
+
+        elif shell == "powershell":
+            if command:
+                cmd = ["pwsh", "-Command", f'. "{activate_script}"; {command}']
+            else:
+                if no_rc:
+                    cmd = ["pwsh", "-NoProfile", "-Command", f'. "{activate_script}"; pwsh -NoExit']
+                else:
+                    cmd = ["pwsh", "-Command", f'. "{activate_script}"; pwsh -NoExit']
+
+        elif shell == "cmd":
+            # Windows CMD doesn't support source, use call
+            if command:
+                cmd = ["cmd", "/C", f'"{activate_script}" && {command}']
+            else:
+                # CMD interactive with activation
+                cmd = ["cmd", "/K", f'"{activate_script}"']
+        else:
+            print(f"❌ Unsupported shell: {shell}", file=sys.stderr)
+            sys.exit(1)
+
+        # Print mode
+        if print_command:
+            print(" ".join(cmd))
+            sys.exit(0)
+
+        # Execute subshell
+        result = subprocess.run(cmd, check=False)
+        sys.exit(result.returncode)
+
+    except Exception as e:
+        print(f"❌ Error launching subshell: {e}", file=sys.stderr)
         if _is_verbose_enabled():
             import traceback
 

@@ -9,6 +9,11 @@ This guide covers installation, common commands, shell completion, and troublesh
 - [Common Commands](#common-commands)
   - [Tool Discovery and Help](#6-tool-discovery-and-help)
   - [Environment Diagnostics](#7-environment-diagnostics)
+- [Making repo-lint Available in Your Shell](#making-repo-lint-available-in-your-shell)
+  - [Show Environment Information (repo-lint which)](#show-environment-information-repo-lint-which)
+  - [Generate Shell Integration Snippet (repo-lint env)](#generate-shell-integration-snippet-repo-lint-env)
+  - [Launch Subshell with Venv Active (repo-lint activate)](#launch-subshell-with-venv-active-repo-lint-activate)
+- [Debugging PATH / venv Issues with repo-lint which](#debugging-path--venv-issues-with-repo-lint-which)
 - [Test Fixtures and Vector Mode](#test-fixtures-and-vector-mode)
   - [What Are Fixture Files?](#what-are-fixture-files)
   - [Where Fixture Files Live](#where-fixture-files-live)
@@ -255,6 +260,158 @@ The `doctor` command checks:
 - Config file validity
 - Tool availability (black, ruff, shellcheck, etc.)
 - PATH configuration
+
+---
+
+## Making repo-lint Available in Your Shell
+
+`repo-lint` provides several commands to help you manage virtual environment activation and PATH configuration. These commands do **NOT** automatically edit your shell configuration files - you must manually add the generated snippets to your shell's rc file.
+
+### Show Environment Information (`repo-lint which`)
+
+Get detailed information about your repo-lint installation and environment:
+
+```bash
+# Show human-readable environment table
+repo-lint which
+
+# Get JSON output for scripting
+repo-lint which --json
+```
+
+The `which` command displays:
+- Repository root directory
+- Resolved virtual environment path
+- Virtual environment bin/Scripts directory
+- Virtual environment activation script path
+- Resolved repo-lint executable path
+- Python executable path
+- Python sys.prefix and sys.base_prefix
+- Detected shell type
+- Whether currently in a venv
+- Warnings if repo-lint is not from the expected venv
+
+**Use cases:**
+- Debugging "repo-lint not found" errors
+- Verifying venv activation
+- Checking if running correct repo-lint installation
+- Generating environment report for bug reports
+
+### Generate Shell Integration Snippet (`repo-lint env`)
+
+Generate shell-specific PATH snippets to make repo-lint available in your shell:
+
+```bash
+# Generate snippet for current shell (auto-detected)
+repo-lint env
+
+# Generate snippet for specific shell
+repo-lint env --shell bash
+repo-lint env --shell zsh
+repo-lint env --shell fish
+repo-lint env --shell powershell
+
+# Write snippet to config directory (manual rc edit still required)
+repo-lint env --install
+
+# Get just the PATH line for automation
+repo-lint env --path-only
+
+# Use with explicit venv
+repo-lint env --venv /path/to/venv
+```
+
+**After running `--install`, you must manually add this line to your shell rc file:**
+
+- **Bash:** `source ~/.config/repo-lint/shell/repo-lint.bash` in `~/.bashrc`
+- **Zsh:** `source ~/.config/repo-lint/shell/repo-lint.zsh` in `~/.zshrc`
+- **Fish:** `source ~/.config/repo-lint/shell/repo-lint.fish` in `~/.config/fish/config.fish`
+- **PowerShell:** `. ~/.config/repo-lint/shell/repo-lint.ps1` in `$PROFILE`
+
+**Why no auto-edit?**
+This tool does NOT automatically edit rc files to avoid:
+- Accidentally breaking shell configuration
+- Creating duplicate entries
+- Modifying files without explicit user consent
+
+### Launch Subshell with Venv Active (`repo-lint activate`)
+
+Spawn a new shell with the repo-lint virtual environment activated:
+
+```bash
+# Launch interactive shell with venv active
+repo-lint activate
+
+# Run a single command with venv active
+repo-lint activate --command "repo-lint check"
+
+# Use specific venv
+repo-lint activate --venv /path/to/venv
+
+# Launch specific shell type
+repo-lint activate --shell bash
+
+# Start shell without loading rc files (clean environment)
+repo-lint activate --no-rc
+
+# Show the activation command (for debugging)
+repo-lint activate --print
+
+# CI mode: requires --command, no interactive shell
+repo-lint activate --ci --command "repo-lint check --ci"
+```
+
+**Interactive shell:**
+When launched interactively, you'll be in a new shell with:
+- repo-lint available on PATH
+- All Python tools available (black, ruff, pylint, etc.)
+- Same environment as "source .venv/bin/activate"
+- Type `exit` to return to parent shell
+
+**CI mode:**
+When `--ci` is specified:
+- Interactive shells are disallowed (prevents hanging CI jobs)
+- `--command` is required
+- Exits with command's exit code
+
+---
+
+## Debugging PATH / venv Issues with `repo-lint which`
+
+If you encounter issues like "repo-lint: command not found" or unexpected behavior, use `repo-lint which` to diagnose:
+
+**Common scenarios:**
+
+1. **repo-lint not found in PATH:**
+   ```bash
+   # Check if repo-lint is installed
+   repo-lint which
+   # If it fails, check Python module invocation
+   python3 -m tools.repo_lint which
+   ```
+
+2. **Wrong repo-lint version running:**
+   ```bash
+   # Check which repo-lint is being used
+   repo-lint which
+   # Look for warning: "repo-lint executable is not from the detected venv"
+   ```
+
+3. **Venv not detected:**
+   ```bash
+   # Check venv resolution
+   repo-lint which
+   # If "Virtual environment: ❌ Not found", create one:
+   python3 -m venv .venv
+   source .venv/bin/activate
+   pip install -e .
+   ```
+
+4. **Multiple venvs confusion:**
+   ```bash
+   # See all venv paths
+   repo-lint which --json | jq '{venv_path, repo_lint_executable, python_executable}'
+   ```
 
 ---
 
