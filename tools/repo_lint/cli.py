@@ -1371,7 +1371,7 @@ def which_cmd(output_json):
 @cli.command("env")
 @click.option(
     "--venv",
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, path_type=Path),
     help="Explicit virtual environment path",
 )
 @click.option(
@@ -1422,7 +1422,7 @@ def env_cmd(venv, shell, install_snippet, path_only):
 
     \b
     OUTPUT MODES:
-      --print (default): Shows instructions + shell snippet
+      default (no flags): Shows instructions + shell snippet
       --install: Writes snippet file + shows manual rc line to add
       --path-only: Prints ONLY PATH export line (automation-friendly)
 
@@ -1441,7 +1441,7 @@ def env_cmd(venv, shell, install_snippet, path_only):
 
     :param venv: Explicit venv path (optional)
     :param shell: Shell type (auto-detected if not provided)
-    :param install: Write snippet to config dir
+    :param install_snippet: Write snippet to config dir
     :param path_only: Print only PATH line
     :returns: Exit code 0 on success, 1 on error
     """
@@ -1510,7 +1510,14 @@ def env_cmd(venv, shell, install_snippet, path_only):
         if install_snippet:
             # Write snippet to config directory
             if platform.system() == "Windows":
-                config_dir = Path(os.environ.get("APPDATA", "")) / "repo-lint" / "shell"
+                appdata = os.environ.get("APPDATA")
+                if not appdata:
+                    print(
+                        "❌ Cannot determine configuration directory: APPDATA is not set.",
+                        file=sys.stderr,
+                    )
+                    sys.exit(1)
+                config_dir = Path(appdata) / "repo-lint" / "shell"
             else:
                 config_dir = Path.home() / ".config" / "repo-lint" / "shell"
 
@@ -1558,7 +1565,7 @@ def env_cmd(venv, shell, install_snippet, path_only):
 @cli.command("activate")
 @click.option(
     "--venv",
-    type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
+    type=click.Path(exists=False, file_okay=False, dir_okay=True, path_type=Path),
     help="Explicit virtual environment path",
 )
 @click.option(
@@ -1644,6 +1651,7 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
     """
     import os
     import platform
+    import shlex
     import subprocess
 
     from tools.repo_lint.env.venv_resolver import (
@@ -1694,14 +1702,16 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
 
         if shell in ("bash", "zsh"):
             if command:
-                # Run single command
+                # Run single command - use shlex.quote() to prevent command injection
                 shell_cmd = [
                     shell,
                     "-c",
-                    f'source "{activation_script}" && {command}',
+                    f"source {shlex.quote(str(activation_script))} && {command}",
                 ]
             else:
                 # Interactive shell: source activation script, then exec a new interactive shell
+                # Use shlex.quote() to prevent injection via activation_script path
+                quoted_script = shlex.quote(str(activation_script))
                 if no_rc:
                     shell_cmd = [
                         shell,
@@ -1709,48 +1719,52 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                         "--norc",
                         "-i",
                         "-c",
-                        f'source "{activation_script}"; exec {shell} --noprofile --norc -i',
+                        f"source {quoted_script}; exec {shell} --noprofile --norc -i",
                     ]
                 else:
                     shell_cmd = [
                         shell,
                         "-i",
                         "-c",
-                        f'source "{activation_script}"; exec {shell} -i',
+                        f"source {quoted_script}; exec {shell} -i",
                     ]
 
         elif shell == "fish":
             if command:
+                # Use shlex.quote() to prevent command injection
                 shell_cmd = [
                     "fish",
                     "-c",
-                    f'source "{activation_script}"; {command}',
+                    f"source {shlex.quote(str(activation_script))}; {command}",
                 ]
             else:
                 # Interactive fish shell: ensure activation script is sourced
                 # so that VIRTUAL_ENV, PATH, and prompt customizations are
                 # applied consistently with non-interactive usage.
+                # Use shlex.quote() to prevent injection via activation_script path
+                quoted_script = shlex.quote(str(activation_script))
                 if no_rc:
                     shell_cmd = [
                         "fish",
                         "--no-config",
                         "-C",
-                        f'source "{activation_script}"',
+                        f"source {quoted_script}",
                     ]
                 else:
                     shell_cmd = [
                         "fish",
                         "-C",
-                        f'source "{activation_script}"',
+                        f"source {quoted_script}",
                     ]
 
         elif shell == "powershell":
+            ps_exe = "pwsh" if platform.system() != "Windows" else "powershell"
             if command:
-                shell_cmd = [
-                    "pwsh" if platform.system() != "Windows" else "powershell",
-                ]
+                shell_cmd = [ps_exe]
                 if no_rc:
                     shell_cmd.append("-NoProfile")
+                # PowerShell doesn't need shlex.quote as it has different quoting rules
+                # but we still quote the activation script path
                 shell_cmd.extend(
                     [
                         "-Command",
@@ -1758,17 +1772,24 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                     ]
                 )
             else:
-                shell_cmd = [
-                    "pwsh" if platform.system() != "Windows" else "powershell",
-                ]
+                shell_cmd = [ps_exe]
                 if no_rc:
                     shell_cmd.append("-NoProfile")
+                # Start an interactive shell that first activates the venv
+                shell_cmd.extend(
+                    [
+                        "-NoExit",
+                        "-Command",
+                        f'. "{activation_script}"',
+                    ]
+                )
 
         elif shell == "cmd":
             if platform.system() != "Windows":
                 print("❌ CMD shell is only supported on Windows", file=sys.stderr)
                 sys.exit(1)
             if command:
+                # CMD uses different quoting - the activation script path is already quoted
                 shell_cmd = [
                     "cmd",
                     "/C",

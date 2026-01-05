@@ -161,7 +161,12 @@ def resolve_venv(
         3. Currently active Python venv (sys.prefix)
         4. Error (no venv found)
 
-    :param explicit_path: Explicit venv path from --venv flag (highest priority)
+    :param explicit_path: Explicit venv path from --venv flag (highest priority).
+                         WARNING: This path is resolved and validated but not restricted
+                         to specific boundaries. Users can specify any path that contains
+                         a valid Python executable. This is by design to support diverse
+                         development environments, but be aware of security implications
+                         when accepting paths from untrusted sources.
     :param repo_root: Repository root directory (for finding .venv/)
     :returns: Resolved Path to the virtual environment
     :raises VenvNotFoundError: If no virtual environment can be resolved
@@ -175,6 +180,12 @@ def resolve_venv(
 
         >>> resolve_venv()  # In active venv
         Path('/home/user/.venv')
+
+    :Security Note:
+        The explicit_path is resolved using Path.resolve() which normalizes the path
+        and follows symlinks. While this validates the path exists and contains a
+        Python executable, it does not restrict the path to specific directories.
+        Users providing --venv flags are responsible for ensuring the path is safe.
     """
     # Precedence 1: Explicit --venv flag
     if explicit_path:
@@ -182,7 +193,7 @@ def resolve_venv(
         if not venv_path.exists():
             raise VenvNotFoundError(
                 f"Explicit venv path does not exist: {venv_path}",
-                f"Create the virtual environment or provide a valid path:\n" f"  python3 -m venv {venv_path}",
+                (f"Create the virtual environment or provide a valid path:\n" f"  python3 -m venv {venv_path}"),
             )
         if (
             not (get_venv_bin_dir(venv_path) / "python").exists()
@@ -192,9 +203,11 @@ def resolve_venv(
         ):
             raise VenvNotFoundError(
                 f"Path exists but is not a valid virtual environment: {venv_path}",
-                f"The directory does not contain a Python executable.\n"
-                f"Create a virtual environment at this location:\n"
-                f"  python3 -m venv {venv_path}",
+                (
+                    f"The directory does not contain a Python executable.\n"
+                    f"Create a virtual environment at this location:\n"
+                    f"  python3 -m venv {venv_path}"
+                ),
             )
         return venv_path
 

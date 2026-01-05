@@ -173,7 +173,9 @@ class TestResolveVenv(unittest.TestCase):
     def test_resolve_venv_explicit_path(self):
         """Test explicit --venv flag takes highest priority."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            # Create a real venv structure
+            # Create a minimal venv structure for testing
+            # Note: We create empty files rather than real executables
+            # since we only need to test the validation logic, not actual execution
             venv_path = Path(tmpdir) / "custom_venv"
             venv_path.mkdir()
             bin_dir = venv_path / "bin"
@@ -200,7 +202,13 @@ class TestResolveVenv(unittest.TestCase):
             self.assertIn("not a valid virtual environment", str(ctx.exception))
 
     def test_resolve_venv_repo_root_dotenv(self):
-        """Test .venv/ under repo root takes second priority."""
+        """Test .venv/ under repo root directory detection.
+
+        Note: This test validates directory existence detection only.
+        It does not validate venv structure since the check on line 202
+        of venv_resolver.py only checks for directory existence, not
+        whether it contains a valid Python executable.
+        """
         with tempfile.TemporaryDirectory() as tmpdir:
             repo_root = Path(tmpdir)
             venv_path = repo_root / ".venv"
