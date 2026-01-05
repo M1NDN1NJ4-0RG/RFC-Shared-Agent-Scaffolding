@@ -69,7 +69,6 @@
 
 import json
 import sys
-
 from pathlib import Path
 
 import rich_click as click
