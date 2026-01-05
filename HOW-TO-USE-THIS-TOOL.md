@@ -7,6 +7,8 @@ This guide covers installation, common commands, shell completion, and troublesh
 - [Installation](#installation)
 - [Basic Usage](#basic-usage)
 - [Common Commands](#common-commands)
+  - [Tool Discovery and Help](#6-tool-discovery-and-help)
+  - [Environment Diagnostics](#7-environment-diagnostics)
 - [Test Fixtures and Vector Mode](#test-fixtures-and-vector-mode)
   - [What Are Fixture Files?](#what-are-fixture-files)
   - [Where Fixture Files Live](#where-fixture-files-live)
@@ -23,6 +25,9 @@ This guide covers installation, common commands, shell completion, and troublesh
   - [Output Modes: Interactive vs CI](#output-modes-interactive-vs-ci)
   - [Theme Customization](#theme-customization)
   - [Custom Configuration](#custom-configuration)
+    - [Viewing Current Configuration](#viewing-current-configuration)
+    - [Validating Configuration Files](#validating-configuration-files)
+    - [Configuration Precedence](#configuration-precedence)
   - [Pre-Commit Hooks](#integrating-with-pre-commit-hooks)
   - [CI/CD Integration](#cicd-integration)
 - [Getting Help](#getting-help)
@@ -89,9 +94,9 @@ repo-lint fix
 Lint only files for a specific language:
 
 ```bash
-repo-lint check --only python
-repo-lint check --only bash
-repo-lint check --only yaml
+repo-lint check --lang python
+repo-lint check --lang bash
+repo-lint check --lang yaml
 ```
 
 ### CI Mode
@@ -139,22 +144,22 @@ repo-lint check
 
 ```bash
 # Check only Python files
-repo-lint check --only python
+repo-lint check --lang python
 
 # Check only Bash scripts
-repo-lint check --only bash
+repo-lint check --lang bash
 
 # Check only YAML files
-repo-lint check --only yaml
+repo-lint check --lang yaml
 
 # Check only PowerShell scripts
-repo-lint check --only powershell
+repo-lint check --lang powershell
 
 # Check only Perl scripts
-repo-lint check --only perl
+repo-lint check --lang perl
 
 # Check only Rust files
-repo-lint check --only rust
+repo-lint check --lang rust
 ```
 
 ### 3. JSON Output for CI Integration
@@ -192,6 +197,64 @@ repo-lint fix --unsafe --yes-i-know
 # - Check logs/unsafe-fix-forensics/ for detailed logs
 # - Review the .patch file carefully
 ```
+
+### 6. Tool Discovery and Help
+
+Discover what languages and tools are supported:
+
+```bash
+# List all supported languages
+repo-lint list-langs
+
+# List all available linting tools
+repo-lint list-tools
+
+# List tools for a specific language
+repo-lint list-tools --lang python
+repo-lint list-tools --lang bash
+
+# Get detailed help for a specific tool
+repo-lint tool-help black
+repo-lint tool-help shellcheck
+```
+
+Example output from `tool-help`:
+```
+$ repo-lint tool-help ruff
+Tool: ruff
+Language: python
+Description: Fast Python linter (replaces flake8, isort)
+Fix capable: Yes
+Version: 0.8.4
+Config: pyproject.toml
+```
+
+### 7. Environment Diagnostics
+
+Check your repo-lint installation and environment:
+
+```bash
+# Run comprehensive diagnostics
+repo-lint doctor
+
+# Output in different formats
+repo-lint doctor --format json
+repo-lint doctor --format yaml
+
+# Save diagnostics to a file
+repo-lint doctor --report diagnostics.txt
+
+# CI mode (exit 0 if all checks pass, 1 if any fail)
+repo-lint doctor --ci
+```
+
+The `doctor` command checks:
+- Repository root detection
+- Virtual environment configuration
+- Tool registry loading
+- Config file validity
+- Tool availability (black, ruff, shellcheck, etc.)
+- PATH configuration
 
 ---
 
@@ -352,7 +415,7 @@ If you see fixture violations in CI output, that indicates a **bug** in the excl
 
 ```bash
 # Test mode - explicitly include fixtures to validate linting infrastructure
-$ repo-lint check --include-fixtures --only python
+$ repo-lint check --include-fixtures --lang python
 🔍 Running repository linters and formatters...
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -385,13 +448,13 @@ $ repo-lint check --include-fixtures
 
 ```bash
 # Test only Bash fixtures
-$ repo-lint check --include-fixtures --only bash
+$ repo-lint check --include-fixtures --lang bash
 
 # Test only Rust fixtures
-$ repo-lint check --include-fixtures --only rust
+$ repo-lint check --include-fixtures --lang rust
 
-# Test Python and YAML fixtures
-$ repo-lint check --include-fixtures --only python --only yaml
+# Test multiple languages (use --lang multiple times)
+$ repo-lint check --include-fixtures --lang python --lang yaml
 ```
 
 ---
@@ -737,7 +800,7 @@ repo-lint <TAB>
 # Type and press TAB
 repo-lint check --<TAB>
 
-# Should show: --ci, --json, --only, --verbose, --help
+# Should show: --ci, --json, --lang, --verbose, --help
 ```
 
 ---
@@ -990,8 +1053,68 @@ repo-lint uses external YAML configuration files for naming rules, docstring rul
 - `conformance/repo-lint/repo-lint-naming-rules.yaml` - Filename conventions
 - `conformance/repo-lint/repo-lint-docstring-rules.yaml` - Docstring requirements
 - `conformance/repo-lint/repo-lint-linting-rules.yaml` - Linter configurations
+- `conformance/repo-lint/repo-lint-file-patterns.yaml` - File discovery patterns
 
 Edit these files to customize rules for your repository.
+
+#### Viewing Current Configuration
+
+To see the complete resolved configuration:
+
+```bash
+# View in YAML format (human-readable)
+repo-lint dump-config
+
+# View in JSON format (machine-readable)
+repo-lint dump-config --format json
+
+# View configuration from a custom directory
+repo-lint dump-config --config /path/to/custom/configs
+```
+
+The `dump-config` command shows:
+- All configuration files merged together
+- The source of the configuration (default, environment variable, or custom path)
+- Current values for all tools, rules, and settings
+
+#### Validating Configuration Files
+
+Before committing configuration changes, validate them:
+
+```bash
+# Validate a specific config file
+repo-lint validate-config conformance/repo-lint/repo-lint-linting-rules.yaml
+
+# Validate returns exit 0 if valid, exit 1 if invalid
+# Perfect for CI/CD validation gates:
+repo-lint validate-config my-config.yaml && echo "Config valid!"
+```
+
+The `validate-config` command checks:
+- YAML document markers (`---` and `...`)
+- Required fields (`config_type`, `version`, `languages`)
+- Unknown or misspelled keys (strict validation)
+- Semantic version format
+- Config-type-specific schema requirements
+
+#### Configuration Precedence
+
+repo-lint loads configuration in this order (highest priority first):
+
+1. **Custom directory** via `--config <PATH>` flag
+2. **Environment variable** `REPO_LINT_CONFIG_DIR`
+3. **Default location** `conformance/repo-lint/` in repository root
+
+Example using custom configuration:
+
+```bash
+# Use configs from a different location
+export REPO_LINT_CONFIG_DIR=/path/to/custom/configs
+repo-lint check
+
+# Or use the flag
+repo-lint check --config /path/to/custom/configs
+```
 
 ### Integrating with Pre-Commit Hooks
 
