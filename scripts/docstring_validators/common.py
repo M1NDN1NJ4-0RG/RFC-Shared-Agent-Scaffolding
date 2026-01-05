@@ -24,6 +24,8 @@ validators, including the ValidationError class and helper functions.
     N/A - This is a library module, not an executable script
 """
 
+from __future__ import annotations
+
 import re
 from typing import List, Optional
 

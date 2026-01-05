@@ -22,6 +22,8 @@ and extract function definitions WITHOUT executing the script (per Phase 0 Item 
     N/A - This is a library module, not an executable script
 """
 
+from __future__ import annotations
+
 from pathlib import Path
 from typing import Any, Dict
 

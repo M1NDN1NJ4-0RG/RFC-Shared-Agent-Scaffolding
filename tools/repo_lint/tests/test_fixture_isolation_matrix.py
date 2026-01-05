@@ -52,6 +52,8 @@ matrix across all runners, flag combinations, and file selection modes.
 :Date: 2026-01-01
 """
 
+from __future__ import annotations
+
 import os
 from pathlib import Path
 from unittest.mock import MagicMock, patch

@@ -62,6 +62,8 @@ All tests run fully offline with no actual GitHub API calls.
 - Uses importlib to dynamically load the module under test
 """
 
+from __future__ import annotations
+
 import importlib.util
 import json
 import os

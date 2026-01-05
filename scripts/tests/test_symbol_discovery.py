@@ -31,6 +31,8 @@ outputs match expected symbols.
         One or more tests failed
 """
 
+from __future__ import annotations
+
 import sys
 import unittest
 from pathlib import Path

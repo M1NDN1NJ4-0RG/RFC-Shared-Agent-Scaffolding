@@ -124,6 +124,9 @@ Using with TOKEN environment variable::
 - GitHub Rulesets API: https://docs.github.com/en/rest/repos/rules
 - GitHub API Authentication: https://docs.github.com/en/rest/authentication
 """
+
+from __future__ import annotations
+
 import json
 import os
 import re

@@ -35,6 +35,8 @@
     - 2: Missing tools
 """
 
+from __future__ import annotations
+
 import json
 import sys
 from typing import Any, Dict, List

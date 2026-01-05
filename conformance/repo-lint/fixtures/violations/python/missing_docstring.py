@@ -1,5 +1,7 @@
 """Test fixture: intentionally bad Python code with missing docstrings."""
 
+from __future__ import annotations
+
 
 def function_without_docstring(param1, param2):
     return param1 + param2

@@ -51,6 +51,8 @@ expected relative paths before running safe_check.py.
 - All tests are platform-independent (Linux, macOS, Windows compatible)
 """
 
+from __future__ import annotations
+
 import os
 import subprocess
 import sys

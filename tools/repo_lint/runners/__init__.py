@@ -26,3 +26,5 @@
     - 0: Implied success (when LintResult.passed = True)
     - 1: Implied violations (when LintResult.passed = False)
 """
+
+from __future__ import annotations

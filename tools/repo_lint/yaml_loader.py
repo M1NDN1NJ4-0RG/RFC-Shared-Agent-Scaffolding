@@ -44,6 +44,8 @@
     - Custom config directory can be set globally via set_config_directory()
 """
 
+from __future__ import annotations
+
 import os
 import warnings
 from functools import lru_cache

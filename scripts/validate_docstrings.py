@@ -150,6 +150,8 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
     - See docs/contributing/docstring-contracts/symbol-level-contracts.md for symbol contracts
 """
 
+from __future__ import annotations
+
 import argparse
 import subprocess
 import sys

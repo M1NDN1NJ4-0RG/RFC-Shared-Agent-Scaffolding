@@ -16,6 +16,8 @@
     N/A - This is a test fixture file, not executable
 """
 
+from __future__ import annotations
+
 
 def function_with_doc():
     """This function has a docstring (should pass)."""

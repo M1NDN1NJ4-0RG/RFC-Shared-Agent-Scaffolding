@@ -26,6 +26,8 @@
     - 1: Violations found (LintResult.passed = False)
 """
 
+from __future__ import annotations
+
 import os
 import subprocess
 import sys

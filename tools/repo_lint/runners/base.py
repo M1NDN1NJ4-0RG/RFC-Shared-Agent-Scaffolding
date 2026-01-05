@@ -29,6 +29,8 @@
     - 1: Implied violations (when LintResult.passed = False)
 """
 
+from __future__ import annotations
+
 import shutil
 import subprocess
 import warnings

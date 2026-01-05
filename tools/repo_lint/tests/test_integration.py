@@ -46,6 +46,8 @@
     - Complements unit tests in test_exit_codes.py
 """
 
+from __future__ import annotations
+
 import os
 import sys
 import unittest

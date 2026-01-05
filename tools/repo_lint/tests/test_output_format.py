@@ -50,6 +50,8 @@
     - Updated for Phase 2.5 Rich UI migration
 """
 
+from __future__ import annotations
+
 import io
 import sys
 import unittest

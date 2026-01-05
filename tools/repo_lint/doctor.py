@@ -34,6 +34,8 @@
         repo-lint doctor --report doctor-report.json --format json
 """
 
+from __future__ import annotations
+
 import json
 import os
 import shutil

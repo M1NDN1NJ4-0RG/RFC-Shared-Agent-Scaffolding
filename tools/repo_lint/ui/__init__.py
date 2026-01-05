@@ -29,6 +29,8 @@
         reporter.render_header(context)
 """
 
+from __future__ import annotations
+
 from tools.repo_lint.ui.console import get_console
 from tools.repo_lint.ui.reporter import Reporter
 

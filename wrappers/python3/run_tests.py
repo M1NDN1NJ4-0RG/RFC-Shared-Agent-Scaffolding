@@ -57,6 +57,8 @@ Run with custom binary path::
 - docs/future-work.md: FW-011 (future native implementation)
 """
 
+from __future__ import annotations
+
 import os
 import subprocess
 import sys

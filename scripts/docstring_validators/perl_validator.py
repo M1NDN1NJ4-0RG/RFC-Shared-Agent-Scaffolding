@@ -25,6 +25,8 @@ without executing the script (per Phase 0 Item 0.9.5).
     N/A - This is a library module, not an executable script
 """
 
+from __future__ import annotations
+
 import json
 import re
 import subprocess
