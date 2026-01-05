@@ -11,7 +11,7 @@ Related: Issue #160, PRs #176, #180
 
 **Status:** 7/8 items COMPLETE, 1 item PARTIALLY COMPLETE
 
-**Remaining Work (Optional - Low Priority):**
+**Remaining Work:**
 - Implement `--config <PATH>` flag to specify custom config file location
 - Implement `--dump-config` command to show resolved configuration
 - Implement `--validate-config <PATH>` command for config validation
