@@ -1,25 +1,11 @@
 MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
-Status: Phase 2.8 COMPLETE (5/5) ✅ - All CI Issues Resolved - Ready for Phase 2.6 or Phase 3
-Last Updated: 2026-01-05 21:52
+Status: Phase 2.8 COMPLETE (5/5 + 2 TODOs) ✅ - All Outstanding Items Resolved - Ready for Phase 2.6 or Phase 3
+Last Updated: 2026-01-05 22:40
 Related: Issue #160, PRs #176, #180, #225, #229
 
 ## NEXT
-
-### Outstanding TODOs (Added 2026-01-05)
-
-1. **yaml-docstrings Check** (Priority: Medium)
-   - Location: `tools/repo_lint/runners/yaml_runner.py`
-   - YAML files have docstring contracts in the repository
-   - Should follow language-specific naming pattern (yaml-docstrings)
-   - Implementation should mirror python-docstrings, bash-docstrings, etc.
-
-2. **actionlint Support** (Priority: Medium)
-   - Location: `tools/repo_lint/runners/yaml_runner.py`
-   - GitHub Actions workflow linter (.github/workflows/*.yml)
-   - Check-only tool (no auto-fix capability)
-   - Reference: https://github.com/rhysd/actionlint
 
 ### Phase 2.6 - Centralized Exception Rules (NEXT PRIORITY)
 
@@ -37,6 +23,86 @@ Per the prioritization decision (Round 2, Decision 2), the sequence is:
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-05 22:40 - Phase 2.8 Outstanding TODOs Complete: yaml-docstrings + actionlint (Session 9)
+
+**Files Changed:**
+- `tools/repo_lint/runners/yaml_runner.py`: Added yaml-docstrings and actionlint support (123 lines added)
+- `conformance/repo-lint/repo-lint-docstring-rules.yaml`: Added docstring header
+- `conformance/repo-lint/repo-lint-file-patterns.yaml`: Added docstring header
+- `conformance/repo-lint/repo-lint-linting-rules.yaml`: Added docstring header
+- `conformance/repo-lint/repo-lint-naming-rules.yaml`: Added docstring header
+- `conformance/repo-lint/repo-lint-ui-theme.yaml`: Added docstring header
+
+**Changes Made:**
+
+1. **yaml-docstrings Check Implemented** (yaml_runner.py lines 189-237):
+   - New method: `_run_docstring_validation()`
+   - Validates YAML files against repository docstring contracts
+   - Uses `validate_docstrings.py --language yaml`
+   - Follows language-specific naming pattern (matches python-docstrings, bash-docstrings, etc.)
+   - Check-only tool (no auto-fix capability)
+   - Integrated into check() method with tool filtering support
+   - Properly handles missing validator script with clear error message
+
+2. **actionlint Support Implemented** (yaml_runner.py lines 152-187):
+   - New method: `_run_actionlint()`
+   - GitHub Actions workflow linter (.github/workflows/*.yml)
+   - Optional tool (doesn't fail if not installed)
+   - Check-only tool (no auto-fix capability)
+   - Only processes .github/workflows/*.yml and *.yaml files
+   - Integrated into check() and fix() methods with tool filtering
+
+3. **Module Docstring Updated** (yaml_runner.py lines 1-24):
+   - Updated to document all three tools: yamllint, actionlint, yaml-docstrings
+   - Clarified which tools are required vs optional
+   - Added proper :Tools: section in docstring
+
+4. **check_tools() Updated** (yaml_runner.py lines 52-60):
+   - Added comment explaining actionlint is optional
+   - Only yamllint is required for check_tools()
+
+5. **Conformance YAML Files Updated** (5 files):
+   - Added required docstring headers to ALL conformance YAML files
+   - Headers include: File, Purpose, Usage, Inputs, Outputs, Side effects, Notes
+   - Headers placed AFTER `---` marker (before config_type) per YAML structure requirements
+   - All files now pass yaml-docstrings validation
+
+**Verification:**
+- ✅ Pre-commit gate: `repo-lint check --ci` → EXIT 0
+- ✅ All 16 runners passing (was 15, now includes yaml-docstrings)
+- ✅ yaml-docstrings validates all YAML files correctly
+- ✅ All conformance YAML files pass validation
+- ✅ Tool filtering works: `repo-lint check --lang yaml --tool yaml-docstrings --ci` → EXIT 0
+- ✅ actionlint is optional (doesn't block if not installed)
+- ✅ Python linting all passing (black, ruff, pylint, python-docstrings)
+
+**Commands Run:**
+```bash
+# Bootstrap and verification
+./scripts/bootstrap-repo-lint-toolchain.sh --all  # EXIT 0
+repo-lint --help                                   # Works
+repo-lint check --ci                               # EXIT 0 (16/16 runners)
+
+# Testing yaml-docstrings
+repo-lint check --lang yaml --tool yaml-docstrings --ci  # EXIT 0
+
+# Testing full YAML linting
+repo-lint check --lang yaml --ci                   # EXIT 0 (yamllint + yaml-docstrings)
+```
+
+**Phase 2.8 Status:** ✅ COMPLETE (5/5 core + 2/2 TODOs = 7/7 items)
+- [x] repo-lint which command
+- [x] repo-lint env command
+- [x] repo-lint activate command
+- [x] Shared venv resolution utility
+- [x] Cross-platform validation (CI-based)
+- [x] yaml-docstrings check (Outstanding TODO #1)
+- [x] actionlint support (Outstanding TODO #2)
+
+**Next Phase:** Phase 2.6 (Centralized Exception Rules) or Phase 3 (Polish)
+
+---
 
 ### 2026-01-05 22:17 - Code Review Round 5 Fixes (Session 8)
 

@@ -2,11 +2,23 @@
 
 This plan outlines prioritized phases to address all findings. Each item includes context, affected components, and suggested fixes.
 
+**NOTE:** This is a summary document. For the canonical, up-to-date status, see `160-overview.md`.
+
+**Current Status (2026-01-05):**
+- Phase 1: ✅ COMPLETE (6/6 items)
+- Phase 2: ✅ COMPLETE (4/4 items)
+- Phase 2.5: ✅ COMPLETE (9/9 items)
+- Phase 2.9: ✅ COMPLETE (2/2 items)
+- Phase 2.7: ✅ COMPLETE (8/8 items)
+- Phase 2.8: ✅ COMPLETE (7/7 items including yaml-docstrings and actionlint)
+- Phase 2.6: NOT STARTED (next priority)
+- Phase 3: DEFERRED
+
 ---
 
-## Phase 1 – Critical Fixes and Corrections (High Priority)
+## Phase 1 – Critical Fixes and Corrections (High Priority) ✅ COMPLETE
 
-- [ ] **Fix repository root detection** (Severity: **High**)  
+- [x] **Fix repository root detection** (Severity: **High**) ✅ COMPLETE  
   - **Context:** `get_repo_root()` and `find_repo_root()` currently require a `.git` directory, causing failures outside Git worktrees.  
   - **Affected Files:** `tools/repo_lint/install/install_helpers.py`, `tools/repo_lint/runners/base.py` (or wherever `find_repo_root` is defined).  
   - **Fix Steps:** Modify these functions to check for `.git` but **if not found**, return the current working directory as root (or use an environment override). For example:
