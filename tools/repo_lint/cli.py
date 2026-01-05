@@ -1715,7 +1715,7 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                 shell_cmd = [
                     shell,
                     "-c",
-                    f"source {quoted_script} && exec \"$@\"",
+                    f'source {quoted_script} && exec "$@"',
                     "repo-lint-activate",
                     *command_args,
                 ]
@@ -1809,7 +1809,7 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                 # First escape the caret itself
                 escaped = arg.replace("^", "^^")
                 # Escape other CMD metacharacters that can be used for command chaining
-                for ch in ('&', '|', '>', '<', '(', ')'):
+                for ch in ("&", "|", ">", "<", "(", ")"):
                     escaped = escaped.replace(ch, "^" + ch)
                 # Prevent environment variable expansion
                 escaped = escaped.replace("%", "%%")
