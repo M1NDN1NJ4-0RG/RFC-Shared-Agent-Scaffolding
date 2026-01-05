@@ -1230,7 +1230,7 @@ install_actionlint() {
 			if command -v apt-get >/dev/null 2>&1; then
 				if has_sudo; then
 					# NOTE: golang-go from apt may install an older Go version on some distributions.
-					# actionlint v1.7.10 requires Go 1.22+. If installation fails due to Go version,
+					# actionlint v1.7.10 requires Go 1.24+. If installation fails due to Go version,
 					# consider using snap (sudo snap install go --classic) or direct binary download.
 					log "Installing golang-go via apt-get..."
 					if sudo apt-get update -qq && sudo apt-get install -y golang-go; then
@@ -1264,7 +1264,8 @@ install_actionlint() {
 				return 0
 			else
 				warn "  ✗ actionlint installed but not found on PATH"
-				warn "  → Ensure $HOME/go/bin is in your PATH"
+				warn "  → PATH was updated for this session, but installation may have failed"
+				warn "  → Manually verify: export PATH=\"\$HOME/go/bin:\$PATH\" && actionlint -version"
 				die "actionlint not accessible after installation" 20
 			fi
 		else
