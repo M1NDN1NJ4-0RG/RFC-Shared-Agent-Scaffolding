@@ -231,6 +231,15 @@ class PythonRunner(Runner):
         violations = []
         if result.stdout:
             # Black outputs diffs, we'll create a summary violation
+            # TODO(Phase 2.8): Fix black formatting table display issue
+            # When black reports violations, the table shows ` .  -` for filename/line
+            # instead of proper file information. This is because we're using "." as
+            # the file and None as the line. We should either:
+            # 1. Parse black's output to extract actual file names and create
+            #    per-file violations, OR
+            # 2. Update the reporter to handle "summary" violations differently
+            #    (e.g., show them in a separate section without file/line columns)
+            # Related: tools/repo_lint/ui/reporter.py render_failures() method
             violations.append(
                 Violation(
                     tool="black",
