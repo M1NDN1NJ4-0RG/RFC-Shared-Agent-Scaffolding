@@ -2,10 +2,24 @@ MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL RE
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
 Status: Phase 2.8 COMPLETE (5/5) ✅ - Ready for Phase 2.6 or Phase 3
-Last Updated: 2026-01-05 19:00
-Related: Issue #160, PRs #176, #180, #225
+Last Updated: 2026-01-05 20:50
+Related: Issue #160, PRs #176, #180, #225, #229
 
 ## NEXT
+
+### Outstanding TODOs (Added 2026-01-05)
+
+1. **yaml-docstrings Check** (Priority: Medium)
+   - Location: `tools/repo_lint/runners/yaml_runner.py`
+   - YAML files have docstring contracts in the repository
+   - Should follow language-specific naming pattern (yaml-docstrings)
+   - Implementation should mirror python-docstrings, bash-docstrings, etc.
+
+2. **actionlint Support** (Priority: Medium)
+   - Location: `tools/repo_lint/runners/yaml_runner.py`
+   - GitHub Actions workflow linter (.github/workflows/*.yml)
+   - Check-only tool (no auto-fix capability)
+   - Reference: https://github.com/rhysd/actionlint
 
 ### Phase 2.6 - Centralized Exception Rules (NEXT PRIORITY)
 
@@ -23,6 +37,85 @@ Per the prioritization decision (Round 2, Decision 2), the sequence is:
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-05 20:50 - Black Table Formatting Fix & Duplicate Filename Disambiguation (Session 6)
+
+**Files Changed:**
+- `tools/repo_lint/runners/python_runner.py`: Fixed Black output parsing (removed TODO, implemented fix)
+- `tools/repo_lint/ui/reporter.py`: Added duplicate filename disambiguation logic
+- `tools/repo_lint/runners/bash_runner.py`: Renamed validate_docstrings → bash-docstrings
+- `tools/repo_lint/runners/perl_runner.py`: Renamed validate_docstrings → perl-docstrings
+- `tools/repo_lint/runners/powershell_runner.py`: Renamed validate_docstrings → powershell-docstrings
+- `tools/repo_lint/runners/yaml_runner.py`: Added TODOs for yaml-docstrings and actionlint
+- `tools/repo_lint/tests/fixtures/python/black_violations.py`: Restored with actual violations
+
+**Changes Made:**
+
+1. **Fixed Black Table Formatting (Task A):**
+   - **Problem:** Black violations displayed as `. -` in File/Line columns
+   - **Root Cause:** Single summary violation with file="." and line=None
+   - **Solution:** Parse Black stdout to extract per-file violations
+     * Regex match "would reformat <filepath>" lines
+     * Convert absolute paths to repo-relative paths
+     * Create one Violation per file with proper filename
+     * Use line=1 as placeholder (Black doesn't provide line numbers)
+     * Fallback to summary violation if parsing fails
+   - **Result:** Black now shows actual filenames instead of `. -`
+
+2. **Implemented Duplicate Filename Disambiguation (Task B):**
+   - **Problem:** Multiple files with same basename (e.g., test.py) are indistinguishable
+   - **Solution:** Smart display name selection in reporter
+     * Pre-scan violations to count basename occurrences
+     * Unique basenames: show just filename
+     * Duplicate basenames: show full relative path from repo root
+     * Maintains stable column alignment
+   - **Location:** `tools/repo_lint/ui/reporter.py` render_failures() method
+   - **Result:** Duplicate basenames now disambiguated automatically
+
+3. **Language-Specific Docstring Validator Naming:**
+   - **Changed:** All docstring validators now use language-specific names
+     * validate_docstrings → python-docstrings
+     * validate_docstrings → bash-docstrings
+     * validate_docstrings → perl-docstrings
+     * validate_docstrings → powershell-docstrings
+     * rust-docstrings (already correct, no change)
+   - **Rationale:** Matches Rust pattern, differentiates language-specific checks
+   - **Verified:** All 15 runners show correct names in output
+
+4. **Added TODOs for Future YAML Enhancements:**
+   - **TODO 1: yaml-docstrings Check**
+     * YAML files have docstring contracts in repo
+     * Should follow language-specific naming pattern
+     * Implementation should mirror other language runners
+     * Location: `tools/repo_lint/runners/yaml_runner.py` check() method
+   - **TODO 2: actionlint Support**
+     * GitHub Actions workflow linter (.github/workflows/*.yml)
+     * Check-only tool (no auto-fix capability)
+     * Reference: https://github.com/rhysd/actionlint
+     * Location: YAML runner check() and fix() methods
+
+**Verification:**
+- ✅ Pre-commit gate: EXIT 0
+- ✅ All 15 runners passing
+- ✅ Language-specific names: python-docstrings, bash-docstrings, perl-docstrings, powershell-docstrings, rust-docstrings
+- ✅ Black parsing logic tested (extracts filenames correctly)
+- ✅ Duplicate basename logic tested (PathLib operations)
+- ✅ Fixture restored with actual Black violations
+
+**Commands Run:**
+```bash
+./scripts/bootstrap-repo-lint-toolchain.sh --all  # Bootstrap
+repo-lint check --ci                              # Verification (exit 0)
+repo-lint check --only python --include-fixtures  # Test with fixtures
+```
+
+**Known Issues/Notes:**
+- Black fixtures are excluded from normal checks (by design in pyproject.toml)
+- Fixture files contain intentional violations for testing purposes
+- Table formatting is now stable and deterministic
+- Duplicate detection works for any tool, not just Black
+
+---
 
 ### 2026-01-05 19:00 - Phase 2.8 Complete: Environment & PATH Management (Session 5)
 
