@@ -353,16 +353,12 @@ class Reporter:
                 # Duplicate filename disambiguation: track basenames to detect duplicates
                 # If a basename appears multiple times, show relative path for those files
                 basename_counts: Dict[str, int] = {}
-                basename_to_violations: Dict[str, List] = {}
 
                 for violation in tool_violations:
                     from pathlib import Path as PathLib
 
                     basename = PathLib(violation.file).name
                     basename_counts[basename] = basename_counts.get(basename, 0) + 1
-                    if basename not in basename_to_violations:
-                        basename_to_violations[basename] = []
-                    basename_to_violations[basename].append(violation)
 
                 # Add violations
                 for violation in tool_violations:

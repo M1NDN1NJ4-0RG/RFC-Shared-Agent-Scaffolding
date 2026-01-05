@@ -1753,20 +1753,26 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                         f"source {quoted_script}; exec {shell} -i",
                     ]
 
+        def _fish_shell_quote(text: str) -> str:
+            """Minimal Fish-safe quoting using single quotes and split-quote pattern."""
+            if text == "":
+                return "''"
+            return "'" + text.replace("'", "'\\''") + "'"
+
         elif shell == "fish":
             if command:
-                # Use shlex.quote() to prevent command injection
+                # Use _fish_shell_quote() to prevent command injection for Fish shell
                 shell_cmd = [
                     "fish",
                     "-c",
-                    f"source {shlex.quote(str(activation_script))}; eval {shlex.quote(command)}",
+                    f"source {_fish_shell_quote(str(activation_script))}; eval {_fish_shell_quote(command)}",
                 ]
             else:
                 # Interactive fish shell: ensure activation script is sourced
                 # so that VIRTUAL_ENV, PATH, and prompt customizations are
                 # applied consistently with non-interactive usage.
-                # Use shlex.quote() to prevent injection via activation_script path
-                quoted_script = shlex.quote(str(activation_script))
+                # Use _fish_shell_quote() to prevent injection via activation_script path
+                quoted_script = _fish_shell_quote(str(activation_script))
                 if no_rc:
                     shell_cmd = [
                         "fish",
