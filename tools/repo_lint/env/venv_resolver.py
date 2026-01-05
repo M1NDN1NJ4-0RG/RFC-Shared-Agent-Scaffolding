@@ -187,6 +187,21 @@ def resolve_venv(
         Python executable, it does not restrict the path to specific directories.
         Users providing --venv flags are responsible for ensuring the path is safe.
     """
+
+    def _validate_venv_structure(venv_path: Path) -> bool:
+        """Check if a directory contains a valid Python virtual environment.
+
+        :param venv_path: Path to check
+        :returns: True if valid venv, False otherwise
+        """
+        bin_dir = get_venv_bin_dir(venv_path)
+        return (
+            (bin_dir / "python").exists()
+            or (bin_dir / "python.exe").exists()
+            or (bin_dir / "python3").exists()
+            or (bin_dir / "python3.exe").exists()
+        )
+
     # Precedence 1: Explicit --venv flag
     if explicit_path:
         venv_path = Path(explicit_path).resolve()
@@ -195,12 +210,7 @@ def resolve_venv(
                 f"Explicit venv path does not exist: {venv_path}",
                 (f"Create the virtual environment or provide a valid path:\n" f"  python3 -m venv {venv_path}"),
             )
-        if (
-            not (get_venv_bin_dir(venv_path) / "python").exists()
-            and not (get_venv_bin_dir(venv_path) / "python.exe").exists()
-            and not (get_venv_bin_dir(venv_path) / "python3").exists()
-            and not (get_venv_bin_dir(venv_path) / "python3.exe").exists()
-        ):
+        if not _validate_venv_structure(venv_path):
             raise VenvNotFoundError(
                 f"Path exists but is not a valid virtual environment: {venv_path}",
                 (
@@ -215,12 +225,7 @@ def resolve_venv(
     if repo_root:
         repo_venv = repo_root / ".venv"
         if repo_venv.exists():
-            if (
-                not (get_venv_bin_dir(repo_venv) / "python").exists()
-                and not (get_venv_bin_dir(repo_venv) / "python.exe").exists()
-                and not (get_venv_bin_dir(repo_venv) / "python3").exists()
-                and not (get_venv_bin_dir(repo_venv) / "python3.exe").exists()
-            ):
+            if not _validate_venv_structure(repo_venv):
                 raise VenvNotFoundError(
                     f".venv directory exists at repository root but is not a valid virtual environment: {repo_venv}",
                     (

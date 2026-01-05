@@ -126,6 +126,48 @@ def _resolve_language_filter(lang, only):
     return only
 
 
+def _escape_cmd_argument(arg: str) -> str:
+    """Escape a string for safe use as a literal argument in a CMD command line.
+
+    This function:
+    - prefixes CMD metacharacters with ^ so they are treated literally
+    - doubles % to avoid unintended environment variable expansion
+
+    :param arg: The string to escape for CMD
+    :returns: Escaped string safe for CMD command line
+    """
+    # First escape the caret itself
+    escaped = arg.replace("^", "^^")
+    # Escape other CMD metacharacters that can be used for command chaining
+    for ch in ("&", "|", ">", "<", "(", ")"):
+        escaped = escaped.replace(ch, "^" + ch)
+    # Prevent environment variable expansion
+    escaped = escaped.replace("%", "%%")
+    return escaped
+
+
+def _escape_powershell_command(command: str) -> str:
+    """Escape a command string for safe execution in PowerShell.
+
+    PowerShell uses backtick (`) as the escape character. This function escapes
+    special characters that could be used for command injection.
+
+    :param command: The command string to escape
+    :returns: Escaped command safe for PowerShell -Command execution
+    
+    :Notes:
+        This provides basic protection against injection via PowerShell metacharacters.
+        Users should still avoid passing untrusted input to the --command flag.
+    """
+    # Escape PowerShell special characters
+    # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters
+    special_chars = (";", "|", "&", "$", "`", "(", ")", "<", ">", '"', "'")
+    escaped = command
+    for char in special_chars:
+        escaped = escaped.replace(char, "`" + char)
+    return escaped
+
+
 # Configure rich-click globally
 click.rich_click.USE_RICH_MARKUP = True
 click.rich_click.USE_MARKDOWN = False
@@ -1719,6 +1761,17 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
         # Build shell command
         activation_script = get_activation_script(venv_path, shell=shell)
 
+        # Helper function for Fish shell quoting
+        def _fish_shell_quote(text: str) -> str:
+            """Minimal Fish-safe quoting using single quotes and split-quote pattern.
+            
+            :param text: The text to quote for Fish shell
+            :returns: Quoted string safe for Fish shell
+            """
+            if text == "":
+                return "''"
+            return "'" + text.replace("'", "'\\''") + "'"
+
         if shell in ("bash", "zsh"):
             # Use shlex.quote() to prevent injection via activation_script path
             quoted_script = shlex.quote(str(activation_script))
@@ -1752,12 +1805,6 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                         "-c",
                         f"source {quoted_script}; exec {shell} -i",
                     ]
-
-        def _fish_shell_quote(text: str) -> str:
-            """Minimal Fish-safe quoting using single quotes and split-quote pattern."""
-            if text == "":
-                return "''"
-            return "'" + text.replace("'", "'\\''") + "'"
 
         elif shell == "fish":
             if command:
@@ -1795,13 +1842,12 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                     shell_cmd.append("-NoProfile")
                 # PowerShell command construction:
                 # - The activation script path is quoted to handle spaces/special chars
-                # - The user command is executed as-is (intentional - user wants to run it)
-                # - This is similar to how `bash -c "source venv && user_command"` works
-                # Note: Users should not pass untrusted input to --command flag
+                # - The user command is escaped to prevent injection via PowerShell metacharacters
+                escaped_command = _escape_powershell_command(command)
                 shell_cmd.extend(
                     [
                         "-Command",
-                        f'. "{activation_script}"; {command}',
+                        f'. "{activation_script}"; {escaped_command}',
                     ]
                 )
             else:
@@ -1821,25 +1867,6 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
             if platform.system() != "Windows":
                 print("❌ CMD shell is only supported on Windows", file=sys.stderr)
                 sys.exit(1)
-
-            def _escape_cmd_argument(arg: str) -> str:
-                """Escape a string for safe use as a literal argument in a CMD command line.
-
-                This function:
-                - prefixes CMD metacharacters with ^ so they are treated literally
-                - doubles % to avoid unintended environment variable expansion
-
-                :param arg: The string to escape for CMD
-                :returns: Escaped string safe for CMD command line
-                """
-                # First escape the caret itself
-                escaped = arg.replace("^", "^^")
-                # Escape other CMD metacharacters that can be used for command chaining
-                for ch in ("&", "|", ">", "<", "(", ")"):
-                    escaped = escaped.replace(ch, "^" + ch)
-                # Prevent environment variable expansion
-                escaped = escaped.replace("%", "%%")
-                return escaped
 
             if command:
                 # CMD uses different quoting - the activation script path is already quoted.
