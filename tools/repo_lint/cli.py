@@ -1527,7 +1527,11 @@ def env_cmd(venv, shell, install_snippet, path_only):
 
             print(f"✅ Snippet saved to: {snippet_file}")
             print(f"\n📝 To enable repo-lint in your shell, add this line to {rc_file}:")
-            print(f"\n    source {snippet_file}\n")
+            if shell == "powershell":
+                load_cmd = f". {snippet_file}"
+            else:
+                load_cmd = f"source {snippet_file}"
+            print(f"\n    {load_cmd}\n")
             sys.exit(0)
 
         # Default mode: show instructions
@@ -1701,17 +1705,22 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
         activation_script = get_activation_script(venv_path, shell=shell)
 
         if shell in ("bash", "zsh"):
+            # Use shlex.quote() to prevent injection via activation_script path
+            quoted_script = shlex.quote(str(activation_script))
             if command:
-                # Run single command - use shlex.quote() to prevent command injection
+                # Run single command:
+                # - keep the -c script constant (only sourcing the activation script and exec'ing "$@")
+                # - pass the user-provided command as separate arguments to avoid shell injection
+                command_args = shlex.split(command)
                 shell_cmd = [
                     shell,
                     "-c",
-                    f"source {shlex.quote(str(activation_script))} && {command}",
+                    f"source {quoted_script} && exec \"$@\"",
+                    "repo-lint-activate",
+                    *command_args,
                 ]
             else:
                 # Interactive shell: source activation script, then exec a new interactive shell
-                # Use shlex.quote() to prevent injection via activation_script path
-                quoted_script = shlex.quote(str(activation_script))
                 if no_rc:
                     shell_cmd = [
                         shell,
@@ -1735,7 +1744,7 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                 shell_cmd = [
                     "fish",
                     "-c",
-                    f"source {shlex.quote(str(activation_script))}; {command}",
+                    f"source {shlex.quote(str(activation_script))}; eval {shlex.quote(command)}",
                 ]
             else:
                 # Interactive fish shell: ensure activation script is sourced
@@ -1788,12 +1797,32 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
             if platform.system() != "Windows":
                 print("❌ CMD shell is only supported on Windows", file=sys.stderr)
                 sys.exit(1)
+
+            def _escape_cmd_argument(arg: str) -> str:
+                """
+                Escape a string for safe use as a literal argument in a CMD command line.
+
+                This function:
+                - prefixes CMD metacharacters with ^ so they are treated literally
+                - doubles % to avoid unintended environment variable expansion
+                """
+                # First escape the caret itself
+                escaped = arg.replace("^", "^^")
+                # Escape other CMD metacharacters that can be used for command chaining
+                for ch in ('&', '|', '>', '<', '(', ')'):
+                    escaped = escaped.replace(ch, "^" + ch)
+                # Prevent environment variable expansion
+                escaped = escaped.replace("%", "%%")
+                return escaped
+
             if command:
-                # CMD uses different quoting - the activation script path is already quoted
+                # CMD uses different quoting - the activation script path is already quoted.
+                # Escape the user-supplied command to avoid injection via CMD metacharacters.
+                escaped_command = _escape_cmd_argument(command)
                 shell_cmd = [
                     "cmd",
                     "/C",
-                    f'"{activation_script}" && {command}',
+                    f'"{activation_script}" && {escaped_command}',
                 ]
             else:
                 shell_cmd = ["cmd", "/K", str(activation_script)]

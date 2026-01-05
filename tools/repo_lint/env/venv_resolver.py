@@ -215,6 +215,20 @@ def resolve_venv(
     if repo_root:
         repo_venv = repo_root / ".venv"
         if repo_venv.exists():
+            if (
+                not (get_venv_bin_dir(repo_venv) / "python").exists()
+                and not (get_venv_bin_dir(repo_venv) / "python.exe").exists()
+                and not (get_venv_bin_dir(repo_venv) / "python3").exists()
+                and not (get_venv_bin_dir(repo_venv) / "python3.exe").exists()
+            ):
+                raise VenvNotFoundError(
+                    f".venv directory exists at repository root but is not a valid virtual environment: {repo_venv}",
+                    (
+                        f"The .venv directory does not contain a Python executable.\n"
+                        f"Create or recreate the virtual environment at this location:\n"
+                        f"  python3 -m venv {repo_venv}"
+                    ),
+                )
             return repo_venv
 
     # Precedence 3: Currently active venv
