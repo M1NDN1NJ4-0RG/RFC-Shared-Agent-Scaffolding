@@ -1447,6 +1447,7 @@ def env_cmd(venv, shell, install_snippet, path_only):
     """
     import os
     import platform
+    import shlex
 
     from tools.repo_lint.env.venv_resolver import (
         VenvNotFoundError,
@@ -1484,17 +1485,24 @@ def env_cmd(venv, shell, install_snippet, path_only):
 
         shell = shell.lower()
 
-        # Generate snippets
+        # Generate snippets with proper path quoting
         if shell in ("bash", "zsh"):
-            path_line = f'export PATH="{bin_dir}:$PATH"'
+            # Quote the bin_dir path for shell safety
+            quoted_bin_dir = shlex.quote(str(bin_dir))
+            path_line = f"export PATH={quoted_bin_dir}:$PATH"
             snippet = f"# repo-lint environment setup\n{path_line}\n"
             rc_file = "~/.bashrc" if shell == "bash" else "~/.zshrc"
         elif shell == "fish":
-            path_line = f'set -gx PATH "{bin_dir}" $PATH'
+            # Fish uses different quoting
+            quoted_bin_dir = shlex.quote(str(bin_dir))
+            path_line = f"set -gx PATH {quoted_bin_dir} $PATH"
             snippet = f"# repo-lint environment setup\n{path_line}\n"
             rc_file = "~/.config/fish/config.fish"
         elif shell == "powershell":
-            path_line = f'$env:PATH = "{bin_dir};$env:PATH"'
+            # PowerShell uses double quotes for paths with spaces
+            # Escape any double quotes in the path
+            escaped_bin_dir = str(bin_dir).replace('"', '""')
+            path_line = f'$env:PATH = "{escaped_bin_dir};$env:PATH"'
             snippet = f"# repo-lint environment setup\n{path_line}\n"
             rc_file = "$PROFILE"
         else:
@@ -1701,6 +1709,13 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
 
         shell = shell.lower()
 
+        # Validate shell is in allowed set to prevent injection via exec command
+        allowed_shells = {"bash", "zsh", "fish", "powershell", "cmd"}
+        if shell not in allowed_shells:
+            print(f"❌ Unsupported shell: {shell}", file=sys.stderr)
+            print(f"   Supported shells: {', '.join(sorted(allowed_shells))}", file=sys.stderr)
+            sys.exit(1)
+
         # Build shell command
         activation_script = get_activation_script(venv_path, shell=shell)
 
@@ -1772,8 +1787,11 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                 shell_cmd = [ps_exe]
                 if no_rc:
                     shell_cmd.append("-NoProfile")
-                # PowerShell doesn't need shlex.quote as it has different quoting rules
-                # but we still quote the activation script path
+                # PowerShell command construction:
+                # - The activation script path is quoted to handle spaces/special chars
+                # - The user command is executed as-is (intentional - user wants to run it)
+                # - This is similar to how `bash -c "source venv && user_command"` works
+                # Note: Users should not pass untrusted input to --command flag
                 shell_cmd.extend(
                     [
                         "-Command",
@@ -1799,12 +1817,14 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
                 sys.exit(1)
 
             def _escape_cmd_argument(arg: str) -> str:
-                """
-                Escape a string for safe use as a literal argument in a CMD command line.
+                """Escape a string for safe use as a literal argument in a CMD command line.
 
                 This function:
                 - prefixes CMD metacharacters with ^ so they are treated literally
                 - doubles % to avoid unintended environment variable expansion
+
+                :param arg: The string to escape for CMD
+                :returns: Escaped string safe for CMD command line
                 """
                 # First escape the caret itself
                 escaped = arg.replace("^", "^^")

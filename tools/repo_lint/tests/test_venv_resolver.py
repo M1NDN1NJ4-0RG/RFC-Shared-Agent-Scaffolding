@@ -202,17 +202,19 @@ class TestResolveVenv(unittest.TestCase):
             self.assertIn("not a valid virtual environment", str(ctx.exception))
 
     def test_resolve_venv_repo_root_dotenv(self):
-        """Test .venv/ under repo root directory detection.
+        """Test .venv/ under repo root with valid structure.
 
-        Note: This test validates directory existence detection only.
-        It does not validate venv structure since the check on line 202
-        of venv_resolver.py only checks for directory existence, not
-        whether it contains a valid Python executable.
+        This test validates that .venv directory under repo root is detected
+        and properly validated for containing a Python executable.
         """
         with tempfile.TemporaryDirectory() as tmpdir:
             repo_root = Path(tmpdir)
             venv_path = repo_root / ".venv"
             venv_path.mkdir()
+            # Create minimal venv structure with Python executable
+            bin_dir = venv_path / "bin"
+            bin_dir.mkdir()
+            (bin_dir / "python").touch()
 
             result = resolve_venv(repo_root=repo_root)
             self.assertEqual(result, venv_path)
@@ -260,6 +262,10 @@ class TestResolveVenv(unittest.TestCase):
             repo_root = Path(tmpdir)
             venv_path = repo_root / ".venv"
             venv_path.mkdir()
+            # Create minimal venv structure with Python executable
+            bin_dir = venv_path / "bin"
+            bin_dir.mkdir()
+            (bin_dir / "python").touch()
 
             with patch("tools.repo_lint.env.venv_resolver.sys.prefix", "/other/venv"):
                 with patch("tools.repo_lint.env.venv_resolver.sys.base_prefix", "/usr"):
