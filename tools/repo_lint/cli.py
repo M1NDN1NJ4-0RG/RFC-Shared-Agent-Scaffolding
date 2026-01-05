@@ -67,6 +67,7 @@
 
 # pylint: disable=too-many-lines
 
+import json
 import sys
 from pathlib import Path
 
@@ -75,6 +76,22 @@ import yaml
 
 from tools.repo_lint.cli_argparse import cmd_check, cmd_fix, cmd_install
 from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
+
+
+# Config-type-specific allowed keys mapping
+# Used by validate-config command to support custom schemas
+CONFIG_TYPE_ALLOWED_KEYS = {
+    "repo-lint-file-patterns": [
+        "config_type",
+        "version",
+        "description",
+        "languages",  # Required by validator
+        "in_scope",
+        "exclusions",
+        "metadata",
+    ],
+    # Add more config types here as needed
+}
 
 
 def _resolve_language_filter(lang, only):
@@ -1049,8 +1066,6 @@ def dump_config(output_format, config_dir):
     :param config_dir: Custom config directory path
     :returns: Exit code 0 on success, 1 on error
     """
-    import json
-
     from tools.repo_lint.yaml_loader import get_all_configs, get_config_source, set_config_directory
 
     try:
@@ -1067,11 +1082,19 @@ def dump_config(output_format, config_dir):
 
         # Print in requested format
         if output_format == "json":
-            print(json.dumps(output, indent=2))
+            try:
+                print(json.dumps(output, indent=2))
+            except (TypeError, ValueError) as e:
+                print(f"❌ Error serializing config to JSON: {e}", file=sys.stderr)
+                sys.exit(1)
         else:  # yaml
             print(f"# Config source: {config_source}")
             print("---")
-            yaml.dump(all_configs, sys.stdout, default_flow_style=False, sort_keys=False)
+            try:
+                yaml.dump(all_configs, sys.stdout, default_flow_style=False, sort_keys=False)
+            except yaml.YAMLError as e:
+                print(f"❌ Error serializing config to YAML: {e}", file=sys.stderr)
+                sys.exit(1)
             print("...")
 
         sys.exit(0)
@@ -1138,20 +1161,8 @@ def validate_config(config_path):
 
         config_type = config.get("config_type", "unknown")
 
-        # Determine allowed keys based on config type
-        # Some config types have custom allowed keys beyond the defaults
-        allowed_keys = None
-        if config_type == "repo-lint-file-patterns":
-            # File patterns config has custom allowed keys
-            allowed_keys = [
-                "config_type",
-                "version",
-                "description",
-                "languages",  # Required by validator
-                "in_scope",
-                "exclusions",
-                "metadata",
-            ]
+        # Get config-type-specific allowed keys from centralized mapping
+        allowed_keys = CONFIG_TYPE_ALLOWED_KEYS.get(config_type)
 
         # Validate config file
         validate_config_file(config_path, config_type, allowed_keys=allowed_keys)
