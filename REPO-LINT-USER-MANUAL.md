@@ -637,16 +637,17 @@ This section details **exactly** what fixture files exist for each language, wha
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
 |------|----------------|---------------------|---------|
-| `all_docstring_violations.py` | `validate_docstrings` | Missing module docstring, missing function docstrings, missing class docstrings, missing method docstrings, incomplete docstrings | Validates docstring enforcement across all Python construct types (module, function, class, method) |
-| `black_violations.py` | `black` | Line length violations, inconsistent quotes, missing trailing commas, improper spacing, extra blank lines, dictionary formatting | Tests Black formatter detection across various formatting issues |
-| `pylint_violations.py` | `pylint` | Unused variables, unused imports, too many local variables, missing docstrings, unnecessary pass statements, comparison to True/False/None | Validates pylint's detection of code quality issues and style violations |
-| `ruff_violations.py` | `ruff` | Unused imports (F401), undefined names (F821), unused local variables (F841), f-strings without placeholders (F541), comparison to None/True/False (E711/E712), import not at top (E402), line too long (E501), mutable default argument (B006) | Tests ruff's comprehensive linting rules including Pyflakes, pycodestyle, and flake8-bugbear rules |
-| `naming-violations.py` | Naming enforcement (CI workflow) | Uses kebab-case filename instead of snake_case | **Intentionally** violates Python naming conventions to test that naming enforcement correctly identifies violations (but is excluded from CI via workflow configuration) |
+| `python_all_docstring_violations.py` | `validate_docstrings` | Missing module docstring, missing function docstrings, missing class docstrings, missing method docstrings | Validates docstring enforcement across all Python construct types (module, function, class, method) |
+| `python_black_violations.py` | `black` | Line length violations, inconsistent quotes, missing whitespace, wrong number of blank lines | Tests Black formatter detection across various formatting issues |
+| `python_pylint_violations.py` | `pylint` | Unused variables, unused imports, too many local variables, redefined builtins, too few public methods | Validates pylint's detection of code quality issues and style violations |
+| `python_ruff_violations.py` | `ruff` | Unused imports (F401), unused local variables (F841), line too long (E501), redefinition of unused name (F811), mutable default argument (B006) | Tests ruff's comprehensive linting rules including Pyflakes, pycodestyle, and flake8-bugbear rules |
+| `python-naming-violations.py` | Naming enforcement | Uses kebab-case filename instead of snake_case, classes not in PascalCase, functions not in snake_case, constants not in UPPER_CASE | **Intentionally** violates Python naming conventions to test that naming enforcement correctly identifies violations |
+
+**RESET.diff Files**: Each fixture has a corresponding `.RESET.diff` file (e.g., `python_black_violations.py.RESET.diff`) that can restore the fixture to its canonical "bad" state after auto-fixing tools have been run on it.
 
 **Key Violations Tested**:
 - **Unused imports**: `import os` when `os` is never used
-- **Undefined variables**: References to variables that don't exist
-- **Bad comparisons**: `if x == None:` instead of `if x is None:`
+- **Bad comparisons**: `list = [1, 2, 3]` (redefining builtin)
 - **Missing docstrings**: Functions/classes without documentation
 - **Formatting**: Lines that are too long, inconsistent indentation, etc.
 
@@ -658,16 +659,17 @@ This section details **exactly** what fixture files exist for each language, wha
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
 |------|----------------|---------------------|---------|
-| `all-docstring-violations.sh` | `validate_docstrings` | Missing file-level comments, missing function documentation | Validates Bash docstring enforcement for scripts and functions |
-| `shellcheck-violations.sh` | `shellcheck` | SC2086 (unquoted variable expansion), SC2068 (unquoted array expansion), SC2155 (declare and assign separately), SC2034 (unused variable), SC2046 (unquoted command substitution), SC2006 (legacy backticks), SC2116 (useless echo) | Tests shellcheck's detection of common Bash scripting pitfalls and best practice violations |
-| `shfmt-violations.sh` | `shfmt` | Inconsistent indentation, missing spaces around operators, improper case statement formatting | Validates shfmt's formatting checks for Bash scripts |
-| `naming_violations.sh` | Naming enforcement (CI workflow) | Uses snake_case filename instead of kebab-case | **Intentionally** violates Bash naming conventions to test naming enforcement |
+| `bash-docstring-violations.sh` | `validate_docstrings` | Missing file-level comments, missing function documentation | Validates Bash docstring enforcement for scripts and functions |
+| `bash-shellcheck-violations.sh` | `shellcheck` | SC2086 (unquoted variable expansion), SC2155 (declare and assign separately), SC2034 (unused variable), SC2164 (cd without error checking) | Tests shellcheck's detection of common Bash scripting pitfalls and best practice violations |
+| `bash-shfmt-violations.sh` | `shfmt` | Inconsistent indentation (tabs vs spaces), missing space in if statement, bad case statement formatting | Validates shfmt's formatting checks for Bash scripts |
+| `bash_naming_violations.sh` | Naming enforcement | camelCase and PascalCase function names instead of snake_case, kebab-case function names | **Intentionally** violates Bash naming conventions to test naming enforcement |
+
+**RESET.diff Files**: Each fixture has a corresponding `.RESET.diff` file that can restore the fixture to its canonical "bad" state after auto-fixing tools have been run on it.
 
 **Key Violations Tested**:
-- **Unquoted variables**: `cat $file` instead of `cat "$file"` (can cause word splitting/globbing issues)
+- **Unquoted variables**: `echo $my_var` instead of `echo "$my_var"` (can cause word splitting/globbing issues)
 - **Unused variables**: Variables declared but never referenced
-- **Legacy syntax**: Backticks instead of `$(...)` for command substitution
-- **Array handling**: Incorrect array expansion that can cause bugs
+- **Improper cd usage**: `cd /tmp` without error handling
 
 **Why These Violations**: Shellcheck catches critical bugs that can cause scripts to fail in production. These test cases ensure the Bash runner correctly identifies these issues.
 
@@ -677,15 +679,16 @@ This section details **exactly** what fixture files exist for each language, wha
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
 |------|----------------|---------------------|---------|
-| `all_docstring_violations.pl` | `validate_docstrings` | Missing POD documentation, missing subroutine documentation | Validates Perl docstring enforcement using POD (Plain Old Documentation) format |
-| `perlcritic_violations.pl` | `perlcritic` | Use of bareword file handles, missing `use strict`, missing `use warnings`, postfix control structures, unnecessary quotes, complex expressions, hard-coded values | Tests perlcritic's "Perl Best Practices" policy enforcement |
-| `naming-violations.pl` | Naming enforcement (CI workflow) | Uses kebab-case filename instead of snake_case | **Intentionally** violates Perl naming conventions to test naming enforcement |
+| `perl_docstring_violations.pl` | `validate_docstrings` | Missing POD documentation, missing subroutine documentation | Validates Perl docstring enforcement using POD (Plain Old Documentation) format |
+| `perl-perlcritic_violations.pl` | `perlcritic` | Excessive complexity, using @_ directly, using punctuation variables | Tests perlcritic's "Perl Best Practices" policy enforcement |
+| `perl-perlNamingViolations.pl` | Naming enforcement | camelCase, ALLUPPERCASE, and mixedCase function names; PascalCase variable names | **Intentionally** violates Perl naming conventions to test naming enforcement |
+
+**RESET.diff Files**: Each fixture has a corresponding `.RESET.diff` file that can restore the fixture to its canonical "bad" state.
 
 **Key Violations Tested**:
-- **Missing pragmas**: Not using `strict` and `warnings`
-- **Bareword filehandles**: Old-style file handling instead of lexical filehandles
-- **Complex conditionals**: Overly complicated logic
-- **Hard-coded values**: Magic numbers without explanation
+- **Excessive complexity**: Functions with too many branches
+- **Using @_ directly**: `print $_[0]` instead of unpacking arguments
+- **Punctuation variables**: Using `$_` without clear context
 
 **Why These Violations**: Perlcritic enforces best practices that make Perl code more maintainable and less error-prone. These fixtures test that the Perl runner correctly applies these policies.
 
@@ -695,15 +698,17 @@ This section details **exactly** what fixture files exist for each language, wha
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
 |------|----------------|---------------------|---------|
-| `AllDocstringViolations.ps1` | `validate_docstrings` | Missing function comments, missing parameter documentation, missing `.SYNOPSIS`, `.DESCRIPTION`, `.EXAMPLE` blocks | Validates PowerShell docstring enforcement using comment-based help |
-| `PsScriptAnalyzerViolations.ps1` | `PSScriptAnalyzer` | Use of unapproved verbs, missing parameter validation, using aliases instead of full cmdlet names, avoid using Write-Host, missing error handling | Tests PSScriptAnalyzer's PowerShell best practices and cmdlet development standards |
-| `naming-violations.ps1` | Naming enforcement (CI workflow) | Uses kebab-case filename instead of PascalCase | **Intentionally** violates PowerShell naming conventions to test naming enforcement |
+| `PowershellAllDocstringViolations.ps1` | `validate_docstrings` | Missing function comments, missing `.SYNOPSIS`, incomplete help blocks | Validates PowerShell docstring enforcement using comment-based help |
+| `PowershellPsScriptAnalyzerViolations.ps1` | `PSScriptAnalyzer` | Unused variables, using aliases instead of full cmdlet names, positional parameters, missing ShouldProcess support | Tests PSScriptAnalyzer's PowerShell best practices and cmdlet development standards |
+| `Powershell-naming-violations.ps1` | Naming enforcement | Functions without Verb-Noun naming, unapproved verbs, missing verbs, snake_case variables instead of PascalCase | **Intentionally** violates PowerShell naming conventions to test naming enforcement |
+
+**RESET.diff Files**: Each fixture has a corresponding `.RESET.diff` file that can restore the fixture to its canonical "bad" state.
 
 **Key Violations Tested**:
-- **Unapproved verbs**: Functions using non-standard verbs like `Do-Something` instead of approved verbs
-- **Missing validation**: Parameters without proper validation attributes
+- **Unused variables**: `$UnusedVariable = "never used"`
 - **Aliases**: Using `gci` instead of `Get-ChildItem`
-- **Write-Host usage**: Using `Write-Host` (which bypasses the pipeline) instead of `Write-Output`
+- **Positional parameters**: Not using named parameters
+- **Missing ShouldProcess**: Remove-* functions without -WhatIf/-Confirm support
 
 **Why These Violations**: PowerShell has strict conventions for module and cmdlet development. These fixtures ensure the PowerShell runner enforces these standards.
 
@@ -713,15 +718,18 @@ This section details **exactly** what fixture files exist for each language, wha
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
 |------|----------------|---------------------|---------|
-| `all-docstring-violations.yaml` | `validate_docstrings` | Missing file-level comments | Validates YAML docstring enforcement (expecting top-of-file comments) |
-| `actionlint-violations.yaml` | `actionlint` | Invalid GitHub Actions workflow syntax, unknown action versions, missing required fields, type mismatches | Tests actionlint's validation of GitHub Actions workflow files |
-| `yamllint-violations.yaml` | `yamllint` | Inconsistent indentation, trailing spaces, line too long, missing document start marker (`---`), duplicate keys | Validates yamllint's YAML formatting and style enforcement |
+| `yaml-all-docstring-violations.yaml` | `validate_docstrings` | Missing file-level comments, missing section documentation | Validates YAML docstring enforcement (expecting top-of-file comments) |
+| `yaml-actionlint-violations.yaml` | `actionlint` | Using deprecated set-output command, missing shell specification, deprecated action versions | Tests actionlint's validation of GitHub Actions workflow files |
+| `yaml-yamllint-violations.yaml` | `yamllint` | Line too long, trailing spaces, inconsistent indentation, missing document start marker | Validates yamllint's YAML formatting and style enforcement |
+| `yaml_naming_violations.yaml` | Naming enforcement | camelCase, PascalCase, and ALL_CAPS keys with inconsistent naming styles | **Intentionally** violates YAML naming conventions to test naming enforcement |
+
+**RESET.diff Files**: Each fixture has a corresponding `.RESET.diff` file that can restore the fixture to its canonical "bad" state.
 
 **Key Violations Tested**:
-- **Indentation**: Mixing 2-space and 4-space indentation
-- **Line length**: Lines exceeding configured maximum
+- **Line too long**: Lines exceeding configured maximum
 - **Trailing whitespace**: Spaces at end of lines
-- **Invalid workflow syntax**: GitHub Actions-specific validation errors
+- **Inconsistent indentation**: Wrong indentation levels
+- **Deprecated Actions syntax**: Old workflow commands
 
 **Why These Violations**: YAML is whitespace-sensitive and easy to break. These fixtures test that the YAML runner catches common formatting and syntax errors.
 
@@ -731,16 +739,72 @@ This section details **exactly** what fixture files exist for each language, wha
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
 |------|----------------|---------------------|---------|
-| `all-docstring-violations.rs` | `validate_docstrings` | Missing module docs (`//!`), missing public item docs (`///`), missing function docs, missing struct docs | Validates Rust docstring enforcement for modules, functions, structs, and public APIs |
-| `clippy-violations.rs` | `clippy` | Needless borrow, redundant pattern matching, single-character string usage, unnecessary `mut`, missing error handling, inefficient string concatenation | Tests clippy's lint suggestions for idiomatic Rust code |
-| `rustfmt-violations.rs` | `rustfmt` | Inconsistent indentation, missing trailing commas in multi-line constructs, improper brace placement, inconsistent spacing | Validates rustfmt's formatting checks for Rust code |
+| `rust-all-docstring.violations.rs` | `validate_docstrings` | Missing module docs (`//!`), missing function docs, missing struct docs, missing impl docs, missing method docs | Validates Rust docstring enforcement for modules, functions, structs, and public APIs |
+| `rust-clippy-violations.rs` | `clippy` | Needless return, unnecessary clone, manual string formatting, comparison to bool | Tests clippy's lint suggestions for idiomatic Rust code |
+| `rust-rustfmt-violations.rs` | `rustfmt` | Bad spacing in function signatures, inconsistent indentation, bad brace placement | Validates rustfmt's formatting checks for Rust code |
+| `rustNamingViolations.rs` | Naming enforcement | bad_struct_name (should be PascalCase), BadFunctionName (should be snake_case), badConstant (should be SCREAMING_SNAKE_CASE) | **Intentionally** violates Rust naming conventions to test naming enforcement |
+
+**RESET.diff Files**: Each fixture has a corresponding `.RESET.diff` file that can restore the fixture to its canonical "bad" state after auto-fixing tools have been run on it.
 
 **Key Violations Tested**:
-- **Missing docs**: Public functions without `///` doc comments
-- **Clippy lints**: Non-idiomatic code patterns that clippy flags
-- **Formatting**: Code that doesn't match `rustfmt` style
+- **Missing docs**: Public functions without `///` doc comments, modules without `//!`
+- **Clippy lints**: `return x + 1` instead of `x + 1`, unnecessary `.clone()` calls
+- **Formatting**: Bad spacing like `fn bad_formatting(  x:i32,y:i32  )->i32{`
 
 **Why These Violations**: Rust has strong conventions for documentation and idiomatic code. These fixtures ensure the Rust runner enforces these standards and correctly integrates with `clippy` and `rustfmt`.
+
+---
+
+### Using RESET.diff Files
+
+Each fixture file has a corresponding `.RESET.diff` file that can restore the fixture to its original "bad" (violating) state after auto-fixing tools have been run on it.
+
+#### What are RESET.diff files?
+
+RESET.diff files are git-format patch files that contain the difference between the "fixed" state (after running auto-formatters) and the "bad" state (with intentional violations). They allow you to restore fixtures to their canonical violating state.
+
+#### When to use RESET.diff files
+
+Use RESET.diff files when:
+- You've accidentally run an auto-fixer (like `black`, `rustfmt`, `shfmt`) on fixture files
+- You want to verify that fixtures still contain their intended violations
+- You need to reset fixtures to a known state for testing
+
+#### How to apply a RESET.diff file
+
+To restore a single fixture:
+
+```bash
+# Example: Restore Python black violations fixture
+git apply --whitespace=nowarn tools/repo_lint/tests/fixtures/python/python_black_violations.py.RESET.diff
+```
+
+To restore all fixtures in a language:
+
+```bash
+# Example: Restore all Python fixtures
+for diff in tools/repo_lint/tests/fixtures/python/*.RESET.diff; do
+    git apply --whitespace=nowarn "$diff"
+done
+```
+
+To restore ALL fixtures:
+
+```bash
+# Restore all fixtures across all languages
+find tools/repo_lint/tests/fixtures -name "*.RESET.diff" -exec git apply --whitespace=nowarn {} \;
+```
+
+#### Verifying fixture integrity
+
+After applying RESET.diff files, verify that fixtures contain violations:
+
+```bash
+# Check that fixtures trigger violations when scanned
+repo-lint check --include-fixtures --ci
+```
+
+You should see violations detected in the fixture files.
 
 ---
 
