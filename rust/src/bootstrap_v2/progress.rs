@@ -18,6 +18,7 @@
 //! task.set_success("Installed");
 //! ```
 
+use chrono;
 use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
 use serde::Serialize;
 use std::collections::HashMap;

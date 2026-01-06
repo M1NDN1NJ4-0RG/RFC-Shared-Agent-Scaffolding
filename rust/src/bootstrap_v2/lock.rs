@@ -90,8 +90,8 @@ impl LockManager {
             .ok_or_else(|| BootstrapError::ConfigError(format!("Unknown lock: {}", lock_name)))?;
 
         let started = Instant::now();
-        let mut delay = Duration::from_millis(100);
-        let max_delay = Duration::from_secs(2);
+        let mut timeout_duration = Duration::from_millis(100);
+        let max_timeout = Duration::from_secs(2);
 
         // Adjust max wait based on CI mode
         let effective_max_wait = if ci_mode {
@@ -102,7 +102,7 @@ impl LockManager {
 
         loop {
             // Try to acquire the lock with timeout
-            match tokio::time::timeout(delay, semaphore.acquire()).await {
+            match tokio::time::timeout(timeout_duration, semaphore.acquire()).await {
                 Ok(Ok(permit)) => {
                     return Ok(LockGuard {
                         _permit: permit,
@@ -126,9 +126,12 @@ impl LockManager {
                         )));
                     }
 
-                    // Exponential backoff
-                    sleep(delay).await;
-                    delay = (delay * 2).min(max_delay);
+                    // Sleep with backoff before next attempt
+                    let backoff_delay = timeout_duration.min(max_timeout);
+                    sleep(backoff_delay).await;
+
+                    // Exponential backoff for next timeout
+                    timeout_duration = (timeout_duration * 2).min(max_timeout);
                 }
             }
         }

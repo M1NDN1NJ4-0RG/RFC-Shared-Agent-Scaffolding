@@ -266,14 +266,12 @@ impl Context {
         match pm {
             PackageManager::Homebrew => Arc::new(HomebrewOps),
             PackageManager::Apt => Arc::new(AptOps),
-            PackageManager::Snap => {
-                // For now, use a no-op implementation
-                // TODO: Implement SnapOps
-                Arc::new(HomebrewOps) // Placeholder
-            }
-            PackageManager::None => {
-                // No-op implementation
-                Arc::new(HomebrewOps) // Placeholder
+            PackageManager::Snap | PackageManager::None => {
+                // For Snap and None, use a no-op implementation that returns errors
+                // TODO: Implement proper SnapOps and NoOpPackageManager
+                // Using HomebrewOps as temporary placeholder - operations will fail gracefully
+                // in installers when package manager is not available
+                Arc::new(HomebrewOps)
             }
         }
     }
