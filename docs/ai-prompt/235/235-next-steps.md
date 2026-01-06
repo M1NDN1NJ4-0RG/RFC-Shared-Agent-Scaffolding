@@ -25,11 +25,15 @@ Related: Issue #235, PRs #240
 **Changes Made:**
 - Verified session start script execution (exit 0)
 - Explored Rust project structure and test infrastructure
-- Ran full Rust test suite: **111 tests passed** (63 lib + 48 integration + 31 conformance + 8 integration_tests)
-  - All unit tests pass
-  - All integration tests pass
-  - All conformance tests pass (4 ignored tests for SIGTERM/preflight scenarios)
-  - Doctests fail (example code in comments) but non-blocking
+- Ran full Rust test suite:
+  - Library tests (`cargo test --lib`): **63 passed**
+  - Binary tests (bootstrap_main): **1 passed**
+  - Binary tests (safe-run main): **7 passed**
+  - Integration tests (bootstrap_tests.rs): **48 passed**
+  - Conformance tests (conformance.rs): **31 passed, 4 ignored**
+  - Integration tests (integration_tests.rs): **8 passed**
+  - **Total: 158 tests** (154 passed, 4 ignored, 0 failed)
+  - Doctests fail (26) but non-blocking (example code formatting issues)
 - Built release binary locally: `cargo build --release --bin bootstrap-repo-cli` (success)
 - Tested local binary:
   - `./target/release/bootstrap-repo-cli --version` → "bootstrap 0.1.1"
@@ -57,7 +61,9 @@ Related: Issue #235, PRs #240
 
 **Verification:**
 - `./scripts/session-start.sh` → exit 0
-- `cargo test --lib --tests` → 111 passed, 0 failed, 4 ignored
+- `cargo test --lib` → 63 passed
+- `cargo test --tests` → 95 passed (1 bootstrap_main + 7 main + 48 bootstrap_tests + 31 conformance + 8 integration_tests)
+- Total unique tests: **158 tests** (154 passed, 4 ignored, 0 failed)
 - `cargo build --release --bin bootstrap-repo-cli` → exit 0
 - `sha256sum -c bootstrap-repo-cli-linux-x86_64.tar.gz.sha256` → OK
 - `bootstrap-repo-cli --version` → "bootstrap 0.1.1"
