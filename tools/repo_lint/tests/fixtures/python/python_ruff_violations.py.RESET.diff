@@ -1,0 +1,20 @@
+diff --git a/tools/repo_lint/tests/fixtures/python/python_ruff_violations.py b/tools/repo_lint/tests/fixtures/python/python_ruff_violations.py
+index 76e3b89..1cb5290 100644
+--- a/tools/repo_lint/tests/fixtures/python/python_ruff_violations.py
++++ b/tools/repo_lint/tests/fixtures/python/python_ruff_violations.py
+@@ -7,11 +7,15 @@ This module intentionally contains Ruff rule violations.
+ 
+ 
+ # Violation 1: F401 - Unused import
++import json
++import random
+ 
+ 
+ # Violation 2: F841 - Local variable assigned but never used
+ def test_unused_var():
+     """Function with unused variable."""
++    x = 42
++    y = 100
+     return 0
+ 
+ 

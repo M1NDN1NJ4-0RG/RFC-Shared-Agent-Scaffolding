@@ -32,7 +32,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Dict, Optional, Tuple
+from typing import Dict, Tuple
 
 from rich.console import Console
 
@@ -46,10 +46,10 @@ def is_tty() -> bool:
 
 
 # Simple cache keyed by (ci_mode, force_terminal) to avoid redundant Console creation
-_console_cache: Dict[Tuple[bool, Optional[bool]], Console] = {}
+_console_cache: Dict[Tuple[bool, bool | None], Console] = {}
 
 
-def get_console(ci_mode: bool = False, force_terminal: Optional[bool] = None) -> Console:
+def get_console(ci_mode: bool = False, force_terminal: bool | None = None) -> Console:
     """Get or create the configured Rich Console instance.
 
     Creates a Console instance with appropriate configuration for TTY or CI mode.

@@ -30,7 +30,7 @@ from __future__ import annotations
 import re
 import sys
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from .common import ValidationError, check_pragma_ignore, check_symbol_pragma_exemption, validate_exit_codes_content
 
@@ -88,7 +88,7 @@ class BashValidator:
         return errors
 
     @staticmethod
-    def _validate_header(file_path: Path, content: str) -> Optional[ValidationError]:
+    def _validate_header(file_path: Path, content: str) -> ValidationError | None:
         """Validate Bash script header documentation.
 
         :param file_path: Path to Bash file

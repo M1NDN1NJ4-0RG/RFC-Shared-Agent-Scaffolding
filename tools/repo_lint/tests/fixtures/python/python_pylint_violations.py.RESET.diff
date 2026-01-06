@@ -1,0 +1,60 @@
+diff --git a/tools/repo_lint/tests/fixtures/python/python_pylint_violations.py b/tools/repo_lint/tests/fixtures/python/python_pylint_violations.py
+new file mode 100644
+index 0000000..224fdcc
+--- /dev/null
++++ b/tools/repo_lint/tests/fixtures/python/python_pylint_violations.py
+@@ -0,0 +1,54 @@
++"""Module with Pylint violations.
++
++This module intentionally contains Pylint rule violations.
++"""
++
++
++# Violation 1: Unused import
++import os
++import sys
++
++
++# Violation 2: Unused variable
++def test_unused():
++    """Function with unused variable."""
++    unused_var = 42
++    return 0
++
++
++# Violation 3: Redefined builtin
++def test_redefined():
++    """Function that redefines builtin."""
++    list = [1, 2, 3]  # pylint should warn about redefining 'list'
++    return list
++
++
++# Violation 4: Too many local variables
++def too_many_locals():
++    """Function with too many local variables."""
++    var1 = 1
++    var2 = 2
++    var3 = 3
++    var4 = 4
++    var5 = 5
++    var6 = 6
++    var7 = 7
++    var8 = 8
++    var9 = 9
++    var10 = 10
++    var11 = 11
++    var12 = 12
++    var13 = 13
++    var14 = 14
++    var15 = 15
++    var16 = 16
++    return var1 + var16
++
++
++class TestClass:
++    """Test class."""
++    
++    # Violation 5: Too few public methods
++    def _private_method(self):
++        """Private method."""
++        pass

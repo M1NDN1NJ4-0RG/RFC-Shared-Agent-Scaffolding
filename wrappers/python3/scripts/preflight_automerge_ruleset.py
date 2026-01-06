@@ -132,7 +132,7 @@ import os
 import re
 import subprocess
 import sys
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
@@ -225,7 +225,7 @@ def classify_auth(obj: object) -> bool:
     )
 
 
-def gh_api(endpoint: str, api_version: str) -> Optional[str]:
+def gh_api(endpoint: str, api_version: str) -> str | None:
     """Call GitHub API using the 'gh' CLI tool.
 
     :param endpoint: API endpoint path (e.g., "repos/owner/repo/rulesets")
@@ -328,7 +328,7 @@ def http_get(url: str, api_version: str) -> Tuple[int, str]:
 
 def parse_args(
     argv: List[str],
-) -> Optional[Tuple[str, Optional[str], Optional[str], str, str]]:
+) -> Tuple[str, str | None, str | None, str, str] | None:
     """Parse command-line arguments for ruleset verification.
 
     :param argv: Command-line arguments (sys.argv[1:])

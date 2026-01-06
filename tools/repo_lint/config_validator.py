@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import yaml
 
@@ -48,7 +48,7 @@ class ConfigValidationError(Exception):
         with file path, line context, and actionable error messages.
     """
 
-    def __init__(self, file_path: str, message: str, line: Optional[int] = None):
+    def __init__(self, file_path: str, message: str, line: int | None = None):
         """Initialize config validation error.
 
         :param file_path: Path to the config file that failed validation
@@ -202,7 +202,7 @@ def _check_unknown_keys(file_path: Path, data: Dict[str, Any], allowed_keys: Lis
         )
 
 
-def validate_config_file(file_path: Path, config_type: str, allowed_keys: Optional[List[str]] = None) -> Dict[str, Any]:
+def validate_config_file(file_path: Path, config_type: str, allowed_keys: List[str] | None = None) -> Dict[str, Any]:
     """Validate a repo_lint YAML configuration file.
 
     :Purpose:

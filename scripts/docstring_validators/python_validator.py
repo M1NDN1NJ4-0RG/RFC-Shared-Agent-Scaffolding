@@ -27,7 +27,7 @@ from __future__ import annotations
 import ast
 import re
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from .common import ValidationError, check_pragma_ignore, validate_exit_codes_content
 
@@ -71,7 +71,7 @@ class PythonValidator:
         return errors
 
     @staticmethod
-    def _validate_module_docstring(file_path: Path, content: str) -> Optional[ValidationError]:
+    def _validate_module_docstring(file_path: Path, content: str) -> ValidationError | None:
         """Validate module-level docstring.
 
         :param file_path: Path to Python file
@@ -175,7 +175,7 @@ class PythonValidator:
         return errors
 
     @staticmethod
-    def _validate_function(file_path: Path, node: ast.FunctionDef, content: str) -> Optional[ValidationError]:
+    def _validate_function(file_path: Path, node: ast.FunctionDef, content: str) -> ValidationError | None:
         """Validate a function or method docstring.
 
         :param file_path: Path to Python file
@@ -268,7 +268,7 @@ class PythonValidator:
         return None
 
     @staticmethod
-    def _validate_class(file_path: Path, node: ast.ClassDef, content: str) -> Optional[ValidationError]:
+    def _validate_class(file_path: Path, node: ast.ClassDef, content: str) -> ValidationError | None:
         """Validate a class docstring.
 
         :param file_path: Path to Python file

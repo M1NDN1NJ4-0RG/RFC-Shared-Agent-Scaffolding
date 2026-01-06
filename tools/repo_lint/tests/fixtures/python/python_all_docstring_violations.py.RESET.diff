@@ -1,0 +1,25 @@
+diff --git a/tools/repo_lint/tests/fixtures/python/python_all_docstring_violations.py b/tools/repo_lint/tests/fixtures/python/python_all_docstring_violations.py
+new file mode 100644
+index 0000000..623940d
+--- /dev/null
++++ b/tools/repo_lint/tests/fixtures/python/python_all_docstring_violations.py
+@@ -0,0 +1,19 @@
++# Missing module docstring - violation 1
++
++# Missing function docstring - violation 2
++def function_no_docstring(x):
++    return x + 1
++
++# Missing class docstring - violation 3
++class MyClass:
++    def __init__(self):
++        self.value = 0
++    
++    # Missing method docstring - violation 4
++    def method_no_docs(self):
++        return self.value
++
++# Another undocumented function - violation 5
++def another_function():
++    x = 5
++    return x * 2

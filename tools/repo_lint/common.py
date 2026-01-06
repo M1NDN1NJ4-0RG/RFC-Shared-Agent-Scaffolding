@@ -36,7 +36,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from enum import IntEnum
-from typing import List, Optional
+from typing import List
 
 
 def safe_print(text: str, fallback_text: str = None) -> None:
@@ -103,7 +103,7 @@ class Violation:
 
     tool: str
     file: str
-    line: Optional[int]
+    line: int | None
     message: str
 
 
@@ -123,10 +123,10 @@ class LintResult:
     tool: str
     passed: bool
     violations: List[Violation]
-    error: Optional[str] = None
-    file_count: Optional[int] = None
-    duration: Optional[float] = None
-    info_message: Optional[str] = None
+    error: str | None = None
+    file_count: int | None = None
+    duration: float | None = None
+    info_message: str | None = None
 
 
 class RepoLintError(Exception):
@@ -136,7 +136,7 @@ class RepoLintError(Exception):
 class MissingToolError(RepoLintError):
     """Raised when required tools are not installed."""
 
-    def __init__(self, tool: str, install_hint: Optional[str] = None):
+    def __init__(self, tool: str, install_hint: str | None = None):
         """Initialize MissingToolError.
 
         :param tool: Name of the missing tool
@@ -157,7 +157,7 @@ class RunnerError(RepoLintError):
 # File filtering utilities
 
 
-def filter_excluded_paths(files: List[str], exclude_patterns: Optional[List[str]] = None) -> List[str]:
+def filter_excluded_paths(files: List[str], exclude_patterns: List[str] | None = None) -> List[str]:
     """Filter out files matching exclusion patterns.
 
     :param files: List of file paths to filter

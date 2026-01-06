@@ -1,0 +1,23 @@
+diff --git a/tools/repo_lint/tests/fixtures/yaml/yaml-all-docstring-violations.yaml b/tools/repo_lint/tests/fixtures/yaml/yaml-all-docstring-violations.yaml
+new file mode 100644
+index 0000000..244ac44
+--- /dev/null
++++ b/tools/repo_lint/tests/fixtures/yaml/yaml-all-docstring-violations.yaml
+@@ -0,0 +1,17 @@
++# Missing document header comment - violation 1
++
++config:
++  name: test
++  # Missing description for this section - violation 2
++  settings:
++    enabled: true
++    
++# Missing documentation for this top-level key - violation 3
++data:
++  items:
++    - value1
++    - value2
++
++# No documentation for this section - violation 4
++metadata:
++  version: 1.0

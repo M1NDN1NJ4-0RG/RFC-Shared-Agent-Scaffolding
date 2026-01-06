@@ -50,7 +50,7 @@ import os
 import warnings
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import yaml
 
@@ -58,10 +58,10 @@ from tools.repo_lint.config_validator import validate_config_file
 from tools.repo_lint.repo_utils import find_repo_root
 
 # Global config directory override (set via --config or set_config_directory)
-_CUSTOM_CONFIG_DIR: Optional[Path] = None
+_CUSTOM_CONFIG_DIR: Path | None = None
 
 
-def set_config_directory(config_dir: Optional[Path]) -> None:
+def set_config_directory(config_dir: Path | None) -> None:
     """Set custom config directory for YAML file loading.
 
     :Purpose:

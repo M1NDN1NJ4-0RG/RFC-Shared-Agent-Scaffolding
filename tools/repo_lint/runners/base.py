@@ -36,7 +36,7 @@ import subprocess
 import warnings
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from tools.repo_lint.common import LintResult, MissingToolError
 
@@ -132,9 +132,7 @@ def get_git_pathspec_excludes(include_fixtures: bool = False) -> List[str]:
     return excludes
 
 
-def get_tracked_files(
-    patterns: List[str], repo_root: Optional[Path] = None, include_fixtures: bool = False
-) -> List[str]:
+def get_tracked_files(patterns: List[str], repo_root: Path | None = None, include_fixtures: bool = False) -> List[str]:
     """Get tracked files matching patterns, excluding lint test fixtures.
 
     :param patterns: List of file patterns (e.g., ["**/*.py", "**/*.sh"])
@@ -172,7 +170,7 @@ class Runner(ABC):
         language runners must implement.
     """
 
-    def __init__(self, repo_root: Optional[Path] = None, ci_mode: bool = False, verbose: bool = False):
+    def __init__(self, repo_root: Path | None = None, ci_mode: bool = False, verbose: bool = False):
         """Initialize runner.
 
         :param repo_root: Path to repository root (auto-detected if None)
@@ -217,7 +215,7 @@ class Runner(ABC):
         pass  # pylint: disable=unnecessary-pass  # Abstract method
 
     @abstractmethod
-    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
+    def fix(self, policy: dict | None = None) -> List[LintResult]:
         """Apply automatic fixes where possible (formatters only).
 
         :param policy: Auto-fix policy dictionary (deny-by-default)
@@ -277,7 +275,7 @@ class Runner(ABC):
             return True
         return tool_name in self._tool_filter
 
-    def _get_changed_files(self, patterns: Optional[List[str]] = None) -> List[str]:
+    def _get_changed_files(self, patterns: List[str] | None = None) -> List[str]:
         """Get list of files changed in git working tree.
 
         :param patterns: Optional file patterns to filter (e.g., ["*.py"])

@@ -51,7 +51,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 
 def get_policy_path() -> Path:
@@ -102,7 +102,7 @@ def get_allowed_categories(policy: Dict) -> List[str]:
     return [cat.get("category") for cat in allowed if cat.get("category")]
 
 
-def get_category_info(policy: Dict, category: str) -> Optional[Dict]:
+def get_category_info(policy: Dict, category: str) -> Dict | None:
     """Get full information about a category.
 
     :param policy: Loaded policy dictionary

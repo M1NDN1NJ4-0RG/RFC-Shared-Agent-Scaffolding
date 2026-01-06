@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from typing import List, Optional
+from typing import List
 
 from tools.repo_lint.common import LintResult, Violation
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
@@ -86,7 +86,7 @@ class YAMLRunner(Runner):
 
         return results
 
-    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
+    def fix(self, policy: dict | None = None) -> List[LintResult]:
         """Apply YAML auto-fixes where possible.
 
         Note: yamllint and actionlint do not have auto-fix modes.

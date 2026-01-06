@@ -1,0 +1,25 @@
+diff --git a/tools/repo_lint/tests/fixtures/bash/bash-docstring-violations.sh b/tools/repo_lint/tests/fixtures/bash/bash-docstring-violations.sh
+new file mode 100644
+index 0000000..5bf54d3
+--- /dev/null
++++ b/tools/repo_lint/tests/fixtures/bash/bash-docstring-violations.sh
+@@ -0,0 +1,19 @@
++#!/usr/bin/env bash
++
++# Missing function docstring - violation 1
++function_without_docstring() {
++    echo "no docstring"
++}
++
++# Missing script header docstring - violation 2
++
++# Incomplete docstring - violation 3
++another_function() {
++    echo "incomplete"
++}
++
++# Function with no docstring at all - violation 4
++third_function() {
++    local x=1
++    echo "$x"
++}

@@ -1,0 +1,21 @@
+diff --git a/tools/repo_lint/tests/fixtures/yaml/yaml_naming_violations.yaml b/tools/repo_lint/tests/fixtures/yaml/yaml_naming_violations.yaml
+new file mode 100644
+index 0000000..70d4cdc
+--- /dev/null
++++ b/tools/repo_lint/tests/fixtures/yaml/yaml_naming_violations.yaml
+@@ -0,0 +1,15 @@
++---
++# This filename violates naming conventions
++
++config_type: test-config
++version: 1
++
++BadCamelCase: "violation 1 - key should be snake_case or kebab-case"
++
++another-Section:  # violation 2 - inconsistent naming style
++  PascalCaseKey: "violation 3"
++  snake_case_key: "mixed styles"
++  
++ALL_CAPS_SECTION:  # violation 4 - inappropriate use of all caps
++  value: 123
++...

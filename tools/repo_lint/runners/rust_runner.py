@@ -33,7 +33,7 @@ from __future__ import annotations
 import json
 import subprocess
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from tools.repo_lint.common import LintResult, Violation
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
@@ -110,7 +110,7 @@ class RustRunner(Runner):
 
         return results
 
-    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
+    def fix(self, policy: dict | None = None) -> List[LintResult]:
         """Apply Rust auto-fixes where possible.
 
         :param policy: Auto-fix policy dictionary (unused for Rust)
@@ -228,7 +228,7 @@ class RustRunner(Runner):
 
         return LintResult(tool="clippy", passed=False, violations=violations[:50])  # Limit output
 
-    def _parse_clippy_json_line(self, line: str, rust_dir: Path) -> Optional[Violation]:
+    def _parse_clippy_json_line(self, line: str, rust_dir: Path) -> Violation | None:
         """Parse a single line of clippy JSON output.
 
         :param line: JSON line from clippy output

@@ -27,7 +27,7 @@ validators, including the ValidationError class and helper functions.
 from __future__ import annotations
 
 import re
-from typing import List, Optional
+from typing import List
 
 # Module-level flag for content checks (set by command-line arg in main script)
 SKIP_CONTENT_CHECKS = False
@@ -55,8 +55,8 @@ class ValidationError:
         missing_sections: List[str],
         message: str = "",
         *,
-        symbol_name: Optional[str] = None,
-        line_number: Optional[int] = None,
+        symbol_name: str | None = None,
+        line_number: int | None = None,
     ):
         """Initialize ValidationError.
 
@@ -124,7 +124,7 @@ def check_pragma_ignore(content: str, section: str) -> bool:
     return False
 
 
-def validate_exit_codes_content(content: str, language: str) -> Optional[str]:
+def validate_exit_codes_content(content: str, language: str) -> str | None:
     """Validate that exit codes section contains minimum required codes.
 
     Checks that at least exit codes 0 and 1 are documented.

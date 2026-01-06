@@ -42,7 +42,6 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
-from typing import Optional
 
 
 class VenvNotFoundError(Exception):
@@ -76,7 +75,7 @@ def is_venv_active() -> bool:
     return sys.prefix != sys.base_prefix
 
 
-def get_current_venv() -> Optional[Path]:
+def get_current_venv() -> Path | None:
     """Get the currently active virtual environment, if any.
 
     :returns: Path to the active virtual environment, or None if not in a venv
@@ -105,7 +104,7 @@ def get_venv_bin_dir(venv_path: Path) -> Path:
     return venv_path / "bin"
 
 
-def get_activation_script(venv_path: Path, shell: Optional[str] = None) -> Path:
+def get_activation_script(venv_path: Path, shell: str | None = None) -> Path:
     """Get the activation script path for a virtual environment.
 
     :param venv_path: Path to the virtual environment root directory
@@ -150,8 +149,8 @@ def get_activation_script(venv_path: Path, shell: Optional[str] = None) -> Path:
 
 
 def resolve_venv(
-    explicit_path: Optional[str] = None,
-    repo_root: Optional[Path] = None,
+    explicit_path: str | None = None,
+    repo_root: Path | None = None,
 ) -> Path:
     """Resolve virtual environment path using precedence rules.
 

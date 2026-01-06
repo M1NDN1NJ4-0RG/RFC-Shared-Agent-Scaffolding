@@ -47,7 +47,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 import pytest
 
@@ -71,7 +71,7 @@ def load_vector(vector_file: Path) -> dict:
         return json.load(f)
 
 
-def normalize_violation_from_docstring_output(line: str) -> Optional[Dict]:
+def normalize_violation_from_docstring_output(line: str) -> Dict | None:
     """Parse and normalize a violation from docstring validator output.
 
     :param line: Single line of output from validate_docstrings.py

@@ -1,0 +1,21 @@
+# Missing document header - violation 1
+
+name: Test Workflow
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      # Violation 2: Using deprecated set-output command
+      - name: Set output
+        run: echo "::set-output name=test::value"
+      
+      # Violation 3: Missing shell specification for multi-line run
+      - name: Multi-line run
+        run: |
+          echo "line 1"
+          echo "line 2"
+      
+      # Violation 4: Using deprecated node12 action version
+      - uses: actions/checkout@v2

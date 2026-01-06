@@ -46,7 +46,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Optional, Protocol
+from typing import List, Protocol
 
 
 class UnsafeFixer(Protocol):
@@ -65,7 +65,7 @@ class UnsafeFixer(Protocol):
         """
         ...  # pylint: disable=unnecessary-ellipsis
 
-    def fix(self, file_path: Path) -> Optional[UnsafeFixerResult]:
+    def fix(self, file_path: Path) -> UnsafeFixerResult | None:
         """Apply the unsafe fix to the file.
 
         :param file_path: Path to file to fix
@@ -126,7 +126,7 @@ class UnsafeDocstringRewriter:
         """
         return file_path.suffix == ".py"
 
-    def fix(self, file_path: Path) -> Optional[UnsafeFixerResult]:
+    def fix(self, file_path: Path) -> UnsafeFixerResult | None:
         """Apply unsafe docstring rewriting to a Python file.
 
         :param file_path: Path to Python file to fix

@@ -72,11 +72,8 @@ jobs:
             suffix = p.suffix.lower()
             stem = p.stem
 
-            # Skip specific naming-violations test files (intentionally violate naming conventions)
-            if path.endswith("/naming-violations.py") or \
-               path.endswith("/naming-violations.pl") or \
-               path.endswith("/naming-violations.ps1") or \
-               path.endswith("/naming_violations.sh"):
+            # Skip all test fixture files (intentionally may violate naming conventions)
+            if "/tests/fixtures/" in path or "/test/fixtures/" in path:
               continue
 
             # Skip special files
