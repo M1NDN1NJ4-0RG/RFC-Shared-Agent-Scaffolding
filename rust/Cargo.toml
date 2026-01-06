@@ -19,6 +19,21 @@ tar = "0.4"
 flate2 = "1.0"
 bzip2 = "0.4"
 zip = "0.6"
+# Rust migration dependencies
+tokio = { version = "1.41", features = ["full"] }
+anyhow = "1.0"
+thiserror = "2.0"
+toml = "0.8"
+indicatif = "0.17"
+reqwest = { version = "0.12", features = ["rustls-tls", "json"], default-features = false }
+futures = "0.3"
+petgraph = "0.6"
+async-trait = "0.1"
+rand = "0.8"
+atty = "0.2"
+dirs = "5.0"
+semver = "1.0"
+num_cpus = "1.16"
 
 [dev-dependencies]
 assert_cmd = "2.0"
