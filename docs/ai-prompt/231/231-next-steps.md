@@ -6,14 +6,58 @@ Last Updated: 2026-01-06
 Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## NEXT
-- Phase 3: Additional verification and fixture/test updates
-- Phase 4: Documentation updates
-- Phase 5: Verification and tests
-- Phase 6: Analysis and Rust migration plan
+- Phase 6: Script analysis and Rust migration plan (future work)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 02:50 - Phases 3-5 COMPLETE (All Execution Phases Done)
+**Files Changed:**
+- `scripts/tests/test_bootstrap_repo_lint_toolchain.py`: Lines 1050-1069 (new test for exit code 21)
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: Lines 52-53, 125-127
+
+**Phase 3: Verification & Hardening**
+- Added test coverage for ripgrep exit code 21
+- Test verifies exit code 21 is documented and used correctly
+- All 26 tests pass including new ripgrep test
+- End-to-end verification on Linux: pass
+- actionlint v1.7.10: functional
+- ripgrep 14.1.0: enforced as required
+
+**Phase 4: Documentation Updates**
+- Updated "What Gets Installed" section:
+  - Changed ripgrep description from "falls back to grep" to "REQUIRED - no fallback"
+  - Added actionlint version (v1.7.10)
+- Updated "Verifying Setup" section:
+  - Added `rg --version` verification command
+- Documentation now accurately reflects actual behavior
+
+**Phase 5: Final Verification**
+- Bootstrap: exit 0 ✅
+- repo-lint check --ci: exit 0 ✅
+- All 15 linters pass ✅
+- Behavior stable and CI-ready
+
+**Summary of All Completed Work:**
+- Phase 0: Manual rename ✅
+- Phase 1: Fail-fast helpers ✅
+- Phase 2: All 8 hardening items ✅
+- Phase 3: Verification + tests ✅
+- Phase 4: Documentation ✅
+- Phase 5: Final verification ✅
+
+**Remaining:**
+- Phase 6: Script analysis and Rust migration plan (deferred to future work)
+
+**Verification:**
+- Bootstrap: exit 0
+- repo-lint check: exit 0
+- Tests: 26/26 pass
+- ShellCheck: clean
+- Documentation: accurate and complete
+
+---
 
 ### 2026-01-06 02:35 - ShellCheck Clean + Doctor Fix (Phase 3 Started)
 **Files Changed:**
