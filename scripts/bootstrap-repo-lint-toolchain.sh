@@ -769,8 +769,17 @@ install_python_tools() {
 			if command -v "$tool" >/dev/null 2>&1; then
 				local version
 				case "$tool" in
-				black | ruff | pylint | yamllint)
-					version=$(safe_version "$tool --version")
+				black)
+					version=$(safe_version "black --version")
+					;;
+				ruff)
+					version=$(safe_version "ruff --version")
+					;;
+				pylint)
+					version=$(safe_version "pylint --version")
+					;;
+				yamllint)
+					version=$(safe_version "yamllint --version")
 					;;
 				pytest)
 					version=$(safe_version "pytest --version")
