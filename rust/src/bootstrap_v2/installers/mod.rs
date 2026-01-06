@@ -17,6 +17,8 @@
 //! ```
 
 pub mod actionlint;
+pub mod perl_tools;
+pub mod powershell_tools;
 pub mod python_tools;
 pub mod ripgrep;
 pub mod shellcheck;
@@ -49,6 +51,10 @@ impl InstallerRegistry {
         registry.register(Arc::new(actionlint::ActionlintInstaller));
         registry.register(Arc::new(shellcheck::ShellcheckInstaller));
         registry.register(Arc::new(shfmt::ShfmtInstaller));
+        registry.register(Arc::new(perl_tools::PerlCriticInstaller));
+        registry.register(Arc::new(perl_tools::PPIInstaller));
+        registry.register(Arc::new(powershell_tools::PwshInstaller));
+        registry.register(Arc::new(powershell_tools::PSScriptAnalyzerInstaller));
 
         registry
     }
