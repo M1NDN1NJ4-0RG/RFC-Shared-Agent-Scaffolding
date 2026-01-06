@@ -585,9 +585,7 @@ activate_venv() {
 	active_python="$(command -v python3)"
 
 	if [[ "$active_python" != "$venv_path/bin/python3" ]]; then
-		warn "Virtual environment may not be properly activated"
-		warn "Expected: $venv_path/bin/python3"
-		warn "Got: $active_python"
+		die "Virtual environment activation failed (python3 does not point to venv). Expected: $venv_path/bin/python3, Got: $active_python" 11
 	else
 		log "Virtual environment activated: $active_python"
 	fi
@@ -658,7 +656,7 @@ install_repo_lint() {
 	local repo_root="$1"
 
 	log "Upgrading pip, setuptools, and wheel"
-	python3 -m pip install --upgrade pip setuptools wheel
+	run_or_die 13 "Failed to upgrade pip/setuptools/wheel" python3 -m pip install --upgrade pip setuptools wheel
 
 	local install_target
 	install_target=$(determine_install_target "$repo_root")

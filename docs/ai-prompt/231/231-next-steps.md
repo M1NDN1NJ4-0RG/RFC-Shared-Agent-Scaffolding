@@ -6,9 +6,7 @@ Last Updated: 2026-01-06
 Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## NEXT
-- Phase 0: Rename and relocate bootstrapper manual
-- Phase 1: Add fail-fast wrapper helpers (run_or_die, try_run, safe_version)
-- Phase 2: Fix function-by-function fail-fast gaps
+- Phase 2: Continue fixing fail-fast gaps (2.3-2.8)
 - Phase 3: Consistency pass across entire script
 - Phase 4: Documentation updates
 - Phase 5: Verification and tests
@@ -17,6 +15,73 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 01:00 - Phase 2.1-2.2: Critical Fail-Fast Fixes
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Lines 587-589 (activate_venv), line 659 (install_repo_lint)
+
+**Changes Made:**
+- Phase 2.1: Made venv activation mismatch fatal instead of warn-only
+  - Changed lines 587-589 from warn() calls to die() with exit code 11
+  - Error message now includes expected vs actual python3 path
+  - Prevents continuing with wrong Python environment
+- Phase 2.2: Wrapped pip upgrade command with run_or_die
+  - Line 659: Changed naked `python3 -m pip install --upgrade pip setuptools wheel`
+  - Now uses: `run_or_die 13 "Failed to upgrade pip/setuptools/wheel" python3 -m pip install --upgrade pip setuptools wheel`
+  - Ensures deterministic exit code 13 on pip upgrade failure
+
+**Verification:**
+- shellcheck passed (exit 0)
+- shfmt auto-formatted successfully  
+- repo-lint check --ci passed (exit 0)
+- Both changes enforce fail-fast semantics per hardening plan
+
+**Next Steps:**
+- Phase 2.3-2.8: Remaining function-by-function fixes (PowerShell, Perl, shell tools, ripgrep, verification gate, actionlint)
+
+---
+
+### 2026-01-06 00:50 - Phase 0 & Phase 1: Helpers and Rename Complete
+**Files Changed:**
+- `docs/tools/repo-lint/bootstrapper.md` → `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` (renamed)
+- `CONTRIBUTING.md`: Added link to bootstrapper manual
+- `docs/ai-prompt/209/*.md`: Updated all references (4 files)
+- `docs/ai-prompt/231/*.md`: Updated all references (3 files)
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Added 3 helper functions (lines 211-296)
+
+**Changes Made:**
+- Phase 0.1-0.3: Renamed bootstrapper manual per plan requirements
+  - Kept file in `docs/tools/repo-lint/` per user requirement (no directory move)
+  - Renamed from `bootstrapper.md` to `bootstrapper-toolchain-user-manual.md`
+  - Updated 7 files with old path references
+  - Added prominent link in CONTRIBUTING.md "Essential Documentation" section
+- Phase 1.1: Added `run_or_die()` helper (lines 211-237)
+  - Accepts exit code, error message, and command
+  - Runs command and calls die() with deterministic exit code on failure
+  - Includes failing command in error message for debugging
+- Phase 1.2: Added `try_run()` helper (lines 239-259)
+  - Executes command without terminating script on failure
+  - Returns actual exit code for caller to handle
+  - Used for truly optional operations
+- Phase 1.3: Added `safe_version()` helper (lines 261-296)
+  - Safely extracts version strings without terminating bootstrap
+  - Pipefail-safe: uses `|| true` patterns throughout
+  - Returns empty string on failure (never exits non-zero)
+  - Supports optional grep pattern and awk field extraction
+
+**Verification:**
+- shellcheck passed on modified script
+- shfmt auto-formatted (trailing whitespace removed)
+- All file renames committed via git mv (history preserved)
+- Zero remaining references to old `bootstrapper.md` name (excluding historical journal entries)
+
+**Rationale:**
+- Helper functions enable systematic enforcement of deterministic exit codes
+- safe_version() prevents fragile logging pipelines from killing the bootstrap
+- run_or_die() ensures all critical external commands map failures to intended exit codes
+- Renamed manual clearly communicates scope and avoids ambiguous generic name
+
+---
 
 ### 2026-01-06 00:40 - Session Start: Bootstrap and Plan Creation
 **Files Changed:**
