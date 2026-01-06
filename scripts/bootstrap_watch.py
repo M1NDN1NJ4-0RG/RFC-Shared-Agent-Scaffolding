@@ -63,6 +63,12 @@ def main():
         output = result.stdout + result.stderr
         lines = output.splitlines()
 
+        # Filter out tar extended header warnings (noise from macOS metadata)
+        tar_warning_pattern = re.compile(
+            r"^(/usr/bin/)?tar: Ignoring unknown extended header keyword 'LIBARCHIVE\.xattr\..*"
+        )
+        lines = [line for line in lines if not tar_warning_pattern.match(line)]
+
         # Pattern to match progress lines: [bootstrap] ... [N/M] ...
         re_prog = re.compile(r"^\[bootstrap\].*\[[0-9]+/[0-9]+\]")
 
