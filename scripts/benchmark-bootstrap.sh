@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# benchmark_bootstrap.sh - Benchmark Rust vs Bash bootstrapper performance
+# benchmark-bootstrap.sh - Benchmark Rust vs Bash bootstrapper performance
 #
 # Usage:
-#   ./scripts/benchmark_bootstrap.sh [OPTIONS]
+#   ./scripts/benchmark-bootstrap.sh [OPTIONS]
 #
 # Options:
 #   --iterations <N>  Number of benchmark iterations (default: 3)
