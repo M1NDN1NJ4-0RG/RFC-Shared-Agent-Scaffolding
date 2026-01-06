@@ -84,6 +84,7 @@ async fn handle_command(cli: Cli) -> anyhow::Result<ExitCode> {
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn handle_install(
     profile: Option<String>,
     jobs: Option<usize>,
