@@ -63,7 +63,7 @@ Related: Issue #235, PRs #240
 - `./scripts/session-start.sh` → exit 0
 - `cargo test --lib` → 63 passed
 - `cargo test --tests` → 95 passed (1 bootstrap_main + 7 main + 48 bootstrap_tests + 31 conformance + 8 integration_tests)
-- Total unique tests: **158 tests** (154 passed, 4 ignored, 0 failed)
+- Total unique tests: **162 tests** (158 passed, 4 ignored, 0 failed)
 - `cargo build --release --bin bootstrap-repo-cli` → exit 0
 - `sha256sum -c bootstrap-repo-cli-linux-x86_64.tar.gz.sha256` → OK
 - `bootstrap-repo-cli --version` → "bootstrap 0.1.1"
