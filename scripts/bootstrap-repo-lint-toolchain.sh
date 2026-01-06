@@ -12,9 +12,10 @@
 #   - repo-lint package installation in editable mode
 #   - Verification that repo-lint is functional and on PATH
 #   - Python toolchain installation (black, ruff, pylint, yamllint, pytest)
-#
-#   Future phases will add installation of system tools (shellcheck, shfmt,
-#   ripgrep, PowerShell, Perl modules) and final verification gate.
+#   - Shell toolchain installation (shellcheck, shfmt) - INSTALLED BY DEFAULT
+#   - PowerShell toolchain installation (pwsh, PSScriptAnalyzer) - INSTALLED BY DEFAULT
+#   - Perl toolchain installation (Perl::Critic, PPI) - INSTALLED BY DEFAULT
+#   - Final verification gate (repo-lint check --ci)
 #
 # USAGE:
 #   ./scripts/bootstrap-repo-lint-toolchain.sh [OPTIONS]
@@ -24,15 +25,18 @@
 #   Arguments:
 #     --verbose, -v    Enable verbose output (DEFAULT, REQUIRED during implementation)
 #     --quiet, -q      Enable quiet mode (DISABLED - reserved for future use)
-#     --shell          Install shell toolchain (shellcheck, shfmt)
-#     --powershell     Install PowerShell toolchain (pwsh, PSScriptAnalyzer)
-#     --perl           Install Perl toolchain (Perl::Critic, PPI)
-#     --all            Install all optional toolchains
+#     --shell          Install shell toolchain (shellcheck, shfmt) - DEFAULT: enabled
+#     --powershell     Install PowerShell toolchain (pwsh, PSScriptAnalyzer) - DEFAULT: enabled
+#     --perl           Install Perl toolchain (Perl::Critic, PPI) - DEFAULT: enabled
+#     --all            Install all toolchains (DEFAULT BEHAVIOR - this flag is redundant)
 #     --help, -h       Show this help message
 #
 #   Environment Variables:
 #     None (uses auto-detected repo root)
 #
+#   Note: All toolchains are installed by default. Individual flags are kept
+#         for backwards compatibility and explicit specification but have no
+#         effect since --all is the default behavior.
 # OUTPUTS:
 #   Exit Codes:
 #     0   Success - all operations completed
@@ -120,11 +124,11 @@ set -euo pipefail
 readonly VENV_DIR=".venv"
 
 # Global flags (set by parse_arguments)
-VERBOSE_MODE=true # Default to verbose during implementation
-QUIET_MODE=false  # Reserved for future use
-INSTALL_SHELL=false
-INSTALL_POWERSHELL=false
-INSTALL_PERL=false
+VERBOSE_MODE=true       # Default to verbose during implementation
+QUIET_MODE=false        # Reserved for future use
+INSTALL_SHELL=true      # Default to true - all toolchains installed by default
+INSTALL_POWERSHELL=true # Default to true - all toolchains installed by default
+INSTALL_PERL=true       # Default to true - all toolchains installed by default
 
 # ============================================================================
 # Logging Functions
@@ -351,30 +355,34 @@ show_usage() {
 		Usage: bootstrap-repo-lint-toolchain.sh [OPTIONS]
 
 		Bootstrap the repo-lint toolchain and development environment.
+		By default, ALL toolchains are installed (equivalent to --all flag).
 
 		OPTIONS:
 		  --verbose, -v      Enable verbose output (DEFAULT - required during implementation)
 		  --quiet, -q        Enable quiet mode (DISABLED - reserved for future use)
-		  --shell            Install shell toolchain (shellcheck, shfmt)
-		  --powershell       Install PowerShell toolchain (pwsh, PSScriptAnalyzer)
-		  --perl             Install Perl toolchain (Perl::Critic, PPI)
-		  --all              Install all optional toolchains
+		  --shell            Install shell toolchain (shellcheck, shfmt) - DEFAULT: enabled
+		  --powershell       Install PowerShell toolchain (pwsh, PSScriptAnalyzer) - DEFAULT: enabled
+		  --perl             Install Perl toolchain (Perl::Critic, PPI) - DEFAULT: enabled
+		  --all              Install all toolchains (DEFAULT BEHAVIOR - redundant)
 		  --help, -h         Show this help message
 
 		DEFAULT TOOLCHAINS (always installed):
 		  - Python toolchain (black, ruff, pylint, yamllint, pytest)
+		  - Shell toolchain (shellcheck, shfmt)
+		  - PowerShell toolchain (pwsh, PSScriptAnalyzer)
+		  - Perl toolchain (Perl::Critic, PPI)
 		  - actionlint (GitHub Actions workflow linter)
-		  - rgrep (or grep fallback)
+		  - ripgrep (or grep fallback)
 
 		EXAMPLES:
-		  # Basic install (Python + rgrep only)
+		  # Install all toolchains (default behavior)
 		  ./scripts/bootstrap-repo-lint-toolchain.sh
 
-		  # Install all toolchains
+		  # Explicit --all flag (same as default)
 		  ./scripts/bootstrap-repo-lint-toolchain.sh --all
 
-		  # Install specific optional toolchains
-		  ./scripts/bootstrap-repo-lint-toolchain.sh --shell --perl
+		  # Any individual flag still works (but all are installed anyway)
+		  ./scripts/bootstrap-repo-lint-toolchain.sh --shell
 
 		NOTE: Verbose mode is currently the ONLY supported output mode during
 		      implementation for troubleshooting purposes. The --quiet flag is
