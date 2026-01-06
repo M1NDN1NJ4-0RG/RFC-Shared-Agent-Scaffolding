@@ -98,6 +98,21 @@ impl Installer for PwshInstaller {
                     .await;
 
                 if snap_check.is_ok() {
+                    // Check if sudo is available and passwordless
+                    let sudo_check = tokio::process::Command::new("sudo")
+                        .arg("-n")
+                        .arg("true")
+                        .output()
+                        .await;
+
+                    if sudo_check.is_err() || !sudo_check.as_ref().unwrap().status.success() {
+                        return Err(BootstrapError::PowerShellToolchainFailed(
+                            "sudo -n failed: passwordless sudo required for snap installation. \
+                             Please run: sudo snap install powershell --classic"
+                                .to_string(),
+                        ));
+                    }
+
                     let output = tokio::process::Command::new("sudo")
                         .arg("-n")
                         .arg("snap")
@@ -116,7 +131,9 @@ impl Installer for PwshInstaller {
                     }
                 } else {
                     return Err(BootstrapError::PowerShellToolchainFailed(
-                        "PowerShell requires snap on Linux systems without Homebrew".to_string(),
+                        "PowerShell requires snap on Linux systems without Homebrew. \
+                         Please install manually: sudo snap install powershell --classic"
+                            .to_string(),
                     ));
                 }
             }

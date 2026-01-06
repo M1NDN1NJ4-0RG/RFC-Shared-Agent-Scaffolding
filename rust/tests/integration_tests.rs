@@ -265,8 +265,14 @@ async fn test_dependency_resolution() {
     let pwsh_idx = ids.iter().position(|&id| id == "pwsh");
     let pssa_idx = ids.iter().position(|&id| id == "psscriptanalyzer");
 
+    assert!(pwsh_idx.is_some(), "pwsh should be in resolved installers");
     assert!(
-        pwsh_idx < pssa_idx,
+        pssa_idx.is_some(),
+        "psscriptanalyzer should be in resolved installers"
+    );
+
+    assert!(
+        pwsh_idx.unwrap() < pssa_idx.unwrap(),
         "Dependencies should come before dependents"
     );
 }

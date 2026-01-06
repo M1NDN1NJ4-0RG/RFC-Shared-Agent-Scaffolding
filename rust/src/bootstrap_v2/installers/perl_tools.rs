@@ -83,12 +83,16 @@ impl Installer for PerlCriticInstaller {
         }
 
         // Install using cpanm to ~/perl5
+        let home = std::env::var("HOME").map_err(|_| {
+            BootstrapError::PerlToolchainFailed(
+                "HOME environment variable not set - cannot determine Perl install location"
+                    .to_string(),
+            )
+        })?;
+
         let output = tokio::process::Command::new("cpanm")
             .arg("--local-lib")
-            .arg(format!(
-                "{}/perl5",
-                std::env::var("HOME").unwrap_or_default()
-            ))
+            .arg(format!("{}/perl5", home))
             .arg("Perl::Critic")
             .output()
             .await
@@ -186,12 +190,16 @@ impl Installer for PPIInstaller {
         }
 
         // Install using cpanm to ~/perl5
+        let home = std::env::var("HOME").map_err(|_| {
+            BootstrapError::PerlToolchainFailed(
+                "HOME environment variable not set - cannot determine Perl install location"
+                    .to_string(),
+            )
+        })?;
+
         let output = tokio::process::Command::new("cpanm")
             .arg("--local-lib")
-            .arg(format!(
-                "{}/perl5",
-                std::env::var("HOME").unwrap_or_default()
-            ))
+            .arg(format!("{}/perl5", home))
             .arg("PPI")
             .output()
             .await
