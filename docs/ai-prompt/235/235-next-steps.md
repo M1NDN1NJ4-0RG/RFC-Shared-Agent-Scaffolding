@@ -6,14 +6,6 @@ Last Updated: 2026-01-06
 Related: Issue #235
 
 ## NEXT
-- Phase 10: Main binary entry point
-  - Create bootstrap_main.rs as new binary entry point
-  - Wire all phases together: CLI -> Config -> Plan -> Execute -> Report
-  - Implement install subcommand handler (full flow)
-  - Implement doctor subcommand handler (call doctor module)
-  - Implement verify subcommand handler (verify-only mode)
-  - Add proper error handling and exit code mapping
-  - Test end-to-end with actual installers
 - Additional installers to reach full coverage
   - Perl tools (perlcritic, PPI)
   - PowerShell tools (pwsh, PSScriptAnalyzer)
@@ -29,6 +21,96 @@ Related: Issue #235
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 11:45 - Phase 10 Complete: Main Binary Entry Point
+**Files Changed:**
+- `rust/src/bootstrap_main.rs`: REWRITTEN - Complete Phase 10 implementation
+- `rust/src/bootstrap_v2/progress.rs`: Added emit_event_plan_computed()
+- `rust/src/bootstrap_v2/doctor.rs`: Updated exit_code API (removed bool param), added exit_code_strict() and to_json()
+- `rust/src/bootstrap_v2/executor.rs`: Updated constructor (takes LockManager instead of InstallerRegistry), added execute_plan() wrapper
+- `rust/src/bootstrap_v2/plan.rs`: Added profile parameter to compute()
+- `rust/src/bootstrap_v2/checkpoint.rs`: Updated tests to pass profile="dev"
+
+**Changes Made:**
+- Phase 10 Main Binary:
+  - Completely rewrote bootstrap_main.rs as async tokio entry point
+  - Implemented handle_install() with full detect→install→verify flow
+  - Implemented handle_doctor() calling doctor module with strict mode support
+  - Implemented handle_verify() for verify-only mode (no installs)
+  - Added find_repo_root() helper to locate git repository
+  - Proper error handling with BootstrapError → ExitCode mapping
+  - Progress reporting integrated throughout
+  - JSON output support for all commands
+- API Updates:
+  - progress: Added emit_event_plan_computed() for plan computation events
+  - doctor: Changed exit_code() to be non-strict by default, added exit_code_strict() and to_json()
+  - executor: Changed constructor to take LockManager (creates internal registry), added execute_plan() wrapper
+  - plan: Added profile parameter to compute() method
+- CLI Flow:
+  - Commands::Install → handle_install (with profile support)
+  - Commands::Doctor → handle_doctor (with strict flag)
+  - Commands::Verify → handle_verify (verify-only, no installs)
+- Context Creation:
+  - Proper OS/package manager detection
+  - Config loading with CI mode enforcement
+  - Progress reporter setup (Interactive/CI/JSON modes)
+  - Full Context::with_config() with all parameters
+
+**Verification:**
+- `cargo build --bin bootstrap-repo-cli` successful
+- All 59 tests passing (including new Phase 10 integration)
+- No clippy warnings
+- Doctor module tests updated and passing
+- Checkpoint module tests updated and passing
+- Executor module tests updated and passing
+
+**Architecture Notes:**
+- Main binary is now fully async (tokio::main)
+- Three command handlers with proper error propagation
+- Progress reporter used consistently across all flows
+- Exit codes properly mapped from errors
+- Registry initialized once per command
+- Lock manager created and passed to executor
+- Plan computation includes profile parameter for tool selection
+
+**Known Issues / Follow-ups:**
+- Integration tests not yet added (need end-to-end flow tests)
+- Bash wrapper (Phase 10.1) not started
+- No binary releases or distribution setup yet
+- Performance benchmarking not started
+- Additional installers needed (Perl, PowerShell tools)
+
+---
+
+### 2026-01-06 11:25 - Phase 8 Complete: Platform Abstractions
+**Files Changed:**
+- `rust/src/bootstrap_v2/platform.rs`: NEW - Platform utilities for venv and shell integration
+- `rust/src/bootstrap_v2/mod.rs`: Added platform module
+- `docs/ai-prompt/235/235-next-steps.md`: Updated
+
+**Changes Made:**
+- Created platform.rs module with comprehensive venv management:
+  - VenvInfo struct with path management (python, pip, bin paths)
+  - VenvInfo::from_path() for loading existing venvs
+  - VenvInfo::detect_python_version() async method
+  - VenvInfo::env_vars() for VIRTUAL_ENV setup
+  - VenvInfo::prepend_to_path() for PATH manipulation
+  - create_venv() async function with dry-run support
+  - upgrade_pip() async function
+  - command_exists() helper for PATH checks
+  - get_current_path() helper
+  - parse_version_from_output() utility for version parsing
+- All 6 platform tests passing
+- Proper error handling with BootstrapError::VenvActivation
+
+**Verification:**
+- `cargo build` successful
+- Platform module tests: 6/6 passing
+- parse_version_from_output() tested with multiple formats
+- VenvInfo tested for path manipulation and env vars
+- Dry-run mode tested
+
+---
 
 ### 2026-01-06 08:30 - Phases 4, 6, 7, 9 Complete: Execution Engine, Config, Checkpointing, Doctor
 **Files Changed:**
