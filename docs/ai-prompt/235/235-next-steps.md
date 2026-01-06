@@ -47,6 +47,7 @@ Related: Issue #235
 - `rust/src/bootstrap_v2/progress.rs`: UPDATED - Added emit_event_phase_* methods, new_for_testing()
 - `rust/src/bootstrap_v2/mod.rs`: UPDATED - Added executor, checkpoint, doctor modules
 - `rust/Cargo.toml`: UPDATED - Added serde feature to chrono
+- `docs/ai-prompt/235/235-next-steps.md`: UPDATED - Comprehensive session notes
 
 **Changes Made:**
 - Phase 4 Execution Engine:
@@ -70,23 +71,36 @@ Related: Issue #235
   - mark_completed/mark_failed/is_completed for resume logic
   - 5 tests covering save/load/validation (all passing)
   - Enables --checkpoint / --resume flags (optional feature)
+  - Policy: no fallback to repo root (must use cache dirs)
 - Phase 9 Doctor Command:
   - doctor() function with 5 core checks: repo, package manager, Python, disk, permissions
   - DiagnosticCheck with CheckStatus (Pass/Warn/Fail)
   - DiagnosticReport with colored output (✓/⚠/✗) and remediation suggestions
   - --strict mode where WARN is treated as FAIL (for exit code)
   - 7 tests covering all check types and exit code logic (all passing)
+  - Disk space check marked as TODO/placeholder
+
+**Code Review:**
+- Triggered GitHub Copilot code review per session requirements
+- 5 review comments received and ALL addressed:
+  1. ✅ executor: Changed unwrap() to expect() with descriptive message
+  2. ✅ executor: Clarified double ? operator with explicit map_err
+  3. ✅ config: Improved error message, added reference to future docs
+  4. ✅ checkpoint: Removed repo root fallback per policy (errors if no cache dir)
+  5. ✅ doctor: Marked disk space check as TODO with clear warning status
+- Re-tested after fixes: all 53 tests passing
 
 **Verification:**
-- `cargo build` successful (0 errors)
+- `cargo build` successful (0 errors, 0 warnings)
 - All module tests passing:
   - executor: 2 tests
   - config: 7 tests
   - checkpoint: 5 tests
   - doctor: 7 tests
-- Total: 21 new tests passing
+  - Total 53 tests across entire codebase (21 new this session)
 - No clippy warnings
 - Context field renames (ci_mode -> is_ci, jobs -> max_jobs) propagated correctly
+- Code review feedback fully addressed
 
 **Architecture Notes:**
 - Executor uses Arc<Context> for thread-safe sharing
@@ -102,6 +116,7 @@ Related: Issue #235
 - Installers don't yet use Executor - need wiring in main
 - No integration tests yet - need end-to-end flow tests
 - Bash wrapper (Phase 10.1) not started
+- Disk space check is placeholder - needs statvfs implementation
 
 ---
 
