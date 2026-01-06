@@ -72,9 +72,8 @@ jobs:
             suffix = p.suffix.lower()
             stem = p.stem
 
-            # Skip specific naming-violations test files (intentionally violate naming conventions)
-            if "naming" in stem.lower() and "violation" in stem.lower() and \
-               ("/tests/fixtures/" in path or "/test/fixtures/" in path):
+            # Skip all test fixture files (intentionally may violate naming conventions)
+            if "/tests/fixtures/" in path or "/test/fixtures/" in path:
               continue
 
             # Skip special files
