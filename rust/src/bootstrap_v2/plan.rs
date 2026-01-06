@@ -1,8 +1,6 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Execution Plan
 //!
 //! Build and execute dependency-ordered installation plans.
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

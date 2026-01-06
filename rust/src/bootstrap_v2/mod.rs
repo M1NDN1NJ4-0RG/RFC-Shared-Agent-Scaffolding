@@ -1,8 +1,6 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Bootstrap V2 - Modular Toolchain Bootstrapper
 //!
 //! This module implements the next-generation modular bootstrapper with:
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

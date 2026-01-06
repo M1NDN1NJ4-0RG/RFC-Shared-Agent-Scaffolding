@@ -1,8 +1,6 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Resource Locking
 //!
 //! Lock manager for shared resources (apt, brew, cache, venv).
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

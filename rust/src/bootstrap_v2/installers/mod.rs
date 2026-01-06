@@ -1,6 +1,20 @@
 //! # Concrete Installer Implementations
 //!
 //! This module contains specific installer implementations for tools.
+//!
+//! # Purpose
+//!
+//! Provides concrete implementations of the Installer trait for various development tools.
+//! Includes system package installers (ripgrep) and Python venv-based tools (black, ruff, pylint).
+//!
+//! # Examples
+//!
+//! ```no_run
+//! use bootstrap_v2::installers::InstallerRegistry;
+//!
+//! let registry = InstallerRegistry::new();
+//! let installers = registry.resolve_dependencies(&["ripgrep", "python-black"]).unwrap();
+//! ```
 
 pub mod python_tools;
 pub mod ripgrep;

@@ -1,8 +1,6 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Installer Trait and Registry
 //!
 //! Core installer abstraction and registry pattern.
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

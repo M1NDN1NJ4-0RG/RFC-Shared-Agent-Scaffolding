@@ -1,8 +1,6 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Error Type Hierarchy
 //!
 //! Defines all error types used by the bootstrap CLI with proper error chaining.
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

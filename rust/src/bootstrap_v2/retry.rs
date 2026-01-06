@@ -1,8 +1,6 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Retry Strategy
 //!
 //! Retry policies with exponential backoff and classification.
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

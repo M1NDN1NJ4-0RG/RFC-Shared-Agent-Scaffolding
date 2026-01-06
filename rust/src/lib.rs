@@ -1,7 +1,6 @@
 //! # Safe-Run and Bootstrap Library
 //!
 //! This library provides:
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

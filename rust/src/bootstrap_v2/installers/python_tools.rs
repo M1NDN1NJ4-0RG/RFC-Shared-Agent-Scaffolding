@@ -1,6 +1,23 @@
 //! # Python Tools Installers
 //!
 //! Installers for Python-based tools (black, ruff, pylint, etc.)
+//!
+//! # Purpose
+//!
+//! Provides installer implementations for Python tools that are installed via pip
+//! in the repository's virtual environment (.venv).
+//!
+//! # Examples
+//!
+//! ```no_run
+//! use bootstrap_v2::installers::python_tools::BlackInstaller;
+//! use bootstrap_v2::installer::Installer;
+//!
+//! # async fn example() {
+//! let installer = BlackInstaller;
+//! // Use installer.detect(), install(), verify()
+//! # }
+//! ```
 
 use crate::bootstrap_v2::context::Context;
 use crate::bootstrap_v2::errors::{BootstrapError, BootstrapResult};

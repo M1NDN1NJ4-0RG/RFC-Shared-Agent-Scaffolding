@@ -1,8 +1,6 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Configuration Module
 //!
 //! Parse and manage .bootstrap.toml configuration files.
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

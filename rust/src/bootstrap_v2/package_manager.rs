@@ -1,7 +1,22 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Package Manager Operations
 //!
 //! Abstract interface for package managers (Homebrew, apt-get, etc.)
+//!
+//! # Purpose
+//!
+//! Provides platform-agnostic interface for package management operations.
+//! Implements concrete package managers (Homebrew for macOS/Linux, apt-get for Debian/Ubuntu).
+//!
+//! # Examples
+//!
+//! ```no_run
+//! use bootstrap_v2::package_manager::{HomebrewOps, PackageManagerOps};
+//!
+//! # async fn example() {
+//! let pm = HomebrewOps;
+//! // pm.install(ctx, "ripgrep", None).await
+//! # }
+//! ```
 
 use crate::bootstrap_v2::context::Context;
 use crate::bootstrap_v2::errors::{BootstrapError, BootstrapResult};

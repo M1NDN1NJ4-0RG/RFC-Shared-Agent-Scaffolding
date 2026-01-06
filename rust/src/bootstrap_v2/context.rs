@@ -1,8 +1,6 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Execution Context
 //!
 //! Shared context object passed to all installer operations.
-//! # noqa: SECTION
 //!
 //! # Purpose
 //!

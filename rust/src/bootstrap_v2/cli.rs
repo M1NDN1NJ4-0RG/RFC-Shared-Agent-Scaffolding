@@ -1,4 +1,3 @@
-// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # CLI Interface
 //!
 //! Command-line interface using clap for the bootstrap tool.
