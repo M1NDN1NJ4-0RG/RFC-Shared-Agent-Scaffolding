@@ -78,8 +78,17 @@ CANDIDATES+=("$REPO_ROOT/target/release/bootstrap-repo-cli")
 for bin in "${CANDIDATES[@]}"; do
 	if [ -f "$bin" ] && [ -x "$bin" ]; then
 		# Found a working binary - delegate to it
-		# Map legacy flags to Rust binary subcommands
-		exec "$bin" install "$@"
+		# Map legacy flags to Rust binary subcommands:
+		# - If no args: default to "install"
+		# - If first arg looks like a flag ("-*"): treat as legacy flags for "install"
+		# - Otherwise: treat first arg as an explicit subcommand and pass through
+		if [ "$#" -eq 0 ]; then
+			exec "$bin" install
+		elif [[ "$1" == -* ]]; then
+			exec "$bin" install "$@"
+		else
+			exec "$bin" "$@"
+		fi
 	fi
 done
 

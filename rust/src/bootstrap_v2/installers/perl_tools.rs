@@ -83,11 +83,15 @@ impl Installer for PerlCriticInstaller {
         }
 
         // Install using cpanm to ~/perl5
-        let home = std::env::var("HOME").map_err(|_| {
-            BootstrapError::PerlToolchainFailed(
+        let home = std::env::var("HOME").map_err(|e| match e {
+            std::env::VarError::NotPresent => BootstrapError::PerlToolchainFailed(
                 "HOME environment variable not set - cannot determine Perl install location"
                     .to_string(),
-            )
+            ),
+            std::env::VarError::NotUnicode(_) => BootstrapError::PerlToolchainFailed(
+                "HOME environment variable contains invalid Unicode - cannot determine Perl install location"
+                    .to_string(),
+            ),
         })?;
 
         let output = tokio::process::Command::new("cpanm")

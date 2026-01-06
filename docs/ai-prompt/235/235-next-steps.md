@@ -69,8 +69,8 @@ Related: Issue #235, PRs #240
 - cargo build successful (0 errors, 0 warnings)
 - cargo fmt applied
 - clippy clean
-- repo-lint check --ci exits 0
-- Docstrings validated with scripts/validate_docstrings.py
+- repo-lint check --ci **not run successfully before commit** (CI later reported bash-docstrings failures for `scripts/bootstrap-wrapper.sh`)
+- Docstrings validation with `scripts/validate_docstrings.py` **not completed before commit** (bash-docstrings for `scripts/bootstrap-wrapper.sh` failed in CI)
 
 **Architecture Notes:**
 - Total 13 installers now registered: ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt, perlcritic, ppi, pwsh, psscriptanalyzer
