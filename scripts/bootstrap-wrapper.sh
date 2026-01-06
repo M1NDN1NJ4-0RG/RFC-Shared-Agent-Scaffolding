@@ -1,40 +1,36 @@
 #!/usr/bin/env bash
 # Wrapper for Rust bootstrapper (transition period)
 #
-# Description:
+# DESCRIPTION:
 #   This script provides backwards compatibility during the migration
 #   from the legacy Bash bootstrapper to the new Rust implementation.
 #
-# Usage:
-#   ./bootstrap-wrapper.sh [FLAGS]
-#   BOOTSTRAP_BIN=/path/to/bin ./bootstrap-wrapper.sh [FLAGS]
-#   BOOTSTRAP_FORCE_LEGACY=1 ./bootstrap-wrapper.sh [FLAGS]
-#
-# Inputs:
-#   FLAGS - All arguments are passed through to the delegated binary/script
-#   $BOOTSTRAP_BIN - (optional) Explicit path to Rust binary
-#   $BOOTSTRAP_FORCE_LEGACY - (optional) Set to "1" to force legacy Bash version
-#
-# Outputs:
-#   Delegates to Rust binary or legacy Bash script
-#   Writes informational/error messages to stderr
-#
-# Resolution order:
+#   Resolution order:
 #   1) $BOOTSTRAP_BIN (explicit override)
 #   2) $REPO_ROOT/.bootstrap/bin/bootstrap (downloaded/prebuilt)
 #   3) $REPO_ROOT/target/release/bootstrap-repo-cli (dev-only)
 #   4) legacy Bash bootstrapper
 #
-# Escape hatch:
-#   Set BOOTSTRAP_FORCE_LEGACY=1 to use legacy Bash version
+#   Escape hatch: Set BOOTSTRAP_FORCE_LEGACY=1 to use legacy Bash version
 #
-# Arguments:
-#   All arguments are passed through to the Rust binary or legacy script
+# USAGE:
+#   ./bootstrap-wrapper.sh [FLAGS]
+#   BOOTSTRAP_BIN=/path/to/bin ./bootstrap-wrapper.sh [FLAGS]
+#   BOOTSTRAP_FORCE_LEGACY=1 ./bootstrap-wrapper.sh [FLAGS]
 #
-# Returns:
-#   Exit code from the delegated binary or script
+# INPUTS:
+#   FLAGS - All arguments are passed through to the delegated binary/script
+#   $BOOTSTRAP_BIN - (optional) Explicit path to Rust binary
+#   $BOOTSTRAP_FORCE_LEGACY - (optional) Set to "1" to force legacy Bash version
 #
-# Examples:
+# OUTPUTS:
+#   Delegates to Rust binary or legacy Bash script
+#   Writes informational/error messages to stderr
+#   Exit codes:
+#     0 - Successful delegation to Rust binary or legacy script
+#     1 - Error: binary not found, legacy script missing, or other failures
+#
+# EXAMPLES:
 #   ./bootstrap-wrapper.sh --all
 #   BOOTSTRAP_FORCE_LEGACY=1 ./bootstrap-wrapper.sh
 #   BOOTSTRAP_BIN=/usr/local/bin/bootstrap ./bootstrap-wrapper.sh

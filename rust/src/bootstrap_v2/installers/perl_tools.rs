@@ -27,6 +27,30 @@ use crate::bootstrap_v2::installer::{InstallResult, Installer, VerifyResult};
 use async_trait::async_trait;
 use semver::Version;
 
+/// Get the Perl installation directory (~/perl5)
+///
+/// Returns the full path to the perl5 directory in the user's home directory.
+/// Validates that the HOME environment variable is set and contains valid Unicode.
+///
+/// # Errors
+///
+/// Returns `BootstrapError::PerlToolchainFailed` if:
+/// - HOME environment variable is not set
+/// - HOME environment variable contains invalid Unicode
+fn get_perl_install_dir() -> BootstrapResult<String> {
+    let home = std::env::var("HOME").map_err(|e| match e {
+        std::env::VarError::NotPresent => BootstrapError::PerlToolchainFailed(
+            "HOME environment variable not set - cannot determine Perl install location"
+                .to_string(),
+        ),
+        std::env::VarError::NotUnicode(_) => BootstrapError::PerlToolchainFailed(
+            "HOME environment variable contains invalid Unicode - cannot determine Perl install location"
+                .to_string(),
+        ),
+    })?;
+    Ok(format!("{}/perl5", home))
+}
+
 /// Installer for Perl::Critic
 pub struct PerlCriticInstaller;
 
@@ -83,20 +107,11 @@ impl Installer for PerlCriticInstaller {
         }
 
         // Install using cpanm to ~/perl5
-        let home = std::env::var("HOME").map_err(|e| match e {
-            std::env::VarError::NotPresent => BootstrapError::PerlToolchainFailed(
-                "HOME environment variable not set - cannot determine Perl install location"
-                    .to_string(),
-            ),
-            std::env::VarError::NotUnicode(_) => BootstrapError::PerlToolchainFailed(
-                "HOME environment variable contains invalid Unicode - cannot determine Perl install location"
-                    .to_string(),
-            ),
-        })?;
+        let perl_dir = get_perl_install_dir()?;
 
         let output = tokio::process::Command::new("cpanm")
             .arg("--local-lib")
-            .arg(format!("{}/perl5", home))
+            .arg(&perl_dir)
             .arg("Perl::Critic")
             .output()
             .await
@@ -194,16 +209,11 @@ impl Installer for PPIInstaller {
         }
 
         // Install using cpanm to ~/perl5
-        let home = std::env::var("HOME").map_err(|_| {
-            BootstrapError::PerlToolchainFailed(
-                "HOME environment variable not set - cannot determine Perl install location"
-                    .to_string(),
-            )
-        })?;
+        let perl_dir = get_perl_install_dir()?;
 
         let output = tokio::process::Command::new("cpanm")
             .arg("--local-lib")
-            .arg(format!("{}/perl5", home))
+            .arg(&perl_dir)
             .arg("PPI")
             .output()
             .await

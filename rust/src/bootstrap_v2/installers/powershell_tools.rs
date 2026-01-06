@@ -105,12 +105,17 @@ impl Installer for PwshInstaller {
                         .output()
                         .await;
 
-                    if sudo_check.is_err() || !sudo_check.as_ref().unwrap().status.success() {
-                        return Err(BootstrapError::PowerShellToolchainFailed(
-                            "sudo -n failed: passwordless sudo required for snap installation. \
-                             Please run: sudo snap install powershell --classic"
-                                .to_string(),
-                        ));
+                    match sudo_check {
+                        Ok(output) if output.status.success() => {
+                            // sudo is available and passwordless, proceed with installation
+                        }
+                        _ => {
+                            return Err(BootstrapError::PowerShellToolchainFailed(
+                                "sudo -n failed: passwordless sudo required for snap installation. \
+                                 Please run: sudo snap install powershell --classic"
+                                    .to_string(),
+                            ));
+                        }
                     }
 
                     let output = tokio::process::Command::new("sudo")
