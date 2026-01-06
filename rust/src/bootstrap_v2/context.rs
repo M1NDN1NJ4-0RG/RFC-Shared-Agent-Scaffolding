@@ -37,6 +37,7 @@
 //! ```
 
 use crate::bootstrap_v2::config::Config;
+use crate::bootstrap_v2::package_manager::{AptOps, HomebrewOps, PackageManagerOps};
 use crate::bootstrap_v2::progress::ProgressReporter;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -166,6 +167,9 @@ pub struct Context {
     /// Package manager
     pub package_manager: PackageManager,
 
+    /// Package manager operations
+    pub package_manager_ops: Arc<dyn PackageManagerOps>,
+
     /// Dry-run mode (no actual changes)
     pub dry_run: bool,
 
@@ -202,12 +206,14 @@ impl Context {
         let venv_path = repo_root.join(".venv");
         let progress = Arc::new(ProgressReporter::new_auto());
         let config = Arc::new(Config::default());
+        let package_manager_ops = Self::get_package_manager_ops(package_manager);
 
         Self {
             repo_root,
             venv_path,
             os,
             package_manager,
+            package_manager_ops,
             dry_run,
             verbosity: Verbosity::Normal,
             progress,
@@ -236,12 +242,14 @@ impl Context {
     ) -> Self {
         let venv_path = repo_root.join(".venv");
         let jobs = jobs.unwrap_or_else(|| Self::default_jobs(ci_mode));
+        let package_manager_ops = Self::get_package_manager_ops(package_manager);
 
         Self {
             repo_root,
             venv_path,
             os,
             package_manager,
+            package_manager_ops,
             dry_run,
             verbosity,
             progress,
@@ -250,6 +258,23 @@ impl Context {
             jobs,
             offline,
             allow_downgrade,
+        }
+    }
+
+    /// Get package manager ops based on package manager type
+    fn get_package_manager_ops(pm: PackageManager) -> Arc<dyn PackageManagerOps> {
+        match pm {
+            PackageManager::Homebrew => Arc::new(HomebrewOps),
+            PackageManager::Apt => Arc::new(AptOps),
+            PackageManager::Snap => {
+                // For now, use a no-op implementation
+                // TODO: Implement SnapOps
+                Arc::new(HomebrewOps) // Placeholder
+            }
+            PackageManager::None => {
+                // No-op implementation
+                Arc::new(HomebrewOps) // Placeholder
+            }
         }
     }
 

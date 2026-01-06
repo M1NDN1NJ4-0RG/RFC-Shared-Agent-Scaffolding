@@ -101,6 +101,14 @@ pub enum BootstrapError {
     #[error("Tool not found: {0}")]
     ToolNotFound(String),
 
+    /// Detection failed
+    #[error("Detection failed: {0}")]
+    DetectionFailed(String),
+
+    /// No package manager available
+    #[error("No package manager available: {0}")]
+    NoPackageManager(String),
+
     /// Dependency resolution failed
     #[error("Dependency resolution failed: {0}")]
     DependencyResolution(String),
@@ -162,6 +170,8 @@ impl BootstrapError {
             Self::ConfigError(_) => ExitCode::UsageError,
             Self::CommandFailed { .. } => ExitCode::VerificationFailed,
             Self::ToolNotFound(_) => ExitCode::VerificationFailed,
+            Self::DetectionFailed(_) => ExitCode::VerificationFailed,
+            Self::NoPackageManager(_) => ExitCode::UsageError,
             Self::DependencyResolution(_) | Self::CyclicDependency => ExitCode::UsageError,
             Self::HttpError(_) | Self::ChecksumMismatch { .. } => ExitCode::VerificationFailed,
             Self::IoError(_) | Self::Other(_) => ExitCode::VerificationFailed,
