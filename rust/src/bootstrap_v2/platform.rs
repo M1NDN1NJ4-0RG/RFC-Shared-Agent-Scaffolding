@@ -286,13 +286,12 @@ pub fn get_current_path() -> Option<String> {
 /// - "tool version 1.2.3" -> "1.2.3"
 pub fn parse_version_from_output(output: &str) -> Option<String> {
     use once_cell::sync::Lazy;
-    
+
     // Compile regex once and cache it for reuse across calls
     static VERSION_RE: Lazy<regex::Regex> = Lazy::new(|| {
-        regex::Regex::new(r"(\d+\.\d+\.\d+)")
-            .expect("VERSION_RE regex pattern is valid")
+        regex::Regex::new(r"(\d+\.\d+\.\d+)").expect("VERSION_RE regex pattern is valid")
     });
-    
+
     VERSION_RE
         .captures(output)
         .and_then(|caps| caps.get(1))
