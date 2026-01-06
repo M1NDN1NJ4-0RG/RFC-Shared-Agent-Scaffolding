@@ -65,7 +65,7 @@ def main():
 
         # Filter out tar extended header warnings (noise from macOS metadata)
         tar_warning_pattern = re.compile(
-            r"^(/usr/bin/)?tar: Ignoring unknown extended header keyword 'LIBARCHIVE\.xattr\..*"
+            r"^(/usr/bin/)?tar: Ignoring unknown extended header keyword 'LIBARCHIVE\.xattr\..*'"
         )
         lines = [line for line in lines if not tar_warning_pattern.match(line)]
 
