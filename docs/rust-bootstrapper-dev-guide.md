@@ -556,7 +556,7 @@ cargo flamegraph --bin bootstrap-repo-cli -- install --dry-run
 ### Benchmarking
 
 ```bash
-./scripts/benchmark_bootstrap.sh --iterations 10
+./scripts/benchmark-bootstrap.sh --iterations 10
 ```
 
 ## Release Process
