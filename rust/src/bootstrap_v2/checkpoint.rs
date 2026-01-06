@@ -249,7 +249,7 @@ mod tests {
         let registry = InstallerRegistry::new();
         let config = Arc::new(Config::default());
         let ctx = Context::new_for_testing(PathBuf::from("/tmp/test"), false, config.clone());
-        let plan = ExecutionPlan::compute(&registry, &config, &ctx)
+        let plan = ExecutionPlan::compute(&registry, &config, &ctx, "dev")
             .await
             .unwrap();
 
@@ -265,7 +265,7 @@ mod tests {
         let registry = InstallerRegistry::new();
         let config = Arc::new(Config::default());
         let ctx = Context::new_for_testing(temp_dir.path().to_path_buf(), false, config.clone());
-        let plan = ExecutionPlan::compute(&registry, &config, &ctx)
+        let plan = ExecutionPlan::compute(&registry, &config, &ctx, "dev")
             .await
             .unwrap();
 
@@ -290,7 +290,7 @@ mod tests {
         let registry = InstallerRegistry::new();
         let config = Arc::new(Config::default());
         let ctx = Context::new_for_testing(PathBuf::from("/tmp/test"), false, config.clone());
-        let plan = ExecutionPlan::compute(&registry, &config, &ctx)
+        let plan = ExecutionPlan::compute(&registry, &config, &ctx, "dev")
             .await
             .unwrap();
 
