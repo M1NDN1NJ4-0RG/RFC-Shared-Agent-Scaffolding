@@ -28,7 +28,7 @@ This work is NOT DONE until:
 
 ## 1) MANDATORY FIRST STEP — RUN AND WAIT
 - From repo root, run:
-  `./scripts/bootstrap/bootstrap_watch.py`
+  `./scripts/bootstrap_watch.py`
 - WAIT FOR IT TO FINISH AND CONFIRM IT SUCCEEDS (EXIT CODE 0).
 - Do not assume it “probably worked.” Do not stop early.
 
