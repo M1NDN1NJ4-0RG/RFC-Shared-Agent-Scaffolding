@@ -1417,7 +1417,8 @@ install_perl_tools() {
 	else
 		# Non-interactive installation with default answers
 		# Wrap cpanm to prevent set -e from short-circuiting error collection
-		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force Perl::Critic; then
+		# Filter out tar extended header warnings from stderr
+		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force Perl::Critic 2> >(grep -v "Ignoring unknown extended header keyword" >&2); then
 			log "  ✓ Perl::Critic installed"
 		else
 			warn "  ✗ Failed to install Perl::Critic"
@@ -1431,7 +1432,8 @@ install_perl_tools() {
 		log "  ✓ PPI already installed"
 	else
 		# Wrap cpanm to prevent set -e from short-circuiting error collection
-		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force PPI; then
+		# Filter out tar extended header warnings from stderr
+		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force PPI 2> >(grep -v "Ignoring unknown extended header keyword" >&2); then
 			log "  ✓ PPI installed"
 		else
 			warn "  ✗ Failed to install PPI"

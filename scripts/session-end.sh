@@ -62,18 +62,18 @@ if [[ ! -x "./scripts/bootstrap-repo-lint-toolchain.sh" ]]; then
 	exit 1
 fi
 
-# Run bootstrap script
+# Run bootstrap script (allowed to fail without stopping)
 echo "[session-end] Running bootstrap toolchain setup..."
-./scripts/bootstrap-repo-lint-toolchain.sh
+./scripts/bootstrap-repo-lint-toolchain.sh || true
 
 # Verify venv exists, run bootstrap_watch.py if not
 if [[ ! -f ".venv/bin/activate" ]]; then
 	echo "[session-end] Virtual environment not found at .venv/bin/activate" >&2
 	echo "[session-end] Running bootstrap_watch.py to create it..." >&2
-	./scripts/bootstrap_watch.py || {
+	if ! ./scripts/bootstrap_watch.py; then
 		echo "ERROR: bootstrap_watch.py failed with exit code $?" >&2
 		exit 1
-	}
+	fi
 fi
 
 # Run repo-lint check in subshell with activated environment
