@@ -102,6 +102,13 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
 - Read fail-fast hardening plan from `docs/ai-prompt/231/231-fail-fast-hardening-plan.md`
 - Created comprehensive execution checklist covering all 6 phases
 - Current status: actionlint already added in previous work; now implementing full fail-fast hardening
+- **Work completed in this session:**
+  - Phase 0: Renamed bootstrapper manual to `bootstrapper-toolchain-user-manual.md`, updated all references, added CONTRIBUTING.md link
+  - Phase 1: Added 3 fail-fast helper functions (run_or_die, try_run, safe_version)
+  - Phase 2.1-2.2: Made venv activation fatal, wrapped pip upgrade with deterministic exit codes
+  - Code review: Addressed all 3 feedback items (exit code docs, security warnings, rationale notes)
+  - All changes verified: shellcheck, shfmt, repo-lint check --ci all pass (exit 0)
+- **Remaining work:** Phases 2.3-6 cover extensive refactoring (PowerShell, Perl, shell tools, ripgrep enforcement, verification hardening, tests, documentation, analysis, Rust migration plan)
 
 ### 2026-01-06 00:16 - Journal Creation
 - Created issue journals for Issue 231
