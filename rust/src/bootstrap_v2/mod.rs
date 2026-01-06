@@ -29,6 +29,7 @@ pub mod checkpoint;
 pub mod cli;
 pub mod config;
 pub mod context;
+pub mod doctor;
 pub mod errors;
 pub mod executor;
 pub mod exit_codes;
