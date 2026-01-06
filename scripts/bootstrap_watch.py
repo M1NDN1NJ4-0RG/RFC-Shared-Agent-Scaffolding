@@ -1,12 +1,39 @@
 #!/usr/bin/env python3
 """Bootstrap Progress Watcher.
 
-Runs the bootstrap script and filters output to show:
-- All progress lines (steps with [N/M] format)
-- All output from the last progress step onward
+Runs the bootstrap script and filters output to show a condensed view
+of progress steps and final results.
 
-This provides a condensed view focusing on the step-by-step progress
-and any final output/errors.
+:Purpose:
+    Provide filtered, focused output from the bootstrapper script by showing
+    all progress lines with step indicators ([N/M]) and all output from the
+    last progress step onward. This reduces noise while preserving visibility
+    into step-by-step progress and any final output or errors.
+
+:Functions:
+    - main: Execute bootstrap script and filter output to show progress steps
+
+:Outputs:
+    - Filtered bootstrap output showing progress lines and final summary
+    - Exit code matching the bootstrap script's exit code
+
+:Environment Variables:
+    None. This script does not read environment variables.
+
+:Examples:
+    >>> # Run from repository root
+    >>> ./scripts/bootstrap_watch.py
+    [bootstrap] [1/13] Parsing arguments...
+    [bootstrap] ✓ [1/13] Parsing arguments (0s)
+    ...
+    [bootstrap] [13/13] Running verification gate...
+    [bootstrap] ✓ [13/13] Running verification gate (43s)
+
+:Exit Codes:
+    This script exits with the same code as the bootstrap script it wraps.
+
+    - 0: Bootstrap script succeeded
+    - 1: Bootstrap script failed or file not found
 """
 
 import re
@@ -17,8 +44,9 @@ import sys
 def main():
     """Run bootstrap script and filter output to show progress steps.
 
-    Returns:
-        int: Exit code from the bootstrap script.
+    :returns: Exit code from the bootstrap script (0 = success, 1 = failure).
+    :raises FileNotFoundError: If bootstrap script not found at expected path.
+    :raises Exception: For any other subprocess execution errors.
     """
     # Run the bootstrap script and capture all output
     script_path = "./scripts/bootstrap-repo-lint-toolchain.sh"

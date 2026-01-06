@@ -189,10 +189,21 @@ progress_init() {
 # progress_cleanup - Cleanup progress UI state
 #
 # DESCRIPTION:
-#   Restores terminal state. Must be called on exit.
+#   Restores terminal state. Must be called on exit via trap handlers.
+#   In TTY mode, clears the current line and restores cursor visibility.
+#   In CI mode, no action is needed as cursor was not hidden.
+#
+# INPUTS:
+#   None. Uses global PROGRESS_TTY variable.
 #
 # OUTPUTS:
-#   Restores cursor visibility if in TTY mode
+#   Sends ANSI escape sequences to restore cursor (TTY mode only):
+#   - \r: Carriage return to start of line
+#   - \033[K: Clear from cursor to end of line
+#   - \033[?25h: Show cursor
+#
+# EXAMPLES:
+#   trap progress_cleanup EXIT INT TERM
 progress_cleanup() {
 	if [[ "$PROGRESS_TTY" = true ]]; then
 		# Clear current line and show cursor
@@ -235,10 +246,21 @@ step_start() {
 # step_ok - Mark step as successful
 #
 # DESCRIPTION:
-#   Records successful completion of current step.
+#   Records successful completion of current step and displays success indicator.
+#   Calculates step duration and displays checkmark with timing information.
+#
+# INPUTS:
+#   None. Uses global PROGRESS_* variables set by step_start.
 #
 # OUTPUTS:
-#   Success indicator with duration
+#   Success indicator with duration:
+#   - TTY mode: ✓ [N/M] Step name (Xs)
+#   - CI mode: [bootstrap] ✓ [N/M] Step name (Xs)
+#
+# EXAMPLES:
+#   step_start "Installing Python tools"
+#   pip install -r requirements.txt
+#   step_ok
 step_ok() {
 	if [[ "$PROGRESS_ENABLED" = false ]]; then
 		return
