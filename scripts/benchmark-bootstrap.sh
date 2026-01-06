@@ -211,13 +211,27 @@ calc_max() {
 	echo "$max"
 }
 
-rust_avg=$(calc_avg "${rust_times[@]}")
-rust_min=$(calc_min "${rust_times[@]}")
-rust_max=$(calc_max "${rust_times[@]}")
+if ((${#rust_times[@]} > 0)); then
+	rust_avg=$(calc_avg "${rust_times[@]}")
+	rust_min=$(calc_min "${rust_times[@]}")
+	rust_max=$(calc_max "${rust_times[@]}")
+else
+	# No successful Rust runs; default metrics to zero
+	rust_avg=0
+	rust_min=0
+	rust_max=0
+fi
 
-bash_avg=$(calc_avg "${bash_times[@]}")
-bash_min=$(calc_min "${bash_times[@]}")
-bash_max=$(calc_max "${bash_times[@]}")
+if ((${#bash_times[@]} > 0)); then
+	bash_avg=$(calc_avg "${bash_times[@]}")
+	bash_min=$(calc_min "${bash_times[@]}")
+	bash_max=$(calc_max "${bash_times[@]}")
+else
+	# No successful Bash runs; default metrics to zero
+	bash_avg=0
+	bash_min=0
+	bash_max=0
+fi
 
 # Calculate speedup (if both averages are non-zero)
 if (($(echo "$rust_avg > 0 && $bash_avg > 0" | bc -l))); then
