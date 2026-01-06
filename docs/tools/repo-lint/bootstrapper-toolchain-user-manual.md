@@ -144,6 +144,7 @@ shfmt --version
 | 18   | Perl toolchain installation failed |
 | 19   | Verification gate failed (repo-lint check --ci) |
 | 20   | actionlint installation failed |
+| 21   | ripgrep installation failed (required tool) |
 
 ## Idempotency
 

@@ -38,7 +38,7 @@
 #     0   Success - all operations completed
 #     1   Generic failure
 #     10  Repository root could not be located
-#     11  Virtual environment creation failed
+#     11  Virtual environment creation or activation failed
 #     12  No valid install target found (missing pyproject.toml at repo root)
 #     13  repo-lint not found on PATH after installation
 #     14  repo-lint exists but --help command failed
@@ -48,6 +48,7 @@
 #     18  Perl toolchain installation failed (Perl::Critic/PPI)
 #     19  Verification gate failed (repo-lint check --ci)
 #     20  actionlint installation failed
+#     21  ripgrep installation failed (required tool)
 #
 #   Stdout:
 #     Progress messages prefixed with [bootstrap]
@@ -808,22 +809,24 @@ install_python_tools() {
 # Core Utilities Installation (Phase 2.1)
 # ============================================================================
 
-# install_rgrep - Install or verify ripgrep (rgrep) utility
+# install_rgrep - Install ripgrep (REQUIRED)
 #
 # DESCRIPTION:
-#   Attempts to install ripgrep (provides rgrep command) using available
-#   package managers (apt-get on Debian/Ubuntu). If ripgrep is not available,
-#   warns the user and falls back to grep. This is a required utility.
+#   Attempts to install ripgrep (rg) using available package managers
+#   (Homebrew on macOS, apt-get on Debian/Ubuntu). Ripgrep is REQUIRED
+#   for this repository's tooling. If installation fails, the script
+#   exits with error code 21.
 #
 # INPUTS:
 #   None
 #
 # OUTPUTS:
 #   Exit Code:
-#     0   rgrep available or fallback to grep configured
+#     0   ripgrep available
+#     21  ripgrep installation failed (fatal)
 #
 #   Stdout:
-#     Installation progress and warnings about grep fallback if needed
+#     Installation progress and clear error messages
 #
 #   Side Effects:
 #     May install ripgrep system package if sudo is available
@@ -831,7 +834,7 @@ install_python_tools() {
 # EXAMPLES:
 #   install_rgrep
 install_rgrep() {
-	log "Checking for ripgrep (rgrep)..."
+	log "Checking for ripgrep (rgrep) - REQUIRED..."
 
 	# Check if ripgrep (rg) is already installed
 	if command -v rg >/dev/null 2>&1; then
@@ -842,44 +845,29 @@ install_rgrep() {
 	fi
 
 	# Attempt to install ripgrep
-	log "ripgrep not found. Attempting to install..."
+	log "ripgrep not found. Attempting to install (REQUIRED)..."
 
 	# Detect package manager and install
 	if command -v apt-get >/dev/null 2>&1; then
 		log "Detected apt-get package manager"
 		if has_sudo; then
 			log "Installing ripgrep via apt-get..."
-			if sudo apt-get update -qq && sudo apt-get install -y ripgrep; then
-				log "  ✓ ripgrep installed successfully"
-				return 0
-			else
-				warn "  ✗ Failed to install ripgrep via apt-get"
-			fi
+			run_or_die 21 "Failed to update apt repositories for ripgrep" sudo apt-get update -qq
+			run_or_die 21 "Failed to install ripgrep via apt-get" sudo apt-get install -y ripgrep
+			log "  ✓ ripgrep installed successfully"
+			return 0
 		else
-			warn "  ✗ Cannot install ripgrep: sudo access required"
+			die "Cannot install ripgrep: sudo access required. Manual install: sudo apt-get install ripgrep" 21
 		fi
 	elif command -v brew >/dev/null 2>&1; then
 		log "Detected Homebrew package manager"
 		log "Installing ripgrep via brew..."
-		if brew install ripgrep; then
-			log "  ✓ ripgrep installed successfully"
-			return 0
-		else
-			warn "  ✗ Failed to install ripgrep via brew"
-		fi
+		run_or_die 21 "Failed to install ripgrep via Homebrew" brew install ripgrep
+		log "  ✓ ripgrep installed successfully"
+		return 0
 	else
-		warn "  ✗ No supported package manager found (apt-get/brew)"
+		die "No supported package manager found for ripgrep (tried apt-get/brew). Manual install required: https://github.com/BurntSushi/ripgrep/releases" 21
 	fi
-
-	# Fallback warning
-	warn "ripgrep (rg/rgrep) could not be installed"
-	warn "repo-lint will fall back to 'grep' but performance may be degraded"
-	warn "To install manually:"
-	warn "  - Debian/Ubuntu: sudo apt-get install ripgrep"
-	warn "  - macOS: brew install ripgrep"
-	warn "  - Or download from: https://github.com/BurntSushi/ripgrep/releases"
-
-	return 0
 }
 
 # ============================================================================
@@ -1062,13 +1050,24 @@ install_powershell_tools() {
 		if command -v apt-get >/dev/null 2>&1; then
 			if command -v sudo >/dev/null 2>&1; then
 				# Install PowerShell via Microsoft package repository
-				sudo apt-get update
-				sudo apt-get install -y wget apt-transport-https software-properties-common
-				wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
-				sudo dpkg -i packages-microsoft-prod.deb
-				rm packages-microsoft-prod.deb
-				sudo apt-get update
-				sudo apt-get install -y powershell
+				# Set up trap to clean up downloaded deb file on exit/failure
+				local deb_file="packages-microsoft-prod.deb"
+				trap 'rm -f "$deb_file"' EXIT
+
+				run_or_die 17 "Failed to update apt repositories for PowerShell prerequisites" sudo apt-get update
+				run_or_die 17 "Failed to install PowerShell prerequisites (wget, apt-transport-https, software-properties-common)" sudo apt-get install -y wget apt-transport-https software-properties-common
+
+				local ms_repo_url="https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+				log "Downloading Microsoft repository package from: $ms_repo_url"
+				run_or_die 17 "Failed to download Microsoft repository package from $ms_repo_url" wget -q "$ms_repo_url" -O "$deb_file"
+
+				run_or_die 17 "Failed to install Microsoft repository package via dpkg" sudo dpkg -i "$deb_file"
+				run_or_die 17 "Failed to update apt repositories after adding Microsoft repo" sudo apt-get update
+				run_or_die 17 "Failed to install PowerShell package" sudo apt-get install -y powershell
+
+				# Clean up deb file (trap will also handle this)
+				rm -f "$deb_file"
+				trap - EXIT
 
 				if command -v pwsh >/dev/null 2>&1; then
 					local pwsh_version
@@ -1082,7 +1081,7 @@ install_powershell_tools() {
 				failed_tools+=("pwsh")
 			fi
 		elif command -v brew >/dev/null 2>&1; then
-			brew install --cask powershell
+			run_or_die 17 "Failed to install PowerShell via Homebrew" brew install --cask powershell
 			if command -v pwsh >/dev/null 2>&1; then
 				local pwsh_version
 				pwsh_version=$(safe_version "pwsh --version")
@@ -1224,10 +1223,11 @@ install_perl_tools() {
 		log "  ✓ Perl::Critic already installed"
 	else
 		# Non-interactive installation with default answers
-		PERL_MM_USE_DEFAULT=1 cpanm --notest --force Perl::Critic
-		if perl -MPerl::Critic -e 1 2>/dev/null; then
+		# Wrap cpanm to prevent set -e from short-circuiting error collection
+		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force Perl::Critic; then
 			log "  ✓ Perl::Critic installed"
 		else
+			warn "  ✗ Failed to install Perl::Critic"
 			failed_tools+=("Perl::Critic")
 		fi
 	fi
@@ -1237,10 +1237,11 @@ install_perl_tools() {
 	if perl -MPPI -e 1 2>/dev/null; then
 		log "  ✓ PPI already installed"
 	else
-		PERL_MM_USE_DEFAULT=1 cpanm --notest --force PPI
-		if perl -MPPI -e 1 2>/dev/null; then
+		# Wrap cpanm to prevent set -e from short-circuiting error collection
+		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force PPI; then
 			log "  ✓ PPI installed"
 		else
+			warn "  ✗ Failed to install PPI"
 			failed_tools+=("PPI")
 		fi
 	fi
