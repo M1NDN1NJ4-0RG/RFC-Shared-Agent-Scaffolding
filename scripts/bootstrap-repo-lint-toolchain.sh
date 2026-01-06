@@ -1413,7 +1413,19 @@ run_verification_gate() {
 		warn "This may indicate PATH activation issues"
 	fi
 
-	# Run verification gate with full output
+	# First run repo-lint doctor to verify toolchain availability
+	log "Running: repo-lint doctor (toolchain self-test)"
+	local doctor_exit=0
+	repo-lint doctor || doctor_exit=$?
+
+	if [ $doctor_exit -ne 0 ]; then
+		warn "  ✗ repo-lint doctor failed with exit code $doctor_exit"
+		warn "Toolchain is not properly configured"
+		die "Verification gate failed: toolchain errors detected by repo-lint doctor" 19
+	fi
+	log "  ✓ repo-lint doctor passed (toolchain operational)"
+
+	# Run full verification gate with repo-lint check --ci
 	log "Running: repo-lint check --ci"
 
 	# Capture exit code
