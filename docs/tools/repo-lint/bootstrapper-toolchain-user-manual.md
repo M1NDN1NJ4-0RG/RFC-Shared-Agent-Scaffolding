@@ -4,6 +4,8 @@
 
 The `bootstrap-repo-lint-toolchain.sh` script automates the setup of all development tools required for contributing to this repository. It is designed to be run at the start of every Copilot agent session to ensure a consistent, compliant development environment.
 
+**New in v2:** The script now features a default-on progress UI that provides real-time feedback during installation, automatically adapting to interactive (TTY) and CI/non-TTY environments.
+
 ## Quick Start
 
 ### For Copilot Agents (MANDATORY)
@@ -11,6 +13,15 @@ The `bootstrap-repo-lint-toolchain.sh` script automates the setup of all develop
 **Run at session start:**
 ```bash
 ./scripts/bootstrap-repo-lint-toolchain.sh
+```
+
+You'll see live progress tracking:
+```
+[bootstrap] [1/13] Parsing arguments...
+[bootstrap] ✓ [1/13] Parsing arguments (0s)
+[bootstrap] [2/13] Finding repository root...
+[bootstrap] ✓ [2/13] Finding repository root (0s)
+...
 ```
 
 **After bootstrap completes, activate the environment:**
@@ -27,19 +38,57 @@ repo-lint check --ci
 ### For Human Developers
 
 ```bash
-# Install all required tools
+# Install all required tools (all toolchains enabled by default)
 ./scripts/bootstrap-repo-lint-toolchain.sh
 
-# Install optional toolchains as needed
-./scripts/bootstrap-repo-lint-toolchain.sh --shell --perl
-
-# Install everything
-./scripts/bootstrap-repo-lint-toolchain.sh --all
+# Run with explicit verbose output
+./scripts/bootstrap-repo-lint-toolchain.sh --verbose
 ```
+
+## Progress UI
+
+### Default Behavior
+
+The progress UI is **enabled by default** in all environments and automatically adapts:
+
+**Interactive Terminal (TTY):**
+- In-place updating progress bar
+- Shows: `[step/total] Step name...`
+- Success: `✓ [step/total] Step name (duration)`
+- Failure: `✗ [step/total] Step name (duration) - error`
+- Cursor hidden during execution, restored on exit
+- Clean visual feedback with checkmarks and timing
+
+**CI / Non-TTY:**
+- Clean, line-oriented output
+- No ANSI escape codes
+- No carriage returns
+- Parseable format: `[bootstrap] [step/total] Step name...`
+- Same success/failure format as TTY (without in-place updates)
+
+### Environment Controls
+
+The progress UI respects standard environment variables:
+
+- `CI` - When set, forces non-TTY mode (clean output)
+- `NO_COLOR` - When set, disables TTY mode (clean output)
+
+### Verbose Mode
+
+When running with `--verbose`, all command output is displayed alongside the progress bar:
+
+```bash
+./scripts/bootstrap-repo-lint-toolchain.sh --verbose
+```
+
+- TTY: Progress bar stays in place, command output scrolls above/below
+- CI: All output intermixed with progress indicators
 
 ## What Gets Installed
 
-### Required Toolchains (Always Installed)
+### Default Toolchains (Always Installed)
+
+**All toolchains are now installed by default.** The script provides a complete development environment out of the box:
 
 - **Python Virtual Environment** (`.venv/`): Isolated Python environment at repository root
 - **repo-lint Package**: Installed in editable mode from `tools/repo_lint/`
@@ -49,22 +98,17 @@ repo-lint check --ci
   - `pylint` - Python static analyzer
   - `yamllint` - YAML linter
   - `pytest` - Testing framework
-- **actionlint**: GitHub Actions workflow linter (v1.7.10)
-- **ripgrep**: Fast recursive search tool (REQUIRED - no fallback)
-
-### Optional Toolchains (Install with Flags)
-
-- **Shell Toolchain** (`--shell`):
+- **Shell Toolchain**:
   - `shellcheck` - Shell script linter
   - `shfmt` - Shell script formatter
-
-- **PowerShell Toolchain** (`--powershell`):
+- **PowerShell Toolchain**:
   - `pwsh` - PowerShell Core
   - `PSScriptAnalyzer` - PowerShell script analyzer
-
-- **Perl Toolchain** (`--perl`):
+- **Perl Toolchain**:
   - `Perl::Critic` - Perl script linter
   - `PPI` - Perl parsing library
+- **actionlint**: GitHub Actions workflow linter (v1.7.10+)
+- **ripgrep**: Fast recursive search tool (REQUIRED - hard fail if unavailable)
 
 ## Command-Line Options
 
@@ -72,14 +116,36 @@ repo-lint check --ci
 Usage: ./scripts/bootstrap-repo-lint-toolchain.sh [OPTIONS]
 
 Options:
-  --verbose, -v      Verbose output (default, required during implementation)
+  --verbose, -v      Verbose output (default, shows all command output)
   --quiet, -q        Quiet mode (reserved for future, currently disabled)
-  --shell            Install shell toolchain (shellcheck, shfmt)
-  --powershell       Install PowerShell toolchain (pwsh, PSScriptAnalyzer)
-  --perl             Install Perl toolchain (Perl::Critic, PPI)
-  --all              Install all optional toolchains
+  --shell            Install shell toolchain (DEFAULT: enabled, kept for compatibility)
+  --powershell       Install PowerShell toolchain (DEFAULT: enabled, kept for compatibility)
+  --perl             Install Perl toolchain (DEFAULT: enabled, kept for compatibility)
+  --all              Install all toolchains (DEFAULT BEHAVIOR, this flag is redundant)
   --help, -h         Show help message
 ```
+
+**Note:** All toolchains are installed by default. Individual flags (`--shell`, `--powershell`, `--perl`) are kept for backwards compatibility but have no effect since `--all` is now the default behavior.
+
+## Step Model
+
+The progress UI tracks these steps during execution:
+
+1. **Parse arguments** - Command-line option processing
+2. **Find repository root** - Locate git repository
+3. **Create virtual environment** - Python venv setup
+4. **Activate virtual environment** - Environment activation
+5. **Install repo-lint package** - Editable mode installation
+6. **Verify repo-lint installation** - Functional test
+7. **Install ripgrep** - Required search tool
+8. **Install Python toolchain** - black, ruff, pylint, yamllint, pytest
+9. **Install actionlint** - GitHub Actions linter
+10. **Install shell toolchain** - shellcheck, shfmt
+11. **Install PowerShell toolchain** - pwsh, PSScriptAnalyzer
+12. **Install Perl toolchain** - Perl::Critic, PPI
+13. **Run verification gate** - Final validation with `repo-lint check --ci`
+
+Total steps may vary based on configuration (steps 10-12 are conditional on flags, though all are enabled by default).
 
 ## Environment Setup
 
