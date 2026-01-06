@@ -259,6 +259,8 @@ pub async fn upgrade_pip(venv_info: &VenvInfo, dry_run: bool) -> Result<()> {
 /// - Commands that don't support `--version` (use `-v`, `-V`, `--help`, or no args)
 /// - Commands that are valid but fail with non-zero exit for `--version`
 ///
+/// The function checks both that the command can be spawned AND that it exits successfully.
+///
 /// For more robust existence checking, callers requiring higher accuracy should use
 /// platform-specific methods like `which` or PATH scanning.
 pub fn command_exists(cmd: &str) -> bool {
@@ -267,7 +269,8 @@ pub fn command_exists(cmd: &str) -> bool {
         .stdout(std::process::Stdio::null())
         .stderr(std::process::Stdio::null())
         .status()
-        .is_ok()
+        .map(|status| status.success())
+        .unwrap_or(false)
 }
 
 /// Get the current PATH environment variable
@@ -282,12 +285,16 @@ pub fn get_current_path() -> Option<String> {
 /// - "v1.2.3" -> "1.2.3"
 /// - "tool version 1.2.3" -> "1.2.3"
 pub fn parse_version_from_output(output: &str) -> Option<String> {
-    // Try to find a semantic version pattern (X.Y.Z)
-    // Note: Regex is compiled on each call. For the expected usage of this
-    // helper, this is acceptable; callers that invoke it in tight loops
-    // should consider caching a compiled Regex at a higher level.
-    let re = regex::Regex::new(r"(\d+\.\d+\.\d+)").ok()?;
-    re.captures(output)
+    use once_cell::sync::Lazy;
+    
+    // Compile regex once and cache it for reuse across calls
+    static VERSION_RE: Lazy<regex::Regex> = Lazy::new(|| {
+        regex::Regex::new(r"(\d+\.\d+\.\d+)")
+            .expect("VERSION_RE regex pattern is valid")
+    });
+    
+    VERSION_RE
+        .captures(output)
         .and_then(|caps| caps.get(1))
         .map(|m| m.as_str().to_string())
 }

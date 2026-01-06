@@ -80,7 +80,7 @@ async fn handle_command(cli: Cli) -> anyhow::Result<ExitCode> {
             .await
         }
         Commands::Doctor { strict } => handle_doctor(strict, cli.ci, cli.json).await,
-        Commands::Verify => handle_verify(cli.ci, cli.verbose).await,
+        Commands::Verify { profile } => handle_verify(profile, cli.ci, cli.verbose).await,
     }
 }
 
@@ -210,7 +210,11 @@ async fn handle_doctor(strict: bool, ci_mode: bool, json: bool) -> anyhow::Resul
     Ok(exit_code)
 }
 
-async fn handle_verify(ci_mode: bool, verbose_count: u8) -> anyhow::Result<ExitCode> {
+async fn handle_verify(
+    profile: String,
+    ci_mode: bool,
+    verbose_count: u8,
+) -> anyhow::Result<ExitCode> {
     // 1. Find repository root
     let repo_root = find_repo_root().await?;
 
@@ -243,8 +247,13 @@ async fn handle_verify(ci_mode: bool, verbose_count: u8) -> anyhow::Result<ExitC
     // 6. Run verify-only (no installs, no downloads)
     println!("🔍 Verifying installed tools...\n");
 
-    let profile = std::env::var("BOOTSTRAP_REPO_PROFILE").unwrap_or_else(|_| "dev".to_string());
-    let tools = config.get_tools_for_profile(&profile);
+    // Use CLI profile argument (with env var fallback for backwards compatibility)
+    let profile_to_use = if profile != "dev" {
+        profile
+    } else {
+        std::env::var("BOOTSTRAP_REPO_PROFILE").unwrap_or(profile)
+    };
+    let tools = config.get_tools_for_profile(&profile_to_use);
     let installers = registry.resolve_dependencies(&tools)?;
 
     let mut failed = false;

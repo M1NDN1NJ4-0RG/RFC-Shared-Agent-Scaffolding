@@ -92,5 +92,9 @@ pub enum Commands {
     },
 
     /// Verify installation only (no installs)
-    Verify,
+    Verify {
+        /// Profile to verify (dev, ci, full)
+        #[arg(long, default_value = "dev")]
+        profile: String,
+    },
 }
