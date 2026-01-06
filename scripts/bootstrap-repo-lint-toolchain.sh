@@ -47,6 +47,7 @@
 #     17  PowerShell toolchain installation failed (pwsh/PSScriptAnalyzer)
 #     18  Perl toolchain installation failed (Perl::Critic/PPI)
 #     19  Verification gate failed (repo-lint check --ci)
+#     20  actionlint installation failed
 #
 #   Stdout:
 #     Progress messages prefixed with [bootstrap]
@@ -185,6 +186,28 @@ die() {
 	exit "$code"
 }
 
+# has_sudo - Check if sudo access is available
+#
+# DESCRIPTION:
+#   Checks if the current user is root or has passwordless sudo access.
+#   Used before attempting system package installations.
+#
+# INPUTS:
+#   None
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   User is root or has passwordless sudo access
+#     1   No sudo access available
+#
+# EXAMPLES:
+#   if has_sudo; then
+#       sudo apt-get install package
+#   fi
+has_sudo() {
+	[ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null
+}
+
 # show_banner - Display a prominent banner message
 #
 # DESCRIPTION:
@@ -244,6 +267,7 @@ show_usage() {
 
 		DEFAULT TOOLCHAINS (always installed):
 		  - Python toolchain (black, ruff, pylint, yamllint, pytest)
+		  - actionlint (GitHub Actions workflow linter)
 		  - rgrep (or grep fallback)
 
 		EXAMPLES:
@@ -718,7 +742,7 @@ install_rgrep() {
 	# Detect package manager and install
 	if command -v apt-get >/dev/null 2>&1; then
 		log "Detected apt-get package manager"
-		if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+		if has_sudo; then
 			log "Installing ripgrep via apt-get..."
 			if sudo apt-get update -qq && sudo apt-get install -y ripgrep; then
 				log "  ✓ ripgrep installed successfully"
@@ -794,7 +818,7 @@ install_shell_tools() {
 	else
 		# Attempt to install shellcheck
 		if command -v apt-get >/dev/null 2>&1; then
-			if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+			if has_sudo; then
 				log "Installing shellcheck via apt-get..."
 				if sudo apt-get update -qq && sudo apt-get install -y shellcheck; then
 					local version
@@ -833,7 +857,7 @@ install_shell_tools() {
 	else
 		# Attempt to install shfmt
 		if command -v apt-get >/dev/null 2>&1; then
-			if [ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null; then
+			if has_sudo; then
 				log "Installing shfmt via apt-get..."
 				if sudo apt-get update -qq && sudo apt-get install -y shfmt; then
 					local version
@@ -1149,6 +1173,108 @@ install_perl_tools() {
 	log "NOTE: Perl tools installed to ~/perl5/bin - ensure this is in your PATH"
 }
 
+# install_actionlint - Install actionlint (GitHub Actions workflow linter)
+#
+# DESCRIPTION:
+#   Installs actionlint to lint GitHub Actions workflow YAML files.
+#   This tool is required for workflow compliance checks in CI and Copilot sessions.
+#
+# INPUTS:
+#   None
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   actionlint installed successfully or already present
+#     20  actionlint installation failed
+#
+#   Stdout:
+#     Installation progress and version information
+#
+#   Side Effects:
+#     May install Go via package manager if not present
+#     Adds $HOME/go/bin to PATH for current session
+#
+# EXAMPLES:
+#   install_actionlint
+install_actionlint() {
+	log "Installing actionlint (GitHub Actions workflow linter)"
+
+	# Check if actionlint is already installed
+	if command -v actionlint >/dev/null 2>&1; then
+		local version
+		version=$(actionlint -version 2>&1 | head -n 1)
+		log "  ✓ actionlint already installed: $version"
+		return 0
+	fi
+
+	# Determine installation method based on platform
+	if command -v brew >/dev/null 2>&1; then
+		# macOS: Use Homebrew
+		log "Installing actionlint via Homebrew..."
+		if brew install actionlint; then
+			local version
+			version=$(actionlint -version 2>&1 | head -n 1)
+			log "  ✓ actionlint installed: $version"
+			return 0
+		else
+			warn "  ✗ Failed to install actionlint via Homebrew"
+			die "actionlint installation failed" 20
+		fi
+	else
+		# Linux: Use go install
+		log "Installing actionlint via go install..."
+
+		# Check if Go is available
+		if ! command -v go >/dev/null 2>&1; then
+			log "Go not found, attempting to install..."
+			if command -v apt-get >/dev/null 2>&1; then
+				if has_sudo; then
+					# NOTE: golang-go from apt may install an older Go version on some distributions.
+					# actionlint v1.7.10 requires Go 1.18+. If installation fails due to Go version,
+					# consider using snap (sudo snap install go --classic) or direct binary download.
+					log "Installing golang-go via apt-get..."
+					if sudo apt-get update -qq && sudo apt-get install -y golang-go; then
+						log "  ✓ Go installed successfully"
+					else
+						warn "  ✗ Failed to install Go via apt-get"
+						die "Go installation required for actionlint" 20
+					fi
+				else
+					warn "  ✗ Cannot install Go: sudo access required"
+					die "Go installation required for actionlint (needs sudo)" 20
+				fi
+			else
+				warn "  ✗ No supported package manager found for Go"
+				die "Go installation required for actionlint" 20
+			fi
+		fi
+
+		# Ensure GOPATH/bin is in PATH for this session
+		export PATH="$HOME/go/bin:$PATH"
+
+		# Install actionlint using go install (pinned to v1.7.10 for reproducibility)
+		log "Running: go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10"
+		if go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10; then
+			# Verify installation
+			if command -v actionlint >/dev/null 2>&1; then
+				local version
+				version=$(actionlint -version 2>&1 | head -n 1)
+				log "  ✓ actionlint installed: $version"
+				log "  ✓ actionlint binary: $(command -v actionlint)"
+				return 0
+			else
+				warn "  ✗ actionlint installed but not found on PATH"
+				warn "  → PATH was updated for this session, but installation may have failed"
+				warn "  → Manually verify: export PATH=\"\$HOME/go/bin:\$PATH\" && actionlint -version"
+				die "actionlint not accessible after installation" 20
+			fi
+		else
+			warn "  ✗ Failed to install actionlint via go install"
+			die "actionlint installation failed" 20
+		fi
+	fi
+}
+
 # run_verification_gate - Run repo-lint verification gate
 #
 # DESCRIPTION:
@@ -1299,19 +1425,23 @@ main() {
 	install_python_tools
 	log ""
 
-	# Phase 2.3: Install shell toolchain (if requested)
+	# Phase 2.3: Install actionlint (always installed - required)
+	install_actionlint
+	log ""
+
+	# Phase 2.4: Install shell toolchain (if requested)
 	if [ "$INSTALL_SHELL" = true ]; then
 		install_shell_tools
 		log ""
 	fi
 
-	# Phase 2.4: Install PowerShell toolchain (if requested)
+	# Phase 2.5: Install PowerShell toolchain (if requested)
 	if [ "$INSTALL_POWERSHELL" = true ]; then
 		install_powershell_tools
 		log ""
 	fi
 
-	# Phase 2.5: Install Perl toolchain (if requested)
+	# Phase 2.6: Install Perl toolchain (if requested)
 	if [ "$INSTALL_PERL" = true ]; then
 		install_perl_tools
 		log ""
@@ -1330,6 +1460,11 @@ main() {
 	log "  - Virtual environment: $repo_root/$VENV_DIR"
 	log "  - repo-lint: $(command -v repo-lint)"
 	log "  - Python tools: black, ruff, pylint, yamllint, pytest"
+	if command -v actionlint >/dev/null 2>&1; then
+		log "  - actionlint: $(command -v actionlint)"
+	else
+		log "  - actionlint: NOT INSTALLED"
+	fi
 	if command -v rg >/dev/null 2>&1; then
 		log "  - ripgrep: $(command -v rg)"
 	else

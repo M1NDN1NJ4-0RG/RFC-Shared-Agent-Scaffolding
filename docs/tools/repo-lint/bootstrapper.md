@@ -49,6 +49,7 @@ repo-lint check --ci
   - `pylint` - Python static analyzer
   - `yamllint` - YAML linter
   - `pytest` - Testing framework
+- **actionlint**: GitHub Actions workflow linter
 - **rgrep**: Recursive grep utility (falls back to `grep` with warnings if unavailable)
 
 ### Optional Toolchains (Install with Flags)
@@ -118,6 +119,9 @@ pytest --version
 black --version
 ruff --version
 
+# Verify actionlint
+actionlint -version
+
 # Verify shell tools (if --shell was used)
 shellcheck --version
 shfmt --version
@@ -139,6 +143,7 @@ shfmt --version
 | 17   | PowerShell toolchain installation failed |
 | 18   | Perl toolchain installation failed |
 | 19   | Verification gate failed (repo-lint check --ci) |
+| 20   | actionlint installation failed |
 
 ## Idempotency
 

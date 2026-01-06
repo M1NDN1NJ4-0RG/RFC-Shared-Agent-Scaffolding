@@ -724,10 +724,11 @@ The canonical tool name in this repository is `repo-lint` as defined in `pyproje
 repo-lint = "tools.repo_lint.cli:main"
 ```
 
-The only remaining references to "repo-cli" are:
-- `docs/repo-cli-bootstrapper.md` - existing file documenting the Rust `bootstrap-repo-cli` tool
-- References to that existing file in the plan
-These are appropriate as they refer to legacy/existing artifacts that predate the naming clarification.
+The only remaining references to "repo-cli" were in the old documentation file:
+- `docs/repo-cli-bootstrapper.md` - old file documenting the Rust `bootstrap-repo-cli` tool (now removed)
+- References to that file in the plan (now updated to point to `docs/tools/repo-lint/bootstrapper.md`)
+
+The canonical bootstrapper documentation is now at `docs/tools/repo-lint/bootstrapper.md` which documents the Bash `bootstrap-repo-lint-toolchain.sh` script.
 
 **Verification:**
 - Searched all three planning files for remaining `repo-cli` references
