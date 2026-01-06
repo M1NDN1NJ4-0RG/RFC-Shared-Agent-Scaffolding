@@ -261,7 +261,7 @@ min_version = "14.0.0"
     #[test]
     fn test_resolve_tools_with_overrides() {
         let mut config = Config::default();
-        let mut profile = Profile {
+        let profile = Profile {
             tools: vec!["ripgrep".to_string(), "python-black".to_string()],
         };
         config.profiles.insert("dev".to_string(), profile);
