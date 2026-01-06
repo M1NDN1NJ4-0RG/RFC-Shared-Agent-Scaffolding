@@ -49,8 +49,8 @@ repo-lint check --ci
   - `pylint` - Python static analyzer
   - `yamllint` - YAML linter
   - `pytest` - Testing framework
-- **actionlint**: GitHub Actions workflow linter
-- **rgrep**: Recursive grep utility (falls back to `grep` with warnings if unavailable)
+- **actionlint**: GitHub Actions workflow linter (v1.7.10)
+- **ripgrep**: Fast recursive search tool (REQUIRED - no fallback)
 
 ### Optional Toolchains (Install with Flags)
 
@@ -121,6 +121,9 @@ ruff --version
 
 # Verify actionlint
 actionlint -version
+
+# Verify ripgrep (required)
+rg --version
 
 # Verify shell tools (if --shell was used)
 shellcheck --version
