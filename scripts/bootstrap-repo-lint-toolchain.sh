@@ -1307,7 +1307,7 @@ install_actionlint() {
 	# Check if actionlint is already installed
 	if command -v actionlint >/dev/null 2>&1; then
 		local version
-		version=$(actionlint -version 2>&1 | head -n 1)
+		version=$(safe_version "actionlint -version")
 		log "  ✓ actionlint already installed: $version"
 		return 0
 	fi
@@ -1316,15 +1316,11 @@ install_actionlint() {
 	if command -v brew >/dev/null 2>&1; then
 		# macOS: Use Homebrew
 		log "Installing actionlint via Homebrew..."
-		if brew install actionlint; then
-			local version
-			version=$(actionlint -version 2>&1 | head -n 1)
-			log "  ✓ actionlint installed: $version"
-			return 0
-		else
-			warn "  ✗ Failed to install actionlint via Homebrew"
-			die "actionlint installation failed" 20
-		fi
+		run_or_die 20 "Failed to install actionlint via Homebrew" brew install actionlint
+		local version
+		version=$(safe_version "actionlint -version")
+		log "  ✓ actionlint installed: $version"
+		return 0
 	else
 		# Linux: Use go install
 		log "Installing actionlint via go install..."
@@ -1338,12 +1334,9 @@ install_actionlint() {
 					# actionlint v1.7.10 requires Go 1.18+. If installation fails due to Go version,
 					# consider using snap (sudo snap install go --classic) or direct binary download.
 					log "Installing golang-go via apt-get..."
-					if sudo apt-get update -qq && sudo apt-get install -y golang-go; then
-						log "  ✓ Go installed successfully"
-					else
-						warn "  ✗ Failed to install Go via apt-get"
-						die "Go installation required for actionlint" 20
-					fi
+					run_or_die 20 "Failed to update apt repositories for Go installation" sudo apt-get update -qq
+					run_or_die 20 "Failed to install golang-go via apt-get" sudo apt-get install -y golang-go
+					log "  ✓ Go installed successfully"
 				else
 					warn "  ✗ Cannot install Go: sudo access required"
 					die "Go installation required for actionlint (needs sudo)" 20
@@ -1359,23 +1352,21 @@ install_actionlint() {
 
 		# Install actionlint using go install (pinned to v1.7.10 for reproducibility)
 		log "Running: go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10"
-		if go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10; then
-			# Verify installation
-			if command -v actionlint >/dev/null 2>&1; then
-				local version
-				version=$(actionlint -version 2>&1 | head -n 1)
-				log "  ✓ actionlint installed: $version"
-				log "  ✓ actionlint binary: $(command -v actionlint)"
-				return 0
-			else
-				warn "  ✗ actionlint installed but not found on PATH"
-				warn "  → PATH was updated for this session, but installation may have failed"
-				warn "  → Manually verify: export PATH=\"\$HOME/go/bin:\$PATH\" && actionlint -version"
-				die "actionlint not accessible after installation" 20
-			fi
+		run_or_die 20 "Failed to install actionlint via go install" go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10
+
+		# Verify installation
+		if command -v actionlint >/dev/null 2>&1; then
+			local version
+			version=$(safe_version "actionlint -version")
+			log "  ✓ actionlint installed: $version"
+			log "  ✓ actionlint binary: $(command -v actionlint)"
+			return 0
 		else
-			warn "  ✗ Failed to install actionlint via go install"
-			die "actionlint installation failed" 20
+			warn "  ✗ actionlint installed but not found on PATH"
+			warn "  → Expected location: \$HOME/go/bin/actionlint"
+			warn "  → PATH was updated for this session: export PATH=\"\$HOME/go/bin:\$PATH\""
+			warn "  → Manually verify: actionlint -version"
+			die "actionlint not accessible after installation (check PATH)" 20
 		fi
 	fi
 }
