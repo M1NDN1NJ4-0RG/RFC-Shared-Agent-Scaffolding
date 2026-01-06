@@ -73,10 +73,8 @@ jobs:
             stem = p.stem
 
             # Skip specific naming-violations test files (intentionally violate naming conventions)
-            if path.endswith("/naming-violations.py") or \
-               path.endswith("/naming-violations.pl") or \
-               path.endswith("/naming-violations.ps1") or \
-               path.endswith("/naming_violations.sh"):
+            if "naming" in stem.lower() and "violation" in stem.lower() and \
+               ("/tests/fixtures/" in path or "/test/fixtures/" in path):
               continue
 
             # Skip special files
