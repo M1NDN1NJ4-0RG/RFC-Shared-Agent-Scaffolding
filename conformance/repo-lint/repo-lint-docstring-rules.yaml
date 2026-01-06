@@ -1,4 +1,11 @@
 ---
+# File: repo-lint-docstring-rules.yaml
+# Purpose: Defines docstring validation rules for all supported languages
+# Usage: Loaded by repo-lint runners to validate docstring contracts
+# Inputs: None (config file)
+# Outputs: Validation rules for python, bash, perl, powershell docstrings
+# Side effects: None (read-only configuration)
+# Notes: Part of Phase 2.2 naming and style enforcement
 config_type: repo-lint-docstring-rules
 version: "1.0.0"
 

@@ -1,4 +1,11 @@
 ---
+# File: repo-lint-ui-theme.yaml
+# Purpose: Defines UI theme and styling for repo-lint console output
+# Usage: Loaded by repo-lint UI layer to configure colors, icons, and formatting
+# Inputs: None (config file)
+# Outputs: Theme configuration for interactive and CI modes
+# Side effects: None (read-only configuration)
+# Notes: Part of Phase 2.5 Rich UI "Glow Up"; user-customizable via --theme flag or REPO_LINT_THEME env var
 config_type: repo-lint-ui-theme
 version: 1
 

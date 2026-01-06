@@ -1,4 +1,11 @@
 ---
+# File: repo-lint-linting-rules.yaml
+# Purpose: Defines linting tool configurations for all supported languages
+# Usage: Loaded by repo-lint to configure tool execution and validation
+# Inputs: None (config file)
+# Outputs: Tool configurations (versions, capabilities, settings)
+# Side effects: None (read-only configuration)
+# Notes: Part of Phase 2.2 and Phase 2.3 (pinned versions)
 config_type: repo-lint-linting-rules
 version: "1.0.0"
 
