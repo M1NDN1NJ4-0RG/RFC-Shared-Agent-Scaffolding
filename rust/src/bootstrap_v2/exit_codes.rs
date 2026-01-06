@@ -6,9 +6,6 @@
 //!
 //! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
 //!
-//! # Examples
-//!
-//! See module documentation and tests for usage examples.
 //! These codes match the existing bash script contract and must remain stable.
 //!
 //! # Exit Code Ranges

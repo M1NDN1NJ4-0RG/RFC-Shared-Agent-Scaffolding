@@ -122,7 +122,11 @@ impl PackageManagerOps for AptOps {
             })?;
 
         if !output.status.success() {
-            eprintln!("Warning: apt-get update failed (non-fatal)");
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            eprintln!(
+                "Warning: `sudo apt-get update -qq` failed (treated as non-fatal, continuing). stderr:\n{}",
+                stderr
+            );
         }
 
         Ok(())
