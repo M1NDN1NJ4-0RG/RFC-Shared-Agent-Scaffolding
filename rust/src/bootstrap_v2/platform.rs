@@ -256,6 +256,8 @@ pub fn get_current_path() -> Option<String> {
 /// - "tool version 1.2.3" -> "1.2.3"
 pub fn parse_version_from_output(output: &str) -> Option<String> {
     // Try to find a semantic version pattern (X.Y.Z)
+    // Note: Regex is compiled on each call. For high-frequency usage,
+    // consider caching with once_cell::sync::Lazy
     let re = regex::Regex::new(r"(\d+\.\d+\.\d+)").ok()?;
     re.captures(output)
         .and_then(|caps| caps.get(1))

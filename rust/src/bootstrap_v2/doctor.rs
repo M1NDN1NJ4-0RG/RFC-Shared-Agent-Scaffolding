@@ -198,7 +198,7 @@ impl DiagnosticReport {
         serde_json::to_string_pretty(&serde_json::json!({
             "checks": checks_json,
         }))
-        .unwrap()
+        .expect("Diagnostic report should always be serializable to JSON")
     }
 }
 
