@@ -23,11 +23,10 @@
 //! ```
 
 use crate::bootstrap_v2::context::{Context, PackageManager};
-use crate::bootstrap_v2::errors::{BootstrapError, BootstrapResult};
+use crate::bootstrap_v2::errors::BootstrapResult;
 use crate::bootstrap_v2::exit_codes::ExitCode;
 use std::path::Path;
 use std::process::Command;
-use std::sync::Arc;
 
 /// Check status
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -309,6 +308,7 @@ mod tests {
     use crate::bootstrap_v2::config::Config;
     use crate::bootstrap_v2::context::{OsType, PackageManager};
     use std::path::PathBuf;
+    use std::sync::Arc;
     use tempfile::TempDir;
 
     #[test]
