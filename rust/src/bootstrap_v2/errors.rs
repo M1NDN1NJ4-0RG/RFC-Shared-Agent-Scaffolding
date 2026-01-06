@@ -144,7 +144,8 @@ impl BootstrapError {
                     "ripgrep" | "rg" => ExitCode::RipgrepFailed,
                     t if t.starts_with("python")
                         || t.starts_with("black")
-                        || t.starts_with("ruff") =>
+                        || t.starts_with("ruff")
+                        || t.starts_with("pylint") =>
                     {
                         ExitCode::PythonToolsFailed
                     }
