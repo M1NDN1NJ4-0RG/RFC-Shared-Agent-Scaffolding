@@ -12,7 +12,7 @@ repository = "https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding"
 clap = { version = "4.5", features = ["derive", "env"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-chrono = "0.4"
+chrono = { version = "0.4", features = ["serde"] }
 regex = "1.0"
 signal-hook = "0.3"
 tar = "0.4"

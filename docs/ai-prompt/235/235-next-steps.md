@@ -6,17 +6,119 @@ Last Updated: 2026-01-06
 Related: Issue #235
 
 ## NEXT
-- Phase 4: Complete job semaphore and phase execution engine
-- Phase 6: Complete Config::load() for .bootstrap.toml parsing and profile resolution
-- Phase 7: Implement dry-run and checkpointing (optional)
-- Phase 8: Complete remaining platform abstractions (version detection, venv manager, PATH helpers)
-- Create main binary entry point that wires up all phases
-- Add comprehensive integration tests
-- Wire execution engine to actually run installer operations
+- Phase 10: Main binary entry point
+  - Create bootstrap_main.rs as new binary entry point
+  - Wire all phases together: CLI -> Config -> Plan -> Execute -> Report
+  - Implement install subcommand handler (full flow)
+  - Implement doctor subcommand handler (call doctor module)
+  - Implement verify subcommand handler (verify-only mode)
+  - Add proper error handling and exit code mapping
+  - Test end-to-end with actual installers
+- Phase 8: Add platform helpers as needed
+  - Version parsing utilities (already have semver crate)
+  - Venv creation/activation helpers
+  - PATH manipulation for shell integration
+  - Cache directory helpers (already in checkpoint module)
+- Additional installers to reach full coverage
+  - Perl tools (perlcritic, PPI)
+  - PowerShell tools (pwsh, PSScriptAnalyzer)
+  - Any missing shell/Python tools
+- Integration tests
+  - Test full install flow in dry-run mode
+  - Test checkpoint save/load/resume
+  - Test doctor command
+  - Test verify-only mode
+- Bash wrapper migration script (Phase 10.1)
+- Performance benchmarking and optimization
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 08:30 - Phases 4, 6, 7, 9 Complete: Execution Engine, Config, Checkpointing, Doctor
+**Files Changed:**
+- `rust/src/bootstrap_v2/executor.rs`: NEW - Execution engine with bounded parallelism
+- `rust/src/bootstrap_v2/config.rs`: UPDATED - Config::load() with TOML parsing
+- `rust/src/bootstrap_v2/checkpoint.rs`: NEW - Checkpointing for resume capability
+- `rust/src/bootstrap_v2/doctor.rs`: NEW - Doctor command diagnostics
+- `rust/src/bootstrap_v2/context.rs`: UPDATED - Field renames, test helpers, progress as Option
+- `rust/src/bootstrap_v2/errors.rs`: UPDATED - Added InstallerNotFound, ExecutionFailed variants
+- `rust/src/bootstrap_v2/installer.rs`: UPDATED - Added Clone derive to InstallResult/VerifyResult
+- `rust/src/bootstrap_v2/progress.rs`: UPDATED - Added emit_event_phase_* methods, new_for_testing()
+- `rust/src/bootstrap_v2/mod.rs`: UPDATED - Added executor, checkpoint, doctor modules
+- `rust/Cargo.toml`: UPDATED - Added serde feature to chrono
+- `docs/ai-prompt/235/235-next-steps.md`: UPDATED - Comprehensive session notes
+
+**Changes Made:**
+- Phase 4 Execution Engine:
+  - Implemented Executor struct with job semaphore (CI=2, Interactive=min(4,cpus))
+  - Added execute_phase() with parallel and sequential modes
+  - Parallel mode uses tokio::spawn with semaphore-bounded concurrency
+  - Sequential mode respects fail-fast on errors
+  - Lock acquisition integrated with proper timeouts (CI=60s, Interactive=180s)
+  - StepResult tracks success, duration, install/verify results
+  - Tests for executor creation and parallel execution bounds
+- Phase 6 Config Implementation:
+  - Implemented Config::load() with TOML file parsing
+  - ConfigFile wrapper for proper [profile.X] and [tool.X] sections
+  - Profile resolution with fallback to default tools
+  - CI mode enforcement: .bootstrap.toml REQUIRED (exits UsageError if missing)
+  - get_tool_config() for version/min_version/install_args
+  - 7 comprehensive tests (all passing)
+- Phase 7 Checkpointing:
+  - Checkpoint save/load outside repo (XDG cache on Linux, macOS caches on macOS)
+  - Plan hash validation for checkpoint compatibility
+  - mark_completed/mark_failed/is_completed for resume logic
+  - 5 tests covering save/load/validation (all passing)
+  - Enables --checkpoint / --resume flags (optional feature)
+  - Policy: no fallback to repo root (must use cache dirs)
+- Phase 9 Doctor Command:
+  - doctor() function with 5 core checks: repo, package manager, Python, disk, permissions
+  - DiagnosticCheck with CheckStatus (Pass/Warn/Fail)
+  - DiagnosticReport with colored output (✓/⚠/✗) and remediation suggestions
+  - --strict mode where WARN is treated as FAIL (for exit code)
+  - 7 tests covering all check types and exit code logic (all passing)
+  - Disk space check marked as TODO/placeholder
+
+**Code Review:**
+- Triggered GitHub Copilot code review per session requirements
+- 5 review comments received and ALL addressed:
+  1. ✅ executor: Changed unwrap() to expect() with descriptive message
+  2. ✅ executor: Clarified double ? operator with explicit map_err
+  3. ✅ config: Improved error message, added reference to future docs
+  4. ✅ checkpoint: Removed repo root fallback per policy (errors if no cache dir)
+  5. ✅ doctor: Marked disk space check as TODO with clear warning status
+- Re-tested after fixes: all 53 tests passing
+
+**Verification:**
+- `cargo build` successful (0 errors, 0 warnings)
+- All module tests passing:
+  - executor: 2 tests
+  - config: 7 tests
+  - checkpoint: 5 tests
+  - doctor: 7 tests
+  - Total 53 tests across entire codebase (21 new this session)
+- No clippy warnings
+- Context field renames (ci_mode -> is_ci, jobs -> max_jobs) propagated correctly
+- Code review feedback fully addressed
+
+**Architecture Notes:**
+- Executor uses Arc<Context> for thread-safe sharing
+- Progress reporter optional (Option<Arc<ProgressReporter>>) for testing
+- Lock manager shared across executor via Arc
+- Job semaphore limits total concurrent steps (prevents CI saturation)
+- Checkpoint path resolution uses dirs crate for XDG/macOS compliance
+- Doctor checks are async for consistency but most are sync operations
+
+**Known Issues / Follow-ups:**
+- Phase 8 (platform helpers) scattered - version parsing uses semver crate, venv/PATH helpers needed
+- Phase 10 (main binary) not started - need bootstrap_main.rs entry point
+- Installers don't yet use Executor - need wiring in main
+- No integration tests yet - need end-to-end flow tests
+- Bash wrapper (Phase 10.1) not started
+- Disk space check is placeholder - needs statvfs implementation
+
+---
 
 ### 2026-01-06 07:05 - Code Review Fixes Applied
 **Files Changed:**

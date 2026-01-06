@@ -16,7 +16,7 @@ use async_trait::async_trait;
 use semver::Version;
 
 /// Installation result
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct InstallResult {
     /// Version installed
     pub version: Version,
@@ -29,7 +29,7 @@ pub struct InstallResult {
 }
 
 /// Verification result
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct VerifyResult {
     /// Success status
     pub success: bool,

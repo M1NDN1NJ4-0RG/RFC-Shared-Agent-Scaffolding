@@ -129,6 +129,14 @@ pub enum BootstrapError {
         actual: String,
     },
 
+    /// Installer not found in registry
+    #[error("Installer not found: {0}")]
+    InstallerNotFound(String),
+
+    /// Execution failed
+    #[error("Execution failed: {0}")]
+    ExecutionFailed(String),
+
     /// Generic error with context
     #[error(transparent)]
     Other(#[from] anyhow::Error),
@@ -174,6 +182,7 @@ impl BootstrapError {
             Self::NoPackageManager(_) => ExitCode::UsageError,
             Self::DependencyResolution(_) | Self::CyclicDependency => ExitCode::UsageError,
             Self::HttpError(_) | Self::ChecksumMismatch { .. } => ExitCode::VerificationFailed,
+            Self::InstallerNotFound(_) | Self::ExecutionFailed(_) => ExitCode::VerificationFailed,
             Self::IoError(_) | Self::Other(_) => ExitCode::VerificationFailed,
         }
     }
