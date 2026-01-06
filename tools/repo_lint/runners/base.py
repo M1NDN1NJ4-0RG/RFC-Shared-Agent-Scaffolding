@@ -132,9 +132,7 @@ def get_git_pathspec_excludes(include_fixtures: bool = False) -> List[str]:
     return excludes
 
 
-def get_tracked_files(
-    patterns: List[str], repo_root: Path | None = None, include_fixtures: bool = False
-) -> List[str]:
+def get_tracked_files(patterns: List[str], repo_root: Path | None = None, include_fixtures: bool = False) -> List[str]:
     """Get tracked files matching patterns, excluding lint test fixtures.
 
     :param patterns: List of file patterns (e.g., ["**/*.py", "**/*.sh"])
