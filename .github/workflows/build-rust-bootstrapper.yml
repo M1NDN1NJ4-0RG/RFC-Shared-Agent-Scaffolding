@@ -242,3 +242,4 @@ jobs:
           cd downloaded
           ./bootstrap-repo-cli --version || true
           ./bootstrap-repo-cli --help
+
