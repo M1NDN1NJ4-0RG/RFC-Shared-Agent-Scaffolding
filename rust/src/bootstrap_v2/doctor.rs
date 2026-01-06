@@ -262,25 +262,31 @@ async fn check_python() -> DiagnosticCheck {
 
 /// Check available disk space
 async fn check_disk_space(repo_root: &Path) -> DiagnosticCheck {
+    // TODO: Implement actual disk space check using statvfs (Unix) or GetDiskFreeSpaceEx (Windows)
+    // For now, this is a placeholder that always passes
     #[cfg(target_family = "unix")]
     {
         match std::fs::metadata(repo_root) {
             Ok(_) => {
-                // This is a simplified check - in reality you'd use statvfs
-                // For now, just check if we can read metadata
-                DiagnosticCheck::pass("Disk Space", "Sufficient disk space available")
+                // Placeholder: actual implementation would use libc::statvfs
+                // to check available bytes and compare against minimum threshold (e.g., 1GB)
+                DiagnosticCheck::warn(
+                    "Disk Space",
+                    "Disk space check not fully implemented (placeholder)",
+                    Some("Future: implement statvfs check for available disk space".to_string()),
+                )
             }
-            Err(_) => DiagnosticCheck::warn(
-                "Disk Space",
-                "Could not check disk space",
-                None,
-            ),
+            Err(_) => DiagnosticCheck::warn("Disk Space", "Could not check disk space", None),
         }
     }
 
     #[cfg(not(target_family = "unix"))]
     {
-        DiagnosticCheck::pass("Disk Space", "Disk space check skipped (non-Unix)")
+        DiagnosticCheck::warn(
+            "Disk Space",
+            "Disk space check not implemented for this platform",
+            None,
+        )
     }
 }
 

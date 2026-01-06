@@ -182,7 +182,10 @@ impl Executor {
 
             let handle = tokio::spawn(async move {
                 // Acquire job semaphore permit
-                let _permit = semaphore.acquire().await.unwrap();
+                let _permit = semaphore
+                    .acquire()
+                    .await
+                    .expect("Job semaphore should never be closed");
 
                 // Execute step
                 Self::execute_step_impl(&step, &ctx, &registry, &lock_manager).await
@@ -194,10 +197,10 @@ impl Executor {
         // Await all tasks
         let mut results = Vec::new();
         for handle in handles {
-            let result = handle
-                .await
-                .map_err(|e| BootstrapError::ExecutionFailed(e.to_string()))??;
-            results.push(result);
+            let result = handle.await.map_err(|e| {
+                BootstrapError::ExecutionFailed(format!("Task join error: {}", e))
+            })?;
+            results.push(result?);
         }
 
         Ok(results)

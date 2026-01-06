@@ -206,11 +206,15 @@ impl Checkpoint {
 ///
 /// Path to checkpoint file in cache directory
 ///
+/// # Errors
+///
+/// Returns error if cache directory cannot be determined (no XDG/macOS cache available)
+///
 /// # Platform Behavior
 ///
 /// - Linux: Uses XDG_CACHE_HOME or ~/.cache
 /// - macOS: Uses ~/Library/Caches
-/// - Fallback: Uses repo root (not ideal but functional)
+/// - No fallback to repo root (policy: checkpoints must be outside repo)
 fn default_checkpoint_path(repo_root: &Path) -> BootstrapResult<PathBuf> {
     // Try to get cache directory
     if let Some(cache_dir) = dirs::cache_dir() {
@@ -225,8 +229,12 @@ fn default_checkpoint_path(repo_root: &Path) -> BootstrapResult<PathBuf> {
             .join("checkpoints")
             .join(format!("{}.json", repo_name)))
     } else {
-        // Fallback: use .bootstrap directory in repo (not ideal)
-        Ok(repo_root.join(".bootstrap").join("checkpoint.json"))
+        // No fallback to repo root per policy - return error
+        Err(BootstrapError::ConfigError(
+            "Cannot determine cache directory for checkpoint storage. \
+             XDG_CACHE_HOME or platform cache directory is required."
+                .to_string(),
+        ))
     }
 }
 

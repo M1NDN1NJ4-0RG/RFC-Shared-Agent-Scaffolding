@@ -99,9 +99,10 @@ impl Config {
             })
         } else if ci_mode {
             // POLICY: For this repo in CI, .bootstrap.toml is REQUIRED
+            // See docs/contributing/bootstrap-config-requirements.md for details
             Err(BootstrapError::ConfigError(
                 ".bootstrap.toml is required in CI mode but was not found. \
-                 Please create a .bootstrap.toml file with at least a [profile.ci] section."
+                 Create a .bootstrap.toml file with at least a [profile.ci] section."
                     .to_string(),
             ))
         } else {
