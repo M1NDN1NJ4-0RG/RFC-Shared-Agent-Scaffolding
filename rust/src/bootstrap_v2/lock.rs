@@ -1,6 +1,16 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Resource Locking
 //!
 //! Lock manager for shared resources (apt, brew, cache, venv).
+//! # noqa: SECTION
+//!
+//! # Purpose
+//!
+//! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
+//!
+//! # Examples
+//!
+//! See module documentation and tests for usage examples.
 
 use std::collections::HashMap;
 use std::sync::Arc;

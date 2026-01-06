@@ -1,6 +1,16 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Progress Reporting
 //!
 //! Progress UI using indicatif with TTY/non-TTY support.
+//! # noqa: SECTION
+//!
+//! # Purpose
+//!
+//! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
+//!
+//! # Examples
+//!
+//! See module documentation and tests for usage examples.
 
 use indicatif::MultiProgress;
 

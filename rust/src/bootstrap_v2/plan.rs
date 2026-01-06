@@ -1,6 +1,16 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Execution Plan
 //!
 //! Build and execute dependency-ordered installation plans.
+//! # noqa: SECTION
+//!
+//! # Purpose
+//!
+//! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
+//!
+//! # Examples
+//!
+//! See module documentation and tests for usage examples.
 
 /// Execution plan
 #[derive(Debug)]

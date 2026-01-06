@@ -1,6 +1,32 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # CLI Interface
 //!
 //! Command-line interface using clap for the bootstrap tool.
+//!
+//! # Purpose
+//!
+//! Provides the command-line argument parsing and structure for the bootstrap
+//! binary using clap's derive API. Defines all subcommands, flags, and options.
+//!
+//! # Examples
+//!
+//! ```no_run
+//! use bootstrap_v2::cli::{Cli, Commands};
+//! use clap::Parser;
+//!
+//! let cli = Cli::parse();
+//! match cli.command {
+//!     Commands::Install { profile } => {
+//!         println!("Installing profile: {}", profile);
+//!     }
+//!     Commands::Doctor { strict } => {
+//!         println!("Running diagnostics (strict={})", strict);
+//!     }
+//!     Commands::Verify => {
+//!         println!("Verifying installation");
+//!     }
+//! }
+//! ```
 //!
 //! # Subcommands
 //!

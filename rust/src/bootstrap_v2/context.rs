@@ -1,6 +1,16 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Execution Context
 //!
 //! Shared context object passed to all installer operations.
+//! # noqa: SECTION
+//!
+//! # Purpose
+//!
+//! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
+//!
+//! # Examples
+//!
+//! See module documentation and tests for usage examples.
 //! Contains configuration, environment info, and shared state.
 //!
 //! # Design

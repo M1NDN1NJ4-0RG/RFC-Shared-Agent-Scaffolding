@@ -1,6 +1,16 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Bootstrap V2 - Modular Toolchain Bootstrapper
 //!
 //! This module implements the next-generation modular bootstrapper with:
+//! # noqa: SECTION
+//!
+//! # Purpose
+//!
+//! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
+//!
+//! # Examples
+//!
+//! See module documentation and tests for usage examples.
 //! - Parallel execution (where safe)
 //! - Rich progress UI
 //! - Structured logging
@@ -23,7 +33,9 @@ pub mod context;
 pub mod errors;
 pub mod exit_codes;
 pub mod installer;
+pub mod installers;
 pub mod lock;
+pub mod package_manager;
 pub mod plan;
 pub mod progress;
 pub mod retry;

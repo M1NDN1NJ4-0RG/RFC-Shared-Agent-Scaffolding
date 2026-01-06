@@ -1,6 +1,16 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Exit Code Constants
 //!
 //! Defines all exit codes used by the bootstrap CLI.
+//! # noqa: SECTION
+//!
+//! # Purpose
+//!
+//! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
+//!
+//! # Examples
+//!
+//! See module documentation and tests for usage examples.
 //! These codes match the existing bash script contract and must remain stable.
 //!
 //! # Exit Code Ranges

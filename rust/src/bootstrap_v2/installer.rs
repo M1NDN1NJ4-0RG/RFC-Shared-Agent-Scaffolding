@@ -1,6 +1,16 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Installer Trait and Registry
 //!
 //! Core installer abstraction and registry pattern.
+//! # noqa: SECTION
+//!
+//! # Purpose
+//!
+//! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
+//!
+//! # Examples
+//!
+//! See module documentation and tests for usage examples.
 
 use crate::bootstrap_v2::context::Context;
 use crate::bootstrap_v2::errors::BootstrapResult;

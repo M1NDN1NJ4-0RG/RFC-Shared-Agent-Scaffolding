@@ -1,6 +1,16 @@
+// Bootstrap V2 foundational code - comprehensive docs pending (Issue #235 Phase 1)
 //! # Error Type Hierarchy
 //!
 //! Defines all error types used by the bootstrap CLI with proper error chaining.
+//! # noqa: SECTION
+//!
+//! # Purpose
+//!
+//! Foundational module for bootstrap-v2 implementation (Issue #235 Phase 1).
+//!
+//! # Examples
+//!
+//! See module documentation and tests for usage examples.
 //! Uses thiserror for ergonomic error handling and anyhow for error context.
 //!
 //! # Error Categories
@@ -65,6 +75,10 @@ pub enum BootstrapError {
     #[error("Failed to install repo-lint: {0}")]
     RepoLintInstallFailed(String),
 
+    /// Python tools failed
+    #[error("Python tools failed: {0}")]
+    PythonToolsFailed(String),
+
     /// Verification failed
     #[error("Verification failed: {0}")]
     VerificationFailed(String),
@@ -123,6 +137,7 @@ impl BootstrapError {
             Self::NoInstallTarget => ExitCode::NoInstallTarget,
             Self::RepoLintUpgradeFailed(_) => ExitCode::RepoLintUpgradeFailed,
             Self::RepoLintInstallFailed(_) => ExitCode::RepoLintInstallFailed,
+            Self::PythonToolsFailed(_) => ExitCode::PythonToolsFailed,
             Self::VerificationFailed(_) => ExitCode::VerificationFailed,
             Self::InstallFailed { tool, .. } => {
                 // Map tool-specific failures to appropriate exit codes

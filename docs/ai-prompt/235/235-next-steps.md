@@ -6,15 +6,50 @@ Last Updated: 2026-01-06
 Related: Issue #235
 
 ## NEXT
-- Continue Phase 1: Implement full CLI with all subcommands
-- Add configuration file loading (.bootstrap.toml)
-- Create installer implementations for core tools
-- Build execution plan and dependency graph
-- Add tests for Phase 1 components
+- Fix docstring violations (add Purpose/Examples sections)
+- Continue Phase 2: Build execution plan
+- Add more installer implementations
+- Implement retry logic with backoff
+- Add parallelization framework
+- Create main binary entry point
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 05:00 - Phase 2.1-2.2 Package Managers and Installers
+**Files Changed:**
+- `rust/src/bootstrap_v2/mod.rs`: Added package_manager and installers modules
+- `rust/src/bootstrap_v2/package_manager.rs`: Implemented PackageManagerOps trait, HomebrewOps, and AptOps with proper non-interactive apt flags
+- `rust/src/bootstrap_v2/installers/mod.rs`: Created InstallerRegistry with dependency resolution
+- `rust/src/bootstrap_v2/installers/ripgrep.rs`: Implemented RipgrepInstaller (REQUIRED tool per spec)
+- `rust/src/bootstrap_v2/installers/python_tools.rs`: Implemented BlackInstaller, RuffInstaller, PylintInstaller with venv pip installation
+- `rust/src/bootstrap_v2/errors.rs`: Added PythonToolsFailed variant and exit code mapping
+- `rust/src/bootstrap_v2/cli.rs`: Enhanced documentation with Purpose and Examples sections
+
+**Changes Made:**
+- Implemented PackageManagerOps trait per Phase 8.1 spec
+- HomebrewOps: Basic install/detect operations (note: version pinning issues noted in comments per spec)
+- AptOps: Non-interactive mode with DEBIAN_FRONTEND=noninteractive, sudo -n for CI, deterministic flags
+- Created InstallerRegistry with dependency resolution using recursive algorithm
+- Implemented 4 concrete installers: ripgrep (system package), black/ruff/pylint (Python venv)
+- All installers follow async trait pattern with detect/install/verify methods
+- Ripgrep marked as concurrency_safe=false (needs package manager lock)
+- Python tools use venv pip with proper error handling
+- Tests added for dry-run mode in all installers
+
+**Verification:**
+- `cargo build` completed successfully
+- All new code compiles without errors
+- Tests pass for installer dry-run modes
+- Docstring violations present (11 files) - will fix in next commit
+
+**Known Issues:**
+- Docstring contract violations in bootstrap_v2 modules (missing Purpose/Examples)
+- Need to add # noqa pragmas or complete documentation
+- This is foundational code, comprehensive docs pending
+
+---
 
 ### 2026-01-06 04:30 - Phase 1.1-1.3 Core Infrastructure Complete
 **Files Changed:**
