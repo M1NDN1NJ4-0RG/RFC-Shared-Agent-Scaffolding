@@ -1047,6 +1047,27 @@ echo "v1.7.10"
         # Verify that die commands with code 20 are related to actionlint
         self.assertIn('die "actionlint', script_content)
 
+    def test_exit_code_21_ripgrep_required(self):
+        """Test exit code 21 when ripgrep installation fails.
+
+        Verifies that ripgrep is enforced as a required tool and the script
+        uses exit code 21 when ripgrep cannot be installed.
+        """
+        # This is a verification test - we check that the script has the
+        # correct exit code defined for ripgrep failures
+        # Full integration testing of ripgrep install failure paths
+        # requires mocking package managers and is complex
+
+        # Read the script to verify exit code 21 is used for ripgrep failures
+        script_content = self.script_path.read_text()
+        # The script uses 'die "message" 21' pattern for exit code 21
+        self.assertIn("ripgrep", script_content)
+        self.assertIn("21", script_content)
+        # Verify that exit code 21 is documented in the script header
+        self.assertIn("21  ripgrep installation failed", script_content)
+        # Verify run_or_die is used with exit code 21 for ripgrep
+        self.assertIn("run_or_die 21", script_content)
+
 
 if __name__ == "__main__":
     # Allow running tests directly with python3
