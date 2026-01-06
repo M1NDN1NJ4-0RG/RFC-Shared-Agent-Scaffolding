@@ -138,10 +138,18 @@ done
 
 # Calculate average of numeric values
 #
-# Args:
-#   $@: One or more numeric values
+# Computes the arithmetic mean of a list of numeric inputs.
+#
+# Arguments:
+#   $@ - One or more numeric values to average
 #
 # Returns:
+#   0 on success (prints average to stdout)
+#
+# Globals:
+#   None
+#
+# Outputs:
 #   Average of the values (3 decimal places)
 calc_avg() {
 	local sum=0
@@ -153,10 +161,18 @@ calc_avg() {
 
 # Calculate minimum of numeric values
 #
-# Args:
-#   $@: One or more numeric values
+# Finds the smallest value from a list of numeric inputs.
+#
+# Arguments:
+#   $@ - One or more numeric values to compare
 #
 # Returns:
+#   0 on success (prints minimum value to stdout)
+#
+# Globals:
+#   None
+#
+# Outputs:
 #   Minimum value from the input
 calc_min() {
 	local min=$1
@@ -171,10 +187,18 @@ calc_min() {
 
 # Calculate maximum of numeric values
 #
-# Args:
-#   $@: One or more numeric values
+# Finds the largest value from a list of numeric inputs.
+#
+# Arguments:
+#   $@ - One or more numeric values to compare
 #
 # Returns:
+#   0 on success (prints maximum value to stdout)
+#
+# Globals:
+#   None
+#
+# Outputs:
 #   Maximum value from the input
 calc_max() {
 	local max=$1
