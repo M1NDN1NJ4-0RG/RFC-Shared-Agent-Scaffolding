@@ -2,7 +2,7 @@ MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL RE
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 235 AI Journal
 Status: In Progress
-Last Updated: 2026-01-06
+Last Updated: 2026-01-06 12:10 UTC
 Related: Issue #235
 
 ## NEXT
@@ -13,10 +13,11 @@ Related: Issue #235
 - Integration tests
   - Test full install flow in dry-run mode
   - Test checkpoint save/load/resume
-  - Test doctor command
-  - Test verify-only mode
+  - Test doctor command end-to-end
+  - Test verify-only mode end-to-end
 - Bash wrapper migration script (Phase 10.1)
 - Performance benchmarking and optimization
+- Binary distribution and release setup
 
 ---
 
