@@ -86,7 +86,7 @@ impl Executor {
     ///
     /// New executor with job semaphore sized per context (CI=2, Interactive=min(4,cpus))
     pub fn new(ctx: Arc<Context>, registry: Arc<InstallerRegistry>) -> Self {
-        let max_jobs = ctx.max_jobs as usize;
+        let max_jobs = ctx.max_jobs;
         let job_semaphore = Arc::new(Semaphore::new(max_jobs));
         let lock_manager = Arc::new(LockManager::new());
 
@@ -197,9 +197,9 @@ impl Executor {
         // Await all tasks
         let mut results = Vec::new();
         for handle in handles {
-            let result = handle.await.map_err(|e| {
-                BootstrapError::ExecutionFailed(format!("Task join error: {}", e))
-            })?;
+            let result = handle
+                .await
+                .map_err(|e| BootstrapError::ExecutionFailed(format!("Task join error: {}", e)))?;
             results.push(result?);
         }
 
@@ -274,11 +274,10 @@ impl Executor {
             .ok_or_else(|| BootstrapError::InstallerNotFound(step.installer.clone()))?;
 
         // Create progress task if available
-        let task_handle = if let Some(progress) = &ctx.progress {
-            Some(progress.add_task(step.id.clone(), installer.name().to_string()))
-        } else {
-            None
-        };
+        let task_handle = ctx
+            .progress
+            .as_ref()
+            .map(|progress| progress.add_task(step.id.clone(), installer.name().to_string()));
 
         // Set task to running
         if let Some(task) = &task_handle {

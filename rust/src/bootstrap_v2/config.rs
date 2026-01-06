@@ -79,17 +79,11 @@ impl Config {
         if config_path.exists() {
             // Parse TOML file
             let contents = fs::read_to_string(&config_path).map_err(|e| {
-                BootstrapError::ConfigError(format!(
-                    "Failed to read .bootstrap.toml: {}",
-                    e
-                ))
+                BootstrapError::ConfigError(format!("Failed to read .bootstrap.toml: {}", e))
             })?;
 
             let config_file: ConfigFile = toml::from_str(&contents).map_err(|e| {
-                BootstrapError::ConfigError(format!(
-                    "Failed to parse .bootstrap.toml: {}",
-                    e
-                ))
+                BootstrapError::ConfigError(format!("Failed to parse .bootstrap.toml: {}", e))
             })?;
 
             // Convert ConfigFile to Config

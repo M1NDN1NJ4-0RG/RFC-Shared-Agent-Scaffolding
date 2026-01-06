@@ -118,8 +118,8 @@ impl DiagnosticReport {
         for check in &self.checks {
             let (icon, color) = match check.status {
                 CheckStatus::Pass => ("✓", "\x1b[32m"), // Green
-                CheckStatus::Warn => ("⚠", "\x1b[33m"),  // Yellow
-                CheckStatus::Fail => ("✗", "\x1b[31m"),  // Red
+                CheckStatus::Warn => ("⚠", "\x1b[33m"), // Yellow
+                CheckStatus::Fail => ("✗", "\x1b[31m"), // Red
             };
 
             println!("{}{} {}\x1b[0m: {}", color, icon, check.name, check.message);
@@ -135,11 +135,26 @@ impl DiagnosticReport {
 
     /// Print summary statistics
     fn print_summary(&self) {
-        let pass_count = self.checks.iter().filter(|c| c.status == CheckStatus::Pass).count();
-        let warn_count = self.checks.iter().filter(|c| c.status == CheckStatus::Warn).count();
-        let fail_count = self.checks.iter().filter(|c| c.status == CheckStatus::Fail).count();
+        let pass_count = self
+            .checks
+            .iter()
+            .filter(|c| c.status == CheckStatus::Pass)
+            .count();
+        let warn_count = self
+            .checks
+            .iter()
+            .filter(|c| c.status == CheckStatus::Warn)
+            .count();
+        let fail_count = self
+            .checks
+            .iter()
+            .filter(|c| c.status == CheckStatus::Fail)
+            .count();
 
-        println!("\nSummary: {} passed, {} warnings, {} failed", pass_count, warn_count, fail_count);
+        println!(
+            "\nSummary: {} passed, {} warnings, {} failed",
+            pass_count, warn_count, fail_count
+        );
     }
 
     /// Get exit code based on report
@@ -250,7 +265,10 @@ async fn check_python() -> DiagnosticCheck {
     match output {
         Ok(out) if out.status.success() => {
             let version = String::from_utf8_lossy(&out.stdout);
-            DiagnosticCheck::pass("Python", format!("Python 3 is available: {}", version.trim()))
+            DiagnosticCheck::pass(
+                "Python",
+                format!("Python 3 is available: {}", version.trim()),
+            )
         }
         _ => DiagnosticCheck::fail(
             "Python",
@@ -312,8 +330,7 @@ async fn check_permissions(repo_root: &Path) -> DiagnosticCheck {
 mod tests {
     use super::*;
     use crate::bootstrap_v2::config::Config;
-    use crate::bootstrap_v2::context::{OsType, PackageManager};
-    use std::path::PathBuf;
+    use crate::bootstrap_v2::context::PackageManager;
     use std::sync::Arc;
     use tempfile::TempDir;
 
@@ -350,7 +367,7 @@ mod tests {
     #[tokio::test]
     async fn test_check_repo() {
         let temp_dir = TempDir::new().unwrap();
-        
+
         // Without .git
         let check = check_repo(temp_dir.path()).await;
         assert_eq!(check.status, CheckStatus::Fail);
@@ -375,7 +392,10 @@ mod tests {
         let check = check_python().await;
         // Should pass if Python 3 is installed (which it should be in CI)
         // If not installed, will fail
-        assert!(matches!(check.status, CheckStatus::Pass | CheckStatus::Fail));
+        assert!(matches!(
+            check.status,
+            CheckStatus::Pass | CheckStatus::Fail
+        ));
     }
 
     #[tokio::test]

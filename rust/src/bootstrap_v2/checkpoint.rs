@@ -90,10 +90,7 @@ impl Checkpoint {
         // Create parent directory if needed
         if let Some(parent) = path.parent() {
             fs::create_dir_all(parent).map_err(|e| {
-                BootstrapError::ConfigError(format!(
-                    "Failed to create checkpoint directory: {}",
-                    e
-                ))
+                BootstrapError::ConfigError(format!("Failed to create checkpoint directory: {}", e))
             })?;
         }
 
