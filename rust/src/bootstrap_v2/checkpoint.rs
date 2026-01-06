@@ -309,10 +309,7 @@ mod tests {
     fn test_default_checkpoint_path() {
         let temp_dir = TempDir::new().unwrap();
         let path = default_checkpoint_path(temp_dir.path()).unwrap();
-        // Should either be in cache dir or .bootstrap subdir
-        assert!(
-            path.to_string_lossy().contains("bootstrap-repo-lint")
-                || path.to_string_lossy().contains(".bootstrap")
-        );
+        // Path should be in the cache dir and include the bootstrap-repo-lint subdir
+        assert!(path.to_string_lossy().contains("bootstrap-repo-lint"));
     }
 }
