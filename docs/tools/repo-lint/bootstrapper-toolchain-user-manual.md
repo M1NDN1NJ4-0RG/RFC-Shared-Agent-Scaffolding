@@ -49,8 +49,8 @@ repo-lint check --ci
   - `pylint` - Python static analyzer
   - `yamllint` - YAML linter
   - `pytest` - Testing framework
-- **actionlint**: GitHub Actions workflow linter
-- **rgrep**: Recursive grep utility (falls back to `grep` with warnings if unavailable)
+- **actionlint**: GitHub Actions workflow linter (v1.7.10)
+- **ripgrep**: Fast recursive search tool (REQUIRED - no fallback)
 
 ### Optional Toolchains (Install with Flags)
 
@@ -122,6 +122,9 @@ ruff --version
 # Verify actionlint
 actionlint -version
 
+# Verify ripgrep (required)
+rg --version
+
 # Verify shell tools (if --shell was used)
 shellcheck --version
 shfmt --version
@@ -134,7 +137,7 @@ shfmt --version
 | 0    | Success - all operations completed |
 | 1    | Generic failure |
 | 10   | Repository root not found |
-| 11   | Virtual environment creation failed |
+| 11   | Virtual environment creation or activation failed |
 | 12   | No valid install target (missing pyproject.toml) |
 | 13   | repo-lint not found on PATH after installation |
 | 14   | repo-lint --help command failed |
@@ -144,6 +147,7 @@ shfmt --version
 | 18   | Perl toolchain installation failed |
 | 19   | Verification gate failed (repo-lint check --ci) |
 | 20   | actionlint installation failed |
+| 21   | ripgrep installation failed (required tool) |
 
 ## Idempotency
 

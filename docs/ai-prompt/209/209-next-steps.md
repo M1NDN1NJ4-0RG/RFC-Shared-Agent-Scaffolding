@@ -29,7 +29,7 @@ All work on Issue #209 (repo-lint bootstrapper) is COMPLETE:
 - ✅ Bash script: `scripts/bootstrap-repo-lint-toolchain.sh` (42,290 bytes)
 - ✅ Test suite: `scripts/tests/test_bootstrap_repo_lint_toolchain.py` (20 tests, all passing)
 - ✅ CI workflow: `.github/workflows/test-bootstrapper.yml`
-- ✅ Documentation: `docs/tools/repo-lint/bootstrapper.md`
+- ✅ Documentation: `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`
 - ✅ All compliance checks passing (shellcheck, shfmt, black, ruff, pylint, yamllint, docstrings)
 
 **Verification:**
@@ -726,9 +726,9 @@ repo-lint = "tools.repo_lint.cli:main"
 
 The only remaining references to "repo-cli" were in the old documentation file:
 - `docs/repo-cli-bootstrapper.md` - old file documenting the Rust `bootstrap-repo-cli` tool (now removed)
-- References to that file in the plan (now updated to point to `docs/tools/repo-lint/bootstrapper.md`)
+- References to that file in the plan (now updated to point to `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`)
 
-The canonical bootstrapper documentation is now at `docs/tools/repo-lint/bootstrapper.md` which documents the Bash `bootstrap-repo-lint-toolchain.sh` script.
+The canonical bootstrapper documentation is now at `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` which documents the Bash `bootstrap-repo-lint-toolchain.sh` script.
 
 **Verification:**
 - Searched all three planning files for remaining `repo-cli` references

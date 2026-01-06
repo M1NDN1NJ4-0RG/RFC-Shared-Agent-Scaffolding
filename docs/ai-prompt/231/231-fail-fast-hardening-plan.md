@@ -55,7 +55,7 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Required changes:**
 - Rename:
-  - `docs/tools/repo-lint/bootstrapper.md`
+  - `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`
 - To:
   - `bootstrapper-toolchain-user-manual.md`
 
@@ -67,7 +67,7 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
   - `docs/repo-lint/bootstrapper-toolchain-user-manual.md`
 
 **Acceptance Criteria:**
-- The original `docs/tools/repo-lint/bootstrapper.md` path no longer exists.
+- The original `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` path no longer exists.
 - The manual content is preserved (no accidental truncation).
 - The new manual location is **linked** from high-signal entrypoints where appropriate, including at minimum:
   - `CONTRIBUTING.md`
@@ -79,7 +79,7 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Implementation Requirements:**
 - Update all references across the repo that mention:
-  - `docs/tools/repo-lint/bootstrapper.md`
+  - `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`
   - `bootstrapper.md`
 - Ensure markdown links, docs indices, READMEs, scripts, comments, and CI references point to the new path:
   - `docs/repo-lint/bootstrapper-toolchain-user-manual.md`
@@ -414,13 +414,11 @@ This task is complete only when:
 
 ---
 
-
 ## Notes for Implementation
 
 - Prefer small, mechanical refactors.
 - Favor readability over cleverness.
 - The script is an enforcement gate: **determinism beats convenience.**
-
 
 ---
 
@@ -452,6 +450,8 @@ This task is complete only when:
   - configuration strategy (hard-coded defaults vs config file; and where it lives)
   - a statically-compiled tool installer registry approach (so adding/removing tools is easy)
   - OS/package-manager abstraction strategy (brew vs apt vs snap vs manual install guidance)
+  - concurrency strategy (what can be safely parallelized; and what must remain sequential)
+  - progress/UI strategy (a constantly-updating progress display that clearly shows current work)
   - deterministic error handling and exit-code mapping strategy
   - logging strategy (structured logs + human-friendly output)
   - testing strategy (unit tests + integration tests that replace/augment `scripts/tests/test_bootstrap_repo_lint_toolchain.py`)
@@ -466,7 +466,270 @@ This task is complete only when:
   - clean separation between “detect/install/verify” for each tool
   - deterministic failure semantics (no accidental fall-through)
 
+#### 6.2-A Concurrency / Parallelism (WHERE SAFE)
+**Goal:** Reduce total bootstrap time while preserving determinism and avoiding race conditions.
+
+**Requirements:**
+- Identify which operations can be parallelized safely (examples include downloading multiple independent artifacts, fetching package metadata, or pre-check/detect steps).
+- Identify which operations must remain sequential (examples include package-manager locks, PATH mutations, environment activation, and installs that depend on prior steps).
+- The plan must explicitly discuss:
+  - process-level vs thread-level concurrency choices
+  - shared resource risks (filesystem paths, temp dirs, package manager locks, caches)
+  - deterministic logging/output ordering (so CI logs remain readable)
+  - retry + exponential backoff strategy for network/package operations (including jitter, max attempts, and what is safe/unsafe to retry)
+  - fallback behavior when concurrency is disabled or unsupported
+
 **Acceptance Criteria:**
-- The plan is detailed enough that implementation can begin without guesswork.
+- The Rust plan contains a clear list/table of candidate steps for parallelization, with rationale for each.
+
+---
+
+#### 6.2-B Fancy as hell progress UI (MUST)
+**Goal:** Provide a constantly updating CLI progress display so the user always knows what the bootstrapper is doing.
+
+**Requirements:**
+- Implement a high-quality, constantly-updating progress UI comparable to a multi-task `tqdm` experience (think: concurrent tasks + live updates).
+- The progress UI must clearly show:
+  - current phase and sub-step
+  - per-tool status (pending/downloading/installing/verifying/done/failed)
+  - elapsed time and (where feasible) ETA
+  - errors surfaced immediately with context
+
+**Implementation notes (not prescriptive, but likely tools):**
+- Consider `indicatif` (progress bars/spinners) + a live-updating terminal UI layer (e.g., a multi-line render approach) for concurrent task status.
+- Ensure the UI degrades gracefully when:
+  - not running in a TTY
+  - output is redirected
+  - CI environments limit terminal control sequences
+
+
+**Acceptance Criteria:**
+- The Rust plan includes a concrete UI approach and how it behaves in TTY vs non-TTY/CI.
+
+---
+
+#### 6.2-C Deterministic execution plan + dependency graph
+**Goal:** Make behavior explainable and concurrency-safe by explicitly modeling what will happen.
+
+**Requirements:**
+- Before performing installs/changes, compute and present a deterministic execution plan that includes:
+  - what will be installed
+  - what is already installed
+  - what will be skipped and why
+  - dependency relationships between tools/steps (a dependency graph)
+- The plan must be renderable in:
+  - human-readable format (default)
+  - machine-readable format (`--json`, see 6.2-G)
+
+**Acceptance Criteria:**
+- The Rust plan includes an explicit dependency-graph model and how it is used to drive ordering and safe parallelism.
+
+---
+
+#### 6.2-D Dry-run mode (no changes)
+**Goal:** Allow users/CI to preview actions without modifying the system.
+
+**Requirements:**
+- Implement `--dry-run` so the tool:
+  - performs detection/preflight checks
+  - prints the full deterministic plan
+  - makes **no** system changes (no installs, no file writes beyond optional logs)
+- Ensure `--dry-run` is compatible with all profiles and tool selections.
+
+**Acceptance Criteria:**
+- `--dry-run` produces a complete plan and exits successfully without side effects.
+
+---
+
+#### 6.2-E Resume / checkpointing
+**Goal:** Allow recovery from partial runs without restarting from scratch.
+
+**Requirements:**
+- Implement a checkpoint/state mechanism so interrupted runs can be resumed.
+- Provide a `--resume` mode that:
+  - loads prior state
+  - re-validates critical assumptions
+  - continues from the last safe checkpoint
+- Include safe invalidation rules when state is stale or incompatible.
+
+**Acceptance Criteria:**
+- The Rust plan specifies:
+  - what is checkpointed
+  - where state lives
+  - how resume works
+  - and how state is invalidated safely.
+
+---
+
+#### 6.2-F Caching strategy (downloads + metadata)
+**Goal:** Reduce rework and speed up repeated runs while staying correct.
+
+**Requirements:**
+- Define what can be cached safely (e.g., downloaded artifacts, package metadata, detection results per run).
+- Provide flags to control caching:
+  - `--no-cache`
+  - `--refresh` (or equivalent) to re-fetch metadata/artifacts
+- Ensure cache paths are deterministic and do not conflict across concurrent tasks.
+
+**Acceptance Criteria:**
+- The Rust plan includes a cache design with safe defaults and clear invalidation rules.
+
+---
+
+#### 6.2-G Output modes: human-friendly + machine-readable
+**Goal:** Support both interactive humans and automation.
+
+**Requirements:**
+- Support at minimum:
+  - default human-friendly output
+  - `--json` output mode that emits structured events and final summary
+  - `--log-file <path>` to persist logs regardless of UI mode
+- Ensure exit codes remain deterministic and match the defined contract.
+
+**Acceptance Criteria:**
+- The Rust plan includes a concrete event/log schema for `--json` and how logs are written alongside the progress UI.
+
+---
+
+#### 6.2-H Non-interactive / CI behavior (first-class)
+**Goal:** Make behavior reliable when stdout is redirected or TTY is unavailable.
+
+**Requirements:**
+- Auto-detect non-TTY environments and degrade UI gracefully:
+  - disable fancy progress rendering
+  - avoid ANSI control sequences
+  - emit periodic plain-text status updates
+- Provide an explicit `--ci` mode to force deterministic, CI-friendly output.
+- Always emit a clear final summary block.
+
+**Acceptance Criteria:**
+- The Rust plan explains UI/printing behavior differences between TTY, non-TTY, and `--ci`.
+
+---
+
+#### 6.2-I Security / supply-chain hardening (WHERE SAFE)
+**Goal:** Prefer trusted installation sources and reduce supply-chain risk.
+
+**Requirements:**
+- Prefer OS package managers (brew/apt/etc.) and signed sources when available.
+- When downloading artifacts directly:
+  - verify checksums/signatures where feasible
+  - avoid insecure patterns (e.g., unverified "curl | sh") unless there is no alternative and it is loudly documented
+- Allow version pinning where appropriate (see 6.2-L).
+
+**Acceptance Criteria:**
+- The Rust plan includes concrete guidance on how downloads are verified and how unsafe installs are handled/documented.
+
+---
+
+#### 6.2-J Privilege model (least surprise)
+**Goal:** Make privilege requirements explicit and predictable.
+
+**Requirements:**
+- Identify which steps require elevated privileges.
+- Provide a preflight that summarizes privilege requirements before executing.
+- Ensure failures due to missing privileges provide actionable remediation.
+
+**Acceptance Criteria:**
+- The Rust plan includes a privilege strategy and how sudo/elevation is handled per platform.
+
+---
+
+#### 6.2-K Configuration profiles
+**Goal:** Make common use-cases easy and consistent.
+
+**Requirements:**
+- Support configuration profiles such as:
+  - `minimal`, `dev`, `ci`, `full`
+- Profiles must map to a deterministic set of tool installers.
+- CLI flags should be able to override profile selections.
+
+**Acceptance Criteria:**
+- The Rust plan defines initial profiles and how they map to tool selections.
+
+---
+
+#### 6.2-L Tool version policy (pinning vs minimum versions)
+**Goal:** Balance reproducibility and staying current.
+
+**Requirements:**
+- Define a version policy that supports at least:
+  - minimum supported versions
+  - optional exact pinning via configuration
+  - upgrade behavior when a tool is below minimum
+
+**Acceptance Criteria:**
+- The Rust plan specifies how versions are chosen, where pins live, and how upgrades are decided.
+
+---
+
+#### 6.2-M Self-diagnostics / support bundle
+**Goal:** Make failures debuggable without guesswork.
+
+**Requirements:**
+- Provide a `diagnostics` command (or equivalent) that can produce a support bundle containing:
+  - OS/arch/package manager info
+  - detected tools and versions
+  - recent log excerpts
+  - the failure step and error cause chain (when a failure occurred)
+
+**Acceptance Criteria:**
+- The Rust plan defines the diagnostics bundle content and how it is generated.
+
+---
+
+#### 6.2-N “Installer interface” + static registry (plugin-like without dynamic plugins)
+**Goal:** Keep the codebase modular and easy to extend.
+
+**Requirements:**
+- Define a clear installer interface per tool, e.g.:
+  - `detect()`
+  - `install()`
+  - `verify()`
+  - `metadata()` (name, description, dependencies, concurrency safety flags)
+- Use a statically-compiled registry to manage installers.
+
+**Acceptance Criteria:**
+- The Rust plan includes the core installer trait/interface and how new tools are added with minimal boilerplate.
+
+---
+
+#### 6.2-O Bootstrapper self-doctor
+**Goal:** Validate bootstrapper prerequisites independent of repo-lint.
+
+**Requirements:**
+- Provide `bootstrap doctor` (or equivalent) that checks:
+  - permissions/privileges
+  - package manager availability
+  - PATH sanity
+  - network reachability (where required)
+  - disk space/working directory constraints
+- Ensure it prints actionable remediation.
+
+**Acceptance Criteria:**
+- The Rust plan includes a self-doctor command and what it validates.
+
+---
+
+#### 6.2-P Safe retries + exponential backoff (WHERE SAFE)
+**Goal:** Make installs resilient to transient failures (network flakiness, temporary 5xx responses, package mirror hiccups) without masking real problems.
+
+**Requirements:**
+- Define a unified retry policy that can be applied (where safe) to:
+  - artifact downloads
+  - package-manager metadata refreshes
+  - external API calls (if any)
+- The retry policy must explicitly define:
+  - which operations are safe to retry vs unsafe (idempotency rules)
+  - maximum attempts and total time budget
+  - exponential backoff with jitter
+  - how retries are reported in the progress UI and logs
+  - how retry behavior differs in `--ci` / non-interactive modes
+- For unsafe-to-retry operations (examples: non-idempotent installs, partial state mutations), the plan must require:
+  - either no retries, or
+  - a detection/cleanup step before retrying, with clear justification
+
+**Acceptance Criteria:**
+- The Rust plan includes a concrete retry/backoff design and explicitly lists which steps use it and which do not.
 
 ---

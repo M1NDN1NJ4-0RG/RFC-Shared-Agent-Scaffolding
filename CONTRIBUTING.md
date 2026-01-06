@@ -18,6 +18,12 @@ Thank you for your interest in contributing! This repository implements the RFC-
 
 ### For Contributors
 
+🛠️ **[Bootstrapper Toolchain User Manual](./docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md)** - Session-start compliance and toolchain setup
+- Bootstrapping repo-lint and all development tools
+- Virtual environment setup
+- Platform-specific installation (macOS/Linux)
+- Troubleshooting and verification
+
 📝 **[Contributing Guide](./docs/contributing/contributing-guide.md)** - Complete guide to contributing
 - Workflow and PR process
 - Code style and conventions

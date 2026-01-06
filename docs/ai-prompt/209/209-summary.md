@@ -27,7 +27,7 @@ Create a single, deterministic bootstrapper script that Copilot can run at the s
    - Installs/verifies all required tools
    - Runs final verification gate (`repo-lint check --ci`)
 
-2. **Documentation**: `docs/tools/repo-lint/bootstrapper.md` (or similar)
+2. **Documentation**: `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` (or similar)
    - How to run the bootstrapper locally
    - Session-start requirements for Copilot
    - Where venv lives and how PATH is managed
@@ -39,7 +39,7 @@ Create a single, deterministic bootstrapper script that Copilot can run at the s
 
 ## Current State
 - **Existing**: Rust-based bootstrap implementation exists (`rust/src/bootstrap.rs`, `rust/src/bootstrap_main.rs`)
-- **Existing**: Documentation at `docs/tools/repo-lint/bootstrapper.md` (for Bash script implementation)
+- **Existing**: Documentation at `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` (for Bash script implementation)
 - **Completed**: Bash script at `scripts/bootstrap-repo-lint-toolchain.sh`
 - **Completed**: Documentation specific to Bash script approach
 - **Completed**: Session-start integration guidance

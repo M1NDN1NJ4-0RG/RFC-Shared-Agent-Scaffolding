@@ -24,7 +24,7 @@ Related: Issue #209
   - [x] Item 3.3: Idempotency and state management
 - [x] Phase 4: Documentation
   - [x] Item 4.1: Inline script documentation
-  - [x] Item 4.2: External documentation (`docs/tools/repo-lint/bootstrapper.md`)
+  - [x] Item 4.2: External documentation (`docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`)
   - [x] Item 4.3: Copilot session-start integration notes
 - [x] Phase 5: Testing and Validation
   - [x] Item 5.1: Manual testing (all toolchains verified)
@@ -189,7 +189,7 @@ Add a short doc explaining:
 - where the venv lives and how PATH is managed
 
 Preferred doc location:
-- `docs/tools/repo-lint/bootstrapper.md` (or repository’s existing docs structure)
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` (or repository’s existing docs structure)
 
 ### R7 — Tests (as applicable)
 If feasible, add lightweight tests to validate:

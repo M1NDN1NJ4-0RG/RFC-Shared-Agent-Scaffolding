@@ -44,7 +44,7 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
 - [ ] Ensure failure behavior is consistent with existing exit codes:
   - [ ] If actionlint is required and cannot be installed, fail with a clear message and a stable exit code (either reuse "Shell toolchain installation failed" semantics or introduce a new specific exit code if that's consistent with the doc contract).
 
-## Phase 2 — Documentation updates (`bootstrapper.md`)
+## Phase 2 — Documentation updates (`bootstrapper-toolchain-user-manual.md`)
 - [ ] Update "What Gets Installed":
   - [ ] Add `actionlint` to the appropriate section (required vs optional) and describe it as "GitHub Actions workflow linter".
 - [ ] Update "Verifying Setup" section to include:
@@ -64,7 +64,7 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
 
 ## Acceptance Criteria
 - [ ] `./scripts/bootstrap-repo-lint-toolchain.sh` installs (or confirms) `actionlint` and the command is available on PATH by the end of the run.
-- [ ] `bootstrapper.md` accurately documents actionlint as installed and provides a verification command.
+- [ ] `bootstrapper-toolchain-user-manual.md` accurately documents actionlint as installed and provides a verification command.
 - [ ] The bootstrapper remains idempotent.
 - [ ] `repo-lint check --ci` passes after bootstrap in a clean environment.
 
@@ -80,7 +80,7 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
   - [x] Added exit code 20 for failures
   - [x] Added has_sudo helper (Rule of Three)
 - [x] Phase 2: Documentation updates
-  - [x] Updated bootstrapper.md with actionlint
+  - [x] Updated bootstrapper-toolchain-user-manual.md with actionlint
   - [x] Added verification command
   - [x] Documented exit code 20
   - [x] Removed old Rust binary docs
@@ -94,6 +94,22 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
   - [x] All PR review comments addressed
 
 ## Session Notes (newest first)
+### 2026-01-06 00:40 - New Session: Fail-Fast Hardening Plan Implementation
+- Read session compliance requirements document
+- Ran bootstrapper successfully: `./scripts/bootstrap-repo-lint-toolchain.sh --all` (exit 0)
+- Activated environment and verified repo-lint functional
+- Health check passed: `repo-lint check --ci` (exit 0)
+- Read fail-fast hardening plan from `docs/ai-prompt/231/231-fail-fast-hardening-plan.md`
+- Created comprehensive execution checklist covering all 6 phases
+- Current status: actionlint already added in previous work; now implementing full fail-fast hardening
+- **Work completed in this session:**
+  - Phase 0: Renamed bootstrapper manual to `bootstrapper-toolchain-user-manual.md`, updated all references, added CONTRIBUTING.md link
+  - Phase 1: Added 3 fail-fast helper functions (run_or_die, try_run, safe_version)
+  - Phase 2.1-2.2: Made venv activation fatal, wrapped pip upgrade with deterministic exit codes
+  - Code review: Addressed all 3 feedback items (exit code docs, security warnings, rationale notes)
+  - All changes verified: shellcheck, shfmt, repo-lint check --ci all pass (exit 0)
+- **Remaining work:** Phases 2.3-6 cover extensive refactoring (PowerShell, Perl, shell tools, ripgrep enforcement, verification hardening, tests, documentation, analysis, Rust migration plan)
+
 ### 2026-01-06 00:16 - Journal Creation
 - Created issue journals for Issue 231
 - All implementation work already completed in previous sessions
