@@ -6,7 +6,6 @@ Last Updated: 2026-01-06
 Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## NEXT
-- Phase 2: Continue fixing fail-fast gaps (2.3, 2.4, 2.6, 2.7)
 - Phase 3: Consistency pass across entire script
 - Phase 4: Documentation updates
 - Phase 5: Verification and tests
@@ -15,6 +14,74 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 02:00 - Phase 2 COMPLETE! All 8 Items Done
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Multiple functions across Phase 2.3, 2.4, 2.6, 2.7
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: Exit code 21 added
+
+**Phase 2.3: PowerShell Install Hardening (Commit 15d6f6a)**
+- Wrapped 6 PowerShell installation steps with run_or_die for exit 17:
+  - apt-get update (prereqs)
+  - apt-get install prerequisites  
+  - wget Microsoft repo package
+  - dpkg install
+  - apt-get update (post-repo)
+  - apt-get install powershell
+- Added trap cleanup for packages-microsoft-prod.deb (lines 1056-1069)
+- Trap ensures no leftover .deb file on failure
+- Error messages show URL and specific failing step
+- Homebrew install also wrapped with run_or_die
+
+**Phase 2.4: Perl cpanm Failure Aggregation (Commit 15d6f6a)**
+- Wrapped cpanm calls in if-statements (lines 1235-1257)
+- Prevents set -e from short-circuiting error collection
+- Failures append to failed_tools[] array
+- Script continues attempting all installs
+- Final check prints manual remediation hints
+- Deterministic exit 18 on any failure
+
+**Phase 2.6: Ripgrep Required with Exit 21 (Commit 15d6f6a)**
+- Changed ripgrep from "optional with fallback" to REQUIRED
+- All install steps wrapped with run_or_die for exit 21
+- apt-get update and install both wrapped
+- Homebrew install wrapped
+- Added exit code 21 to script header documentation
+- Added exit code 21 to bootstrapper manual
+- Clear error messages with platform-specific remediation
+- No more silent grep fallback
+
+**Phase 2.7: Verification Gate Hardening (Commit d689ef1)**
+- Added repo-lint doctor as primary toolchain self-test (line 1403)
+- Runs before repo-lint check --ci
+- Doctor exit non-zero = toolchain failure (die with exit 19)
+- Prevents misclassifying operational errors as violations
+- Doctor pass + check pass/violations = success
+- Clear distinction between doctor failures and check results
+
+**Summary of All Phase 2 Items:**
+- 2.1 ✅ Venv activation fatal (exit 11)
+- 2.2 ✅ Pip upgrade wrapped (exit 13)
+- 2.3 ✅ PowerShell + trap (exit 17)
+- 2.4 ✅ Perl cpanm aggregation (exit 18)
+- 2.5 ✅ Shell version parsing safe
+- 2.6 ✅ Ripgrep required (exit 21)
+- 2.7 ✅ Verification doctor (exit 19)
+- 2.8 ✅ Actionlint wrapped (exit 20)
+
+**Verification:**
+- shellcheck passed (one SC2155 warning acceptable)
+- All changes use run_or_die for deterministic exit codes
+- Error messages clear and actionable
+- No silent failures remain in Phase 2 scope
+
+**Next Steps:**
+- Phase 3: Consistency pass
+- Phase 4: Documentation updates
+- Phase 5: Verification and tests
+- Phase 6: Analysis and Rust migration plan
+
+---
 
 ### 2026-01-06 01:30 - Phase 2.8: Actionlint Fail-Fast Hardening
 **Files Changed:**
