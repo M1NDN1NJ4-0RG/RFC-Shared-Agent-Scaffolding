@@ -1491,3 +1491,63 @@ impl Installer for RipgrepInstaller {
 6. Offline mode: **SUPPORTED** via `--offline` (cache-only; fail if missing).
 
 ---
+
+---
+
+## Progress Tracker
+Last Updated: 2026-01-06
+
+- [x] Phase 1: Core Infrastructure
+  - [x] 1.1 Project Setup (Cargo.toml, dependencies, CLI)
+  - [x] 1.2 Exit Code Constants (all 22 codes)
+  - [x] 1.3 Error Type Hierarchy (BootstrapError with thiserror)
+- [x] Phase 2: Installer Registry & Trait (Foundation)
+  - [x] 2.1 Core Installer Interface (trait, registry, dependency resolution)
+  - [x] 2.2 Context Object & Package Managers
+  - [x] 2.3 Concrete Installers (ripgrep, black, ruff, pylint)
+- [ ] Phase 3: Execution Plan & Dependency Graph
+  - [ ] 3.1 Plan Computation
+  - [ ] 3.2 Dependency Resolution with petgraph
+- [ ] Phase 4: Concurrency & Parallelism
+  - [ ] 4.1 Safe Parallelization Strategy
+  - [ ] 4.2 Retry Strategy with backoff
+- [ ] Phase 5: Progress UI
+  - [ ] 5.1 Multi-Task Progress Display (indicatif)
+  - [ ] 5.2 JSON Event Stream
+- [ ] Phase 6: Configuration & Profiles
+  - [ ] 6.1 Configuration File (.bootstrap.toml parsing)
+  - [ ] 6.2 Profile Resolution
+- [ ] Phase 7: Dry-Run & Checkpointing
+- [ ] Phase 8: Platform Abstractions (partial - package managers done)
+
+## Session Notes (newest first)
+
+### 2026-01-06 04:17-05:30 - Initial Implementation (Phases 1-2)
+
+**Summary:**
+Implemented foundational infrastructure for Rust migration (Issue #235). Completed Phase 1 (core infrastructure) and Phase 2.1-2.3 (installer foundation).
+
+**Commits:**
+- `3a0931d`: Initialize issue #235 journal and analyze repository state
+- `de0fc64`: Phase 1.1-1.3: Implement core infrastructure (exit codes, errors, context, CLI)
+- `43e9b4c`: Phase 2.1-2.2: Add package managers and concrete installer implementations
+- `4816e22`: Address code review: Remove pragmas and complete docstrings
+
+**Key Achievements:**
+- All 22 exit codes defined matching bash script contract
+- Complete error hierarchy with thiserror integration
+- Full CLI with clap (install/doctor/verify subcommands)
+- Package manager abstractions (Homebrew, apt-get) with CI compliance
+- Installer registry with dependency resolution
+- 4 concrete installers (ripgrep, black, ruff, pylint)
+- All quality gates passed (build, lint, tests, code review, docstrings)
+
+**Technical Compliance:**
+✅ All EPIC #235 hard requirements followed
+✅ No Windows support (v1 constraint)
+✅ tokio async runtime
+✅ reqwest + rustls
+✅ Exit code 0 on all quality gates
+
+**Next Session:**
+Continue with Phase 3 (execution planning) and Phase 4 (parallelization framework)
