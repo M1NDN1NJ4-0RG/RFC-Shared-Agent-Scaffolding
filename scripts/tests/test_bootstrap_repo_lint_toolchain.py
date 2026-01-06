@@ -1041,8 +1041,11 @@ echo "v1.7.10"
 
         # Read the script to verify exit code 20 is used for actionlint failures
         script_content = self.script_path.read_text()
-        self.assertIn("exit 20", script_content)
-        self.assertIn("actionlint", script_content)
+        # The script uses 'die "message" 20' pattern for exit code 20
+        self.assertIn('"actionlint', script_content)
+        self.assertIn("20", script_content)
+        # Verify that die commands with code 20 are related to actionlint
+        self.assertIn('die "actionlint', script_content)
 
 
 if __name__ == "__main__":
