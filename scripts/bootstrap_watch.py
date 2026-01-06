@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-Bootstrap Progress Watcher
+"""Bootstrap Progress Watcher.
 
 Runs the bootstrap script and filters output to show:
 - All progress lines (steps with [N/M] format)
@@ -16,11 +15,21 @@ import sys
 
 
 def main():
+    """Run bootstrap script and filter output to show progress steps.
+
+    Returns:
+        int: Exit code from the bootstrap script.
+    """
     # Run the bootstrap script and capture all output
     script_path = "./scripts/bootstrap-repo-lint-toolchain.sh"
-
     try:
-        result = subprocess.run([script_path], capture_output=True, text=True, encoding="utf-8", errors="replace")
+        result = subprocess.run(
+            [script_path],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+        )
 
         # Combine stdout and stderr
         output = result.stdout + result.stderr
