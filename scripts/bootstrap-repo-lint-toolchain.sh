@@ -1548,8 +1548,9 @@ install_actionlint() {
 
 		# Install actionlint using go install (pinned to v1.7.10 for reproducibility)
 		log "Running: go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10"
-		# Suppress Go module download noise by redirecting stderr to log file
-		local go_log="/tmp/actionlint-install-$$.log"
+		# Suppress Go module download noise by redirecting stderr to a secure temporary log file
+		local go_log
+		go_log="$(mktemp -t actionlint-install-XXXXXX.log)" || die "Failed to create temporary log file for Go installation" 20
 		if ! go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10 2>"$go_log"; then
 			# On failure, show the log
 			cat "$go_log" >&2
