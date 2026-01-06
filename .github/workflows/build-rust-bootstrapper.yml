@@ -1,0 +1,251 @@
+# Workflow: Build and Release Rust Bootstrapper
+#
+# Purpose:
+#   Build multi-platform binaries for the Rust bootstrapper and create GitHub releases.
+#   Produces static binaries for Linux (musl) and macOS (x86_64 and ARM64).
+#
+# Triggers:
+#   - Tag push matching 'bootstrap-v*' (e.g., bootstrap-v1.0.0)
+#   - Manual dispatch via workflow_dispatch
+#
+# Inputs:
+#   create_release (workflow_dispatch): Whether to create a GitHub Release (default: false)
+#
+# Outputs:
+#   - GitHub Release with binaries and checksums (on tag push or manual dispatch)
+#   - Artifacts: bootstrap-repo-cli-linux-x86_64, bootstrap-repo-cli-macos-x86_64, bootstrap-repo-cli-macos-arm64
+#
+# Dependencies:
+#   - Rust toolchain (stable)
+#   - musl-tools (Linux builds)
+#   - actions/checkout@v4
+#   - actions-rust-lang/setup-rust-toolchain@v1
+#   - actions/upload-artifact@v4
+#   - actions/download-artifact@v4
+#   - softprops/action-gh-release@v2
+#
+# Notes:
+#   - Binaries are stripped to reduce size
+#   - SHA256 checksums are generated for all artifacts
+#   - Release creation requires GITHUB_TOKEN with contents:write permission
+#   - Test job verifies binary execution and checksum validation
+
+name: Build and Release Rust Bootstrapper
+permissions:
+  contents: read
+
+on:
+  push:
+    tags:
+      - 'bootstrap-v*'
+  workflow_dispatch:
+    inputs:
+      create_release:
+        description: 'Create GitHub Release'
+        required: false
+        default: 'false'
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux x86_64 (musl for static linking)
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            artifact_name: bootstrap-repo-cli
+            asset_name: bootstrap-repo-cli-linux-x86_64
+          # macOS x86_64
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: bootstrap-repo-cli
+            asset_name: bootstrap-repo-cli-macos-x86_64
+          # macOS ARM64
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            artifact_name: bootstrap-repo-cli
+            asset_name: bootstrap-repo-cli-macos-arm64
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@b113a30d27a8e59c969077c0a0168cc13dab5ffc  # v1.10.1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+
+      - name: Install musl tools (Linux only)
+        if: matrix.target == 'x86_64-unknown-linux-musl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+
+      - name: Build release binary
+        working-directory: rust
+        run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Strip binary (non-Windows)
+        if: matrix.os != 'windows-latest'
+        run: |
+          strip rust/target/${{ matrix.target }}/release/${{ matrix.artifact_name }} || true
+
+      - name: Create tarball
+        run: |
+          cd rust/target/${{ matrix.target }}/release
+          tar czf ${{ matrix.asset_name }}.tar.gz ${{ matrix.artifact_name }}
+          
+      - name: Generate checksums
+        run: |
+          cd rust/target/${{ matrix.target }}/release
+          sha256sum ${{ matrix.asset_name }}.tar.gz > ${{ matrix.asset_name }}.tar.gz.sha256
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@6f51ac03b9356f520e9adb1b1b7802705f340c2b  # v4.5.0
+        with:
+          name: ${{ matrix.asset_name }}
+          path: |
+            rust/target/${{ matrix.target }}/release/${{ matrix.asset_name }}.tar.gz
+            rust/target/${{ matrix.target }}/release/${{ matrix.asset_name }}.tar.gz.sha256
+          if-no-files-found: error
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/bootstrap-v') || github.event.inputs.create_release == 'true'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683  # v4.2.2
+
+      - name: Download all artifacts
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        with:
+          path: artifacts
+
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
+
+      - name: Prepare release assets
+        run: |
+          mkdir -p release-assets
+          find artifacts -name "*.tar.gz" -exec cp {} release-assets/ \;
+          find artifacts -name "*.sha256" -exec cp {} release-assets/ \;
+          ls -lh release-assets/
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/bootstrap-v}
+          else
+            VERSION=$(date +%Y%m%d-%H%M%S)
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@c062e08bd532815e2082a85e87e3ef29c3e6d191  # v2.2.0
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Rust Bootstrapper v${{ steps.get_version.outputs.version }}
+          body: |
+            ## Rust Bootstrapper v${{ steps.get_version.outputs.version }}
+            
+            This release contains pre-built binaries of the Rust-based bootstrapper for multiple platforms.
+            
+            ### Installation
+            
+            1. Download the appropriate binary for your platform:
+               - Linux x86_64: `bootstrap-repo-cli-linux-x86_64.tar.gz`
+               - macOS x86_64: `bootstrap-repo-cli-macos-x86_64.tar.gz`
+               - macOS ARM64: `bootstrap-repo-cli-macos-arm64.tar.gz`
+            
+            2. Verify the checksum (optional but recommended):
+               ```bash
+               sha256sum -c bootstrap-repo-cli-<platform>.tar.gz.sha256
+               ```
+            
+            3. Extract the binary:
+               ```bash
+               tar xzf bootstrap-repo-cli-<platform>.tar.gz
+               ```
+            
+            4. Install to a directory in your PATH:
+               ```bash
+               mkdir -p ~/.bootstrap/bin
+               mv bootstrap-repo-cli ~/.bootstrap/bin/
+               chmod +x ~/.bootstrap/bin/bootstrap-repo-cli
+               ```
+            
+            ### Usage
+            
+            ```bash
+            bootstrap-repo-cli install --profile ci
+            bootstrap-repo-cli doctor
+            bootstrap-repo-cli verify
+            ```
+            
+            See `bootstrap-repo-cli --help` for full documentation.
+            
+            ### What's New
+            
+            - Parallel execution for faster bootstrapping
+            - Rich progress UI with real-time status updates
+            - Improved error handling and diagnostics
+            - Better platform detection and package manager support
+            - Deterministic exit codes matching bash version
+            
+          draft: false
+          prerelease: false
+          files: release-assets/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    name: Test Release Binaries
+    needs: build
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            asset_name: bootstrap-repo-cli-linux-x86_64
+          - os: macos-latest
+            asset_name: bootstrap-repo-cli-macos-x86_64
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16  # v4.1.8
+        with:
+          name: ${{ matrix.asset_name }}
+          path: downloaded
+
+      - name: Extract binary
+        run: |
+          cd downloaded
+          tar xzf ${{ matrix.asset_name }}.tar.gz
+          chmod +x bootstrap-repo-cli
+          
+      - name: Verify checksum
+        run: |
+          cd downloaded
+          sha256sum -c ${{ matrix.asset_name }}.tar.gz.sha256
+
+      - name: Test binary execution
+        run: |
+          cd downloaded
+          ./bootstrap-repo-cli --version || true
+          ./bootstrap-repo-cli --help
+

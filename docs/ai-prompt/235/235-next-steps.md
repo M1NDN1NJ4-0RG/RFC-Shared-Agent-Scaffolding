@@ -6,22 +6,116 @@ Last Updated: 2026-01-06 17:40 UTC
 Related: Issue #235, PRs #240
 
 ## NEXT
-- Performance benchmarking and optimization (Phase 11)
-  - Benchmark Rust vs Bash execution times
-  - Identify bottlenecks
-  - Optimize parallel execution
-- Binary distribution and release setup (Phase 11)
-  - CI workflow for building release binaries
-  - Multi-platform builds (Linux x86_64, macOS x86_64/arm64)
-  - Release artifact publishing
-- Documentation updates
-  - Update user manual for Rust bootstrapper
-  - Migration guide for users
-  - Developer documentation
+- Testing and validation
+  - Run benchmarks on actual installations
+  - Validate CI workflow on tag push
+  - Test binary downloads and verification
+- Future enhancements (post-v1)
+  - Windows support
+  - Plugin system
+  - Additional performance optimizations
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 19:42 UTC - Phase 11: Benchmarking, CI Workflow, Documentation
+**Files Changed:**
+- `scripts/benchmark-bootstrap.sh`: NEW - Performance benchmarking script (commit 06d6af4, fixed fff2f7f)
+- `.github/workflows/build-rust-bootstrapper.yml`: NEW - Multi-platform build and release workflow (commit 06d6af4, fixed fff2f7f)
+- `docs/rust-bootstrapper-migration-guide.md`: NEW - Complete migration guide from Bash to Rust (commit 06d6af4, renamed fff2f7f)
+- `docs/rust-bootstrapper-manual.md`: NEW - Comprehensive user manual (commit 06d6af4, renamed fff2f7f)
+- `docs/rust-bootstrapper-dev-guide.md`: NEW - Developer documentation (commit 06d6af4, renamed fff2f7f)
+- `docs/ai-prompt/235/235-next-steps.md`: Updated NEXT and DONE sections
+
+**Changes Made:**
+
+**Performance Benchmarking Script:**
+- Created `scripts/benchmark-bootstrap.sh` with comprehensive benchmark harness
+- Measures Rust vs Bash execution times across multiple iterations
+- Supports `--iterations <N>` and `--profile <dev|ci|full>` flags
+- Calculates statistics: average, min, max, speedup percentage
+- Uses dry-run mode to measure planning overhead without actual installations
+- Complete docstring with Usage, Inputs, Outputs, Description, Examples
+- Helper functions: `calc_avg()`, `calc_min()`, `calc_max()` with full docstrings
+- Applied shfmt formatting for consistency
+
+**CI/CD Workflow:**
+- Created `.github/workflows/build-rust-bootstrapper.yml` for automated releases
+- Multi-platform builds: Linux x86_64 (musl), macOS x86_64, macOS ARM64
+- Static linking with musl for Linux (no glibc dependency)
+- Binary stripping to reduce size
+- SHA256 checksum generation for all artifacts
+- Automated GitHub Release creation on tag push (bootstrap-v*)
+- Manual dispatch option with `create_release` input
+- Test job validates binary execution and checksum verification
+- Complete YAML docstring with Workflow, Purpose, Triggers, Inputs, Outputs, Dependencies, Notes
+
+**Documentation:**
+- `rust-bootstrapper-migration-guide.md` (9106 chars):
+  - Complete migration guide from Bash to Rust
+  - Installation methods: pre-built binaries, build from source, wrapper script
+  - Command equivalents table (Bash → Rust)
+  - Configuration comparison (.bootstrap.toml vs flags)
+  - New features: doctor, verify, JSON output, parallel execution, dry-run, offline
+  - CI integration examples
+  - Troubleshooting section with common issues and solutions
+  - Migration checklist
+  - Rollback instructions
+- `rust-bootstrapper-manual.md` (14406 chars):
+  - Comprehensive user manual with table of contents
+  - Quick start guide
+  - All commands documented: install, doctor, verify
+  - Configuration file format (.bootstrap.toml)
+  - All exit codes with meanings
+  - Advanced usage: parallelism, checkpoint/resume, offline mode, JSON output
+  - Troubleshooting guide with diagnostics
+  - Architecture overview
+  - Supported tools list
+- `rust-bootstrapper-dev-guide.md` (15721 chars):
+  - Developer documentation for contributors
+  - Project structure and architecture
+  - Design principles and core components
+  - Adding new installers (step-by-step guide)
+  - Testing strategy: unit, integration, parity tests
+  - Development workflow: building, testing, linting, documentation
+  - Debugging techniques
+  - Performance profiling with flamegraph
+  - Release process
+  - Common patterns and code style
+  - Dependencies and their roles
+
+**Compliance Fixes (commit fff2f7f):**
+- Renamed all markdown files to kebab-case per naming conventions
+- Fixed file references in migration guide
+- Added `Examples:` section to benchmark script (was `Example:`)
+- Added function docstrings for `calc_avg()`, `calc_min()`, `calc_max()`
+- Added complete YAML workflow header with all required sections
+- Applied shfmt formatting to benchmark script
+
+**Verification:**
+- All 16 linters passing (exit 0)
+- repo-lint check --ci: SUCCESS
+- repo-lint fix: SUCCESS (all formatters applied)
+- All naming conventions enforced (kebab-case)
+- All docstring contracts satisfied (bash, yaml)
+- No violations reported
+
+**Architecture Notes:**
+- Benchmark script measures planning/detection overhead using dry-run mode
+- Real-world speedups depend on parallelization during actual installs
+- CI workflow produces static binaries with no runtime dependencies
+- Documentation follows repository standards and includes comprehensive examples
+- All files pass quality gates before commit
+
+**Phase 11 Completion Status:**
+- ✅ Performance benchmarking infrastructure complete
+- ✅ CI/CD workflow for multi-platform builds complete
+- ✅ Documentation suite complete (migration, user manual, dev guide)
+- ✅ All quality gates passing
+- 🔄 Next: Testing and validation on actual tag push
+
+---
 
 ### 2026-01-06 17:40 - Complete Missing Installers, Integration Tests, Bash Wrapper
 **Files Changed:**
