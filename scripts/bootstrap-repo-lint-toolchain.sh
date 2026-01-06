@@ -12,9 +12,10 @@
 #   - repo-lint package installation in editable mode
 #   - Verification that repo-lint is functional and on PATH
 #   - Python toolchain installation (black, ruff, pylint, yamllint, pytest)
-#
-#   Future phases will add installation of system tools (shellcheck, shfmt,
-#   ripgrep, PowerShell, Perl modules) and final verification gate.
+#   - Shell toolchain installation (shellcheck, shfmt) - INSTALLED BY DEFAULT
+#   - PowerShell toolchain installation (pwsh, PSScriptAnalyzer) - INSTALLED BY DEFAULT
+#   - Perl toolchain installation (Perl::Critic, PPI) - INSTALLED BY DEFAULT
+#   - Final verification gate (repo-lint check --ci)
 #
 # USAGE:
 #   ./scripts/bootstrap-repo-lint-toolchain.sh [OPTIONS]
@@ -24,15 +25,18 @@
 #   Arguments:
 #     --verbose, -v    Enable verbose output (DEFAULT, REQUIRED during implementation)
 #     --quiet, -q      Enable quiet mode (DISABLED - reserved for future use)
-#     --shell          Install shell toolchain (shellcheck, shfmt)
-#     --powershell     Install PowerShell toolchain (pwsh, PSScriptAnalyzer)
-#     --perl           Install Perl toolchain (Perl::Critic, PPI)
-#     --all            Install all optional toolchains
+#     --shell          Install shell toolchain (shellcheck, shfmt) - DEFAULT: enabled
+#     --powershell     Install PowerShell toolchain (pwsh, PSScriptAnalyzer) - DEFAULT: enabled
+#     --perl           Install Perl toolchain (Perl::Critic, PPI) - DEFAULT: enabled
+#     --all            Install all toolchains (DEFAULT BEHAVIOR - this flag is redundant)
 #     --help, -h       Show this help message
 #
 #   Environment Variables:
 #     None (uses auto-detected repo root)
 #
+#   Note: All toolchains are installed by default. Individual flags are kept
+#         for backwards compatibility and explicit specification but have no
+#         effect since --all is the default behavior.
 # OUTPUTS:
 #   Exit Codes:
 #     0   Success - all operations completed
@@ -116,15 +120,199 @@
 
 set -euo pipefail
 
+# Trap to ensure progress cleanup on exit
+trap progress_cleanup EXIT INT TERM
+
 # Constants
 readonly VENV_DIR=".venv"
 
 # Global flags (set by parse_arguments)
-VERBOSE_MODE=true # Default to verbose during implementation
-QUIET_MODE=false  # Reserved for future use
-INSTALL_SHELL=false
-INSTALL_POWERSHELL=false
-INSTALL_PERL=false
+VERBOSE_MODE=true       # Default to verbose during implementation
+QUIET_MODE=false        # Reserved for future use
+INSTALL_SHELL=true      # Default to true - all toolchains installed by default
+INSTALL_POWERSHELL=true # Default to true - all toolchains installed by default
+INSTALL_PERL=true       # Default to true - all toolchains installed by default
+
+# Progress UI globals
+PROGRESS_ENABLED=false
+PROGRESS_TTY=false
+PROGRESS_TOTAL_STEPS=0
+PROGRESS_CURRENT_STEP=0
+PROGRESS_CURRENT_STEP_NAME=""
+PROGRESS_STEP_START_TIME=0
+
+# ============================================================================
+# Progress UI Functions
+# ============================================================================
+
+# is_tty - Check if stdout is a TTY
+#
+# DESCRIPTION:
+#   Determines if the script is running in an interactive terminal.
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   stdout is a TTY
+#     1   stdout is not a TTY
+is_tty() {
+	[[ -t 1 ]]
+}
+
+# progress_init - Initialize progress tracking
+#
+# DESCRIPTION:
+#   Sets up progress tracking system. Automatically detects TTY mode and
+#   respects CI/NO_COLOR environment variables.
+#
+# INPUTS:
+#   $1 - Total number of steps
+#
+# OUTPUTS:
+#   Sets global progress variables
+progress_init() {
+	local total_steps="$1"
+	PROGRESS_TOTAL_STEPS="$total_steps"
+	PROGRESS_CURRENT_STEP=0
+
+	# Detect if we should enable progress UI
+	if is_tty && [[ -z "${CI:-}" ]] && [[ -z "${NO_COLOR:-}" ]]; then
+		PROGRESS_ENABLED=true
+		PROGRESS_TTY=true
+		# Hide cursor
+		printf '\033[?25l'
+	elif [[ -n "${CI:-}" ]] || ! is_tty; then
+		PROGRESS_ENABLED=true
+		PROGRESS_TTY=false
+	fi
+}
+
+# progress_cleanup - Cleanup progress UI state
+#
+# DESCRIPTION:
+#   Restores terminal state. Must be called on exit via trap handlers.
+#   In TTY mode, clears the current line and restores cursor visibility.
+#   In CI mode, no action is needed as cursor was not hidden.
+#
+# INPUTS:
+#   None. Uses global PROGRESS_TTY variable.
+#
+# OUTPUTS:
+#   Sends ANSI escape sequences to restore cursor (TTY mode only):
+#   - \r: Carriage return to start of line
+#   - \033[K: Clear from cursor to end of line
+#   - \033[?25h: Show cursor
+#
+# EXAMPLES:
+#   trap progress_cleanup EXIT INT TERM
+progress_cleanup() {
+	if [[ "$PROGRESS_TTY" = true ]]; then
+		# Clear current line and show cursor
+		printf '\r\033[K\033[?25h'
+	fi
+}
+
+# step_start - Mark start of a step
+#
+# DESCRIPTION:
+#   Records the start of a step and displays progress.
+#
+# INPUTS:
+#   $1 - Step name
+#
+# OUTPUTS:
+#   Progress indicator (TTY or CI format)
+step_start() {
+	local step_name="$1"
+	PROGRESS_CURRENT_STEP=$((PROGRESS_CURRENT_STEP + 1))
+	PROGRESS_CURRENT_STEP_NAME="$step_name"
+	PROGRESS_STEP_START_TIME="$SECONDS"
+
+	if [[ "$PROGRESS_ENABLED" = false ]]; then
+		return
+	fi
+
+	if [[ "$PROGRESS_TTY" = true ]]; then
+		# TTY mode: in-place updating progress
+		printf '\r\033[K[%d/%d] %s...' \
+			"$PROGRESS_CURRENT_STEP" \
+			"$PROGRESS_TOTAL_STEPS" \
+			"$step_name"
+	else
+		# CI mode: clean line-oriented output
+		echo "[bootstrap] [$PROGRESS_CURRENT_STEP/$PROGRESS_TOTAL_STEPS] $step_name..."
+	fi
+}
+
+# step_ok - Mark step as successful
+#
+# DESCRIPTION:
+#   Records successful completion of current step and displays success indicator.
+#   Calculates step duration and displays checkmark with timing information.
+#
+# INPUTS:
+#   None. Uses global PROGRESS_* variables set by step_start.
+#
+# OUTPUTS:
+#   Success indicator with duration:
+#   - TTY mode: ✓ [N/M] Step name (Xs)
+#   - CI mode: [bootstrap] ✓ [N/M] Step name (Xs)
+#
+# EXAMPLES:
+#   step_start "Installing Python tools"
+#   pip install -r requirements.txt
+#   step_ok
+step_ok() {
+	if [[ "$PROGRESS_ENABLED" = false ]]; then
+		return
+	fi
+
+	local duration=$((SECONDS - PROGRESS_STEP_START_TIME))
+
+	if [[ "$PROGRESS_TTY" = true ]]; then
+		# TTY mode: update in place with checkmark
+		printf '\r\033[K✓ [%d/%d] %s (%ds)\n' \
+			"$PROGRESS_CURRENT_STEP" \
+			"$PROGRESS_TOTAL_STEPS" \
+			"$PROGRESS_CURRENT_STEP_NAME" \
+			"$duration"
+	else
+		# CI mode: clean success line
+		echo "[bootstrap] ✓ [$PROGRESS_CURRENT_STEP/$PROGRESS_TOTAL_STEPS] $PROGRESS_CURRENT_STEP_NAME (${duration}s)"
+	fi
+}
+
+# step_fail - Mark step as failed
+#
+# DESCRIPTION:
+#   Records failure of current step.
+#
+# INPUTS:
+#   $1 - Error message (optional)
+#
+# OUTPUTS:
+#   Failure indicator with duration and error
+step_fail() {
+	local error_msg="${1:-failed}"
+
+	if [[ "$PROGRESS_ENABLED" = false ]]; then
+		return
+	fi
+
+	local duration=$((SECONDS - PROGRESS_STEP_START_TIME))
+
+	if [[ "$PROGRESS_TTY" = true ]]; then
+		# TTY mode: update in place with X
+		printf '\r\033[K✗ [%d/%d] %s (%ds) - %s\n' \
+			"$PROGRESS_CURRENT_STEP" \
+			"$PROGRESS_TOTAL_STEPS" \
+			"$PROGRESS_CURRENT_STEP_NAME" \
+			"$duration" \
+			"$error_msg"
+	else
+		# CI mode: clean failure line
+		echo "[bootstrap] ✗ [$PROGRESS_CURRENT_STEP/$PROGRESS_TOTAL_STEPS] $PROGRESS_CURRENT_STEP_NAME (${duration}s) - $error_msg"
+	fi
+}
 
 # ============================================================================
 # Logging Functions
@@ -351,30 +539,34 @@ show_usage() {
 		Usage: bootstrap-repo-lint-toolchain.sh [OPTIONS]
 
 		Bootstrap the repo-lint toolchain and development environment.
+		By default, ALL toolchains are installed (equivalent to --all flag).
 
 		OPTIONS:
 		  --verbose, -v      Enable verbose output (DEFAULT - required during implementation)
 		  --quiet, -q        Enable quiet mode (DISABLED - reserved for future use)
-		  --shell            Install shell toolchain (shellcheck, shfmt)
-		  --powershell       Install PowerShell toolchain (pwsh, PSScriptAnalyzer)
-		  --perl             Install Perl toolchain (Perl::Critic, PPI)
-		  --all              Install all optional toolchains
+		  --shell            Install shell toolchain (shellcheck, shfmt) - DEFAULT: enabled
+		  --powershell       Install PowerShell toolchain (pwsh, PSScriptAnalyzer) - DEFAULT: enabled
+		  --perl             Install Perl toolchain (Perl::Critic, PPI) - DEFAULT: enabled
+		  --all              Install all toolchains (DEFAULT BEHAVIOR - redundant)
 		  --help, -h         Show this help message
 
 		DEFAULT TOOLCHAINS (always installed):
 		  - Python toolchain (black, ruff, pylint, yamllint, pytest)
+		  - Shell toolchain (shellcheck, shfmt)
+		  - PowerShell toolchain (pwsh, PSScriptAnalyzer)
+		  - Perl toolchain (Perl::Critic, PPI)
 		  - actionlint (GitHub Actions workflow linter)
-		  - rgrep (or grep fallback)
+		  - ripgrep (or grep fallback)
 
 		EXAMPLES:
-		  # Basic install (Python + rgrep only)
+		  # Install all toolchains (default behavior)
 		  ./scripts/bootstrap-repo-lint-toolchain.sh
 
-		  # Install all toolchains
+		  # Explicit --all flag (same as default)
 		  ./scripts/bootstrap-repo-lint-toolchain.sh --all
 
-		  # Install specific optional toolchains
-		  ./scripts/bootstrap-repo-lint-toolchain.sh --shell --perl
+		  # Any individual flag still works (but all are installed anyway)
+		  ./scripts/bootstrap-repo-lint-toolchain.sh --shell
 
 		NOTE: Verbose mode is currently the ONLY supported output mode during
 		      implementation for troubleshooting purposes. The --quiet flag is
@@ -1225,7 +1417,8 @@ install_perl_tools() {
 	else
 		# Non-interactive installation with default answers
 		# Wrap cpanm to prevent set -e from short-circuiting error collection
-		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force Perl::Critic; then
+		# Filter out tar extended header warnings from stderr
+		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force Perl::Critic 2> >(grep -v "Ignoring unknown extended header keyword" >&2); then
 			log "  ✓ Perl::Critic installed"
 		else
 			warn "  ✗ Failed to install Perl::Critic"
@@ -1239,7 +1432,8 @@ install_perl_tools() {
 		log "  ✓ PPI already installed"
 	else
 		# Wrap cpanm to prevent set -e from short-circuiting error collection
-		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force PPI; then
+		# Filter out tar extended header warnings from stderr
+		if PERL_MM_USE_DEFAULT=1 cpanm --notest --force PPI 2> >(grep -v "Ignoring unknown extended header keyword" >&2); then
 			log "  ✓ PPI installed"
 		else
 			warn "  ✗ Failed to install PPI"
@@ -1489,8 +1683,20 @@ run_verification_gate() {
 # EXAMPLES:
 #   main "$@"
 main() {
-	# Parse command-line arguments
+	# Calculate total steps (dynamically based on configuration)
+	local total_steps=9 # Base steps: args, repo_root, venv, activate, repo-lint install, repo-lint verify, ripgrep, python, actionlint, verification
+	[[ "$INSTALL_SHELL" = true ]] && total_steps=$((total_steps + 1))
+	[[ "$INSTALL_POWERSHELL" = true ]] && total_steps=$((total_steps + 1))
+	[[ "$INSTALL_PERL" = true ]] && total_steps=$((total_steps + 1))
+	total_steps=$((total_steps + 1)) # verification gate
+
+	# Initialize progress tracking
+	progress_init "$total_steps"
+
+	# Step 1: Parse command-line arguments
+	step_start "Parsing arguments"
 	parse_arguments "$@"
+	step_ok
 
 	show_banner "REPO-LINT TOOLCHAIN BOOTSTRAP" "Setting up development environment..."
 
@@ -1505,68 +1711,92 @@ main() {
 	log "  Install Perl toolchain: $INSTALL_PERL"
 	log ""
 
-	# Phase 1.1: Find repository root
+	# Step 2: Find repository root
+	step_start "Finding repository root"
 	local repo_root
 	repo_root=$(find_repo_root)
 	log "Repository root: $repo_root"
+	step_ok
 	log ""
 
 	# Change to repository root
 	cd "$repo_root"
 
-	# Phase 1.2: Ensure virtual environment exists
+	# Step 3: Ensure virtual environment exists
 	show_banner "PHASE 1: CORE SETUP" "Creating Python virtual environment..."
+	step_start "Creating virtual environment"
 	ensure_venv "$repo_root"
+	step_ok
 	log ""
 
-	# Phase 1.2 (continued): Activate virtual environment
+	# Step 4: Activate virtual environment
+	step_start "Activating virtual environment"
 	activate_venv "$repo_root"
+	step_ok
 	log ""
 
-	# Phase 1.3: Install repo-lint package
+	# Step 5: Install repo-lint package
+	step_start "Installing repo-lint package"
 	install_repo_lint "$repo_root"
+	step_ok
 	log ""
 
-	# Phase 1.4: Verify repo-lint installation
+	# Step 6: Verify repo-lint installation
+	step_start "Verifying repo-lint installation"
 	verify_repo_lint
+	step_ok
 	log ""
 
 	# Phase 2: Install toolchains
 	show_banner "PHASE 2: TOOLCHAIN INSTALLATION" "This may take several minutes. Please wait..."
 
-	# Phase 2.1: Install rgrep (always installed - required)
+	# Step 7: Install ripgrep (always installed - required)
+	step_start "Installing ripgrep"
 	install_rgrep
+	step_ok
 	log ""
 
-	# Phase 2.2: Install Python toolchain (always installed - required)
+	# Step 8: Install Python toolchain (always installed - required)
+	step_start "Installing Python toolchain"
 	install_python_tools
+	step_ok
 	log ""
 
-	# Phase 2.3: Install actionlint (always installed - required)
+	# Step 9: Install actionlint (always installed - required)
+	step_start "Installing actionlint"
 	install_actionlint
+	step_ok
 	log ""
 
-	# Phase 2.4: Install shell toolchain (if requested)
+	# Step 10+: Install shell toolchain (if requested)
 	if [ "$INSTALL_SHELL" = true ]; then
+		step_start "Installing shell toolchain"
 		install_shell_tools
+		step_ok
 		log ""
 	fi
 
-	# Phase 2.5: Install PowerShell toolchain (if requested)
+	# Step 11+: Install PowerShell toolchain (if requested)
 	if [ "$INSTALL_POWERSHELL" = true ]; then
+		step_start "Installing PowerShell toolchain"
 		install_powershell_tools
+		step_ok
 		log ""
 	fi
 
-	# Phase 2.6: Install Perl toolchain (if requested)
+	# Step 12+: Install Perl toolchain (if requested)
 	if [ "$INSTALL_PERL" = true ]; then
+		step_start "Installing Perl toolchain"
 		install_perl_tools
+		step_ok
 		log ""
 	fi
 
-	# Phase 3: Run verification gate
+	# Step Final: Run verification gate
 	show_banner "PHASE 3: VERIFICATION GATE" "Validating installation..."
+	step_start "Running verification gate"
 	run_verification_gate
+	step_ok
 	log ""
 
 	# Success summary
@@ -1600,9 +1830,19 @@ main() {
 
 	# PATH activation banner
 	show_banner "IMPORTANT: PATH ACTIVATION REQUIRED"
-	log "To use repo-lint and installed tools, you MUST activate the virtual environment:"
+	log "To use repo-lint and installed tools, you MUST activate the virtual environment"
+	log "and export Perl environment variables."
 	log ""
-	log "  source .venv/bin/activate"
+	log "Run this command to activate everything and verify:"
+	log ""
+	log "  source .venv/bin/activate && \\"
+	log "    PERL_HOME=\"\$HOME/perl5\" && \\"
+	log "    export PERL_LOCAL_LIB_ROOT=\"\${PERL_HOME}\${PERL_LOCAL_LIB_ROOT:+:\${PERL_LOCAL_LIB_ROOT}}\" && \\"
+	log "    export PERL_MB_OPT=\"--install_base \"\${PERL_HOME}\"\" && \\"
+	log "    export PERL_MM_OPT=\"INSTALL_BASE=\${PERL_HOME}\" && \\"
+	log "    export PERL5LIB=\"\${PERL_HOME}/lib/perl5\${PERL5LIB:+:\${PERL5LIB}}\" && \\"
+	log "    export PATH=\"\${PERL_HOME}/bin\${PATH:+:\${PATH}}\" && \\"
+	log "    repo-lint check --ci"
 	log ""
 	if [ "$INSTALL_PERL" = true ]; then
 		log "For Perl tools (Perl::Critic, PPI), this script has configured a local::lib-style"
@@ -1611,7 +1851,7 @@ main() {
 		log ""
 		log "In a NEW shell, the recommended way to restore the full Perl environment is to re-run:"
 		log ""
-		log "  scripts/bootstrap-repo-lint-toolchain.sh --install-perl"
+		log "  scripts/bootstrap-repo-lint-toolchain.sh"
 		log ""
 		log "If you prefer to configure Perl manually, you must at least:"
 		log "  - add \$HOME/perl5/bin to PATH, and"

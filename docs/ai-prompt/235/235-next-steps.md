@@ -2,38 +2,244 @@ MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL RE
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 235 AI Journal
 Status: In Progress
-Last Updated: 2026-01-06
-Related: Issue #235
+Last Updated: 2026-01-06 14:30 UTC
+Related: Issue #235, PRs #240
 
 ## NEXT
-- Phase 10: Main binary entry point
-  - Create bootstrap_main.rs as new binary entry point
-  - Wire all phases together: CLI -> Config -> Plan -> Execute -> Report
-  - Implement install subcommand handler (full flow)
-  - Implement doctor subcommand handler (call doctor module)
-  - Implement verify subcommand handler (verify-only mode)
-  - Add proper error handling and exit code mapping
-  - Test end-to-end with actual installers
-- Phase 8: Add platform helpers as needed
-  - Version parsing utilities (already have semver crate)
-  - Venv creation/activation helpers
-  - PATH manipulation for shell integration
-  - Cache directory helpers (already in checkpoint module)
-- Additional installers to reach full coverage
-  - Perl tools (perlcritic, PPI)
-  - PowerShell tools (pwsh, PSScriptAnalyzer)
+- Additional installers to reach full coverage (Rust implementation)
+  - Perl tools installer (perlcritic, PPI)
+  - PowerShell tools installer (pwsh, PSScriptAnalyzer)
   - Any missing shell/Python tools
-- Integration tests
+- Integration tests (Rust implementation)
   - Test full install flow in dry-run mode
   - Test checkpoint save/load/resume
-  - Test doctor command
-  - Test verify-only mode
-- Bash wrapper migration script (Phase 10.1)
+  - Test doctor command end-to-end
+  - Test verify-only mode end-to-end
+- Bash wrapper migration script (Phase 10.1 from EPIC)
 - Performance benchmarking and optimization
+- Binary distribution and release setup
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 14:30 - Bash Bootstrapper Progress UI Implementation + Documentation Update
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Added default-on progress UI (commit 95494a0)
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: Updated to match current behavior (commit 759cf11)
+
+**Changes Made:**
+- Progress UI Implementation (Bash script):
+  - Added global variables for progress tracking (PROGRESS_ENABLED, PROGRESS_TTY, PROGRESS_TOTAL_STEPS, etc.)
+  - Implemented is_tty() to detect TTY mode using [[ -t 1 ]]
+  - Implemented progress_init() to initialize progress tracking with auto-detection
+  - Implemented progress_cleanup() to restore cursor visibility
+  - Implemented step_start() to mark step start with progress display
+  - Implemented step_ok() to mark successful completion with duration
+  - Implemented step_fail() to mark failure with duration and error message
+  - Added trap handler: `trap progress_cleanup EXIT INT TERM`
+  - Updated main() to use progress tracking for all 13 steps
+  - Progress UI respects CI and NO_COLOR environment variables
+  - TTY mode: in-place updating with `printf '\r\033[K...'`, cursor hidden/shown
+  - CI mode: clean line-oriented output, no ANSI, no carriage returns
+  - Per-step duration tracking using $SECONDS
+  - All exit codes and behavior preserved
+- Documentation Update:
+  - Added "Progress UI" section explaining TTY vs CI modes
+  - Added "Step Model" section listing all 13 tracked steps
+  - Updated "What Gets Installed" to reflect all toolchains are now default
+  - Updated "Command-Line Options" to clarify --all is default behavior
+  - Added environment controls documentation (CI, NO_COLOR)
+  - Updated examples with actual progress output
+  - Clarified verbose mode behavior
+
+**Verification:**
+- Bootstrap script runs to completion with exit code 0
+- Progress UI displays correctly in CI mode
+- All 13 steps tracked with timing (0s to 43s per step)
+- Verification gate passes with "Exit Code: 0 (SUCCESS)"
+- All 17 linting tools operational
+- Shellcheck passes with zero warnings
+- Shfmt formatting applied
+
+**Known Issues/Follow-ups:**
+- None - implementation complete per directive requirements
+
+---
+
+### 2026-01-06 13:00 - Address Review Comments: Optimize Regex, Fix command_exists, Add Profile to Verify
+**Files Changed:**
+- `rust/Cargo.toml`: Moved once_cell from dev-dependencies to dependencies (commit 6885a00)
+- `rust/src/bootstrap_v2/platform.rs`: Optimized regex with once_cell::Lazy, fixed command_exists (commit 6885a00)
+- `rust/src/bootstrap_v2/cli.rs`: Added --profile option to Verify command (commit 6885a00)
+- `rust/src/bootstrap_main.rs`: Updated handle_verify to accept profile parameter (commit 6885a00)
+- `rust/src/bootstrap_v2/platform.rs`: Applied cargo fmt formatting (commit c33bcd8)
+
+**Changes Made:**
+- Review Comment 1 (Regex Compilation Overhead):
+  - Changed parse_version_from_output() to use once_cell::Lazy
+  - Regex now compiled once and cached across all calls
+  - Eliminates overhead when called in loops during verification
+- Review Comment 2 (command_exists Exit Code):
+  - Changed from `.is_ok()` to `.map(|status| status.success()).unwrap_or(false)`
+  - Now properly checks both that command spawns AND exits with code 0
+  - More accurate existence checking
+- Review Comment 3 (Verify Profile Inconsistency):
+  - Added --profile option to Verify command in cli.rs
+  - Updated handle_verify() to accept profile parameter
+  - Maintains backwards compatibility with BOOTSTRAP_REPO_PROFILE env var
+  - Consistent API between install and verify commands
+- Formatting:
+  - Applied cargo fmt to fix all style violations
+
+**Verification:**
+- All 59 tests passing
+- Zero compilation errors
+- Zero clippy warnings
+- Cargo fmt check passes
+- repo-lint check --ci passes (exit code 0)
+- Binary tested with --help for verify command (shows new --profile option)
+
+**Known Issues/Follow-ups:**
+- None - all review comments addressed
+
+---
+
+### 2026-01-06 12:00 - Fix Bootstrap Script to Install All Toolchains by Default
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Changed defaults, updated documentation, applied shfmt (commit f4aebf9)
+
+**Changes Made:**
+- Changed INSTALL_SHELL=true (was false)
+- Changed INSTALL_POWERSHELL=true (was false)  
+- Changed INSTALL_PERL=true (was false)
+- Updated script header documentation to reflect all toolchains installed by default
+- Updated show_usage() to clarify --all is now default behavior
+- Applied shfmt formatting to fix style violations
+- Ensures shfmt and all tools installed, allowing verification gate to pass cleanly
+
+**Verification:**
+- Bootstrap script exits with code 0
+- shfmt installed and available
+- Verification gate passes: "Exit Code: 0 (SUCCESS)"
+- All toolchains installed: Python, Shell, PowerShell, Perl, actionlint, ripgrep
+- repo-lint check --ci passes with proper environment setup
+
+**Known Issues/Follow-ups:**
+- None - bootstrap script compliance gate passing
+
+---
+
+### 2026-01-06 11:50 - Address Initial Review Comments
+**Files Changed:**
+- `rust/src/bootstrap_v2/executor.rs`: Removed unused _registry parameter (commit b214946)
+- `rust/src/bootstrap_v2/platform.rs`: Added documentation about limitations (commit b214946)
+- `rust/src/bootstrap_main.rs`: Removed unused progress reporter from handle_verify (commit b214946)
+
+**Changes Made:**
+- Removed unused `_registry` parameter from execute_plan() method
+- Added documentation to command_exists() about --version limitation
+- Added documentation to create_venv() about Unix-only platform support
+- Removed unused progress reporter from handle_verify() function
+- Applied cargo fmt formatting fixes
+
+**Verification:**
+- 59/59 tests passing
+- Zero compilation errors
+- Zero warnings
+- Binary functional
+
+---
+
+### 2026-01-06 11:45 - Phase 10 Complete: Main Binary Entry Point
+**Files Changed:**
+- `rust/src/bootstrap_main.rs`: REWRITTEN - Complete Phase 10 implementation
+- `rust/src/bootstrap_v2/progress.rs`: Added emit_event_plan_computed()
+- `rust/src/bootstrap_v2/doctor.rs`: Updated exit_code API (removed bool param), added exit_code_strict() and to_json()
+- `rust/src/bootstrap_v2/executor.rs`: Updated constructor (takes LockManager instead of InstallerRegistry), added execute_plan() wrapper
+- `rust/src/bootstrap_v2/plan.rs`: Added profile parameter to compute()
+- `rust/src/bootstrap_v2/checkpoint.rs`: Updated tests to pass profile="dev"
+
+**Changes Made:**
+- Phase 10 Main Binary:
+  - Completely rewrote bootstrap_main.rs as async tokio entry point
+  - Implemented handle_install() with full detect→install→verify flow
+  - Implemented handle_doctor() calling doctor module with strict mode support
+  - Implemented handle_verify() for verify-only mode (no installs)
+  - Added find_repo_root() helper to locate git repository
+  - Proper error handling with BootstrapError → ExitCode mapping
+  - Progress reporting integrated throughout
+  - JSON output support for all commands
+- API Updates:
+  - progress: Added emit_event_plan_computed() for plan computation events
+  - doctor: Changed exit_code() to be non-strict by default, added exit_code_strict() and to_json()
+  - executor: Changed constructor to take LockManager (creates internal registry), added execute_plan() wrapper
+  - plan: Added profile parameter to compute() method
+- CLI Flow:
+  - Commands::Install → handle_install (with profile support)
+  - Commands::Doctor → handle_doctor (with strict flag)
+  - Commands::Verify → handle_verify (verify-only, no installs)
+- Context Creation:
+  - Proper OS/package manager detection
+  - Config loading with CI mode enforcement
+  - Progress reporter setup (Interactive/CI/JSON modes)
+  - Full Context::with_config() with all parameters
+
+**Verification:**
+- `cargo build --bin bootstrap-repo-cli` successful
+- All 59 tests passing (including new Phase 10 integration)
+- No clippy warnings
+- Doctor module tests updated and passing
+- Checkpoint module tests updated and passing
+- Executor module tests updated and passing
+
+**Architecture Notes:**
+- Main binary is now fully async (tokio::main)
+- Three command handlers with proper error propagation
+- Progress reporter used consistently across all flows
+- Exit codes properly mapped from errors
+- Registry initialized once per command
+- Lock manager created and passed to executor
+- Plan computation includes profile parameter for tool selection
+
+**Known Issues / Follow-ups:**
+- Integration tests not yet added (need end-to-end flow tests)
+- Bash wrapper (Phase 10.1) not started
+- No binary releases or distribution setup yet
+- Performance benchmarking not started
+- Additional installers needed (Perl, PowerShell tools)
+
+---
+
+### 2026-01-06 11:25 - Phase 8 Complete: Platform Abstractions
+**Files Changed:**
+- `rust/src/bootstrap_v2/platform.rs`: NEW - Platform utilities for venv and shell integration
+- `rust/src/bootstrap_v2/mod.rs`: Added platform module
+- `docs/ai-prompt/235/235-next-steps.md`: Updated
+
+**Changes Made:**
+- Created platform.rs module with comprehensive venv management:
+  - VenvInfo struct with path management (python, pip, bin paths)
+  - VenvInfo::from_path() for loading existing venvs
+  - VenvInfo::detect_python_version() async method
+  - VenvInfo::env_vars() for VIRTUAL_ENV setup
+  - VenvInfo::prepend_to_path() for PATH manipulation
+  - create_venv() async function with dry-run support
+  - upgrade_pip() async function
+  - command_exists() helper for PATH checks
+  - get_current_path() helper
+  - parse_version_from_output() utility for version parsing
+- All 6 platform tests passing
+- Proper error handling with BootstrapError::VenvActivation
+
+**Verification:**
+- `cargo build` successful
+- Platform module tests: 6/6 passing
+- parse_version_from_output() tested with multiple formats
+- VenvInfo tested for path manipulation and env vars
+- Dry-run mode tested
+
+---
 
 ### 2026-01-06 08:30 - Phases 4, 6, 7, 9 Complete: Execution Engine, Config, Checkpointing, Doctor
 **Files Changed:**

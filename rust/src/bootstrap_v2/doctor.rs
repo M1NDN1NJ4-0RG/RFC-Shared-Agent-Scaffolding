@@ -157,25 +157,52 @@ impl DiagnosticReport {
         );
     }
 
-    /// Get exit code based on report
-    ///
-    /// # Arguments
-    ///
-    /// * `strict` - If true, warnings are treated as failures
-    ///
-    /// # Returns
-    ///
-    /// ExitCode::Success if all checks pass (or only warnings in non-strict mode),
-    /// ExitCode::VerificationFailed otherwise
-    pub fn exit_code(&self, strict: bool) -> ExitCode {
+    /// Get exit code based on report (non-strict mode: warnings don't fail)
+    pub fn exit_code(&self) -> ExitCode {
         let has_failures = self.checks.iter().any(|c| c.status == CheckStatus::Fail);
-        let has_warnings = self.checks.iter().any(|c| c.status == CheckStatus::Warn);
 
-        if has_failures || (strict && has_warnings) {
+        if has_failures {
             ExitCode::VerificationFailed
         } else {
             ExitCode::Success
         }
+    }
+
+    /// Get exit code in strict mode (warnings treated as failures)
+    pub fn exit_code_strict(&self) -> ExitCode {
+        let has_failures = self.checks.iter().any(|c| c.status == CheckStatus::Fail);
+        let has_warnings = self.checks.iter().any(|c| c.status == CheckStatus::Warn);
+
+        if has_failures || has_warnings {
+            ExitCode::VerificationFailed
+        } else {
+            ExitCode::Success
+        }
+    }
+
+    /// Convert report to JSON
+    pub fn to_json(&self) -> String {
+        let checks_json: Vec<_> = self
+            .checks
+            .iter()
+            .map(|c| {
+                serde_json::json!({
+                    "name": c.name,
+                    "status": match c.status {
+                        CheckStatus::Pass => "Pass",
+                        CheckStatus::Warn => "Warn",
+                        CheckStatus::Fail => "Fail",
+                    },
+                    "message": c.message,
+                    "remediation": c.remediation,
+                })
+            })
+            .collect();
+
+        serde_json::to_string_pretty(&serde_json::json!({
+            "checks": checks_json,
+        }))
+        .expect("Diagnostic report should always be serializable to JSON")
     }
 }
 
@@ -190,7 +217,6 @@ impl Default for DiagnosticReport {
 /// # Arguments
 ///
 /// * `ctx` - Execution context
-/// * `_strict` - Whether to treat warnings as failures (for exit code)
 ///
 /// # Returns
 ///
@@ -203,7 +229,7 @@ impl Default for DiagnosticReport {
 /// - Python: Check Python 3 availability and version
 /// - Disk Space: Check available disk space
 /// - Permissions: Check write permissions
-pub async fn doctor(ctx: &Context, _strict: bool) -> BootstrapResult<DiagnosticReport> {
+pub async fn doctor(ctx: &Context) -> BootstrapResult<DiagnosticReport> {
     let mut report = DiagnosticReport::new();
 
     // Check repository
@@ -349,19 +375,19 @@ mod tests {
     #[test]
     fn test_report_exit_code() {
         let mut report = DiagnosticReport::new();
-        assert_eq!(report.exit_code(false), ExitCode::Success);
+        assert_eq!(report.exit_code(), ExitCode::Success);
 
         report.add_check(DiagnosticCheck::pass("test1", "ok"));
-        assert_eq!(report.exit_code(false), ExitCode::Success);
+        assert_eq!(report.exit_code(), ExitCode::Success);
 
         report.add_check(DiagnosticCheck::warn("test2", "warning", None));
-        assert_eq!(report.exit_code(false), ExitCode::Success); // Non-strict
-        assert_eq!(report.exit_code(true), ExitCode::VerificationFailed); // Strict
+        assert_eq!(report.exit_code(), ExitCode::Success); // Non-strict
+        assert_eq!(report.exit_code_strict(), ExitCode::VerificationFailed); // Strict
 
         let mut report2 = DiagnosticReport::new();
         report2.add_check(DiagnosticCheck::fail("test3", "failed", None));
-        assert_eq!(report2.exit_code(false), ExitCode::VerificationFailed);
-        assert_eq!(report2.exit_code(true), ExitCode::VerificationFailed);
+        assert_eq!(report2.exit_code(), ExitCode::VerificationFailed);
+        assert_eq!(report2.exit_code_strict(), ExitCode::VerificationFailed);
     }
 
     #[tokio::test]
@@ -413,7 +439,7 @@ mod tests {
         let config = Arc::new(Config::default());
         let ctx = Context::new_for_testing(temp_dir.path().to_path_buf(), false, config);
 
-        let report = doctor(&ctx, false).await.unwrap();
+        let report = doctor(&ctx).await.unwrap();
         assert!(report.checks.len() >= 5); // Should have all checks
     }
 }

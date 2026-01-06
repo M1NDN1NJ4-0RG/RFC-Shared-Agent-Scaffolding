@@ -14,12 +14,12 @@
 //! use bootstrap_v2::executor::Executor;
 //! use bootstrap_v2::plan::ExecutionPlan;
 //! use bootstrap_v2::context::Context;
-//! use bootstrap_v2::installers::InstallerRegistry;
+//! use bootstrap_v2::lock::LockManager;
 //! use std::sync::Arc;
 //!
 //! # async fn example(plan: ExecutionPlan, ctx: Arc<Context>) {
-//! let registry = Arc::new(InstallerRegistry::new());
-//! let executor = Executor::new(ctx.clone(), registry);
+//! let lock_manager = Arc::new(LockManager::new());
+//! let executor = Executor::new(ctx.clone(), lock_manager);
 //! let results = executor.execute(&plan).await.unwrap();
 //! # }
 //! ```
@@ -80,15 +80,15 @@ impl Executor {
     /// # Arguments
     ///
     /// * `ctx` - Execution context with configuration
-    /// * `registry` - Installer registry
+    /// * `lock_manager` - Lock manager for resource coordination
     ///
     /// # Returns
     ///
     /// New executor with job semaphore sized per context (CI=2, Interactive=min(4,cpus))
-    pub fn new(ctx: Arc<Context>, registry: Arc<InstallerRegistry>) -> Self {
+    pub fn new(ctx: Arc<Context>, lock_manager: Arc<LockManager>) -> Self {
         let max_jobs = ctx.max_jobs;
         let job_semaphore = Arc::new(Semaphore::new(max_jobs));
-        let lock_manager = Arc::new(LockManager::new());
+        let registry = Arc::new(InstallerRegistry::new());
 
         Self {
             ctx,
@@ -96,6 +96,20 @@ impl Executor {
             lock_manager,
             job_semaphore,
         }
+    }
+
+    /// Execute plan using the internal installer registry
+    ///
+    /// # Arguments
+    ///
+    /// * `plan` - Execution plan to run
+    ///
+    /// # Returns
+    ///
+    /// Vector of step results for all steps in all phases
+    pub async fn execute_plan(&self, plan: &ExecutionPlan) -> BootstrapResult<Vec<StepResult>> {
+        // Use the internal registry
+        self.execute(plan).await
     }
 
     /// Execute the full plan
@@ -395,9 +409,9 @@ mod tests {
             false,
             config,
         ));
-        let registry = Arc::new(InstallerRegistry::new());
+        let lock_manager = Arc::new(LockManager::new());
 
-        let executor = Executor::new(ctx, registry);
+        let executor = Executor::new(ctx, lock_manager);
         assert!(Arc::strong_count(&executor.job_semaphore) >= 1);
     }
 
@@ -411,12 +425,13 @@ mod tests {
             config,
             progress,
         ));
-        let registry = Arc::new(InstallerRegistry::new());
+        let registry = InstallerRegistry::new();
+        let lock_manager = Arc::new(LockManager::new());
 
-        let executor = Executor::new(ctx.clone(), registry.clone());
+        let executor = Executor::new(ctx.clone(), lock_manager);
 
         // Create a simple plan
-        let plan = ExecutionPlan::compute(&registry, &ctx.config, &ctx)
+        let plan = ExecutionPlan::compute(&registry, &ctx.config, &ctx, "dev")
             .await
             .unwrap();
 

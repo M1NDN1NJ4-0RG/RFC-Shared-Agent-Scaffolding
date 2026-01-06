@@ -45,9 +45,10 @@ impl ExecutionPlan {
         registry: &InstallerRegistry,
         config: &Config,
         _ctx: &Context,
+        profile: &str,
     ) -> BootstrapResult<Self> {
-        // Get required tools from config
-        let required_tools = config.get_required_tools();
+        // Get required tools from config for the given profile
+        let required_tools = config.get_tools_for_profile(profile);
 
         // Resolve dependencies
         let installers = registry.resolve_dependencies(&required_tools)?;

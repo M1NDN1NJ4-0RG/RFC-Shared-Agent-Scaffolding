@@ -301,6 +301,24 @@ impl ProgressReporter {
         }
     }
 
+    /// Emit plan computed event
+    pub fn emit_event_plan_computed(&self) {
+        match self.mode {
+            ProgressMode::Interactive | ProgressMode::Ci => {
+                println!(
+                    "[{}] Execution plan computed",
+                    chrono::Utc::now().format("%H:%M:%S")
+                );
+            }
+            ProgressMode::Json => {
+                let event = serde_json::json!({
+                    "type": "PlanComputed",
+                });
+                println!("{}", serde_json::to_string(&event).unwrap());
+            }
+        }
+    }
+
     /// Create reporter for testing
     #[cfg(test)]
     pub fn new_for_testing() -> Self {
