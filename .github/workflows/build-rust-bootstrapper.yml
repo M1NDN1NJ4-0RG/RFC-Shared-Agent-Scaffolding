@@ -31,6 +31,8 @@
 #   - Test job verifies binary execution and checksum validation
 
 name: Build and Release Rust Bootstrapper
+permissions:
+  contents: read
 
 on:
   push:
