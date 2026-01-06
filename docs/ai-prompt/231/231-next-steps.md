@@ -6,11 +6,46 @@ Last Updated: 2026-01-06
 Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## NEXT
-- All work complete, ready for merge
+- Phase 0: Rename and relocate bootstrapper manual
+- Phase 1: Add fail-fast wrapper helpers (run_or_die, try_run, safe_version)
+- Phase 2: Fix function-by-function fail-fast gaps
+- Phase 3: Consistency pass across entire script
+- Phase 4: Documentation updates
+- Phase 5: Verification and tests
+- Phase 6: Analysis and Rust migration plan
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 00:40 - Session Start: Bootstrap and Plan Creation
+**Files Changed:**
+- `docs/ai-prompt/231/231-overview.md`: Added new session notes
+- `docs/ai-prompt/231/231-next-steps.md`: Updated NEXT section with fail-fast hardening tasks
+
+**Changes Made:**
+- Completed mandatory session start procedure:
+  - Read `docs/contributing/session-compliance-requirements.md` in full
+  - Ran `./scripts/bootstrap-repo-lint-toolchain.sh --all` successfully (exit code 0, completed in ~3 minutes)
+  - Activated virtual environment: `source .venv/bin/activate`
+  - Exported Perl PATH and PERL5LIB variables
+  - Verified repo-lint functional: `repo-lint --help` (exit 0)
+  - Ran health check: `repo-lint check --ci` (exit 0, all 15 runners passed)
+- Read complete fail-fast hardening plan from `docs/ai-prompt/231/231-fail-fast-hardening-plan.md`
+- Created comprehensive 6-phase execution checklist via report_progress
+- Identified scope: actionlint already added; task is to implement full fail-fast hardening plan
+- Updated journals to reflect current session start
+
+**Verification:**
+- Bootstrap completed successfully (exit 0)
+- All required tools installed and functional
+- Repository in clean state (no violations)
+- Execution plan covers all requirements from hardening plan document
+
+**Next Steps:**
+- Begin Phase 0: Rename and relocate bootstrapper manual
+
+---
 
 ### 2026-01-06 00:16 - Journal Creation and Retrospective Documentation
 **Files Changed:**
@@ -63,7 +98,7 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
   - test_actionlint_exit_code_20_documented
 - Added pylint: disable=too-many-lines to handle file size (1049 lines)
 - Removed obsolete Rust bootstrapper documentation
-- Updated all references from docs/repo-cli-bootstrapper.md to docs/tools/repo-lint/bootstrapper.md
+- Updated all references from docs/repo-cli-bootstrapper.md to docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md
 
 **Verification:**
 - Python syntax validation passed
@@ -124,7 +159,7 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 ### 2026-01-05 23:00 - Add actionlint Installation and Documentation (Commit 168344d)
 **Files Changed:**
 - `scripts/bootstrap-repo-lint-toolchain.sh`: 115 lines added
-- `docs/tools/repo-lint/bootstrapper.md`: 5 lines added
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: 5 lines added
 
 **Changes Made:**
 - Added install_actionlint() function:

@@ -208,6 +208,95 @@ has_sudo() {
 	[ "$(id -u)" -eq 0 ] || sudo -n true 2>/dev/null
 }
 
+# run_or_die - Execute command and exit via die() on failure
+#
+# DESCRIPTION:
+#   Runs a command and if it fails, exits the script via die() with
+#   a specified exit code and error message. This enforces deterministic
+#   exit codes for all critical external commands.
+#
+# INPUTS:
+#   $1 - Exit code to use on failure
+#   $2 - Error message for die()
+#   $@ (3+) - Command and arguments to execute
+#
+# OUTPUTS:
+#   Exit Code:
+#     0   Command succeeded
+#     <specified>  Command failed, exits via die()
+#
+# EXAMPLES:
+#   run_or_die 17 "PowerShell installation failed" sudo apt-get install -y powershell
+#   run_or_die 13 "pip upgrade failed" python3 -m pip install --upgrade pip
+run_or_die() {
+	local exit_code="$1"
+	local error_msg="$2"
+	shift 2
+
+	if ! "$@"; then
+		die "$error_msg (command: $*)" "$exit_code"
+	fi
+}
+
+# try_run - Execute command and return its exit code without dying
+#
+# DESCRIPTION:
+#   Runs a command and returns its exit code without terminating the script.
+#   Used for truly optional operations where failure is acceptable.
+#   Suppresses pipefail/-e behavior for this command only.
+#
+# INPUTS:
+#   $@ - Command and arguments to execute
+#
+# OUTPUTS:
+#   Exit Code:
+#     Returns the exit code of the command (0 on success, non-zero on failure)
+#
+# EXAMPLES:
+#   if try_run brew install actionlint; then
+#       log "Homebrew install succeeded"
+#   else
+#       log "Homebrew install failed, trying alternative"
+#   fi
+try_run() {
+	"$@" || return $?
+}
+
+# safe_version - Extract version string without terminating on failure
+#
+# DESCRIPTION:
+#   Safely attempts to extract a version string from a command's output.
+#   Uses pipefail-safe patterns to prevent version parsing failures from
+#   terminating the bootstrap process. Returns empty string on failure.
+#
+# INPUTS:
+#   $1 - Command to run (e.g., "shellcheck --version")
+#   $2 - Optional grep pattern (e.g., "^version:")
+#   $3 - Optional awk field number (default: 2)
+#
+# OUTPUTS:
+#   Stdout: Version string or empty string
+#   Exit Code: Always 0 (never fails)
+#
+# EXAMPLES:
+#   version=$(safe_version "shellcheck --version" "^version:" 2)
+#   version=$(safe_version "actionlint -version")
+safe_version() {
+	local cmd="$1"
+	local pattern="${2:-}"
+	local field="${3:-2}"
+
+	local output
+	output=$($cmd 2>/dev/null || true)
+
+	if [[ -n "$pattern" ]]; then
+		echo "$output" | awk -v pat="$pattern" -v fld="$field" \
+			'$0 ~ pat {print $fld; found=1} END {exit 0}' || true
+	else
+		echo "$output" || true
+	fi
+}
+
 # show_banner - Display a prominent banner message
 #
 # DESCRIPTION:

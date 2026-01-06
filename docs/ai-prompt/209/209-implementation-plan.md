@@ -368,7 +368,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Update `README.md` (if applicable):
   - [ ] Add "Quick Start" section with bootstrapper usage
   - [ ] Link to detailed documentation
-- [ ] Update `docs/tools/repo-lint/bootstrapper.md`:
+- [ ] Update `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`:
   - [ ] Add section comparing Bash vs Rust implementations (if applicable)
   - [ ] Clarify when to use which implementation (if applicable)
   - [ ] Note: This file documents the Bash `bootstrap-repo-lint-toolchain.sh` script
@@ -589,7 +589,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - Issue #209: This epic
 
 ### Related Documentation
-- `docs/tools/repo-lint/bootstrapper.md`: Bash bootstrapper documentation for `bootstrap-repo-lint-toolchain.sh`
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: Bash bootstrapper documentation for `bootstrap-repo-lint-toolchain.sh`
 - `.github/copilot-instructions.md`: Copilot agent guidelines
 - `tools/repo_lint/README.md`: repo-lint tool documentation
 - `pyproject.toml`: Python dependencies and tool configuration

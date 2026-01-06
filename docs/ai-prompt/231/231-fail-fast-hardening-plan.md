@@ -55,7 +55,7 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Required changes:**
 - Rename:
-  - `docs/tools/repo-lint/bootstrapper.md`
+  - `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`
 - To:
   - `bootstrapper-toolchain-user-manual.md`
 
@@ -67,7 +67,7 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
   - `docs/repo-lint/bootstrapper-toolchain-user-manual.md`
 
 **Acceptance Criteria:**
-- The original `docs/tools/repo-lint/bootstrapper.md` path no longer exists.
+- The original `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` path no longer exists.
 - The manual content is preserved (no accidental truncation).
 - The new manual location is **linked** from high-signal entrypoints where appropriate, including at minimum:
   - `CONTRIBUTING.md`
@@ -79,7 +79,7 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Implementation Requirements:**
 - Update all references across the repo that mention:
-  - `docs/tools/repo-lint/bootstrapper.md`
+  - `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`
   - `bootstrapper.md`
 - Ensure markdown links, docs indices, READMEs, scripts, comments, and CI references point to the new path:
   - `docs/repo-lint/bootstrapper-toolchain-user-manual.md`
