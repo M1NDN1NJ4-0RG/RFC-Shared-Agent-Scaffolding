@@ -31,7 +31,7 @@ import json
 import re
 import subprocess
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 from .common import ValidationError, check_symbol_pragma_exemption
 
@@ -83,7 +83,7 @@ class PerlValidator:
         return errors
 
     @staticmethod
-    def _validate_file_pod(file_path: Path, content: str) -> Optional[ValidationError]:
+    def _validate_file_pod(file_path: Path, content: str) -> ValidationError | None:
         """Validate file-level POD documentation.
 
         :param file_path: Path to Perl file

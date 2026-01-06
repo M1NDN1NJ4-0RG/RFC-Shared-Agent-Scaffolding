@@ -98,10 +98,9 @@ import platform
 import shutil
 import sys
 from pathlib import Path
-from typing import Optional
 
 
-def find_repo_root() -> Optional[Path]:
+def find_repo_root() -> Path | None:
     """Walk up from script location to find repository root.
 
     Searches for repository markers (RFC specification file or .git directory)
@@ -192,7 +191,7 @@ def detect_platform() -> str:
     return f"{os_name}/{arch}"
 
 
-def find_safe_run_binary() -> Optional[str]:
+def find_safe_run_binary() -> str | None:
     """Binary discovery cascade per docs/wrapper-discovery.md.
 
     Implements the deterministic binary discovery rules that all language

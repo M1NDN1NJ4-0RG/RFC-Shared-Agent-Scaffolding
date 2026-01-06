@@ -1,0 +1,29 @@
+diff --git a/tools/repo_lint/tests/fixtures/powershell/PowershellAllDocstringViolations.ps1 b/tools/repo_lint/tests/fixtures/powershell/PowershellAllDocstringViolations.ps1
+new file mode 100644
+index 0000000..71f2d24
+--- /dev/null
++++ b/tools/repo_lint/tests/fixtures/powershell/PowershellAllDocstringViolations.ps1
+@@ -0,0 +1,23 @@
++# Missing .SYNOPSIS - violation 1
++# Missing .DESCRIPTION - violation 2
++
++# Missing function help - violation 3
++function Test-FunctionNoHelp {
++    param($Param1)
++    Write-Output $Param1
++}
++
++# Incomplete help - violation 4
++function Test-IncompleteHelp {
++    <#
++    .SYNOPSIS
++    Only has synopsis
++    #>
++    param($Value)
++    return $Value
++}
++
++# No help at all - violation 5
++function Get-Something {
++    "no help"
++}

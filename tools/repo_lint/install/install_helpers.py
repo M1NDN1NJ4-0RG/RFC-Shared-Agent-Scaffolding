@@ -36,7 +36,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 from tools.repo_lint.install.version_pins import PIP_VERSION, get_all_versions
 
@@ -102,7 +102,7 @@ def venv_exists() -> bool:
     return python_path.exists()
 
 
-def create_venv(verbose: bool = False) -> Tuple[bool, Optional[str]]:
+def create_venv(verbose: bool = False) -> Tuple[bool, str | None]:
     """Create repo-local virtual environment.
 
     :param verbose: If True, print detailed output

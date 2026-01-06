@@ -1,0 +1,22 @@
+diff --git a/tools/repo_lint/tests/fixtures/yaml/yaml-yamllint-violations.yaml b/tools/repo_lint/tests/fixtures/yaml/yaml-yamllint-violations.yaml
+new file mode 100644
+index 0000000..66bac95
+--- /dev/null
++++ b/tools/repo_lint/tests/fixtures/yaml/yaml-yamllint-violations.yaml
+@@ -0,0 +1,16 @@
++# Violation 1: Line too long (exceeds max line length)
++very_long_key_name_that_exceeds_the_maximum_line_length_configured_in_yamllint: "this is a very long line that will trigger yamllint warnings"
++
++# Violation 2: Trailing spaces   
++key_with_trailing: "value"   
++
++# Violation 3: Inconsistent indentation
++config:
++  section1:
++    key1: value1
++   key2: value2  # Wrong indentation
++
++# Violation 4: Missing document start marker
++data:
++  - item1
++  - item2

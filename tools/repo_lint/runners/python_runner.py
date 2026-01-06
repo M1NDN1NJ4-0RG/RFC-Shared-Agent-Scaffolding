@@ -31,7 +31,7 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
-from typing import List, Optional
+from typing import List
 
 from tools.repo_lint.common import LintResult, Violation
 from tools.repo_lint.policy import is_category_allowed
@@ -162,7 +162,7 @@ class PythonRunner(Runner):
 
         return results
 
-    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
+    def fix(self, policy: dict | None = None) -> List[LintResult]:
         """Apply Python formatters and safe auto-fixes.
 
         Per Phase 0 Item 0.9.1: Apply Black formatting and Ruff safe fixes.
@@ -288,7 +288,7 @@ class PythonRunner(Runner):
             tool="black", passed=False, violations=[], error=f"Black failed with exit code {result.returncode}"
         )
 
-    def _parse_ruff_output(self, stdout: str, context: str = "check") -> tuple[List[Violation], Optional[str]]:
+    def _parse_ruff_output(self, stdout: str, context: str = "check") -> tuple[List[Violation], str | None]:
         """Parse Ruff output into violations and info message.
 
         :param stdout: Ruff command stdout output

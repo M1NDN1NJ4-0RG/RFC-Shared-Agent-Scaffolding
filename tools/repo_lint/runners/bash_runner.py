@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from typing import List, Optional
+from typing import List
 
 from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
 from tools.repo_lint.policy import is_category_allowed
@@ -85,7 +85,7 @@ class BashRunner(Runner):
 
         return results
 
-    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
+    def fix(self, policy: dict | None = None) -> List[LintResult]:
         """Apply Bash formatters and safe auto-fixes.
 
         Per Phase 6 Item 6.5.6: Consult auto-fix policy before running fixes.

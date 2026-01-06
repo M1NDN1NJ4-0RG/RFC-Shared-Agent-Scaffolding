@@ -39,7 +39,6 @@ import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
 
 import yaml
 from rich import box
@@ -139,7 +138,7 @@ class UITheme:
 class ThemeValidationError(Exception):
     """Raised when theme validation fails."""
 
-    def __init__(self, message: str, file_path: Optional[Path] = None):
+    def __init__(self, message: str, file_path: Path | None = None):
         """Initialize ThemeValidationError.
 
         :param message: Error message
@@ -207,7 +206,7 @@ def _validate_no_unknown_keys(data: dict, allowed_keys: set, file_path: Path, co
         raise ThemeValidationError(f"Unknown keys in {context}: {', '.join(sorted(unknown_keys))}", file_path)
 
 
-def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_user_override: bool = True) -> UITheme:
+def load_theme(theme_path: Path | None = None, ci_mode: bool = False, allow_user_override: bool = True) -> UITheme:
     """Load and validate UI theme from YAML.
 
     Loads theme from (in precedence order):
@@ -225,7 +224,7 @@ def load_theme(theme_path: Optional[Path] = None, ci_mode: bool = False, allow_u
     :returns: Loaded and validated UITheme
     :raises ThemeValidationError: If theme validation fails
     """
-    selected_theme: Optional[Path] = None
+    selected_theme: Path | None = None
 
     # Explicit theme_path must take absolute precedence and must exist
     if theme_path is not None:

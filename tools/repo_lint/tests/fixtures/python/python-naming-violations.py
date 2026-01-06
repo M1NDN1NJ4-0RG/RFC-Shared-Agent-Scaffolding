@@ -1,0 +1,35 @@
+"""Module with naming violations.
+
+This module intentionally violates Python naming conventions.
+"""
+
+
+# Violation 1: Class name not in PascalCase
+class my_class:
+    """Test class with bad name."""
+    
+    def __init__(self):
+        """Initialize."""
+        self.value = 0
+
+
+# Violation 2: Function name not in snake_case
+def BadFunctionName():
+    """Function with camelCase name."""
+    return 42
+
+
+# Violation 3: Constant not in UPPER_CASE
+myConstant = 100
+
+
+# Violation 4: Another bad class name
+class snake_case_class:
+    """Another class with snake_case instead of PascalCase."""
+    
+    # Violation 5: Method name not in snake_case
+    def MethodName(self):
+        """Method with PascalCase name."""
+        # Violation 6: Variable with camelCase
+        myVariable = "bad"
+        return myVariable

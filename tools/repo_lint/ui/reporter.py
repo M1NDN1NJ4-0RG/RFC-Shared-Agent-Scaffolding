@@ -30,7 +30,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 from rich.markup import escape
 from rich.panel import Panel
@@ -55,7 +55,7 @@ class Reporter:
     consistent formatting across TTY and CI modes.
     """
 
-    def __init__(self, ci_mode: bool = False, theme: Optional[UITheme] = None):
+    def __init__(self, ci_mode: bool = False, theme: UITheme | None = None):
         """Initialize Reporter.
 
         :param ci_mode: If True, use CI-friendly output (no colors, no spinners)

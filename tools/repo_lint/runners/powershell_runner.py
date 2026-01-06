@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import subprocess
 import sys
-from typing import List, Optional
+from typing import List
 
 from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
@@ -100,7 +100,7 @@ class PowerShellRunner(Runner):
 
         return results
 
-    def fix(self, policy: Optional[dict] = None) -> List[LintResult]:
+    def fix(self, policy: dict | None = None) -> List[LintResult]:
         """Apply PowerShell auto-fixes where possible.
 
         Note: PSScriptAnalyzer does not have a general auto-fix mode.

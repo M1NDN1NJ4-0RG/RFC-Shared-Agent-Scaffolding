@@ -1,0 +1,49 @@
+<#
+.SYNOPSIS
+    Test script with naming violations
+
+.DESCRIPTION
+    This script intentionally violates PowerShell naming conventions
+
+.NOTES
+    For testing purposes only
+#>
+
+# Violation 1: Function doesn't use Verb-Noun naming
+function badFunctionName {
+    <#
+    .SYNOPSIS
+        Function with incorrect naming
+    #>
+    Write-Output "bad name"
+}
+
+# Violation 2: Using unapproved verb
+function Fetch-Data {
+    <#
+    .SYNOPSIS
+        Using 'Fetch' instead of approved 'Get'
+    #>
+    return "data"
+}
+
+# Violation 3: No verb at all
+function MyFunction {
+    <#
+    .SYNOPSIS
+        Missing verb in name
+    #>
+    param($InputValue)
+    return $InputValue
+}
+
+# Violation 4: Variable doesn't use PascalCase
+function Test-BadVarNames {
+    <#
+    .SYNOPSIS
+        Function with bad variable names
+    #>
+    $bad_variable_name = "should be PascalCase"  # violation
+    $another-bad = "no hyphens"  # violation
+    return $bad_variable_name
+}

@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from tools.repo_lint.common import LintResult, MissingToolError, Violation
 from tools.repo_lint.config_validator import ConfigValidationError, load_validated_config
@@ -123,7 +123,7 @@ class NamingRunner(Runner):
 
         return results
 
-    def fix(self, policy: Optional[dict] = None, verbose: bool = False) -> List[LintResult]:
+    def fix(self, policy: dict | None = None, verbose: bool = False) -> List[LintResult]:
         """Naming enforcement is check-only - no auto-rename support.
 
         :Purpose:
@@ -185,7 +185,7 @@ class NamingRunner(Runner):
 
         return filtered
 
-    def _check_file_naming(self, file_path: Path, repo_root: Path, verbose: bool = False) -> Optional[LintResult]:
+    def _check_file_naming(self, file_path: Path, repo_root: Path, verbose: bool = False) -> LintResult | None:
         """Check a single file against naming rules.
 
         :param file_path: Path to file

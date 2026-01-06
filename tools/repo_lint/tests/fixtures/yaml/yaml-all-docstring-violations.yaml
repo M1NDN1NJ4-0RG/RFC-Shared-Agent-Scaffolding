@@ -1,0 +1,17 @@
+# Missing document header comment - violation 1
+
+config:
+  name: test
+  # Missing description for this section - violation 2
+  settings:
+    enabled: true
+    
+# Missing documentation for this top-level key - violation 3
+data:
+  items:
+    - value1
+    - value2
+
+# No documentation for this section - violation 4
+metadata:
+  version: 1.0
