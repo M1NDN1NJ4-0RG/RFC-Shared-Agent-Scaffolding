@@ -414,13 +414,11 @@ This task is complete only when:
 
 ---
 
-
 ## Notes for Implementation
 
 - Prefer small, mechanical refactors.
 - Favor readability over cleverness.
 - The script is an enforcement gate: **determinism beats convenience.**
-
 
 ---
 
@@ -478,6 +476,7 @@ This task is complete only when:
   - process-level vs thread-level concurrency choices
   - shared resource risks (filesystem paths, temp dirs, package manager locks, caches)
   - deterministic logging/output ordering (so CI logs remain readable)
+  - retry + exponential backoff strategy for network/package operations (including jitter, max attempts, and what is safe/unsafe to retry)
   - fallback behavior when concurrency is disabled or unsupported
 
 **Acceptance Criteria:**
@@ -709,5 +708,28 @@ This task is complete only when:
 
 **Acceptance Criteria:**
 - The Rust plan includes a self-doctor command and what it validates.
+
+---
+
+#### 6.2-P Safe retries + exponential backoff (WHERE SAFE)
+**Goal:** Make installs resilient to transient failures (network flakiness, temporary 5xx responses, package mirror hiccups) without masking real problems.
+
+**Requirements:**
+- Define a unified retry policy that can be applied (where safe) to:
+  - artifact downloads
+  - package-manager metadata refreshes
+  - external API calls (if any)
+- The retry policy must explicitly define:
+  - which operations are safe to retry vs unsafe (idempotency rules)
+  - maximum attempts and total time budget
+  - exponential backoff with jitter
+  - how retries are reported in the progress UI and logs
+  - how retry behavior differs in `--ci` / non-interactive modes
+- For unsafe-to-retry operations (examples: non-idempotent installs, partial state mutations), the plan must require:
+  - either no retries, or
+  - a detection/cleanup step before retrying, with clear justification
+
+**Acceptance Criteria:**
+- The Rust plan includes a concrete retry/backoff design and explicitly lists which steps use it and which do not.
 
 ---
