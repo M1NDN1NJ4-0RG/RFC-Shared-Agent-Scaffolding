@@ -2,26 +2,154 @@ MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL RE
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 235 AI Journal
 Status: In Progress
-Last Updated: 2026-01-06 12:10 UTC
-Related: Issue #235
+Last Updated: 2026-01-06 14:30 UTC
+Related: Issue #235, PRs #240
 
 ## NEXT
-- Additional installers to reach full coverage
-  - Perl tools (perlcritic, PPI)
-  - PowerShell tools (pwsh, PSScriptAnalyzer)
+- Additional installers to reach full coverage (Rust implementation)
+  - Perl tools installer (perlcritic, PPI)
+  - PowerShell tools installer (pwsh, PSScriptAnalyzer)
   - Any missing shell/Python tools
-- Integration tests
+- Integration tests (Rust implementation)
   - Test full install flow in dry-run mode
   - Test checkpoint save/load/resume
   - Test doctor command end-to-end
   - Test verify-only mode end-to-end
-- Bash wrapper migration script (Phase 10.1)
+- Bash wrapper migration script (Phase 10.1 from EPIC)
 - Performance benchmarking and optimization
 - Binary distribution and release setup
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 14:30 - Bash Bootstrapper Progress UI Implementation + Documentation Update
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Added default-on progress UI (commit 95494a0)
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: Updated to match current behavior (commit 759cf11)
+
+**Changes Made:**
+- Progress UI Implementation (Bash script):
+  - Added global variables for progress tracking (PROGRESS_ENABLED, PROGRESS_TTY, PROGRESS_TOTAL_STEPS, etc.)
+  - Implemented is_tty() to detect TTY mode using [[ -t 1 ]]
+  - Implemented progress_init() to initialize progress tracking with auto-detection
+  - Implemented progress_cleanup() to restore cursor visibility
+  - Implemented step_start() to mark step start with progress display
+  - Implemented step_ok() to mark successful completion with duration
+  - Implemented step_fail() to mark failure with duration and error message
+  - Added trap handler: `trap progress_cleanup EXIT INT TERM`
+  - Updated main() to use progress tracking for all 13 steps
+  - Progress UI respects CI and NO_COLOR environment variables
+  - TTY mode: in-place updating with `printf '\r\033[K...'`, cursor hidden/shown
+  - CI mode: clean line-oriented output, no ANSI, no carriage returns
+  - Per-step duration tracking using $SECONDS
+  - All exit codes and behavior preserved
+- Documentation Update:
+  - Added "Progress UI" section explaining TTY vs CI modes
+  - Added "Step Model" section listing all 13 tracked steps
+  - Updated "What Gets Installed" to reflect all toolchains are now default
+  - Updated "Command-Line Options" to clarify --all is default behavior
+  - Added environment controls documentation (CI, NO_COLOR)
+  - Updated examples with actual progress output
+  - Clarified verbose mode behavior
+
+**Verification:**
+- Bootstrap script runs to completion with exit code 0
+- Progress UI displays correctly in CI mode
+- All 13 steps tracked with timing (0s to 43s per step)
+- Verification gate passes with "Exit Code: 0 (SUCCESS)"
+- All 17 linting tools operational
+- Shellcheck passes with zero warnings
+- Shfmt formatting applied
+
+**Known Issues/Follow-ups:**
+- None - implementation complete per directive requirements
+
+---
+
+### 2026-01-06 13:00 - Address Review Comments: Optimize Regex, Fix command_exists, Add Profile to Verify
+**Files Changed:**
+- `rust/Cargo.toml`: Moved once_cell from dev-dependencies to dependencies (commit 6885a00)
+- `rust/src/bootstrap_v2/platform.rs`: Optimized regex with once_cell::Lazy, fixed command_exists (commit 6885a00)
+- `rust/src/bootstrap_v2/cli.rs`: Added --profile option to Verify command (commit 6885a00)
+- `rust/src/bootstrap_main.rs`: Updated handle_verify to accept profile parameter (commit 6885a00)
+- `rust/src/bootstrap_v2/platform.rs`: Applied cargo fmt formatting (commit c33bcd8)
+
+**Changes Made:**
+- Review Comment 1 (Regex Compilation Overhead):
+  - Changed parse_version_from_output() to use once_cell::Lazy
+  - Regex now compiled once and cached across all calls
+  - Eliminates overhead when called in loops during verification
+- Review Comment 2 (command_exists Exit Code):
+  - Changed from `.is_ok()` to `.map(|status| status.success()).unwrap_or(false)`
+  - Now properly checks both that command spawns AND exits with code 0
+  - More accurate existence checking
+- Review Comment 3 (Verify Profile Inconsistency):
+  - Added --profile option to Verify command in cli.rs
+  - Updated handle_verify() to accept profile parameter
+  - Maintains backwards compatibility with BOOTSTRAP_REPO_PROFILE env var
+  - Consistent API between install and verify commands
+- Formatting:
+  - Applied cargo fmt to fix all style violations
+
+**Verification:**
+- All 59 tests passing
+- Zero compilation errors
+- Zero clippy warnings
+- Cargo fmt check passes
+- repo-lint check --ci passes (exit code 0)
+- Binary tested with --help for verify command (shows new --profile option)
+
+**Known Issues/Follow-ups:**
+- None - all review comments addressed
+
+---
+
+### 2026-01-06 12:00 - Fix Bootstrap Script to Install All Toolchains by Default
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Changed defaults, updated documentation, applied shfmt (commit f4aebf9)
+
+**Changes Made:**
+- Changed INSTALL_SHELL=true (was false)
+- Changed INSTALL_POWERSHELL=true (was false)  
+- Changed INSTALL_PERL=true (was false)
+- Updated script header documentation to reflect all toolchains installed by default
+- Updated show_usage() to clarify --all is now default behavior
+- Applied shfmt formatting to fix style violations
+- Ensures shfmt and all tools installed, allowing verification gate to pass cleanly
+
+**Verification:**
+- Bootstrap script exits with code 0
+- shfmt installed and available
+- Verification gate passes: "Exit Code: 0 (SUCCESS)"
+- All toolchains installed: Python, Shell, PowerShell, Perl, actionlint, ripgrep
+- repo-lint check --ci passes with proper environment setup
+
+**Known Issues/Follow-ups:**
+- None - bootstrap script compliance gate passing
+
+---
+
+### 2026-01-06 11:50 - Address Initial Review Comments
+**Files Changed:**
+- `rust/src/bootstrap_v2/executor.rs`: Removed unused _registry parameter (commit b214946)
+- `rust/src/bootstrap_v2/platform.rs`: Added documentation about limitations (commit b214946)
+- `rust/src/bootstrap_main.rs`: Removed unused progress reporter from handle_verify (commit b214946)
+
+**Changes Made:**
+- Removed unused `_registry` parameter from execute_plan() method
+- Added documentation to command_exists() about --version limitation
+- Added documentation to create_venv() about Unix-only platform support
+- Removed unused progress reporter from handle_verify() function
+- Applied cargo fmt formatting fixes
+
+**Verification:**
+- 59/59 tests passing
+- Zero compilation errors
+- Zero warnings
+- Binary functional
+
+---
 
 ### 2026-01-06 11:45 - Phase 10 Complete: Main Binary Entry Point
 **Files Changed:**
