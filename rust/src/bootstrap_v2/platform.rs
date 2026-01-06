@@ -1,14 +1,17 @@
-//! # Platform Abstractions
+//! # Unix/Linux Platform Abstractions
 //!
-//! Platform-specific utilities for virtual environment management, shell integration,
+//! Unix/Linux-specific utilities for virtual environment management, shell integration,
 //! and PATH manipulation.
 //!
 //! # Purpose
 //!
-//! Provides platform abstractions for Phase 8 of Issue #235, including:
+//! Provides Unix/Linux platform abstractions for Phase 8 of Issue #235, including:
 //! - Virtual environment creation and validation
 //! - Shell environment setup (PATH, VIRTUAL_ENV)
-//! - Platform-specific command execution helpers
+//! - Platform-specific command execution helpers for Unix-like systems
+//!
+//! **Note:** This v1 implementation supports Unix/Linux platforms only. Windows is
+//! explicitly not supported and will be added in a future version.
 //!
 //! # Examples
 //!
@@ -133,8 +136,11 @@ impl VenvInfo {
     pub fn prepend_to_path(&self, current_path: Option<&str>) -> String {
         let bin_dir = self.bin_path.display().to_string();
 
+        // Use platform-specific PATH separator: ':' on Unix, ';' on Windows
+        let sep = if cfg!(windows) { ';' } else { ':' };
+
         if let Some(path) = current_path {
-            format!("{}:{}", bin_dir, path)
+            format!("{}{}{}", bin_dir, sep, path)
         } else {
             bin_dir
         }
@@ -256,8 +262,9 @@ pub fn get_current_path() -> Option<String> {
 /// - "tool version 1.2.3" -> "1.2.3"
 pub fn parse_version_from_output(output: &str) -> Option<String> {
     // Try to find a semantic version pattern (X.Y.Z)
-    // Note: Regex is compiled on each call. For high-frequency usage,
-    // consider caching with once_cell::sync::Lazy
+    // Note: Regex is compiled on each call. For the expected usage of this
+    // helper, this is acceptable; callers that invoke it in tight loops
+    // should consider caching a compiled Regex at a higher level.
     let re = regex::Regex::new(r"(\d+\.\d+\.\d+)").ok()?;
     re.captures(output)
         .and_then(|caps| caps.get(1))

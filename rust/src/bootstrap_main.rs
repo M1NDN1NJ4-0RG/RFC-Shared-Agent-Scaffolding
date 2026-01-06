@@ -136,9 +136,9 @@ async fn handle_install(
     let registry = InstallerRegistry::new();
 
     // 7. Compute execution plan
-    progress.emit_event_plan_computed();
     let profile_name = profile.as_deref().unwrap_or("dev");
     let plan = ExecutionPlan::compute(&registry, config.as_ref(), ctx.as_ref(), profile_name).await?;
+    progress.emit_event_plan_computed();
 
     // Print plan in appropriate format
     if json {
@@ -253,7 +253,8 @@ async fn handle_verify(ci_mode: bool, json: bool, verbose_count: u8) -> anyhow::
     // 7. Run verify-only (no installs, no downloads)
     println!("🔍 Verifying installed tools...\n");
 
-    let tools = config.get_tools_for_profile("dev");
+    let profile = std::env::var("BOOTSTRAP_REPO_PROFILE").unwrap_or_else(|_| "dev".to_string());
+    let tools = config.get_tools_for_profile(&profile);
     let installers = registry.resolve_dependencies(&tools)?;
 
     let mut failed = false;
@@ -284,7 +285,8 @@ async fn find_repo_root() -> anyhow::Result<PathBuf> {
     let mut dir = current_dir.as_path();
 
     loop {
-        if dir.join(".git").exists() {
+        let git_path = dir.join(".git");
+        if git_path.is_dir() || git_path.is_file() {
             return Ok(dir.to_path_buf());
         }
 

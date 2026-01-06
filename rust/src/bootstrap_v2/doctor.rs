@@ -188,7 +188,11 @@ impl DiagnosticReport {
             .map(|c| {
                 serde_json::json!({
                     "name": c.name,
-                    "status": format!("{:?}", c.status),
+                    "status": match c.status {
+                        CheckStatus::Pass => "Pass",
+                        CheckStatus::Warn => "Warn",
+                        CheckStatus::Fail => "Fail",
+                    },
                     "message": c.message,
                     "remediation": c.remediation,
                 })
