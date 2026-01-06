@@ -1057,7 +1057,8 @@ install_powershell_tools() {
 				run_or_die 17 "Failed to update apt repositories for PowerShell prerequisites" sudo apt-get update
 				run_or_die 17 "Failed to install PowerShell prerequisites (wget, apt-transport-https, software-properties-common)" sudo apt-get install -y wget apt-transport-https software-properties-common
 
-				local ms_repo_url="https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+				local ms_repo_url
+				ms_repo_url="https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
 				log "Downloading Microsoft repository package from: $ms_repo_url"
 				run_or_die 17 "Failed to download Microsoft repository package from $ms_repo_url" wget -q "$ms_repo_url" -O "$deb_file"
 
