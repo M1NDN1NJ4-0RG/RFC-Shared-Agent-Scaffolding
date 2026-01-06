@@ -32,7 +32,7 @@ Related: Issue #235, PRs #240
   - Integration tests (bootstrap_tests.rs): **48 passed**
   - Conformance tests (conformance.rs): **31 passed, 4 ignored**
   - Integration tests (integration_tests.rs): **8 passed**
-  - **Total: 158 tests** (154 passed, 4 ignored, 0 failed)
+  - **Total: 162 tests** (158 passed, 4 ignored, 0 failed)
   - Doctests fail (26) but non-blocking (example code formatting issues)
 - Built release binary locally: `cargo build --release --bin bootstrap-repo-cli` (success)
 - Tested local binary:
