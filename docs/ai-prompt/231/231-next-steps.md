@@ -6,7 +6,7 @@ Last Updated: 2026-01-06
 Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## NEXT
-- Phase 2: Continue fixing fail-fast gaps (2.3, 2.4, 2.6, 2.7, 2.8)
+- Phase 2: Continue fixing fail-fast gaps (2.3, 2.4, 2.6, 2.7)
 - Phase 3: Consistency pass across entire script
 - Phase 4: Documentation updates
 - Phase 5: Verification and tests
@@ -15,6 +15,82 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 01:30 - Phase 2.8: Actionlint Fail-Fast Hardening
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Lines 1307-1370 (install_actionlint function)
+
+**Changes Made:**
+- Phase 2.8-A: Wrapped all actionlint install steps with run_or_die for deterministic exit code 20
+  - Line 1318: Wrapped Homebrew install - `run_or_die 20 "Failed to install actionlint via Homebrew" brew install actionlint`
+  - Line 1339: Wrapped apt-get update - `run_or_die 20 "Failed to update apt repositories for Go installation" sudo apt-get update -qq`
+  - Line 1340: Wrapped golang-go install - `run_or_die 20 "Failed to install golang-go via apt-get" sudo apt-get install -y golang-go`
+  - Line 1360: Wrapped go install - `run_or_die 20 "Failed to install actionlint via go install" go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10`
+- Phase 2.8-B: Improved PATH error messaging when actionlint not found after install
+  - Changed error message to show expected location: `$HOME/go/bin/actionlint`
+  - Shows explicit PATH export command users should run
+  - Clearer verification instructions
+- Consistency improvement: All actionlint version parsing now uses safe_version()
+  - Lines 1310, 1321, 1367: Changed from `actionlint -version 2>&1 | head -n 1` to `safe_version "actionlint -version"`
+  - Eliminates 3 more fragile version parsing pipelines
+
+**Rationale:**
+- All external commands that can fail now exit via die() with exit code 20
+- Prevents random apt-get/go install exit codes from propagating
+- Ensures failures are deterministic and clear
+- Better user guidance when PATH issues occur
+
+**Verification:**
+- shellcheck passed (exit 0)
+- shfmt passed (exit 0)
+
+**Next Steps:**
+- Phase 2.3, 2.4, 2.6, 2.7 remaining
+
+---
+
+### 2026-01-06 01:25 - Security Fix: Explicit Commands in safe_version()
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Lines 772-786 (Python tools case statement)
+
+**Changes Made:**
+- Addressed code review security concern about variable expansion in safe_version() calls
+- Refactored Python tools version parsing from pattern `safe_version "$tool --version"` to explicit case branches
+- Changed from:
+  ```bash
+  black | ruff | pylint | yamllint)
+      version=$(safe_version "$tool --version")
+  ```
+- To:
+  ```bash
+  black)
+      version=$(safe_version "black --version")
+      ;;
+  ruff)
+      version=$(safe_version "ruff --version")
+      ;;
+  pylint)
+      version=$(safe_version "pylint --version")
+      ;;
+  yamllint)
+      version=$(safe_version "yamllint --version")
+      ;;
+  ```
+- Now fully consistent with safe_version() security documentation: "Only use with trusted tool version commands"
+- Eliminates potential for accidental variable-expansion command injection pattern
+
+**Rationale:**
+- Prevents this usage pattern from being copied with untrusted variables
+- Makes code explicitly safe and consistent with security guidelines
+- Each command is now hardcoded and visible in the source
+
+**Verification:**
+- shellcheck passed (exit 0)
+- shfmt passed (exit 0)
+- Bootstrap passed (exit 0)
+- repo-lint check --ci passed (exit 0)
+
+---
 
 ### 2026-01-06 01:20 - Phase 2.5: Safe Version Parsing
 **Files Changed:**
