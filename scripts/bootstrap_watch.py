@@ -69,11 +69,7 @@ def main():
         )
         # Filter out Go module download noise
         go_download_pattern = re.compile(r"^go: downloading ")
-        lines = [
-            line
-            for line in lines
-            if not tar_warning_pattern.match(line) and not go_download_pattern.match(line)
-        ]
+        lines = [line for line in lines if not tar_warning_pattern.match(line) and not go_download_pattern.match(line)]
 
         # Pattern to match progress lines: [bootstrap] ... [N/M] ...
         re_prog = re.compile(r"^\[bootstrap\].*\[[0-9]+/[0-9]+\]")
