@@ -258,4 +258,52 @@ impl ProgressReporter {
     pub fn mode(&self) -> ProgressMode {
         self.mode
     }
+
+    /// Emit phase started event
+    pub fn emit_event_phase_started(&self, phase_name: &str) {
+        match self.mode {
+            ProgressMode::Interactive | ProgressMode::Ci => {
+                println!(
+                    "[{}] Phase: {}",
+                    chrono::Utc::now().format("%H:%M:%S"),
+                    phase_name
+                );
+            }
+            ProgressMode::Json => {
+                let event = serde_json::json!({
+                    "type": "PhaseStarted",
+                    "phase": phase_name,
+                });
+                println!("{}", serde_json::to_string(&event).unwrap());
+            }
+        }
+    }
+
+    /// Emit phase completed event
+    pub fn emit_event_phase_completed(&self, phase_name: &str, duration: std::time::Duration) {
+        match self.mode {
+            ProgressMode::Interactive | ProgressMode::Ci => {
+                println!(
+                    "[{}] Phase {} completed in {:?}",
+                    chrono::Utc::now().format("%H:%M:%S"),
+                    phase_name,
+                    duration
+                );
+            }
+            ProgressMode::Json => {
+                let event = serde_json::json!({
+                    "type": "PhaseCompleted",
+                    "phase": phase_name,
+                    "duration_ms": duration.as_millis(),
+                });
+                println!("{}", serde_json::to_string(&event).unwrap());
+            }
+        }
+    }
+
+    /// Create reporter for testing
+    #[cfg(test)]
+    pub fn new_for_testing() -> Self {
+        Self::new(ProgressMode::Ci)
+    }
 }

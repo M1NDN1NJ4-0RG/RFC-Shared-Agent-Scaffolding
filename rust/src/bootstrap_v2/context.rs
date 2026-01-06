@@ -177,16 +177,16 @@ pub struct Context {
     pub verbosity: Verbosity,
 
     /// Progress reporter
-    pub progress: Arc<ProgressReporter>,
+    pub progress: Option<Arc<ProgressReporter>>,
 
     /// Configuration
     pub config: Arc<Config>,
 
     /// CI mode
-    pub ci_mode: bool,
+    pub is_ci: bool,
 
     /// Number of parallel jobs
-    pub jobs: usize,
+    pub max_jobs: usize,
 
     /// Offline mode (no network)
     pub offline: bool,
@@ -204,7 +204,7 @@ impl Context {
         dry_run: bool,
     ) -> Self {
         let venv_path = repo_root.join(".venv");
-        let progress = Arc::new(ProgressReporter::new_auto());
+        let progress = Some(Arc::new(ProgressReporter::new_auto()));
         let config = Arc::new(Config::default());
         let package_manager_ops = Self::get_package_manager_ops(package_manager);
 
@@ -218,8 +218,8 @@ impl Context {
             verbosity: Verbosity::Normal,
             progress,
             config,
-            ci_mode: false,
-            jobs: Self::default_jobs(false),
+            is_ci: false,
+            max_jobs: Self::default_jobs(false),
             offline: false,
             allow_downgrade: false,
         }
@@ -233,7 +233,7 @@ impl Context {
         package_manager: PackageManager,
         dry_run: bool,
         verbosity: Verbosity,
-        progress: Arc<ProgressReporter>,
+        progress: Option<Arc<ProgressReporter>>,
         config: Arc<Config>,
         ci_mode: bool,
         jobs: Option<usize>,
@@ -254,8 +254,8 @@ impl Context {
             verbosity,
             progress,
             config,
-            ci_mode,
-            jobs,
+            is_ci: ci_mode,
+            max_jobs: jobs,
             offline,
             allow_downgrade,
         }
@@ -287,7 +287,7 @@ impl Context {
 
     /// Check if running in CI mode
     pub fn is_ci(&self) -> bool {
-        self.ci_mode
+        self.is_ci
     }
 
     /// Get venv python path
@@ -303,6 +303,54 @@ impl Context {
     /// Get repo-lint binary path
     pub fn repo_lint_bin(&self) -> PathBuf {
         self.venv_path.join("bin").join("repo-lint")
+    }
+
+    /// Create context for testing
+    #[cfg(test)]
+    pub fn new_for_testing(repo_root: PathBuf, dry_run: bool, config: Arc<Config>) -> Self {
+        let os = OsType::detect();
+        let package_manager = PackageManager::detect(os);
+        let progress = Some(Arc::new(ProgressReporter::new_for_testing()));
+
+        Self::with_config(
+            repo_root,
+            os,
+            package_manager,
+            dry_run,
+            Verbosity::Normal,
+            progress,
+            config,
+            false,
+            Some(2),
+            false,
+            false,
+        )
+    }
+
+    /// Create context with progress for testing
+    #[cfg(test)]
+    pub fn new_with_progress_for_testing(
+        repo_root: PathBuf,
+        dry_run: bool,
+        config: Arc<Config>,
+        progress: Arc<ProgressReporter>,
+    ) -> Self {
+        let os = OsType::detect();
+        let package_manager = PackageManager::detect(os);
+
+        Self::with_config(
+            repo_root,
+            os,
+            package_manager,
+            dry_run,
+            Verbosity::Normal,
+            Some(progress),
+            config,
+            false,
+            Some(2),
+            false,
+            false,
+        )
     }
 }
 

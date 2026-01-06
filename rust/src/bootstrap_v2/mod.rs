@@ -29,6 +29,7 @@ pub mod cli;
 pub mod config;
 pub mod context;
 pub mod errors;
+pub mod executor;
 pub mod exit_codes;
 pub mod installer;
 pub mod installers;
