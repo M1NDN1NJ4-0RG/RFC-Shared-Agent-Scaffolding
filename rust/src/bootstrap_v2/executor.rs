@@ -98,21 +98,16 @@ impl Executor {
         }
     }
 
-    /// Execute plan with installer registry
+    /// Execute plan using the internal installer registry
     ///
     /// # Arguments
     ///
     /// * `plan` - Execution plan to run
-    /// * `registry` - Installer registry with all installers
     ///
     /// # Returns
     ///
     /// Vector of step results for all steps in all phases
-    pub async fn execute_plan(
-        &self,
-        plan: &ExecutionPlan,
-        _registry: &InstallerRegistry,
-    ) -> BootstrapResult<Vec<StepResult>> {
+    pub async fn execute_plan(&self, plan: &ExecutionPlan) -> BootstrapResult<Vec<StepResult>> {
         // Use the internal registry
         self.execute(plan).await
     }

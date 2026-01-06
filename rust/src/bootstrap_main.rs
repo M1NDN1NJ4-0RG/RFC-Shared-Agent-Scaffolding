@@ -80,7 +80,7 @@ async fn handle_command(cli: Cli) -> anyhow::Result<ExitCode> {
             .await
         }
         Commands::Doctor { strict } => handle_doctor(strict, cli.ci, cli.json).await,
-        Commands::Verify => handle_verify(cli.ci, cli.json, cli.verbose).await,
+        Commands::Verify => handle_verify(cli.ci, cli.verbose).await,
     }
 }
 
@@ -137,7 +137,8 @@ async fn handle_install(
 
     // 7. Compute execution plan
     let profile_name = profile.as_deref().unwrap_or("dev");
-    let plan = ExecutionPlan::compute(&registry, config.as_ref(), ctx.as_ref(), profile_name).await?;
+    let plan =
+        ExecutionPlan::compute(&registry, config.as_ref(), ctx.as_ref(), profile_name).await?;
     progress.emit_event_plan_computed();
 
     // Print plan in appropriate format
@@ -152,7 +153,7 @@ async fn handle_install(
     let executor = Executor::new(ctx.clone(), lock_manager);
 
     // 9. Execute the plan (detect → install → verify)
-    let results = executor.execute_plan(&plan, &registry).await?;
+    let results = executor.execute_plan(&plan).await?;
 
     // 10. Check for failures
     let failed = results.iter().any(|r| !r.success);
@@ -209,7 +210,7 @@ async fn handle_doctor(strict: bool, ci_mode: bool, json: bool) -> anyhow::Resul
     Ok(exit_code)
 }
 
-async fn handle_verify(ci_mode: bool, json: bool, verbose_count: u8) -> anyhow::Result<ExitCode> {
+async fn handle_verify(ci_mode: bool, verbose_count: u8) -> anyhow::Result<ExitCode> {
     // 1. Find repository root
     let repo_root = find_repo_root().await?;
 
@@ -220,18 +221,7 @@ async fn handle_verify(ci_mode: bool, json: bool, verbose_count: u8) -> anyhow::
     // 3. Load configuration
     let config = Arc::new(Config::load(&repo_root, ci_mode)?);
 
-    // 4. Setup progress reporter
-    let progress_mode = if json {
-        ProgressMode::Json
-    } else if ci_mode {
-        ProgressMode::Ci
-    } else {
-        // Default to Interactive when not in CI or JSON mode
-        ProgressMode::Interactive
-    };
-    let progress = Arc::new(ProgressReporter::new(progress_mode));
-
-    // 5. Create execution context
+    // 4. Create minimal execution context (no progress reporter needed for verify)
     let verbosity = Verbosity::from_count(verbose_count);
     let ctx = Arc::new(Context::with_config(
         repo_root.clone(),
@@ -239,7 +229,7 @@ async fn handle_verify(ci_mode: bool, json: bool, verbose_count: u8) -> anyhow::
         package_manager,
         false, // verify is never dry-run
         verbosity,
-        Some(progress.clone()),
+        None, // No progress reporter - verify prints directly
         config.clone(),
         ci_mode,
         None,
@@ -247,10 +237,10 @@ async fn handle_verify(ci_mode: bool, json: bool, verbose_count: u8) -> anyhow::
         false,
     ));
 
-    // 6. Initialize installer registry
+    // 5. Initialize installer registry
     let registry = InstallerRegistry::new();
 
-    // 7. Run verify-only (no installs, no downloads)
+    // 6. Run verify-only (no installs, no downloads)
     println!("🔍 Verifying installed tools...\n");
 
     let profile = std::env::var("BOOTSTRAP_REPO_PROFILE").unwrap_or_else(|_| "dev".to_string());
@@ -261,7 +251,14 @@ async fn handle_verify(ci_mode: bool, json: bool, verbose_count: u8) -> anyhow::
     for installer in installers {
         let result = installer.verify(ctx.as_ref()).await?;
         if result.success {
-            println!("✅ {}: {}", installer.name(), result.version.map(|v| v.to_string()).unwrap_or_else(|| "OK".to_string()));
+            println!(
+                "✅ {}: {}",
+                installer.name(),
+                result
+                    .version
+                    .map(|v| v.to_string())
+                    .unwrap_or_else(|| "OK".to_string())
+            );
         } else {
             println!("❌ {}: FAILED", installer.name());
             for issue in &result.issues {
@@ -290,9 +287,7 @@ async fn find_repo_root() -> anyhow::Result<PathBuf> {
             return Ok(dir.to_path_buf());
         }
 
-        dir = dir
-            .parent()
-            .ok_or_else(|| BootstrapError::NotInRepo)?;
+        dir = dir.parent().ok_or_else(|| BootstrapError::NotInRepo)?;
     }
 }
 

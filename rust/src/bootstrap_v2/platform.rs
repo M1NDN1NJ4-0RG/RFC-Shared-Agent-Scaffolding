@@ -149,6 +149,14 @@ impl VenvInfo {
 
 /// Create a Python virtual environment
 ///
+/// # Platform Support
+///
+/// This function is designed for Unix/Linux platforms and uses Unix-specific paths:
+/// - Uses `bin/` subdirectory for executables (not `Scripts/` as on Windows)
+/// - Uses `python3` and `pip` executable names (not `.exe` extensions)
+///
+/// Windows support is explicitly excluded in v1 of this implementation.
+///
 /// # Arguments
 ///
 /// * `venv_path` - Path where venv should be created
@@ -213,7 +221,10 @@ pub async fn create_venv(venv_path: &Path, dry_run: bool) -> Result<VenvInfo> {
 /// Returns error if pip upgrade fails
 pub async fn upgrade_pip(venv_info: &VenvInfo, dry_run: bool) -> Result<()> {
     if dry_run {
-        println!("[DRY-RUN] Would upgrade pip in: {}", venv_info.venv_path.display());
+        println!(
+            "[DRY-RUN] Would upgrade pip in: {}",
+            venv_info.venv_path.display()
+        );
         return Ok(());
     }
 
@@ -240,6 +251,16 @@ pub async fn upgrade_pip(venv_info: &VenvInfo, dry_run: bool) -> Result<()> {
 }
 
 /// Check if a command exists in PATH
+///
+/// # Implementation Note
+///
+/// This function checks command existence by attempting to execute it with `--version`.
+/// This approach works for most standard CLI tools but may produce false negatives for:
+/// - Commands that don't support `--version` (use `-v`, `-V`, `--help`, or no args)
+/// - Commands that are valid but fail with non-zero exit for `--version`
+///
+/// For more robust existence checking, callers requiring higher accuracy should use
+/// platform-specific methods like `which` or PATH scanning.
 pub fn command_exists(cmd: &str) -> bool {
     std::process::Command::new(cmd)
         .arg("--version")
