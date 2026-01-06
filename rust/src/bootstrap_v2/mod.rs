@@ -38,5 +38,6 @@ pub mod installers;
 pub mod lock;
 pub mod package_manager;
 pub mod plan;
+pub mod platform;
 pub mod progress;
 pub mod retry;
