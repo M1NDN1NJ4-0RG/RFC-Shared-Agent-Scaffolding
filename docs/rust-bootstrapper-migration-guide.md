@@ -363,7 +363,7 @@ export BOOTSTRAP_FORCE_LEGACY=1
 - Run `bootstrap-repo-cli --help` for command documentation
 - Use `bootstrap-repo-cli doctor` for diagnostics
 - Check the [GitHub issues](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues) for known problems
-- See the [Rust Bootstrapper User Manual](RUST_BOOTSTRAPPER_MANUAL.md) for detailed documentation
+- See the [Rust Bootstrapper User Manual](rust-bootstrapper-manual.md) for detailed documentation
 
 ## Feedback
 

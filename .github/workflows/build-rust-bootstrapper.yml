@@ -1,3 +1,35 @@
+# Workflow: Build and Release Rust Bootstrapper
+#
+# Purpose:
+#   Build multi-platform binaries for the Rust bootstrapper and create GitHub releases.
+#   Produces static binaries for Linux (musl) and macOS (x86_64 and ARM64).
+#
+# Triggers:
+#   - Tag push matching 'bootstrap-v*' (e.g., bootstrap-v1.0.0)
+#   - Manual dispatch via workflow_dispatch
+#
+# Inputs:
+#   create_release (workflow_dispatch): Whether to create a GitHub Release (default: false)
+#
+# Outputs:
+#   - GitHub Release with binaries and checksums (on tag push or manual dispatch)
+#   - Artifacts: bootstrap-repo-cli-linux-x86_64, bootstrap-repo-cli-macos-x86_64, bootstrap-repo-cli-macos-arm64
+#
+# Dependencies:
+#   - Rust toolchain (stable)
+#   - musl-tools (Linux builds)
+#   - actions/checkout@v4
+#   - actions-rust-lang/setup-rust-toolchain@v1
+#   - actions/upload-artifact@v4
+#   - actions/download-artifact@v4
+#   - softprops/action-gh-release@v2
+#
+# Notes:
+#   - Binaries are stripped to reduce size
+#   - SHA256 checksums are generated for all artifacts
+#   - Release creation requires GITHUB_TOKEN with contents:write permission
+#   - Test job verifies binary execution and checksum validation
+
 name: Build and Release Rust Bootstrapper
 
 on:
