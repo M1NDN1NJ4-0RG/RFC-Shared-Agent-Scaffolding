@@ -6,7 +6,7 @@ Last Updated: 2026-01-06
 Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## NEXT
-- Phase 2: Continue fixing fail-fast gaps (2.3-2.8)
+- Phase 2: Continue fixing fail-fast gaps (2.3, 2.4, 2.6, 2.7, 2.8)
 - Phase 3: Consistency pass across entire script
 - Phase 4: Documentation updates
 - Phase 5: Verification and tests
@@ -15,6 +15,36 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 01:20 - Phase 2.5: Safe Version Parsing
+**Files Changed:**
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Lines 772-776 (Python tools), 830 (ripgrep), 912/921/935 (shellcheck), 1049/1066/1079 (PowerShell)
+
+**Changes Made:**
+- Phase 2.5: Replaced all fragile version parsing pipelines with safe_version() helper
+  - Python tools (black, ruff, pylint, yamllint, pytest): Changed from `$tool --version 2>&1 | head -n1` to `safe_version "$tool --version"`
+  - ripgrep: Changed from `rg --version | head -n1` to `safe_version "rg --version"`
+  - shellcheck (3 locations): Changed from `shellcheck --version | grep "^version:" | awk '{print $2}'` to `safe_version "shellcheck --version" "^version:" 2`
+  - PowerShell (3 locations): Changed from `pwsh --version 2>&1 | head -n1` to `safe_version "pwsh --version"`
+  - All version parsing now uses the safe_version() helper introduced in Phase 1.3
+  - Version parsing failures can no longer terminate the bootstrap (pipefail-safe)
+  - Empty string returned on parse failure rather than script termination
+
+**Rationale:**
+- Prevents fragile logging pipelines from killing the bootstrap run
+- Makes the script more robust - version display is informational, not critical
+- Uses the safe_version() helper function that ensures exit 0 even on parse failures
+- Addresses Phase 2.5 requirement: "Logging cannot terminate bootstrap"
+
+**Verification:**
+- shellcheck passed (exit 0)
+- shfmt passed (exit 0, no formatting needed)
+- All 9 version parsing call sites updated consistently
+
+**Next Steps:**
+- Continue with Phase 2.3, 2.4, 2.6, 2.7, 2.8 as time permits
+
+---
 
 ### 2026-01-06 01:10 - Address Code Review Feedback
 **Files Changed:**
