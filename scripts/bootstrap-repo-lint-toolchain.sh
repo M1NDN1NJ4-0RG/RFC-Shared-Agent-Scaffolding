@@ -770,10 +770,10 @@ install_python_tools() {
 				local version
 				case "$tool" in
 				black | ruff | pylint | yamllint)
-					version=$($tool --version 2>&1 | head -n1)
+					version=$(safe_version "$tool --version")
 					;;
 				pytest)
-					version=$(pytest --version 2>&1 | head -n1)
+					version=$(safe_version "pytest --version")
 					;;
 				esac
 				log "  ✓ $tool installed: $version"
@@ -827,7 +827,7 @@ install_rgrep() {
 	# Check if ripgrep (rg) is already installed
 	if command -v rg >/dev/null 2>&1; then
 		local version
-		version=$(rg --version | head -n1)
+		version=$(safe_version "rg --version")
 		log "  ✓ ripgrep is already installed: $version"
 		return 0
 	fi
@@ -909,7 +909,7 @@ install_shell_tools() {
 	log "Installing shellcheck..."
 	if command -v shellcheck >/dev/null 2>&1; then
 		local version
-		version=$(shellcheck --version | grep "^version:" | awk '{print $2}')
+		version=$(safe_version "shellcheck --version" "^version:" 2)
 		log "  ✓ shellcheck already installed: version $version"
 	else
 		# Attempt to install shellcheck
@@ -918,7 +918,7 @@ install_shell_tools() {
 				log "Installing shellcheck via apt-get..."
 				if sudo apt-get update -qq && sudo apt-get install -y shellcheck; then
 					local version
-					version=$(shellcheck --version | grep "^version:" | awk '{print $2}')
+					version=$(safe_version "shellcheck --version" "^version:" 2)
 					log "  ✓ shellcheck installed: version $version"
 				else
 					warn "  ✗ Failed to install shellcheck via apt-get"
@@ -932,7 +932,7 @@ install_shell_tools() {
 			log "Installing shellcheck via brew..."
 			if brew install shellcheck; then
 				local version
-				version=$(shellcheck --version | grep "^version:" | awk '{print $2}')
+				version=$(safe_version "shellcheck --version" "^version:" 2)
 				log "  ✓ shellcheck installed: version $version"
 			else
 				warn "  ✗ Failed to install shellcheck via brew"
@@ -1046,7 +1046,7 @@ install_powershell_tools() {
 	# Install pwsh (PowerShell)
 	if command -v pwsh >/dev/null 2>&1; then
 		local pwsh_version
-		pwsh_version=$(pwsh --version 2>&1 | head -n1)
+		pwsh_version=$(safe_version "pwsh --version")
 		log "  ✓ pwsh already installed: $pwsh_version"
 	else
 		log "Installing pwsh..."
@@ -1063,7 +1063,7 @@ install_powershell_tools() {
 
 				if command -v pwsh >/dev/null 2>&1; then
 					local pwsh_version
-					pwsh_version=$(pwsh --version 2>&1 | head -n1)
+					pwsh_version=$(safe_version "pwsh --version")
 					log "  ✓ pwsh installed: $pwsh_version"
 				else
 					failed_tools+=("pwsh")
@@ -1076,7 +1076,7 @@ install_powershell_tools() {
 			brew install --cask powershell
 			if command -v pwsh >/dev/null 2>&1; then
 				local pwsh_version
-				pwsh_version=$(pwsh --version 2>&1 | head -n1)
+				pwsh_version=$(safe_version "pwsh --version")
 				log "  ✓ pwsh installed: $pwsh_version"
 			else
 				failed_tools+=("pwsh")
