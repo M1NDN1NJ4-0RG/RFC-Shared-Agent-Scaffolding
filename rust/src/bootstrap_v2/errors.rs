@@ -77,6 +77,18 @@ pub enum BootstrapError {
     #[error("Python tools failed: {0}")]
     PythonToolsFailed(String),
 
+    /// Shell toolchain failed
+    #[error("Shell toolchain failed: {0}")]
+    ShellToolchainFailed(String),
+
+    /// PowerShell toolchain failed
+    #[error("PowerShell toolchain failed: {0}")]
+    PowerShellToolchainFailed(String),
+
+    /// Perl toolchain failed
+    #[error("Perl toolchain failed: {0}")]
+    PerlToolchainFailed(String),
+
     /// Verification failed
     #[error("Verification failed: {0}")]
     VerificationFailed(String),
@@ -152,6 +164,9 @@ impl BootstrapError {
             Self::RepoLintUpgradeFailed(_) => ExitCode::RepoLintUpgradeFailed,
             Self::RepoLintInstallFailed(_) => ExitCode::RepoLintInstallFailed,
             Self::PythonToolsFailed(_) => ExitCode::PythonToolsFailed,
+            Self::ShellToolchainFailed(_) => ExitCode::ShellToolchainFailed,
+            Self::PowerShellToolchainFailed(_) => ExitCode::PowerShellToolchainFailed,
+            Self::PerlToolchainFailed(_) => ExitCode::PerlToolchainFailed,
             Self::VerificationFailed(_) => ExitCode::VerificationFailed,
             Self::InstallFailed { tool, .. } => {
                 // Map tool-specific failures to appropriate exit codes

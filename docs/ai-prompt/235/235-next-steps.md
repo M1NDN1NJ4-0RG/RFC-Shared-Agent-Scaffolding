@@ -2,26 +2,88 @@ MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL RE
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 235 AI Journal
 Status: In Progress
-Last Updated: 2026-01-06 14:30 UTC
+Last Updated: 2026-01-06 17:40 UTC
 Related: Issue #235, PRs #240
 
 ## NEXT
-- Additional installers to reach full coverage (Rust implementation)
-  - Perl tools installer (perlcritic, PPI)
-  - PowerShell tools installer (pwsh, PSScriptAnalyzer)
-  - Any missing shell/Python tools
-- Integration tests (Rust implementation)
-  - Test full install flow in dry-run mode
-  - Test checkpoint save/load/resume
-  - Test doctor command end-to-end
-  - Test verify-only mode end-to-end
-- Bash wrapper migration script (Phase 10.1 from EPIC)
-- Performance benchmarking and optimization
-- Binary distribution and release setup
+- Performance benchmarking and optimization (Phase 11)
+  - Benchmark Rust vs Bash execution times
+  - Identify bottlenecks
+  - Optimize parallel execution
+- Binary distribution and release setup (Phase 11)
+  - CI workflow for building release binaries
+  - Multi-platform builds (Linux x86_64, macOS x86_64/arm64)
+  - Release artifact publishing
+- Documentation updates
+  - Update user manual for Rust bootstrapper
+  - Migration guide for users
+  - Developer documentation
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-06 17:40 - Complete Missing Installers, Integration Tests, Bash Wrapper
+**Files Changed:**
+- `rust/src/bootstrap_v2/installers/perl_tools.rs`: NEW - Perl::Critic and PPI installers (commit e983aa8)
+- `rust/src/bootstrap_v2/installers/powershell_tools.rs`: NEW - pwsh and PSScriptAnalyzer installers (commit e983aa8)
+- `rust/src/bootstrap_v2/installers/mod.rs`: Updated registry to include 4 new installers (commit e983aa8)
+- `rust/src/bootstrap_v2/errors.rs`: Added ShellToolchainFailed, PowerShellToolchainFailed, PerlToolchainFailed error variants (commit e983aa8)
+- `rust/tests/integration_tests.rs`: NEW - Comprehensive integration test suite with 8 tests (commit 951db7c)
+- `scripts/bootstrap-wrapper.sh`: NEW - Bash wrapper for Rust binary migration (commits 6394e38, 39297e1)
+- `docs/ai-prompt/235/235-next-steps.md`: Updated journal with session progress
+
+**Changes Made:**
+- Perl Tools Installers:
+  - PerlCriticInstaller: Installs Perl::Critic via cpanm to ~/perl5, detects version via `perlcritic --version`
+  - PPIInstaller: Installs PPI library via cpanm, detects via `perl -MPPI -e 'print $PPI::VERSION'`
+  - Both marked as non-concurrency-safe (cpanm behavior)
+  - Proper error handling with PerlToolchainFailed variant
+- PowerShell Tools Installers:
+  - PwshInstaller: Installs PowerShell Core via Homebrew or snap, detects via `pwsh -Version`
+  - PSScriptAnalyzerInstaller: Installs PSScriptAnalyzer module via `Install-Module`, depends on pwsh
+  - Snap installation on Linux with --classic flag
+  - Proper error handling with PowerShellToolchainFailed variant
+- Error Variants:
+  - Added 3 new error variants matching exit codes from Phase 1.2
+  - Updated exit_code() method to map new variants correctly
+- Integration Tests (8 total, all passing):
+  - test_full_install_flow_dry_run: Tests individual installer dry-run mode
+  - test_checkpoint_save_load_resume: Tests checkpoint persistence and validation
+  - test_doctor_command_execution: Tests doctor diagnostics end-to-end
+  - test_verify_only_mode: Tests verify without install
+  - test_plan_phases_structure: Validates 3-phase plan structure (Detection/Installation/Verification)
+  - test_registry_has_all_installers: Verifies all 13 tools registered
+  - test_dependency_resolution: Tests PSScriptAnalyzer → pwsh dependency ordering
+  - test_plan_to_json: Tests JSON serialization
+- Bash Wrapper Script:
+  - Resolution order: $BOOTSTRAP_BIN → .bootstrap/bin/bootstrap → target/release/bootstrap-repo-cli → legacy
+  - BOOTSTRAP_FORCE_LEGACY=1 escape hatch for legacy Bash version
+  - Clear error messages when no binary found
+  - Proper shfmt formatting and complete docstring (Usage, Inputs, Outputs)
+  - Executable permissions set
+
+**Verification:**
+- All 63 unit tests passing (lib tests)
+- All 8 integration tests passing
+- cargo build successful (0 errors, 0 warnings)
+- cargo fmt applied
+- clippy clean
+- repo-lint check --ci **not run successfully before commit** (CI later reported bash-docstrings failures for `scripts/bootstrap-wrapper.sh`)
+- Docstrings validation with `scripts/validate_docstrings.py` **not completed before commit** (bash-docstrings for `scripts/bootstrap-wrapper.sh` failed in CI)
+
+**Architecture Notes:**
+- Total 13 installers now registered: ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt, perlcritic, ppi, pwsh, psscriptanalyzer
+- Integration tests use tempfile for isolated test environments
+- Tests properly use safe_run:: module path for imports
+- Wrapper script is backwards-compatible transition mechanism
+
+**Known Issues/Follow-ups:**
+- Performance benchmarking not started (next phase)
+- Binary distribution/release setup not started (next phase)
+- Documentation updates pending
+
+---
 
 ### 2026-01-06 14:30 - Bash Bootstrapper Progress UI Implementation + Documentation Update
 **Files Changed:**
