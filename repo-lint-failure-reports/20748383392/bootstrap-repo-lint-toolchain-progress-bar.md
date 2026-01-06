@@ -150,4 +150,33 @@ This escape hatch exists to **preserve momentum**, not reduce ambition.
 
 ---
 
+## FINAL HARD REQUIRED PHASE — DOCUMENTATION UPDATE (DO NOT SKIP)
+
+After the script changes are complete and **only after** `./scripts/bootstrap-repo-lint-toolchain.sh` exits cleanly, you MUST update:
+
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`
+
+This documentation MUST be brought to parity with the **current** behavior of `scripts/bootstrap-repo-lint-toolchain.sh` (as modified in this session), including:
+
+- New **default-on progress UI** behavior (TTY vs non-TTY/CI)
+- `--verbose` behavior and how it interacts with the progress bar
+- Environment controls:
+  - `CI`
+  - `NO_COLOR`
+- Any flags supported by the script (add/update/remove docs as needed)
+- The **actual step model** (real steps the script runs today), including the final verification gate
+- At least **one** example for each:
+  - Interactive run (TTY)
+  - CI run (non-TTY)
+  - `--verbose` run
+
+### Documentation acceptance criteria (HARD)
+- The manual accurately reflects **the exact current script output contract**
+- No stale references to previous behavior
+- No “future work” or “TODO” placeholders for anything implemented in this session
+
+Only after the manual is updated and consistent with the script, the session is considered complete.
+
+---
+
 🚀 **BEGIN IMPLEMENTATION IMMEDIATELY.**
