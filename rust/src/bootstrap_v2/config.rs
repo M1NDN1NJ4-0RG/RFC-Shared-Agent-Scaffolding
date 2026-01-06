@@ -25,6 +25,41 @@ pub struct Config {
     pub tools: HashMap<String, ToolConfig>,
 }
 
+impl Config {
+    /// Get required tools for current profile (defaults to "dev")
+    pub fn get_required_tools(&self) -> Vec<&str> {
+        // For now, return a default set of tools
+        // TODO: Add profile selection based on CLI args
+        vec![
+            "ripgrep",
+            "python-black",
+            "python-ruff",
+            "python-pylint",
+            "yamllint",
+            "pytest",
+            "actionlint",
+            "shellcheck",
+            "shfmt",
+        ]
+    }
+
+    /// Resolve tools for a specific profile
+    pub fn resolve_tools(&self, profile: &str, overrides: &[String]) -> Vec<String> {
+        let mut tools = if let Some(prof) = self.profiles.get(profile) {
+            prof.tools.clone()
+        } else {
+            // Default tools if profile not found
+            self.get_required_tools()
+                .into_iter()
+                .map(|s| s.to_string())
+                .collect()
+        };
+
+        tools.extend_from_slice(overrides);
+        tools
+    }
+}
+
 /// Profile configuration
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Profile {

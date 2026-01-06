@@ -245,3 +245,113 @@ impl Installer for PylintInstaller {
         }
     }
 }
+
+/// yamllint installer
+pub struct YamllintInstaller;
+
+#[async_trait]
+impl Installer for YamllintInstaller {
+    fn id(&self) -> &'static str {
+        "yamllint"
+    }
+
+    fn name(&self) -> &'static str {
+        "yamllint"
+    }
+
+    fn description(&self) -> &'static str {
+        "YAML linter"
+    }
+
+    fn concurrency_safe(&self) -> bool {
+        false
+    }
+
+    async fn detect(&self, ctx: &Context) -> BootstrapResult<Option<Version>> {
+        detect_python_tool(ctx, "yamllint").await
+    }
+
+    async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
+        pip_install(ctx, "yamllint").await?;
+
+        let version = self.detect(ctx).await?.ok_or_else(|| {
+            BootstrapError::PythonToolsFailed("yamllint install verification failed".to_string())
+        })?;
+
+        Ok(InstallResult {
+            version,
+            installed_new: true,
+            log_messages: vec!["yamllint installed successfully".to_string()],
+        })
+    }
+
+    async fn verify(&self, ctx: &Context) -> BootstrapResult<VerifyResult> {
+        match self.detect(ctx).await? {
+            Some(version) => Ok(VerifyResult {
+                success: true,
+                version: Some(version),
+                issues: vec![],
+            }),
+            None => Ok(VerifyResult {
+                success: false,
+                version: None,
+                issues: vec!["yamllint not found".to_string()],
+            }),
+        }
+    }
+}
+
+/// pytest installer
+pub struct PytestInstaller;
+
+#[async_trait]
+impl Installer for PytestInstaller {
+    fn id(&self) -> &'static str {
+        "pytest"
+    }
+
+    fn name(&self) -> &'static str {
+        "pytest"
+    }
+
+    fn description(&self) -> &'static str {
+        "Python testing framework"
+    }
+
+    fn concurrency_safe(&self) -> bool {
+        false
+    }
+
+    async fn detect(&self, ctx: &Context) -> BootstrapResult<Option<Version>> {
+        detect_python_tool(ctx, "pytest").await
+    }
+
+    async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
+        pip_install(ctx, "pytest").await?;
+
+        let version = self.detect(ctx).await?.ok_or_else(|| {
+            BootstrapError::PythonToolsFailed("pytest install verification failed".to_string())
+        })?;
+
+        Ok(InstallResult {
+            version,
+            installed_new: true,
+            log_messages: vec!["pytest installed successfully".to_string()],
+        })
+    }
+
+    async fn verify(&self, ctx: &Context) -> BootstrapResult<VerifyResult> {
+        match self.detect(ctx).await? {
+            Some(version) => Ok(VerifyResult {
+                success: true,
+                version: Some(version),
+                issues: vec![],
+            }),
+            None => Ok(VerifyResult {
+                success: false,
+                version: None,
+                issues: vec!["pytest not found".to_string()],
+            }),
+        }
+    }
+}

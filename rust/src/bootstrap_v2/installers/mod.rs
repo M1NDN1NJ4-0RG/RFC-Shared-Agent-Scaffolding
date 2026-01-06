@@ -16,8 +16,11 @@
 //! let installers = registry.resolve_dependencies(&["ripgrep", "python-black"]).unwrap();
 //! ```
 
+pub mod actionlint;
 pub mod python_tools;
 pub mod ripgrep;
+pub mod shellcheck;
+pub mod shfmt;
 
 use crate::bootstrap_v2::errors::BootstrapResult;
 use crate::bootstrap_v2::installer::Installer;
@@ -41,6 +44,11 @@ impl InstallerRegistry {
         registry.register(Arc::new(python_tools::BlackInstaller));
         registry.register(Arc::new(python_tools::RuffInstaller));
         registry.register(Arc::new(python_tools::PylintInstaller));
+        registry.register(Arc::new(python_tools::YamllintInstaller));
+        registry.register(Arc::new(python_tools::PytestInstaller));
+        registry.register(Arc::new(actionlint::ActionlintInstaller));
+        registry.register(Arc::new(shellcheck::ShellcheckInstaller));
+        registry.register(Arc::new(shfmt::ShfmtInstaller));
 
         registry
     }
