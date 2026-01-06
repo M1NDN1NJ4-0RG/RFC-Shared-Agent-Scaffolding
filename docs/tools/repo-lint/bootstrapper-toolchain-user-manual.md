@@ -134,7 +134,7 @@ shfmt --version
 | 0    | Success - all operations completed |
 | 1    | Generic failure |
 | 10   | Repository root not found |
-| 11   | Virtual environment creation failed |
+| 11   | Virtual environment creation or activation failed |
 | 12   | No valid install target (missing pyproject.toml) |
 | 13   | repo-lint not found on PATH after installation |
 | 14   | repo-lint --help command failed |

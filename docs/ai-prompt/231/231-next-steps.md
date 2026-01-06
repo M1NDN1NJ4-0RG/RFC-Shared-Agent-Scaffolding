@@ -16,6 +16,37 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## DONE (EXTREMELY DETAILED)
 
+### 2026-01-06 01:10 - Address Code Review Feedback
+**Files Changed:**
+- `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: Line 137
+- `scripts/bootstrap-repo-lint-toolchain.sh`: Lines 268-271, 658-661
+
+**Changes Made:**
+- Review Comment 1: Updated exit code 11 description in manual
+  - Changed from "Virtual environment creation failed"
+  - To: "Virtual environment creation or activation failed"
+  - Accurately reflects Phase 2.1 changes where activation mismatch now dies with exit 11
+- Review Comment 2: Added security documentation to safe_version()
+  - Added SECURITY warning in docstring (lines 268-271)
+  - Clarified that $1 must be a trusted tool command, not untrusted input
+  - Added inline comment at $cmd execution warning about direct execution
+  - Function is only called with known tool version commands (shellcheck, actionlint, etc.)
+- Review Comment 3: Documented exit code 13 decision for pip upgrade
+  - Added durable note explaining why pip upgrade uses exit code 13 (lines 658-661)
+  - Rationale: pip upgrade is part of repo-lint installation process
+  - Error message is clear, separate exit code not necessary
+  - Maintains consistency with existing exit code scheme
+
+**Verification:**
+- shellcheck passed (exit 0)
+- shfmt passed (exit 0, no formatting changes needed)
+- All review comments addressed per session compliance requirements
+
+**Next Steps:**
+- Continue with remaining Phase 2 work or move to Phase 3-6
+
+---
+
 ### 2026-01-06 01:00 - Phase 2.1-2.2: Critical Fail-Fast Fixes
 **Files Changed:**
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Lines 587-589 (activate_venv), line 659 (install_repo_lint)

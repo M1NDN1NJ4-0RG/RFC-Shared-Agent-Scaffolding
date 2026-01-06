@@ -269,8 +269,12 @@ try_run() {
 #   Uses pipefail-safe patterns to prevent version parsing failures from
 #   terminating the bootstrap process. Returns empty string on failure.
 #
+#   SECURITY: This function executes the command passed as $1. Only use with
+#   trusted tool version commands (e.g., "shellcheck --version"). Do NOT pass
+#   untrusted input or user-controlled command strings.
+#
 # INPUTS:
-#   $1 - Command to run (e.g., "shellcheck --version")
+#   $1 - Command to run (e.g., "shellcheck --version") - MUST BE TRUSTED
 #   $2 - Optional grep pattern (e.g., "^version:")
 #   $3 - Optional awk field number (default: 2)
 #
@@ -286,6 +290,8 @@ safe_version() {
 	local pattern="${2:-}"
 	local field="${3:-2}"
 
+	# Execute command in subshell with error suppression
+	# WARNING: $cmd is executed directly - only call with trusted tool commands
 	local output
 	output=$($cmd 2>/dev/null || true)
 
@@ -656,6 +662,9 @@ install_repo_lint() {
 	local repo_root="$1"
 
 	log "Upgrading pip, setuptools, and wheel"
+	# NOTE: Uses exit code 13 (repo-lint installation failure) for pip upgrade failures
+	# because pip upgrade is part of the repo-lint installation process. The error message
+	# clearly indicates what failed, so a separate exit code is not necessary.
 	run_or_die 13 "Failed to upgrade pip/setuptools/wheel" python3 -m pip install --upgrade pip setuptools wheel
 
 	local install_target
