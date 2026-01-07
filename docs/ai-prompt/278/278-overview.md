@@ -10,6 +10,35 @@ Bring the repo’s Python code into a **single, enforceable standard** for:
 
 This issue is intentionally phased to avoid a “big-bang” PR and to keep CI usable.
 
+## Locked Decisions (Human Approved)
+
+These decisions are **locked in** for this issue and should be treated as requirements unless explicitly changed later.
+
+1. **PEP 526 scope (baseline):** enforce variable annotations for **module-level assignments** and **class attributes** as the mandatory baseline.  
+   Local-variable annotations are **optional** for now and may be enabled later behind `--strict-typing` and/or “new/changed code only”.
+
+2. **Function annotations:** enforce annotations for **every parameter** and **every return type** repo-wide, including explicit `-> None`.
+
+3. **Unknown types:** prefer **real types** where possible; when unknown, `Any` is allowed **with an explicit tightening tag**:  
+   `# typing: Any (TODO: tighten)`
+
+4. **Optional / union syntax (max compatibility):** allow PEP 604 `T | None`, but it is **allowed-not-preferred**.  
+   Prefer `Optional[T]` for broad compatibility, and avoid churn: only update syntax when touching code for another reason.
+
+5. **`*args`/`**kwargs` policy:** use `*args: Any, **kwargs: Any` as the default (advanced `Unpack[...]` is optional later).
+
+6. **Docstring `:rtype:` policy:** require `:rtype:` **only** when a function/method returns a **non-None** value. Do **not** require `:rtype:` for `None`.
+
+7. **Rollout strategy (initial):** start with **maximum compatibility** and **measurement-first** enforcement (report-only / baseline) so we can see how bad the churn would be, then tighten gradually.
+
+8. **Markdown tooling:** use **markdownlint-cli2**.
+
+9. **TOML tooling:** use **Taplo**.
+
+10. **Progress UI:** optional. If added, use **Rich** (not tqdm) and keep it **off by default**; enable only when attached to a TTY to avoid CI log spam.
+
+---
+
 ---
 
 ## Phase 0 — Preflight: establish current state (MANDATORY)
@@ -73,15 +102,18 @@ This issue is intentionally phased to avoid a “big-bang” PR and to keep CI u
 Write a concrete policy in a doc so the tooling can implement it deterministically.
 
 - [ ] Define which scopes require PEP 526 annotations:
-  - [ ] module-level assignments
-  - [ ] class attributes
-  - [ ] local variables
+  - [ ] module-level assignments (**MANDATORY baseline**)
+  - [ ] class attributes (**MANDATORY baseline**)
+  - [ ] local variables (**OPTIONAL for now**; later gated by `--strict-typing` and/or “new/changed code only”)
 - [ ] Define which patterns **MUST** be annotated (recommended minimum set):
   - [ ] empty literals (ambiguous inference): `{}`, `[]`, `set()`, `dict()`, `list()`, `tuple()`
   - [ ] `None` initializations intended to be later replaced (common bug factory)
   - [ ] public “configuration” variables/constants
 - [ ] Define allowed fallback types when exact type is unknown:
-  - [ ] `Any` vs `object` vs `Unknown`-style patterns
+  - [ ] Prefer **real types** where possible (custom types/modules/classes are encouraged when they clarify intent)
+  - [ ] `Any` is **allowed** but MUST be explicitly tagged for future tightening:
+    - [ ] `# typing: Any (TODO: tighten)`
+  - [ ] `object` is allowed only when you truly mean “unknown opaque thing” and `Any` would be misleading
 - [ ] Decide policy on these edge cases:
   - [ ] comprehensions
   - [ ] unpacking assignment
@@ -96,17 +128,16 @@ Write a concrete policy in a doc so the tooling can implement it deterministical
   - [ ] annotations for every parameter (including keyword-only)
   - [ ] annotation for return type
 - [ ] Functions returning nothing MUST be explicitly `-> None`
-- [ ] For `*args` and `**kwargs`, define allowed forms (pick one):
-  - [ ] `*args: Any, **kwargs: Any`
-  - [ ] `*args: object, **kwargs: object`
+- [ ] For `*args` and `**kwargs`, define allowed forms (LOCKED):
+  - [ ] `*args: Any, **kwargs: Any` (**default**)
   - [ ] typed tuples / `Unpack[...]` (advanced; optional later)
 
 ### 2.3 Docstring return type policy (MANDATORY)
 
 - [ ] reST docstrings MUST include `:rtype:` when the function returns a value
-- [ ] If return is `None`, allow:
-  - [ ] no `:rtype:` (recommended), OR
-  - [ ] `:rtype: None` (allowed if you prefer symmetry)
+- [ ] If return is `None`:
+  - [ ] Do **NOT** require `:rtype:`
+  - [ ] Do **NOT** add `:rtype: None`
 - [ ] Define how generators/iterators should be documented (`Iterator[T]`, `Generator[T, None, None]`, etc.)
 
 ---
@@ -125,6 +156,9 @@ Write a concrete policy in a doc so the tooling can implement it deterministical
 - [ ] Use Ruff rules for function annotations if feasible:
   - [ ] enable annotation rules (e.g., flake8-annotations / `ANN*`) via ruff config
   - [ ] explicitly require return annotations, including `-> None`
+  - [ ] Optional type syntax policy (max compatibility):
+    - [ ] `Optional[T]` is preferred
+    - [ ] `T | None` is allowed but not preferred (avoid churn unless touching code)
 - [ ] Evaluate docstring tooling for `:rtype:`:
   - [ ] if ruff cannot enforce it: introduce a dedicated checker (custom or a docstring tool)
   - [ ] ensure it can run in CI and locally consistently
@@ -143,6 +177,8 @@ If `repo_lint` cannot fully enforce PEP 526 + `:rtype:`:
   - [ ] per-rule disable switches (temporary, but must be documented)
 
 **Deliverable:** new repo-lint rule(s) with unit tests + integration in `repo-lint check --ci`
+
+---
 
 ### 3.4 Docstring validation consolidation (MANDATORY)
 
@@ -360,8 +396,6 @@ This includes:
 
 **Deliverable:** TOML linting in `repo_lint` is heavily tested and stable.
 
----
-
 ## Phase 4 — Autofix strategy (recommended: staged, not all-at-once)
 
 ### 4.1 Add non-destructive autofix where safe
@@ -424,15 +458,6 @@ This includes:
 - [ ] Baseline issues are fixed or tracked via explicit, documented, time-bounded exceptions.
 - [ ] CI fails on new violations.
 - [ ] Documentation is updated and verified against the repo configuration.
-- [ ] `repo-lint check --ci` no longer depends on calling `scripts/validate_docstrings.py` as an external script.
-- [ ] The docstring validation implementation is internal to `repo_lint` and covered by extremely comprehensive unit + integration tests.
-- [ ] If `scripts/validate_docstrings.py` remains, it is a thin compatibility wrapper over the internal `repo_lint` implementation (no duplicated logic).
-- [ ] Markdown contracts are documented in a canonical doc and mapped to a concrete linter configuration.
-- [ ] `repo-lint check --ci` enforces Markdown linting repo-wide (with explicit exclusions if needed).
-- [ ] Markdown linting integration includes extremely comprehensive unit + integration tests and produces stable CI failure artifacts.
-- [ ] TOML contracts are documented in a canonical doc and mapped to a concrete linter/formatter configuration.
-- [ ] `repo-lint check --ci` enforces TOML linting/formatting repo-wide (with explicit exclusions if needed).
-- [ ] TOML linting integration includes extremely comprehensive unit + integration tests and produces stable CI failure artifacts.
 
 ---
 
@@ -441,5 +466,9 @@ This includes:
 - Enforce in **check** mode first; keep **fix** mode conservative.
 - Avoid “clever inference” in automated tooling; prefer deterministic rules and human review for complex typing.
 - Keep tests/fixtures policy explicit (some fixtures intentionally violate rules; they must be scoped and documented).
+
+- Optional: If progress reporting is added for long-running checks, use **Rich progress** (not tqdm).
+  - Keep it **off by default**; enable only when running interactively (TTY).
+  - In CI, prefer stable summaries over progress bars to avoid log spam.
 
 ---
