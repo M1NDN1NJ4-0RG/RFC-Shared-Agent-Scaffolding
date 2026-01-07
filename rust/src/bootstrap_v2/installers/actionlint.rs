@@ -91,7 +91,7 @@ impl Installer for ActionlintInstaller {
         // Try multiple locations where actionlint might be installed:
         // 1. PATH (default lookup)
         // 2. $HOME/go/bin (default go install location)
-        // 3. $(go env GOPATH)/bin (custom GOPATH)
+        // 3. $GOPATH/bin (custom GOPATH if set)
 
         let candidates = get_actionlint_candidates();
 
