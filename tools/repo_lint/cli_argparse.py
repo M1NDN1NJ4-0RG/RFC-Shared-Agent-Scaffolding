@@ -272,12 +272,6 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         start_time = time.time()
 
         try:
-            # If the runner has no files to process, return early with empty results.
-            # In the parallel aggregation phase, such runners will not appear in the
-            # runner_results mapping, so they intentionally yield no output entries.
-            if not runner.has_files():
-                return (key, name, results, time.time() - start_time, error_msg)
-
             # Check for missing tools
             missing_tools = runner.check_tools()
             if missing_tools:
