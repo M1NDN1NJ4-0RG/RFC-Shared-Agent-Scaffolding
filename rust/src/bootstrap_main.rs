@@ -129,17 +129,6 @@ async fn handle_install(
     };
     let progress = Arc::new(ProgressReporter::new(progress_mode));
 
-    // 5. Setup progress reporter
-    let progress_mode = if json {
-        ProgressMode::Json
-    } else if ci_mode {
-        ProgressMode::Ci
-    } else {
-        // Default to Interactive when not in CI or JSON mode
-        ProgressMode::Interactive
-    };
-    let progress = Arc::new(ProgressReporter::new(progress_mode));
-
     // 6. Create execution context
     let verbosity = Verbosity::from_count(verbose_count);
     let ctx = Arc::new(Context::with_config(
