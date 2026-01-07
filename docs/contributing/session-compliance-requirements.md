@@ -4,7 +4,7 @@
 
 **Authority:** This document supersedes any conflicting guidance. When in doubt, follow this document.
 
-**MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work. **EXCEPTION:** If the user explicitly says "CONTINUE" or references continuing existing work, skip session start and proceed directly. Failure to read this document when starting NEW work is a violation.
+**MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work. Failure to read this document when starting NEW work is a violation.
 
 **Last Updated:** 2025-12-31
 
@@ -21,49 +21,99 @@ This repository has experienced repeated compliance failures where Copilot agent
 
 This document exists to **prevent those failures** by establishing clear, non-negotiable checkpoints with no loopholes.
 
+## In-Session Work Requirements (MANDATORY)
+
+This document is not a “planning exercise.” After Session Start completes successfully, you MUST execute the requested work.
+
+### Non-negotiable behavior
+
+- **No “bootstrap + catch-up only” sessions.** Completing session-start and then stopping to summarize “what we should do next” is a violation unless you are blocked or near context limits.
+- **Implementation over narration.** Do the work. Output only actionable items: errors encountered and the exact next command/file change you are making.
+- **Minimum progress rule:** In every session, you MUST do at least one of the following:
+  - Produce a meaningful commit (preferred), OR
+  - Create/update the issue journals with a concrete, file-path-level plan and clear resume instructions, OR
+  - Escalate with `**BLOCKED — HUMAN ACTION REQUIRED**` (canonical format) with exact error output.
+
+### Work loop (how to behave during the session)
+
+After Session Start completes (exit 0):
+1. Identify the active issue number and ensure the journals exist in:
+   - `docs/ai-prompt/{ISSUE_NUMBER}/`
+2. Read:
+   - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-overview.md`
+   - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-next-steps.md`
+3. Execute the “NEXT” work items immediately. Do not stop after planning.
+
+### “Near context limit” escape hatch (ONLY IF NECESSARY)
+
+If you are getting close to token/window/context limits at any time:
+1. Stop starting new work.
+2. Commit whatever is already correct and complete.
+3. Update:
+   - `{ISSUE_NUMBER}-summary.md` (this commit’s work),
+   - `{ISSUE_NUMBER}-overview.md` (checkbox/task progress),
+   - `{ISSUE_NUMBER}-next-steps.md` with extremely detailed resume steps:
+     - exact remaining checklist items
+     - exact next commands to run
+     - exact files/sections to open next
+4. Push the branch so the next session can resume immediately.
+
 ---
 
 ## Session Start Requirements (MANDATORY)
 
 **When:** At the start of NEW work sessions, **IMMEDIATELY** upon receiving the first user message, before ANY file exploration, repository analysis, problem investigation, or code changes.
 
-**EXCEPTION:** If the user explicitly says "CONTINUE" or references continuing existing work (e.g., "continue on Phase 2.7", "keep working on issue 160"), SKIP session start and proceed directly to the work.
-
 **PROHIBITION (for NEW work only):** You may NOT read files, explore the repository, analyze the problem, or plan changes until the bootstrapper has completed successfully (exit code 0).
 
 ### Ordered Checklist
 
 1. **Run the bootstrapper**
-   ```bash
-   # First navigate to repository root
-   cd /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
-   # Then run bootstrapper
-   ./scripts/bootstrap-repo-lint-toolchain.sh --all
-   ```
+   ~~~bash
+   ./scripts/session-start.sh
+   ~~~
    - This script MUST complete with exit code 0
    - Typical completion time: 3-10 minutes
    - If it takes longer than 15 minutes or appears hung, STOP it and escalate
    - It installs/verifies ALL required tools (Python, Bash, PowerShell, Perl)
-   - It creates and activates the `.venv/` virtual environment
+   - It creates/configures the `.venv/` virtual environment (activation happens in Step 2)
    - It installs the `repo-lint` package
 
 2. **Activate the environment**
-   ```bash
-   source .venv/bin/activate
-   export PATH="$HOME/perl5/bin:$PATH"
-   export PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
-   ```
+   ~~~bash
+   source .venv/bin/activate && \
+     PERL_HOME="$HOME/perl5" && \
+     export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" && \
+     export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" && \
+     export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" && \
+     export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" && \
+     export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}"
+   ~~~
 
 3. **Verify `repo-lint` is functional**
-   ```bash
-   repo-lint --help
-   ```
+   ~~~bash
+   source .venv/bin/activate && \
+     PERL_HOME="$HOME/perl5" && \
+     export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" && \
+     export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" && \
+     export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" && \
+     export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" && \
+     export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}" && \
+     repo-lint --help
+   ~~~
    - MUST exit 0 and show help text
 
 4. **Run health check** (minimal verification)
-   ```bash
-   repo-lint check --ci
-   ```
+   ~~~bash
+   source .venv/bin/activate && \
+     PERL_HOME="$HOME/perl5" && \
+     export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" && \
+     export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" && \
+     export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" && \
+     export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" && \
+     export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}" && \
+     repo-lint check --ci
+   ~~~
    - Acceptable exit codes:
      - **0** = No violations (ideal - repo is clean)
      - **1** = Violations found but tools work (acceptable - repo has pre-existing issues you'll fix before committing YOUR changes)
@@ -77,25 +127,43 @@ This document exists to **prevent those failures** by establishing clear, non-ne
    - ALL work must be associated with a tracked issue
    - If the request isn't linked to an issue: ask the human to create one, or work in an existing catch-all issue
    - For ANY new issue you begin work on, create:
-     - `docs/ai-prompt/<ISSUE_NUMBER>/`
-     - `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-overview.md`
-     - `docs/ai-prompt/<ISSUE_NUMBER>/<ISSUE_NUMBER>-next-steps.md`
-     - Copy the ORIGINAL GitHub issue text into `<ISSUE_NUMBER>-overview.md` in Markdown, preserving checkboxes/tasks
+     - `docs/ai-prompt/{ISSUE_NUMBER}/`
+     - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-overview.md`
+     - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-next-steps.md`
+     - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md`
+     - Copy the ORIGINAL GitHub issue text into `{ISSUE_NUMBER}-overview.md` in Markdown, preserving checkboxes/tasks
         - This document needs to be updated with boxes checked as you go.
-   - **MANDATORY FIRST LINE in every `<ISSUE_NUMBER>-next-steps.md` file:**
-     ```
+
+   **Journal File Definitions (NON-NEGOTIABLE)**
+
+   - `docs/ai-prompt/{ISSUE_NUMBER}/` is the issue journal directory.
+
+   - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-overview.md`
+     - MUST contain a copy of the ORIGINAL GitHub issue body (verbatim, in Markdown).
+     - MUST be updated during the session to reflect progress (checkboxes checked, tasks completed).
+     - Purpose: so the human can update the GitHub issue body to match the repo state (especially for EPIC / multi-PR issues).
+
+   - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-next-steps.md`
+     - MUST contain extremely detailed, step-by-step next actions.
+     - MUST include an extremely detailed “prompt to Copilot” so the next session can start with minimal catch-up.
+
+   - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md`
+     - MUST be updated with EVERY COMMIT (not just at session end).
+     - Put the latest changes, what was completed, and what remains, in a concise but concrete way.
+
+   - **MANDATORY FIRST LINE in every `{ISSUE_NUMBER}-next-steps.md` file:**
+     ~~~
      MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
-     ```
+     ~~~
    - Update journals EVERY session, even for minor changes
 
 ### Additional Rules
 
 - If any required tool is missing (including any tool required by `repo-lint`), the bootstrapper will attempt to install it.
 - If installation is blocked by environment constraints, escalate using `**BLOCKED — HUMAN ACTION REQUIRED**` and list the missing tools.
-- Use `rgrep` as the default grep/search tool for repository work unless a human explicitly instructs otherwise.
+- Use `rg` (ripgrep) as the canonical grep/search tool for repository work unless a human explicitly instructs otherwise.
 - Do NOT proceed with scripting/tooling work until `repo-lint` is installed, on PATH, and functional.
 
-### STOP Conditions
 
 If any of the above steps fail:
 
@@ -103,7 +171,7 @@ If any of the above steps fail:
 2. **Do NOT proceed with code changes**
 3. **Escalate using the exact format below:**
 
-```
+~~~
 **BLOCKED — HUMAN ACTION REQUIRED**
 
 Bootstrapper failed at step: [step name]
@@ -115,7 +183,7 @@ Missing tools (if applicable): [list]
 
 Manual install suggestions:
 [paste from bootstrapper output]
-```
+~~~
 
 ---
 
@@ -125,45 +193,73 @@ Manual install suggestions:
 
 **Rationale:** While the gate primarily validates scripts/tooling, repo-lint may check any file type. Run the full gate regardless of what you're committing.
 
+**Hard requirement:** Any time you run a `repo-lint` command during this workflow, you MUST run it with the full venv + Perl environment activation block shown below (the multiline `source .venv/bin/activate` + `PERL_HOME` + exports). Do NOT shorten it or “assume” the environment is already configured.
+
+**Exception:** Running `./scripts/session-end.sh` for repair is allowed without the activation block because it is the wrapper that self-heals/installs missing components.
+
 ### Ordered Checklist
 
-1. **Run repo-lint conformance check**
-   ```bash
-   repo-lint check --ci
-   ```
+1. **Ensure the environment is active** (pre-commit uses the fast path)
+   ~~~bash
+   source .venv/bin/activate && \
+     PERL_HOME="$HOME/perl5" && \
+     export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" && \
+     export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" && \
+     export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" && \
+     export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" && \
+     export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}"
+   ~~~
 
-2. **Fix ALL reported violations**
+2. **Run the pre-commit gate (FAST)**
+   ~~~bash
+   repo-lint check --ci
+   ~~~
+
+3. **Fix ALL reported violations**
    - Linting errors (shellcheck, ruff, pylint, perlcritic, PSScriptAnalyzer)
    - Formatting errors (shfmt, black)
    - Docstring violations (missing sections, wrong format)
 
-3. **Re-run until exit code 0**
-   ```bash
+4. **Re-run until exit code 0**
+   ~~~bash
    repo-lint check --ci
    # MUST exit 0 before committing
    # Exit code 0 = ALL checks passed, OK to commit
    # Exit code 1 = Violations still exist, NOT OK to commit - fix and re-run
-   # Exit code 2 = Missing tools, BLOCKER - escalate
-   ```
+   # Exit code 2 = Missing tools / broken environment, NOT OK - run session-start/session-end to repair
+   ~~~
 
-4. **Only then commit**
+5. **Update the issue summary BEFORE committing (MANDATORY)**
+   - Update `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md` to reflect what this commit contains.
+   - This file MUST be updated with EVERY commit.
+
+6. **Only then commit**
    - Use `report_progress` tool to commit and push
    - You may NOT commit if exit code is 1 or 2
 
+**Repair rule (only if needed):**
+- If `repo-lint` is not found, or `repo-lint check --ci` exits **2**, run:
+  ~~~bash
+  ./scripts/session-end.sh
+  ~~~
+  Then re-run `repo-lint check --ci` until it exits 0.
+
 ### Exit Code Meanings
 
+These exit codes refer to `repo-lint check --ci`:
+
 - **0** = All checks passed → **OK to commit**
-- **1** = Violations found → **NOT OK to commit** - FIX violations, then re-run until exit 0
-- **2** = Missing tools → **BLOCKER** (escalate with BLOCKED format)
+- **1** = Violations found → **NOT OK to commit** (fix violations, then re-run until exit 0)
+- **2** = Missing tools / broken environment → **BLOCKER** (run `./scripts/session-end.sh` to repair; if still failing, escalate)
 
 ### STOP Conditions
 
-If `repo-lint check --ci` exits with code 1 or 2:
+If `./scripts/session-end.sh` exits with code 1 or 2:
 
 **Exit Code 1:**
 1. **Do NOT commit**
 2. **Fix the violations**
-3. **Re-run until exit 0**
+3. **Re-run `./scripts/session-end.sh` until exit 0**
 4. **Then commit**
 
 **Exit Code 2:**
@@ -171,7 +267,7 @@ If `repo-lint check --ci` exits with code 1 or 2:
 2. **Do NOT commit**
 3. **Escalate:**
 
-```
+~~~
 **BLOCKED — HUMAN ACTION REQUIRED**
 
 Pre-commit gate failed: missing tools
@@ -181,7 +277,7 @@ repo-lint output:
 [paste output showing which tools are missing]
 
 Attempted fix: [what you tried]
-```
+~~~
 
 ---
 
@@ -193,69 +289,76 @@ Attempted fix: [what you tried]
 
 ### Ordered Checklist
 
-1. **Trigger GitHub Copilot Code Review**
-   - Request a code review of the PR's latest changes
-   - Review all feedback provided by Copilot
-   - Code review is MANDATORY for every session that includes code changes
-
-2. **Address ALL code review comments**
-   - Treat **every** Copilot Code Review comment as a **required action**
-   - This includes items labeled "nit", "code quality", "maintainability", "consistency", or "suggestion"
-   - Do **not** classify review feedback as "non-blocking" or "nice-to-have"
-   - **Nits are not optional**
-   - You may skip a review comment **ONLY** if implementing it would:
-     - Break existing, passing tests or CI checks (verified by running tests), OR
-     - Violate an explicit technical constraint stated in the issue/PR description, OR
-     - Require changes to files explicitly marked out-of-scope in the PR description
-   - You may NOT skip a comment because it "exceeds scope" or is "too much work"
-   - If you skip or partially implement any review comment, you MUST:
-     - Leave a **nearby, durable** note explaining why (function/class docstring, module-level comment, or inline comment)
-     - Mention it explicitly in the PR update comment, including WHAT was skipped and WHY
-
-3. **Verify PR status checks**
-   - Ensure all required PR status checks are passing (tests, linters, conformance, etc.)
-   - Agents cannot always directly "run" GitHub Actions. Instead:
-     - Verify the latest workflow/check runs exist and are passing for the PR's HEAD commit, OR
-     - If checks haven't triggered on your latest commit, wait up to 5 minutes
-     - If still no CI run after 5 minutes, escalate using BLOCKED format
-     - Do NOT create empty or trivial commits solely to trigger CI
-   - If CodeQL is configured/enabled: ensure CodeQL is passing
-   - If CodeQL is not configured: explicitly state that CodeQL cannot be verified
-
-4. **Update journals** (ALWAYS REQUIRED - NO EXCEPTIONS)
-   - Update journals for EVERY session, even minor changes
-   - If working on a tracked issue (e.g., `docs/ai-prompt/209/`):
-     - Update `{ISSUE}-next-steps.md` with latest DONE entry (per-commit journal)
-     - Update `{ISSUE}-issue-overview.md` progress tracker (per-session journal)
-   - If not on a tracked issue: create one or use catch-all issue
-
-5. **Verify repository state**
-   - Run final check:
-     ```bash
+1. **Run the pre-commit gate (FAST)**
+   - Use the full environment activation block from the Pre-Commit section, then run:
+     ~~~bash
      repo-lint check --ci
-     # Exit 0 or 1 is OK (same reasoning as session start)
-     # Exit 0 = clean
-     # Exit 1 = pre-existing violations (not from your changes - acceptable)
-     # Exit 2 = missing tools - BLOCKER, escalate
-     ```
+     ~~~
+   - Fix violations and re-run until exit code **0**.
 
-6. **Ensure ALL work is committed**
-   - ALL changes committed via `report_progress`, including:
-     - Completed features/fixes
-     - Work-in-progress changes (mark as WIP in commit message)
-     - Experimental changes that inform the solution
-     - ANY modified files that contain useful information
-   - Only exclude: temporary test files, build artifacts, or debugging output
-   - No uncommitted changes that would be lost
+2. **Commit changes**
+   - Commit ALL meaningful work via `report_progress`.
+   - Do not leave useful work uncommitted.
+
+3. **If possible: approve any pending workflows and wait for the repo-lint umbrella workflow**
+   - If the platform/UI allows approving pending workflows for the branch/PR, approve them.
+   - Wait for the repo-lint umbrella workflow to finish.
+   - If the umbrella workflow auto-fixes issues, pull/apply those updates as required.
+
+4. **Initiate Copilot Code Review (MANDATORY)**
+   - Trigger Copilot Code Review on the PR’s latest changes.
+
+5. **Address ALL Copilot Code Review comments (MANDATORY)**
+   - Treat **every** Copilot Code Review comment as a **required action**.
+   - You may skip a comment **ONLY** if implementing it would:
+     - Break existing, passing tests or CI checks (verified), OR
+     - Violate an explicit technical constraint stated in the issue/PR description.
+   - If you defer an item for **future usage**, you MUST:
+     - Leave a nearby, durable `TODO` / `FUTURE:` note in the relevant file explaining **what** and **why**.
+     - Only comment out code when necessary to keep builds/tests passing (e.g., Rust compile/build).
+
+6. **Verify PR status checks**
+   - Ensure required checks are passing for the PR’s HEAD commit.
+   - If checks have not triggered, wait up to 5 minutes; if still no CI run, escalate using BLOCKED format.
+
+7. **Update journals (ALWAYS REQUIRED)**
+   - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md`
+     - MUST already be current because it is required with EVERY commit.
+     - If anything changed since the last commit, update it and include it in the final commit.
+
+   - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-overview.md`
+     - Update to reflect session progress (checkboxes/tasks updated) so it matches the repo state.
+
+   - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-next-steps.md`
+     - Update with extremely detailed next steps and a detailed prompt to Copilot to resume work.
+
+8. **Verify repository state (SESSION END GATE)**
+   ~~~bash
+   ./scripts/session-end.sh
+   # MUST exit 0 before ending the session.
+   # Exit 0 = clean, OK to end session
+   # Exit 1 = violations exist - fix violations, then re-run until exit 0
+   # Exit 2 = missing tools - BLOCKER, escalate
+   ~~~
+
+9. **Ensure ALL work is committed**
+   - After the session-end gate passes, ensure there are no uncommitted changes that would be lost.
 
 ### STOP Conditions
+
+If `./scripts/session-end.sh` exits with code 1:
+
+1. **Do NOT end the session**
+2. **Fix the violations**
+3. **Re-run `./scripts/session-end.sh` until exit 0**
+4. **Only then end the session**
 
 If repository is in unknown state (exit code 2, tools missing):
 
 1. **Update journals documenting the blocker**
 2. **Escalate:**
 
-```
+~~~
 **BLOCKED — HUMAN ACTION REQUIRED**
 
 Session ending with repository in unknown state.
@@ -265,7 +368,7 @@ Missing tools: [list]
 
 Last known good state: [commit hash]
 Current blocker: [description]
-```
+~~~
 
 ---
 
@@ -274,7 +377,7 @@ Current blocker: [description]
 "Required tools" means ALL of the following are installed and functional:
 
 ### Core Utilities
-- `rgrep` or `grep` (with warning if grep)
+- `rg (ripgrep)`
 
 ### Python Toolchain (always required)
 - `black` (formatter)
@@ -296,7 +399,10 @@ Current blocker: [description]
 - `perlcritic` (linter, from Perl::Critic)
 - `PPI` (Perl parsing library)
 
-The bootstrapper (`scripts/bootstrap-repo-lint-toolchain.sh --all`) installs ALL of these.
+### GitHub Actionlint
+- `actionlint` (linter for GitHub Action Workflows)
+
+The session bootstrapper (`./scripts/session-start.sh`) installs/verifies ALL of these (it may delegate to scripts/bootstrap-repo-lint-toolchain.sh internally).
 
 ---
 
@@ -333,7 +439,7 @@ This is **MANDATORY** for repository tooling/scripting. Violations constitute no
 
 When blocked, use EXACTLY this format:
 
-```
+~~~
 **BLOCKED — HUMAN ACTION REQUIRED**
 
 [1-2 sentence description of blocker]
@@ -352,7 +458,7 @@ What I tried:
 Suggested options:
 1. [option 1]
 2. [option 2]
-```
+~~~
 
 Tag @m1ndn1nj4 if escalating.
 
@@ -387,40 +493,72 @@ Violations of these requirements constitute non-compliance and will result in re
 ## Quick Reference
 
 ### Session Start (IMMEDIATELY upon first message)
-```bash
-cd /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
-./scripts/bootstrap-repo-lint-toolchain.sh --all  # MUST exit 0, typical 3-10 min
-source .venv/bin/activate
-export PATH="$HOME/perl5/bin:$PATH"
-export PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
-repo-lint --help  # verify (MUST exit 0)
-repo-lint check --ci  # health check (exit 0 or 1 OK, exit 2 = BLOCKER)
-# Exit 1 OK here because repo may have pre-existing violations
-```
+~~~bash
+cd /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding && \
+  ./scripts/session-start.sh
+~~~
+#### MUST exit 0, typical runtime 90-600 seconds
+
+~~~bash
+source .venv/bin/activate && \
+  PERL_HOME="$HOME/perl5" && \
+  export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" && \
+  export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" && \
+  export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" && \
+  export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" && \
+  export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}" && \
+  repo-lint --help && \
+  repo-lint check --ci
+~~~
+
+#### Exit 1 OK here because repo may have pre-existing violations, typical runtime 90-600 seconds
 
 ### Pre-Commit (BEFORE EVERY commit, ALL file types)
-```bash
-repo-lint check --ci  # MUST exit 0 before commit
-# Exit 0 = OK to commit
-# Exit 1 = violations exist, NOT OK - fix violations, re-run until 0
-# Exit 2 = BLOCKER - escalate immediately
-```
+~~~bash
+source .venv/bin/activate && \
+  PERL_HOME="$HOME/perl5" && \
+  export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" && \
+  export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" && \
+  export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" && \
+  export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" && \
+  export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}" && \
+  repo-lint check --ci
+~~~
+
+#### MUST exit 0 before commit, typical runtime 90-600 seconds
+#### Exit 0 = OK to commit
+#### Exit 1 = violations exist, NOT OK - fix violations, re-run until 0
+#### Exit 2 = environment/tools missing - run ./scripts/session-end.sh to repair, then re-run repo-lint check --ci
+#### If Exit 2 persists AFTER repair, escalate using BLOCKED format
 
 ### Session End (BEFORE terminating)
-```bash
-# 1. Trigger Copilot Code Review (mandatory)
-# 2. Address ALL review comments (nits not optional)
-# 3. Verify PR status checks passing
-# 4. Update journals in docs/ai-prompt/{ISSUE}/ (always required)
-# 5. Verify state:
-repo-lint check --ci  # exit 0 or 1 OK, exit 2 = BLOCKER
-# 6. Commit ALL work via report_progress
-```
+#### Commit ALL meaningful work via report_progress BEFORE running ./scripts/session-end.sh
+#### After ./scripts/session-end.sh passes, ensure there are no uncommitted changes
+
+1. Run pre-commit gate: `repo-lint check --ci` (must exit 0)
+1. Commit ALL meaningful work via report_progress
+1. If possible, approve pending workflows and wait for the repo-lint umbrella workflow
+1. Initiate Copilot Code Review (mandatory)
+1. Treat ***ALL*** Copilot callouts as mandatory unless:
+  - Implementing the suggestion would ***break something***, OR
+  - There is a ***specific, concrete reason*** tied to future work, or a specific migration plan to keep the current approach.
+  - If you do not apply a callout:
+    - Leave an explicit note explaining ***why***.
+1. Verify PR status checks passing
+1. Update journals in docs/ai-prompt/{ISSUE}/ (always required)
+1. Verify state:
+
+~~~bash
+./scripts/session-end.sh
+~~~
+#### Exit 0 OK,
+#### Exit 1 Violations need to be fixed
+#### Exit 2 = BLOCKER
 
 **Key Differences:**
 - Session start: exit 1 acceptable (pre-existing issues)
 - Pre-commit: exit 0 required (YOUR changes must be clean)
-- Session end: exit 0 or 1 acceptable (state verification only)
+- Session end: exit 0 required (must fix violations before ending the session)
 
 ---
 
