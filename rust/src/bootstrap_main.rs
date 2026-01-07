@@ -32,7 +32,7 @@ use safe_run::bootstrap_v2::{
     errors::BootstrapError,
     executor::Executor,
     exit_codes::ExitCode,
-    installers::InstallerRegistry,
+    installers::{repo_lint::REPO_LINT_INSTALLER_ID, InstallerRegistry},
     lock::LockManager,
     plan::ExecutionPlan,
     progress::{ProgressMode, ProgressReporter},
@@ -160,6 +160,57 @@ async fn handle_install(
     if failed {
         eprintln!("\n❌ Installation failed - see errors above");
         return Ok(ExitCode::VerificationFailed);
+    }
+
+    // 11. Run automatic verification gate (repo-lint check --ci)
+    // This runs if repo-lint was in the plan (profile includes it)
+    let repo_lint_in_plan = plan.phases.iter().any(|phase| {
+        phase
+            .steps
+            .iter()
+            .any(|step| step.installer == REPO_LINT_INSTALLER_ID)
+    });
+
+    if repo_lint_in_plan && !dry_run {
+        println!("\n🔍 Running verification gate (repo-lint check --ci)...");
+
+        let repo_lint_bin = ctx.repo_lint_bin();
+        let gate_result = tokio::process::Command::new(&repo_lint_bin)
+            .args(["check", "--ci"])
+            .status()
+            .await;
+
+        match gate_result {
+            Ok(status) => {
+                let exit_code = status.code().unwrap_or(-1);
+                match exit_code {
+                    0 => {
+                        println!("  ✓ Verification gate passed (no violations)");
+                    }
+                    1 => {
+                        println!(
+                            "  ✓ Verification gate passed (tools functional, violations found)"
+                        );
+                        println!(
+                            "  Note: Repository has lint violations but all tools are working"
+                        );
+                    }
+                    2 => {
+                        eprintln!("  ✗ Verification gate failed: Missing tools");
+                        eprintln!("Some required tools are not installed or not on PATH");
+                        return Ok(ExitCode::VerificationFailed);
+                    }
+                    _ => {
+                        eprintln!("  ✗ Verification gate failed with exit code {}", exit_code);
+                        return Ok(ExitCode::VerificationFailed);
+                    }
+                }
+            }
+            Err(e) => {
+                eprintln!("  ✗ Failed to run verification gate: {}", e);
+                return Ok(ExitCode::VerificationFailed);
+            }
+        }
     }
 
     println!("\n✅ Bootstrap completed successfully");

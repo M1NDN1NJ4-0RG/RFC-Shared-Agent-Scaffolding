@@ -1,0 +1,23 @@
+# Cargo configuration for cross-compilation
+#
+# This file configures linkers for cross-compilation targets.
+# Currently used for building Linux ARM64 binaries on x86_64.
+#
+# Prerequisites for ARM64 cross-compilation:
+# - ARM64 cross-compilation toolchain must be installed on the build system
+#
+# Debian/Ubuntu:
+#   sudo apt-get install gcc-aarch64-linux-gnu
+#
+# RHEL/CentOS/Fedora:
+#   sudo dnf install gcc-aarch64-linux-gnu
+#
+# Arch Linux:
+#   sudo pacman -S aarch64-linux-gnu-gcc
+#
+# macOS:
+#   brew install aarch64-elf-gcc
+#   (Note: May need additional configuration for musl target)
+
+[target.aarch64-unknown-linux-musl]
+linker = "aarch64-linux-gnu-gcc"

@@ -118,6 +118,7 @@ impl Config {
         } else {
             // Fallback to default tools if profile not found
             vec![
+                "repo-lint",
                 "ripgrep",
                 "python-black",
                 "python-ruff",

@@ -22,6 +22,7 @@ The Rust bootstrapper provides several advantages over the Bash version:
 
 1. Download the appropriate binary for your platform from the [releases page](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases):
    - Linux x86_64: `bootstrap-repo-cli-linux-x86_64.tar.gz`
+   - Linux ARM64: `bootstrap-repo-cli-linux-arm64.tar.gz`
    - macOS x86_64: `bootstrap-repo-cli-macos-x86_64.tar.gz`
    - macOS ARM64: `bootstrap-repo-cli-macos-arm64.tar.gz`
 
@@ -92,6 +93,39 @@ export BOOTSTRAP_BIN="$HOME/.bootstrap/bin/bootstrap-repo-cli"
 | N/A | `--jobs <N>` (control parallelism) |
 | N/A | `--offline` (cache-only mode) |
 | N/A | `--allow-downgrade` (permit version downgrades) |
+
+## Parity with Bash Bootstrapper
+
+The Rust bootstrapper achieves complete feature parity with the Bash version:
+
+### repo-lint Installation and Verification
+
+Both bootstrappers:
+1. Install `repo-lint` via `pip install -e .` (editable mode from repository root)
+2. Verify `repo-lint --help` succeeds before completing
+3. Run automatic verification gate (`repo-lint check --ci`) after successful installation
+4. Handle verification gate exit codes identically:
+   - Exit 0: Clean repository, all tools working ✓
+   - Exit 1: Violations found but tools working ✓ (acceptable)
+   - Exit 2: Missing tools ✗ (failure)
+   - Exit 3+: Other errors ✗ (failure)
+
+### Profile Support
+
+The Rust version uses profiles instead of command-line flags:
+- **dev profile**: Equivalent to Bash default (all common tools)
+- **ci profile**: Minimal tools for CI environments
+- **full profile**: All available tools (equivalent to Bash `--all`)
+
+Both approaches ensure the same tools are installed for equivalent use cases.
+
+### Session Scripts
+
+Both bootstrappers work with session scripts:
+- `./scripts/session-start.sh`: Runs bootstrapper and activates environment
+- `./scripts/session-end.sh`: Validates all tools still work correctly
+
+The session scripts automatically use the Rust bootstrapper if available, falling back to Bash.
 
 ## Configuration
 

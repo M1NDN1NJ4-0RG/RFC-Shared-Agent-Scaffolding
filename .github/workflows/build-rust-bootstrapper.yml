@@ -2,7 +2,7 @@
 #
 # Purpose:
 #   Build multi-platform binaries for the Rust bootstrapper and create GitHub releases.
-#   Produces static binaries for Linux (musl) and macOS (x86_64 and ARM64).
+#   Produces static binaries for Linux (musl) x86_64 and ARM64, and macOS (x86_64 and ARM64).
 #
 # Triggers:
 #   - Tag push matching 'bootstrap-v*' (e.g., bootstrap-v1.0.0)
@@ -13,7 +13,7 @@
 #
 # Outputs:
 #   - GitHub Release with binaries and checksums (on tag push or manual dispatch)
-#   - Artifacts: bootstrap-repo-cli-linux-x86_64, bootstrap-repo-cli-macos-x86_64, bootstrap-repo-cli-macos-arm64
+#   - Artifacts: bootstrap-repo-cli-linux-x86_64, bootstrap-repo-cli-linux-arm64, bootstrap-repo-cli-macos-x86_64, bootstrap-repo-cli-macos-arm64
 #
 # Dependencies:
 #   - Rust toolchain (stable)
@@ -60,6 +60,11 @@ jobs:
             target: x86_64-unknown-linux-musl
             artifact_name: bootstrap-repo-cli
             asset_name: bootstrap-repo-cli-linux-x86_64
+          # Linux ARM64 (musl for static linking)
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            artifact_name: bootstrap-repo-cli
+            asset_name: bootstrap-repo-cli-linux-arm64
           # macOS x86_64
           - os: macos-latest
             target: x86_64-apple-darwin
@@ -82,14 +87,23 @@ jobs:
           target: ${{ matrix.target }}
 
       - name: Install musl tools (Linux only)
-        if: matrix.target == 'x86_64-unknown-linux-musl'
+        if: contains(matrix.target, 'linux-musl')
         run: |
           sudo apt-get update
           sudo apt-get install -y musl-tools
 
+      - name: Install cross-compilation tools (Linux ARM64 only)
+        if: matrix.target == 'aarch64-unknown-linux-musl'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc-aarch64-linux-gnu
+
       - name: Build release binary
         working-directory: rust
         run: cargo build --release --target ${{ matrix.target }}
+        env:
+          # Set cross-compilation linker for ARM64
+          CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER: aarch64-linux-gnu-gcc
 
       - name: Strip binary (non-Windows)
         if: matrix.os != 'windows-latest'
@@ -167,6 +181,7 @@ jobs:
             
             1. Download the appropriate binary for your platform:
                - Linux x86_64: `bootstrap-repo-cli-linux-x86_64.tar.gz`
+               - Linux ARM64: `bootstrap-repo-cli-linux-arm64.tar.gz`
                - macOS x86_64: `bootstrap-repo-cli-macos-x86_64.tar.gz`
                - macOS ARM64: `bootstrap-repo-cli-macos-arm64.tar.gz`
             
