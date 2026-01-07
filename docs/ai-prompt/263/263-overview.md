@@ -28,6 +28,6 @@ Address ALL CodeQL security comments from PR #263: https://github.com/M1NDN1NJ4-
 - [x] Address CodeQL alert 2: Pin taiki-e/install-action to commit hash
 - [x] Pre-commit gate passes (exit 0)
 - [x] Update journals
-- [ ] Commit changes
-- [ ] Code review
-- [ ] Session end verification
+- [x] Commit changes
+- [x] Code review
+- [x] Session end verification
