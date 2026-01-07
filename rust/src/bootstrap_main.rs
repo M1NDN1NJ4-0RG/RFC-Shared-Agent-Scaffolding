@@ -206,18 +206,15 @@ async fn handle_install(
         let venv_bin = ctx.venv_path.join("bin");
         let current_path = std::env::var("PATH").unwrap_or_default();
 
-        // Add Perl environment for Perl tools
-        let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());
-        let perl_home = format!("{}/perl5", home);
-        let perl_bin = format!("{}/bin", perl_home);
-        let perl5lib = format!("{}/lib/perl5", perl_home);
+        // Add Perl environment for Perl tools (use shared function to avoid duplication)
+        let perl = activate::get_perl_env();
 
-        let new_path = format!("{}:{}:{}", perl_bin, venv_bin.display(), current_path);
+        let new_path = format!("{}:{}:{}", perl.bin_path, venv_bin.display(), current_path);
 
         let gate_result = tokio::process::Command::new(&repo_lint_bin)
             .args(["check", "--ci"])
             .env("PATH", new_path)
-            .env("PERL5LIB", perl5lib)
+            .env("PERL5LIB", perl.lib_path)
             .status()
             .await;
 

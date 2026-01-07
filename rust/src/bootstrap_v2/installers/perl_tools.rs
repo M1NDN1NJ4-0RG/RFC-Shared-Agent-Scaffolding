@@ -27,6 +27,83 @@ use crate::bootstrap_v2::installer::{InstallResult, Installer, VerifyResult};
 use async_trait::async_trait;
 use semver::Version;
 
+/// Normalize Perl version string to semver format
+///
+/// Perl tools often report versions with only 2 components (e.g., "1.156").
+/// This function adds ".0" as the patch version to make them semver-compatible.
+///
+/// # Arguments
+///
+/// * `version_str` - Version string from Perl tool (e.g., "1.156" or "1.2.3")
+///
+/// # Returns
+///
+/// Version string with 3 components (e.g., "1.156.0" or "1.2.3")
+fn normalize_perl_version(version_str: &str) -> String {
+    let mut normalized = version_str.to_string();
+    // If version has only 2 components (e.g., "1.156"), add ".0" for semver compatibility
+    if normalized.matches('.').count() == 1 {
+        normalized.push_str(".0");
+    }
+    normalized
+}
+
+/// Detect a Perl tool version with fallback path logic
+///
+/// Tries to detect a Perl tool by first checking an explicit path (e.g., ~/perl5/bin/tool),
+/// then falling back to PATH if the explicit path fails. This handles tools installed via
+/// cpanm to local::lib (~/ perl5) which may not be in PATH.
+///
+/// # Arguments
+///
+/// * `tool_name` - Name of the tool binary (e.g., "perlcritic")
+/// * `explicit_path` - Full path to try first (e.g., "/home/user/perl5/bin/perlcritic")
+/// * `version_arg` - Argument to get version (e.g., "--version")
+/// * `perl5lib` - PERL5LIB environment value to set
+/// * `parse_version` - Function to extract version from command output
+///
+/// # Returns
+///
+/// * `Ok(Some(Version))` - Tool found and version parsed successfully
+/// * `Ok(None)` - Tool not found or version could not be parsed
+/// * `Err(_)` - Command execution failed unexpectedly
+async fn detect_perl_tool_with_fallback<F>(
+    tool_name: &str,
+    explicit_path: &str,
+    version_arg: &str,
+    perl5lib: &str,
+    parse_version: F,
+) -> BootstrapResult<Option<Version>>
+where
+    F: Fn(&str) -> Option<Version>,
+{
+    // Try explicit path first (handles tools installed to ~/perl5)
+    let output = tokio::process::Command::new(explicit_path)
+        .arg(version_arg)
+        .env("PERL5LIB", perl5lib)
+        .output()
+        .await;
+
+    // If explicit path doesn't work, try PATH
+    let output = if output.is_err() || !output.as_ref().unwrap().status.success() {
+        tokio::process::Command::new(tool_name)
+            .arg(version_arg)
+            .env("PERL5LIB", perl5lib)
+            .output()
+            .await
+    } else {
+        output
+    };
+
+    match output {
+        Ok(output) if output.status.success() => {
+            let stdout = String::from_utf8_lossy(&output.stdout);
+            Ok(parse_version(stdout.trim()))
+        }
+        _ => Ok(None),
+    }
+}
+
 /// Get the Perl installation directory (~/perl5)
 ///
 /// Returns the full path to the perl5 directory in the user's home directory.
@@ -82,42 +159,18 @@ impl Installer for PerlCriticInstaller {
         let perl5lib = format!("{}/lib/perl5", perl_dir);
         let perlcritic_path = format!("{}/bin/perlcritic", perl_dir);
 
-        // Try explicit path first (handles tools installed to ~/perl5)
-        let output = tokio::process::Command::new(&perlcritic_path)
-            .arg("--version")
-            .env("PERL5LIB", &perl5lib)
-            .output()
-            .await;
-
-        // If explicit path doesn't work, try PATH
-        let output = if output.is_err() || !output.as_ref().unwrap().status.success() {
-            tokio::process::Command::new("perlcritic")
-                .arg("--version")
-                .env("PERL5LIB", &perl5lib)
-                .output()
-                .await
-        } else {
-            output
-        };
-
-        match output {
-            Ok(output) if output.status.success() => {
-                let stdout = String::from_utf8_lossy(&output.stdout);
+        detect_perl_tool_with_fallback(
+            "perlcritic",
+            &perlcritic_path,
+            "--version",
+            &perl5lib,
+            |output| {
                 // perlcritic --version outputs just the version number: "1.156"
-                let mut version_str = stdout.trim().to_string();
-
-                // If version has only 2 components (e.g., "1.156"), add ".0" for semver compatibility
-                if version_str.matches('.').count() == 1 {
-                    version_str.push_str(".0");
-                }
-
-                if let Ok(version) = Version::parse(&version_str) {
-                    return Ok(Some(version));
-                }
-                Ok(None)
-            }
-            _ => Ok(None),
-        }
+                let version_str = normalize_perl_version(output);
+                Version::parse(&version_str).ok()
+            },
+        )
+        .await
     }
 
     async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
@@ -230,12 +283,7 @@ impl Installer for PPIInstaller {
         match output {
             Ok(output) if output.status.success() => {
                 let stdout = String::from_utf8_lossy(&output.stdout);
-                let mut version_str = stdout.trim().to_string();
-
-                // If version has only 2 components (e.g., "1.284"), add ".0" for semver compatibility
-                if version_str.matches('.').count() == 1 {
-                    version_str.push_str(".0");
-                }
+                let version_str = normalize_perl_version(stdout.trim());
 
                 if let Ok(version) = Version::parse(&version_str) {
                     return Ok(Some(version));

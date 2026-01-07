@@ -23,6 +23,33 @@ use anyhow::Result;
 use std::fs;
 use std::path::Path;
 
+/// Perl environment paths
+///
+/// Contains the paths needed to configure the Perl environment
+pub struct PerlEnv {
+    /// Path to Perl binaries (~/perl5/bin)
+    pub bin_path: String,
+    /// Path to Perl libraries (~/perl5/lib/perl5)
+    pub lib_path: String,
+}
+
+/// Get Perl environment paths
+///
+/// Returns the standard Perl local::lib paths relative to the user's home directory.
+/// These paths are used consistently across activation script generation and
+/// subprocess environment configuration.
+///
+/// # Returns
+///
+/// `PerlEnv` struct containing bin and lib paths
+pub fn get_perl_env() -> PerlEnv {
+    let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());
+    PerlEnv {
+        bin_path: format!("{}/perl5/bin", home),
+        lib_path: format!("{}/perl5/lib/perl5", home),
+    }
+}
+
 /// Write a sourceable activation script to the repository
 ///
 /// Creates `.bootstrap/activate.sh` that users can source to activate the environment:
@@ -35,9 +62,7 @@ pub fn write_activation_script(repo_root: &Path, venv_path: &Path) -> Result<()>
 
     let activate_script = bootstrap_dir.join("activate.sh");
 
-    let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());
-    let perl_bin = format!("{}/perl5/bin", home);
-    let perl_lib = format!("{}/perl5/lib/perl5", home);
+    let perl = get_perl_env();
 
     let script_content = format!(
         r#"#!/usr/bin/env bash
@@ -105,7 +130,7 @@ fi
 
 # Add Perl tools to PATH and set PERL5LIB
 export PATH="{perl_bin}:$PATH"
-export PERL5LIB="{perl_lib}:${{PERL5LIB:+$PERL5LIB}}"
+export PERL5LIB="{perl_lib}${{PERL5LIB:+:$PERL5LIB}}"
 echo "✓ Perl environment configured"
 
 # Mark as activated
@@ -117,8 +142,8 @@ echo ""
 echo "To deactivate, run: deactivate"
 "#,
         venv = venv_path.display(),
-        perl_bin = perl_bin,
-        perl_lib = perl_lib,
+        perl_bin = perl.bin_path,
+        perl_lib = perl.lib_path,
     );
 
     fs::write(&activate_script, script_content)?;
@@ -142,18 +167,18 @@ echo "To deactivate, run: deactivate"
 /// eval "$(bootstrap-repo-cli install --profile dev --emit-env-commands)"
 /// ```
 pub fn emit_env_commands(_repo_root: &Path, venv_path: &Path) {
-    let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());
-    let perl_home = format!("{}/perl5", home);
-    let perl_bin = format!("{}/bin", perl_home);
-    let perl_lib = format!("{}/lib/perl5", perl_home);
+    let perl = get_perl_env();
 
     // Emit commands for shell evaluation
     println!("# Bootstrap environment activation commands");
     println!("# Activate Python venv");
     println!("source {}/bin/activate", venv_path.display());
     println!("# Configure Perl environment");
-    println!("export PATH=\"{}:$PATH\"", perl_bin);
-    println!("export PERL5LIB=\"{}${{PERL5LIB:+:${{PERL5LIB}}}}\"", perl_lib);
+    println!("export PATH=\"{}:$PATH\"", perl.bin_path);
+    println!(
+        "export PERL5LIB=\"{}${{PERL5LIB:+:$PERL5LIB}}\"",
+        perl.lib_path
+    );
     println!("export BOOTSTRAP_ACTIVATED=1");
 }
 
