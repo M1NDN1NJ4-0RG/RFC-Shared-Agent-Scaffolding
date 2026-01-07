@@ -99,7 +99,7 @@ def create_parser() -> argparse.ArgumentParser:
         type=int,
         default=None,
         metavar="N",
-        help="Number of parallel jobs (default: 1, env: REPO_LINT_JOBS)",
+        help="Number of parallel jobs (default: AUTO based on CPU count, env: REPO_LINT_JOBS)",
     )
 
     # fix command
@@ -258,8 +258,20 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 error_msg = f"Missing tools: {', '.join(missing_tools)}"
                 return (key, name, results, time.time() - start_time, error_msg)
             
-            # Run the action callback
-            results = action_callback(runner)
+            # Run the action callback (with optional tool-level parallelism)
+            # For check mode with tool-level parallelism enabled, run tools in parallel
+            enable_tool_parallelism = (
+                mode == "Linting" and 
+                jobs > 1 and
+                os.getenv("REPO_LINT_TOOL_PARALLELISM", "").lower() in ("1", "true", "yes")
+            )
+            
+            if enable_tool_parallelism and hasattr(runner, 'check_parallel'):
+                # Use parallel check if available
+                results = runner.check_parallel(max_workers=min(jobs, 4))
+            else:
+                # Standard sequential execution
+                results = action_callback(runner)
             
         except Exception as e:
             error_msg = f"Runner failed: {str(e)}"
@@ -497,17 +509,27 @@ def cmd_check(args: argparse.Namespace) -> int:
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
     import os
+    import multiprocessing
     
     use_json = getattr(args, "json", False)
     
-    # Handle --jobs/-j with environment variable fallback
+    # Calculate DEFAULT_SAFE_AUTO for safety capping
+    cpu = max(multiprocessing.cpu_count() or 1, 1)
+    auto_workers = max(cpu - 1, 1)  # Leave 1 core for OS/overhead
+    DEFAULT_SAFE_AUTO = min(auto_workers, 8)  # Hard cap at 8
+    
+    # Handle --jobs/-j with environment variable fallback and AUTO default
     jobs = getattr(args, "jobs", None)
+    explicit_override = False  # Track if user explicitly set jobs
+    
+    # Precedence: 1) CLI flag, 2) env var, 3) AUTO
     if jobs is None:
         # Try environment variable
         env_jobs = os.getenv("REPO_LINT_JOBS")
         if env_jobs:
             try:
                 jobs = int(env_jobs)
+                explicit_override = True
             except ValueError:
                 safe_print(
                     f"❌ Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be an integer)",
@@ -515,26 +537,50 @@ def cmd_check(args: argparse.Namespace) -> int:
                 )
                 return ExitCode.INTERNAL_ERROR
         else:
-            jobs = 1  # Default to sequential
+            # AUTO: Conservative auto-detection
+            jobs = DEFAULT_SAFE_AUTO
+            
+            if args.verbose and not use_json:
+                safe_print(
+                    f"ℹ️  Auto-detected {cpu} CPUs, using {jobs} parallel workers",
+                    f"INFO: Auto-detected {cpu} CPUs, using {jobs} parallel workers"
+                )
+    else:
+        explicit_override = True
     
     # Validate jobs count
-    if jobs < 1:
+    if jobs <= 0:
         safe_print(
-            f"❌ Invalid --jobs value: {jobs} (must be >= 1)",
-            f"ERROR: Invalid --jobs value: {jobs} (must be >= 1)"
+            f"❌ Invalid jobs value: {jobs} (must be >= 1)",
+            f"ERROR: Invalid jobs value: {jobs} (must be >= 1)"
         )
         return ExitCode.INTERNAL_ERROR
     
-    # Optional: Cap to CPU count
-    import multiprocessing
-    cpu_count = multiprocessing.cpu_count()
-    if jobs > cpu_count * 2:
-        if args.verbose and not use_json:
+    # Safety: Cap user-specified values to DEFAULT_SAFE_AUTO
+    if explicit_override and jobs > DEFAULT_SAFE_AUTO:
+        if not use_json:
             safe_print(
-                f"⚠️  Warning: --jobs={jobs} exceeds 2x CPU count ({cpu_count}), capping to {cpu_count * 2}",
-                f"WARNING: --jobs={jobs} exceeds 2x CPU count ({cpu_count}), capping to {cpu_count * 2}"
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+                "=" * 70
             )
-        jobs = cpu_count * 2
+            safe_print(
+                f"⚠️  SAFETY LIMIT: Requested {jobs} workers exceeds safe maximum",
+                f"WARNING: SAFETY LIMIT: Requested {jobs} workers exceeds safe maximum"
+            )
+            safe_print(
+                f"⚠️  For safety, capping to {DEFAULT_SAFE_AUTO} workers (based on {cpu} CPUs)",
+                f"WARNING: For safety, capping to {DEFAULT_SAFE_AUTO} workers (based on {cpu} CPUs)"
+            )
+            safe_print(
+                "⚠️  High worker counts can cause resource exhaustion and system instability",
+                "WARNING: High worker counts can cause resource exhaustion and system instability"
+            )
+            safe_print(
+                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
+                "=" * 70
+            )
+            print("")
+        jobs = DEFAULT_SAFE_AUTO
     
     # Store validated jobs count back in args for _run_all_runners
     args.jobs = jobs

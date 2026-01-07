@@ -224,6 +224,65 @@ class Runner(ABC):
         """
         pass  # pylint: disable=unnecessary-pass  # Abstract method
 
+    def check_parallel(self, max_workers: int = 4) -> List[LintResult]:
+        """Run linting checks with tool-level parallelism (optional).
+
+        This is a default implementation that introspects the runner for tool methods
+        and executes them in parallel. Runners can override this for custom behavior.
+
+        :param max_workers: Maximum number of parallel tool executions
+        :returns: List of linting results from all tools (in deterministic order)
+        """
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+        import inspect
+
+        # Get all methods that look like tool check methods
+        # Pattern: _run_* methods that are likely tool-specific
+        tool_methods = []
+        for name, method in inspect.getmembers(self, predicate=inspect.ismethod):
+            # Include methods that start with _run_ and aren't utility methods
+            if (name.startswith('_run_') and 
+                not name.endswith(('_fix', '_format', '_helper', '_util')) and
+                callable(method)):
+                # Verify the method matches check() behavior by checking if tool filtering applies
+                if self._should_run_tool(name.replace('_run_', '').replace('_check', '').replace('_validation', '')):
+                    tool_methods.append((name, method))
+
+        # If no tool methods found or only one, fall back to sequential
+        if len(tool_methods) <= 1:
+            return self.check()
+
+        # Execute tools in parallel
+        results_map = {}  # method_name -> result
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_method = {
+                executor.submit(method): name
+                for name, method in tool_methods
+            }
+
+            for future in as_completed(future_to_method):
+                method_name = future_to_method[future]
+                try:
+                    result = future.result()
+                    results_map[method_name] = result
+                except Exception as e:
+                    # Create error result for failed tool
+                    from tools.repo_lint.common import LintResult
+                    results_map[method_name] = LintResult(
+                        tool=method_name,
+                        passed=False,
+                        violations=[],
+                        error=f"Tool execution failed: {str(e)}"
+                    )
+
+        # Return results in deterministic order (same order as tool_methods)
+        results = []
+        for name, _ in tool_methods:
+            if name in results_map:
+                results.append(results_map[name])
+
+        return results
+
     def set_tool_filter(self, tools: List[str]) -> None:
         """Set tool filter to run only specific tools.
 

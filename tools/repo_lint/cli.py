@@ -392,7 +392,7 @@ def cli(ctx):
     type=int,
     default=None,
     metavar="N",
-    help="Number of parallel jobs (default: 1, env: REPO_LINT_JOBS)",
+    help="Number of parallel jobs (default: AUTO based on CPU count, env: REPO_LINT_JOBS)",
 )
 @click.option(
     "--progress",
@@ -499,7 +499,7 @@ def check(
     :param show_codes: Show tool rule IDs/codes in output
     :param max_violations: Stop after N violations
     :param fail_fast: Stop after first tool failure
-    :param jobs: Number of parallel jobs (default: 1, env: REPO_LINT_JOBS)
+    :param jobs: Number of parallel jobs (default: AUTO based on CPU count, env: REPO_LINT_JOBS)
     :param progress: Show progress bar during parallel execution
     """
     import argparse  # Local import - only needed for Namespace creation
