@@ -12,6 +12,13 @@
 #   - jq for JSON inspection
 #   - curl for downloading pinned binaries
 #   - perl + cpanminus (cpanm) for Perl tooling
+#   - Archive/compression + inspection:
+#     - zip, unzip, p7zip (7z)
+#     - zstd, xz-utils, pigz, bzip2, lz4, pbzip2
+#     - file, tree
+#
+# - Media tooling (optional / commented-out by default):
+#   - ffmpeg, mediainfo
 #
 # - YAML tooling (always):
 #   - yq (Mike Farah Go-yq) installed from GitHub releases (pinned version) to avoid the
@@ -122,7 +129,18 @@ jobs:
             jq \
             curl \
             perl \
-            cpanminus
+            cpanminus \
+            zip \
+            unzip \
+            p7zip-full \
+            zstd \
+            xz-utils \
+            pigz \
+            bzip2 \
+            lz4 \
+            pbzip2 \
+            file \
+            tree
 
           # Install Mike Farah's Go-yq (the Ubuntu/Debian `yq` package is a different implementation)
           YQ_VERSION="v4.44.3"
@@ -139,6 +157,15 @@ jobs:
           sudo curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${YQ_ARCH}" -o /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
           yq --version
+
+          # Optional media tooling (commented out by default to reduce install time/surface area)
+          # Uncomment if/when the repo needs media processing helpers.
+          # sudo apt-get install -y --no-install-recommends \
+          #   ffmpeg \
+          #   mediainfo
+          #
+          # ffmpeg -version
+          # mediainfo --Version
 
           # Conditional tools (only installed if the repo contains relevant files)
           if git ls-files '*.sh' | rg -q .; then
@@ -341,6 +368,22 @@ jobs:
           rg --version
           jq --version
           yq --version
+          zip -v | head -n 2
+          unzip -v | head -n 2
+          7z | head -n 2
+          zstd --version
+          xz --version
+          pigz --version
+          bzip2 --version
+          lz4 --version
+          pbzip2 -V
+          file --version
+          tree --version
+
+          # Optional media tooling verification (commented out by default)
+          # ffmpeg -version
+          # mediainfo --Version
+
           command -v repo-lint
           repo-lint --help
           python -m tools.repo_lint.cli --help
