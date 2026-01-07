@@ -78,6 +78,18 @@ impl Installer for RipgrepInstaller {
             });
         }
 
+        // Check if ripgrep is already installed
+        if let Some(existing_version) = self.detect(ctx).await? {
+            return Ok(InstallResult {
+                version: existing_version.clone(),
+                installed_new: false,
+                log_messages: vec![format!(
+                    "ripgrep already installed (version {})",
+                    existing_version
+                )],
+            });
+        }
+
         let pm: Box<dyn PackageManagerOps> = match ctx.package_manager {
             PackageManager::Homebrew => Box::new(HomebrewOps),
             PackageManager::Apt => Box::new(AptOps),

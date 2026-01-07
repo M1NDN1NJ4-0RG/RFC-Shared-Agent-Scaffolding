@@ -80,6 +80,18 @@ impl Installer for ShfmtInstaller {
             });
         }
 
+        // Check if shfmt is already installed
+        if let Some(existing_version) = self.detect(ctx).await? {
+            return Ok(InstallResult {
+                version: existing_version.clone(),
+                installed_new: false,
+                log_messages: vec![format!(
+                    "shfmt already installed (version {})",
+                    existing_version
+                )],
+            });
+        }
+
         let package_name = match &ctx.package_manager {
             PackageManager::Homebrew => "shfmt",
             PackageManager::Apt => {
