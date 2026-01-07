@@ -105,8 +105,9 @@ jobs:
             yamllint
 
           # Install repo-lint from THIS repository (editable).
-          # Installs from the package directory at tools/repo_lint (relative to the repo root).
-          python -m pip install --user -e ./tools/repo_lint
+          # NOTE: This repo packages repo-lint from the repository root (pyproject.toml at repo root).
+          test -f pyproject.toml || (echo "ERROR: pyproject.toml not found at repo root" >&2; exit 1)
+          python -m pip install --user -e .
 
           # Ensure user scripts are on PATH
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
