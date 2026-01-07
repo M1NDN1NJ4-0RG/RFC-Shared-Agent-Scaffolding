@@ -16,13 +16,25 @@
 #     - jq for JSON inspection
 #     - curl for downloading pinned binaries
 #     - perl + cpanminus (cpanm) for Perl tooling
+#     - archive/compression utilities:
+#       - zip/unzip, 7zip (p7zip), zstd, xz-utils, pigz, bzip2, lz4, pbzip2
+#     - file/tree helpers:
+#       - file, tree
+#     - optional media tooling (commented out by default):
+#       - ffmpeg, mediainfo
 #   - YAML tooling (always):
 #     - yq (Mike Farah Go-yq) installed from GitHub releases (pinned version)
 #   - Python tooling (always):
 #     - Python 3.12 via actions/setup-python
 #     - pip caching keyed by repo root `pyproject.toml`
 #     - Python CLI/tooling installed via pip --user
-#     - repo-lint installed from THIS repository (editable)
+#     - repo-lint installed from THIS repository (editable) via repo root `pyproject.toml`
+#     - common agent libraries installed (non-exhaustive):
+#       - formatting/lint/test: black, ruff, pylint, yamllint, pytest, mdformat
+#       - CLI/UI: click, rich, rich-click, typer, tqdm
+#       - networking: paramiko, netmiko, napalm, ntc-templates, textfsm
+#       - JSON/YAML/TOML: json5, jsonschema, orjson, ruamel.yaml, toml, tomlkit, tomli-w
+#       - HTTP/retry: requests, httpx, tenacity
 #   - Shell toolchain (conditional):
 #     - shellcheck (apt) only when *.sh exists
 #     - shfmt (Go install) only when *.sh exists
@@ -36,7 +48,7 @@
 #     - cpanm fallback when *.pl exists (best-effort)
 #   - Rust toolchain (conditional, when rust/** exists):
 #     - dtolnay/rust-toolchain@stable with rustfmt + clippy components
-#     - helper tools via taiki-e/install-action
+#     - helper tools via taiki-e/install-action (includes taplo)
 #   - Markdown linting (conditional):
 #     - Node.js 20 setup when *.md exists
 #     - markdownlint-cli installed globally when *.md exists
@@ -190,6 +202,9 @@ jobs:
             ruff \
             tenacity \
             textfsm \
+            toml \
+            tomlkit \
+            tomli-w \
             tqdm \
             typer \
             yamllint
