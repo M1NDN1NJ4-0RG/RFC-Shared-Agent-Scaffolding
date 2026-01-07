@@ -70,6 +70,82 @@ This will:
 - Install Python tools (black, ruff, pylint, yamllint) in a local virtual environment
 - Provide instructions for installing language-specific tools (shellcheck, perltidy, etc.)
 
+### Option 3: Automated Bootstrapping (Recommended for Contributors)
+
+For a complete, automated setup of all development tools, use the bootstrapper scripts:
+
+#### Using Bash Bootstrapper (Traditional)
+
+```bash
+cd RFC-Shared-Agent-Scaffolding
+./scripts/session-start.sh
+```
+
+This script:
+- Creates a Python virtual environment (`.venv/`)
+- Installs `repo-lint` in editable mode (`pip install -e .`)
+- Installs all required linting tools (Python, Shell, PowerShell, Perl)
+- Runs verification gate (`repo-lint check --ci`)
+
+#### Using Rust Bootstrapper (Faster, Parallel)
+
+The repository includes a Rust-based bootstrapper that provides:
+- Parallel tool installation for faster setup
+- Profile-based installation (dev/ci/full)
+- Rich progress UI with real-time status updates
+- Deterministic exit codes
+
+**Pre-built binaries** are available for:
+- Linux x86_64 (musl)
+- Linux ARM64 (musl)
+- macOS x86_64
+- macOS ARM64
+
+Download from [GitHub Releases](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases) or use the session scripts (which automatically use the Rust bootstrapper if available).
+
+**Usage:**
+
+```bash
+# Install for development (dev profile)
+bootstrap-repo-cli install --profile dev
+
+# Check installation
+bootstrap-repo-cli doctor
+
+# Verify all tools
+bootstrap-repo-cli verify
+```
+
+**Profiles:**
+- `dev`: Development tools (repo-lint, ripgrep, Python tools, shell tools, actionlint)
+- `ci`: Minimal tools for CI environments (subset of dev)
+- `full`: All available tools including Perl and PowerShell
+
+**Parity with Bash:**
+The Rust bootstrapper achieves parity with the Bash bootstrapper by:
+- Installing `repo-lint` via `pip install -e .` (editable mode)
+- Running automatic verification gate (`repo-lint check --ci`) after installation
+- Ensuring `repo-lint --help` succeeds before completing
+
+#### Session Scripts
+
+For consistent workflow management, use these scripts:
+
+```bash
+# Start a session (runs bootstrapper + activates environment)
+./scripts/session-start.sh
+
+# End a session (runs verification gate)
+./scripts/session-end.sh
+```
+
+**Session workflow:**
+1. `session-start.sh` runs the bootstrapper and sets up the environment
+2. You make code changes
+3. `session-end.sh` validates that all tools still work correctly
+
+Both scripts **MUST** exit 0 for a successful session.
+
 ---
 
 ## Basic Usage
