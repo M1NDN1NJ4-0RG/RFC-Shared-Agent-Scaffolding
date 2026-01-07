@@ -150,3 +150,17 @@
   - Unannotated function parameter → DETECTED by Ruff ANN* ✓
   - Missing function return type → DETECTED by Ruff ANN* ✓
 - **Conclusion:** Ruff ANN* handles function annotations perfectly. Custom AST-based checker needed for PEP 526 module-level and class attributes.
+
+---
+
+### 2026-01-07 - Code Review Fixes
+
+**Addressed Copilot Code Review comments:**
+- Fixed `tools/repo_lint/runners/base.py`: Replaced `getattr` with explicit `hasattr` check for `_should_run_tool` method detection
+- Fixed `tools/repo_lint/cli_argparse.py`: 
+  - Replaced string slicing with `removeprefix()` method for cleaner code
+  - Defined `MAX_AUTO_WORKERS = 8` constant instead of magic number
+- Fixed `rust/crates/safe-run/src/safe_run.rs`:
+  - Defined `SIGINT_EXIT_CODE = 130` and `SIGTERM_EXIT_CODE = 143` constants
+  - Added comprehensive docstring explaining sequence number increment logic in `emit_event()`
+- Ran `repo-lint check --ci` (exit 1 - pre-existing YAML violation only, all fixes passed)

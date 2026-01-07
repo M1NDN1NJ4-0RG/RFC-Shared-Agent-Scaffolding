@@ -364,7 +364,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                             tools = []
                             prefix = "Missing tools:"
                             if error_msg.startswith(prefix):
-                                tools_part = error_msg[len(prefix) :].strip()
+                                tools_part = error_msg.removeprefix(prefix).strip()
                                 if tools_part:
                                     tools = [t.strip() for t in tools_part.split(",") if t.strip()]
                             if tools:
@@ -551,11 +551,14 @@ def cmd_check(args: argparse.Namespace) -> int:
 
     use_json = getattr(args, "json", False)
 
-    # Calculate safe AUTO maximum for default behavior
-    # Upper limit of 8 chosen based on: diminishing returns beyond 8 parallel runners,
+    # Maximum parallel workers for AUTO mode
+    # Chosen based on: diminishing returns beyond 8 parallel runners,
     # memory constraints (each runner spawns subprocesses), and CI stability
+    MAX_AUTO_WORKERS = 8
+
+    # Calculate safe AUTO maximum for default behavior
     cpu = os.cpu_count() or 1
-    auto_max = min(max(cpu - 1, 1), 8)  # Safe default: 1..8
+    auto_max = min(max(cpu - 1, 1), MAX_AUTO_WORKERS)  # Safe default: 1..MAX_AUTO_WORKERS
 
     # Handle --jobs/-j with environment variable fallback and AUTO default
     jobs = getattr(args, "jobs", None)

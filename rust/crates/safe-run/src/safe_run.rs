@@ -62,6 +62,10 @@ use std::fs::{self, File};
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
+
+// Signal exit code constants (Unix convention: 128 + signal number)
+const SIGINT_EXIT_CODE: i32 = 130; // 128 + SIGINT (2)
+const SIGTERM_EXIT_CODE: i32 = 143; // 128 + SIGTERM (15)
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -290,12 +294,12 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
             );
 
             // Exit with conventional signal exit code (128 + signal number).
-            // SIGINT (2) → 130, SIGTERM (15) → 143
+            // SIGINT (2) → SIGINT_EXIT_CODE (130), SIGTERM (15) → SIGTERM_EXIT_CODE (143)
             // Check SIGINT first since it's more specific (user Ctrl-C)
             let exit_code = if got_sigint {
-                130 // 128 + SIGINT (2)
+                SIGINT_EXIT_CODE
             } else {
-                143 // 128 + SIGTERM (15)
+                SIGTERM_EXIT_CODE
             };
             return Ok(exit_code);
         }
@@ -407,6 +411,30 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
 /// let events_vec = events.lock().unwrap();
 /// assert_eq!(events_vec[0], "[SEQ=1][STDOUT] Hello");
 /// assert_eq!(events_vec[1], "[SEQ=2][META] Command started");
+/// Emit an event to the ledger with monotonic sequence numbering.
+///
+/// # Sequence Numbering
+///
+/// The sequence counter starts at 0, and `fetch_add(1)` returns the old value.
+/// We add 1 to get a 1-based sequence number for human readability in logs:
+/// - First call: fetch_add returns 0, we emit SEQ=1
+/// - Second call: fetch_add returns 1, we emit SEQ=2
+/// - etc.
+///
+/// This ensures the first event is SEQ=1 (not SEQ=0), which is clearer for users.
+///
+/// # Arguments
+///
+/// * `seq_counter` - Atomic counter for monotonic sequence numbers (starts at 0)
+/// * `events` - Shared event ledger
+/// * `stream` - Stream identifier (e.g., "STDOUT", "STDERR")
+/// * `text` - Event content
+///
+/// # Example
+///
+/// ```ignore
+/// emit_event(&seq_counter, &events, "STDOUT", "Hello world");
+/// // Emits: [SEQ=1][STDOUT] Hello world
 /// ```
 fn emit_event(
     seq_counter: &Arc<AtomicU64>,
@@ -414,6 +442,7 @@ fn emit_event(
     stream: &str,
     text: &str,
 ) {
+    // fetch_add returns the previous value, so we add 1 to get 1-based numbering
     let seq = seq_counter.fetch_add(1, Ordering::SeqCst) + 1;
     let event = format!("[SEQ={}][{}] {}", seq, stream, text);
 
