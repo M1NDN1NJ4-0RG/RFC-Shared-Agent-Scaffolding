@@ -4,6 +4,7 @@
 [profile.dev]
 # Development profile: All tools for full local development
 tools = [
+    "repo-lint",
     "ripgrep",
     "python-black",
     "python-ruff",
@@ -22,6 +23,7 @@ tools = [
 [profile.ci]
 # CI profile: Minimal set for CI workflows
 tools = [
+    "repo-lint",
     "ripgrep",
     "python-black",
     "python-ruff",
@@ -33,6 +35,7 @@ tools = [
 [profile.full]
 # Full profile: All available tools
 tools = [
+    "repo-lint",
     "ripgrep",
     "python-black",
     "python-ruff",
