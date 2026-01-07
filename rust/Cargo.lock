@@ -170,6 +170,33 @@ dependencies = [
 ]
 
 [[package]]
+name = "bootstrap-repo-cli"
+version = "0.1.1"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "atty",
+ "chrono",
+ "clap",
+ "dirs",
+ "futures",
+ "indicatif",
+ "num_cpus",
+ "once_cell",
+ "petgraph",
+ "rand 0.8.5",
+ "regex",
+ "reqwest",
+ "semver",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.17",
+ "tokio",
+ "toml",
+]
+
+[[package]]
 name = "bstr"
 version = "1.12.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1568,33 +1595,19 @@ checksum = "a50f4cf475b65d88e057964e0e9bb1f0aa9bbb2036dc65c64596b42932536984"
 name = "safe-run"
 version = "0.1.1"
 dependencies = [
- "anyhow",
  "assert_cmd",
- "async-trait",
- "atty",
  "bzip2",
  "chrono",
  "clap",
- "dirs",
  "flate2",
- "futures",
- "indicatif",
- "num_cpus",
  "once_cell",
- "petgraph",
  "predicates",
- "rand 0.8.5",
  "regex",
- "reqwest",
- "semver",
  "serde",
  "serde_json",
  "signal-hook",
  "tar",
  "tempfile",
- "thiserror 2.0.17",
- "tokio",
- "toml",
  "zip",
 ]
 

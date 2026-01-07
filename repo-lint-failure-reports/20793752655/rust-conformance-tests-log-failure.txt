@@ -1,0 +1,337 @@
+2026-01-07T19:11:15 GMT ##[debug]Evaluating condition for step: 'Run conformance tests (non-ignored only)'
+2026-01-07T19:11:15 GMT ##[debug]Evaluating: success()
+2026-01-07T19:11:15 GMT ##[debug]Evaluating success:
+2026-01-07T19:11:15 GMT ##[debug]=> true
+2026-01-07T19:11:15 GMT ##[debug]Result: true
+2026-01-07T19:11:15 GMT ##[debug]Starting: Run conformance tests (non-ignored only)
+2026-01-07T19:11:15 GMT ##[debug]Loading inputs
+2026-01-07T19:11:15 GMT ##[debug]Loading env
+2026-01-07T19:11:15 GMT ##[group]Run cargo test -p safe-run --test conformance --verbose
+2026-01-07T19:11:15 GMT cargo test -p safe-run --test conformance --verbose
+2026-01-07T19:11:15 GMT shell: /bin/bash -e {0}
+2026-01-07T19:11:15 GMT env:
+2026-01-07T19:11:15 GMT   CARGO_HOME: /Users/runner/.cargo
+2026-01-07T19:11:15 GMT   CARGO_INCREMENTAL: 0
+2026-01-07T19:11:15 GMT   CARGO_TERM_COLOR: always
+2026-01-07T19:11:15 GMT ##[endgroup]
+2026-01-07T19:11:15 GMT ##[debug]/bin/bash -e /Users/runner/work/_temp/39eef6fb-cdaf-4dae-b43f-ac658fe7a8ea.sh
+2026-01-07T19:11:15 GMT        Fresh version_check v0.9.5
+2026-01-07T19:11:15 GMT        Fresh libc v0.2.178
+2026-01-07T19:11:15 GMT        Fresh jobserver v0.1.34
+2026-01-07T19:11:15 GMT        Fresh typenum v1.19.0
+2026-01-07T19:11:15 GMT        Fresh shlex v1.3.0
+2026-01-07T19:11:15 GMT        Fresh find-msvc-tools v0.1.6
+2026-01-07T19:11:15 GMT        Fresh generic-array v0.14.7
+2026-01-07T19:11:15 GMT        Fresh cc v1.2.51
+2026-01-07T19:11:15 GMT        Fresh pkg-config v0.3.32
+2026-01-07T19:11:15 GMT        Fresh cfg-if v1.0.4
+2026-01-07T19:11:15 GMT        Fresh crypto-common v0.1.7
+2026-01-07T19:11:15 GMT        Fresh unicode-ident v1.0.22
+2026-01-07T19:11:15 GMT        Fresh subtle v2.6.1
+2026-01-07T19:11:15 GMT        Fresh proc-macro2 v1.0.103
+2026-01-07T19:11:15 GMT        Fresh autocfg v1.5.0
+2026-01-07T19:11:15 GMT        Fresh quote v1.0.42
+2026-01-07T19:11:15 GMT        Fresh block-buffer v0.10.4
+2026-01-07T19:11:15 GMT        Fresh errno v0.3.14
+2026-01-07T19:11:15 GMT        Fresh memchr v2.7.6
+2026-01-07T19:11:15 GMT        Fresh digest v0.10.7
+2026-01-07T19:11:15 GMT        Fresh syn v2.0.111
+2026-01-07T19:11:15 GMT        Fresh cpufeatures v0.2.17
+2026-01-07T19:11:15 GMT        Fresh anstyle v1.0.13
+2026-01-07T19:11:15 GMT        Fresh num-traits v0.2.19
+2026-01-07T19:11:15 GMT        Fresh aho-corasick v1.1.4
+2026-01-07T19:11:15 GMT        Fresh bitflags v2.10.0
+2026-01-07T19:11:15 GMT        Fresh utf8parse v0.2.2
+2026-01-07T19:11:15 GMT        Fresh regex-syntax v0.8.8
+2026-01-07T19:11:15 GMT        Fresh anstyle-parse v0.2.7
+2026-01-07T19:11:15 GMT        Fresh regex-automata v0.4.13
+2026-01-07T19:11:15 GMT        Fresh rustix v1.1.3
+2026-01-07T19:11:15 GMT        Fresh serde_core v1.0.228
+2026-01-07T19:11:15 GMT        Fresh zstd-sys v2.0.16+zstd.1.5.7
+2026-01-07T19:11:15 GMT        Fresh inout v0.1.4
+2026-01-07T19:11:15 GMT        Fresh is_terminal_polyfill v1.70.2
+2026-01-07T19:11:15 GMT        Fresh powerfmt v0.2.0
+2026-01-07T19:11:15 GMT        Fresh colorchoice v1.0.4
+2026-01-07T19:11:15 GMT        Fresh simd-adler32 v0.3.8
+2026-01-07T19:11:15 GMT        Fresh rand_core v0.6.4
+2026-01-07T19:11:15 GMT        Fresh base64ct v1.8.1
+2026-01-07T19:11:15 GMT        Fresh anstyle-query v1.1.5
+2026-01-07T19:11:15 GMT        Fresh adler2 v2.0.1
+2026-01-07T19:11:15 GMT        Fresh miniz_oxide v0.8.9
+2026-01-07T19:11:15 GMT        Fresh anstream v0.6.21
+2026-01-07T19:11:15 GMT        Fresh password-hash v0.4.2
+2026-01-07T19:11:15 GMT        Fresh deranged v0.5.5
+2026-01-07T19:11:15 GMT        Fresh cipher v0.4.4
+2026-01-07T19:11:15 GMT        Fresh zstd-safe v5.0.2+zstd.1.5.2
+2026-01-07T19:11:15 GMT        Fresh crc32fast v1.5.0
+2026-01-07T19:11:15 GMT        Fresh bzip2-sys v0.1.13+1.0.8
+2026-01-07T19:11:15 GMT        Fresh sha2 v0.10.9
+2026-01-07T19:11:15 GMT        Fresh serde_derive v1.0.228
+2026-01-07T19:11:15 GMT        Fresh hmac v0.12.1
+2026-01-07T19:11:15 GMT        Fresh heck v0.5.0
+2026-01-07T19:11:15 GMT        Fresh num-conv v0.1.0
+2026-01-07T19:11:15 GMT        Fresh clap_lex v0.7.6
+2026-01-07T19:11:15 GMT        Fresh time-core v0.1.6
+2026-01-07T19:11:15 GMT        Fresh predicates-core v1.0.9
+2026-01-07T19:11:15 GMT        Fresh strsim v0.11.1
+2026-01-07T19:11:15 GMT        Fresh core-foundation-sys v0.8.7
+2026-01-07T19:11:15 GMT        Fresh clap_builder v4.5.53
+2026-01-07T19:11:15 GMT        Fresh iana-time-zone v0.1.64
+2026-01-07T19:11:15 GMT        Fresh time v0.3.44
+2026-01-07T19:11:15 GMT        Fresh clap_derive v4.5.49
+2026-01-07T19:11:15 GMT        Fresh serde v1.0.228
+2026-01-07T19:11:15 GMT        Fresh pbkdf2 v0.11.0
+2026-01-07T19:11:15 GMT        Fresh bzip2 v0.4.4
+2026-01-07T19:11:15 GMT        Fresh flate2 v1.1.5
+2026-01-07T19:11:15 GMT        Fresh zstd v0.11.2+zstd.1.5.2
+2026-01-07T19:11:15 GMT        Fresh aes v0.8.4
+2026-01-07T19:11:15 GMT        Fresh xattr v1.6.1
+2026-01-07T19:11:15 GMT        Fresh regex v1.12.2
+2026-01-07T19:11:15 GMT        Fresh float-cmp v0.10.0
+2026-01-07T19:11:15 GMT        Fresh sha1 v0.10.6
+2026-01-07T19:11:15 GMT        Fresh signal-hook-registry v1.4.8
+2026-01-07T19:11:15 GMT        Fresh filetime v0.2.26
+2026-01-07T19:11:15 GMT        Fresh difflib v0.4.0
+2026-01-07T19:11:15 GMT        Fresh constant_time_eq v0.1.5
+2026-01-07T19:11:15 GMT        Fresh termtree v0.5.1
+2026-01-07T19:11:15 GMT        Fresh byteorder v1.5.0
+2026-01-07T19:11:15 GMT        Fresh normalize-line-endings v0.3.0
+2026-01-07T19:11:15 GMT        Fresh zip v0.6.6
+2026-01-07T19:11:15 GMT        Fresh predicates v3.1.3
+2026-01-07T19:11:15 GMT        Fresh predicates-tree v1.0.12
+2026-01-07T19:11:15 GMT        Fresh tar v0.4.44
+2026-01-07T19:11:15 GMT        Fresh signal-hook v0.3.18
+2026-01-07T19:11:15 GMT        Fresh chrono v0.4.42
+2026-01-07T19:11:15 GMT        Fresh getrandom v0.3.4
+2026-01-07T19:11:15 GMT        Fresh clap v4.5.53
+2026-01-07T19:11:15 GMT        Fresh bstr v1.12.1
+2026-01-07T19:11:15 GMT        Fresh wait-timeout v0.2.1
+2026-01-07T19:11:15 GMT        Fresh itoa v1.0.16
+2026-01-07T19:11:15 GMT        Fresh fastrand v2.3.0
+2026-01-07T19:11:15 GMT        Fresh once_cell v1.21.3
+2026-01-07T19:11:15 GMT        Fresh zmij v0.1.9
+2026-01-07T19:11:15 GMT        Fresh assert_cmd v2.1.1
+2026-01-07T19:11:15 GMT        Fresh serde_json v1.0.147
+2026-01-07T19:11:15 GMT        Fresh tempfile v3.24.0
+2026-01-07T19:11:15 GMT    Compiling safe-run v0.1.1 (/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run)
+2026-01-07T19:11:15 GMT      Running `/Users/runner/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc --crate-name safe_run --edition=2021 crates/safe-run/src/main.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --crate-type bin --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 -C split-debuginfo=unpacked --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values())' -C metadata=fdd52a60fe4cf641 -C extra-filename=-59b6ab010c58dc3d --out-dir /Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps -L dependency=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps --extern bzip2=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libbzip2-b3e37bc39c5f10cf.rlib --extern chrono=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libchrono-52471283a87aa145.rlib --extern clap=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libclap-a1ab1795f1bd0b2e.rlib --extern flate2=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libflate2-e3d622fdd69805e0.rlib --extern signal_hook=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libsignal_hook-cf20ee6e498a6230.rlib --extern tar=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libtar-7e3b8ea33c57f153.rlib --extern zip=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libzip-e727c02c1b572180.rlib -L native=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/build/zstd-sys-a57129c45cb76101/out -L native=/usr/lib`
+2026-01-07T19:11:15 GMT      Running `/Users/runner/.rustup/toolchains/stable-aarch64-apple-darwin/bin/rustc --crate-name conformance --edition=2021 crates/safe-run/tests/conformance.rs --error-format=json --json=diagnostic-rendered-ansi,artifacts,future-incompat --emit=dep-info,link -C embed-bitcode=no -C debuginfo=2 -C split-debuginfo=unpacked --test --check-cfg 'cfg(docsrs,test)' --check-cfg 'cfg(feature, values())' -C metadata=24e7b5b22d8666aa -C extra-filename=-de3e97055cc8658f --out-dir /Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps -L dependency=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps --extern assert_cmd=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libassert_cmd-d349907ebe223a6b.rlib --extern bzip2=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libbzip2-b3e37bc39c5f10cf.rlib --extern chrono=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libchrono-52471283a87aa145.rlib --extern clap=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libclap-a1ab1795f1bd0b2e.rlib --extern flate2=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libflate2-e3d622fdd69805e0.rlib --extern once_cell=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libonce_cell-4a5135b5efdc4b11.rlib --extern predicates=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libpredicates-3964c2fd59db7e64.rlib --extern regex=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libregex-98e832f2fac77866.rlib --extern serde=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libserde-914d73097ae4d7a4.rlib --extern serde_json=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libserde_json-3337b86f7445de1c.rlib --extern signal_hook=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libsignal_hook-cf20ee6e498a6230.rlib --extern tar=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libtar-7e3b8ea33c57f153.rlib --extern tempfile=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libtempfile-13db94edb30b5e10.rlib --extern zip=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/libzip-e727c02c1b572180.rlib -L native=/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/build/zstd-sys-a57129c45cb76101/out -L native=/usr/lib`
+2026-01-07T19:11:16 GMT     Finished `test` profile [unoptimized + debuginfo] target(s) in 0.91s
+2026-01-07T19:11:16 GMT      Running `/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/target/debug/deps/conformance-de3e97055cc8658f`
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT running 35 tests
+2026-01-07T19:11:16 GMT test common::snapshots::tests::test_normalize_pid ... ok
+2026-01-07T19:11:16 GMT test common::tests::test_load_vectors ... FAILED
+2026-01-07T19:11:16 GMT test common::tests::test_safe_run_vector_structure ... FAILED
+2026-01-07T19:11:16 GMT test preflight_tests::test_preflight_001_success ... ignored
+2026-01-07T19:11:16 GMT test preflight_tests::test_preflight_002_auth_failure ... ignored
+2026-01-07T19:11:16 GMT test preflight_tests::test_preflight_003_ruleset_not_found ... ignored
+2026-01-07T19:11:16 GMT test safe_archive_tests::test_safe_archive_001_basic ... FAILED
+2026-01-07T19:11:16 GMT test safe_archive_tests::test_safe_archive_002_compression_formats ... FAILED
+2026-01-07T19:11:16 GMT test safe_archive_tests::test_safe_archive_003_no_clobber_auto_suffix ... FAILED
+2026-01-07T19:11:16 GMT test safe_archive_tests::test_safe_archive_004_no_clobber_strict ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_conformance_tests::test_safe_check_001_command_exists_on_path ... FAILED
+2026-01-07T19:11:16 GMT test common::snapshots::tests::test_normalize_line_endings ... ok
+2026-01-07T19:11:16 GMT test safe_check_conformance_tests::test_safe_check_002_command_not_found ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_conformance_tests::test_safe_check_003_absolute_path ... FAILED
+2026-01-07T19:11:16 GMT test common::snapshots::tests::test_normalize_timestamp ... ok
+2026-01-07T19:11:16 GMT test safe_check_conformance_tests::test_safe_check_004_relative_path ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_conformance_tests::test_safe_check_007_no_command ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_conformance_tests::test_safe_check_005_not_executable ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_phase2_tests::test_check_not_executable ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_phase2_tests::test_check_executable_passes ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_phase2_tests::test_repository_validation ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_tests::test_check_absolute_path_not_found ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_tests::test_check_absolute_path ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_tests::test_check_command_exists_on_path ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_tests::test_check_multiple_common_commands ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_tests::test_check_command_not_found ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_tests::test_check_no_command ... FAILED
+2026-01-07T19:11:16 GMT test safe_run_tests::test_safe_run_001_success_no_artifacts ... FAILED
+2026-01-07T19:11:16 GMT test safe_run_tests::test_safe_run_002_failure_creates_log ... FAILED
+2026-01-07T19:11:16 GMT test safe_run_tests::test_safe_run_003_sigterm_aborted ... ignored
+2026-01-07T19:11:16 GMT test safe_run_tests::test_safe_run_004_custom_log_dir ... FAILED
+2026-01-07T19:11:16 GMT test safe_run_tests::test_safe_run_005_snippet_output ... FAILED
+2026-01-07T19:11:16 GMT test safe_check_tests::test_check_relative_path_not_found ... FAILED
+2026-01-07T19:11:16 GMT test test_all_vectors_have_tests ... FAILED
+2026-01-07T19:11:16 GMT error: test failed, to rerun pass `-p safe-run --test conformance`
+2026-01-07T19:11:16 GMT test safe_check_tests::test_check_relative_path ... FAILED
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT failures:
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- common::tests::test_load_vectors stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'common::tests::test_load_vectors' (23020) panicked at crates/safe-run/tests/common/mod.rs:474:38:
+2026-01-07T19:11:16 GMT Should load conformance vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- common::tests::test_safe_run_vector_structure stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'common::tests::test_safe_run_vector_structure' (23021) panicked at crates/safe-run/tests/common/mod.rs:503:38:
+2026-01-07T19:11:16 GMT Should load conformance vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_archive_tests::test_safe_archive_001_basic stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_archive_tests::test_safe_archive_001_basic' (23022) panicked at crates/safe-run/tests/conformance.rs:571:38:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_archive_tests::test_safe_archive_002_compression_formats stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_archive_tests::test_safe_archive_002_compression_formats' (23023) panicked at crates/safe-run/tests/conformance.rs:623:38:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_archive_tests::test_safe_archive_003_no_clobber_auto_suffix stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_archive_tests::test_safe_archive_003_no_clobber_auto_suffix' (23024) panicked at crates/safe-run/tests/conformance.rs:689:38:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_archive_tests::test_safe_archive_004_no_clobber_strict stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_archive_tests::test_safe_archive_004_no_clobber_strict' (23025) panicked at crates/safe-run/tests/conformance.rs:748:38:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_conformance_tests::test_safe_check_001_command_exists_on_path stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_conformance_tests::test_safe_check_001_command_exists_on_path' (23026) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpn7vIZG" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "ls", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_conformance_tests::test_safe_check_002_command_not_found stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_conformance_tests::test_safe_check_002_command_not_found' (23028) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpwh6IcT" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "nonexistent_command_xyz_never_exists_12345", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_conformance_tests::test_safe_check_003_absolute_path stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_conformance_tests::test_safe_check_003_absolute_path' (23029) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpQs4s9P" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "/bin/sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_conformance_tests::test_safe_check_004_relative_path stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_conformance_tests::test_safe_check_004_relative_path' (23032) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmp5uUvet" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "./test_script.sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_conformance_tests::test_safe_check_007_no_command stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_conformance_tests::test_safe_check_007_no_command' (23034) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmp01wKj2" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_conformance_tests::test_safe_check_005_not_executable stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_conformance_tests::test_safe_check_005_not_executable' (23033) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpjZWOMY" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "./non_exec.sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_phase2_tests::test_check_not_executable stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_phase2_tests::test_check_not_executable' (23039) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpjtdbaX" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpjtdbaX/non_executable.sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_phase2_tests::test_check_executable_passes stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_phase2_tests::test_check_executable_passes' (23038) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpLyuOHw" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpLyuOHw/executable.sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_phase2_tests::test_repository_validation stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_phase2_tests::test_repository_validation' (23040) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpuHxoYx" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_tests::test_check_absolute_path_not_found stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_tests::test_check_absolute_path_not_found' (23045) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmptGvlpq" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmptGvlpq/nonexistent_file", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_tests::test_check_absolute_path stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_tests::test_check_absolute_path' (23044) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpuViAlt" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpuViAlt/test_script.sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_tests::test_check_command_exists_on_path stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_tests::test_check_command_exists_on_path' (23048) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpkiFNUJ" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "ls", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_tests::test_check_multiple_common_commands stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_tests::test_check_multiple_common_commands' (23052) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmp4OhKhw" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_tests::test_check_command_not_found stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_tests::test_check_command_not_found' (23050) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmph8Ht3v" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "nonexistent_command_xyz123_never_exists", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_tests::test_check_no_command stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_tests::test_check_no_command' (23054) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpGJJSgv" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_run_tests::test_safe_run_001_success_no_artifacts stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_run_tests::test_safe_run_001_success_no_artifacts' (23059) panicked at crates/safe-run/tests/conformance.rs:188:38:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_run_tests::test_safe_run_002_failure_creates_log stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_run_tests::test_safe_run_002_failure_creates_log' (23060) panicked at crates/safe-run/tests/conformance.rs:250:38:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_run_tests::test_safe_run_004_custom_log_dir stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_run_tests::test_safe_run_004_custom_log_dir' (23061) panicked at crates/safe-run/tests/conformance.rs:398:38:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_run_tests::test_safe_run_005_snippet_output stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_run_tests::test_safe_run_005_snippet_output' (23063) panicked at crates/safe-run/tests/conformance.rs:476:38:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_tests::test_check_relative_path_not_found stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_tests::test_check_relative_path_not_found' (23057) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpbuMLRW" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "./nonexistent_script", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- test_all_vectors_have_tests stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'test_all_vectors_have_tests' (23064) panicked at crates/safe-run/tests/conformance.rs:1507:34:
+2026-01-07T19:11:16 GMT Failed to load vectors: "Failed to read vectors.json: No such file or directory (os error 2)"
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ---- safe_check_tests::test_check_relative_path stdout ----
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT thread 'safe_check_tests::test_check_relative_path' (23056) panicked at /Users/runner/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/assert_cmd-2.1.1/src/cmd.rs:658:17:
+2026-01-07T19:11:16 GMT Failed to spawn Command { cmd: cd "/var/folders/bp/kmfmhnl95kx1c8x321z7twbw0000gn/T/.tmpid8Mwt" && "/Users/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/safe-run/target/debug/safe-run" "check" "./script_here.sh", stdin: None, timeout: None }: No such file or directory (os error 2)
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT failures:
+2026-01-07T19:11:16 GMT     common::tests::test_load_vectors
+2026-01-07T19:11:16 GMT     common::tests::test_safe_run_vector_structure
+2026-01-07T19:11:16 GMT     safe_archive_tests::test_safe_archive_001_basic
+2026-01-07T19:11:16 GMT     safe_archive_tests::test_safe_archive_002_compression_formats
+2026-01-07T19:11:16 GMT     safe_archive_tests::test_safe_archive_003_no_clobber_auto_suffix
+2026-01-07T19:11:16 GMT     safe_archive_tests::test_safe_archive_004_no_clobber_strict
+2026-01-07T19:11:16 GMT     safe_check_conformance_tests::test_safe_check_001_command_exists_on_path
+2026-01-07T19:11:16 GMT     safe_check_conformance_tests::test_safe_check_002_command_not_found
+2026-01-07T19:11:16 GMT     safe_check_conformance_tests::test_safe_check_003_absolute_path
+2026-01-07T19:11:16 GMT     safe_check_conformance_tests::test_safe_check_004_relative_path
+2026-01-07T19:11:16 GMT     safe_check_conformance_tests::test_safe_check_005_not_executable
+2026-01-07T19:11:16 GMT     safe_check_conformance_tests::test_safe_check_007_no_command
+2026-01-07T19:11:16 GMT     safe_check_phase2_tests::test_check_executable_passes
+2026-01-07T19:11:16 GMT     safe_check_phase2_tests::test_check_not_executable
+2026-01-07T19:11:16 GMT     safe_check_phase2_tests::test_repository_validation
+2026-01-07T19:11:16 GMT     safe_check_tests::test_check_absolute_path
+2026-01-07T19:11:16 GMT     safe_check_tests::test_check_absolute_path_not_found
+2026-01-07T19:11:16 GMT     safe_check_tests::test_check_command_exists_on_path
+2026-01-07T19:11:16 GMT     safe_check_tests::test_check_command_not_found
+2026-01-07T19:11:16 GMT     safe_check_tests::test_check_multiple_common_commands
+2026-01-07T19:11:16 GMT     safe_check_tests::test_check_no_command
+2026-01-07T19:11:16 GMT     safe_check_tests::test_check_relative_path
+2026-01-07T19:11:16 GMT     safe_check_tests::test_check_relative_path_not_found
+2026-01-07T19:11:16 GMT     safe_run_tests::test_safe_run_001_success_no_artifacts
+2026-01-07T19:11:16 GMT     safe_run_tests::test_safe_run_002_failure_creates_log
+2026-01-07T19:11:16 GMT     safe_run_tests::test_safe_run_004_custom_log_dir
+2026-01-07T19:11:16 GMT     safe_run_tests::test_safe_run_005_snippet_output
+2026-01-07T19:11:16 GMT     test_all_vectors_have_tests
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT test result: FAILED. 3 passed; 28 failed; 4 ignored; 0 measured; 0 filtered out; finished in 0.01s
+2026-01-07T19:11:16 GMT 
+2026-01-07T19:11:16 GMT ##[error]Process completed with exit code 101.
+2026-01-07T19:11:16 GMT ##[debug]Finishing: Run conformance tests (non-ignored only)

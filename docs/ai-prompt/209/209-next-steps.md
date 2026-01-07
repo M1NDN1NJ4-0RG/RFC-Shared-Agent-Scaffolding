@@ -788,7 +788,7 @@ Created comprehensive planning documentation as requested in the agent instructi
    - **Appendix**: Related issues, docs, code, external resources
 
 **Key Insights from Planning:**
-- Discovered existing Rust implementation at `rust/src/bootstrap.rs` with comprehensive docs
+- Discovered existing Rust implementation at `rust/src/bootstrap.rs` [**REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`] with comprehensive docs
 - Issue specifically requests Bash script at `scripts/bootstrap-repo-lint-toolchain.sh`
 - Both implementations can coexist; Bash may serve as lighter-weight alternative
 - Must follow "Rule of Three" for any code duplication

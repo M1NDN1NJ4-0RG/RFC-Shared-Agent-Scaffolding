@@ -107,25 +107,25 @@ jobs:
       # Step 7: Build Rust project in debug mode with verbose output
       - name: Build Rust project
         working-directory: rust
-        run: cargo build --verbose
+        run: cargo build --verbose -p safe-run
 
       # Step 8: Run unit tests for the safe-run binary
       # --bin safe-run targets only the binary's unit tests (not integration tests)
       - name: Run unit tests
         working-directory: rust
-        run: cargo test --bin safe-run --verbose
+        run: cargo test -p safe-run --bin safe-run --verbose
 
       # Step 9: Run conformance integration tests (non-ignored only)
       # --test conformance targets the tests/conformance.rs integration test suite
       # Ignored tests (e.g., #[ignore]) are skipped (can be run manually with --ignored)
       - name: Run conformance tests (non-ignored only)
         working-directory: rust
-        run: cargo test --test conformance --verbose
+        run: cargo test -p safe-run --test conformance --verbose
 
       # Step 10: Build release binary (optimized, no debug symbols)
       - name: Build release binary
         working-directory: rust
-        run: cargo build --release --verbose
+        run: cargo build --release --verbose -p safe-run
 
       # Step 11: Verify release binary exists and display metadata
       # Handles both Unix (safe-run) and Windows (safe-run.exe) binary names

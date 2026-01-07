@@ -260,12 +260,15 @@ where
 ### Building
 
 ```bash
-# Debug build
+# Debug build (bootstrap-repo-cli)
 cd rust
-cargo build
+cargo build -p bootstrap-repo-cli
 
 # Release build (optimized)
-cargo build --release
+cargo build --release -p bootstrap-repo-cli
+
+# Build safe-run package
+cargo build -p safe-run
 
 # Check without building
 cargo check
@@ -274,17 +277,17 @@ cargo check
 ### Testing
 
 ```bash
-# Run all tests
-cargo test
+# Run all tests for bootstrap-repo-cli
+cargo test -p bootstrap-repo-cli
 
 # Run with output
-cargo test -- --nocapture
+cargo test -p bootstrap-repo-cli -- --nocapture
 
 # Run specific test
-cargo test test_full_install_flow
+cargo test -p bootstrap-repo-cli test_full_install_flow
 
 # Integration tests only
-cargo test --test integration_tests
+cargo test -p bootstrap-repo-cli --test integration_tests
 ```
 
 ### Linting
@@ -684,8 +687,8 @@ pub async fn install(ctx: &Context) -> Result<InstallSummary> {
 1. Fork the repository
 2. Create a feature branch
 3. Make changes with tests
-4. Run `cargo fmt` and `cargo clippy`
-5. Run `cargo test`
+4. Run `cargo fmt` and `cargo clippy` for the package you changed
+5. Run `cargo test -p <package>` (e.g., `cargo test -p bootstrap-repo-cli`)
 6. Submit pull request
 
 See [CONTRIBUTING.md](../CONTRIBUTING.md) for detailed guidelines.
