@@ -20,10 +20,23 @@
    - `rust/src/bootstrap_v2/activate.rs` - 11 formatting fixes  
    - `rust/src/bootstrap_v2/cli.rs` - 2 formatting fixes
    - `rust/src/bootstrap_v2/installers/perl_tools.rs` - 6 formatting fixes
+
+### Activation Script Docstring Fix ✅
+4. **Problem:** Auto-generated `.bootstrap/activate.sh` had bash-docstring violations
+   - Missing required DESCRIPTION, USAGE, INPUTS, OUTPUTS, EXAMPLES sections
    
-4. **Removed Auto-Generated File:**
-   - `.bootstrap/activate.sh` - Auto-generated file with docstring violations
-   - Will be regenerated on next install (not tracked in git)
+5. **Fix Applied:**
+   - Updated `rust/src/bootstrap_v2/activate.rs` to generate compliant docstring
+   - Script now includes all required sections per bash docstring contract
+   - Validated with `validate_docstrings.py` - passes all checks
+   
+6. **Docstring Sections Added:**
+   - DESCRIPTION: Full explanation of script purpose and requirements
+   - USAGE: Source command examples
+   - INPUTS: Arguments and environment variables
+   - OUTPUTS: Exit codes, environment variables set, stdout messages
+   - EXAMPLES: Activation and verification examples
+   - NOTE: Auto-generation warning
 
 ### Build & Quality Gates
 - Rust build: ✅ SUCCESS (exit 0)
