@@ -145,6 +145,18 @@ impl Installer for ActionlintInstaller {
             });
         }
 
+        // Check if actionlint is already installed (e.g., from go install)
+        if let Some(existing_version) = self.detect(ctx).await? {
+            return Ok(InstallResult {
+                version: existing_version.clone(),
+                installed_new: false,
+                log_messages: vec![format!(
+                    "actionlint already installed (version {})",
+                    existing_version
+                )],
+            });
+        }
+
         let package_name = match &ctx.package_manager {
             PackageManager::Homebrew => "actionlint",
             PackageManager::Apt => {
