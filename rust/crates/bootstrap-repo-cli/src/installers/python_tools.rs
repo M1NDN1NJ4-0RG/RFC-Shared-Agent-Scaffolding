@@ -55,6 +55,39 @@ async fn pip_install(ctx: &Context, package: &str) -> BootstrapResult<()> {
     Ok(())
 }
 
+/// Helper to install and verify a Python package
+/// Returns placeholder version in dry-run mode
+async fn install_and_verify_python_tool(
+    ctx: &Context,
+    package_name: &str,
+    tool_name: &str,
+) -> BootstrapResult<InstallResult> {
+    pip_install(ctx, package_name).await?;
+
+    // In dry-run mode, return placeholder version without detection
+    if ctx.dry_run {
+        return Ok(InstallResult {
+            version: Version::new(0, 0, 0),
+            installed_new: true,
+            log_messages: vec![format!("[DRY-RUN] Would install {}", tool_name)],
+        });
+    }
+
+    // Real install: verify by detecting version
+    let version = detect_python_tool(ctx, tool_name).await?.ok_or_else(|| {
+        BootstrapError::PythonToolsFailed(format!(
+            "{} install verification failed - not found after installation",
+            tool_name
+        ))
+    })?;
+
+    Ok(InstallResult {
+        version,
+        installed_new: true,
+        log_messages: vec![format!("{} installed successfully", tool_name)],
+    })
+}
+
 /// Helper to detect Python package version
 async fn detect_python_tool(ctx: &Context, tool_name: &str) -> BootstrapResult<Option<Version>> {
     let venv_python = ctx.venv_python();
@@ -107,17 +140,7 @@ impl Installer for BlackInstaller {
     }
 
     async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
-        pip_install(ctx, "black").await?;
-
-        let version = self.detect(ctx).await?.ok_or_else(|| {
-            BootstrapError::PythonToolsFailed("black install verification failed".to_string())
-        })?;
-
-        Ok(InstallResult {
-            version,
-            installed_new: true,
-            log_messages: vec!["black installed successfully".to_string()],
-        })
+        install_and_verify_python_tool(ctx, "black", "black").await
     }
 
     async fn verify(&self, ctx: &Context) -> BootstrapResult<VerifyResult> {
@@ -162,17 +185,7 @@ impl Installer for RuffInstaller {
     }
 
     async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
-        pip_install(ctx, "ruff").await?;
-
-        let version = self.detect(ctx).await?.ok_or_else(|| {
-            BootstrapError::PythonToolsFailed("ruff install verification failed".to_string())
-        })?;
-
-        Ok(InstallResult {
-            version,
-            installed_new: true,
-            log_messages: vec!["ruff installed successfully".to_string()],
-        })
+        install_and_verify_python_tool(ctx, "ruff", "ruff").await
     }
 
     async fn verify(&self, ctx: &Context) -> BootstrapResult<VerifyResult> {
@@ -217,17 +230,7 @@ impl Installer for PylintInstaller {
     }
 
     async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
-        pip_install(ctx, "pylint").await?;
-
-        let version = self.detect(ctx).await?.ok_or_else(|| {
-            BootstrapError::PythonToolsFailed("pylint install verification failed".to_string())
-        })?;
-
-        Ok(InstallResult {
-            version,
-            installed_new: true,
-            log_messages: vec!["pylint installed successfully".to_string()],
-        })
+        install_and_verify_python_tool(ctx, "pylint", "pylint").await
     }
 
     async fn verify(&self, ctx: &Context) -> BootstrapResult<VerifyResult> {
@@ -272,17 +275,7 @@ impl Installer for YamllintInstaller {
     }
 
     async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
-        pip_install(ctx, "yamllint").await?;
-
-        let version = self.detect(ctx).await?.ok_or_else(|| {
-            BootstrapError::PythonToolsFailed("yamllint install verification failed".to_string())
-        })?;
-
-        Ok(InstallResult {
-            version,
-            installed_new: true,
-            log_messages: vec!["yamllint installed successfully".to_string()],
-        })
+        install_and_verify_python_tool(ctx, "yamllint", "yamllint").await
     }
 
     async fn verify(&self, ctx: &Context) -> BootstrapResult<VerifyResult> {
@@ -327,17 +320,7 @@ impl Installer for PytestInstaller {
     }
 
     async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
-        pip_install(ctx, "pytest").await?;
-
-        let version = self.detect(ctx).await?.ok_or_else(|| {
-            BootstrapError::PythonToolsFailed("pytest install verification failed".to_string())
-        })?;
-
-        Ok(InstallResult {
-            version,
-            installed_new: true,
-            log_messages: vec!["pytest installed successfully".to_string()],
-        })
+        install_and_verify_python_tool(ctx, "pytest", "pytest").await
     }
 
     async fn verify(&self, ctx: &Context) -> BootstrapResult<VerifyResult> {
