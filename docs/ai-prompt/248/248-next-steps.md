@@ -1,20 +1,38 @@
 # Issue #248 Next Steps
 
-**Current Phase:** ✅ **ALL PHASES COMPLETE + RUST FIX APPLIED**
+**Current Phase:** ✅ **ALL PHASES COMPLETE + BENCHMARKS COMPLETE**
 
 ## Work Status
 
-All phases have been completed and the Rust bootstrapper verification issue has been fixed:
+All phases have been completed, Rust bootstrapper fixed, and benchmarks successfully re-run:
 
 - ✅ Phase 1: Parity Implementation (repo-lint install + verification gate)
-- ✅ Phase 2: Dev Benchmarks (executed and documented)
+- ✅ Phase 2: Dev Benchmarks (executed, documented, and **RE-RUN COMPLETE**)
 - ✅ Phase 3: Linux ARM64 Support (cross-compilation configured)
 - ✅ Phase 4: Documentation Updates (all docs updated)
-- ✅ **NEW:** Rust Bootstrapper Fix (actionlint detection for go install locations)
+- ✅ Rust Bootstrapper Fix (actionlint detection for go install locations)
+- ✅ **NEW:** Complete Benchmark Re-run (2026-01-07 ~04:50 UTC)
 
 ## Outstanding Items
 
-None. Issue #248 is complete.
+None. Issue #248 is complete with full benchmark results.
+
+### Benchmark Re-run Summary (2026-01-07 ~04:50 UTC)
+
+**Status:** ✅ **COMPLETE**
+
+After fixing the Rust bootstrapper's actionlint detection issue, benchmarks were successfully re-run:
+
+**Results:**
+- Bash `repo-lint check --ci`: **43.883s ± 0.402s** (full linting suite)
+- Rust `bootstrap verify`: **1.362s ± 0.006s** (tool availability check)
+- **Speedup:** Rust is ~32x faster, but performs a different operation
+
+**Key Findings:**
+- Both systems now fully functional
+- Extremely consistent performance (Rust: σ=0.006s, Bash: σ=0.402s)
+- Parity achieved for verification workflows
+- Performance baselines established for future optimization
 
 ### Rust Bootstrapper Fix Summary (2026-01-07 04:20 UTC)
 
@@ -31,19 +49,9 @@ Also fixed version parsing to handle:
 
 **Result:** Rust `bootstrap verify --profile dev` now exits 0 successfully with all tools detected.
 
-### Phase 2 Benchmark Summary
-
-The dev benchmarks have been executed and documented in `docs/ai-prompt/235/235-dev-benchmark-results.md`.
-
-**Key Findings:**
-- Bash verification baseline established: 43.2s ± 0.7s for `repo-lint check --ci`
-- Rust bootstrapper verification issue fixed (was exit code 19, now exit 0)
-- Rust `bootstrap verify` is ~1.5s (checks tool availability)
-- Note: `bootstrap verify` and `repo-lint check --ci` perform different operations
-
 ## No Further Action Required
 
-This issue is complete and ready for final review.
+This issue is complete with all phases implemented and benchmarks successfully executed.
 
 ## Resume Instructions (If Needed)
 
