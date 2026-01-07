@@ -106,22 +106,7 @@ async fn handle_install(
     // 3. Load configuration
     let config = Arc::new(Config::load(&repo_root, ci_mode)?);
 
-    // 4. Create virtual environment if it doesn't exist
-    let venv_path = repo_root.join(".venv");
-    if !venv_path.exists() {
-        if !dry_run {
-            println!("🔧 Creating Python virtual environment...");
-        }
-        let venv_info = platform::create_venv(&venv_path, dry_run).await?;
-        if !dry_run {
-            println!(
-                "  ✓ Virtual environment created (Python {})",
-                venv_info.python_version
-            );
-        }
-    }
-
-    // 5. Setup progress reporter
+    // 4. Setup progress reporter
     let progress_mode = if json {
         ProgressMode::Json
     } else if ci_mode {
@@ -132,7 +117,7 @@ async fn handle_install(
     };
     let progress = Arc::new(ProgressReporter::new(progress_mode));
 
-    // 6. Create execution context
+    // 5. Create execution context
     let verbosity = Verbosity::from_count(verbose_count);
     let ctx = Arc::new(Context::with_config(
         repo_root.clone(),
@@ -147,6 +132,24 @@ async fn handle_install(
         offline,
         allow_downgrade,
     ));
+
+    // 6. Create virtual environment if it doesn't exist
+    let venv_path = ctx.venv_path.clone();
+    if !venv_path.exists() {
+        // Use progress reporter for status updates if not in JSON mode
+        if !json {
+            if ctx.verbosity != Verbosity::Quiet {
+                println!("🔧 Creating Python virtual environment...");
+            }
+        }
+        let venv_info = platform::create_venv(&venv_path, dry_run).await?;
+        if !dry_run && !json && ctx.verbosity != Verbosity::Quiet {
+            println!(
+                "  ✓ Virtual environment created (Python {})",
+                venv_info.python_version.as_deref().unwrap_or("unknown")
+            );
+        }
+    }
 
     // 7. Initialize installer registry
     let registry = InstallerRegistry::new();
