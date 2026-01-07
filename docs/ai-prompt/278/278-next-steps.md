@@ -4,13 +4,18 @@
 
 - [x] Phase 0.1: Snapshot repo + tooling (COMPLETE)
 - [x] Phase 0.2: Inventory all Python files (COMPLETE)
-- [ ] Phase 1.1: Collect "contracts" that already exist
-  - [ ] Document exact current enforcement mechanisms
-  - [ ] List what is enforced today (naming, docstrings, linting)
-- [ ] Phase 1.2: Current-violations baseline
-  - [ ] Run current Python checks and collect baseline
-  - [ ] Identify most common failure categories
-  - [ ] Determine which are autofixable
+- [x] Phase 1.1: Collect "contracts" that already exist (COMPLETE)
+- [x] Phase 1.2: Current-violations baseline (COMPLETE)
+- [ ] Phase 2.1: Policy specification (MANDATORY)
+  - [ ] Create `docs/contributing/python-typing-policy.md`
+  - [ ] Define PEP 526 annotation scope (module-level, class attributes)
+  - [ ] Define required annotation patterns (empty literals, None inits, etc.)
+  - [ ] Define fallback types policy (Any with tags, object, etc.)
+- [ ] Phase 2.2: Function annotations policy (MANDATORY)
+  - [ ] Document mandatory function annotation requirements
+  - [ ] Define `*args`/`**kwargs` typing policy
+- [ ] Phase 2.3: Docstring return type policy (MANDATORY)
+  - [ ] Document `:rtype:` requirement for non-None returns
 
 ## Resume Pointers
 

@@ -19,8 +19,8 @@
 - Ready to begin Phase 0 work
 
 **Next actions:**
-- Begin Phase 1: Evaluate existing Python contracts
-- Create current-violations baseline
+- Continue Phase 1: Document exact current enforcement mechanisms
+- Create policy documents for Phase 2
 
 ---
 
@@ -53,3 +53,39 @@
 - Pylint has docstring checks DISABLED
 - Current docstring validation via `scripts/validate_docstrings.py` (migration target for Phase 3.4)
 - No type annotation enforcement currently exists (gap to address)
+
+---
+
+### 2026-01-07 - Phase 1 Complete
+
+**Phase 1.1: Collect "contracts" that already exist**
+- Documented current enforcement mechanisms:
+  - `repo-lint` Python runner at `tools/repo_lint/runners/python_runner.py`
+  - Standalone docstring validator at `scripts/validate_docstrings.py` (subprocess call)
+  - CI workflow: `.github/workflows/repo-lint-and-docstring-enforcement.yml`
+- Listed what is enforced today:
+  - **Naming:** PEP 8 via Ruff N* rules (snake_case functions, PascalCase classes, etc.)
+  - **Docstrings:** reST format via `validate_docstrings.py` (module-level + symbol-level)
+  - **Linting:** Black (formatting), Ruff (style), Pylint (static analysis)
+  - **NOT enforced:** Type annotations, `:rtype:` in docstrings
+
+**Phase 1.2: Current-violations baseline**
+- Ran Ruff ANN* rules (flake8-annotations) across repository
+- **Total annotation violations: 722 errors** across 84 Python files
+- Top violation categories:
+  - **ANN201:** 389 violations - Missing return type annotation for public functions
+  - **ANN001:** 287 violations - Missing type annotation for function arguments
+  - **ANN202:** 26 violations - Missing return type annotation for private functions
+  - **ANN204:** 11 violations - Missing return type annotation for special methods
+  - **ANN206:** 4 violations - Missing return type annotation for class methods
+  - **ANN002:** 2 violations - Missing type annotation for `*args`
+  - **ANN003:** 2 violations - Missing type annotation for `**kwargs`
+  - **ANN401:** 1 violation - Use of bare `Any` type
+- **Autofixable:** 0 (annotation violations require manual intervention)
+- **Unsafe fixes available:** 396 (Ruff can suggest fixes with `--unsafe-fixes`, but manual review required)
+
+**Key findings:**
+- Current codebase has ZERO type annotation enforcement
+- Ruff ANN* rules are ready to use (no custom tooling needed for function annotations!)
+- ~8.6 violations per file on average (722 / 84 files)
+- Most violations are in product code (`tools/repo_lint/*`)
