@@ -20,6 +20,7 @@ pub mod actionlint;
 pub mod perl_tools;
 pub mod powershell_tools;
 pub mod python_tools;
+pub mod repo_lint;
 pub mod ripgrep;
 pub mod shellcheck;
 pub mod shfmt;
@@ -42,6 +43,7 @@ impl InstallerRegistry {
         };
 
         // Register all installers
+        registry.register(Arc::new(repo_lint::RepoLintInstaller));
         registry.register(Arc::new(ripgrep::RipgrepInstaller));
         registry.register(Arc::new(python_tools::BlackInstaller));
         registry.register(Arc::new(python_tools::RuffInstaller));
