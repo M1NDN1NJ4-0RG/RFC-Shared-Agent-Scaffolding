@@ -23,6 +23,7 @@ use crate::bootstrap_v2::errors::{BootstrapError, BootstrapResult};
 use crate::bootstrap_v2::installer::{InstallResult, Installer, VerifyResult};
 use async_trait::async_trait;
 use semver::Version;
+use std::collections::HashSet;
 use std::path::PathBuf;
 use tokio::process::Command;
 
@@ -37,6 +38,8 @@ use tokio::process::Command;
 /// puts binaries in the Go bin directory, not in system PATH by default.
 fn get_actionlint_candidates() -> Vec<String> {
     let mut candidates = vec!["actionlint".to_string()];
+    let mut seen = HashSet::new();
+    seen.insert("actionlint".to_string());
 
     // Try $HOME/go/bin/actionlint (default location for go install)
     if let Ok(home) = std::env::var("HOME") {
@@ -44,15 +47,18 @@ fn get_actionlint_candidates() -> Vec<String> {
             .join("go")
             .join("bin")
             .join("actionlint");
-        candidates.push(go_bin_path.to_string_lossy().to_string());
+        let path_str = go_bin_path.to_string_lossy().to_string();
+        if seen.insert(path_str.clone()) {
+            candidates.push(path_str);
+        }
     }
 
     // Try $GOPATH/bin/actionlint (custom GOPATH)
     if let Ok(gopath) = std::env::var("GOPATH") {
         let gopath_bin = PathBuf::from(gopath).join("bin").join("actionlint");
-        let gopath_str = gopath_bin.to_string_lossy().to_string();
-        if !candidates.contains(&gopath_str) {
-            candidates.push(gopath_str);
+        let path_str = gopath_bin.to_string_lossy().to_string();
+        if seen.insert(path_str.clone()) {
+            candidates.push(path_str);
         }
     }
 
@@ -98,6 +104,11 @@ impl Installer for ActionlintInstaller {
                     let version_str = String::from_utf8_lossy(&out.stdout);
                     // Take only the first line since output may be multi-line
                     let version_str = version_str.lines().next().unwrap_or("").trim();
+
+                    // Skip empty version strings
+                    if version_str.is_empty() {
+                        continue;
+                    }
 
                     // Try to parse as semver, handling optional 'v' prefix
                     let version_without_v = version_str.strip_prefix('v').unwrap_or(version_str);
