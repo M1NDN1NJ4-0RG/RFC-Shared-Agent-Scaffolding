@@ -76,7 +76,7 @@ jobs:
       # Produces safe-run.exe on Windows
       - name: Build Rust canonical tool
         working-directory: rust
-        run: cargo build --release
+        run: cargo build --release -p safe-run
 
       # Step 4: Run Phase 3 Ctrl-C probe script
       # Probe script will:

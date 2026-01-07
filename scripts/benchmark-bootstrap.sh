@@ -78,10 +78,10 @@ if ! [[ "$PROFILE" =~ ^(dev|ci|full)$ ]]; then
 fi
 
 # Check if Rust binary exists
-RUST_BIN="$REPO_ROOT/target/release/bootstrap-repo-cli"
+RUST_BIN="$REPO_ROOT/rust/target/release/bootstrap-repo-cli"
 if [[ ! -f "$RUST_BIN" ]]; then
 	echo "Error: Rust binary not found at $RUST_BIN" >&2
-	echo "Please run: cd $REPO_ROOT/rust && cargo build --release" >&2
+	echo "Please run: cd $REPO_ROOT/rust && cargo build --release -p bootstrap-repo-cli" >&2
 	exit 1
 fi
 

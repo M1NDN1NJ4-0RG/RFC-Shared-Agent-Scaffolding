@@ -1,79 +1,58 @@
 # Workflow: Copilot Setup Steps
 #
-# Purpose
-# - Pre-install and verify common toolchains in the GitHub Actions runner environment so
+# Purpose:
+#   Pre-install and verify common toolchains in the GitHub Actions runner environment so
 #   Copilot Coding Agent sessions can run immediately (repo-lint, formatters, linters, etc.).
-# - Provides a deterministic baseline for CI and agent workflows without requiring
+#   Provides a deterministic baseline for CI and agent workflows without requiring
 #   per-session bootstrap scripts.
 #
-# What this workflow installs / verifies
-# - Base OS tools (always):
-#   - ripgrep (rg) for searching (REQUIRED grep tool)
-#   - jq for JSON inspection
-#   - curl for downloading pinned binaries
-#   - perl + cpanminus (cpanm) for Perl tooling
+# Triggers:
+#   - Manual workflow_dispatch (for validation)
+#   - Push/PRs that modify this workflow file
 #
-# - YAML tooling (always):
-#   - yq (Mike Farah Go-yq) installed from GitHub releases (pinned version) to avoid the
-#     distro `yq` implementation mismatch.
+# Dependencies:
+#   - Base OS tools (always):
+#     - ripgrep (rg) for searching (REQUIRED grep tool)
+#     - jq for JSON inspection
+#     - curl for downloading pinned binaries
+#     - perl + cpanminus (cpanm) for Perl tooling
+#   - YAML tooling (always):
+#     - yq (Mike Farah Go-yq) installed from GitHub releases (pinned version)
+#   - Python tooling (always):
+#     - Python 3.12 via actions/setup-python
+#     - pip caching keyed by repo root `pyproject.toml`
+#     - Python CLI/tooling installed via pip --user
+#     - repo-lint installed from THIS repository (editable)
+#   - Shell toolchain (conditional):
+#     - shellcheck (apt) only when *.sh exists
+#     - shfmt (Go install) only when *.sh exists
+#   - GitHub Actions linting (conditional):
+#     - actionlint (Go install) only when workflow files exist
+#   - PowerShell toolchain (conditional):
+#     - pwsh presence verified (ubuntu-latest includes pwsh)
+#     - PSScriptAnalyzer installed only when *.ps1 exists
+#   - Perl toolchain (conditional):
+#     - Perl::Critic + PPI via apt when *.pl exists (preferred)
+#     - cpanm fallback when *.pl exists (best-effort)
+#   - Rust toolchain (conditional, when rust/** exists):
+#     - dtolnay/rust-toolchain@stable with rustfmt + clippy components
+#     - helper tools via taiki-e/install-action
+#   - Markdown linting (conditional):
+#     - Node.js 20 setup when *.md exists
+#     - markdownlint-cli installed globally when *.md exists
 #
-# - Python tooling (always):
-#   - Python 3.12 via actions/setup-python
-#   - pip caching keyed by repo root `pyproject.toml`
-#   - Python CLI/tooling installed via pip --user, including:
-#     - Formatting/lint/test: black, ruff, pylint, yamllint, pytest, mdformat
-#     - CLI/UX: click, rich, rich-click, typer, tqdm
-#     - Networking/automation: paramiko, netmiko, napalm
-#     - Data/config helpers: json5, orjson, jsonschema, ruamel.yaml, pydantic, jmespath
-#     - HTTP/retries: requests, httpx, tenacity
-#   - repo-lint installed from THIS repository (editable) and verified via:
-#     - `repo-lint --help` and `python -m tools.repo_lint.cli --help`
-#   - NOTE: The Python package set above is intentionally broader than this repository's
-#     direct runtime dependencies. These tools are pre-installed to give Copilot Coding
-#     Agent sessions a rich, ready-to-use environment for common automation, networking,
-#     and data-processing tasks, and to accommodate likely future workflow features.
-#     Maintainers may narrow or remove these extra packages if they prefer faster
-#     workflow startup or a smaller dependency/security surface.
+# Outputs:
+#   - Job name MUST be `copilot-setup-steps` for Copilot to pick it up
+#   - All required tools verified and available in PATH
+#   - repo-lint verified via `repo-lint --help`
 #
-# - Shell toolchain (conditional):
-#   - shellcheck (apt) only when *.sh exists
-#   - shfmt (Go install) only when *.sh exists
-#
-# - GitHub Actions linting (conditional):
-#   - actionlint (Go install) only when workflow files exist
-#
-# - PowerShell toolchain (conditional):
-#   - pwsh presence verified (ubuntu-latest includes pwsh)
-#   - PSScriptAnalyzer installed only when *.ps1 exists
-#
-# - Perl toolchain (conditional):
-#   - Perl::Critic + PPI via apt when *.pl exists (preferred)
-#   - cpanm fallback when *.pl exists (best-effort), with a hard requirement that
-#     `perlcritic` ends up available if Perl files exist.
-#
-# - Rust toolchain (conditional, when rust/** exists):
-#   - dtolnay/rust-toolchain@stable with rustfmt + clippy components
-#   - helper tools via taiki-e/install-action (audit/deny/coverage/nextest + utilities):
-#     cargo-audit, cargo-deny, cargo-llvm-cov, cargo-nextest,
-#     git-cliff, grcov, hyperfine, just, osv-scanner, taplo, trivy, typos
-#
-# - Markdown linting (conditional):
-#   - Node.js 20 setup when *.md exists
-#   - markdownlint-cli installed globally when *.md exists
-#
-# Triggers
-# - Manual workflow_dispatch (for validation)
-# - Push/PRs that modify this workflow file
-#
-# Output / contract
-# - Job name MUST be `copilot-setup-steps` for Copilot to pick it up.
-# - This workflow is intentionally verbose about tool verification to fail fast when a
-#   runner environment is missing required capabilities.
-#
-# Notes
-# - Go is only set up when shfmt and/or actionlint are required.
-# - PATH updates via $GITHUB_PATH only apply to subsequent steps (this workflow also
-#   exports PATH locally when needed inside a step).
+# Notes:
+#   - Go is only set up when shfmt and/or actionlint are required
+#   - PATH updates via $GITHUB_PATH only apply to subsequent steps
+#   - This workflow is intentionally verbose about tool verification to fail fast when a
+#     runner environment is missing required capabilities
+#   - The Python package set is intentionally broader than this repository's direct runtime
+#     dependencies to give Copilot Coding Agent sessions a rich, ready-to-use environment
 
 name: "Copilot Setup Steps"
 
@@ -122,7 +101,18 @@ jobs:
             jq \
             curl \
             perl \
-            cpanminus
+            cpanminus \
+            zip \
+            unzip \
+            p7zip-full \
+            zstd \
+            xz-utils \
+            pigz \
+            bzip2 \
+            lz4 \
+            pbzip2 \
+            file \
+            tree
 
           # Install Mike Farah's Go-yq (the Ubuntu/Debian `yq` package is a different implementation)
           YQ_VERSION="v4.44.3"
@@ -139,6 +129,15 @@ jobs:
           sudo curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${YQ_ARCH}" -o /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
           yq --version
+
+          # Optional media tooling (commented out by default to reduce install time/surface area)
+          # Uncomment if/when the repo needs media processing helpers.
+          # sudo apt-get install -y --no-install-recommends \
+          #   ffmpeg \
+          #   mediainfo
+          #
+          # ffmpeg -version
+          # mediainfo --Version
 
           # Conditional tools (only installed if the repo contains relevant files)
           if git ls-files '*.sh' | rg -q .; then
@@ -341,6 +340,22 @@ jobs:
           rg --version
           jq --version
           yq --version
+          zip -v | head -n 2
+          unzip -v | head -n 2
+          7z | head -n 2
+          zstd --version
+          xz --version
+          pigz --version
+          bzip2 --help 2>&1 | head -n 1
+          lz4 -V
+          pbzip2 -V
+          file --version
+          tree --version
+
+          # Optional media tooling verification (commented out by default)
+          # ffmpeg -version
+          # mediainfo --Version
+
           command -v repo-lint
           repo-lint --help
           python -m tools.repo_lint.cli --help

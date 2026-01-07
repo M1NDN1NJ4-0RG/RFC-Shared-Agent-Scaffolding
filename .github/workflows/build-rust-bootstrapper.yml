@@ -100,7 +100,7 @@ jobs:
 
       - name: Build release binary
         working-directory: rust
-        run: cargo build --release --target ${{ matrix.target }}
+        run: cargo build --release -p bootstrap-repo-cli --target ${{ matrix.target }}
         env:
           # Set cross-compilation linker for ARM64
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_MUSL_LINKER: aarch64-linux-gnu-gcc
