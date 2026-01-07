@@ -27,11 +27,12 @@
 - ✅ Fixed all rustfmt violations
 
 ### Phase 2: Dev Benchmarks
-- ✅ **COMPLETED** - Benchmark executed, baseline established
+- ✅ **COMPLETED** - Benchmark executed, baseline established, script committed
 - ✅ Installed hyperfine v1.20.0
-- ✅ Created benchmark script
+- ✅ Created benchmark script at `scripts/benchmarks/benchmark-bootstrappers.sh`
 - ✅ Executed Mode B (verify-only) benchmark for Bash
 - ✅ Created comprehensive benchmark report at `docs/ai-prompt/235/235-dev-benchmark-results.md`
+- ✅ Committed benchmark script and README to repository
 - ⚠️  Rust benchmarks skipped due to exit code 19 errors (implementation gap identified)
 
 ### Phase 3: Linux ARM64 Support
@@ -70,7 +71,7 @@
 - ✅ Merged latest main branch updates
 - ✅ Updated issue journals (this file) ← **FINAL STEP COMPLETED**
 
-## Commits Made (13 total)
+## Commits Made (14 total)
 
 1. ca53366 - Initialize issue #248 journals and session start
 2. 300ed22 - Phase 1.1: Add RepoLintInstaller and automatic verification gate
@@ -84,7 +85,8 @@
 10. [merge] - Merge origin/main (compliance requirements update from PR #253)
 11. [previous] - Update issue journals per compliance requirements
 12. 7a8e981 - Initial plan (from previous session)
-13. [current] - Phase 2: Complete dev benchmark execution and report
+13. 57fec61 - Phase 2: Complete dev benchmark execution and create comprehensive report
+14. d63f3c1 - Add benchmark script and documentation to repository
 
 ## Current Status
 
