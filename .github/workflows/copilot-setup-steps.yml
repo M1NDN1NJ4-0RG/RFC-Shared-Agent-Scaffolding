@@ -96,7 +96,7 @@ jobs:
             exit 1
           fi
 
-      - name: Install Python CLI tools (black/ruff/pylint/yamllint/pytest/repo-lint)
+      - name: Install Python CLI tools (black, mdformat, pylint, pytest, repo-lint, ruff, yamllint)
         shell: bash
         run: |
           set -euo pipefail
@@ -126,11 +126,11 @@ jobs:
           rg --version
           python --version
           python -m black --version
-          python -m ruff --version
-          python -m pylint --version
-          python -m yamllint --version
-          python -m pytest --version
           python -m mdformat --version
+          python -m pylint --version
+          python -m pytest --version
+          python -m ruff --version
+          python -m yamllint --version
 
           # repo-lint should be available both as a console script and as a module
           command -v repo-lint
@@ -198,13 +198,13 @@ jobs:
           perlcritic --version
 
       # Rust toolchain + common Rust dev tools (repo contains rust/)
-      - name: Set up Rust (stable + rustfmt + clippy)
+      - name: Set up Rust (stable + clippy + rustfmt)
         if: ${{ hashFiles('rust/**') != '' }}
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: rustfmt, clippy
+          components: clippy, rustfmt
 
-      - name: Install Rust helper tools (taplo, cargo-audit, cargo-nextest)
+      - name: Install Rust helper tools (cargo-audit, cargo-deny, cargo-llvm-cov, cargo-nextest, git-cliff, grcov, hyperfine, just, osv-scanner, taplo, trivy, typos)
         if: ${{ hashFiles('rust/**') != '' }}
         uses: taiki-e/install-action@v2
         with:
