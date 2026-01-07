@@ -35,6 +35,7 @@ use safe_run::bootstrap_v2::{
     installers::{repo_lint::REPO_LINT_INSTALLER_ID, InstallerRegistry},
     lock::LockManager,
     plan::ExecutionPlan,
+    platform,
     progress::{ProgressMode, ProgressReporter},
 };
 use std::path::PathBuf;
@@ -105,7 +106,19 @@ async fn handle_install(
     // 3. Load configuration
     let config = Arc::new(Config::load(&repo_root, ci_mode)?);
 
-    // 4. Setup progress reporter
+    // 4. Create virtual environment if it doesn't exist
+    let venv_path = repo_root.join(".venv");
+    if !venv_path.exists() || dry_run {
+        if !dry_run {
+            println!("🔧 Creating Python virtual environment...");
+        }
+        let _ = platform::create_venv(&venv_path, dry_run).await?;
+        if !dry_run {
+            println!("  ✓ Virtual environment created");
+        }
+    }
+
+    // 5. Setup progress reporter
     let progress_mode = if json {
         ProgressMode::Json
     } else if ci_mode {
@@ -116,7 +129,18 @@ async fn handle_install(
     };
     let progress = Arc::new(ProgressReporter::new(progress_mode));
 
-    // 5. Create execution context
+    // 5. Setup progress reporter
+    let progress_mode = if json {
+        ProgressMode::Json
+    } else if ci_mode {
+        ProgressMode::Ci
+    } else {
+        // Default to Interactive when not in CI or JSON mode
+        ProgressMode::Interactive
+    };
+    let progress = Arc::new(ProgressReporter::new(progress_mode));
+
+    // 6. Create execution context
     let verbosity = Verbosity::from_count(verbose_count);
     let ctx = Arc::new(Context::with_config(
         repo_root.clone(),
@@ -132,10 +156,10 @@ async fn handle_install(
         allow_downgrade,
     ));
 
-    // 6. Initialize installer registry
+    // 7. Initialize installer registry
     let registry = InstallerRegistry::new();
 
-    // 7. Compute execution plan
+    // 8. Compute execution plan
     let profile_name = profile.as_deref().unwrap_or("dev");
     let plan =
         ExecutionPlan::compute(&registry, config.as_ref(), ctx.as_ref(), profile_name).await?;
@@ -148,21 +172,21 @@ async fn handle_install(
         plan.print_human();
     }
 
-    // 8. Create executor and lock manager
+    // 9. Create executor and lock manager
     let lock_manager = Arc::new(LockManager::new());
     let executor = Executor::new(ctx.clone(), lock_manager);
 
-    // 9. Execute the plan (detect → install → verify)
+    // 10. Execute the plan (detect → install → verify)
     let results = executor.execute_plan(&plan).await?;
 
-    // 10. Check for failures
+    // 11. Check for failures
     let failed = results.iter().any(|r| !r.success);
     if failed {
         eprintln!("\n❌ Installation failed - see errors above");
         return Ok(ExitCode::VerificationFailed);
     }
 
-    // 11. Run automatic verification gate (repo-lint check --ci)
+    // 12. Run automatic verification gate (repo-lint check --ci)
     // This runs if repo-lint was in the plan (profile includes it)
     let repo_lint_in_plan = plan.phases.iter().any(|phase| {
         phase
