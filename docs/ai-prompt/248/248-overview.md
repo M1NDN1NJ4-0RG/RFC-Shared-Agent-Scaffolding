@@ -5,7 +5,7 @@
 **Status:** ✅ **COMPLETE** (Phase 2 deferred)
 
 **Original Issue Body:**
-
+~~~markdown
 # [EPIC] [BLOCKER TO: ISSUE #235] Bootstrapper parity + Dev benchmarks + expanded release matrix (linux arm64)
 
 **Related:** ***BLOCKER TO:*** Issue #235 (Rust Migration Plan: Modular Toolchain Bootstrapper)  
@@ -188,6 +188,10 @@ Pick ONE and document it in the workflow:
 - Updated `.github/workflows/build-rust-bootstrapper.yml` with linux arm64 support
 - Updated `REPO-LINT-USER-MANUAL.md`
 - Rust parity changes: repo-lint install + auto verification gate
+
+---
+
+~~~
 
 ---
 
