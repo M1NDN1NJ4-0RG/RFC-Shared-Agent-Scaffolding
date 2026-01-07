@@ -105,7 +105,7 @@ fi
 
 # Add Perl tools to PATH and set PERL5LIB
 export PATH="{perl_bin}:$PATH"
-export PERL5LIB="{perl_lib}:${{PERL5LIB:+:$PERL5LIB}}"
+export PERL5LIB="{perl_lib}:${{PERL5LIB:+$PERL5LIB}}"
 echo "✓ Perl environment configured"
 
 # Mark as activated
@@ -153,7 +153,7 @@ pub fn emit_env_commands(_repo_root: &Path, venv_path: &Path) {
     println!("source {}/bin/activate", venv_path.display());
     println!("# Configure Perl environment");
     println!("export PATH=\"{}:$PATH\"", perl_bin);
-    println!("export PERL5LIB=\"{}:${{PERL5LIB}}\"", perl_lib);
+    println!("export PERL5LIB=\"{}${{PERL5LIB:+:${{PERL5LIB}}}}\"", perl_lib);
     println!("export BOOTSTRAP_ACTIVATED=1");
 }
 
