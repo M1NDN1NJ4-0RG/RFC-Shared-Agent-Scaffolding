@@ -1,0 +1,292 @@
+# Workflow: Copilot Setup Steps
+#
+# Purpose: Provides setup steps for GitHub Copilot agent development environment.
+# Installs required tooling (Python, shell, PowerShell, Perl, Go-based tools)
+# needed for agent code review and editing tasks.
+#
+# Dependencies:
+# - Python 3.12 (for repo-lint and Python CLI tools)
+# - ripgrep (rg) for fast searching
+# - jq + yq for JSON/YAML inspection
+# - Go (for shfmt, actionlint when needed)
+# - Rust toolchain (rustfmt, clippy) + helper tools (taplo, cargo-audit, cargo-nextest)
+# - Perl tooling (perlcritic, PPI when Perl files exist)
+# - PowerShell tooling (PSScriptAnalyzer when .ps1 files exist)
+# - Node.js tooling for Markdown linting (markdownlint-cli)
+#
+# Triggers:
+# - Manual workflow dispatch (for testing)
+# - Pushes modifying this workflow file
+# - Pull requests modifying this workflow file
+#
+# Outputs:
+# - Status check: "copilot-setup-steps"
+# - Artifacts: None
+# - Side effects: Installs development tools for Copilot agent session
+#
+# Notes:
+# - Go setup only runs when shell scripts or workflow files exist
+# - Tools are installed conditionally based on file types present in repository
+# - Some tools are pinned to known-good versions for determinism
+# - PATH modifications in GitHub Actions take effect only in subsequent steps
+
+name: "Copilot Setup Steps"
+
+# Automatically run the setup steps when they are changed to allow for easy validation, and
+# allow manual testing through the repository's "Actions" tab
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+
+    # Set the permissions to the lowest permissions possible needed for your steps.
+    # Copilot will be given its own token for its operations.
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Python tooling (always installed)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install required OS packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+
+          # Always-required base tools
+          sudo apt-get install -y --no-install-recommends \
+            ripgrep \
+            jq \
+            yq \
+            perl \
+            cpanminus
+
+          # Conditional tools (only installed if the repo contains relevant files)
+          if git ls-files '*.sh' | rg -q .; then
+            sudo apt-get install -y --no-install-recommends shellcheck
+          fi
+
+          if git ls-files '*.pl' | rg -q .; then
+            # Prefer apt packages when available (faster + deterministic)
+            sudo apt-get install -y --no-install-recommends \
+              libperl-critic-perl \
+              libppi-perl
+          fi
+
+          # PowerShell is preinstalled on ubuntu-latest runners, but verify it's present
+          if ! command -v pwsh >/dev/null 2>&1; then
+            echo "ERROR: pwsh not found on runner" >&2
+            exit 1
+          fi
+
+      - name: Install Python CLI tools (black/ruff/pylint/yamllint/pytest/repo-lint)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+
+          # Ensure user-level scripts are available in THIS step as well
+          export PATH="$HOME/.local/bin:$PATH"
+
+          # Install Python tools for the agent session (user-level so we don't need sudo).
+          python -m pip install --user \
+            black \
+            mdformat \
+            pylint \
+            pytest \
+            ruff \
+            yamllint
+
+          # Install repo-lint from THIS repository (editable).
+          # NOTE: This repo packages repo-lint from the repository root (pyproject.toml at repo root).
+          test -f pyproject.toml || (echo "ERROR: pyproject.toml not found at repo root" >&2; exit 1)
+          python -m pip install --user -e .
+
+          # Ensure user scripts are on PATH
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+          # Quick sanity checks (prefer python -m to avoid PATH surprises)
+          rg --version
+          python --version
+          python -m black --version
+          python -m ruff --version
+          python -m pylint --version
+          python -m yamllint --version
+          python -m pytest --version
+          python -m mdformat --version
+
+          # repo-lint should be available both as a console script and as a module
+          command -v repo-lint
+          repo-lint --help
+          python -m tools.repo_lint.cli --help
+
+      # Go-based tools: shfmt + actionlint (installed only if needed)
+      # Both shfmt and actionlint require Go, so we set up Go when either tool is needed
+      - name: Set up Go
+        if: ${{ hashFiles('**/*.sh', '.github/workflows/*.yml', '.github/workflows/*.yaml') != '' }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+          cache: false
+
+      - name: Install shfmt (when shell scripts exist)
+        if: ${{ hashFiles('**/*.sh') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          go install mvdan.cc/sh/v3/cmd/shfmt@v3.9.0
+          echo "$HOME/go/bin" >> "$GITHUB_PATH"
+          # Note: shfmt uses --version (GNU-style), while actionlint uses -version (Go-style)
+          "$HOME/go/bin/shfmt" --version
+
+      - name: Install actionlint (when workflow files exist)
+        if: ${{ hashFiles('.github/workflows/*.yml', '.github/workflows/*.yaml') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10
+          echo "$HOME/go/bin" >> "$GITHUB_PATH"
+          "$HOME/go/bin/actionlint" -version
+
+      # PowerShell tooling (installed only if .ps1 exists)
+      - name: Install PSScriptAnalyzer (when PowerShell exists)
+        if: ${{ hashFiles('**/*.ps1') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          pwsh -NoProfile -Command '$PSVersionTable.PSVersion'
+          pwsh -NoProfile -Command "Set-PSRepository -Name PSGallery -InstallationPolicy Trusted"
+          pwsh -NoProfile -Command "Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser"
+          pwsh -NoProfile -Command "Import-Module PSScriptAnalyzer; Get-Module PSScriptAnalyzer | Select-Object Name,Version"
+
+      # Perl tooling (installed only if .pl exists AND the apt packages were not installed)
+      - name: Install Perl tools via cpanm (fallback)
+        if: ${{ hashFiles('**/*.pl') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # If apt packages already provided these, this is effectively a no-op.
+          # cpanm is present from the OS packages step.
+          cpanm --notest Perl::Critic PPI || true
+
+          # Hard requirement: if Perl exists in-repo, perlcritic must be available
+          if ! command -v perlcritic >/dev/null 2>&1; then
+            echo "ERROR: perlcritic not available after install attempts" >&2
+            exit 1
+          fi
+
+          # Light sanity checks (don't fail the workflow if perlcritic isn't on PATH for some reason)
+          perl -v
+          perlcritic --version
+
+      # Rust toolchain + common Rust dev tools (repo contains rust/)
+      - name: Set up Rust (stable + rustfmt + clippy)
+        if: ${{ hashFiles('rust/**') != '' }}
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install Rust helper tools (taplo, cargo-audit, cargo-nextest)
+        if: ${{ hashFiles('rust/**') != '' }}
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit,cargo-deny,cargo-llvm-cov,cargo-nextest,git-cliff,grcov,hyperfine,just,osv-scanner,taplo,trivy,typos
+
+      - name: Verify Rust toolchain
+        if: ${{ hashFiles('rust/**') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # Core Rust toolchain
+          rustc --version
+          cargo --version
+          rustfmt --version
+          cargo clippy --version || true
+
+          # Installed Rust/helper tooling (via taiki-e/install-action)
+          taplo --version
+          cargo audit --version
+          cargo deny --version
+          cargo llvm-cov --version
+          cargo nextest --version
+
+          # Extra CLI helpers
+          git-cliff --version
+          grcov --version
+          hyperfine --version
+          just --version
+          osv-scanner --version
+          trivy --version
+          typos --version
+
+      # Node-based Markdown linting (repo contains markdown)
+      - name: Set up Node.js
+        if: ${{ hashFiles('**/*.md') != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install markdownlint-cli (when Markdown exists)
+        if: ${{ hashFiles('**/*.md') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install -g markdownlint-cli@0.41.0
+          markdownlint --version
+
+      - name: Verify key tools are available
+        shell: bash
+        run: |
+          set -euo pipefail
+          rg --version
+          jq --version
+          yq --version
+          command -v repo-lint
+          repo-lint --help
+          python -m tools.repo_lint.cli --help
+
+          # Optional tools (installed only if relevant files exist)
+          if git ls-files '*.sh' | rg -q .; then
+            shellcheck --version
+            "$HOME/go/bin/shfmt" --version
+          fi
+
+          if git ls-files '*.ps1' | rg -q .; then
+            pwsh -NoProfile -Command "Import-Module PSScriptAnalyzer; Get-Command Invoke-ScriptAnalyzer | Out-Null"
+          fi
+
+          if git ls-files '*.pl' | rg -q .; then
+            perlcritic --version
+          fi
+
+          if find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) 2>/dev/null | rg -q .; then
+            "$HOME/go/bin/actionlint" -version
+          fi
+
+          if git ls-files '*.toml' | rg -q .; then
+            taplo --version
+          fi
+
+          if git ls-files '*.md' | rg -q .; then
+            command -v markdownlint
+            markdownlint --version
+          fi
