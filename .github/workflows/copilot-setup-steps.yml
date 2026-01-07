@@ -123,7 +123,7 @@ jobs:
           python -m tools.repo_lint.cli --help
 
       # Go-based tools: shfmt + actionlint (installed only if needed)
-      # Both shfmt and actionlint require Go, so we set up Go when either tool is needed
+      # Both shfmt and actionlint require Go, so we set up Go when shell scripts or workflow files exist
       - name: Set up Go
         if: ${{ hashFiles('**/*.sh', '.github/workflows/*.yml', '.github/workflows/*.yaml') != '' }}
         uses: actions/setup-go@v5
