@@ -374,8 +374,8 @@ jobs:
           zstd --version
           xz --version
           pigz --version
-          bzip2 --version
-          lz4 --version
+          bzip2 --help 2>&1 | head -n 1
+          lz4 -V
           pbzip2 -V
           file --version
           tree --version
