@@ -199,6 +199,167 @@ This migration MUST include exhaustive test coverage for the new internal docstr
 
 **Deliverable:** Docstring validation runs fully inside `repo_lint`, and test coverage proves parity with the old script.
 
+### 3.5 Markdown contracts + linting support in `repo_lint` (MANDATORY)
+
+Because Copilot sessions now start with Markdown formatting/linting available, we MUST add first-class Markdown linting support into the `repo_lint` package.
+
+This includes:
+
+- defining **repo-wide Markdown contracts** (what “valid” Markdown means here),
+- enforcing them consistently via `repo-lint check --ci`, and
+- fixing the current repo to conform to the contract.
+
+#### 3.5.1 Define the Markdown contract (MANDATORY)
+
+- [ ] Create a canonical Markdown rules document:
+  - [ ] `docs/contributing/markdown-contracts.md` (or repo-equivalent canonical location)
+- [ ] Define the contract scope:
+  - [ ] Which directories/files are enforced (default: all `*.md`)
+  - [ ] Explicit exclusions (generated docs, vendored content, etc.)
+- [ ] Define the ruleset explicitly (NO VAGUE RULES). Examples to decide and document:
+  - [ ] heading structure (H1 rules, incremental headings)
+  - [ ] line length policy (if any) and exceptions
+  - [ ] code fence requirements (language tags, consistent fence style)
+  - [ ] trailing whitespace policy
+  - [ ] required blank lines around lists/headings
+  - [ ] link style + link checking expectations (if enforced)
+  - [ ] allowed HTML in Markdown (if any)
+
+**Deliverable:** `docs/contributing/markdown-contracts.md` merged and treated as the canonical source of truth.
+
+#### 3.5.2 Choose enforcement mechanism (MANDATORY)
+
+- [ ] Evaluate options and pick ONE default enforcement path:
+  - [ ] Use a standard Markdown linter (preferred) and call it from `repo_lint`:
+    - [ ] `markdownlint-cli2` (Node) **or**
+    - [ ] `markdownlint` (Node) **or**
+    - [ ] a Python-based markdown linter (only if Node is not acceptable)
+  - [ ] If a standard linter cannot support a contract rule, implement a small deterministic checker inside `repo_lint` to cover the missing rule(s).
+- [ ] Decide how configuration is stored:
+  - [ ] `.markdownlint.yaml` / `.markdownlint-cli2.jsonc` / repo-equivalent config
+  - [ ] mapping from `docs/contributing/markdown-contracts.md` → linter configuration must be explicit
+
+**Deliverable:** Selected linter + config committed, with a clear mapping to the documented contract.
+
+#### 3.5.3 Integrate Markdown checks into `repo_lint` (MANDATORY)
+
+- [ ] Add a Markdown runner to `repo_lint` (or extend an existing runner architecture) that:
+  - [ ] discovers Markdown files (`*.md`) respecting exclusions
+  - [ ] runs the chosen linter deterministically
+  - [ ] produces stable machine-readable results compatible with existing CI failure report artifacts
+  - [ ] supports `repo-lint check --ci`
+- [ ] Decide fix behavior:
+  - [ ] `repo-lint fix` may include Markdown auto-fix ONLY if the chosen tool supports safe deterministic fixes.
+  - [ ] If fixes are risky, keep Markdown in check-only mode initially.
+
+**Deliverable:** Markdown linting runs under `repo-lint check --ci` and produces CI-friendly failure artifacts.
+
+#### 3.5.4 Repo baseline cleanup (MANDATORY)
+
+- [ ] Run Markdown linting across the repo.
+- [ ] Fix all Markdown files to conform to the new contract (or add explicit, documented exclusions).
+- [ ] Ensure `repo-lint check --ci` is green after cleanup.
+
+**Deliverable:** Repo-wide Markdown conformance achieved (or tracked via explicit exclusions).
+
+#### 3.5.5 EXTREMELY COMPREHENSIVE tests (MANDATORY, NO SHORTCUTS)
+
+- [ ] Unit tests for:
+  - [ ] Markdown file discovery + exclusion logic
+  - [ ] config loading and contract-to-config mapping
+  - [ ] result parsing / normalization into repo-lint report format
+  - [ ] exit code and failure aggregation behavior
+- [ ] Golden fixtures:
+  - [ ] multiple `*.md` fixtures with multiple distinct violations
+  - [ ] at least one fully compliant fixture
+- [ ] Integration tests:
+  - [ ] `repo-lint check --ci` end-to-end validation including Markdown failures
+  - [ ] failure report artifact contents (stable and ANSI-clean)
+- [ ] Regression tests:
+  - [ ] add a regression test for every bug found in Markdown integration so it cannot reoccur
+
+**Deliverable:** Markdown linting in `repo_lint` is heavily tested and stable.
+
+### 3.6 TOML contracts + linting support in `repo_lint` (MANDATORY)
+
+Because Copilot sessions now start with TOML linting available, we MUST add first-class TOML linting support into the `repo_lint` package.
+
+This includes:
+
+- defining **repo-wide TOML contracts** (what “valid” TOML means here),
+- enforcing them consistently via `repo-lint check --ci`, and
+- fixing the current repo to conform to the contract.
+
+#### 3.6.1 Define the TOML contract (MANDATORY)
+
+- [ ] Create a canonical TOML rules document:
+  - [ ] `docs/contributing/toml-contracts.md` (or repo-equivalent canonical location)
+- [ ] Define the contract scope:
+  - [ ] Which files are enforced (default: all `*.toml`)
+  - [ ] Explicit exclusions (vendored/generated TOML, tool-managed lockfiles if applicable, etc.)
+- [ ] Define the ruleset explicitly (NO VAGUE RULES). Examples to decide and document:
+  - [ ] formatting/indentation conventions (spaces vs tabs, indentation width)
+  - [ ] key ordering expectations (if any) and whether ordering is enforced
+  - [ ] whitespace rules (around `=` and inline tables)
+  - [ ] quoting rules (single vs double quotes, when required)
+  - [ ] trailing commas policy in inline tables/arrays (if applicable)
+  - [ ] allowed multi-line strings conventions
+  - [ ] comment style expectations
+
+**Deliverable:** `docs/contributing/toml-contracts.md` merged and treated as the canonical source of truth.
+
+#### 3.6.2 Choose enforcement mechanism (MANDATORY)
+
+- [ ] Evaluate options and pick ONE default enforcement path:
+  - [ ] Use a standard TOML linter/formatter (preferred) and call it from `repo_lint`:
+    - [ ] **Taplo** (`taplo fmt` / `taplo check`) (recommended)
+    - [ ] OR another TOML linter/formatter already used in this repo (if any)
+  - [ ] If a standard tool cannot support a contract rule, implement a small deterministic checker inside `repo_lint` to cover the missing rule(s).
+- [ ] Decide how configuration is stored:
+  - [ ] `taplo.toml` (recommended) or repo-equivalent config
+  - [ ] mapping from `docs/contributing/toml-contracts.md` → tool configuration must be explicit
+
+**Deliverable:** Selected tool + config committed, with a clear mapping to the documented contract.
+
+#### 3.6.3 Integrate TOML checks into `repo_lint` (MANDATORY)
+
+- [ ] Add a TOML runner to `repo_lint` (or extend an existing runner architecture) that:
+  - [ ] discovers TOML files (`*.toml`) respecting exclusions
+  - [ ] runs the chosen tool deterministically
+  - [ ] produces stable machine-readable results compatible with existing CI failure report artifacts
+  - [ ] supports `repo-lint check --ci`
+- [ ] Decide fix behavior:
+  - [ ] `repo-lint fix` may include TOML auto-format ONLY if the chosen tool supports safe deterministic formatting.
+  - [ ] If fixes are risky, keep TOML in check-only mode initially.
+
+**Deliverable:** TOML linting/formatting runs under `repo-lint check --ci` and produces CI-friendly failure artifacts.
+
+#### 3.6.4 Repo baseline cleanup (MANDATORY)
+
+- [ ] Run TOML linting/formatting across the repo.
+- [ ] Fix all TOML files to conform to the new contract (or add explicit, documented exclusions).
+- [ ] Ensure `repo-lint check --ci` is green after cleanup.
+
+**Deliverable:** Repo-wide TOML conformance achieved (or tracked via explicit exclusions).
+
+#### 3.6.5 EXTREMELY COMPREHENSIVE tests (MANDATORY, NO SHORTCUTS)
+
+- [ ] Unit tests for:
+  - [ ] TOML file discovery + exclusion logic
+  - [ ] config loading and contract-to-config mapping
+  - [ ] result parsing / normalization into repo-lint report format
+  - [ ] exit code and failure aggregation behavior
+- [ ] Golden fixtures:
+  - [ ] multiple `*.toml` fixtures with multiple distinct violations
+  - [ ] at least one fully compliant fixture
+- [ ] Integration tests:
+  - [ ] `repo-lint check --ci` end-to-end validation including TOML failures
+  - [ ] failure report artifact contents (stable and ANSI-clean)
+- [ ] Regression tests:
+  - [ ] add a regression test for every bug found in TOML integration so it cannot reoccur
+
+**Deliverable:** TOML linting in `repo_lint` is heavily tested and stable.
+
 ---
 
 ## Phase 4 — Autofix strategy (recommended: staged, not all-at-once)
@@ -266,6 +427,12 @@ This migration MUST include exhaustive test coverage for the new internal docstr
 - [ ] `repo-lint check --ci` no longer depends on calling `scripts/validate_docstrings.py` as an external script.
 - [ ] The docstring validation implementation is internal to `repo_lint` and covered by extremely comprehensive unit + integration tests.
 - [ ] If `scripts/validate_docstrings.py` remains, it is a thin compatibility wrapper over the internal `repo_lint` implementation (no duplicated logic).
+- [ ] Markdown contracts are documented in a canonical doc and mapped to a concrete linter configuration.
+- [ ] `repo-lint check --ci` enforces Markdown linting repo-wide (with explicit exclusions if needed).
+- [ ] Markdown linting integration includes extremely comprehensive unit + integration tests and produces stable CI failure artifacts.
+- [ ] TOML contracts are documented in a canonical doc and mapped to a concrete linter/formatter configuration.
+- [ ] `repo-lint check --ci` enforces TOML linting/formatting repo-wide (with explicit exclusions if needed).
+- [ ] TOML linting integration includes extremely comprehensive unit + integration tests and produces stable CI failure artifacts.
 
 ---
 
@@ -274,3 +441,5 @@ This migration MUST include exhaustive test coverage for the new internal docstr
 - Enforce in **check** mode first; keep **fix** mode conservative.
 - Avoid “clever inference” in automated tooling; prefer deterministic rules and human review for complex typing.
 - Keep tests/fixtures policy explicit (some fixtures intentionally violate rules; they must be scoped and documented).
+
+---
