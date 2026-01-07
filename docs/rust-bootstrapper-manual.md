@@ -25,6 +25,20 @@ The Rust Bootstrapper (`bootstrap-repo-cli`) is a fast, reliable tool for instal
 - **Zero Dependencies**: Single static binary, no external runtime required
 - **Diagnostics**: Built-in `doctor` command for troubleshooting
 - **Flexible Configuration**: TOML-based profiles for different environments
+- **Parity with Bash**: Full feature parity with the Bash bootstrapper
+
+### Parity with Bash Bootstrapper
+
+The Rust bootstrapper achieves complete parity with the Bash bootstrapper:
+
+1. **repo-lint Installation**: Installs repo-lint via `pip install -e .` (editable mode)
+2. **Automatic Verification Gate**: Runs `repo-lint check --ci` automatically after successful installation
+3. **Exit Code Handling**: Properly handles verification gate exit codes:
+   - Exit 0: Clean repository, all tools working
+   - Exit 1: Violations found but tools working (acceptable)
+   - Exit 2+: Missing tools or critical errors (failure)
+4. **Profile Support**: Supports dev/ci/full profiles for different environments
+5. **Session Integration**: Works seamlessly with `session-start.sh` and `session-end.sh` scripts
 
 ### Performance
 
@@ -43,6 +57,10 @@ Download from the [releases page](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Ag
 # Linux x86_64
 curl -L -o bootstrap.tar.gz \
   https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases/latest/download/bootstrap-repo-cli-linux-x86_64.tar.gz
+
+# Linux ARM64
+curl -L -o bootstrap.tar.gz \
+  https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases/latest/download/bootstrap-repo-cli-linux-arm64.tar.gz
 
 # macOS x86_64
 curl -L -o bootstrap.tar.gz \
