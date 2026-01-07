@@ -201,7 +201,7 @@ jobs:
       # Rust toolchain + common Rust dev tools (repo contains rust/)
       - name: Set up Rust (stable + rustfmt + clippy)
         if: ${{ hashFiles('rust/**') != '' }}
-        uses: dtolnay/rust-toolchain@4be9e76fd7c4901c61fb841f559994984270fce7 # stable
+        uses: dtolnay/rust-toolchain@e97e2d8cc328f1b50210efc529dca0028893a2d9 # was: stable
         with:
           components: rustfmt, clippy
 
