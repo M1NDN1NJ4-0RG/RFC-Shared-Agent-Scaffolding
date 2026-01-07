@@ -166,6 +166,6 @@ jobs:
             command -v perlcritic >/dev/null 2>&1 && perlcritic --version || true
           fi
 
-          if git ls-files '.github/workflows/*.yml' '.github/workflows/*.yaml' | rg -q .; then
+          if find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) 2>/dev/null | rg -q .; then
             actionlint -version
           fi
