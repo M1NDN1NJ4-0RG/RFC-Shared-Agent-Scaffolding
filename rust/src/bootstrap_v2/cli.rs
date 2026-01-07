@@ -82,6 +82,14 @@ pub enum Commands {
         /// Profile to install (dev, ci, full)
         #[arg(long, default_value = "dev")]
         profile: String,
+
+        /// Write environment variables to $GITHUB_ENV (GitHub Actions only)
+        #[arg(long)]
+        github_env: bool,
+
+        /// Emit shell commands to stdout for eval (e.g., eval "$(bootstrap install)")
+        #[arg(long)]
+        emit_env_commands: bool,
     },
 
     /// Run diagnostics

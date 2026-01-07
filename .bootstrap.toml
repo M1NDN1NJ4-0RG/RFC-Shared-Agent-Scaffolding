@@ -1,0 +1,66 @@
+# Bootstrap configuration for RFC-Shared-Agent-Scaffolding
+# This file defines tool profiles and version constraints
+
+[profile.dev]
+# Development profile: All tools for full local development
+tools = [
+    "repo-lint",
+    "ripgrep",
+    "python-black",
+    "python-ruff",
+    "python-pylint",
+    "yamllint",
+    "pytest",
+    "actionlint",
+    "shellcheck",
+    "shfmt",
+    "perlcritic",
+    "ppi",
+    "pwsh",
+    "psscriptanalyzer",
+]
+
+[profile.ci]
+# CI profile: Minimal set for CI workflows
+tools = [
+    "repo-lint",
+    "ripgrep",
+    "python-black",
+    "python-ruff",
+    "python-pylint",
+    "yamllint",
+    "actionlint",
+]
+
+[profile.full]
+# Full profile: All available tools
+tools = [
+    "repo-lint",
+    "ripgrep",
+    "python-black",
+    "python-ruff",
+    "python-pylint",
+    "yamllint",
+    "pytest",
+    "actionlint",
+    "shellcheck",
+    "shfmt",
+    "perlcritic",
+    "ppi",
+    "pwsh",
+    "psscriptanalyzer",
+]
+
+# Tool-specific configuration
+
+[tool.actionlint]
+min_version = "1.7.10"
+
+[tool.ripgrep]
+min_version = "14.0.0"
+
+[tool.shellcheck]
+# ShellCheck is required for shell script linting
+
+[tool.shfmt]
+# shfmt is required for shell script formatting

@@ -84,6 +84,18 @@ impl Installer for PwshInstaller {
             });
         }
 
+        // Check if PowerShell is already installed
+        if let Some(existing_version) = self.detect(ctx).await? {
+            return Ok(InstallResult {
+                version: existing_version.clone(),
+                installed_new: false,
+                log_messages: vec![format!(
+                    "PowerShell Core already installed (version {})",
+                    existing_version
+                )],
+            });
+        }
+
         match ctx.package_manager {
             PackageManager::Homebrew => {
                 let pm: Box<dyn PackageManagerOps> = Box::new(HomebrewOps);

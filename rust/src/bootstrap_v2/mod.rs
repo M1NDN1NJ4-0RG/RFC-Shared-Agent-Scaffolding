@@ -25,6 +25,7 @@
 //! - `config`: Configuration file parsing
 //! - `cli`: Command-line interface
 
+pub mod activate;
 pub mod checkpoint;
 pub mod cli;
 pub mod config;

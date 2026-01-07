@@ -25,6 +25,7 @@
 
 use clap::Parser;
 use safe_run::bootstrap_v2::{
+    activate,
     cli::{Cli, Commands},
     config::Config,
     context::{Context, OsType, PackageManager, Verbosity},
@@ -35,6 +36,7 @@ use safe_run::bootstrap_v2::{
     installers::{repo_lint::REPO_LINT_INSTALLER_ID, InstallerRegistry},
     lock::LockManager,
     plan::ExecutionPlan,
+    platform,
     progress::{ProgressMode, ProgressReporter},
 };
 use std::path::PathBuf;
@@ -66,7 +68,11 @@ async fn run() -> ExitCode {
 
 async fn handle_command(cli: Cli) -> anyhow::Result<ExitCode> {
     match cli.command {
-        Commands::Install { profile } => {
+        Commands::Install {
+            profile,
+            github_env,
+            emit_env_commands,
+        } => {
             handle_install(
                 Some(profile),
                 cli.jobs,
@@ -76,6 +82,8 @@ async fn handle_command(cli: Cli) -> anyhow::Result<ExitCode> {
                 cli.allow_downgrade,
                 cli.json,
                 cli.verbose,
+                github_env,
+                emit_env_commands,
             )
             .await
         }
@@ -94,6 +102,8 @@ async fn handle_install(
     allow_downgrade: bool,
     json: bool,
     verbose_count: u8,
+    github_env: bool,
+    emit_env_commands: bool,
 ) -> anyhow::Result<ExitCode> {
     // 1. Find repository root
     let repo_root = find_repo_root().await?;
@@ -132,10 +142,26 @@ async fn handle_install(
         allow_downgrade,
     ));
 
-    // 6. Initialize installer registry
+    // 6. Create virtual environment if it doesn't exist
+    let venv_path = ctx.venv_path.clone();
+    if !venv_path.exists() {
+        // Use progress reporter for status updates if not in JSON mode
+        if !json && ctx.verbosity != Verbosity::Quiet {
+            println!("🔧 Creating Python virtual environment...");
+        }
+        let venv_info = platform::create_venv(&venv_path, dry_run).await?;
+        if !dry_run && !json && ctx.verbosity != Verbosity::Quiet {
+            println!(
+                "  ✓ Virtual environment created (Python {})",
+                venv_info.python_version.as_deref().unwrap_or("unknown")
+            );
+        }
+    }
+
+    // 7. Initialize installer registry
     let registry = InstallerRegistry::new();
 
-    // 7. Compute execution plan
+    // 8. Compute execution plan
     let profile_name = profile.as_deref().unwrap_or("dev");
     let plan =
         ExecutionPlan::compute(&registry, config.as_ref(), ctx.as_ref(), profile_name).await?;
@@ -148,21 +174,21 @@ async fn handle_install(
         plan.print_human();
     }
 
-    // 8. Create executor and lock manager
+    // 9. Create executor and lock manager
     let lock_manager = Arc::new(LockManager::new());
     let executor = Executor::new(ctx.clone(), lock_manager);
 
-    // 9. Execute the plan (detect → install → verify)
+    // 10. Execute the plan (detect → install → verify)
     let results = executor.execute_plan(&plan).await?;
 
-    // 10. Check for failures
+    // 11. Check for failures
     let failed = results.iter().any(|r| !r.success);
     if failed {
         eprintln!("\n❌ Installation failed - see errors above");
         return Ok(ExitCode::VerificationFailed);
     }
 
-    // 11. Run automatic verification gate (repo-lint check --ci)
+    // 12. Run automatic verification gate (repo-lint check --ci)
     // This runs if repo-lint was in the plan (profile includes it)
     let repo_lint_in_plan = plan.phases.iter().any(|phase| {
         phase
@@ -175,8 +201,20 @@ async fn handle_install(
         println!("\n🔍 Running verification gate (repo-lint check --ci)...");
 
         let repo_lint_bin = ctx.repo_lint_bin();
+
+        // Add .venv/bin to PATH for the subprocess so Python tools are accessible
+        let venv_bin = ctx.venv_path.join("bin");
+        let current_path = std::env::var("PATH").unwrap_or_default();
+
+        // Add Perl environment for Perl tools (use shared function to avoid duplication)
+        let perl = activate::get_perl_env();
+
+        let new_path = format!("{}:{}:{}", perl.bin_path, venv_bin.display(), current_path);
+
         let gate_result = tokio::process::Command::new(&repo_lint_bin)
             .args(["check", "--ci"])
+            .env("PATH", new_path)
+            .env("PERL5LIB", perl.lib_path)
             .status()
             .await;
 
@@ -214,6 +252,26 @@ async fn handle_install(
     }
 
     println!("\n✅ Bootstrap completed successfully");
+
+    // Generate activation mechanisms (unless in JSON mode or emit-env-commands mode)
+    if !dry_run && !json {
+        // Write activation script to .bootstrap/activate.sh
+        activate::write_activation_script(&repo_root, &ctx.venv_path)?;
+
+        // Handle GitHub Actions environment persistence
+        if github_env {
+            activate::write_github_env(&repo_root, &ctx.venv_path)?;
+        }
+
+        // Emit shell commands for eval if requested
+        if emit_env_commands {
+            activate::emit_env_commands(&repo_root, &ctx.venv_path);
+        } else {
+            // Print activation instructions for the user
+            activate::print_activation_instructions(&repo_root, ci_mode);
+        }
+    }
+
     Ok(ExitCode::Success)
 }
 
