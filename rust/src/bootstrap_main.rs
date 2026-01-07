@@ -108,13 +108,16 @@ async fn handle_install(
 
     // 4. Create virtual environment if it doesn't exist
     let venv_path = repo_root.join(".venv");
-    if !venv_path.exists() || dry_run {
+    if !venv_path.exists() {
         if !dry_run {
             println!("🔧 Creating Python virtual environment...");
         }
-        let _ = platform::create_venv(&venv_path, dry_run).await?;
+        let venv_info = platform::create_venv(&venv_path, dry_run).await?;
         if !dry_run {
-            println!("  ✓ Virtual environment created");
+            println!(
+                "  ✓ Virtual environment created (Python {})",
+                venv_info.python_version
+            );
         }
     }
 
