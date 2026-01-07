@@ -28,6 +28,7 @@ After Session Start completes successfully, you MUST execute the requested work.
 ### Near context limit escape hatch (ONLY IF NECESSARY)
 
 If you are getting close to token/window/context limits:
+
 1. Stop starting new work.
 2. Commit whatever is already correct and complete.
 3. Update journals (`*-summary.md`, `*-overview.md`, `*-next-steps.md`) with extremely detailed resume steps.
@@ -46,26 +47,33 @@ If you are getting close to token/window/context limits:
 ### Ordered Checklist
 
 1. **Run bootstrapper**
+
    ~~~bash
    ./scripts/session-start.sh
    ~~~
+
    MUST exit 0.
 
 2. **Activate environment (venv + Perl)**
+
    ~~~bash
    source .venv/bin/activate &&      PERL_HOME="$HOME/perl5" &&      export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" &&      export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" &&      export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" &&      export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" &&      export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}"
    ~~~
 
 3. **Verify `repo-lint` works**
+
    ~~~bash
    source .venv/bin/activate &&      PERL_HOME="$HOME/perl5" &&      export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" &&      export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" &&      export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" &&      export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" &&      export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}" &&      repo-lint --help
    ~~~
+
    MUST exit 0.
 
 4. **Health check**
+
    ~~~bash
    source .venv/bin/activate &&      PERL_HOME="$HOME/perl5" &&      export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" &&      export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" &&      export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" &&      export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" &&      export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}" &&      repo-lint check --ci
    ~~~
+
    Acceptable exit codes at session start:
    - **0** (clean)
    - **1** (violations exist, but tooling works)
@@ -97,18 +105,21 @@ If you are getting close to token/window/context limits:
 
 **Exception:** Running `./scripts/session-end.sh` for repair is allowed without the activation block because it is the wrapper that self-heals/installs missing components.
 
-### Ordered Checklist (for scripting/tooling commits)
+### Pre-Commit Gate Requirements Ordered Checklist (for scripting/tooling commits)
 
 1. Activate environment (venv + Perl) using the same block as Session Start Step 2.
 2. Run:
+
    ~~~bash
    repo-lint check --ci
    ~~~
+
 3. Fix violations and re-run until exit code **0**.
 4. Update `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md` BEFORE committing (MANDATORY).
 5. Commit.
 
 Exit codes for `repo-lint check --ci`:
+
 - **0** = OK to commit
 - **1** = violations exist → NOT OK to commit
 - **2** = missing tools → BLOCKER (run `./scripts/session-end.sh` to repair; if still failing, escalate)
@@ -121,7 +132,7 @@ Exit codes for `repo-lint check --ci`:
 
 **Allowed session end exit codes:** **0 only.**
 
-### Ordered Checklist
+### Session End Requirements Ordered Checklist
 
 1. **Pre-commit gate (only if this session includes scripting/tooling changes)**
    - Run `repo-lint check --ci` and fix until it exits **0**.
@@ -152,14 +163,16 @@ Exit codes for `repo-lint check --ci`:
    - If checks have not triggered, wait up to 5 minutes; if still no CI run, escalate using BLOCKED format.
 
 7. **Verify repository state (SESSION END GATE)**
+
    ~~~bash
    ./scripts/session-end.sh
    ~~~
+
    MUST exit **0**.
 
 If any required step fails, escalate using:
 
-~~~
+~~~plaintext
 **BLOCKED — HUMAN ACTION REQUIRED**
 ~~~
 
@@ -170,9 +183,12 @@ Include: failing step, exact command, exit code, and error output; mention `@m1n
 ## Required Tools Definition
 
 "Required tools" means all are installed and functional (as enforced by `./scripts/session-start.sh`):
+
 - `rg` (ripgrep)
 - Python: `black`, `ruff`, `pylint`, `yamllint`, `pytest`, `repo-lint`
 - Shell: `shellcheck`, `shfmt` (when shell scripts exist/changed)
 - PowerShell: `pwsh`, `PSScriptAnalyzer` (when PowerShell exists/changed)
 - Perl: `perlcritic`, `PPI` (when Perl exists/changed)
 - GitHub Actions: `actionlint` (when workflows exist/changed)
+
+---
