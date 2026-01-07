@@ -163,7 +163,6 @@ jobs:
           set -euo pipefail
           go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10
           echo "$HOME/go/bin" >> "$GITHUB_PATH"
-          # Note: actionlint uses -version (Go-style), while shfmt uses --version (GNU-style)
           "$HOME/go/bin/actionlint" -version
 
       # PowerShell tooling (installed only if .ps1 exists)
@@ -201,7 +200,7 @@ jobs:
       # Rust toolchain + common Rust dev tools (repo contains rust/)
       - name: Set up Rust (stable + rustfmt + clippy)
         if: ${{ hashFiles('rust/**') != '' }}
-        uses: dtolnay/rust-toolchain@master
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
 
