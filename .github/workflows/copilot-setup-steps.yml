@@ -178,6 +178,7 @@ jobs:
             mdformat \
             napalm \
             netmiko \
+            ntc-templates \
             orjson \
             paramiko \
             pydantic \
@@ -189,6 +190,7 @@ jobs:
             ruamel.yaml \
             ruff \
             tenacity \
+            textfsm \
             tqdm \
             typer \
             yamllint
