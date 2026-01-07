@@ -77,19 +77,42 @@ impl Installer for PerlCriticInstaller {
     }
 
     async fn detect(&self, _ctx: &Context) -> BootstrapResult<Option<Version>> {
-        let output = tokio::process::Command::new("perlcritic")
+        // Set up Perl environment to detect tools installed in ~/perl5
+        let perl_dir = get_perl_install_dir()?;
+        let perl5lib = format!("{}/lib/perl5", perl_dir);
+        let perlcritic_path = format!("{}/bin/perlcritic", perl_dir);
+        
+        // Try explicit path first (handles tools installed to ~/perl5)
+        let output = tokio::process::Command::new(&perlcritic_path)
             .arg("--version")
+            .env("PERL5LIB", &perl5lib)
             .output()
             .await;
+
+        // If explicit path doesn't work, try PATH
+        let output = if output.is_err() || !output.as_ref().unwrap().status.success() {
+            tokio::process::Command::new("perlcritic")
+                .arg("--version")
+                .env("PERL5LIB", &perl5lib)
+                .output()
+                .await
+        } else {
+            output
+        };
 
         match output {
             Ok(output) if output.status.success() => {
                 let stdout = String::from_utf8_lossy(&output.stdout);
-                // perlcritic --version outputs: "Perl::Critic version 1.150"
-                if let Some(version_str) = stdout.split_whitespace().nth(2) {
-                    if let Ok(version) = Version::parse(version_str) {
-                        return Ok(Some(version));
-                    }
+                // perlcritic --version outputs just the version number: "1.156"
+                let mut version_str = stdout.trim().to_string();
+                
+                // If version has only 2 components (e.g., "1.156"), add ".0" for semver compatibility
+                if version_str.matches('.').count() == 1 {
+                    version_str.push_str(".0");
+                }
+                
+                if let Ok(version) = Version::parse(&version_str) {
+                    return Ok(Some(version));
                 }
                 Ok(None)
             }
@@ -103,6 +126,18 @@ impl Installer for PerlCriticInstaller {
                 version: Version::new(1, 0, 0),
                 installed_new: false,
                 log_messages: vec!["[DRY-RUN] Would install Perl::Critic via cpanm".to_string()],
+            });
+        }
+
+        // Check if Perl::Critic is already installed
+        if let Some(existing_version) = self.detect(ctx).await? {
+            return Ok(InstallResult {
+                version: existing_version.clone(),
+                installed_new: false,
+                log_messages: vec![format!(
+                    "Perl::Critic already installed (version {})",
+                    existing_version
+                )],
             });
         }
 
@@ -179,18 +214,30 @@ impl Installer for PPIInstaller {
     }
 
     async fn detect(&self, _ctx: &Context) -> BootstrapResult<Option<Version>> {
+        // Set up Perl environment to detect modules installed in ~/perl5
+        let perl_dir = get_perl_install_dir()?;
+        let perl5lib = format!("{}/lib/perl5", perl_dir);
+        
         // PPI is a library, check via perl -MPPI -e
         let output = tokio::process::Command::new("perl")
             .arg("-MPPI")
             .arg("-e")
             .arg("print $PPI::VERSION")
+            .env("PERL5LIB", &perl5lib)
             .output()
             .await;
 
         match output {
             Ok(output) if output.status.success() => {
                 let stdout = String::from_utf8_lossy(&output.stdout);
-                if let Ok(version) = Version::parse(stdout.trim()) {
+                let mut version_str = stdout.trim().to_string();
+                
+                // If version has only 2 components (e.g., "1.284"), add ".0" for semver compatibility
+                if version_str.matches('.').count() == 1 {
+                    version_str.push_str(".0");
+                }
+                
+                if let Ok(version) = Version::parse(&version_str) {
                     return Ok(Some(version));
                 }
                 Ok(None)
@@ -205,6 +252,18 @@ impl Installer for PPIInstaller {
                 version: Version::new(1, 0, 0),
                 installed_new: false,
                 log_messages: vec!["[DRY-RUN] Would install PPI via cpanm".to_string()],
+            });
+        }
+
+        // Check if PPI is already installed
+        if let Some(existing_version) = self.detect(ctx).await? {
+            return Ok(InstallResult {
+                version: existing_version.clone(),
+                installed_new: false,
+                log_messages: vec![format!(
+                    "PPI already installed (version {})",
+                    existing_version
+                )],
             });
         }
 
