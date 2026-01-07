@@ -2,37 +2,38 @@
 
 ## Current Status
 
-**Phase:** Phase 2 Complete - Moving to Phase 3 (Update CI/workflows)
+**Phase:** Phase 3 Complete - Moving to Phase 4 (Final cleanup)
 
 **Completed:**
 - ✅ Phase 0: Preflight/Baseline
 - ✅ Phase 1: Remove proto-rust-bootstrapper artifacts
 - ✅ Phase 2: Convert to Cargo workspace with separate packages
+- ✅ Phase 3: Update CI/workflows/scripts
 
-**Phase 2 Details:**
-- Created workspace root `rust/Cargo.toml` with two member packages
-- Created `rust/crates/safe-run/` package:
-  - Moved `cli.rs`, `safe_archive.rs`, `safe_run.rs`, `main.rs`
-  - Created package-specific `Cargo.toml` with minimal dependencies
-  - Moved conformance tests
-- Created `rust/crates/bootstrap-repo-cli/` package:
-  - Moved all `bootstrap_v2/*` modules to top-level src/
-  - Updated all `crate::bootstrap_v2::` references to `crate::`
-  - Created package-specific `Cargo.toml` with bootstrap dependencies
-  - Moved bootstrap integration tests
-- Verified builds:
-  - `cargo build -p safe-run --release` ✅ (builds only safe-run)
-  - `cargo build -p bootstrap-repo-cli --release` ✅ (builds only bootstrap)
-- Verified tests:
-  - `cargo test -p bootstrap-repo-cli` ✅ (169 unit tests pass, same doctest baseline failures)
+**Phase 3 Details:**
+- Updated workflows building bootstrap-repo-cli:
+  - `.github/workflows/build-rust-bootstrapper.yml` → `cargo build -p bootstrap-repo-cli`
+- Updated workflows building safe-run:
+  - `.github/workflows/drift-detection.yml` → `cargo build -p safe-run`
+  - `.github/workflows/rust-conformance.yml` → `cargo build/test -p safe-run`
+  - `.github/workflows/test-bash.yml` → `cargo build -p safe-run`
+  - `.github/workflows/test-python3.yml` → `cargo build -p safe-run`
+  - `.github/workflows/test-perl.yml` → `cargo build -p safe-run`
+  - `.github/workflows/test-powershell.yml` → `cargo build -p safe-run`
+  - `.github/workflows/phase3-windows-ctrlc-probe.yml` → `cargo build -p safe-run`
+- Updated scripts:
+  - `scripts/benchmark-bootstrap.sh` → updated path and build command
+- Updated docs:
+  - `docs/rust-bootstrapper-dev-guide.md` → updated all build/test examples
 
 **In Progress:**
-- Phase 3: Update CI/workflows/scripts
+- Phase 4: Final cleanup and verification
 
 **Next:**
-- Find workflows that build these binaries
-- Update to use `-p <package>` flag
-- Update any hardcoded paths
+- Run `cargo fmt --all`
+- Run `cargo clippy --all-targets --all-features`
+- Run `repo-lint check --ci`
+- Verify acceptance criteria
 
 ## Commit Log
 
@@ -45,9 +46,14 @@
 - Updated `rust/src/lib.rs` (removed proto bootstrap module)
 - Updated docs in `docs/ai-prompt/196/` and `docs/ai-prompt/209/` with removal notes
 
-### Commit 3 (pending): Phase 2 - Convert to Cargo workspace
+### Commit 3: Phase 2 - Convert to Cargo workspace
 - Created workspace structure with two packages
 - Moved source files to appropriate packages
 - Updated module paths and imports
 - Created package-specific Cargo.toml files
 - Moved tests to appropriate packages
+
+### Commit 4 (pending): Phase 3 - Update CI/workflows/scripts
+- Updated 8 workflows to use `-p <package>` flag
+- Updated benchmark script
+- Updated dev guide documentation

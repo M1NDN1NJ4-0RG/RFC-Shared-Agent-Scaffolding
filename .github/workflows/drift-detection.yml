@@ -73,7 +73,7 @@ jobs:
       - name: Build Rust canonical tool
         run: |
           cd rust
-          cargo build --release
+          cargo build --release -p safe-run
           cd ..
 
       # Step 4: Stage the Rust binary at dist/linux/x86_64/safe-run

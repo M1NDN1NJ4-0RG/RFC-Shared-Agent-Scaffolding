@@ -76,7 +76,7 @@ jobs:
       # This is the reference implementation that the Python wrapper delegates to
       - name: Build Rust canonical tool
         working-directory: rust
-        run: cargo build --release
+        run: cargo build --release -p safe-run
 
       # Step 4: Stage Rust binary at standard discovery location
       # Python wrapper uses SAFE_RUN_BIN environment variable to locate this binary

@@ -68,7 +68,7 @@ jobs:
       # Produces safe-run.exe on Windows (not safe-run)
       - name: Build Rust canonical tool
         working-directory: rust
-        run: cargo build --release
+        run: cargo build --release -p safe-run
 
       # Step 4: Stage Rust binary at standard Windows discovery location
       # PowerShell wrapper uses $env:SAFE_RUN_BIN to locate this binary
