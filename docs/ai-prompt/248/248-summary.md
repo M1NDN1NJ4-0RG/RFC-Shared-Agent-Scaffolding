@@ -1,6 +1,6 @@
 # Issue #248 Summary
 
-**Last Updated:** 2026-01-07 02:18 UTC
+**Last Updated:** 2026-01-07 04:20 UTC
 
 ## Work Completed
 
@@ -34,7 +34,10 @@
 - ✅ Created comprehensive benchmark report at `docs/ai-prompt/235/235-dev-benchmark-results.md`
 - ✅ Committed benchmark script and README to repository
 - ✅ Fixed all bash linting violations (shellcheck, shfmt, bash-docstrings)
-- ⚠️  Rust benchmarks skipped due to exit code 19 errors (implementation gap identified)
+- ✅ **NEW: Fixed Rust bootstrapper verification failures**
+  - Root cause: actionlint installed via `go install` to `~/go/bin`, not in PATH
+  - Solution: Updated ActionlintInstaller to check Go bin directories
+  - Rust verify now exits 0 instead of 19
 
 ### Phase 3: Linux ARM64 Support
 - ✅ Updated CI workflow `.github/workflows/build-rust-bootstrapper.yml`
@@ -58,6 +61,20 @@
   - Added Linux ARM64 platform
   - Documented parity section (profiles, exit codes, session scripts)
 
+### Rust Bootstrapper Fix (NEW - 2026-01-07 04:20 UTC)
+- ✅ Investigated exit code 19 (VerificationFailed) root cause
+- ✅ Fixed ActionlintInstaller to check multiple locations:
+  - PATH lookup (original behavior)
+  - `$HOME/go/bin/actionlint` (default go install location)
+  - `$GOPATH/bin/actionlint` (custom GOPATH if set)
+- ✅ Fixed version parsing to handle:
+  - Multi-line output (actionlint outputs 3 lines)
+  - 'v' prefix in version string (e.g., "v1.7.10")
+- ✅ Applied cargo fmt for consistent formatting
+- ✅ Verified with clippy (no warnings)
+- ✅ Pre-commit gate passed (repo-lint check --ci exit 0)
+- ✅ Rust verify command now exits 0 successfully
+
 ### Code Review Iterations (All Feedback Addressed)
 - ✅ **Iteration 1**: Improved version parsing with regex, specific error messages
 - ✅ **Iteration 2**: Added regex import, OnceLock pattern, REPO_LINT_INSTALLER_ID constant, prerequisites docs
@@ -73,7 +90,7 @@
 - ✅ Updated issue journals (this file)
 - ✅ Fixed bash linting violations per CI feedback (commit 4e7abee)
 
-## Commits Made (16 total)
+## Commits Made (17 total)
 
 1. ca53366 - Initialize issue #248 journals and session start
 2. 300ed22 - Phase 1.1: Add RepoLintInstaller and automatic verification gate
@@ -91,10 +108,11 @@
 14. d63f3c1 - Add benchmark script and documentation to repository
 15. 9e2ab12 - Update issue journals with benchmark script commit info
 16. 4e7abee - Fix bash linting violations in benchmark script
+17. (pending) - Fix Rust bootstrapper actionlint detection for go install locations
 
 ## Current Status
 
-**COMPLETE** - All phases including Phase 2 (benchmarks) implemented and verified.
+**COMPLETE** - All phases implemented and Rust bootstrapper verification fixed.
 
 ### Platform Support Matrix
 - Linux: x86_64 (musl), **ARM64 (musl)** ← NEW
@@ -106,6 +124,7 @@
 ✅ Exit codes stable and documented
 ✅ Release artifacts include Linux ARM64
 ✅ Documentation reflects reality
+✅ **Rust verify command exits 0 (was exiting 19)**
 
 ## Blockers
 
@@ -113,6 +132,7 @@ None.
 
 ## Notes for Future Work
 
-- Rust bootstrapper has implementation gaps (exit code 19 errors) preventing full benchmark comparison
-- Re-run benchmarks after Rust bootstrapper issues are fixed to get complete performance data
+- ✅ **RESOLVED**: Rust bootstrapper exit code 19 errors fixed
+- Benchmark comparison now possible (Rust verify works)
+- Consider re-running full benchmarks in future session to compare Rust vs Bash performance
 - Bash baseline established: 43.2s ± 0.7s for verification workflow
