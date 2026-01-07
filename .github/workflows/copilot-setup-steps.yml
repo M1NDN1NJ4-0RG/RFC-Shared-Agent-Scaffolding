@@ -205,21 +205,6 @@ jobs:
           python -m ruff --version
           python -m yamllint --version
 
-          # Extra sanity checks for added tooling
-          python -c "import click; print(click.__version__)"
-          python -c "import rich; print(rich.__version__)"
-          python -c "import rich_click; print(rich_click.__version__)"
-          python -c "import tqdm; print(tqdm.__version__)"
-          python -c "import paramiko; print(paramiko.__version__)"
-          python -c "import netmiko; print(netmiko.__version__)"
-          python -c "import napalm; print(napalm.__version__)"
-          python -c "import json5; print(json5.__version__)"
-          python -c "import orjson; print(orjson.__version__)"
-          python -c "import ruamel.yaml; import importlib.metadata as m; print(m.version('ruamel.yaml'))"
-          python -c "import pydantic; print(pydantic.__version__)"
-          python -c "import typer; print(typer.__version__)"
-          python -c "import tenacity; print(tenacity.__version__)"
-
           # repo-lint should be available both as a console script and as a module
           command -v repo-lint
           repo-lint --help
