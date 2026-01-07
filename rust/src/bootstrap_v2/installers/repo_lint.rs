@@ -24,8 +24,16 @@ use crate::bootstrap_v2::context::Context;
 use crate::bootstrap_v2::errors::{BootstrapError, BootstrapResult};
 use crate::bootstrap_v2::installer::{InstallResult, Installer, VerifyResult};
 use async_trait::async_trait;
+use regex::Regex;
 use semver::Version;
+use std::sync::OnceLock;
 use tokio::process::Command;
+
+/// Installer ID constant for consistency
+pub const REPO_LINT_INSTALLER_ID: &str = "repo-lint";
+
+/// Compiled regex for version parsing (compiled once)
+static VERSION_REGEX: OnceLock<Regex> = OnceLock::new();
 
 /// Helper to install repo-lint in editable mode
 async fn pip_install_editable(ctx: &Context) -> BootstrapResult<()> {
@@ -103,7 +111,10 @@ async fn detect_repo_lint(ctx: &Context) -> BootstrapResult<Option<Version>> {
             let output_str = String::from_utf8_lossy(&out.stdout);
             // Try to parse version from output using regex for semantic versioning
             // Format: "repo-lint, version X.Y.Z" or similar
-            let re = regex::Regex::new(r"(\d+\.\d+\.\d+)").unwrap();
+            let re = VERSION_REGEX.get_or_init(|| {
+                Regex::new(r"(\d+\.\d+\.\d+)")
+                    .expect("Failed to compile version regex - this is a bug")
+            });
             if let Some(captures) = re.captures(&output_str) {
                 if let Some(ver_match) = captures.get(1) {
                     if let Ok(version) = Version::parse(ver_match.as_str()) {
@@ -111,8 +122,9 @@ async fn detect_repo_lint(ctx: &Context) -> BootstrapResult<Option<Version>> {
                     }
                 }
             }
-            // If we can't parse version but command succeeded, return a placeholder
-            Ok(Some(Version::new(0, 0, 0)))
+            // Version detection succeeded but parsing failed - this is acceptable
+            // Return None to indicate version is unknown (will be caught by caller)
+            Ok(None)
         }
         _ => Ok(None),
     }
@@ -137,7 +149,7 @@ pub struct RepoLintInstaller;
 #[async_trait]
 impl Installer for RepoLintInstaller {
     fn id(&self) -> &'static str {
-        "repo-lint"
+        REPO_LINT_INSTALLER_ID
     }
 
     fn name(&self) -> &'static str {

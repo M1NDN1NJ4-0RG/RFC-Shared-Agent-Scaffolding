@@ -2,6 +2,10 @@
 #
 # This file configures linkers for cross-compilation targets.
 # Currently used for building Linux ARM64 binaries on x86_64.
+#
+# Prerequisites for ARM64 cross-compilation:
+# - gcc-aarch64-linux-gnu must be installed on the build system
+#   (e.g., via `sudo apt-get install gcc-aarch64-linux-gnu` on Debian/Ubuntu)
 
 [target.aarch64-unknown-linux-musl]
 linker = "aarch64-linux-gnu-gcc"

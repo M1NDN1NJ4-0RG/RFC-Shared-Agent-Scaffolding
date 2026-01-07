@@ -32,7 +32,7 @@ use safe_run::bootstrap_v2::{
     errors::BootstrapError,
     executor::Executor,
     exit_codes::ExitCode,
-    installers::InstallerRegistry,
+    installers::{repo_lint::REPO_LINT_INSTALLER_ID, InstallerRegistry},
     lock::LockManager,
     plan::ExecutionPlan,
     progress::{ProgressMode, ProgressReporter},
@@ -164,10 +164,12 @@ async fn handle_install(
 
     // 11. Run automatic verification gate (repo-lint check --ci)
     // This runs if repo-lint was in the plan (profile includes it)
-    let repo_lint_in_plan = plan
-        .phases
-        .iter()
-        .any(|phase| phase.steps.iter().any(|step| step.installer == "repo-lint"));
+    let repo_lint_in_plan = plan.phases.iter().any(|phase| {
+        phase
+            .steps
+            .iter()
+            .any(|step| step.installer == REPO_LINT_INSTALLER_ID)
+    });
 
     if repo_lint_in_plan && !dry_run {
         println!("\n🔍 Running verification gate (repo-lint check --ci)...");
