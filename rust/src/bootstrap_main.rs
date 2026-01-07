@@ -25,6 +25,7 @@
 
 use clap::Parser;
 use safe_run::bootstrap_v2::{
+    activate,
     cli::{Cli, Commands},
     config::Config,
     context::{Context, OsType, PackageManager, Verbosity},
@@ -67,7 +68,7 @@ async fn run() -> ExitCode {
 
 async fn handle_command(cli: Cli) -> anyhow::Result<ExitCode> {
     match cli.command {
-        Commands::Install { profile } => {
+        Commands::Install { profile, github_env, emit_env_commands } => {
             handle_install(
                 Some(profile),
                 cli.jobs,
@@ -77,6 +78,8 @@ async fn handle_command(cli: Cli) -> anyhow::Result<ExitCode> {
                 cli.allow_downgrade,
                 cli.json,
                 cli.verbose,
+                github_env,
+                emit_env_commands,
             )
             .await
         }
@@ -95,6 +98,8 @@ async fn handle_install(
     allow_downgrade: bool,
     json: bool,
     verbose_count: u8,
+    github_env: bool,
+    emit_env_commands: bool,
 ) -> anyhow::Result<ExitCode> {
     // 1. Find repository root
     let repo_root = find_repo_root().await?;
@@ -246,6 +251,26 @@ async fn handle_install(
     }
 
     println!("\n✅ Bootstrap completed successfully");
+    
+    // Generate activation mechanisms (unless in JSON mode or emit-env-commands mode)
+    if !dry_run && !json {
+        // Write activation script to .bootstrap/activate.sh
+        activate::write_activation_script(&repo_root, &ctx.venv_path)?;
+        
+        // Handle GitHub Actions environment persistence
+        if github_env {
+            activate::write_github_env(&repo_root, &ctx.venv_path)?;
+        }
+        
+        // Emit shell commands for eval if requested
+        if emit_env_commands {
+            activate::emit_env_commands(&repo_root, &ctx.venv_path);
+        } else {
+            // Print activation instructions for the user
+            activate::print_activation_instructions(&repo_root, ci_mode);
+        }
+    }
+    
     Ok(ExitCode::Success)
 }
 
