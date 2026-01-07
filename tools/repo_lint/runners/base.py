@@ -243,7 +243,7 @@ class Runner(ABC):
         import re
         from concurrent.futures import ThreadPoolExecutor, as_completed
 
-        # TODO: Replace introspection with explicit declaration pattern (decorator or attribute)
+        # FUTURE: Replace introspection with explicit declaration pattern (decorator or attribute)
         # Current implementation relies on naming conventions which may not be reliable across
         # all runners. Consider adding a @parallelizable decorator or _parallelizable_methods
         # class attribute for explicit opt-in.
@@ -288,7 +288,7 @@ class Runner(ABC):
                     import logging
                     import traceback
 
-                    logging.error(f"Tool method {method_name} failed with exception:\n{traceback.format_exc()}")
+                    logging.error("Tool method %s failed with exception:\n%s", method_name, traceback.format_exc())
                     # Create error result for failed tool
                     results_map[method_name] = LintResult(
                         tool=method_name, passed=False, violations=[], error=f"Tool execution failed: {str(e)}"

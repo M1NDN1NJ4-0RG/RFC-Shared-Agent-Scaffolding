@@ -1,12 +1,30 @@
 # Workflow: Copilot Setup Steps
 #
-# Purpose
-# - Pre-install and verify common toolchains in the GitHub Actions runner environment so
-#   Copilot Coding Agent sessions can run immediately (repo-lint, formatters, linters, etc.).
-# - Provides a deterministic baseline for CI and agent workflows without requiring
-#   per-session bootstrap scripts.
+# Purpose: Pre-install and verify common toolchains in the GitHub Actions runner
+# environment so Copilot Coding Agent sessions can run immediately (repo-lint,
+# formatters, linters, etc.). Provides a deterministic baseline for CI and agent
+# workflows without requiring per-session bootstrap scripts.
 #
-# What this workflow installs / verifies
+# Triggers:
+# - Scheduled: Never (manual workflow_dispatch only for validation)
+# - Manual: workflow_dispatch for testing setup steps
+# - Push/PRs that modify this workflow file
+#
+# Dependencies:
+# - Ubuntu runner (ubuntu-latest)
+# - Third-party actions: setup-python@v5, dtolnay/rust-toolchain, taiki-e/install-action
+# - Language-specific package managers: apt, pip, cpanm, npm, cargo
+#
+# Outputs:
+# - Installs toolchains in GitHub Actions runner environment
+# - Job name MUST be `copilot-setup-steps` for Copilot to pick it up
+# - Intentionally verbose tool verification to fail fast on missing capabilities
+#
+# Notes:
+# - Go is only set up when shfmt and/or actionlint are required
+# - PATH updates via $GITHUB_PATH only apply to subsequent steps
+#
+# What this workflow installs / verifies:
 # - Base OS tools (always):
 #   - ripgrep (rg) for searching (REQUIRED grep tool)
 #   - jq for JSON inspection
@@ -14,8 +32,7 @@
 #   - perl + cpanminus (cpanm) for Perl tooling
 #
 # - YAML tooling (always):
-#   - yq (Mike Farah Go-yq) installed from GitHub releases (pinned version) to avoid the
-#     distro `yq` implementation mismatch.
+#   - yq (Mike Farah Go-yq) installed from GitHub releases (pinned version)
 #
 # - Python tooling (always):
 #   - Python 3.12 via actions/setup-python
@@ -26,14 +43,8 @@
 #     - Networking/automation: paramiko, netmiko, napalm
 #     - Data/config helpers: json5, orjson, jsonschema, ruamel.yaml, pydantic, jmespath
 #     - HTTP/retries: requests, httpx, tenacity
-#   - repo-lint installed from THIS repository (editable) and verified via:
-#     - `repo-lint --help` and `python -m tools.repo_lint.cli --help`
-#   - NOTE: The Python package set above is intentionally broader than this repository's
-#     direct runtime dependencies. These tools are pre-installed to give Copilot Coding
-#     Agent sessions a rich, ready-to-use environment for common automation, networking,
-#     and data-processing tasks, and to accommodate likely future workflow features.
-#     Maintainers may narrow or remove these extra packages if they prefer faster
-#     workflow startup or a smaller dependency/security surface.
+#   - repo-lint installed from THIS repository (editable) and verified
+#   - NOTE: Python package set intentionally broader than runtime dependencies
 #
 # - Shell toolchain (conditional):
 #   - shellcheck (apt) only when *.sh exists
@@ -48,32 +59,15 @@
 #
 # - Perl toolchain (conditional):
 #   - Perl::Critic + PPI via apt when *.pl exists (preferred)
-#   - cpanm fallback when *.pl exists (best-effort), with a hard requirement that
-#     `perlcritic` ends up available if Perl files exist.
+#   - cpanm fallback when *.pl exists (best-effort)
 #
 # - Rust toolchain (conditional, when rust/** exists):
 #   - dtolnay/rust-toolchain@stable with rustfmt + clippy components
-#   - helper tools via taiki-e/install-action (audit/deny/coverage/nextest + utilities):
-#     cargo-audit, cargo-deny, cargo-llvm-cov, cargo-nextest,
-#     git-cliff, grcov, hyperfine, just, osv-scanner, taplo, trivy, typos
+#   - helper tools via taiki-e/install-action
 #
 # - Markdown linting (conditional):
 #   - Node.js 20 setup when *.md exists
 #   - markdownlint-cli installed globally when *.md exists
-#
-# Triggers
-# - Manual workflow_dispatch (for validation)
-# - Push/PRs that modify this workflow file
-#
-# Output / contract
-# - Job name MUST be `copilot-setup-steps` for Copilot to pick it up.
-# - This workflow is intentionally verbose about tool verification to fail fast when a
-#   runner environment is missing required capabilities.
-#
-# Notes
-# - Go is only set up when shfmt and/or actionlint are required.
-# - PATH updates via $GITHUB_PATH only apply to subsequent steps (this workflow also
-#   exports PATH locally when needed inside a step).
 
 name: "Copilot Setup Steps"
 
