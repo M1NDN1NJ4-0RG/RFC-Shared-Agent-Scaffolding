@@ -1,0 +1,7 @@
+# Cargo configuration for cross-compilation
+#
+# This file configures linkers for cross-compilation targets.
+# Currently used for building Linux ARM64 binaries on x86_64.
+
+[target.aarch64-unknown-linux-musl]
+linker = "aarch64-linux-gnu-gcc"
