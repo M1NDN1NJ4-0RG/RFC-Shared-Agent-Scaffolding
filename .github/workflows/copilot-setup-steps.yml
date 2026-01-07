@@ -91,7 +91,7 @@ jobs:
           pylint --version
           yamllint --version
           pytest --version
-          repo-lint --help
+          python -m tools.repo_lint.cli --help
 
       # Go-based tools: shfmt + actionlint (installed only if needed)
       - name: Set up Go
