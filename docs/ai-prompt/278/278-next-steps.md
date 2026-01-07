@@ -2,13 +2,15 @@
 
 ## NEXT
 
-- [ ] Phase 0.1: Snapshot repo + tooling
-  - [ ] Capture current Python toolchain versions (already done via repo-lint check --ci)
-  - [ ] Search and document where Python lint/docstring/naming contracts are documented
-- [ ] Phase 0.2: Inventory all Python files
-  - [ ] Enumerate and classify all `*.py` files
-  - [ ] Identify excluded directories/patterns
-  - [ ] Create deliverable: `278-python-annotation-inventory.md`
+- [x] Phase 0.1: Snapshot repo + tooling (COMPLETE)
+- [x] Phase 0.2: Inventory all Python files (COMPLETE)
+- [ ] Phase 1.1: Collect "contracts" that already exist
+  - [ ] Document exact current enforcement mechanisms
+  - [ ] List what is enforced today (naming, docstrings, linting)
+- [ ] Phase 1.2: Current-violations baseline
+  - [ ] Run current Python checks and collect baseline
+  - [ ] Identify most common failure categories
+  - [ ] Determine which are autofixable
 
 ## Resume Pointers
 
