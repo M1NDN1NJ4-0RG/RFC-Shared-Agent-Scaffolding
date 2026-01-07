@@ -201,13 +201,13 @@ jobs:
       # Rust toolchain + common Rust dev tools (repo contains rust/)
       - name: Set up Rust (stable + rustfmt + clippy)
         if: ${{ hashFiles('rust/**') != '' }}
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@4be9e76fd7c4901c61fb841f559994984270fce7 # stable
         with:
           components: rustfmt, clippy
 
       - name: Install Rust helper tools (taplo, cargo-audit, cargo-nextest)
         if: ${{ hashFiles('rust/**') != '' }}
-        uses: taiki-e/install-action@v2
+        uses: taiki-e/install-action@dfcb1ee29051d97c8d0f2d437199570008fd5612 # v2
         with:
           tool: taplo,cargo-audit,cargo-nextest
 
