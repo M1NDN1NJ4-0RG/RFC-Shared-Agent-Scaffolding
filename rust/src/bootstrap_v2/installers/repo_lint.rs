@@ -101,13 +101,13 @@ async fn detect_repo_lint(ctx: &Context) -> BootstrapResult<Option<Version>> {
     match output {
         Ok(out) if out.status.success() => {
             let output_str = String::from_utf8_lossy(&out.stdout);
-            // Try to parse version from output (format: "repo-lint, version X.Y.Z")
-            for line in output_str.lines() {
-                if line.contains("version") {
-                    if let Some(ver_str) = line.split_whitespace().last() {
-                        if let Ok(version) = Version::parse(ver_str) {
-                            return Ok(Some(version));
-                        }
+            // Try to parse version from output using regex for semantic versioning
+            // Format: "repo-lint, version X.Y.Z" or similar
+            let re = regex::Regex::new(r"(\d+\.\d+\.\d+)").unwrap();
+            if let Some(captures) = re.captures(&output_str) {
+                if let Some(ver_match) = captures.get(1) {
+                    if let Ok(version) = Version::parse(ver_match.as_str()) {
+                        return Ok(Some(version));
                     }
                 }
             }
@@ -160,7 +160,10 @@ impl Installer for RepoLintInstaller {
         pip_install_editable(ctx).await?;
 
         let version = self.detect(ctx).await?.ok_or_else(|| {
-            BootstrapError::PythonToolsFailed("repo-lint install verification failed".to_string())
+            BootstrapError::PythonToolsFailed(
+                "repo-lint binary not found after installation - version detection failed"
+                    .to_string(),
+            )
         })?;
 
         // Verify that --help works
