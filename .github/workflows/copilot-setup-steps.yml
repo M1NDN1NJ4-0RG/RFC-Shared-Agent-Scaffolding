@@ -95,6 +95,7 @@ jobs:
 
       # Go-based tools: shfmt + actionlint (installed only if needed)
       - name: Set up Go
+        if: ${{ hashFiles('**/*.sh', '.github/workflows/*.yml', '.github/workflows/*.yaml') != '' }}
         uses: actions/setup-go@v5
         with:
           go-version: "stable"
@@ -107,7 +108,7 @@ jobs:
           set -euo pipefail
           go install mvdan.cc/sh/v3/cmd/shfmt@latest
           echo "$HOME/go/bin" >> "$GITHUB_PATH"
-          shfmt --version
+          "$HOME/go/bin/shfmt" --version
 
       - name: Install actionlint (when workflow files exist)
         if: ${{ hashFiles('.github/workflows/*.yml', '.github/workflows/*.yaml') != '' }}
