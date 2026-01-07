@@ -101,6 +101,11 @@ def create_parser() -> argparse.ArgumentParser:
         metavar="N",
         help="Number of parallel jobs (default: AUTO based on CPU count, env: REPO_LINT_JOBS)",
     )
+    check_parser.add_argument(
+        "--progress",
+        action="store_true",
+        help="Show progress bar during parallel execution (auto-disabled in CI/non-TTY)",
+    )
 
     # fix command
     fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
@@ -311,6 +316,52 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             )
             print("")
 
+        # Helper function to process futures
+        def process_futures(executor_futures, progress_tracker=None):
+            """Process completed futures and collect results.
+
+            :param executor_futures: Dict mapping futures to (key, name) tuples
+            :param progress_tracker: Optional Rich Progress object with task
+            :returns: None (updates runner_results and runner_timings in enclosing scope)
+            """
+            for future in as_completed(executor_futures):
+                _key, name = executor_futures[future]
+                try:
+                    result_tuple = future.result()
+                    runner_key, runner_name, results, duration, error_msg = result_tuple
+
+                    # Store results in order
+                    runner_results[runner_key] = (runner_name, results, error_msg)
+                    runner_timings[runner_key] = duration
+
+                    # Update progress if tracker provided
+                    if progress_tracker:
+                        progress, task = progress_tracker
+                        progress.update(task, advance=1, description=f"Completed {runner_name}")
+
+                    # Handle errors
+                    if error_msg and "Missing tools" in error_msg:
+                        if args.ci:
+                            # Extract missing tools in a robust way and print instructions
+                            # Expected format: "Missing tools: tool1, tool2"
+                            _before, _sep, tools_part = error_msg.partition(":")
+                            tools_part = tools_part if tools_part else error_msg
+                            tools = [t.strip() for t in tools_part.split(",") if t.strip()]
+                            print_install_instructions(tools, ci_mode=args.ci)
+                            return ExitCode.MISSING_TOOLS
+                        safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
+                        print("   Run 'repo-lint install' to install them")
+                        print("")
+                        return ExitCode.MISSING_TOOLS
+
+                except Exception as e:
+                    safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
+                    if args.verbose:
+                        import traceback
+
+                        traceback.print_exc()
+            return None
+
         # Use Rich Progress if available and progress is enabled
         if show_progress:
             try:
@@ -332,47 +383,10 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                             for key, name, runner in runners_to_run
                         }
 
-                        # Collect results as they complete
-                        for future in as_completed(future_to_runner):
-                            key, name = future_to_runner[future]
-                            try:
-                                result_tuple = future.result()
-                                runner_key, runner_name, results, duration, error_msg = result_tuple
-
-                                # Store results in order
-                                runner_results[runner_key] = (runner_name, results, error_msg)
-                                runner_timings[runner_key] = duration
-
-                                # Update progress
-                                progress.update(task, advance=1, description=f"Completed {runner_name}")
-
-                                # Handle errors
-                                if error_msg:
-                                    if "Missing tools" in error_msg:
-                                        if args.ci:
-                                            # Extract missing tools in a robust way and print instructions
-                                            # Expected format: "Missing tools: tool1, tool2"
-                                            _before, _sep, tools_part = error_msg.partition(":")
-                                            if not tools_part:
-                                                # Fallback: use full message if no colon is present
-                                                tools_part = error_msg
-                                            tools = [t.strip() for t in tools_part.split(",") if t.strip()]
-                                            print_install_instructions(
-                                                tools,
-                                                ci_mode=args.ci,
-                                            )
-                                            return ExitCode.MISSING_TOOLS
-                                        safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
-                                        print("   Run 'repo-lint install' to install them")
-                                        print("")
-                                        return ExitCode.MISSING_TOOLS
-
-                            except Exception as e:
-                                safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
-                                if args.verbose:
-                                    import traceback
-
-                                    traceback.print_exc()
+                        # Process futures with progress tracking
+                        error_code = process_futures(future_to_runner, (progress, task))
+                        if error_code:
+                            return error_code
             except ImportError:
                 # Fall back to non-progress version if Rich not available
                 show_progress = False
@@ -386,42 +400,15 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                     for key, name, runner in runners_to_run
                 }
 
-                # Collect results as they complete
-                for future in as_completed(future_to_runner):
-                    key, name = future_to_runner[future]
-                    try:
-                        result_tuple = future.result()
-                        runner_key, runner_name, results, duration, error_msg = result_tuple
-
-                        # Store results in order
-                        runner_results[runner_key] = (runner_name, results, error_msg)
-                        runner_timings[runner_key] = duration
-
-                        # Handle errors
-                        if error_msg:
-                            if "Missing tools" in error_msg:
-                                if args.ci:
-                                    # Extract missing tools and print instructions
-                                    print_install_instructions(
-                                        [t.strip() for t in error_msg.split(":", 1)[1].split(",")], ci_mode=args.ci
-                                    )
-                                    return ExitCode.MISSING_TOOLS
-                                safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
-                                print("   Run 'repo-lint install' to install them")
-                                print("")
-                                return ExitCode.MISSING_TOOLS
-
-                    except Exception as e:
-                        safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
-                        if args.verbose:
-                            import traceback
-
-                            traceback.print_exc()
+                # Process futures without progress tracking
+                error_code = process_futures(future_to_runner)
+                if error_code:
+                    return error_code
 
         # Collect all results in deterministic order
         for key, name, runner in runners:
             if key in runner_results:
-                runner_name, results, error_msg = runner_results[key]
+                _runner_name, results, _error_msg = runner_results[key]
                 all_results.extend(results)
 
                 # Mirror sequential fail-fast and max-violations behavior

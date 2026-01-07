@@ -184,6 +184,94 @@ Run checks in CI mode (fails if tools are missing instead of prompting to instal
 repo-lint check --ci
 ```
 
+### Parallel Execution (Default)
+
+**`repo-lint check` runs in parallel by default** using automatic worker calculation based on CPU count.
+
+#### Default Behavior (AUTO)
+
+By default, `repo-lint check` and `repo-lint check --ci` use parallel execution with:
+- **AUTO worker calculation**: `min(max((os.cpu_count() or 1) - 1, 1), 8)`
+- This selects a conservative number of workers (1-8) based on available CPUs
+- Leaves 1 CPU core available for OS/overhead
+- Hard capped at 8 workers to prevent resource exhaustion
+
+#### Controlling Parallelism
+
+Override the number of parallel workers:
+
+```bash
+# Use AUTO (default - recommended)
+repo-lint check
+
+# Explicitly set worker count
+repo-lint check --jobs 4
+repo-lint check -j 4
+
+# Use environment variable
+REPO_LINT_JOBS=4 repo-lint check
+
+# Disable parallelism (sequential execution)
+repo-lint check --jobs 1
+# OR
+REPO_LINT_DISABLE_CONCURRENCY=1 repo-lint check
+```
+
+**Precedence**: CLI `--jobs` > `REPO_LINT_JOBS` env var > AUTO
+
+#### Safety Controls
+
+When you request more workers than the AUTO maximum, `repo-lint` shows a warning banner but **honors your explicit request**:
+
+```bash
+repo-lint check --jobs 50
+# ⚠️  Requested 50 workers exceeds safe AUTO max 3
+# ⚠️  Proceeding with 50 workers as explicitly requested via --jobs=50
+# ⚠️  High worker counts may cause resource exhaustion and flaky CI
+```
+
+**Optional hard cap** (disabled by default):
+```bash
+# Enforce AUTO maximum even for explicit requests
+REPO_LINT_HARD_CAP_JOBS=1 repo-lint check --jobs 50
+# Will cap to AUTO maximum with warning
+```
+
+#### Debug and Diagnostics
+
+```bash
+# Show per-runner timing information
+REPO_LINT_DEBUG_TIMING=1 repo-lint check
+
+# Enable tool-level parallelism within each runner (experimental)
+REPO_LINT_TOOL_PARALLELISM=1 repo-lint check
+```
+
+#### Progress Bar
+
+Show a Rich progress bar during parallel execution:
+
+```bash
+repo-lint check --progress
+```
+
+**Note**: Progress bars are auto-disabled in CI environments and non-TTY contexts unless explicitly enabled with `--progress`.
+
+#### Deterministic Output
+
+Parallel execution maintains deterministic, stable output:
+- Runner output is buffered and printed in registration order
+- No log interleaving
+- Exit codes and violation counts are identical to sequential execution
+- Same violations reported regardless of `--jobs` value
+
+#### Performance Impact
+
+Example on a 4-CPU system:
+- **Sequential** (`--jobs 1`): ~45s
+- **Parallel** (AUTO, 3 workers): ~27s (**40% faster**)
+- With tool-level parallelism: ~26s (**43% faster**)
+
 ### Verbose Output
 
 Show detailed output including passed checks:
@@ -1423,8 +1511,37 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .
       
-      - name: Run repo-lint
+      - name: Run repo-lint (uses AUTO parallelism by default)
         run: repo-lint check --ci --json
+        # Parallel execution is enabled by default
+        # AUTO will use min(max(cpu_count-1, 1), 8) workers
+      
+      # Optional: Explicit worker count for deterministic CI performance
+      - name: Run repo-lint with explicit worker count
+        run: repo-lint check --ci --jobs 4
+        # OR use environment variable:
+        # env:
+        #   REPO_LINT_JOBS: 4
+```
+
+#### CI Parallelism Recommendations
+
+**For stable CI performance**, consider setting an explicit worker count:
+```yaml
+env:
+  REPO_LINT_JOBS: 4  # Explicit count for reproducible CI timing
+```
+
+**For maximum speed with variable runners**, rely on AUTO:
+```yaml
+# No --jobs flag - uses AUTO based on runner CPU count
+run: repo-lint check --ci
+```
+
+**To disable parallelism** (if needed for troubleshooting):
+```yaml
+env:
+  REPO_LINT_DISABLE_CONCURRENCY: 1
 ```
 
 ### Environment Variables
@@ -1432,6 +1549,13 @@ jobs:
 repo-lint supports environment variable configuration:
 
 ```bash
+# Parallelism controls
+export REPO_LINT_JOBS=4                      # Override worker count
+export REPO_LINT_DISABLE_CONCURRENCY=1       # Force sequential execution
+export REPO_LINT_HARD_CAP_JOBS=1             # Enforce AUTO cap on explicit values
+export REPO_LINT_DEBUG_TIMING=1              # Show per-runner timing
+export REPO_LINT_TOOL_PARALLELISM=1          # Enable tool-level parallelism (experimental)
+
 # Set default values for Click commands
 export REPO_LINT_VERBOSE=1
 export REPO_LINT_CI=1

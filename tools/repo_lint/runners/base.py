@@ -228,13 +228,25 @@ class Runner(ABC):
         """Run linting checks with tool-level parallelism (optional).
 
         This is a default implementation that introspects the runner for tool methods
-        and executes them in parallel. Runners can override this for custom behavior.
+        and executes them in parallel. Runners can override this for custom behavior
+        or declare which methods are safe to parallelize explicitly.
 
         :param max_workers: Maximum number of parallel tool executions
         :returns: List of linting results from all tools (in deterministic order)
+
+        :note: This method uses naming conventions to discover tool methods. For more
+               explicit control, runners should override this method and declare which
+               methods to parallelize. The current pattern matches methods starting with
+               '_run_' that aren't fix/format/helper/util methods.
         """
         import inspect
+        import re
         from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        # TODO: Replace introspection with explicit declaration pattern (decorator or attribute)
+        # Current implementation relies on naming conventions which may not be reliable across
+        # all runners. Consider adding a @parallelizable decorator or _parallelizable_methods
+        # class attribute for explicit opt-in.
 
         # Get all methods that look like tool check methods
         # Pattern: _run_* methods that are likely tool-specific
@@ -246,16 +258,23 @@ class Runner(ABC):
                 and not name.endswith(("_fix", "_format", "_helper", "_util"))
                 and callable(method)
             ):
-                # Verify the method matches check() behavior by checking if tool filtering applies
-                if self._should_run_tool(name.replace("_run_", "").replace("_check", "").replace("_validation", "")):
-                    tool_methods.append((name, method))
+                # Extract tool name using regex for more robust parsing
+                # Handles patterns like: _run_black_check, _run_pylint, _run_docstring_validation
+                tool_name_match = re.match(r"_run_([a-z_]+?)(?:_check|_validation)?$", name)
+                if tool_name_match:
+                    tool_name = tool_name_match.group(1)
+                    # Verify the method matches check() behavior by checking if tool filtering applies
+                    if self._should_run_tool(tool_name):
+                        tool_methods.append((name, method))
 
         # If no tool methods found or only one, fall back to sequential
         if len(tool_methods) <= 1:
             return self.check()
 
         # Execute tools in parallel
-        results_map = {}  # method_name -> result
+        # Note: Tool methods (_run_*_check, _run_*_validation) return single LintResult objects,
+        # not lists. The check() method aggregates these into a List[LintResult].
+        results_map = {}  # method_name -> result (single LintResult)
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_to_method = {executor.submit(method): name for name, method in tool_methods}
 
@@ -265,6 +284,11 @@ class Runner(ABC):
                     result = future.result()
                     results_map[method_name] = result
                 except Exception as e:
+                    # Log full exception for debugging
+                    import logging
+                    import traceback
+
+                    logging.error(f"Tool method {method_name} failed with exception:\n{traceback.format_exc()}")
                     # Create error result for failed tool
                     results_map[method_name] = LintResult(
                         tool=method_name, passed=False, violations=[], error=f"Tool execution failed: {str(e)}"
