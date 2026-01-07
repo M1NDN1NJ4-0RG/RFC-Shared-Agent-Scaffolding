@@ -1,3 +1,31 @@
+# Workflow: Copilot Setup Steps
+#
+# Purpose: Provides setup steps for GitHub Copilot agent development environment.
+# Installs required tooling (Python, shell, PowerShell, Perl, Go-based tools)
+# needed for agent code review and editing tasks.
+#
+# Dependencies:
+# - Python 3.12 (for repo-lint and Python CLI tools)
+# - ripgrep (rg) for fast searching
+# - Go (for shfmt, actionlint when needed)
+# - Perl tooling (perlcritic, PPI when Perl files exist)
+# - PowerShell tooling (PSScriptAnalyzer when .ps1 files exist)
+#
+# Triggers:
+# - Manual workflow dispatch (for testing)
+# - Pushes modifying this workflow file
+# - Pull requests modifying this workflow file
+#
+# Outputs:
+# - Status check: "copilot-setup-steps"
+# - Artifacts: None
+# - Side effects: Installs development tools for Copilot agent session
+#
+# Notes:
+# - Go setup only runs when shell scripts or workflow files exist
+# - Tools are installed conditionally based on file types present in repository
+# - PATH modifications in GitHub Actions take effect only in subsequent steps
+
 name: "Copilot Setup Steps"
 
 # Automatically run the setup steps when they are changed to allow for easy validation, and
