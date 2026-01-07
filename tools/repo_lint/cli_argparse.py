@@ -350,9 +350,15 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                                 if error_msg:
                                     if "Missing tools" in error_msg:
                                         if args.ci:
-                                            # Extract missing tools and print instructions
+                                            # Extract missing tools in a robust way and print instructions
+                                            # Expected format: "Missing tools: tool1, tool2"
+                                            _before, _sep, tools_part = error_msg.partition(":")
+                                            if not tools_part:
+                                                # Fallback: use full message if no colon is present
+                                                tools_part = error_msg
+                                            tools = [t.strip() for t in tools_part.split(",") if t.strip()]
                                             print_install_instructions(
-                                                [t.strip() for t in error_msg.split(":", 1)[1].split(",")],
+                                                tools,
                                                 ci_mode=args.ci,
                                             )
                                             return ExitCode.MISSING_TOOLS
@@ -418,6 +424,12 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 runner_name, results, error_msg = runner_results[key]
                 all_results.extend(results)
 
+                # Mirror sequential fail-fast and max-violations behavior
+                if fail_fast and any(r.violations for r in results):
+                    break
+
+                if max_violations and sum(len(r.violations) for r in all_results) >= max_violations:
+                    break
     else:
         # Sequential execution (original behavior)
         for key, name, runner in runners:
