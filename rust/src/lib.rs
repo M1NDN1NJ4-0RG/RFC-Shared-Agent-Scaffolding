@@ -10,9 +10,8 @@
 //!
 //! See module documentation and tests for usage examples.
 //! - safe-run: Command execution with timeouts and resource limits
-//! - bootstrap: Toolchain bootstrapping utilities
+//! - bootstrap_v2: Toolchain bootstrapping utilities
 
-pub mod bootstrap;
 pub mod bootstrap_v2;
 pub mod cli;
 pub mod safe_archive;

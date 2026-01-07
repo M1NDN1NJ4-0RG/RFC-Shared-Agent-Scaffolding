@@ -38,7 +38,7 @@ Create a single, deterministic bootstrapper script that Copilot can run at the s
    - Tool detection logic
 
 ## Current State
-- **Existing**: Rust-based bootstrap implementation exists (`rust/src/bootstrap.rs`, `rust/src/bootstrap_main.rs`)
+- **Existing**: Rust-based bootstrap implementation exists (`rust/src/bootstrap.rs` [**REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`], `rust/src/bootstrap_main.rs` [**UPDATED in Issue #265** - now uses bootstrap_v2])
 - **Existing**: Documentation at `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` (for Bash script implementation)
 - **Completed**: Bash script at `scripts/bootstrap-repo-lint-toolchain.sh`
 - **Completed**: Documentation specific to Bash script approach

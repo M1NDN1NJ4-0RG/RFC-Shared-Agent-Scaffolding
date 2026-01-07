@@ -12,7 +12,7 @@
 
 This plan outlines the implementation of a Bash-based bootstrapper script that automates the setup of the repo-lint toolchain and development environment. The bootstrapper will be the canonical session-start compliance gate for Copilot agents working on this repository.
 
-**Key Insight:** A Rust implementation already exists (`rust/src/bootstrap.rs`), but the requirement specifies a **Bash script** at `scripts/bootstrap-repo-lint-toolchain.sh`. This plan assumes both implementations will coexist, with the Bash script potentially serving as a lighter-weight alternative for shell-based workflows.
+**Key Insight:** A Rust implementation already exists (`rust/src/bootstrap.rs` [**REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`]), but the requirement specifies a **Bash script** at `scripts/bootstrap-repo-lint-toolchain.sh`. This plan assumes both implementations will coexist, with the Bash script potentially serving as a lighter-weight alternative for shell-based workflows.
 
 ---
 
@@ -595,8 +595,8 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - `pyproject.toml`: Python dependencies and tool configuration
 
 ### Related Code
-- `rust/src/bootstrap.rs`: Rust bootstrapper implementation (reference for logic)
-- `rust/src/bootstrap_main.rs`: Rust bootstrapper entry point
+- `rust/src/bootstrap.rs`: Rust bootstrapper implementation (reference for logic) [**REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`]
+- `rust/src/bootstrap_main.rs`: Rust bootstrapper entry point [**UPDATED in Issue #265** - now uses bootstrap_v2]
 - `tools/repo_lint/install/`: repo-lint installation helpers
 
 ### External Resources

@@ -102,7 +102,7 @@ cargo test --test bootstrap_tests
 
 ### 2025-12-31 09:59 - Address code review feedback
 **Files Changed:**
-- `rust/src/bootstrap.rs`: Applied clippy and rustfmt fixes
+- `rust/src/bootstrap.rs`: Applied clippy and rustfmt fixes [**FILE REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`]
 
 **Changes Made:**
 Applied linting fixes per @m1ndn1nj4's request:
@@ -145,8 +145,8 @@ None. All linting errors resolved.
 
 ### 2025-12-31 09:35 - Implemented full Rust binary
 **Files Changed:**
-- `rust/src/bootstrap.rs`: Created new module implementing all bootstrap functionality (17,583 bytes)
-- `rust/src/bootstrap_main.rs`: Created binary entry point (654 bytes)
+- `rust/src/bootstrap.rs`: Created new module implementing all bootstrap functionality (17,583 bytes) [**FILE REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`]
+- `rust/src/bootstrap_main.rs`: Created binary entry point (654 bytes) [**UPDATED in Issue #265** - now uses bootstrap_v2]
 - `rust/Cargo.toml`: Added [[bin]] entry for bootstrap-repo-cli
 - `docs/ai-prompt/196/196-next-steps.md`: Updated journal
 

@@ -2,26 +2,35 @@
 
 ## Current Status
 
-**Phase:** Session Start - Journal Initialization
+**Phase:** Phase 1 Complete - Moving to Phase 2 (Workspace Separation)
 
 **Completed:**
-- ✅ Read compliance documents (`.github/copilot-instructions.md` and `docs/contributing/session-compliance-requirements.md`)
-- ✅ Verified `repo-lint --help` exits 0
-- ✅ Ran `repo-lint check --ci` health check (exit code 1 - violations exist but tooling works, acceptable at session start)
-- ✅ Created issue journal files: `265-next-steps.md` and `265-summary.md`
+- ✅ Session start compliance checks
+- ✅ Phase 0: Preflight/Baseline
+- ✅ Phase 1: Remove proto-rust-bootstrapper artifacts
+
+**Phase 1 Details:**
+- Removed `rust/src/bootstrap.rs` (679-line proto bootstrapper)
+- Removed `pub mod bootstrap;` from `rust/src/lib.rs`
+- Updated all doc references to indicate proto bootstrap was removed and replaced
+- Verified `rg -n "rust/src/bootstrap\.rs|\bbootstrap\.rs\b"` returns no unwanted matches ✅
+- Verified `cargo test` still passes (same baseline as before) ✅
 
 **In Progress:**
-- About to explore repository structure to understand current state before making changes
+- Phase 2: Convert to Cargo workspace with separate packages
 
 **Next:**
-- Explore Rust project structure
-- Search for proto-bootstrapper artifacts
-- Create working branch
-- Begin Phase 0 work
-
-**Violations/Issues:**
-- Pre-existing yaml-docstrings violations in `.github/workflows/copilot-setup-steps.yml` (not blocking session start)
+- Create workspace root Cargo.toml
+- Move safe-run to `rust/crates/safe-run/`
+- Move bootstrap to `rust/crates/bootstrap-repo-cli/`
 
 ## Commit Log
 
-_No commits yet - journal initialization only_
+### Commit 1: Initialize issue #265 journals
+- Added `docs/ai-prompt/265/265-next-steps.md`
+- Added `docs/ai-prompt/265/265-summary.md`
+
+### Commit 2 (pending): Phase 1 - Remove proto bootstrapper
+- Deleted `rust/src/bootstrap.rs`
+- Updated `rust/src/lib.rs` (removed proto bootstrap module)
+- Updated docs in `docs/ai-prompt/196/` and `docs/ai-prompt/209/` with removal notes

@@ -27,8 +27,8 @@ INTO A RUST BINARY
 
 ### 2025-12-31 09:35 - Implementation Complete
 - Implemented full Rust binary with complete feature parity
-- Created `rust/src/bootstrap.rs` (17.6KB) - all functionality
-- Created `rust/src/bootstrap_main.rs` - binary entry point
+- Created `rust/src/bootstrap.rs` (17.6KB) - all functionality [**REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`]
+- Created `rust/src/bootstrap_main.rs` - binary entry point [**UPDATED in Issue #265** - now uses bootstrap_v2]
 - Updated `rust/Cargo.toml` - added [[bin]] entry
 - Verified build and execution successfully
 - Maintained exit codes and output format from bash script
