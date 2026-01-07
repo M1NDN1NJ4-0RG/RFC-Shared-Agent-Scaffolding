@@ -25,8 +25,8 @@
 //! cargo test --test parity_tests
 //! ```
 
-use std::process::Command;
 use std::path::PathBuf;
+use std::process::Command;
 
 /// Get repository root for test execution
 fn repo_root() -> PathBuf {
@@ -80,7 +80,7 @@ fn test_parity_version_flag() {
         !rust_output.stdout.is_empty(),
         "Rust --version produced no output"
     );
-    
+
     // NOTE: Bash bootstrapper does not support --version flag
     // This is an expected behavioral difference - Rust adds version support
     // which is a usability improvement over the Bash version
@@ -105,7 +105,7 @@ fn test_parity_help_flag() {
         "Rust --help failed with: {}",
         String::from_utf8_lossy(&rust_output.stderr)
     );
-    
+
     assert!(
         bash_output.status.success(),
         "Bash --help failed with: {}",
@@ -117,7 +117,7 @@ fn test_parity_help_flag() {
         !rust_output.stdout.is_empty(),
         "Rust --help produced no output"
     );
-    
+
     assert!(
         !bash_output.stdout.is_empty(),
         "Bash --help produced no output"
@@ -178,7 +178,7 @@ fn test_parity_install_dry_run() {
         "Rust install --dry-run failed with: {}",
         String::from_utf8_lossy(&rust_output.stderr)
     );
-    
+
     // Bash dry-run may not be fully implemented, so we just check it runs
     // without catastrophic failure
     let bash_exit = bash_output.status.code();
@@ -192,7 +192,7 @@ fn test_parity_install_dry_run() {
 fn test_parity_exit_code_success() {
     // When tools are already installed, both should exit 0
     // This test assumes the environment has been bootstrapped
-    
+
     // Test Rust verify (should detect installed tools)
     let rust_verify = Command::new(rust_binary())
         .arg("verify")
@@ -234,7 +234,7 @@ fn test_parity_json_output() {
 
     // Should produce valid JSON
     let stdout = String::from_utf8_lossy(&rust_output.stdout);
-    
+
     // Attempt to parse as JSON
     let parse_result = serde_json::from_str::<serde_json::Value>(&stdout);
     assert!(
@@ -248,7 +248,7 @@ fn test_parity_json_output() {
 fn test_parity_profile_support() {
     // Rust should support profile selection
     let profiles = vec!["dev", "ci", "full"];
-    
+
     for profile in profiles {
         let rust_output = Command::new(rust_binary())
             .args(&["install", "--profile", profile, "--dry-run"])
@@ -282,7 +282,7 @@ fn test_parity_invalid_arguments() {
         !rust_output.status.success(),
         "Rust should reject invalid arguments"
     );
-    
+
     assert!(
         !bash_output.status.success(),
         "Bash should reject invalid arguments"
@@ -294,7 +294,7 @@ fn test_parity_repo_root_detection() {
     // Both should detect repository root correctly
     // Test by running from a subdirectory
     let test_dir = repo_root().join("docs");
-    
+
     let rust_output = Command::new(rust_binary())
         .current_dir(&test_dir)
         .args(&["doctor", "--json"])
