@@ -203,7 +203,7 @@ click.rich_click.OPTION_GROUPS = {
         },
         {
             "name": "Execution",
-            "options": ["--max-violations", "--fail-fast"],
+            "options": ["--max-violations", "--fail-fast", "--jobs", "-j", "--progress"],
         },
     ],
     "repo-lint fix": [
@@ -386,6 +386,19 @@ def cli(ctx):
     is_flag=True,
     help="Stop after first tool failure",
 )
+@click.option(
+    "--jobs",
+    "-j",
+    type=int,
+    default=None,
+    metavar="N",
+    help="Number of parallel jobs (default: 1, env: REPO_LINT_JOBS)",
+)
+@click.option(
+    "--progress",
+    is_flag=True,
+    help="Show progress bar during parallel execution (auto-disabled in CI/non-TTY)",
+)
 # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
 def check(
     verbose,
@@ -406,6 +419,8 @@ def check(
     show_codes,
     max_violations,
     fail_fast,
+    jobs,
+    progress,
 ):
     """Run linting checks without modifying files.
 
@@ -484,6 +499,8 @@ def check(
     :param show_codes: Show tool rule IDs/codes in output
     :param max_violations: Stop after N violations
     :param fail_fast: Stop after first tool failure
+    :param jobs: Number of parallel jobs (default: 1, env: REPO_LINT_JOBS)
+    :param progress: Show progress bar during parallel execution
     """
     import argparse  # Local import - only needed for Namespace creation
 
@@ -509,6 +526,8 @@ def check(
         show_codes=show_codes,
         max_violations=max_violations,
         fail_fast=fail_fast,
+        jobs=jobs,
+        progress=progress,
     )
 
     exit_code = cmd_check(args)

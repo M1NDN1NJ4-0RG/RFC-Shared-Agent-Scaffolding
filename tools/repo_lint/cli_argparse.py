@@ -93,6 +93,14 @@ def create_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Include test fixture files in scans (vector mode for testing)",
     )
+    check_parser.add_argument(
+        "--jobs",
+        "-j",
+        type=int,
+        default=None,
+        metavar="N",
+        help="Number of parallel jobs (default: 1, env: REPO_LINT_JOBS)",
+    )
 
     # fix command
     fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
@@ -142,8 +150,22 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     :param action_callback: Callable that takes a runner and returns results
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
+    import os
+    from concurrent.futures import ThreadPoolExecutor, as_completed
+    
     all_results = []
     use_json = getattr(args, "json", False)
+    jobs = getattr(args, "jobs", 1)
+    
+    # Check for kill switch
+    if os.getenv("REPO_LINT_DISABLE_CONCURRENCY", "").lower() in ("1", "true", "yes"):
+        jobs = 1
+        if args.verbose and not use_json:
+            safe_print("⚠️  Concurrency disabled via REPO_LINT_DISABLE_CONCURRENCY", 
+                      "WARNING: Concurrency disabled via REPO_LINT_DISABLE_CONCURRENCY")
+    
+    # Debug timing mode
+    debug_timing = os.getenv("REPO_LINT_DEBUG_TIMING", "").lower() in ("1", "true", "yes")
 
     # Define all runners
     all_runners = [
@@ -211,41 +233,208 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     fail_fast = getattr(args, "fail_fast", False)
     max_violations = getattr(args, "max_violations", None)
 
-    # Run each runner if it has files
-    for key, name, runner in runners:
-        if runner.has_files():
-            # Skip progress output in JSON mode
-            if not use_json:
-                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
-                print(f"  {name} {mode}")
-                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
-
+    # Helper function to run a single runner
+    def run_single_runner(key, name, runner):
+        """Run a single runner.
+        
+        :param key: Runner key (e.g., "python")
+        :param name: Display name (e.g., "Python")
+        :param runner: Runner instance
+        :returns: Tuple of (key, name, results, timing_info, error_msg)
+        """
+        import time
+        
+        error_msg = None
+        results = []
+        start_time = time.time()
+        
+        try:
+            if not runner.has_files():
+                return (key, name, results, time.time() - start_time, error_msg)
+            
+            # Check for missing tools
             missing_tools = runner.check_tools()
             if missing_tools:
-                if args.ci:
-                    print_install_instructions(missing_tools, ci_mode=args.ci)
-                    return ExitCode.MISSING_TOOLS
-                safe_print(
-                    f"⚠️  Missing tools: {', '.join(missing_tools)}",
-                    f"WARNING: Missing tools: {', '.join(missing_tools)}",
-                )
-                print("   Run 'repo-lint install' to install them")
-                print("")
-                return ExitCode.MISSING_TOOLS
-
+                error_msg = f"Missing tools: {', '.join(missing_tools)}"
+                return (key, name, results, time.time() - start_time, error_msg)
+            
+            # Run the action callback
             results = action_callback(runner)
-            all_results.extend(results)
+            
+        except Exception as e:
+            error_msg = f"Runner failed: {str(e)}"
+            import traceback
+            traceback.print_exc()
+        
+        duration = time.time() - start_time
+        return (key, name, results, duration, error_msg)
 
-            # If fail-fast is enabled and we have violations, stop
-            if fail_fast and any(r.violations for r in results):
-                break
+    # Determine if we should use parallel execution
+    # Only parallelize for 'check' mode (not 'fix')
+    use_parallel = jobs > 1 and mode == "Linting"
+    
+    # Determine if we should show progress
+    show_progress = getattr(args, "progress", False)
+    # Auto-disable progress in CI or non-TTY unless explicitly enabled
+    if show_progress and (use_json or not sys.stdout.isatty()):
+        show_progress = False
+    
+    # Filter runners that have files
+    runners_to_run = [(key, name, runner) for key, name, runner in runners if runner.has_files()]
+    
+    # Store runner outputs in order for deterministic printing
+    runner_results = {}  # key -> (name, results, error_msg)
+    runner_timings = {}
+    
+    if use_parallel and runners_to_run:
+        # Parallel execution with ThreadPoolExecutor
+        if not use_json and args.verbose:
+            safe_print(f"🚀 Running {len(runners_to_run)} runners in parallel (jobs={jobs})", 
+                      f"Running {len(runners_to_run)} runners in parallel (jobs={jobs})")
+            print("")
+        
+        # Use Rich Progress if available and progress is enabled
+        if show_progress:
+            try:
+                from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
+                
+                with Progress(
+                    SpinnerColumn(),
+                    TextColumn("[progress.description]{task.description}"),
+                    BarColumn(),
+                    TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+                    TimeElapsedColumn(),
+                ) as progress:
+                    task = progress.add_task(f"Running {len(runners_to_run)} runners...", total=len(runners_to_run))
+                    
+                    with ThreadPoolExecutor(max_workers=jobs) as executor:
+                        # Submit all runners
+                        future_to_runner = {
+                            executor.submit(run_single_runner, key, name, runner): (key, name)
+                            for key, name, runner in runners_to_run
+                        }
+                        
+                        # Collect results as they complete
+                        for future in as_completed(future_to_runner):
+                            key, name = future_to_runner[future]
+                            try:
+                                result_tuple = future.result()
+                                runner_key, runner_name, results, duration, error_msg = result_tuple
+                                
+                                # Store results in order
+                                runner_results[runner_key] = (runner_name, results, error_msg)
+                                runner_timings[runner_key] = duration
+                                
+                                # Update progress
+                                progress.update(task, advance=1, description=f"Completed {runner_name}")
+                                
+                                # Handle errors
+                                if error_msg:
+                                    if "Missing tools" in error_msg:
+                                        if args.ci:
+                                            # Extract missing tools and print instructions
+                                            print_install_instructions(
+                                                [t.strip() for t in error_msg.split(":", 1)[1].split(",")],
+                                                ci_mode=args.ci
+                                            )
+                                            return ExitCode.MISSING_TOOLS
+                                        safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
+                                        print("   Run 'repo-lint install' to install them")
+                                        print("")
+                                        return ExitCode.MISSING_TOOLS
+                                
+                            except Exception as e:
+                                safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
+                                if args.verbose:
+                                    import traceback
+                                    traceback.print_exc()
+            except ImportError:
+                # Fall back to non-progress version if Rich not available
+                show_progress = False
+        
+        if not show_progress:
+            # No progress bar version
+            with ThreadPoolExecutor(max_workers=jobs) as executor:
+                # Submit all runners
+                future_to_runner = {
+                    executor.submit(run_single_runner, key, name, runner): (key, name)
+                    for key, name, runner in runners_to_run
+                }
+                
+                # Collect results as they complete
+                for future in as_completed(future_to_runner):
+                    key, name = future_to_runner[future]
+                    try:
+                        result_tuple = future.result()
+                        runner_key, runner_name, results, duration, error_msg = result_tuple
+                        
+                        # Store results in order
+                        runner_results[runner_key] = (runner_name, results, error_msg)
+                        runner_timings[runner_key] = duration
+                        
+                        # Handle errors
+                        if error_msg:
+                            if "Missing tools" in error_msg:
+                                if args.ci:
+                                    # Extract missing tools and print instructions
+                                    print_install_instructions(
+                                        [t.strip() for t in error_msg.split(":", 1)[1].split(",")],
+                                        ci_mode=args.ci
+                                    )
+                                    return ExitCode.MISSING_TOOLS
+                                safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
+                                print("   Run 'repo-lint install' to install them")
+                                print("")
+                                return ExitCode.MISSING_TOOLS
+                        
+                    except Exception as e:
+                        safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
+                        if args.verbose:
+                            import traceback
+                            traceback.print_exc()
+        
+        # Collect all results in deterministic order
+        for key, name, runner in runners:
+            if key in runner_results:
+                runner_name, results, error_msg = runner_results[key]
+                all_results.extend(results)
+        
+    else:
+        # Sequential execution (original behavior)
+        for key, name, runner in runners:
+            if runner.has_files():
+                # Skip progress output in JSON mode
+                if not use_json:
+                    safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
+                    print(f"  {name} {mode}")
+                    safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
 
-            # If max-violations is set and we've exceeded it, stop
-            if max_violations and sum(len(r.violations) for r in all_results) >= max_violations:
-                break
-        else:
-            if args.verbose and not use_json:
-                print(f"No {name} files found. Skipping {name} {mode.lower()}.")
+                missing_tools = runner.check_tools()
+                if missing_tools:
+                    if args.ci:
+                        print_install_instructions(missing_tools, ci_mode=args.ci)
+                        return ExitCode.MISSING_TOOLS
+                    safe_print(
+                        f"⚠️  Missing tools: {', '.join(missing_tools)}",
+                        f"WARNING: Missing tools: {', '.join(missing_tools)}",
+                    )
+                    print("   Run 'repo-lint install' to install them")
+                    print("")
+                    return ExitCode.MISSING_TOOLS
+
+                results = action_callback(runner)
+                all_results.extend(results)
+
+                # If fail-fast is enabled and we have violations, stop
+                if fail_fast and any(r.violations for r in results):
+                    break
+
+                # If max-violations is set and we've exceeded it, stop
+                if max_violations and sum(len(r.violations) for r in all_results) >= max_violations:
+                    break
+            else:
+                if args.verbose and not use_json:
+                    print(f"No {name} files found. Skipping {name} {mode.lower()}.")
 
     # Run cross-language runners (only if --only not specified)
     if not only_language:
@@ -257,6 +446,19 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
             results = action_callback(runner)
             all_results.extend(results)
+
+    # Print timing summary if debug mode is enabled
+    if debug_timing and runner_timings and not use_json:
+        print("")
+        safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
+        print("  Timing Summary (REPO_LINT_DEBUG_TIMING=1)")
+        safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
+        # Print in deterministic order
+        for key, name, runner in runners:
+            if key in runner_timings:
+                duration = runner_timings[key]
+                print(f"  {name:30s} {duration:6.2f}s")
+        print("")
 
     # Report results
     if not use_json:
@@ -294,7 +496,49 @@ def cmd_check(args: argparse.Namespace) -> int:
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
+    import os
+    
     use_json = getattr(args, "json", False)
+    
+    # Handle --jobs/-j with environment variable fallback
+    jobs = getattr(args, "jobs", None)
+    if jobs is None:
+        # Try environment variable
+        env_jobs = os.getenv("REPO_LINT_JOBS")
+        if env_jobs:
+            try:
+                jobs = int(env_jobs)
+            except ValueError:
+                safe_print(
+                    f"❌ Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be an integer)",
+                    f"ERROR: Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be an integer)"
+                )
+                return ExitCode.INTERNAL_ERROR
+        else:
+            jobs = 1  # Default to sequential
+    
+    # Validate jobs count
+    if jobs < 1:
+        safe_print(
+            f"❌ Invalid --jobs value: {jobs} (must be >= 1)",
+            f"ERROR: Invalid --jobs value: {jobs} (must be >= 1)"
+        )
+        return ExitCode.INTERNAL_ERROR
+    
+    # Optional: Cap to CPU count
+    import multiprocessing
+    cpu_count = multiprocessing.cpu_count()
+    if jobs > cpu_count * 2:
+        if args.verbose and not use_json:
+            safe_print(
+                f"⚠️  Warning: --jobs={jobs} exceeds 2x CPU count ({cpu_count}), capping to {cpu_count * 2}",
+                f"WARNING: --jobs={jobs} exceeds 2x CPU count ({cpu_count}), capping to {cpu_count * 2}"
+            )
+        jobs = cpu_count * 2
+    
+    # Store validated jobs count back in args for _run_all_runners
+    args.jobs = jobs
+    
     if not use_json:
         safe_print("🔍 Running repository linters and formatters...", "Running repository linters and formatters...")
         print("")
