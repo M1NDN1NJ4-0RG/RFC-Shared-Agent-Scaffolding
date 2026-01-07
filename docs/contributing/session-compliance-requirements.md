@@ -6,19 +6,36 @@
 
 **MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work. Failure to read this document when starting NEW work is a violation.
 
-**Exception (allowed before bootstrap):** Reading `docs/contributing/session-compliance-requirements.md` and `.github/copilot-instructions.md` is permitted before running the bootstrapper. No other repository file exploration/analysis is permitted until the bootstrapper completes successfully (exit 0).
+**Exception (allowed before anything else):** Reading `docs/contributing/session-compliance-requirements.md` and `.github/copilot-instructions.md` is permitted before doing any work.
 
-**Last Updated:** 2026-01-06
+**Last Updated:** 2026-01-07
+
+---
+
+## Environment Model (IMPORTANT)
+
+This repository uses **Copilot Coding Agent “customize the agent environment”** via:
+
+- `.github/workflows/copilot-setup-steps.yml`
+
+That workflow preinstalls the required toolchains for the agent environment. Therefore:
+
+- `./scripts/session-start.sh` is **NOT required** at session start.
+- `./scripts/session-end.sh` is **NOT required** at session end.
+
+### Repair-only exception (allowed)
+
+If tooling is missing/broken (unexpected), the agent may use `./scripts/session-end.sh` as a **repair step** (because it is a wrapper that can self-heal). If repair fails, escalate.
 
 ---
 
 ## In-Session Work Requirements (MANDATORY)
 
-After Session Start completes successfully, you MUST execute the requested work.
+After completing Session Start, you MUST execute the requested work.
 
 ### Non-negotiable behavior
 
-- **No “bootstrap + catch-up only” sessions.** Completing session-start and then stopping to summarize “what we should do next” is a violation unless you are blocked or near context limits.
+- **No “catch-up only” sessions.** Reading docs and then stopping to summarize “what we should do next” is a violation unless you are blocked or near context limits.
 - **Implementation over narration.** Do the work.
 - **Minimum progress rule:** In every session, you MUST do at least one of:
   - Produce a meaningful commit (preferred), OR
@@ -38,50 +55,40 @@ If you are getting close to token/window/context limits:
 
 ## Session Start Requirements (MANDATORY)
 
-**When:** At the start of NEW work sessions, immediately upon first message, before ANY repo exploration/analysis/work.
-
-**PROHIBITION (for NEW work only):** You may NOT read files, explore the repository, analyze the problem, or plan changes until the bootstrapper has completed successfully (exit 0).
-
-**Exception:** Reading this file and `.github/copilot-instructions.md` is permitted before bootstrap.
+**When:** At the start of NEW work sessions, immediately upon first message, before ANY work.
 
 ### Ordered Checklist
 
-1. **Run bootstrapper**
+1. **Read the compliance docs (MANDATORY)**
 
-   ~~~bash
-   ./scripts/session-start.sh
-   ~~~
+   You MUST read BOTH:
+   - `.github/copilot-instructions.md`
+   - `docs/contributing/session-compliance-requirements.md`
 
-   MUST exit 0.
+2. **Verify required tools work (MANDATORY)**
 
-2. **Activate environment (venv + Perl)**
+   ```bash
+   repo-lint --help
+   ```
 
-   ~~~bash
-   source .venv/bin/activate &&      PERL_HOME="$HOME/perl5" &&      export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" &&      export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" &&      export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" &&      export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" &&      export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}"
-   ~~~
+   MUST exit **0**.
 
-3. **Verify `repo-lint` works**
+3. **Health check (MANDATORY)**
 
-   ~~~bash
-   source .venv/bin/activate &&      PERL_HOME="$HOME/perl5" &&      export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" &&      export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" &&      export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" &&      export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" &&      export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}" &&      repo-lint --help
-   ~~~
-
-   MUST exit 0.
-
-4. **Health check**
-
-   ~~~bash
-   source .venv/bin/activate &&      PERL_HOME="$HOME/perl5" &&      export PERL_LOCAL_LIB_ROOT="${PERL_HOME}${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}" &&      export PERL_MB_OPT="--install_base \"${PERL_HOME}\"" &&      export PERL_MM_OPT="INSTALL_BASE=${PERL_HOME}" &&      export PERL5LIB="${PERL_HOME}/lib/perl5${PERL5LIB:+:${PERL5LIB}}" &&      export PATH="${PERL_HOME}/bin${PATH:+:${PATH}}" &&      repo-lint check --ci
-   ~~~
+   ```bash
+   repo-lint check --ci
+   ```
 
    Acceptable exit codes at session start:
    - **0** (clean)
    - **1** (violations exist, but tooling works)
-   Unacceptable:
-   - **2** (missing tools) → **BLOCKER**
-   - any other non-zero → **BLOCKER**
 
-5. **Initialize issue journals (always required)**
+   Unacceptable (BLOCKER):
+   - **2** (missing tools)
+   - any other non-zero
+
+4. **Initialize issue journals (always required)**
+
    - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-overview.md`
    - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-next-steps.md`
    - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md`
@@ -90,6 +97,11 @@ If you are getting close to token/window/context limits:
    - `*-overview.md`: original issue body (verbatim) + progress updates
    - `*-next-steps.md`: extremely detailed resume steps + prompt
    - `*-summary.md`: MUST be updated with EVERY commit
+
+5. **Required search tool (MANDATORY)**
+
+   - **Use `rg` (ripgrep) as the canonical search tool.**
+   - **Do NOT use `grep`** unless a human explicitly instructs otherwise.
 
 ---
 
@@ -101,28 +113,23 @@ If you are getting close to token/window/context limits:
 
 **Docs-only / non-scripting commits:** If the commit contains ONLY documentation (e.g. `*.md`) or other non-scripting files not checked by repo-lint for this gate, running `repo-lint check --ci` is recommended but not required.
 
-**Hard requirement (when applicable):** Any time you run a `repo-lint` command during the pre-commit workflow, you MUST run it with the full venv + Perl environment activation block (the multiline `source .venv/bin/activate` + `PERL_HOME` + exports). Do NOT shorten it.
-
-**Exception:** Running `./scripts/session-end.sh` for repair is allowed without the activation block because it is the wrapper that self-heals/installs missing components.
-
 ### Pre-Commit Gate Requirements Ordered Checklist (for scripting/tooling commits)
 
-1. Activate environment (venv + Perl) using the same block as Session Start Step 2.
-2. Run:
+1. Run:
 
-   ~~~bash
+   ```bash
    repo-lint check --ci
-   ~~~
+   ```
 
-3. Fix violations and re-run until exit code **0**.
-4. Update `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md` BEFORE committing (MANDATORY).
-5. Commit.
+2. Fix violations and re-run until exit code **0**.
+3. Update `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md` BEFORE committing (MANDATORY).
+4. Commit.
 
 Exit codes for `repo-lint check --ci`:
 
 - **0** = OK to commit
 - **1** = violations exist → NOT OK to commit
-- **2** = missing tools → BLOCKER (run `./scripts/session-end.sh` to repair; if still failing, escalate)
+- **2** = missing tools → BLOCKER (attempt repair; if still failing, escalate)
 
 ---
 
@@ -139,7 +146,7 @@ Exit codes for `repo-lint check --ci`:
 
 2. **Commit ALL meaningful work**
    - Commit ALL meaningful work.
-   - Keep issue journals current.
+   - Keep issue journals current (`*-summary.md` must be updated with EVERY commit).
 
 3. **If possible: approve any pending workflows and wait for the repo-lint umbrella workflow**
    - If the platform/UI allows approving pending workflows for the branch/PR, approve them.
@@ -162,19 +169,16 @@ Exit codes for `repo-lint check --ci`:
    - Ensure required checks are passing for the PR’s HEAD commit.
    - If checks have not triggered, wait up to 5 minutes; if still no CI run, escalate using BLOCKED format.
 
-7. **Verify repository state (SESSION END GATE)**
-
-   ~~~bash
-   ./scripts/session-end.sh
-   ~~~
-
-   MUST exit **0**.
+7. **Repository state must be clean and resumable (MANDATORY)**
+   - No uncommitted changes (unless explicitly instructed by human).
+   - Journals updated to resume instantly next session.
+   - If tooling is broken unexpectedly: attempt repair with `./scripts/session-end.sh` (repair-only exception). If still broken, escalate.
 
 If any required step fails, escalate using:
 
-~~~plaintext
+```text
 **BLOCKED — HUMAN ACTION REQUIRED**
-~~~
+```
 
 Include: failing step, exact command, exit code, and error output; mention `@m1ndn1nj4`.
 
@@ -182,7 +186,7 @@ Include: failing step, exact command, exit code, and error output; mention `@m1n
 
 ## Required Tools Definition
 
-"Required tools" means all are installed and functional (as enforced by `./scripts/session-start.sh`):
+"Required tools" means all are installed and functional (as enforced by `.github/workflows/copilot-setup-steps.yml`):
 
 - `rg` (ripgrep)
 - Python: `black`, `ruff`, `pylint`, `yamllint`, `pytest`, `repo-lint`
@@ -190,5 +194,6 @@ Include: failing step, exact command, exit code, and error output; mention `@m1n
 - PowerShell: `pwsh`, `PSScriptAnalyzer` (when PowerShell exists/changed)
 - Perl: `perlcritic`, `PPI` (when Perl exists/changed)
 - GitHub Actions: `actionlint` (when workflows exist/changed)
+- Rust: toolchain + helper tools (as configured in workflow)
 
 ---
