@@ -154,9 +154,6 @@ Run 10: 1.375  ← max
 | Verify-only | ✅ Works (~43.9s) | ✅ Works (~1.4s) | **✅ Parity Achieved** |
 | repo-lint install | ✅ Automatic | ✅ Automatic | **✅ Parity Achieved** |
 | Verification gate | ✅ Automatic | ✅ Automatic | **✅ Parity Achieved** |
-| Verify-only | ✅ Works (~43s) | ❌ Fails (exit 19) | **Mismatch** |
-| repo-lint install | ✅ Automatic | ⚠️  Intended but non-functional | **Incomplete** |
-| Verification gate | ✅ Automatic | ⚠️  Intended but non-functional | **Incomplete** |
 
 ---
 

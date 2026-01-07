@@ -39,14 +39,18 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
 
 ### Current Blocker
 
-**BLOCKER:** The Rust bootstrapper currently requires a pre-existing virtual environment for pip operations. When attempting fresh installation (after removing `.venv`), the Rust bootstrapper exits with code 19 during the Python toolchain installation phase.
+**BLOCKER:** The Rust bootstrapper currently requires a pre-existing virtual environment for pip operations. While the actionlint detection issue (exit code 19 during verification) has been fixed, attempting fresh installation after removing `.venv` still fails during the Python toolchain installation phase.
 
-**Issue:** `Error: Command failed: pip install --upgrade pip setuptools wheel`
+**Issue:** When `.venv` doesn't exist, the Rust bootstrapper fails to create it before attempting pip operations.
+
+**Status of Previous Fix:** The exit code 19 issue related to actionlint detection has been resolved (tools can now be verified correctly). However, the fresh installation workflow (Mode A) remains blocked by the venv creation issue.
 
 **Required Fix:** The Rust bootstrapper needs to be updated to:
 1. Detect if `.venv` exists
 2. Create `.venv` if it doesn't exist (using `python3 -m venv .venv` or equivalent)
 3. Ensure pip operations run within the venv context even if venv was just created
+
+**Note:** The verification workflow (Mode B) works correctly because it assumes the environment is already set up.
 
 ### Required Tools
 
@@ -71,7 +75,9 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
    ./scripts/bootstrap-repo-lint-toolchain.sh
    
    # Run Rust bootstrapper once to populate any Rust-specific caches
-   # (BLOCKED: requires fix first)
+   # IMPORTANT: Only run this if the venv creation fix has been implemented
+   # Test first: rm -rf .venv && ./rust/target/release/bootstrap-repo-cli install --profile dev
+   # If test passes, then:
    # ./rust/target/release/bootstrap-repo-cli install --profile dev
    ```
 
@@ -86,6 +92,19 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
    # Check system package manager cache
    # (varies by OS: apt cache, homebrew cache, etc.)
    ```
+
+### Testing the Fix (Before Running Mode A)
+
+Before executing Mode A benchmarks, verify the Rust bootstrapper can handle fresh installations:
+
+```bash
+# Test fresh installation
+rm -rf .venv
+./rust/target/release/bootstrap-repo-cli install --profile dev
+
+# If successful (exit 0), proceed with Mode A benchmarks
+# If fails, the venv creation blocker still exists
+```
 
 ### Benchmark Execution (Bash)
 
