@@ -89,3 +89,39 @@
 - Ruff ANN* rules are ready to use (no custom tooling needed for function annotations!)
 - ~8.6 violations per file on average (722 / 84 files)
 - Most violations are in product code (`tools/repo_lint/*`)
+
+---
+
+### 2026-01-07 - Phase 2 Complete
+
+**Phase 2.1, 2.2, 2.3: Policy specification (MANDATORY)**
+- Created comprehensive `docs/contributing/python-typing-policy.md`
+- Defined PEP 526 annotation scope:
+  - **Module-level assignments:** MANDATORY baseline
+  - **Class attributes:** MANDATORY baseline  
+  - **Local variables:** OPTIONAL for now (may be enforced later)
+- Defined required annotation patterns:
+  - Empty literals (`{}`, `[]`, `set()`) MUST be annotated
+  - None initializations MUST use `Optional[T]`
+  - Public configuration variables MUST be annotated
+- Defined fallback types policy:
+  - Prefer real, specific types
+  - `Any` allowed with tag: `# typing: Any (TODO: tighten)`
+  - `object` for truly opaque references only
+- Documented function annotations policy:
+  - ALL functions MUST have parameter annotations
+  - ALL functions MUST have return type (including explicit `-> None`)
+  - Default `*args`/`**kwargs` typing: `*args: Any, **kwargs: Any`
+- Documented docstring `:rtype:` policy:
+  - `:rtype:` REQUIRED for non-None returns
+  - `:rtype:` MUST NOT be added for `-> None`
+  - Generator/iterator types use proper generic types
+- Documented Optional/Union syntax policy:
+  - PREFER `Optional[T]` for compatibility
+  - ALLOW `T | None` but avoid churn
+- Provided complete examples and edge case handling
+
+**Key policy decisions locked in:**
+- Maximum compatibility approach (Python 3.8+)
+- Ruff ANN* rules as primary enforcement mechanism
+- Report-only rollout initially, then gradual enforcement

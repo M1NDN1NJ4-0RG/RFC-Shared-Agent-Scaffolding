@@ -2,20 +2,17 @@
 
 ## NEXT
 
-- [x] Phase 0.1: Snapshot repo + tooling (COMPLETE)
-- [x] Phase 0.2: Inventory all Python files (COMPLETE)
-- [x] Phase 1.1: Collect "contracts" that already exist (COMPLETE)
-- [x] Phase 1.2: Current-violations baseline (COMPLETE)
-- [ ] Phase 2.1: Policy specification (MANDATORY)
-  - [ ] Create `docs/contributing/python-typing-policy.md`
-  - [ ] Define PEP 526 annotation scope (module-level, class attributes)
-  - [ ] Define required annotation patterns (empty literals, None inits, etc.)
-  - [ ] Define fallback types policy (Any with tags, object, etc.)
-- [ ] Phase 2.2: Function annotations policy (MANDATORY)
-  - [ ] Document mandatory function annotation requirements
-  - [ ] Define `*args`/`**kwargs` typing policy
-- [ ] Phase 2.3: Docstring return type policy (MANDATORY)
-  - [ ] Document `:rtype:` requirement for non-None returns
+- [x] Phase 0: Preflight (COMPLETE)
+- [x] Phase 1: Evaluate existing Python contracts (COMPLETE)
+- [x] Phase 2: Define the policy (COMPLETE)
+  - [x] Created `docs/contributing/python-typing-policy.md`
+- [ ] Phase 3: Tooling design
+  - [ ] 3.1: Evaluate existing repo_lint Python runner
+  - [ ] 3.2: Enable Ruff ANN* rules in pyproject.toml
+  - [ ] 3.3: Implement PEP 526 checking (if needed beyond Ruff)
+  - [ ] 3.4: Docstring validation consolidation (MANDATORY)
+  - [ ] 3.5: Markdown contracts + linting support (MANDATORY)
+  - [ ] 3.6: TOML contracts + linting support (MANDATORY)
 
 ## Resume Pointers
 
