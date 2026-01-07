@@ -32,13 +32,13 @@ use std::path::Path;
 pub fn write_activation_script(repo_root: &Path, venv_path: &Path) -> Result<()> {
     let bootstrap_dir = repo_root.join(".bootstrap");
     fs::create_dir_all(&bootstrap_dir)?;
-    
+
     let activate_script = bootstrap_dir.join("activate.sh");
-    
+
     let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());
     let perl_bin = format!("{}/perl5/bin", home);
     let perl_lib = format!("{}/perl5/lib/perl5", home);
-    
+
     let script_content = format!(
         r#"#!/usr/bin/env bash
 # Bootstrap Environment Activation Script
@@ -82,9 +82,9 @@ echo "To deactivate, run: deactivate"
         perl_bin = perl_bin,
         perl_lib = perl_lib,
     );
-    
+
     fs::write(&activate_script, script_content)?;
-    
+
     // Make script executable
     #[cfg(unix)]
     {
@@ -93,7 +93,7 @@ echo "To deactivate, run: deactivate"
         perms.set_mode(0o755);
         fs::set_permissions(&activate_script, perms)?;
     }
-    
+
     Ok(())
 }
 
@@ -108,7 +108,7 @@ pub fn emit_env_commands(_repo_root: &Path, venv_path: &Path) {
     let perl_home = format!("{}/perl5", home);
     let perl_bin = format!("{}/bin", perl_home);
     let perl_lib = format!("{}/lib/perl5", perl_home);
-    
+
     // Emit commands for shell evaluation
     println!("# Bootstrap environment activation commands");
     println!("# Activate Python venv");
@@ -129,38 +129,38 @@ pub fn emit_env_commands(_repo_root: &Path, venv_path: &Path) {
 pub fn write_github_env(_repo_root: &Path, venv_path: &Path) -> Result<()> {
     let github_env_path = std::env::var("GITHUB_ENV")
         .map_err(|_| anyhow::anyhow!("GITHUB_ENV not set - not running in GitHub Actions"))?;
-    
+
     let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());
     let perl_home = format!("{}/perl5", home);
     let perl_bin = format!("{}/bin", perl_home);
     let perl_lib = format!("{}/lib/perl5", perl_home);
-    
+
     let venv_bin = venv_path.join("bin");
     let current_path = std::env::var("PATH").unwrap_or_default();
-    
+
     // Build new PATH with venv and Perl bins
     let new_path = format!("{}:{}:{}", perl_bin, venv_bin.display(), current_path);
-    
+
     // Append to GITHUB_ENV file
     let mut env_content = String::new();
     env_content.push_str(&format!("PATH={}\n", new_path));
     env_content.push_str(&format!("PERL5LIB={}\n", perl_lib));
     env_content.push_str(&format!("VIRTUAL_ENV={}\n", venv_path.display()));
     env_content.push_str("BOOTSTRAP_ACTIVATED=1\n");
-    
+
     use std::fs::OpenOptions;
     use std::io::Write;
-    
+
     let mut file = OpenOptions::new()
         .append(true)
         .create(true)
         .open(&github_env_path)?;
-    
+
     file.write_all(env_content.as_bytes())?;
-    
+
     println!("✓ Environment variables written to $GITHUB_ENV");
     println!("  PATH, PERL5LIB, VIRTUAL_ENV, and BOOTSTRAP_ACTIVATED set for subsequent steps");
-    
+
     Ok(())
 }
 
@@ -168,7 +168,9 @@ pub fn write_github_env(_repo_root: &Path, venv_path: &Path) -> Result<()> {
 pub fn print_activation_instructions(repo_root: &Path, ci_mode: bool) {
     if ci_mode {
         println!("\n📋 CI Environment Activation:");
-        println!("   For GitHub Actions, use --github-env flag to persist environment across steps");
+        println!(
+            "   For GitHub Actions, use --github-env flag to persist environment across steps"
+        );
         println!("   For other CI systems, source .bootstrap/activate.sh in subsequent commands");
     } else {
         println!("\n📋 To activate the environment in your shell:");

@@ -68,7 +68,11 @@ async fn run() -> ExitCode {
 
 async fn handle_command(cli: Cli) -> anyhow::Result<ExitCode> {
     match cli.command {
-        Commands::Install { profile, github_env, emit_env_commands } => {
+        Commands::Install {
+            profile,
+            github_env,
+            emit_env_commands,
+        } => {
             handle_install(
                 Some(profile),
                 cli.jobs,
@@ -197,19 +201,19 @@ async fn handle_install(
         println!("\n🔍 Running verification gate (repo-lint check --ci)...");
 
         let repo_lint_bin = ctx.repo_lint_bin();
-        
+
         // Add .venv/bin to PATH for the subprocess so Python tools are accessible
         let venv_bin = ctx.venv_path.join("bin");
         let current_path = std::env::var("PATH").unwrap_or_default();
-        
+
         // Add Perl environment for Perl tools
         let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());
         let perl_home = format!("{}/perl5", home);
         let perl_bin = format!("{}/bin", perl_home);
         let perl5lib = format!("{}/lib/perl5", perl_home);
-        
+
         let new_path = format!("{}:{}:{}", perl_bin, venv_bin.display(), current_path);
-        
+
         let gate_result = tokio::process::Command::new(&repo_lint_bin)
             .args(["check", "--ci"])
             .env("PATH", new_path)
@@ -251,17 +255,17 @@ async fn handle_install(
     }
 
     println!("\n✅ Bootstrap completed successfully");
-    
+
     // Generate activation mechanisms (unless in JSON mode or emit-env-commands mode)
     if !dry_run && !json {
         // Write activation script to .bootstrap/activate.sh
         activate::write_activation_script(&repo_root, &ctx.venv_path)?;
-        
+
         // Handle GitHub Actions environment persistence
         if github_env {
             activate::write_github_env(&repo_root, &ctx.venv_path)?;
         }
-        
+
         // Emit shell commands for eval if requested
         if emit_env_commands {
             activate::emit_env_commands(&repo_root, &ctx.venv_path);
@@ -270,7 +274,7 @@ async fn handle_install(
             activate::print_activation_instructions(&repo_root, ci_mode);
         }
     }
-    
+
     Ok(ExitCode::Success)
 }
 

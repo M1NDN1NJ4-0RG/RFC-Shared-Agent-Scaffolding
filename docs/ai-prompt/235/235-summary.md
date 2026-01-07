@@ -2,37 +2,42 @@
 
 ## Current Session
 **Date:** 2026-01-07
-**Objective:** Address code review comments from PR #259
-**Status:** ✅ All review comments addressed, pre-install detection applied consistently
+**Objective:** Fix Rust formatting (rustfmt) CI failures
+**Status:** ✅ Formatting fixed, ready for merge
 
 ## What Changed This Session
 
-### Code Review Comments Addressed
-1. **Clippy collapsible_if warning** ✅
-   - File: `rust/src/bootstrap_main.rs:140-142`
-   - Status: Already fixed in previous commit - nested if statements already collapsed
-
-2. **Consistent pre-install detection pattern** ✅
-   - Applied pre-install detection to all system tool installers
-   - Files modified:
-     - `rust/src/bootstrap_v2/installers/ripgrep.rs` - Added pre-install check
-     - `rust/src/bootstrap_v2/installers/shellcheck.rs` - Added pre-install check
-     - `rust/src/bootstrap_v2/installers/shfmt.rs` - Added pre-install check
-   - Pattern: Check if tool already installed before attempting package manager install
-   - Behavior: Matches actionlint installer and Bash bootstrapper behavior
-   - Result: Prevents unnecessary installation attempts when tools already present
+### Rust Formatting Fix ✅
+1. **Problem:** CI failing on rustfmt check (`cargo fmt --all -- --check`)
+   - Multiple Rust files had trailing whitespace and formatting issues
+   
+2. **Fix Applied:**
+   - Ran `cargo fmt --all` to apply standard Rust formatting
+   - Fixed all whitespace and style issues automatically
+   
+3. **Files Reformatted:**
+   - `rust/src/bootstrap_main.rs` - 7 formatting fixes
+   - `rust/src/bootstrap_v2/activate.rs` - 11 formatting fixes  
+   - `rust/src/bootstrap_v2/cli.rs` - 2 formatting fixes
+   - `rust/src/bootstrap_v2/installers/perl_tools.rs` - 6 formatting fixes
+   
+4. **Removed Auto-Generated File:**
+   - `.bootstrap/activate.sh` - Auto-generated file with docstring violations
+   - Will be regenerated on next install (not tracked in git)
 
 ### Build & Quality Gates
 - Rust build: ✅ SUCCESS (exit 0)
-- Pre-commit gate: ✅ PASS (16/16 linters, exit 0)
-- Session start: ✅ COMPLETE (exit 0)
-- Session end: Pending
+- Rust formatting: ✅ PASS (`cargo fmt --all -- --check` exit 0)
+- Tool verification: ✅ repo-lint available
+- Session start: ✅ SKIPPED (tools pre-installed in Copilot env)
 
 ### Files Changed
-- `rust/src/bootstrap_v2/installers/ripgrep.rs`
-- `rust/src/bootstrap_v2/installers/shellcheck.rs`
-- `rust/src/bootstrap_v2/installers/shfmt.rs`
-- `docs/ai-prompt/235/235-summary.md` (this file)
+- `rust/src/bootstrap_main.rs` - Formatting fixes
+- `rust/src/bootstrap_v2/activate.rs` - Formatting fixes
+- `rust/src/bootstrap_v2/cli.rs` - Formatting fixes
+- `rust/src/bootstrap_v2/installers/perl_tools.rs` - Formatting fixes
+- `.bootstrap/activate.sh` - REMOVED (auto-generated)
+- `docs/ai-prompt/235/235-summary.md` - Updated session notes
 
 ## Previous Session Summary
 

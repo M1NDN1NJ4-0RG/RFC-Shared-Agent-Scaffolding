@@ -81,7 +81,7 @@ impl Installer for PerlCriticInstaller {
         let perl_dir = get_perl_install_dir()?;
         let perl5lib = format!("{}/lib/perl5", perl_dir);
         let perlcritic_path = format!("{}/bin/perlcritic", perl_dir);
-        
+
         // Try explicit path first (handles tools installed to ~/perl5)
         let output = tokio::process::Command::new(&perlcritic_path)
             .arg("--version")
@@ -105,12 +105,12 @@ impl Installer for PerlCriticInstaller {
                 let stdout = String::from_utf8_lossy(&output.stdout);
                 // perlcritic --version outputs just the version number: "1.156"
                 let mut version_str = stdout.trim().to_string();
-                
+
                 // If version has only 2 components (e.g., "1.156"), add ".0" for semver compatibility
                 if version_str.matches('.').count() == 1 {
                     version_str.push_str(".0");
                 }
-                
+
                 if let Ok(version) = Version::parse(&version_str) {
                     return Ok(Some(version));
                 }
@@ -217,7 +217,7 @@ impl Installer for PPIInstaller {
         // Set up Perl environment to detect modules installed in ~/perl5
         let perl_dir = get_perl_install_dir()?;
         let perl5lib = format!("{}/lib/perl5", perl_dir);
-        
+
         // PPI is a library, check via perl -MPPI -e
         let output = tokio::process::Command::new("perl")
             .arg("-MPPI")
@@ -231,12 +231,12 @@ impl Installer for PPIInstaller {
             Ok(output) if output.status.success() => {
                 let stdout = String::from_utf8_lossy(&output.stdout);
                 let mut version_str = stdout.trim().to_string();
-                
+
                 // If version has only 2 components (e.g., "1.284"), add ".0" for semver compatibility
                 if version_str.matches('.').count() == 1 {
                     version_str.push_str(".0");
                 }
-                
+
                 if let Ok(version) = Version::parse(&version_str) {
                     return Ok(Some(version));
                 }
