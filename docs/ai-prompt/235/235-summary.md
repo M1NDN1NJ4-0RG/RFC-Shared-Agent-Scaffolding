@@ -2,55 +2,67 @@
 
 ## Current Session
 **Date:** 2026-01-07
-**Objective:** Fix Rust formatting (rustfmt) CI failures
-**Status:** ✅ Formatting fixed, ready for merge
+**Objective:** Address parity report recommendations and implement behavioral parity tests
+**Status:** ✅ Parity tests complete - 11/11 passing
 
 ## What Changed This Session
 
-### Rust Formatting Fix ✅
-1. **Problem:** CI failing on rustfmt check (`cargo fmt --all -- --check`)
-   - Multiple Rust files had trailing whitespace and formatting issues
+### Parity Test Suite Implementation ✅
+1. **Created comprehensive parity tests:**
+   - 11 behavioral tests comparing Bash vs Rust
+   - Test file: `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs`
+   - All tests passing (100% success rate)
    
-2. **Fix Applied:**
-   - Ran `cargo fmt --all` to apply standard Rust formatting
-   - Fixed all whitespace and style issues automatically
-   
-3. **Files Reformatted:**
-   - `rust/src/bootstrap_main.rs` - 7 formatting fixes
-   - `rust/src/bootstrap_v2/activate.rs` - 11 formatting fixes  
-   - `rust/src/bootstrap_v2/cli.rs` - 2 formatting fixes
-   - `rust/src/bootstrap_v2/installers/perl_tools.rs` - 6 formatting fixes
+2. **Test Coverage:**
+   - Version/help flags
+   - Doctor and verify commands
+   - Dry-run mode functionality
+   - CI mode and JSON output
+   - Profile selection (dev/ci/full)
+   - Invalid argument handling
+   - Repository root detection
+   - Exit code consistency
 
-### Activation Script Docstring Fix ✅
-4. **Problem:** Auto-generated `.bootstrap/activate.sh` had bash-docstring violations
-   - Missing required DESCRIPTION, USAGE, INPUTS, OUTPUTS, EXAMPLES sections
+### Dry-Run Mode Fixes ✅
+3. **Problem Identified:**
+   - Installers calling detect() after dry-run, failing when tools not installed
+   - Affected: repo-lint and all Python tools
    
-5. **Fix Applied:**
-   - Updated `rust/src/bootstrap_v2/activate.rs` to generate compliant docstring
-   - Script now includes all required sections per bash docstring contract
-   - Validated with `validate_docstrings.py` - passes all checks
+4. **Solution Implemented:**
+   - Created `install_and_verify_python_tool()` helper function
+   - Returns placeholder version (0.0.0) in dry-run mode
+   - Skips detection when dry_run=true
    
-6. **Docstring Sections Added:**
-   - DESCRIPTION: Full explanation of script purpose and requirements
-   - USAGE: Source command examples
-   - INPUTS: Arguments and environment variables
-   - OUTPUTS: Exit codes, environment variables set, stdout messages
-   - EXAMPLES: Activation and verification examples
-   - NOTE: Auto-generation warning
+5. **Files Fixed:**
+   - `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs`
+   - `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs`
+   - Updated: repo-lint, black, ruff, pylint, yamllint, pytest installers
+
+### Parity Report Verification ✅
+6. **Confirmed all recommendations addressed:**
+   - ✅ Bash wrapper docstrings - Already compliant
+   - ✅ repo-lint installation - RepoLintInstaller registered
+   - ✅ Verification gate - Part of execute_plan
+   - ✅ Default profile - Set to "dev"
+   - ✅ Parity tests - Implemented and passing
 
 ### Build & Quality Gates
 - Rust build: ✅ SUCCESS (exit 0)
-- Rust formatting: ✅ PASS (`cargo fmt --all -- --check` exit 0)
-- Tool verification: ✅ repo-lint available
-- Session start: ✅ SKIPPED (tools pre-installed in Copilot env)
+- Parity tests: ✅ 11/11 passing
+- Test time: ~42 seconds total
+- No breaking changes to existing functionality
+
+### Known Behavioral Differences (By Design)
+- Rust adds `--version` flag (usability improvement)
+- Rust provides JSON output mode (new feature)
+- Rust has explicit `doctor`/`verify` subcommands (better UX)
 
 ### Files Changed
-- `rust/src/bootstrap_main.rs` - Formatting fixes
-- `rust/src/bootstrap_v2/activate.rs` - Formatting fixes
-- `rust/src/bootstrap_v2/cli.rs` - Formatting fixes
-- `rust/src/bootstrap_v2/installers/perl_tools.rs` - Formatting fixes
-- `.bootstrap/activate.sh` - REMOVED (auto-generated)
-- `docs/ai-prompt/235/235-summary.md` - Updated session notes
+- `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs` - NEW (322 lines)
+- `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs` - Updated (dry-run helper)
+- `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs` - Updated (dry-run fix)
+- `docs/ai-prompt/235/235-next-steps.md` - Updated NEXT and DONE
+- `docs/ai-prompt/235/235-summary.md` - This file
 
 ## Previous Session Summary
 
