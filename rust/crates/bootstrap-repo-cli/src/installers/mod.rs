@@ -93,9 +93,9 @@ impl InstallerRegistry {
             return Ok(());
         }
 
-        let installer = self.get(id).ok_or_else(|| {
-            crate::errors::BootstrapError::ToolNotFound(id.to_string())
-        })?;
+        let installer = self
+            .get(id)
+            .ok_or_else(|| crate::errors::BootstrapError::ToolNotFound(id.to_string()))?;
 
         // Resolve dependencies first
         for dep in installer.dependencies() {

@@ -2,6 +2,15 @@
 //!
 //! Library modules for the bootstrap-repo-cli tool.
 //! These modules are exposed for integration testing.
+//!
+//! # Purpose
+//!
+//! Provides modular toolchain bootstrapping with parallel execution,
+//! rich progress UI, and structured error handling.
+//!
+//! # Examples
+//!
+//! See integration tests in `tests/` for usage examples.
 
 pub mod activate;
 pub mod checkpoint;

@@ -6,6 +6,15 @@
 //! This binary provides modular toolchain bootstrapping with parallel execution,
 //! rich progress UI, and structured error handling.
 //!
+//! # Exit Codes
+//!
+//! - 0: Success
+//! - 1: Usage error (invalid arguments)
+//! - 2: Missing required tools
+//! - 10: Tool installation failed
+//! - 11: Tool verification failed
+//! - Other: Specific error codes from installers
+//!
 //! # Examples
 //!
 //! Install all tools for development:
