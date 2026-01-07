@@ -34,6 +34,9 @@ use tokio::process::Command;
 /// 2. $HOME/go/bin/actionlint (default go install location)
 /// 3. $GOPATH/bin/actionlint (if GOPATH is set)
 ///
+/// Priority order is maintained by the insertion sequence into the vector.
+/// HashSet is used only for deduplication to avoid checking the same path twice.
+///
 /// This is necessary because actionlint is installed via `go install` which
 /// puts binaries in the Go bin directory, not in system PATH by default.
 fn get_actionlint_candidates() -> Vec<String> {
@@ -114,13 +117,11 @@ impl Installer for ActionlintInstaller {
                     let version_without_v = version_str.strip_prefix('v').unwrap_or(version_str);
                     let version = Version::parse(version_without_v).ok().or_else(|| {
                         // Try parsing just the numbers if it starts with a digit
-                        version_str
+                        // Use version_without_v to avoid redundant prefix stripping
+                        version_without_v
                             .split_whitespace()
                             .find(|s| s.chars().next().is_some_and(|c| c.is_ascii_digit()))
-                            .and_then(|v| {
-                                let v_clean = v.strip_prefix('v').unwrap_or(v);
-                                Version::parse(v_clean).ok()
-                            })
+                            .and_then(|v| Version::parse(v).ok())
                     });
 
                     if let Some(v) = version {
