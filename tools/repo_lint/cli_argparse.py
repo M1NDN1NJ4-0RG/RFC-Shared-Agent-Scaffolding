@@ -43,6 +43,8 @@ from __future__ import annotations
 
 import argparse
 import sys
+import time
+import traceback
 
 from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
 from tools.repo_lint.install.install_helpers import (
@@ -265,13 +267,14 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         :param runner: Runner instance
         :returns: Tuple of (key, name, results, timing_info, error_msg)
         """
-        import time
-
         error_msg = None
         results = []
         start_time = time.time()
 
         try:
+            # If the runner has no files to process, return early with empty results.
+            # In the parallel aggregation phase, such runners will not appear in the
+            # runner_results mapping, so they intentionally yield no output entries.
             if not runner.has_files():
                 return (key, name, results, time.time() - start_time, error_msg)
 
@@ -301,8 +304,6 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
         except Exception as e:
             error_msg = f"Runner failed: {str(e)}"
-            import traceback
-
             traceback.print_exc()
 
         duration = time.time() - start_time
@@ -346,8 +347,8 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             collected_timings = {}
             error_code = None
 
-            for future in as_completed(executor_futures):
-                _key, name = executor_futures[future]
+            for future in as_completed(executor_futures):  # pylint: disable=too-many-nested-blocks
+                _, name = executor_futures[future]
                 try:
                     result_tuple = future.result()
                     runner_key, runner_name, results, duration, error_msg = result_tuple
@@ -364,12 +365,21 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                     # Handle errors
                     if error_msg and "Missing tools" in error_msg:
                         if args.ci:
-                            # Extract missing tools in a robust way and print instructions
-                            # Expected format: "Missing tools: tool1, tool2"
-                            _before, _sep, tools_part = error_msg.partition(":")
-                            tools_part = tools_part if tools_part else error_msg
-                            tools = [t.strip() for t in tools_part.split(",") if t.strip()]
-                            print_install_instructions(tools, ci_mode=args.ci)
+                            # Extract missing tools in a robust way and print instructions.
+                            # Expected (and only trusted) format: "Missing tools: tool1, tool2"
+                            tools = []
+                            prefix = "Missing tools:"
+                            if error_msg.startswith(prefix):
+                                tools_part = error_msg[len(prefix) :].strip()
+                                if tools_part:
+                                    tools = [t.strip() for t in tools_part.split(",") if t.strip()]
+                            if tools:
+                                print_install_instructions(tools, ci_mode=args.ci)
+                            else:
+                                # Unknown or unsupported message format: fall back to a generic warning.
+                                safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
+                                print("   Run 'repo-lint install' to install them")
+                                print("")
                             error_code = ExitCode.MISSING_TOOLS
                             break
                         safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
@@ -381,8 +391,6 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 except Exception as e:
                     safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
                     if args.verbose:
-                        import traceback
-
                         traceback.print_exc()
                     error_code = ExitCode.INTERNAL_ERROR
                     break
@@ -439,7 +447,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         # Collect all results in deterministic order
         for key, name, runner in runners:
             if key in runner_results:
-                _runner_name, results, _error_msg = runner_results[key]
+                _, results, _ = runner_results[key]
                 all_results.extend(results)
 
                 # Mirror sequential fail-fast and max-violations behavior
@@ -922,8 +930,6 @@ def main() -> None:
     except Exception as e:
         safe_print(f"❌ Internal error: {e}", f"Internal error: {e}")
         if args.verbose:
-            import traceback
-
             traceback.print_exc()
         sys.exit(ExitCode.INTERNAL_ERROR)
 

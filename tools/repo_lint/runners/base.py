@@ -278,6 +278,7 @@ class Runner(ABC):
         # Execute tools in parallel
         # Note: Tool methods (_run_*_check, _run_*_validation) return single LintResult objects,
         # not lists. The check() method aggregates these into a List[LintResult].
+        # Verify type at runtime to catch implementation errors early.
         results_map = {}  # method_name -> result (single LintResult)
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
             future_to_method = {executor.submit(method): name for name, method in tool_methods}
@@ -286,6 +287,13 @@ class Runner(ABC):
                 method_name = future_to_method[future]
                 try:
                     result = future.result()
+                    # Verify that tool methods return single LintResult, not lists
+                    if isinstance(result, list):
+                        logging.warning(
+                            "Tool method %s returned a list instead of single LintResult. Using first result only.",
+                            method_name,
+                        )
+                        result = result[0] if result else LintResult(tool="unknown", passed=True, violations=[])
                     results_map[method_name] = result
                 except Exception as e:
                     # Log full exception for debugging

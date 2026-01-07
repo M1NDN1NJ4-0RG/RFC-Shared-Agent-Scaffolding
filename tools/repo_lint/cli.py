@@ -389,7 +389,7 @@ def cli(ctx):
 @click.option(
     "--jobs",
     "-j",
-    type=int,
+    type=click.IntRange(1, None),
     default=None,
     metavar="N",
     help="Number of parallel jobs (default: AUTO based on CPU count, env: REPO_LINT_JOBS)",
