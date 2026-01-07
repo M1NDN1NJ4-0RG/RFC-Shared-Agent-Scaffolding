@@ -514,19 +514,18 @@ def cmd_check(args: argparse.Namespace) -> int:
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
-    import multiprocessing
     import os
 
     use_json = getattr(args, "json", False)
 
-    # Calculate default_safe_auto for safety capping
-    cpu = max(multiprocessing.cpu_count() or 1, 1)
-    auto_workers = max(cpu - 1, 1)  # Leave 1 core for OS/overhead
-    default_safe_auto = min(auto_workers, 8)  # Hard cap at 8
+    # Calculate safe AUTO maximum for default behavior
+    cpu = os.cpu_count() or 1
+    auto_max = min(max(cpu - 1, 1), 8)  # Safe default: 1..8
 
     # Handle --jobs/-j with environment variable fallback and AUTO default
     jobs = getattr(args, "jobs", None)
     explicit_override = False  # Track if user explicitly set jobs
+    source = None  # Track source of jobs value for warning
 
     # Precedence: 1) CLI flag, 2) env var, 3) AUTO
     if jobs is None:
@@ -536,6 +535,7 @@ def cmd_check(args: argparse.Namespace) -> int:
             try:
                 jobs = int(env_jobs)
                 explicit_override = True
+                source = f"REPO_LINT_JOBS={env_jobs}"
             except ValueError:
                 safe_print(
                     f"❌ Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be an integer)",
@@ -544,7 +544,8 @@ def cmd_check(args: argparse.Namespace) -> int:
                 return ExitCode.INTERNAL_ERROR
         else:
             # AUTO: Conservative auto-detection
-            jobs = default_safe_auto
+            jobs = auto_max
+            source = "AUTO"
 
             if args.verbose and not use_json:
                 safe_print(
@@ -553,31 +554,60 @@ def cmd_check(args: argparse.Namespace) -> int:
                 )
     else:
         explicit_override = True
+        source = f"--jobs={jobs}"
 
     # Validate jobs count
     if jobs <= 0:
         safe_print(f"❌ Invalid jobs value: {jobs} (must be >= 1)", f"ERROR: Invalid jobs value: {jobs} (must be >= 1)")
         return ExitCode.INTERNAL_ERROR
 
-    # Safety: Cap user-specified values to default_safe_auto
-    if explicit_override and jobs > default_safe_auto:
-        if not use_json:
-            safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
-            safe_print(
-                f"⚠️  SAFETY LIMIT: Requested {jobs} workers exceeds safe maximum",
-                f"WARNING: SAFETY LIMIT: Requested {jobs} workers exceeds safe maximum",
-            )
-            safe_print(
-                f"⚠️  For safety, capping to {default_safe_auto} workers (based on {cpu} CPUs)",
-                f"WARNING: For safety, capping to {default_safe_auto} workers (based on {cpu} CPUs)",
-            )
-            safe_print(
-                "⚠️  High worker counts can cause resource exhaustion and system instability",
-                "WARNING: High worker counts can cause resource exhaustion and system instability",
-            )
-            safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
-            print("")
-        jobs = default_safe_auto
+    # Check for hard cap override (opt-in safety lock for CI/agents)
+    hard_cap_enabled = os.getenv("REPO_LINT_HARD_CAP_JOBS", "").lower() in ("1", "true", "yes")
+
+    # Safety warning banner when explicit override exceeds auto_max
+    if explicit_override and jobs > auto_max:
+        if hard_cap_enabled:
+            # Hard cap enabled - cap the value and warn
+            if not use_json:
+                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
+                safe_print(
+                    f"⚠️  HARD CAP ENABLED: Requested {jobs} workers exceeds safe maximum",
+                    f"WARNING: HARD CAP ENABLED: Requested {jobs} workers exceeds safe maximum",
+                )
+                safe_print(
+                    "⚠️  Hard cap enabled via REPO_LINT_HARD_CAP_JOBS",
+                    "WARNING: Hard cap enabled via REPO_LINT_HARD_CAP_JOBS",
+                )
+                safe_print(
+                    f"⚠️  Capping to {auto_max} workers (cpu={cpu}; auto_max=min(max(cpu-1,1),8))",
+                    f"WARNING: Capping to {auto_max} workers (cpu={cpu}; auto_max=min(max(cpu-1,1),8))",
+                )
+                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
+                print("")
+            jobs = auto_max
+        else:
+            # No hard cap - honor user request but warn
+            if not use_json:
+                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
+                safe_print(
+                    f"⚠️  Requested {jobs} workers exceeds safe AUTO max {auto_max}",
+                    f"WARNING: Requested {jobs} workers exceeds safe AUTO max {auto_max}",
+                )
+                safe_print(
+                    f"    (cpu={cpu}; auto_max=min(max(cpu-1,1),8)={auto_max})",
+                    f"    (cpu={cpu}; auto_max=min(max(cpu-1,1),8)={auto_max})",
+                )
+                safe_print(
+                    f"⚠️  Proceeding with {jobs} workers as explicitly requested via {source}",
+                    f"WARNING: Proceeding with {jobs} workers as explicitly requested via {source}",
+                )
+                safe_print(
+                    "⚠️  High worker counts may cause resource exhaustion and flaky CI",
+                    "WARNING: High worker counts may cause resource exhaustion and flaky CI",
+                )
+                safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
+                print("")
+            # jobs remains as requested - no capping
 
     # Store validated jobs count back in args for _run_all_runners
     args.jobs = jobs
