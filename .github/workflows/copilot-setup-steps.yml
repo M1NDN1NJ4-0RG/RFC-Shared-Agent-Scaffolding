@@ -77,7 +77,7 @@ jobs:
             yamllint
 
           # Install repo-lint from THIS repository (editable).
-          # Assumes the package lives at tools/repo_lint (as in this repo).
+          # Installs from the package directory at tools/repo_lint (relative to the repo root).
           python -m pip install --user -e ./tools/repo_lint
 
           # Ensure user scripts are on PATH
