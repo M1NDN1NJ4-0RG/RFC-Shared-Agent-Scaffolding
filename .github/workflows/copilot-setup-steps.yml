@@ -156,7 +156,7 @@ jobs:
           # Optional tools (installed only if relevant files exist)
           if git ls-files '*.sh' | rg -q .; then
             shellcheck --version
-            shfmt --version
+            "$HOME/go/bin/shfmt" --version
           fi
 
           if git ls-files '*.ps1' | rg -q .; then
@@ -168,5 +168,5 @@ jobs:
           fi
 
           if find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) 2>/dev/null | rg -q .; then
-            actionlint -version
+            "$HOME/go/bin/actionlint" -version
           fi
