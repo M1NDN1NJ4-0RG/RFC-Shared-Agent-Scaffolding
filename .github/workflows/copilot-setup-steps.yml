@@ -28,6 +28,12 @@
 #     - HTTP/retries: requests, httpx, tenacity
 #   - repo-lint installed from THIS repository (editable) and verified via:
 #     - `repo-lint --help` and `python -m tools.repo_lint.cli --help`
+#   - NOTE: The Python package set above is intentionally broader than this repository's
+#     direct runtime dependencies. These tools are pre-installed to give Copilot Coding
+#     Agent sessions a rich, ready-to-use environment for common automation, networking,
+#     and data-processing tasks, and to accommodate likely future workflow features.
+#     Maintainers may narrow or remove these extra packages if they prefer faster
+#     workflow startup or a smaller dependency/security surface.
 #
 # - Shell toolchain (conditional):
 #   - shellcheck (apt) only when *.sh exists
