@@ -152,18 +152,20 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     """
     import os
     from concurrent.futures import ThreadPoolExecutor, as_completed
-    
+
     all_results = []
     use_json = getattr(args, "json", False)
     jobs = getattr(args, "jobs", 1)
-    
+
     # Check for kill switch
     if os.getenv("REPO_LINT_DISABLE_CONCURRENCY", "").lower() in ("1", "true", "yes"):
         jobs = 1
         if args.verbose and not use_json:
-            safe_print("⚠️  Concurrency disabled via REPO_LINT_DISABLE_CONCURRENCY", 
-                      "WARNING: Concurrency disabled via REPO_LINT_DISABLE_CONCURRENCY")
-    
+            safe_print(
+                "⚠️  Concurrency disabled via REPO_LINT_DISABLE_CONCURRENCY",
+                "WARNING: Concurrency disabled via REPO_LINT_DISABLE_CONCURRENCY",
+            )
+
     # Debug timing mode
     debug_timing = os.getenv("REPO_LINT_DEBUG_TIMING", "").lower() in ("1", "true", "yes")
 
@@ -236,80 +238,83 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     # Helper function to run a single runner
     def run_single_runner(key, name, runner):
         """Run a single runner.
-        
+
         :param key: Runner key (e.g., "python")
         :param name: Display name (e.g., "Python")
         :param runner: Runner instance
         :returns: Tuple of (key, name, results, timing_info, error_msg)
         """
         import time
-        
+
         error_msg = None
         results = []
         start_time = time.time()
-        
+
         try:
             if not runner.has_files():
                 return (key, name, results, time.time() - start_time, error_msg)
-            
+
             # Check for missing tools
             missing_tools = runner.check_tools()
             if missing_tools:
                 error_msg = f"Missing tools: {', '.join(missing_tools)}"
                 return (key, name, results, time.time() - start_time, error_msg)
-            
+
             # Run the action callback (with optional tool-level parallelism)
             # For check mode with tool-level parallelism enabled, run tools in parallel
             enable_tool_parallelism = (
-                mode == "Linting" and 
-                jobs > 1 and
-                os.getenv("REPO_LINT_TOOL_PARALLELISM", "").lower() in ("1", "true", "yes")
+                mode == "Linting"
+                and jobs > 1
+                and os.getenv("REPO_LINT_TOOL_PARALLELISM", "").lower() in ("1", "true", "yes")
             )
-            
-            if enable_tool_parallelism and hasattr(runner, 'check_parallel'):
+
+            if enable_tool_parallelism and hasattr(runner, "check_parallel"):
                 # Use parallel check if available
                 results = runner.check_parallel(max_workers=min(jobs, 4))
             else:
                 # Standard sequential execution
                 results = action_callback(runner)
-            
+
         except Exception as e:
             error_msg = f"Runner failed: {str(e)}"
             import traceback
+
             traceback.print_exc()
-        
+
         duration = time.time() - start_time
         return (key, name, results, duration, error_msg)
 
     # Determine if we should use parallel execution
     # Only parallelize for 'check' mode (not 'fix')
     use_parallel = jobs > 1 and mode == "Linting"
-    
+
     # Determine if we should show progress
     show_progress = getattr(args, "progress", False)
     # Auto-disable progress in CI or non-TTY unless explicitly enabled
     if show_progress and (use_json or not sys.stdout.isatty()):
         show_progress = False
-    
+
     # Filter runners that have files
     runners_to_run = [(key, name, runner) for key, name, runner in runners if runner.has_files()]
-    
+
     # Store runner outputs in order for deterministic printing
     runner_results = {}  # key -> (name, results, error_msg)
     runner_timings = {}
-    
+
     if use_parallel and runners_to_run:
         # Parallel execution with ThreadPoolExecutor
         if not use_json and args.verbose:
-            safe_print(f"🚀 Running {len(runners_to_run)} runners in parallel (jobs={jobs})", 
-                      f"Running {len(runners_to_run)} runners in parallel (jobs={jobs})")
+            safe_print(
+                f"🚀 Running {len(runners_to_run)} runners in parallel (jobs={jobs})",
+                f"Running {len(runners_to_run)} runners in parallel (jobs={jobs})",
+            )
             print("")
-        
+
         # Use Rich Progress if available and progress is enabled
         if show_progress:
             try:
-                from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeElapsedColumn
-                
+                from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
+
                 with Progress(
                     SpinnerColumn(),
                     TextColumn("[progress.description]{task.description}"),
@@ -318,28 +323,28 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                     TimeElapsedColumn(),
                 ) as progress:
                     task = progress.add_task(f"Running {len(runners_to_run)} runners...", total=len(runners_to_run))
-                    
+
                     with ThreadPoolExecutor(max_workers=jobs) as executor:
                         # Submit all runners
                         future_to_runner = {
                             executor.submit(run_single_runner, key, name, runner): (key, name)
                             for key, name, runner in runners_to_run
                         }
-                        
+
                         # Collect results as they complete
                         for future in as_completed(future_to_runner):
                             key, name = future_to_runner[future]
                             try:
                                 result_tuple = future.result()
                                 runner_key, runner_name, results, duration, error_msg = result_tuple
-                                
+
                                 # Store results in order
                                 runner_results[runner_key] = (runner_name, results, error_msg)
                                 runner_timings[runner_key] = duration
-                                
+
                                 # Update progress
                                 progress.update(task, advance=1, description=f"Completed {runner_name}")
-                                
+
                                 # Handle errors
                                 if error_msg:
                                     if "Missing tools" in error_msg:
@@ -347,23 +352,24 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                                             # Extract missing tools and print instructions
                                             print_install_instructions(
                                                 [t.strip() for t in error_msg.split(":", 1)[1].split(",")],
-                                                ci_mode=args.ci
+                                                ci_mode=args.ci,
                                             )
                                             return ExitCode.MISSING_TOOLS
                                         safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
                                         print("   Run 'repo-lint install' to install them")
                                         print("")
                                         return ExitCode.MISSING_TOOLS
-                                
+
                             except Exception as e:
                                 safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
                                 if args.verbose:
                                     import traceback
+
                                     traceback.print_exc()
             except ImportError:
                 # Fall back to non-progress version if Rich not available
                 show_progress = False
-        
+
         if not show_progress:
             # No progress bar version
             with ThreadPoolExecutor(max_workers=jobs) as executor:
@@ -372,45 +378,45 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                     executor.submit(run_single_runner, key, name, runner): (key, name)
                     for key, name, runner in runners_to_run
                 }
-                
+
                 # Collect results as they complete
                 for future in as_completed(future_to_runner):
                     key, name = future_to_runner[future]
                     try:
                         result_tuple = future.result()
                         runner_key, runner_name, results, duration, error_msg = result_tuple
-                        
+
                         # Store results in order
                         runner_results[runner_key] = (runner_name, results, error_msg)
                         runner_timings[runner_key] = duration
-                        
+
                         # Handle errors
                         if error_msg:
                             if "Missing tools" in error_msg:
                                 if args.ci:
                                     # Extract missing tools and print instructions
                                     print_install_instructions(
-                                        [t.strip() for t in error_msg.split(":", 1)[1].split(",")],
-                                        ci_mode=args.ci
+                                        [t.strip() for t in error_msg.split(":", 1)[1].split(",")], ci_mode=args.ci
                                     )
                                     return ExitCode.MISSING_TOOLS
                                 safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
                                 print("   Run 'repo-lint install' to install them")
                                 print("")
                                 return ExitCode.MISSING_TOOLS
-                        
+
                     except Exception as e:
                         safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
                         if args.verbose:
                             import traceback
+
                             traceback.print_exc()
-        
+
         # Collect all results in deterministic order
         for key, name, runner in runners:
             if key in runner_results:
                 runner_name, results, error_msg = runner_results[key]
                 all_results.extend(results)
-        
+
     else:
         # Sequential execution (original behavior)
         for key, name, runner in runners:
@@ -508,20 +514,20 @@ def cmd_check(args: argparse.Namespace) -> int:
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
     """
-    import os
     import multiprocessing
-    
+    import os
+
     use_json = getattr(args, "json", False)
-    
-    # Calculate DEFAULT_SAFE_AUTO for safety capping
+
+    # Calculate default_safe_auto for safety capping
     cpu = max(multiprocessing.cpu_count() or 1, 1)
     auto_workers = max(cpu - 1, 1)  # Leave 1 core for OS/overhead
-    DEFAULT_SAFE_AUTO = min(auto_workers, 8)  # Hard cap at 8
-    
+    default_safe_auto = min(auto_workers, 8)  # Hard cap at 8
+
     # Handle --jobs/-j with environment variable fallback and AUTO default
     jobs = getattr(args, "jobs", None)
     explicit_override = False  # Track if user explicitly set jobs
-    
+
     # Precedence: 1) CLI flag, 2) env var, 3) AUTO
     if jobs is None:
         # Try environment variable
@@ -533,58 +539,49 @@ def cmd_check(args: argparse.Namespace) -> int:
             except ValueError:
                 safe_print(
                     f"❌ Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be an integer)",
-                    f"ERROR: Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be an integer)"
+                    f"ERROR: Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be an integer)",
                 )
                 return ExitCode.INTERNAL_ERROR
         else:
             # AUTO: Conservative auto-detection
-            jobs = DEFAULT_SAFE_AUTO
-            
+            jobs = default_safe_auto
+
             if args.verbose and not use_json:
                 safe_print(
                     f"ℹ️  Auto-detected {cpu} CPUs, using {jobs} parallel workers",
-                    f"INFO: Auto-detected {cpu} CPUs, using {jobs} parallel workers"
+                    f"INFO: Auto-detected {cpu} CPUs, using {jobs} parallel workers",
                 )
     else:
         explicit_override = True
-    
+
     # Validate jobs count
     if jobs <= 0:
-        safe_print(
-            f"❌ Invalid jobs value: {jobs} (must be >= 1)",
-            f"ERROR: Invalid jobs value: {jobs} (must be >= 1)"
-        )
+        safe_print(f"❌ Invalid jobs value: {jobs} (must be >= 1)", f"ERROR: Invalid jobs value: {jobs} (must be >= 1)")
         return ExitCode.INTERNAL_ERROR
-    
-    # Safety: Cap user-specified values to DEFAULT_SAFE_AUTO
-    if explicit_override and jobs > DEFAULT_SAFE_AUTO:
+
+    # Safety: Cap user-specified values to default_safe_auto
+    if explicit_override and jobs > default_safe_auto:
         if not use_json:
-            safe_print(
-                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-                "=" * 70
-            )
+            safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
             safe_print(
                 f"⚠️  SAFETY LIMIT: Requested {jobs} workers exceeds safe maximum",
-                f"WARNING: SAFETY LIMIT: Requested {jobs} workers exceeds safe maximum"
+                f"WARNING: SAFETY LIMIT: Requested {jobs} workers exceeds safe maximum",
             )
             safe_print(
-                f"⚠️  For safety, capping to {DEFAULT_SAFE_AUTO} workers (based on {cpu} CPUs)",
-                f"WARNING: For safety, capping to {DEFAULT_SAFE_AUTO} workers (based on {cpu} CPUs)"
+                f"⚠️  For safety, capping to {default_safe_auto} workers (based on {cpu} CPUs)",
+                f"WARNING: For safety, capping to {default_safe_auto} workers (based on {cpu} CPUs)",
             )
             safe_print(
                 "⚠️  High worker counts can cause resource exhaustion and system instability",
-                "WARNING: High worker counts can cause resource exhaustion and system instability"
+                "WARNING: High worker counts can cause resource exhaustion and system instability",
             )
-            safe_print(
-                "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━",
-                "=" * 70
-            )
+            safe_print("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", "=" * 70)
             print("")
-        jobs = DEFAULT_SAFE_AUTO
-    
+        jobs = default_safe_auto
+
     # Store validated jobs count back in args for _run_all_runners
     args.jobs = jobs
-    
+
     if not use_json:
         safe_print("🔍 Running repository linters and formatters...", "Running repository linters and formatters...")
         print("")

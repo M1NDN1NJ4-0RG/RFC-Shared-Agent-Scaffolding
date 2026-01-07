@@ -233,19 +233,21 @@ class Runner(ABC):
         :param max_workers: Maximum number of parallel tool executions
         :returns: List of linting results from all tools (in deterministic order)
         """
-        from concurrent.futures import ThreadPoolExecutor, as_completed
         import inspect
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
         # Get all methods that look like tool check methods
         # Pattern: _run_* methods that are likely tool-specific
         tool_methods = []
         for name, method in inspect.getmembers(self, predicate=inspect.ismethod):
             # Include methods that start with _run_ and aren't utility methods
-            if (name.startswith('_run_') and 
-                not name.endswith(('_fix', '_format', '_helper', '_util')) and
-                callable(method)):
+            if (
+                name.startswith("_run_")
+                and not name.endswith(("_fix", "_format", "_helper", "_util"))
+                and callable(method)
+            ):
                 # Verify the method matches check() behavior by checking if tool filtering applies
-                if self._should_run_tool(name.replace('_run_', '').replace('_check', '').replace('_validation', '')):
+                if self._should_run_tool(name.replace("_run_", "").replace("_check", "").replace("_validation", "")):
                     tool_methods.append((name, method))
 
         # If no tool methods found or only one, fall back to sequential
@@ -255,10 +257,7 @@ class Runner(ABC):
         # Execute tools in parallel
         results_map = {}  # method_name -> result
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            future_to_method = {
-                executor.submit(method): name
-                for name, method in tool_methods
-            }
+            future_to_method = {executor.submit(method): name for name, method in tool_methods}
 
             for future in as_completed(future_to_method):
                 method_name = future_to_method[future]
@@ -268,11 +267,9 @@ class Runner(ABC):
                 except Exception as e:
                     # Create error result for failed tool
                     from tools.repo_lint.common import LintResult
+
                     results_map[method_name] = LintResult(
-                        tool=method_name,
-                        passed=False,
-                        violations=[],
-                        error=f"Tool execution failed: {str(e)}"
+                        tool=method_name, passed=False, violations=[], error=f"Tool execution failed: {str(e)}"
                     )
 
         # Return results in deterministic order (same order as tool_methods)
