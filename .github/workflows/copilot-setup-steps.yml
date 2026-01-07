@@ -1,3 +1,31 @@
+# Workflow: Copilot Setup Steps
+#
+# Purpose: Provides setup steps for GitHub Copilot agent development environment.
+# Installs required tooling (Python, shell, PowerShell, Perl, Go-based tools)
+# needed for agent code review and editing tasks.
+#
+# Dependencies:
+# - Python 3.12 (for repo-lint and Python CLI tools)
+# - ripgrep (rg) for fast searching
+# - Go (for shfmt, actionlint when needed)
+# - Perl tooling (perlcritic, PPI when Perl files exist)
+# - PowerShell tooling (PSScriptAnalyzer when .ps1 files exist)
+#
+# Triggers:
+# - Manual workflow dispatch (for testing)
+# - Pushes modifying this workflow file
+# - Pull requests modifying this workflow file
+#
+# Outputs:
+# - Status check: "copilot-setup-steps"
+# - Artifacts: None
+# - Side effects: Installs development tools for Copilot agent session
+#
+# Notes:
+# - Go setup only runs when shell scripts or workflow files exist
+# - Tools are installed conditionally based on file types present in repository
+# - PATH modifications in GitHub Actions take effect only in subsequent steps
+
 name: "Copilot Setup Steps"
 
 # Automatically run the setup steps when they are changed to allow for easy validation, and
@@ -77,8 +105,9 @@ jobs:
             yamllint
 
           # Install repo-lint from THIS repository (editable).
-          # Installs from the package directory at tools/repo_lint (relative to the repo root).
-          python -m pip install --user -e ./tools/repo_lint
+          # NOTE: This repo packages repo-lint from the repository root (pyproject.toml at repo root).
+          test -f pyproject.toml || (echo "ERROR: pyproject.toml not found at repo root" >&2; exit 1)
+          python -m pip install --user -e .
 
           # Ensure user scripts are on PATH
           echo "$HOME/.local/bin" >> "$GITHUB_PATH"
@@ -94,7 +123,9 @@ jobs:
           python -m tools.repo_lint.cli --help
 
       # Go-based tools: shfmt + actionlint (installed only if needed)
+      # Both shfmt and actionlint require Go, so we set up Go when shell scripts or workflow files exist
       - name: Set up Go
+        if: ${{ hashFiles('**/*.sh', '.github/workflows/*.yml', '.github/workflows/*.yaml') != '' }}
         uses: actions/setup-go@v5
         with:
           go-version: "stable"
@@ -107,7 +138,8 @@ jobs:
           set -euo pipefail
           go install mvdan.cc/sh/v3/cmd/shfmt@latest
           echo "$HOME/go/bin" >> "$GITHUB_PATH"
-          shfmt --version
+          # Note: shfmt uses --version (GNU-style), while actionlint uses -version (Go-style)
+          "$HOME/go/bin/shfmt" --version
 
       - name: Install actionlint (when workflow files exist)
         if: ${{ hashFiles('.github/workflows/*.yml', '.github/workflows/*.yaml') != '' }}
@@ -155,7 +187,7 @@ jobs:
           # Optional tools (installed only if relevant files exist)
           if git ls-files '*.sh' | rg -q .; then
             shellcheck --version
-            shfmt --version
+            "$HOME/go/bin/shfmt" --version
           fi
 
           if git ls-files '*.ps1' | rg -q .; then
@@ -167,5 +199,5 @@ jobs:
           fi
 
           if find .github/workflows -type f \( -name '*.yml' -o -name '*.yaml' \) 2>/dev/null | rg -q .; then
-            actionlint -version
+            "$HOME/go/bin/actionlint" -version
           fi
