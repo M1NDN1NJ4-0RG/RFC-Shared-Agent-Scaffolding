@@ -31,10 +31,15 @@
 
 from __future__ import annotations
 
+import inspect
+import logging
+import re
 import shutil
 import subprocess
+import traceback
 import warnings
 from abc import ABC, abstractmethod
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import List
 
@@ -223,6 +228,88 @@ class Runner(ABC):
         :raises MissingToolError: If required tools are not installed (CI mode only)
         """
         pass  # pylint: disable=unnecessary-pass  # Abstract method
+
+    def check_parallel(self, max_workers: int = 4) -> List[LintResult]:
+        """Run linting checks with tool-level parallelism (optional).
+
+        This is a default implementation that introspects the runner for tool methods
+        and executes them in parallel. Runners can override this for custom behavior
+        or declare which methods are safe to parallelize explicitly.
+
+        :param max_workers: Maximum number of parallel tool executions
+        :returns: List of linting results from all tools (in deterministic order)
+
+        :note: This method uses naming conventions to discover tool methods. For more
+               explicit control, runners should override this method and declare which
+               methods to parallelize. The current pattern matches methods starting with
+               '_run_' that aren't fix/format/helper/util methods.
+        """
+        # FUTURE: Replace introspection with explicit declaration pattern (decorator or attribute)
+        # Current implementation relies on naming conventions which may not be reliable across
+        # all runners. Consider adding a @parallelizable decorator or _parallelizable_methods
+        # class attribute for explicit opt-in.
+
+        # Get all methods that look like tool check methods
+        # Pattern: _run_* methods that are likely tool-specific
+        tool_methods = []
+        for name, method in inspect.getmembers(self, predicate=inspect.ismethod):
+            # Include methods that start with _run_ and aren't utility methods
+            if (
+                name.startswith("_run_")
+                and not name.endswith(("_fix", "_format", "_helper", "_util"))
+                and callable(method)
+            ):
+                # Extract tool name using regex for more robust parsing
+                # Handles patterns like: _run_black_check, _run_pylint, _run_docstring_validation
+                # Also supports numbers: _run_python3_check, _run_ps1_check
+                tool_name_match = re.match(r"_run_([a-z0-9_]+?)(?:_check|_validation)?$", name)
+                if tool_name_match:
+                    tool_name = tool_name_match.group(1)
+                    # Verify the method matches check() behavior by checking if tool filtering applies
+                    # Only call _should_run_tool if it exists; otherwise, include all discovered methods
+                    should_run_tool = getattr(self, "_should_run_tool", None)
+                    if should_run_tool is None or should_run_tool(tool_name):
+                        tool_methods.append((name, method))
+
+        # If no tool methods found or only one, fall back to sequential
+        if len(tool_methods) <= 1:
+            return self.check()
+
+        # Execute tools in parallel
+        # Note: Tool methods (_run_*_check, _run_*_validation) return single LintResult objects,
+        # not lists. The check() method aggregates these into a List[LintResult].
+        # Verify type at runtime to catch implementation errors early.
+        results_map = {}  # method_name -> result (single LintResult)
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_method = {executor.submit(method): name for name, method in tool_methods}
+
+            for future in as_completed(future_to_method):
+                method_name = future_to_method[future]
+                try:
+                    result = future.result()
+                    # Verify that tool methods return single LintResult, not lists
+                    if isinstance(result, list):
+                        logging.warning(
+                            "Tool method %s returned a list instead of single LintResult. Using first result only.",
+                            method_name,
+                        )
+                        result = result[0] if result else LintResult(tool="unknown", passed=True, violations=[])
+                    results_map[method_name] = result
+                except Exception as e:
+                    # Log full exception for debugging
+                    logging.error("Tool method %s failed with exception:\n%s", method_name, traceback.format_exc())
+                    # Create error result for failed tool
+                    results_map[method_name] = LintResult(
+                        tool=method_name, passed=False, violations=[], error=f"Tool execution failed: {str(e)}"
+                    )
+
+        # Return results in deterministic order (same order as tool_methods)
+        results = []
+        for name, _ in tool_methods:
+            if name in results_map:
+                results.append(results_map[name])
+
+        return results
 
     def set_tool_filter(self, tools: List[str]) -> None:
         """Set tool filter to run only specific tools.
