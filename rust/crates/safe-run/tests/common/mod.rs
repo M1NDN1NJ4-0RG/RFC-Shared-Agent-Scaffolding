@@ -368,9 +368,13 @@ pub struct ExpectedOutcome {
 /// println!("Loaded {} safe-run vectors", vectors.vectors.safe_run.len());
 /// ```
 pub fn load_vectors() -> Result<ConformanceVectors, Box<dyn std::error::Error>> {
-    // Navigate from rust/tests/ up to repo root
+    // Navigate from rust/crates/safe-run/ up to repo root
     let manifest_dir = env!("CARGO_MANIFEST_DIR");
     let vectors_path = Path::new(manifest_dir)
+        .parent()
+        .ok_or("Cannot find parent directory")?
+        .parent()
+        .ok_or("Cannot find parent directory")?
         .parent()
         .ok_or("Cannot find parent directory")?
         .join("conformance")
@@ -424,10 +428,12 @@ pub fn get_safe_run_binary() -> PathBuf {
     #[cfg(not(windows))]
     let bin_name = "safe-run";
 
-    let debug_bin = Path::new(manifest_dir).join("target/debug").join(bin_name);
-    let release_bin = Path::new(manifest_dir)
-        .join("target/release")
-        .join(bin_name);
+    // Target directory is at workspace root (rust/target/), not package root
+    // Navigate from rust/crates/safe-run/ up to rust/
+    let workspace_root = Path::new(manifest_dir).parent().unwrap().parent().unwrap();
+
+    let debug_bin = workspace_root.join("target/debug").join(bin_name);
+    let release_bin = workspace_root.join("target/release").join(bin_name);
 
     // Prefer release build if it exists
     if release_bin.exists() {

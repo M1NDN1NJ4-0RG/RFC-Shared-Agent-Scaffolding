@@ -76,9 +76,18 @@
 - Updated 1 script
 - Updated 1 doc
 
-### Commit 5 (pending): Phase 4 - Final cleanup
+### Commit 5: Phase 4 - Final cleanup
 - Removed old `rust/src/` and `rust/tests/` directories
 - Fixed docstrings in lib.rs and main.rs
 - Fixed copilot-setup-steps.yml docstring contract
 - Ran `cargo fmt --all`
 - Verified all acceptance criteria
+
+### Commit 6 (pending): Fix CI conformance test failures
+- Fixed test file paths after workspace refactoring
+- Updated `rust/crates/safe-run/tests/common/mod.rs`:
+  - Fixed `load_vectors()` to navigate 3 levels up (rust/crates/safe-run/ → repo root)
+  - Fixed `get_safe_run_binary()` to find binary in workspace target/ directory
+- All 31 conformance tests now pass ✅
+- Ran `cargo fmt --all` to fix formatting
+- Verified `repo-lint check --ci` exits 0 ✅
