@@ -7,43 +7,27 @@ Add files via upload
 (Empty - no description provided)
 
 ## Objective
-Address ALL Copilot Code Review comments from review thread: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/pull/263#pullrequestreview-3635188546
+Address ALL CodeQL security comments from PR #263: https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/pull/263
 
-## Review Comments to Address
+## CodeQL Security Alerts
 
-### Addressed Comments:
+### Alert 1: Unpinned 3rd party Action 'dtolnay/rust-toolchain@stable' ✅ COMPLETE
+- **Issue:** Uses 'dtolnay/rust-toolchain' with ref 'stable', not a pinned commit hash
+- **Solution:** Pinned to commit hash: dtolnay/rust-toolchain@4be9e76fd7c4901c61fb841f559994984270fce7 # stable
+- **Location:** `.github/workflows/copilot-setup-steps.yml` line 204
 
-1. **Line 97-101: Go setup unconditional execution** ✅ COMPLETE
-   - Issue: Go setup runs unconditionally even when no Go-based tools are needed
-   - Solution: Added conditional check `if: ${{ hashFiles('**/*.sh', '.github/workflows/*.yml', '.github/workflows/*.yaml') != '' }}`
-   - Go setup now only runs when shell scripts or workflow files exist
-
-2. **Line 110: shfmt PATH verification in same step** ✅ COMPLETE
-   - Issue: PATH updated on line 109 but shfmt tested on line 110 in same step (won't work)
-   - Solution: Changed `shfmt --version` to `"$HOME/go/bin/shfmt" --version`
-   - Uses full path instead of relying on PATH update in same step
-
-3. **Workflow docstring header** ✅ COMPLETE
-   - Issue: yaml-docstrings validation failed due to missing required docstring header
-   - Solution: Added complete workflow docstring with all required sections (Workflow, Purpose, Dependencies, Triggers, Outputs, Notes)
-   - Pre-commit gate now passes (exit 0)
-
-### Resolved Comments (from previous sessions):
-
-1. **Line 26: actions/checkout version** ✓ RESOLVED
-2. **Line 94: repo-lint PATH check** ✓ RESOLVED
-3. **Line 80: Comment clarity** ✓ RESOLVED
-4. **Line 119: actionlint PATH verification** ✓ RESOLVED
-5. **Line 169: git ls-files pattern** ✓ RESOLVED
+### Alert 2: Unpinned 3rd party Action 'taiki-e/install-action@v2' ✅ COMPLETE
+- **Issue:** Uses 'taiki-e/install-action' with ref 'v2', not a pinned commit hash
+- **Solution:** Pinned to commit hash: taiki-e/install-action@dfcb1ee29051d97c8d0f2d437199570008fd5612 # v2
+- **Location:** `.github/workflows/copilot-setup-steps.yml` line 210
 
 ## Progress
 - [x] Session start complete
 - [x] Journal initialization
-- [x] Address comment 1: Go setup conditional
-- [x] Address comment 2: shfmt PATH verification
-- [x] Address yaml-docstrings requirement
+- [x] Address CodeQL alert 1: Pin dtolnay/rust-toolchain to commit hash
+- [x] Address CodeQL alert 2: Pin taiki-e/install-action to commit hash
 - [x] Pre-commit gate passes (exit 0)
 - [x] Update journals
 - [x] Commit changes
-- [ ] Code review
-- [ ] Session end verification
+- [x] Code review
+- [x] Session end verification
