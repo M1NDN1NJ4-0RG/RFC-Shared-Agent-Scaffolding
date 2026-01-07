@@ -23,7 +23,50 @@ use crate::bootstrap_v2::errors::{BootstrapError, BootstrapResult};
 use crate::bootstrap_v2::installer::{InstallResult, Installer, VerifyResult};
 use async_trait::async_trait;
 use semver::Version;
+use std::collections::HashSet;
+use std::path::PathBuf;
 use tokio::process::Command;
+
+/// Get candidate paths where actionlint might be installed
+///
+/// Returns a list of paths to check for actionlint, in priority order:
+/// 1. "actionlint" (PATH lookup - fastest if it works)
+/// 2. $HOME/go/bin/actionlint (default go install location)
+/// 3. $GOPATH/bin/actionlint (if GOPATH is set)
+///
+/// Priority order is maintained by the insertion sequence into the vector.
+/// HashSet is used only for deduplication to avoid checking the same path twice.
+///
+/// This is necessary because actionlint is installed via `go install` which
+/// puts binaries in the Go bin directory, not in system PATH by default.
+fn get_actionlint_candidates() -> Vec<String> {
+    let mut candidates = vec!["actionlint".to_string()];
+    let mut seen = HashSet::new();
+    seen.insert("actionlint".to_string());
+
+    // Try $HOME/go/bin/actionlint (default location for go install)
+    if let Ok(home) = std::env::var("HOME") {
+        let go_bin_path = PathBuf::from(home)
+            .join("go")
+            .join("bin")
+            .join("actionlint");
+        let path_str = go_bin_path.to_string_lossy().to_string();
+        if seen.insert(path_str.clone()) {
+            candidates.push(path_str);
+        }
+    }
+
+    // Try $GOPATH/bin/actionlint (custom GOPATH)
+    if let Ok(gopath) = std::env::var("GOPATH") {
+        let gopath_bin = PathBuf::from(gopath).join("bin").join("actionlint");
+        let path_str = gopath_bin.to_string_lossy().to_string();
+        if seen.insert(path_str.clone()) {
+            candidates.push(path_str);
+        }
+    }
+
+    candidates
+}
 
 /// actionlint installer
 pub struct ActionlintInstaller;
@@ -48,35 +91,48 @@ impl Installer for ActionlintInstaller {
     }
 
     async fn detect(&self, _ctx: &Context) -> BootstrapResult<Option<Version>> {
-        // Check if actionlint is in PATH
-        let output = Command::new("actionlint").arg("--version").output().await;
+        // Try multiple locations where actionlint might be installed:
+        // 1. PATH (default lookup)
+        // 2. $HOME/go/bin (default go install location)
+        // 3. $GOPATH/bin (custom GOPATH if set)
 
-        match output {
-            Ok(out) if out.status.success() => {
-                // Parse version from output (format: "1.7.10" or similar)
-                let version_str = String::from_utf8_lossy(&out.stdout);
-                let version_str = version_str.trim();
+        let candidates = get_actionlint_candidates();
 
-                // Try to parse as semver
-                Version::parse(version_str)
-                    .ok()
-                    .or_else(|| {
+        for candidate in candidates {
+            let output = Command::new(&candidate).arg("--version").output().await;
+
+            if let Ok(out) = output {
+                if out.status.success() {
+                    // Parse version from output (format: "v1.7.10" or "1.7.10" on first line)
+                    let version_str = String::from_utf8_lossy(&out.stdout);
+                    // Take only the first line since output may be multi-line
+                    let version_str = version_str.lines().next().unwrap_or("").trim();
+
+                    // Skip empty version strings
+                    if version_str.is_empty() {
+                        continue;
+                    }
+
+                    // Try to parse as semver, handling optional 'v' prefix
+                    let version_without_v = version_str.strip_prefix('v').unwrap_or(version_str);
+                    let version = Version::parse(version_without_v).ok().or_else(|| {
                         // Try parsing just the numbers if it starts with a digit
-                        version_str
+                        // Use version_without_v to avoid redundant prefix stripping
+                        version_without_v
                             .split_whitespace()
                             .find(|s| s.chars().next().is_some_and(|c| c.is_ascii_digit()))
                             .and_then(|v| Version::parse(v).ok())
-                    })
-                    .map(Some)
-                    .ok_or_else(|| {
-                        BootstrapError::DetectionFailed(format!(
-                            "actionlint version output not parseable: {}",
-                            version_str
-                        ))
-                    })
+                    });
+
+                    if let Some(v) = version {
+                        return Ok(Some(v));
+                    }
+                }
             }
-            _ => Ok(None),
         }
+
+        // Not found in any location
+        Ok(None)
     }
 
     async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {

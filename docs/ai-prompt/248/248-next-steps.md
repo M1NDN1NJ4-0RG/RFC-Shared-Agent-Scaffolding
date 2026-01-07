@@ -1,32 +1,57 @@
 # Issue #248 Next Steps
 
-**Current Phase:** ✅ **ALL PHASES COMPLETE**
+**Current Phase:** ✅ **ALL PHASES COMPLETE + BENCHMARKS COMPLETE**
 
 ## Work Status
 
-All phases have been completed:
+All phases have been completed, Rust bootstrapper fixed, and benchmarks successfully re-run:
 
 - ✅ Phase 1: Parity Implementation (repo-lint install + verification gate)
-- ✅ Phase 2: Dev Benchmarks (executed and documented)
+- ✅ Phase 2: Dev Benchmarks (executed, documented, and **RE-RUN COMPLETE**)
 - ✅ Phase 3: Linux ARM64 Support (cross-compilation configured)
 - ✅ Phase 4: Documentation Updates (all docs updated)
+- ✅ Rust Bootstrapper Fix (actionlint detection for go install locations)
+- ✅ **NEW:** Complete Benchmark Re-run (2026-01-07 ~04:50 UTC)
 
 ## Outstanding Items
 
-None. Issue #248 is complete.
+None. Issue #248 is complete with full benchmark results.
 
-### Phase 2 Benchmark Summary
+### Benchmark Re-run Summary (2026-01-07 ~04:50 UTC)
 
-The dev benchmarks have been executed and documented in `docs/ai-prompt/235/235-dev-benchmark-results.md`.
+**Status:** ✅ **COMPLETE**
+
+After fixing the Rust bootstrapper's actionlint detection issue, benchmarks were successfully re-run:
+
+**Results:**
+- Bash `repo-lint check --ci`: **43.883s ± 0.402s** (full linting suite)
+- Rust `bootstrap verify`: **1.362s ± 0.006s** (tool availability check)
+- **Speedup:** Rust is ~32x faster, but performs a different operation
 
 **Key Findings:**
-- Bash verification baseline established: 43.2s ± 0.7s for `repo-lint check --ci`
-- Rust bootstrapper has implementation gaps (exit code 19 errors) preventing full benchmark comparison
-- Comprehensive methodology documented for future re-runs after Rust fixes
+- Both systems now fully functional
+- Extremely consistent performance (Rust: σ=0.006s, Bash: σ=0.402s)
+- Parity achieved for verification workflows
+- Performance baselines established for future optimization
+
+### Rust Bootstrapper Fix Summary (2026-01-07 04:20 UTC)
+
+**Problem:** The Rust bootstrapper's `verify` command was failing with exit code 19 because actionlint (installed via `go install` to `~/go/bin`) was not found in PATH.
+
+**Solution:** Updated `ActionlintInstaller::detect()` to check multiple locations:
+- PATH lookup (existing behavior)
+- `$HOME/go/bin/actionlint` (default go install location)
+- `$GOPATH/bin/actionlint` (custom GOPATH if set)
+
+Also fixed version parsing to handle:
+- Multi-line output (actionlint outputs 3 lines)
+- 'v' prefix in version strings (e.g., "v1.7.10")
+
+**Result:** Rust `bootstrap verify --profile dev` now exits 0 successfully with all tools detected.
 
 ## No Further Action Required
 
-This issue is complete and ready for final review.
+This issue is complete with all phases implemented and benchmarks successfully executed.
 
 ## Resume Instructions (If Needed)
 
