@@ -7,11 +7,16 @@
 - [x] Phase 2: Define the policy (COMPLETE)
 - [ ] Phase 3: Tooling design (IN PROGRESS)
   - [ ] 3.1: Evaluate existing repo_lint Python runner (PARTIAL)
-  - [x] 3.2: Enable Ruff ANN* rules in pyproject.toml (COMPLETE - per-file-ignores for gradual rollout)
-  - [ ] 3.3: Implement PEP 526 checking (evaluate if needed beyond Ruff)
+  - [x] 3.2: Enable Ruff ANN* rules in pyproject.toml (COMPLETE)
+  - [ ] 3.3: Implement PEP 526 checker (REQUIRED - Ruff doesn't cover module/class attributes)
   - [ ] 3.4: Docstring validation consolidation (MANDATORY - large scope)
   - [ ] 3.5: Markdown contracts + linting support (MANDATORY - large scope)
   - [ ] 3.6: TOML contracts + linting support (MANDATORY - large scope)
+
+**Phase 3 Status:**
+- Created detailed implementation plan: `278-phase-3-implementation-plan.md`
+- Estimated remaining scope: 28-48 hours
+- Recommendation: Pick ONE of 3.4/3.5/3.6 and complete fully in next session
 
 ## Resume Pointers
 

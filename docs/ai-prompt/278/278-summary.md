@@ -138,7 +138,15 @@
 - Verified configuration with `ruff check` and `repo-lint check --ci`
 
 **Next steps for Phase 3:**
-- Evaluate whether PEP 526 (module-level/class attributes) needs custom checker beyond Ruff
+- **Phase 3.3 investigation complete:** Ruff ANN* does NOT detect missing module-level/class attribute annotations. Custom PEP 526 checker REQUIRED.
 - Plan docstring validation consolidation (Phase 3.4)
 - Plan Markdown linting integration (Phase 3.5)
 - Plan TOML linting integration (Phase 3.6)
+
+**Phase 3.3 findings:**
+- Tested Ruff with sample file containing:
+  - Unannotated module-level variable → NOT detected by Ruff ANN*
+  - Unannotated class attribute → NOT detected by Ruff ANN*
+  - Unannotated function parameter → DETECTED by Ruff ANN* ✓
+  - Missing function return type → DETECTED by Ruff ANN* ✓
+- **Conclusion:** Ruff ANN* handles function annotations perfectly. Custom AST-based checker needed for PEP 526 module-level and class attributes.
