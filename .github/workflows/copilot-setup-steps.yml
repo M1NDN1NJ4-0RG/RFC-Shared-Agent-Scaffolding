@@ -208,7 +208,7 @@ jobs:
         if: ${{ hashFiles('rust/**') != '' }}
         uses: taiki-e/install-action@v2
         with:
-          tool: taplo,cargo-audit,cargo-nextest
+          tool: cargo-audit,cargo-deny,cargo-llvm-cov,cargo-nextest,git-cliff,grcov,hyperfine,just,osv-scanner,taplo,trivy,typos
 
       - name: Verify Rust toolchain
         if: ${{ hashFiles('rust/**') != '' }}
