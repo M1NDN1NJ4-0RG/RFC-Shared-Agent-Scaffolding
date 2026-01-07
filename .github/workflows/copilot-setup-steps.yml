@@ -1,34 +1,73 @@
 # Workflow: Copilot Setup Steps
 #
-# Purpose: Provides setup steps for GitHub Copilot agent development environment.
-# Installs required tooling (Python, shell, PowerShell, Perl, Go-based tools)
-# needed for agent code review and editing tasks.
+# Purpose
+# - Pre-install and verify common toolchains in the GitHub Actions runner environment so
+#   Copilot Coding Agent sessions can run immediately (repo-lint, formatters, linters, etc.).
+# - Provides a deterministic baseline for CI and agent workflows without requiring
+#   per-session bootstrap scripts.
 #
-# Dependencies:
-# - Python 3.12 (for repo-lint and Python CLI tools)
-# - ripgrep (rg) for fast searching
-# - jq + yq for JSON/YAML inspection
-# - Go (for shfmt, actionlint when needed)
-# - Rust toolchain (rustfmt, clippy) + helper tools (taplo, cargo-audit, cargo-nextest)
-# - Perl tooling (perlcritic, PPI when Perl files exist)
-# - PowerShell tooling (PSScriptAnalyzer when .ps1 files exist)
-# - Node.js tooling for Markdown linting (markdownlint-cli)
+# What this workflow installs / verifies
+# - Base OS tools (always):
+#   - ripgrep (rg) for searching (REQUIRED grep tool)
+#   - jq for JSON inspection
+#   - curl for downloading pinned binaries
+#   - perl + cpanminus (cpanm) for Perl tooling
 #
-# Triggers:
-# - Manual workflow dispatch (for testing)
-# - Pushes modifying this workflow file
-# - Pull requests modifying this workflow file
+# - YAML tooling (always):
+#   - yq (Mike Farah Go-yq) installed from GitHub releases (pinned version) to avoid the
+#     distro `yq` implementation mismatch.
 #
-# Outputs:
-# - Status check: "copilot-setup-steps"
-# - Artifacts: None
-# - Side effects: Installs development tools for Copilot agent session
+# - Python tooling (always):
+#   - Python 3.12 via actions/setup-python
+#   - pip caching keyed by repo root `pyproject.toml`
+#   - Python CLI/tooling installed via pip --user, including:
+#     - Formatting/lint/test: black, ruff, pylint, yamllint, pytest, mdformat
+#     - CLI/UX: click, rich, rich-click, typer, tqdm
+#     - Networking/automation: paramiko, netmiko, napalm
+#     - Data/config helpers: json5, orjson, jsonschema, ruamel.yaml, pydantic, jmespath
+#     - HTTP/retries: requests, httpx, tenacity
+#   - repo-lint installed from THIS repository (editable) and verified via:
+#     - `repo-lint --help` and `python -m tools.repo_lint.cli --help`
 #
-# Notes:
-# - Go setup only runs when shell scripts or workflow files exist
-# - Tools are installed conditionally based on file types present in repository
-# - Some tools are pinned to known-good versions for determinism
-# - PATH modifications in GitHub Actions take effect only in subsequent steps
+# - Shell toolchain (conditional):
+#   - shellcheck (apt) only when *.sh exists
+#   - shfmt (Go install) only when *.sh exists
+#
+# - GitHub Actions linting (conditional):
+#   - actionlint (Go install) only when workflow files exist
+#
+# - PowerShell toolchain (conditional):
+#   - pwsh presence verified (ubuntu-latest includes pwsh)
+#   - PSScriptAnalyzer installed only when *.ps1 exists
+#
+# - Perl toolchain (conditional):
+#   - Perl::Critic + PPI via apt when *.pl exists (preferred)
+#   - cpanm fallback when *.pl exists (best-effort), with a hard requirement that
+#     `perlcritic` ends up available if Perl files exist.
+#
+# - Rust toolchain (conditional, when rust/** exists):
+#   - dtolnay/rust-toolchain@stable with rustfmt + clippy components
+#   - helper tools via taiki-e/install-action (audit/deny/coverage/nextest + utilities):
+#     cargo-audit, cargo-deny, cargo-llvm-cov, cargo-nextest,
+#     git-cliff, grcov, hyperfine, just, osv-scanner, taplo, trivy, typos
+#
+# - Markdown linting (conditional):
+#   - Node.js 20 setup when *.md exists
+#   - markdownlint-cli installed globally when *.md exists
+#
+# Triggers
+# - Manual workflow_dispatch (for validation)
+# - Push/PRs that modify this workflow file
+#
+# Output / contract
+# - Job name MUST be `copilot-setup-steps` for Copilot to pick it up.
+# - This workflow is intentionally verbose about tool verification to fail fast when a
+#   runner environment is missing required capabilities.
+#
+# Notes
+# - Go is only set up when shfmt and/or actionlint are required.
+# - PATH updates via $GITHUB_PATH only apply to subsequent steps (this workflow also
+#   exports PATH locally when needed inside a step).
 
 name: "Copilot Setup Steps"
 
@@ -63,6 +102,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
+          cache-dependency-path: pyproject.toml
 
       - name: Install required OS packages
         shell: bash
@@ -74,9 +114,25 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             ripgrep \
             jq \
-            yq \
+            curl \
             perl \
             cpanminus
+
+          # Install Mike Farah's Go-yq (the Ubuntu/Debian `yq` package is a different implementation)
+          YQ_VERSION="v4.44.3"
+          ARCH="$(uname -m)"
+          case "$ARCH" in
+            x86_64|amd64) YQ_ARCH="amd64" ;;
+            aarch64|arm64) YQ_ARCH="arm64" ;;
+            *)
+              echo "ERROR: Unsupported architecture for yq: $ARCH" >&2
+              exit 1
+              ;;
+          esac
+
+          sudo curl -fsSL "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_${YQ_ARCH}" -o /usr/local/bin/yq
+          sudo chmod +x /usr/local/bin/yq
+          yq --version
 
           # Conditional tools (only installed if the repo contains relevant files)
           if git ls-files '*.sh' | rg -q .; then
@@ -96,7 +152,7 @@ jobs:
             exit 1
           fi
 
-      - name: Install Python CLI tools (black, mdformat, pylint, pytest, repo-lint, ruff, yamllint)
+      - name: Install Python CLI tools (black, click, mdformat, network libs, pylint, pytest, repo-lint, rich, ruff, yamllint)
         shell: bash
         run: |
           set -euo pipefail
@@ -108,10 +164,27 @@ jobs:
           # Install Python tools for the agent session (user-level so we don't need sudo).
           python -m pip install --user \
             black \
+            click \
+            httpx \
+            jmespath \
+            json5 \
+            jsonschema \
             mdformat \
+            napalm \
+            netmiko \
+            orjson \
+            paramiko \
+            pydantic \
             pylint \
             pytest \
+            requests \
+            rich \
+            rich-click \
+            ruamel.yaml \
             ruff \
+            tenacity \
+            tqdm \
+            typer \
             yamllint
 
           # Install repo-lint from THIS repository (editable).
@@ -131,6 +204,21 @@ jobs:
           python -m pytest --version
           python -m ruff --version
           python -m yamllint --version
+
+          # Extra sanity checks for added tooling
+          python -c "import click; print(click.__version__)"
+          python -c "import rich; print(rich.__version__)"
+          python -c "import rich_click; print(rich_click.__version__)"
+          python -c "import tqdm; print(tqdm.__version__)"
+          python -c "import paramiko; print(paramiko.__version__)"
+          python -c "import netmiko; print(netmiko.__version__)"
+          python -c "import napalm; print(napalm.__version__)"
+          python -c "import json5; print(json5.__version__)"
+          python -c "import orjson; print(orjson.__version__)"
+          python -c "import ruamel.yaml; import importlib.metadata as m; print(m.version('ruamel.yaml'))"
+          python -c "import pydantic; print(pydantic.__version__)"
+          python -c "import typer; print(typer.__version__)"
+          python -c "import tenacity; print(tenacity.__version__)"
 
           # repo-lint should be available both as a console script and as a module
           command -v repo-lint
