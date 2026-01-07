@@ -35,10 +35,18 @@ async fn pip_install_editable(ctx: &Context) -> BootstrapResult<()> {
     }
 
     let venv_python = ctx.venv_python();
-    
+
     // First upgrade pip, setuptools, and wheel
     let upgrade_output = Command::new(&venv_python)
-        .args(["-m", "pip", "install", "--upgrade", "pip", "setuptools", "wheel"])
+        .args([
+            "-m",
+            "pip",
+            "install",
+            "--upgrade",
+            "pip",
+            "setuptools",
+            "wheel",
+        ])
         .output()
         .await
         .map_err(|e| BootstrapError::CommandFailed {
@@ -81,17 +89,14 @@ async fn pip_install_editable(ctx: &Context) -> BootstrapResult<()> {
 /// Helper to detect repo-lint version
 async fn detect_repo_lint(ctx: &Context) -> BootstrapResult<Option<Version>> {
     let repo_lint_bin = ctx.repo_lint_bin();
-    
+
     // Check if repo-lint binary exists
     if !repo_lint_bin.exists() {
         return Ok(None);
     }
 
     // Try to get version from repo-lint --version
-    let output = Command::new(&repo_lint_bin)
-        .arg("--version")
-        .output()
-        .await;
+    let output = Command::new(&repo_lint_bin).arg("--version").output().await;
 
     match output {
         Ok(out) if out.status.success() => {
@@ -116,15 +121,12 @@ async fn detect_repo_lint(ctx: &Context) -> BootstrapResult<Option<Version>> {
 /// Helper to verify repo-lint --help works
 async fn verify_repo_lint_help(ctx: &Context) -> BootstrapResult<bool> {
     let repo_lint_bin = ctx.repo_lint_bin();
-    
+
     if !repo_lint_bin.exists() {
         return Ok(false);
     }
 
-    let output = Command::new(&repo_lint_bin)
-        .arg("--help")
-        .output()
-        .await;
+    let output = Command::new(&repo_lint_bin).arg("--help").output().await;
 
     Ok(matches!(output, Ok(out) if out.status.success()))
 }

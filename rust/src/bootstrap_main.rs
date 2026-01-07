@@ -164,12 +164,10 @@ async fn handle_install(
 
     // 11. Run automatic verification gate (repo-lint check --ci)
     // This runs if repo-lint was in the plan (profile includes it)
-    let repo_lint_in_plan = plan.phases.iter().any(|phase| {
-        phase
-            .steps
-            .iter()
-            .any(|step| step.installer == "repo-lint")
-    });
+    let repo_lint_in_plan = plan
+        .phases
+        .iter()
+        .any(|phase| phase.steps.iter().any(|step| step.installer == "repo-lint"));
 
     if repo_lint_in_plan && !dry_run {
         println!("\n🔍 Running verification gate (repo-lint check --ci)...");
@@ -188,8 +186,12 @@ async fn handle_install(
                         println!("  ✓ Verification gate passed (no violations)");
                     }
                     1 => {
-                        println!("  ✓ Verification gate passed (tools functional, violations found)");
-                        println!("  Note: Repository has lint violations but all tools are working");
+                        println!(
+                            "  ✓ Verification gate passed (tools functional, violations found)"
+                        );
+                        println!(
+                            "  Note: Repository has lint violations but all tools are working"
+                        );
                     }
                     2 => {
                         eprintln!("  ✗ Verification gate failed: Missing tools");
