@@ -116,7 +116,7 @@ jobs:
           set -euo pipefail
           go install github.com/rhysd/actionlint/cmd/actionlint@latest
           echo "$HOME/go/bin" >> "$GITHUB_PATH"
-          actionlint -version
+          "$HOME/go/bin/actionlint" -version
 
       # PowerShell tooling (installed only if .ps1 exists)
       - name: Install PSScriptAnalyzer (when PowerShell exists)
