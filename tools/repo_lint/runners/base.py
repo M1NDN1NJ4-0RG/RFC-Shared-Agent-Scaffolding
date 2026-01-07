@@ -266,8 +266,6 @@ class Runner(ABC):
                     results_map[method_name] = result
                 except Exception as e:
                     # Create error result for failed tool
-                    from tools.repo_lint.common import LintResult
-
                     results_map[method_name] = LintResult(
                         tool=method_name, passed=False, violations=[], error=f"Tool execution failed: {str(e)}"
                     )

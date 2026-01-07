@@ -270,6 +270,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
             if enable_tool_parallelism and hasattr(runner, "check_parallel"):
                 # Use parallel check if available
+                # Use min(jobs, 4) to avoid excessive subprocess spawning per runner
                 results = runner.check_parallel(max_workers=min(jobs, 4))
             else:
                 # Standard sequential execution
@@ -519,6 +520,8 @@ def cmd_check(args: argparse.Namespace) -> int:
     use_json = getattr(args, "json", False)
 
     # Calculate safe AUTO maximum for default behavior
+    # Upper limit of 8 chosen based on: diminishing returns beyond 8 parallel runners,
+    # memory constraints (each runner spawns subprocesses), and CI stability
     cpu = os.cpu_count() or 1
     auto_max = min(max(cpu - 1, 1), 8)  # Safe default: 1..8
 
