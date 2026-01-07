@@ -1,19 +1,35 @@
 # Issue #248 Next Steps
 
-**Current Phase:** ✅ **ALL PHASES COMPLETE**
+**Current Phase:** ✅ **ALL PHASES COMPLETE + RUST FIX APPLIED**
 
 ## Work Status
 
-All phases have been completed:
+All phases have been completed and the Rust bootstrapper verification issue has been fixed:
 
 - ✅ Phase 1: Parity Implementation (repo-lint install + verification gate)
 - ✅ Phase 2: Dev Benchmarks (executed and documented)
 - ✅ Phase 3: Linux ARM64 Support (cross-compilation configured)
 - ✅ Phase 4: Documentation Updates (all docs updated)
+- ✅ **NEW:** Rust Bootstrapper Fix (actionlint detection for go install locations)
 
 ## Outstanding Items
 
 None. Issue #248 is complete.
+
+### Rust Bootstrapper Fix Summary (2026-01-07 04:20 UTC)
+
+**Problem:** The Rust bootstrapper's `verify` command was failing with exit code 19 because actionlint (installed via `go install` to `~/go/bin`) was not found in PATH.
+
+**Solution:** Updated `ActionlintInstaller::detect()` to check multiple locations:
+- PATH lookup (existing behavior)
+- `$HOME/go/bin/actionlint` (default go install location)
+- `$GOPATH/bin/actionlint` (custom GOPATH if set)
+
+Also fixed version parsing to handle:
+- Multi-line output (actionlint outputs 3 lines)
+- 'v' prefix in version strings (e.g., "v1.7.10")
+
+**Result:** Rust `bootstrap verify --profile dev` now exits 0 successfully with all tools detected.
 
 ### Phase 2 Benchmark Summary
 
@@ -21,8 +37,9 @@ The dev benchmarks have been executed and documented in `docs/ai-prompt/235/235-
 
 **Key Findings:**
 - Bash verification baseline established: 43.2s ± 0.7s for `repo-lint check --ci`
-- Rust bootstrapper has implementation gaps (exit code 19 errors) preventing full benchmark comparison
-- Comprehensive methodology documented for future re-runs after Rust fixes
+- Rust bootstrapper verification issue fixed (was exit code 19, now exit 0)
+- Rust `bootstrap verify` is ~1.5s (checks tool availability)
+- Note: `bootstrap verify` and `repo-lint check --ci` perform different operations
 
 ## No Further Action Required
 
