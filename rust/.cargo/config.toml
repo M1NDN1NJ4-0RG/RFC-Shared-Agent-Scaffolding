@@ -4,8 +4,20 @@
 # Currently used for building Linux ARM64 binaries on x86_64.
 #
 # Prerequisites for ARM64 cross-compilation:
-# - gcc-aarch64-linux-gnu must be installed on the build system
-#   (e.g., via `sudo apt-get install gcc-aarch64-linux-gnu` on Debian/Ubuntu)
+# - ARM64 cross-compilation toolchain must be installed on the build system
+#
+# Debian/Ubuntu:
+#   sudo apt-get install gcc-aarch64-linux-gnu
+#
+# RHEL/CentOS/Fedora:
+#   sudo dnf install gcc-aarch64-linux-gnu
+#
+# Arch Linux:
+#   sudo pacman -S aarch64-linux-gnu-gcc
+#
+# macOS:
+#   brew install aarch64-elf-gcc
+#   (Note: May need additional configuration for musl target)
 
 [target.aarch64-unknown-linux-musl]
 linker = "aarch64-linux-gnu-gcc"

@@ -33,9 +33,37 @@ use tokio::process::Command;
 pub const REPO_LINT_INSTALLER_ID: &str = "repo-lint";
 
 /// Compiled regex for version parsing (compiled once)
+///
+/// Pattern matches semantic versions: X.Y.Z with optional pre-release and build metadata
+/// Examples: 1.0.0, 1.0.0-alpha, 1.0.0-alpha.1+build.123
 static VERSION_REGEX: OnceLock<Regex> = OnceLock::new();
 
 /// Helper to install repo-lint in editable mode
+///
+/// # Purpose
+///
+/// Installs the repo-lint package in editable mode from the repository root
+/// using `pip install -e .`. This matches the Bash bootstrapper behavior and
+/// allows development changes to repo-lint to be immediately available.
+///
+/// # Process
+///
+/// 1. Upgrades pip, setuptools, and wheel to latest versions (ensures compatibility)
+/// 2. Installs repo-lint from repository root in editable mode
+/// 3. Verifies the installation succeeded
+///
+/// # Errors
+///
+/// Returns `BootstrapError::CommandFailed` if:
+/// - pip upgrade fails
+/// - The installation command fails to execute
+///
+/// Returns `BootstrapError::InstallFailed` if:
+/// - pip install command exits with non-zero status
+///
+/// # Arguments
+///
+/// * `ctx` - Bootstrap context containing venv paths and dry-run flag
 async fn pip_install_editable(ctx: &Context) -> BootstrapResult<()> {
     if ctx.dry_run {
         println!("[DRY-RUN] Would install repo-lint via pip install -e .");
@@ -111,8 +139,9 @@ async fn detect_repo_lint(ctx: &Context) -> BootstrapResult<Option<Version>> {
             let output_str = String::from_utf8_lossy(&out.stdout);
             // Try to parse version from output using regex for semantic versioning
             // Format: "repo-lint, version X.Y.Z" or similar
+            // Pattern matches: X.Y.Z with optional pre-release (-alpha.1) and build metadata (+build.123)
             let re = VERSION_REGEX.get_or_init(|| {
-                Regex::new(r"(\d+\.\d+\.\d+)")
+                Regex::new(r"(\d+\.\d+\.\d+(?:-[\w.]+)?(?:\+[\w.]+)?)")
                     .expect("Failed to compile version regex - this is a bug")
             });
             if let Some(captures) = re.captures(&output_str) {
