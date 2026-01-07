@@ -260,10 +260,10 @@ repo-lint check --progress
 #### Deterministic Output
 
 Parallel execution maintains deterministic, stable output:
-- Runner output is buffered and printed in registration order
-- No log interleaving
+- Final violation results are buffered and reported in runner registration order
 - Exit codes and violation counts are identical to sequential execution
 - Same violations reported regardless of `--jobs` value
+- Aggregated summary output is deterministic
 
 #### Performance Impact
 

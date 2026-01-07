@@ -31,10 +31,15 @@
 
 from __future__ import annotations
 
+import inspect
+import logging
+import re
 import shutil
 import subprocess
+import traceback
 import warnings
 from abc import ABC, abstractmethod
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import List
 
@@ -239,10 +244,6 @@ class Runner(ABC):
                methods to parallelize. The current pattern matches methods starting with
                '_run_' that aren't fix/format/helper/util methods.
         """
-        import inspect
-        import re
-        from concurrent.futures import ThreadPoolExecutor, as_completed
-
         # FUTURE: Replace introspection with explicit declaration pattern (decorator or attribute)
         # Current implementation relies on naming conventions which may not be reliable across
         # all runners. Consider adding a @parallelizable decorator or _parallelizable_methods
@@ -260,11 +261,14 @@ class Runner(ABC):
             ):
                 # Extract tool name using regex for more robust parsing
                 # Handles patterns like: _run_black_check, _run_pylint, _run_docstring_validation
-                tool_name_match = re.match(r"_run_([a-z_]+?)(?:_check|_validation)?$", name)
+                # Also supports numbers: _run_python3_check, _run_ps1_check
+                tool_name_match = re.match(r"_run_([a-z0-9_]+?)(?:_check|_validation)?$", name)
                 if tool_name_match:
                     tool_name = tool_name_match.group(1)
                     # Verify the method matches check() behavior by checking if tool filtering applies
-                    if self._should_run_tool(tool_name):
+                    # Only call _should_run_tool if it exists; otherwise, include all discovered methods
+                    should_run_tool = getattr(self, "_should_run_tool", None)
+                    if should_run_tool is None or should_run_tool(tool_name):
                         tool_methods.append((name, method))
 
         # If no tool methods found or only one, fall back to sequential
@@ -285,9 +289,6 @@ class Runner(ABC):
                     results_map[method_name] = result
                 except Exception as e:
                     # Log full exception for debugging
-                    import logging
-                    import traceback
-
                     logging.error("Tool method %s failed with exception:\n%s", method_name, traceback.format_exc())
                     # Create error result for failed tool
                     results_map[method_name] = LintResult(

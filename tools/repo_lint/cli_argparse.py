@@ -64,6 +64,22 @@ from tools.repo_lint.runners.rust_runner import RustRunner
 from tools.repo_lint.runners.yaml_runner import YAMLRunner
 
 
+def positive_int(value):
+    """Validate that a value is a positive integer.
+
+    :param value: String value from command line
+    :returns: Integer value if valid
+    :raises: argparse.ArgumentTypeError if invalid
+    """
+    try:
+        ivalue = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError(f"{value} is not a valid integer") from exc
+    if ivalue <= 0:
+        raise argparse.ArgumentTypeError(f"{value} must be a positive integer (>= 1)")
+    return ivalue
+
+
 def create_parser() -> argparse.ArgumentParser:
     """Create argument parser for repo_lint CLI.
 
@@ -96,7 +112,7 @@ def create_parser() -> argparse.ArgumentParser:
     check_parser.add_argument(
         "--jobs",
         "-j",
-        type=int,
+        type=positive_int,
         default=None,
         metavar="N",
         help="Number of parallel jobs (default: AUTO based on CPU count, env: REPO_LINT_JOBS)",
@@ -267,8 +283,10 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
             # Run the action callback (with optional tool-level parallelism)
             # For check mode with tool-level parallelism enabled, run tools in parallel
+            # Check if this is check mode by verifying action_callback is the check method
+            is_check_mode = hasattr(runner, "check") and action_callback is getattr(runner, "check")
             enable_tool_parallelism = (
-                mode == "Linting"
+                is_check_mode
                 and jobs > 1
                 and os.getenv("REPO_LINT_TOOL_PARALLELISM", "").lower() in ("1", "true", "yes")
             )
@@ -322,8 +340,12 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
 
             :param executor_futures: Dict mapping futures to (key, name) tuples
             :param progress_tracker: Optional Rich Progress object with task
-            :returns: None (updates runner_results and runner_timings in enclosing scope)
+            :returns: Tuple of (collected_results dict, collected_timings dict, error_code or None)
             """
+            collected_results = {}
+            collected_timings = {}
+            error_code = None
+
             for future in as_completed(executor_futures):
                 _key, name = executor_futures[future]
                 try:
@@ -331,8 +353,8 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                     runner_key, runner_name, results, duration, error_msg = result_tuple
 
                     # Store results in order
-                    runner_results[runner_key] = (runner_name, results, error_msg)
-                    runner_timings[runner_key] = duration
+                    collected_results[runner_key] = (runner_name, results, error_msg)
+                    collected_timings[runner_key] = duration
 
                     # Update progress if tracker provided
                     if progress_tracker:
@@ -348,11 +370,13 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                             tools_part = tools_part if tools_part else error_msg
                             tools = [t.strip() for t in tools_part.split(",") if t.strip()]
                             print_install_instructions(tools, ci_mode=args.ci)
-                            return ExitCode.MISSING_TOOLS
+                            error_code = ExitCode.MISSING_TOOLS
+                            break
                         safe_print(f"⚠️  {error_msg}", f"WARNING: {error_msg}")
                         print("   Run 'repo-lint install' to install them")
                         print("")
-                        return ExitCode.MISSING_TOOLS
+                        error_code = ExitCode.MISSING_TOOLS
+                        break
 
                 except Exception as e:
                     safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
@@ -360,7 +384,10 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                         import traceback
 
                         traceback.print_exc()
-            return None
+                    error_code = ExitCode.INTERNAL_ERROR
+                    break
+
+            return (collected_results, collected_timings, error_code)
 
         # Use Rich Progress if available and progress is enabled
         if show_progress:
@@ -384,7 +411,9 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                         }
 
                         # Process futures with progress tracking
-                        error_code = process_futures(future_to_runner, (progress, task))
+                        results_data, timings_data, error_code = process_futures(future_to_runner, (progress, task))
+                        runner_results.update(results_data)
+                        runner_timings.update(timings_data)
                         if error_code:
                             return error_code
             except ImportError:
@@ -401,7 +430,9 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 }
 
                 # Process futures without progress tracking
-                error_code = process_futures(future_to_runner)
+                results_data, timings_data, error_code = process_futures(future_to_runner)
+                runner_results.update(results_data)
+                runner_timings.update(timings_data)
                 if error_code:
                     return error_code
 
@@ -536,6 +567,12 @@ def cmd_check(args: argparse.Namespace) -> int:
         if env_jobs:
             try:
                 jobs = int(env_jobs)
+                if jobs <= 0:
+                    safe_print(
+                        f"❌ Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be a positive integer >= 1)",
+                        f"ERROR: Invalid REPO_LINT_JOBS value: '{env_jobs}' (must be a positive integer >= 1)",
+                    )
+                    return ExitCode.INTERNAL_ERROR
                 explicit_override = True
                 source = f"REPO_LINT_JOBS={env_jobs}"
             except ValueError:
@@ -557,11 +594,6 @@ def cmd_check(args: argparse.Namespace) -> int:
     else:
         explicit_override = True
         source = f"--jobs={jobs}"
-
-    # Validate jobs count
-    if jobs <= 0:
-        safe_print(f"❌ Invalid jobs value: {jobs} (must be >= 1)", f"ERROR: Invalid jobs value: {jobs} (must be >= 1)")
-        return ExitCode.INTERNAL_ERROR
 
     # Check for hard cap override (opt-in safety lock for CI/agents)
     hard_cap_enabled = os.getenv("REPO_LINT_HARD_CAP_JOBS", "").lower() in ("1", "true", "yes")
