@@ -46,3 +46,7 @@ dist/*.tar.gz
 Thumbs.db
 # NOTE: black.diff in root is excluded, but logs/*/black.diff is allowed
 /black.diff
+
+# Agent files
+CLAUDE.md
+AGENTS.md
