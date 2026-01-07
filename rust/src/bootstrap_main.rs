@@ -137,10 +137,8 @@ async fn handle_install(
     let venv_path = ctx.venv_path.clone();
     if !venv_path.exists() {
         // Use progress reporter for status updates if not in JSON mode
-        if !json {
-            if ctx.verbosity != Verbosity::Quiet {
-                println!("🔧 Creating Python virtual environment...");
-            }
+        if !json && ctx.verbosity != Verbosity::Quiet {
+            println!("🔧 Creating Python virtual environment...");
         }
         let venv_info = platform::create_venv(&venv_path, dry_run).await?;
         if !dry_run && !json && ctx.verbosity != Verbosity::Quiet {
