@@ -215,13 +215,28 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+
+          # Core Rust toolchain
           rustc --version
           cargo --version
           rustfmt --version
           cargo clippy --version || true
+
+          # Installed Rust/helper tooling (via taiki-e/install-action)
           taplo --version
           cargo audit --version
+          cargo deny --version
+          cargo llvm-cov --version
           cargo nextest --version
+
+          # Extra CLI helpers
+          git-cliff --version
+          grcov --version
+          hyperfine --version
+          just --version
+          osv-scanner --version
+          trivy --version
+          typos --version
 
       # Node-based Markdown linting (repo contains markdown)
       - name: Set up Node.js
