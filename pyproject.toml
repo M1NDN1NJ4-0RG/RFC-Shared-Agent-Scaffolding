@@ -90,13 +90,22 @@ select = [
     "I",   # isort
     "N",   # pep8-naming
     "UP",  # pyupgrade
+    "ANN", # flake8-annotations (type annotation enforcement) - Issue #278
 ]
 
 # Ignore pyupgrade rules that conflict with Python 3.8+ compatibility
 # UP006: Use `list` instead of `List` - keep typing imports for 3.8 compatibility
 # UP007: Use `X | Y` instead of `Optional[X]` - keep Optional for 3.8 compatibility  
 # UP035: deprecated-import - allow typing imports for compatibility
-ignore = ["UP006", "UP007", "UP035"]
+# ANN401: Dynamically typed expressions (Any) are disallowed - we allow Any with tags
+ignore = ["UP006", "UP007", "UP035", "ANN401"]
+
+# Per-file ignores for gradual rollout (Issue #278 Phase 5)
+# Initially exclude all files from ANN checks, then gradually enable
+[tool.ruff.lint.per-file-ignores]
+# Temporarily exclude all files from annotation checks during baseline measurement
+# Remove these exclusions progressively as files are annotated
+"**/*.py" = ["ANN"]
 [tool.pylint.format]
 max-line-length = 120
 

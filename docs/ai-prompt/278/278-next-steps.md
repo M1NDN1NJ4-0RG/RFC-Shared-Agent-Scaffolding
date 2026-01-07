@@ -5,14 +5,13 @@
 - [x] Phase 0: Preflight (COMPLETE)
 - [x] Phase 1: Evaluate existing Python contracts (COMPLETE)
 - [x] Phase 2: Define the policy (COMPLETE)
-  - [x] Created `docs/contributing/python-typing-policy.md`
-- [ ] Phase 3: Tooling design
-  - [ ] 3.1: Evaluate existing repo_lint Python runner
-  - [ ] 3.2: Enable Ruff ANN* rules in pyproject.toml
-  - [ ] 3.3: Implement PEP 526 checking (if needed beyond Ruff)
-  - [ ] 3.4: Docstring validation consolidation (MANDATORY)
-  - [ ] 3.5: Markdown contracts + linting support (MANDATORY)
-  - [ ] 3.6: TOML contracts + linting support (MANDATORY)
+- [ ] Phase 3: Tooling design (IN PROGRESS)
+  - [ ] 3.1: Evaluate existing repo_lint Python runner (PARTIAL)
+  - [x] 3.2: Enable Ruff ANN* rules in pyproject.toml (COMPLETE - per-file-ignores for gradual rollout)
+  - [ ] 3.3: Implement PEP 526 checking (evaluate if needed beyond Ruff)
+  - [ ] 3.4: Docstring validation consolidation (MANDATORY - large scope)
+  - [ ] 3.5: Markdown contracts + linting support (MANDATORY - large scope)
+  - [ ] 3.6: TOML contracts + linting support (MANDATORY - large scope)
 
 ## Resume Pointers
 

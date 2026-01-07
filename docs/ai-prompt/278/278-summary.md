@@ -125,3 +125,20 @@
 - Maximum compatibility approach (Python 3.8+)
 - Ruff ANN* rules as primary enforcement mechanism
 - Report-only rollout initially, then gradual enforcement
+
+---
+
+### 2026-01-07 - Phase 3.1, 3.2 In Progress
+
+**Phase 3.2: Enable Ruff ANN* rules**
+- Updated `pyproject.toml` to select ANN (flake8-annotations) rules
+- Configured per-file-ignores to exclude all files initially (measurement-first approach)
+- Ignored ANN401 (Any disallowed) - we allow `Any` with explicit tags
+- Kept UP006, UP007, UP035 ignored for Python 3.8+ compatibility (prefer `Optional[T]`)
+- Verified configuration with `ruff check` and `repo-lint check --ci`
+
+**Next steps for Phase 3:**
+- Evaluate whether PEP 526 (module-level/class attributes) needs custom checker beyond Ruff
+- Plan docstring validation consolidation (Phase 3.4)
+- Plan Markdown linting integration (Phase 3.5)
+- Plan TOML linting integration (Phase 3.6)
