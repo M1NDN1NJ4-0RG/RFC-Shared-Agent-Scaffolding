@@ -58,7 +58,7 @@ These decisions are **locked in** for this issue and should be treated as requir
   - [x] CLI/utility scripts
   - [x] Tests/fixtures
   - [x] Generated or third-party vendored code (if any)
-- [ ] Identify any “excluded” directories/patterns already in use (and why).
+- [x] Identify any “excluded” directories/patterns already in use (and why).
 
 **Deliverable:** `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-python-annotation-inventory.md`
 
