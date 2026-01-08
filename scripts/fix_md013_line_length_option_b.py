@@ -388,7 +388,7 @@ def _rewrite_file(path: Path) -> bool:
         next_i, para_lines = _collect_paragraph(lines, i)
         para_text = " ".join(s.strip() for s in para_lines).strip()
 
-        if para_text and len(para_text) > MAX_LEN and any(len(l) > MAX_LEN for l in para_lines):
+        if para_text and len(para_text) > MAX_LEN and any(len(line) > MAX_LEN for line in para_lines):
             out.extend(_wrap_text(para_text))
         else:
             out.extend(para_lines)
