@@ -120,31 +120,46 @@ All sub-phases of Phase 3.9 are now complete:
 
 **Status:** Ready for code review and merge.
 
-**Next Priority Options:**
+**Next Execution Order (MANDATORY - Human Approved):**
 
-After code review approval and merge, the next MANDATORY phases are:
+The following phases MUST be executed in this exact order:
 
-**Option A: Phase 3.3 - Custom PEP 526 Checker (DEFERRED - HIGH PRIORITY)**
+### 1. Phase 3.3 - Custom PEP 526 Checker (NEXT - HIGH PRIORITY)
 - Design and implement AST-based checker for module-level/class attribute annotations
 - This is the LAST remaining Phase 3 item (3.3)
 - All other Phase 3 sub-phases are complete
+- **Sub-phases:**
+  - [ ] 3.3.1: Design AST-based checker for module-level/class attribute annotations
+  - [ ] 3.3.2: Implement checker in repo_lint
+  - [ ] 3.3.3: Add configuration support (per-file-ignores, gradual rollout)
+  - [ ] 3.3.4: Comprehensive unit tests
+  - [ ] 3.3.5: Integration with `repo-lint check --ci`
 
-**Option B: Phase 4 - Autofix Strategy (MANDATORY)**
+### 2. Phase 4 - Autofix Strategy (AFTER Phase 3.3)
 - Begin autofix implementation for type annotations
 - Identify autofixable patterns
 - Create bulk migration plan
+- **Sub-phases:**
+  - [ ] 4.1: Add non-destructive autofix where safe
+  - [ ] 4.2: Bulk migration PR plan
 
-**Option C: Phase 5 - CI Enforcement Rollout (MANDATORY)**
+### 3. Phase 5 - CI Enforcement Rollout (AFTER Phase 4)
 - Implement report-only mode
 - Measure baseline violations
 - Plan gradual enforcement
+- **Sub-phases:**
+  - [ ] 5.1: Report-only mode
+  - [ ] 5.2: Enforcing mode
 
-**Option D: Phase 6 - Documentation Updates (MANDATORY)**
+### 4. Phase 6 - Documentation Updates (AFTER Phase 5)
 - Update user manual and contributing docs
 - Add type annotation examples
 - Verify docs match reality
+- **Sub-phases:**
+  - [ ] 6.1: Update repo docs
+  - [ ] 6.2: Verify docs match reality
 
-**Recommended:** Complete Phase 3.3 next (custom PEP 526 checker) to finish all Phase 3 work before moving to Phases 4-6.
+**IMMEDIATE NEXT ACTION:** Begin Phase 3.3.1 - Design AST-based checker for module-level/class attribute annotations
 
 ---
 
