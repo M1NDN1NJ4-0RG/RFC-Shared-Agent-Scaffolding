@@ -58,16 +58,6 @@
 #   - All required tools verified and available in PATH
 #   - repo-lint verified via `repo-lint --help`
 #
-# Side effects:
-#   - Modifies runner PATH to include user-level Python scripts ($HOME/.local/bin)
-#   - Modifies runner PATH to include Go binaries ($HOME/go/bin) when Go tools are installed
-#   - Installs system packages via apt-get (ripgrep, jq, curl, perl, etc.)
-#   - Installs Python packages to user site-packages (~/.local)
-#   - Installs Go tools to $HOME/go/bin (shfmt, actionlint)
-#   - Installs PowerShell modules to CurrentUser scope
-#   - Installs Perl modules via cpanm when needed
-#   - Sets PSGallery as trusted for PowerShell module installation
-#
 # Notes:
 #   - Go is only set up when shfmt and/or actionlint are required
 #   - PATH updates via $GITHUB_PATH only apply to subsequent steps
@@ -117,24 +107,26 @@ jobs:
           set -euo pipefail
           sudo apt-get update
 
-          # Always-required base tools
-          sudo apt-get install -y --no-install-recommends \
-            ripgrep \
-            jq \
-            curl \
-            perl \
-            cpanminus \
-            zip \
-            unzip \
-            p7zip-full \
-            zstd \
-            xz-utils \
-            pigz \
-            bzip2 \
-            lz4 \
-            pbzip2 \
-            file \
+          APT_TOOLS=(
+            ripgrep
+            jq
+            curl
+            perl
+            cpanminus
+            zip
+            unzip
+            p7zip-full
+            zstd
+            xz-utils
+            pigz
+            bzip2
+            lz4
+            pbzip2
+            file
             tree
+          )
+
+          sudo apt-get install -y --no-install-recommends "${APT_TOOLS[@]}"
 
           # Install Mike Farah's Go-yq (the Ubuntu/Debian `yq` package is a different implementation)
           YQ_VERSION="v4.44.3"
@@ -189,35 +181,43 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
 
           # Install Python tools for the agent session (user-level so we don't need sudo).
-          python -m pip install --user \
-            black \
-            click \
-            httpx \
-            jmespath \
-            json5 \
-            jsonschema \
-            mdformat \
-            napalm \
-            netmiko \
-            ntc-templates \
-            orjson \
-            paramiko \
-            pydantic \
-            pylint \
-            pytest \
-            requests \
-            rich \
-            rich-click \
-            ruamel.yaml \
-            ruff \
-            tenacity \
-            textfsm \
-            toml \
-            tomlkit \
-            tomli-w \
-            tqdm \
-            typer \
+            python -m pip install --user -r /dev/stdin <<'REQS'
+            # Formatting / lint / test
+            black
+            ruff
+            pylint
             yamllint
+            pytest
+            mdformat
+
+            # CLI / UI
+            click
+            rich
+            rich-click
+            tqdm
+            typer
+
+            # Networking
+            # paramiko
+            # netmiko
+            # napalm
+            # textfsm
+            # ntc-templates
+
+            # Data formats
+            json5
+            jsonschema
+            orjson
+            ruamel.yaml
+            toml
+            tomlkit
+            tomli-w
+
+            # HTTP / retry
+            requests
+            httpx
+            tenacity
+            REQS
 
           # Install repo-lint from THIS repository (editable).
           # NOTE: This repo packages repo-lint from the repository root (pyproject.toml at repo root).
