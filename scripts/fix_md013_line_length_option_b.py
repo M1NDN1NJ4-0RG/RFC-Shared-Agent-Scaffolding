@@ -65,9 +65,7 @@ TABLE_SEP_RE = re.compile(r"^\s{0,3}\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*
 # Lists:
 # - Bullet or numbered marker
 # - Optional task checkbox immediately after marker
-LIST_ITEM_PREFIX_RE = re.compile(
-    r"^(?P<indent>\s{0,3})(?P<marker>[-*+]|\d{1,4}\.)\s+"
-)
+LIST_ITEM_PREFIX_RE = re.compile(r"^(?P<indent>\s{0,3})(?P<marker>[-*+]|\d{1,4}\.)\s+")
 TASK_BOX_RE = re.compile(r"^\[(?P<state>[ xX])\]\s+")
 
 
@@ -340,11 +338,7 @@ def _rewrite_file(path: Path) -> bool:
         next_i, para_lines = _collect_paragraph(lines, i)
         para_text = " ".join(s.strip() for s in para_lines).strip()
 
-        if (
-            para_text
-            and len(para_text) > MAX_LEN
-            and any(len(l) > MAX_LEN for l in para_lines)
-        ):
+        if para_text and len(para_text) > MAX_LEN and any(len(l) > MAX_LEN for l in para_lines):
             out.extend(_wrap_text(para_text))
         else:
             out.extend(para_lines)
