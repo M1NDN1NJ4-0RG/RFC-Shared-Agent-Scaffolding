@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# pylint: disable=wrong-import-position  # Test file needs special setup
+# pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
+# ruff: noqa: SLF001
 """Unit tests for JSON/JSONC runner.
 
 :Purpose:
