@@ -1,6 +1,110 @@
 # Issue #278 - Next Steps
 
-## NEXT
+## CURRENT SESSION (2026-01-08) - Planning Remaining Work
+
+**Status:** Reviewed all previous work and issue #297. Planning remaining MANDATORY phases.
+
+### Critical Finding: NO OPTIONAL PHASES
+
+Per agent instructions: "We DO NOT have ANY OPTIONAL PHASES in this EPIC!"
+This means ALL phases including 4, 5, 6 are MANDATORY (not optional/recommended).
+
+### Work Completed (Previous Sessions)
+
+- ✅ Phase 0: Preflight (snapshots + inventory)
+- ✅ Phase 1: Evaluate existing contracts
+- ✅ Phase 2: Define policy (PEP 526 + function annotations + :rtype:)
+- ✅ Phase 3.1-3.2: Tooling evaluation + Ruff ANN* config
+- ✅ Phase 3.4.1-3.4.3: Docstring validation consolidation (core migration)
+- ✅ Phase 3.5.1-3.5.4: Markdown contracts + linting (partial cleanup)
+- ✅ Phase 3.6.1-3.6.5: TOML contracts + linting (complete with tests)
+- ✅ Phase 3.7.1-3.7.3: Exception handling policy + narrowing
+- ✅ Phase 3.8.1-3.8.4: Rich-powered logging
+
+### Remaining MANDATORY Work
+
+**Phase 3.3: Custom PEP 526 Checker (DEFERRED - HIGH PRIORITY)**
+- [ ] 3.3.1: Design AST-based checker for module-level/class attribute annotations
+- [ ] 3.3.2: Implement checker in repo_lint
+- [ ] 3.3.3: Add configuration support (per-file-ignores, gradual rollout)
+- [ ] 3.3.4: Comprehensive unit tests
+- [ ] 3.3.5: Integration with `repo-lint check --ci`
+
+**Phase 3.4.4: Docstring Validator Unit Tests (DEFERRED - MEDIUM PRIORITY)**
+- [ ] Create test files for internal validators:
+  - [ ] test_python_validator.py
+  - [ ] test_bash_validator.py
+  - [ ] test_powershell_validator.py
+  - [ ] test_perl_validator.py
+  - [ ] test_rust_validator.py
+  - [ ] test_yaml_validator.py
+  - [ ] test_validator_common.py
+- [ ] Golden fixtures for each language (pass/fail cases)
+- [ ] Regression tests for bugs found during migration
+
+**Phase 3.5.5: Markdown Runner Comprehensive Tests (COMPLETE ✅)**
+- Already has 15 comprehensive tests (added during code review)
+- Covers: file detection, tool checking, parsing, check/fix modes
+- Integration tests included
+- Mark as COMPLETE
+
+**Phase 4: Autofix Strategy (ALL MANDATORY)**
+- [ ] 4.1: Add non-destructive autofix where safe
+  - [ ] Identify autofixable patterns (-> None, trivial annotations)
+  - [ ] Implement safe autofix logic
+  - [ ] Test autofix on sample files
+- [ ] 4.2: Bulk migration PR plan
+  - [ ] Create staged migration strategy
+  - [ ] Per-directory commits plan
+  - [ ] CI green validation after each stage
+
+**Phase 5: CI Enforcement Rollout (ALL MANDATORY)**
+- [ ] 5.1: Report-only mode
+  - [ ] Add checks to CI without failing builds
+  - [ ] Produce actionable failure reports
+  - [ ] Measure baseline violations
+- [ ] 5.2: Enforcing mode
+  - [ ] Fail CI on new violations
+  - [ ] Remove temporary exemptions
+
+**Phase 6: Documentation Updates (MANDATORY)**
+- [ ] 6.1: Update repo docs
+  - [ ] User manual / README updates
+  - [ ] Contributing docs with examples
+  - [ ] PEP 526 examples
+  - [ ] Function annotation examples
+  - [ ] reST docstring :rtype: examples
+- [ ] 6.2: Verify docs match reality
+  - [ ] Config files match documented rules
+  - [ ] CI runs documented ruleset
+
+### Recommended Execution Order
+
+**Priority 1: Complete Deferred Test Coverage**
+1. Phase 3.5.5: Mark as complete (already done)
+2. Phase 3.4.4: Add docstring validator unit tests
+
+**Priority 2: Implement Custom PEP 526 Checker**
+3. Phase 3.3: Custom checker for module-level/class annotations
+
+**Priority 3: Autofix and Rollout**
+4. Phase 4: Autofix strategy
+5. Phase 5: CI enforcement rollout
+
+**Priority 4: Documentation**
+6. Phase 6: Documentation updates
+
+### Next Immediate Action
+
+Start with Phase 3.4.4 (docstring validator tests) because:
+- Validates the Phase 3.4 migration was correct
+- Establishes test patterns for Phase 3.3 custom checker
+- Lower risk than implementing new checker first
+- Can be done incrementally (one validator at a time)
+
+---
+
+## PREVIOUS SESSION
 
 **Code Review Comments Addressed - PR Ready for Final Review**
 
