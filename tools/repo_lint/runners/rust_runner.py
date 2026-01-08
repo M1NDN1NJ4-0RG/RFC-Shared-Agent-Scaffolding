@@ -2,12 +2,12 @@
 
 :Purpose:
     Runs all Rust linting and formatting tools as defined in the repository
-    standards. Integrates with existing validate_docstrings.py script.
+    standards. Uses internal docstring validation module.
 
 :Tools:
     - rustfmt: Code formatter (official Rust style)
     - clippy: Comprehensive linter for Rust (with JSON output parsing)
-    - validate_docstrings.py: Docstring contract validation
+    - Internal docstring validator: Docstring contract validation
 
 :Status:
     COMPLETE - Full implementation with enhanced clippy parsing and docstring validation.
@@ -31,11 +31,13 @@
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 from pathlib import Path
 from typing import List
 
 from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.docstrings import validate_files
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
@@ -297,7 +299,7 @@ class RustRunner(Runner):
             return None
 
     def _run_docstring_validation(self) -> LintResult:
-        """Run Rust docstring validation using validate_docstrings.py.
+        """Run Rust docstring validation using internal module.
 
         :returns:
             LintResult for docstring validation
@@ -309,58 +311,42 @@ class RustRunner(Runner):
                 print("  No rust/ directory found, skipping Rust docstring validation")
             return LintResult(tool="rust-docstrings", passed=True, violations=[])
 
-        # Call validate_docstrings.py with --language rust
-        validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
-        if not validator_script.exists():
-            if self.verbose:
-                print("  Docstring validator script not found, skipping")
+        # Get Rust files to validate
+        rust_files = get_tracked_files(["**/*.rs"], self.repo_root, include_fixtures=self._include_fixtures)
+
+        if not rust_files:
             return LintResult(tool="rust-docstrings", passed=True, violations=[])
 
-        cmd = ["python3", str(validator_script), "--language", "rust"]
-        if self._include_fixtures:
-            cmd.append("--include-fixtures")
+        # Use internal validator module
+        errors = validate_files(rust_files, language="rust")
 
-        result = subprocess.run(
-            cmd,
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-
-        if result.returncode == 0:
+        if not errors:
             return LintResult(tool="rust-docstrings", passed=True, violations=[])
 
+        # Convert ValidationError objects to Violation objects
         violations = []
-        # Parse validator output (format: "FILE: Missing docstring for SYMBOL")
-        for line in result.stdout.splitlines():
-            line = line.strip()
-            if not line or line.startswith("===") or line.startswith("Checking"):
-                continue
+        for error in errors:
+            file_basename = os.path.basename(error.file_path)
 
-            # Parse violation format
-            # Example: "rust/src/main.rs: Missing docstring for function 'helper'"
-            if ":" in line:
-                parts = line.split(":", 1)
-                file_path = parts[0].strip()
-                message = parts[1].strip() if len(parts) > 1 else line
-
-                violations.append(
-                    Violation(
-                        tool="rust-docstrings",
-                        file=file_path,
-                        line=None,
-                        message=message,
-                    )
-                )
+            if error.missing_sections:
+                sections = ", ".join(error.missing_sections)
+                if error.symbol_name:
+                    message = f"Symbol '{error.symbol_name}': Missing {sections}"
+                else:
+                    message = f"Missing required sections: {sections}"
             else:
-                violations.append(
-                    Violation(
-                        tool="rust-docstrings",
-                        file="unknown",
-                        line=None,
-                        message=line,
-                    )
-                )
+                message = error.message
 
-        return LintResult(tool="rust-docstrings", passed=False, violations=violations)
+            if error.message and error.missing_sections:
+                message += f" ({error.message})"
+
+            violations.append(
+                Violation(
+                    tool="rust-docstrings",
+                    file=file_basename,
+                    line=error.line_number,
+                    message=message,
+                )
+            )
+
+        return LintResult(tool="rust-docstrings", passed=False, violations=violations[:20])

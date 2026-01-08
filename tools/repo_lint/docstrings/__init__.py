@@ -34,7 +34,10 @@
         errors = validate_files(files, language="python")
 
 :Exit Codes:
-    N/A - This is a library module, not an executable script
+    0
+        Success (library module, no direct execution)
+    1
+        Library module error (should not occur in normal usage)
 """
 
 from __future__ import annotations

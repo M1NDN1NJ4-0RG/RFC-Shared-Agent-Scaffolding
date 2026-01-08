@@ -2,11 +2,11 @@
 
 :Purpose:
     Runs all PowerShell linting tools as defined in the repository standards.
-    Integrates with existing validate_docstrings.py script.
+    Uses internal docstring validation module.
 
 :Tools:
     - PSScriptAnalyzer: PowerShell script analyzer (via pwsh)
-    - validate_docstrings.py: Docstring contract validation
+    - Internal docstring validator: Docstring contract validation
 
 :Environment Variables:
     None
@@ -26,11 +26,12 @@
 
 from __future__ import annotations
 
+import os
 import subprocess
-import sys
 from typing import List
 
 from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
+from tools.repo_lint.docstrings import validate_files
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
@@ -171,45 +172,45 @@ class PowerShellRunner(Runner):
         return LintResult(tool="PSScriptAnalyzer", passed=False, violations=violations[:20])  # Limit output
 
     def _run_docstring_validation(self) -> LintResult:
-        """Run PowerShell docstring validation.
+        """Run PowerShell docstring validation using internal module.
 
         :returns:
             LintResult for docstring validation
         """
-        validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
-
-        if not validator_script.exists():
-            return LintResult(
-                tool="powershell-docstrings",
-                passed=False,
-                violations=[],
-                error=f"Docstring validation SKIPPED: validator script not found at {validator_script}. "
-                "This check was not executed.",
-            )
-
         ps_files = self._get_powershell_files()
         if not ps_files:
             return LintResult(tool="powershell-docstrings", passed=True, violations=[])
 
-        # Run validator for powershell language only (no need for --file args with --language flag)
-        cmd = [sys.executable, str(validator_script), "--language", "powershell"]
-        if self._include_fixtures:
-            cmd.append("--include-fixtures")
+        # Use internal validator module
+        errors = validate_files(ps_files, language="powershell")
 
-        result = subprocess.run(
-            cmd,
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-
-        if result.returncode == 0:
+        if not errors:
             return LintResult(tool="powershell-docstrings", passed=True, violations=[])
 
+        # Convert ValidationError objects to Violation objects
         violations = []
-        for line in result.stdout.splitlines():
-            if "❌" in line or "ERROR" in line or "violation" in line.lower():
-                violations.append(Violation(tool="powershell-docstrings", file=".", line=None, message=line.strip()))
+        for error in errors:
+            file_basename = os.path.basename(error.file_path)
 
-        return LintResult(tool="powershell-docstrings", passed=False, violations=violations[:20])  # Limit output
+            if error.missing_sections:
+                sections = ", ".join(error.missing_sections)
+                if error.symbol_name:
+                    message = f"Symbol '{error.symbol_name}': Missing {sections}"
+                else:
+                    message = f"Missing required sections: {sections}"
+            else:
+                message = error.message
+
+            if error.message and error.missing_sections:
+                message += f" ({error.message})"
+
+            violations.append(
+                Violation(
+                    tool="powershell-docstrings",
+                    file=file_basename,
+                    line=error.line_number,
+                    message=message,
+                )
+            )
+
+        return LintResult(tool="powershell-docstrings", passed=False, violations=violations[:20])

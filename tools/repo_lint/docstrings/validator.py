@@ -23,13 +23,16 @@
         errors = validate_file(Path("script.sh"))
 
 :Exit Codes:
-    N/A - This is a library module, not an executable script
+    0
+        Success (library module, no direct execution)
+    1
+        Library module error (should not occur in normal usage)
 """
 
 from __future__ import annotations
 
 from pathlib import Path
-from typing import List, Union
+from typing import List
 
 from tools.repo_lint.docstrings.bash_validator import BashValidator
 from tools.repo_lint.docstrings.common import ValidationError
