@@ -1,29 +1,49 @@
 # PR #297 Next Steps
 
-## Immediate Actions Required
+## Session Complete - Ready for User Verification
 
-1. **Address unresolved PR review comments** (from PR review #3640238927):
-   - scripts/fix_md013_line_length_option_b.py:12 - Docstring mismatch with implementation
-   - scripts/fix_md013_line_length_option_b.py:1-394 - Missing test coverage
-   - scripts/fix_md013_line_length_option_b.py:219-222 - Magic string "__DO_NOT_TOUCH_LIST_ITEM__" issue
-   - scripts/fix_md013_line_length_option_b.py:323-324 - Empty payload wrapping check
-   - scripts/fix_md013_line_length_option_a.py:268 - Empty file edge case
-   - scripts/fix_md013_line_length_option_a.py:1-309 - Missing test coverage
-   - scripts/fix_md013_line_length_option_b.py:353 - Empty file edge case
+All work completed for this session. User requested to stop before validation on actual MD files.
 
-2. **Fix repo-lint violations** (MANDATORY before commit):
-   - pylint R1737: Use 'yield from' in both scripts
-   - Add complete module docstrings with Purpose, Environment Variables, Examples, Exit Codes sections
-   - Add :param and :returns to all function docstrings
+## What Was Completed
 
-3. **Create comprehensive unit tests** for both scripts
+1. ✅ Fixed all addressable PR review comments
+2. ✅ Fixed all repo-lint violations (pylint, python-docstrings)
+3. ✅ Created comprehensive unit tests (60 tests, all passing)
+4. ✅ Initiated and passed Copilot Code Review (no issues)
+5. ✅ Repository is clean and resumable
 
-## Detailed Resume Instructions
+## Future Work (Awaiting User Verification)
 
-### Files to open:
-- `/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/fix_md013_line_length_option_a.py`
-- `/home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/fix_md013_line_length_option_b.py`
+Per copilot-prompt.md Step 6 and beyond:
 
-### Commands to run:
-1. Fix violations: `repo-lint check --ci` until exit 0
-2. Run tests after creating them: `pytest scripts/tests/test_fix_md013_*.py`
+### 1. Safety Trial (One File Only)
+- Identify ONE Markdown file with MD013 violations
+- Ensure working tree clean before trial
+- Run Option B on ONLY that file
+- Manually inspect the diff for:
+  - Lists remain correct
+  - Checkboxes remain correct
+  - Tables unchanged
+  - Code blocks unchanged
+- Run: `repo-lint check --ci --only markdown`
+
+### 2. Apply MD013 Fixes in Controlled Batches
+Only proceed if safety trial succeeds:
+- Batch 1: 3-5 files
+- Batch 2: 10-20 files
+- Batch 3: 50 files
+- For each batch:
+  - Clean working tree
+  - Run Option B on batch
+  - Inspect representative diffs
+  - Run markdown linting
+  - Commit with batch number
+
+### 3. Final Verification
+- Run: `repo-lint check --ci`
+- Ensure PR is clean and resumable
+
+## Files to Work With (Next Session)
+
+- Scripts: `scripts/fix_md013_line_length_option_a.py`, `scripts/fix_md013_line_length_option_b.py`
+- Tests: `scripts/tests/test_fix_md013_line_length_option_a.py`, `scripts/tests/test_fix_md013_line_length_option_b.py`
