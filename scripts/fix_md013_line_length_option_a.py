@@ -1,34 +1,44 @@
 #!/usr/bin/env python3
-"""
-fix_md013_line_length_option_a.py
+"""Safe-ish fixer for markdownlint MD013 (line-length) violations - Option A.
 
-Safe-ish fixer for markdownlint MD013 (line-length) violations.
+This script provides a conservative approach to fixing MD013 violations by only
+reflowing plain paragraph blocks while preserving all structure-sensitive markdown.
 
-Option A strategy: **do not touch structure-sensitive markdown**.
-This script will only reflow *plain paragraph blocks* (non-list, non-table, non-code)
-to <= 120 characters. It will **skip**:
+:Purpose:
+    Fix MD013 line-length violations using Option A strategy:
+    **do not touch structure-sensitive markdown**.
 
-- Fenced code blocks (``` / ~~~)
-- Indented code blocks (4 spaces or tab) when not in a list
-- Tables (header + separator detection, plus contiguous table rows)
-- Headings (# ...)
-- Blockquotes (> ...)
-- Link reference definitions ([id]: url)
-- HTML block lines (<tag>...</tag>)
-- Any line containing backticks (inline code exemption)
-- Any line containing URLs (http/https or <http...>)
-- Entire list blocks (bullets, numbered lists, task lists) including their continuations
+    Only reflows *plain paragraph blocks* (non-list, non-table, non-code)
+    to <= 120 characters. Skips:
 
-Usage:
-    python3 fix_md013_line_length_option_a.py <path>
+    - Fenced code blocks (``` / ~~~)
+    - Indented code blocks (4 spaces or tab) when not in a list
+    - Tables (header + separator detection, plus contiguous table rows)
+    - Headings (# ...)
+    - Blockquotes (> ...)
+    - Link reference definitions ([id]: url)
+    - HTML block lines (<tag>...</tag>)
+    - Any line containing backticks (inline code exemption)
+    - Any line containing URLs (http/https or <http...>)
+    - Entire list blocks (bullets, numbered lists, task lists) and continuations
 
-Where <path> may be:
-- a single .md file
-- a directory (recursively processes *.md)
+:Environment Variables:
+    None
 
-Exit codes:
-    0 success (even if no changes)
-    2 usage / input errors
+:Examples:
+    Process a single Markdown file::
+
+        python3 fix_md013_line_length_option_a.py README.md
+
+    Process all Markdown files in a directory::
+
+        python3 fix_md013_line_length_option_a.py docs/
+
+:Exit Codes:
+    0
+        Success (even if no changes were made)
+    2
+        Usage error or input path not found
 """
 
 from __future__ import annotations
@@ -59,7 +69,11 @@ TASK_LIST_RE = re.compile(r"^(\s{0,3})([-*+]|\d{1,4}\.)\s+\[[ xX]\]\s+")
 
 
 def _starts_fence(line: str) -> Optional[Tuple[str, int]]:
-    """If line starts a fence, return (fence_char, fence_len)."""
+    """Check if line starts a fenced code block.
+
+    :param line: The line to check
+    :returns: Tuple of (fence_char, fence_len) if fence detected, None otherwise
+    """
     m = FENCE_RE.match(line)
     if not m:
         return None
@@ -68,7 +82,13 @@ def _starts_fence(line: str) -> Optional[Tuple[str, int]]:
 
 
 def _ends_fence(line: str, fence_char: str, fence_len: int) -> bool:
-    """Close fence must match the opening fence char and be at least as long."""
+    """Check if line closes a fenced code block.
+
+    :param line: The line to check
+    :param fence_char: The fence character from opening fence (` or ~)
+    :param fence_len: The length of the opening fence
+    :returns: True if this line closes the fence, False otherwise
+    """
     m = FENCE_RE.match(line)
     if not m:
         return False
@@ -77,28 +97,41 @@ def _ends_fence(line: str, fence_char: str, fence_len: int) -> bool:
 
 
 def _is_table_block(lines: List[str], i: int) -> bool:
-    """Detect a table by checking current line and the next line: header + separator."""
+    """Detect if current line starts a table block.
+
+    :param lines: All lines in the file
+    :param i: Current line index
+    :returns: True if current and next line form a table header+separator
+    """
     if i + 1 >= len(lines):
         return False
     return bool(TABLE_ROW_RE.match(lines[i]) and TABLE_SEP_RE.match(lines[i + 1]))
 
 
 def _is_indented_code(line: str) -> bool:
-    """
-    Treat 4-space (or tab) indented lines as code blocks.
-    This intentionally does NOT try to be clever inside lists; list blocks are skipped entirely
-    by Option A.
+    """Check if line is an indented code block (4 spaces or tab).
+
+    :param line: The line to check
+    :returns: True if line starts with 4 spaces or a tab
     """
     return line.startswith("    ") or line.startswith("\t")
 
 
 def _is_list_item(line: str) -> bool:
-    """True if this line starts a list item (including task lists)."""
+    """Check if line starts a list item (including task lists).
+
+    :param line: The line to check
+    :returns: True if line starts a list item
+    """
     return bool(LIST_ITEM_RE.match(line) or TASK_LIST_RE.match(line))
 
 
 def _should_skip_line(line: str) -> bool:
-    """Lines we should never reflow."""
+    """Check if line should never be reflowed.
+
+    :param line: The line to check
+    :returns: True if line should be skipped (heading, blockquote, etc.)
+    """
     if not line.strip():
         return True
     if HEADING_RE.match(line):
@@ -119,7 +152,11 @@ def _should_skip_line(line: str) -> bool:
 
 
 def _wrap_paragraph(text: str) -> List[str]:
-    """Wrap paragraph text to MAX_LEN, without breaking words."""
+    """Wrap paragraph text to MAX_LEN without breaking words.
+
+    :param text: The paragraph text to wrap
+    :returns: List of wrapped lines
+    """
     wrapped = textwrap.fill(
         text,
         width=MAX_LEN,
@@ -130,10 +167,13 @@ def _wrap_paragraph(text: str) -> List[str]:
 
 
 def _collect_paragraph(lines: List[str], start: int) -> Tuple[int, List[str]]:
-    """
-    Collect consecutive lines that form a plain paragraph block.
+    """Collect consecutive lines forming a plain paragraph block.
+
     Stops at blank line or any structure-sensitive line.
-    Returns (next_index, paragraph_lines).
+
+    :param lines: All lines in the file
+    :param start: Starting line index
+    :returns: Tuple of (next_index, paragraph_lines)
     """
     buf: List[str] = []
     i = start
@@ -153,9 +193,13 @@ def _collect_paragraph(lines: List[str], start: int) -> Tuple[int, List[str]]:
 
 
 def _copy_list_block(lines: List[str], i: int) -> Tuple[int, List[str]]:
-    """
-    Copy a list item and its immediate continuation lines unchanged.
-    Option A: we skip list blocks entirely to avoid mangling bullets/checkboxes.
+    """Copy a list item and its continuation lines unchanged.
+
+    Option A skips list blocks entirely to avoid mangling bullets/checkboxes.
+
+    :param lines: All lines in the file
+    :param i: Current line index (must be a list item)
+    :returns: Tuple of (next_index, copied_lines)
     """
     out: List[str] = []
     first = lines[i]
@@ -189,6 +233,11 @@ def _copy_list_block(lines: List[str], i: int) -> Tuple[int, List[str]]:
 
 
 def _rewrite_file(path: Path) -> bool:
+    """Rewrite a single Markdown file with MD013 fixes applied.
+
+    :param path: Path to the Markdown file
+    :returns: True if file was modified, False otherwise
+    """
     original = path.read_text(encoding="utf-8")
     lines = original.splitlines()
 
@@ -265,7 +314,11 @@ def _rewrite_file(path: Path) -> bool:
             out.append(lines[i])
             i += 1
 
-    new = "\n".join(out) + ("\n" if original.endswith("\n") else "")
+    # Handle final newline: preserve original file's trailing newline behavior
+    if original:
+        new = "\n".join(out) + ("\n" if original.endswith("\n") else "")
+    else:
+        new = ""
     if new != original:
         path.write_text(new, encoding="utf-8")
         return True
@@ -273,15 +326,23 @@ def _rewrite_file(path: Path) -> bool:
 
 
 def _iter_md_files(path: Path) -> Iterable[Path]:
+    """Iterate over Markdown files in path.
+
+    :param path: File or directory path
+    :returns: Generator yielding Path objects for each .md file
+    """
     if path.is_file():
         if path.suffix.lower() == ".md":
             yield path
         return
-    for p in sorted(path.rglob("*.md")):
-        yield p
+    yield from sorted(path.rglob("*.md"))
 
 
 def main() -> int:
+    """Main entry point for the script.
+
+    :returns: Exit code (0 for success, 2 for errors)
+    """
     if len(sys.argv) != 2:
         print("Usage: fix_md013_line_length_option_a.py <file-or-directory>", file=sys.stderr)
         return 2

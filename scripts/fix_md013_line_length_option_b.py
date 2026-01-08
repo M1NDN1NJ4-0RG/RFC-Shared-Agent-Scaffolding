@@ -1,43 +1,54 @@
 #!/usr/bin/env python3
-"""
-fix_md013_line_length_option_b.py
+"""Markdown MD013 (line-length) fixer with list-aware wrapping - Option B.
 
-Markdown MD013 (line-length) fixer with **list-aware wrapping**.
+This script provides an advanced approach to fixing MD013 violations by reflowing
+both plain paragraphs and list items while preserving structure and markers.
 
-Option B strategy: reflow plain paragraphs *and* list items safely-ish.
+:Purpose:
+    Fix MD013 line-length violations using Option B strategy:
+    reflow plain paragraphs *and* list items safely.
 
-It will still skip structure-sensitive markdown:
+    Still skips structure-sensitive markdown:
 
-- Fenced code blocks (``` / ~~~)
-- Indented code blocks (4 spaces or tab) when not in a list context
-- Tables (header + separator detection, plus contiguous table rows)
-- Headings (# ...)
-- Blockquotes (> ...)
-- Link reference definitions ([id]: url)
-- HTML block lines (<tag>...</tag>)
-- Any line containing backticks (inline code exemption)
-- Any line containing URLs (http/https or <http...>)
+    - Fenced code blocks (``` / ~~~)
+    - Indented code blocks (4 spaces or tab)
+    - Tables (header + separator detection, plus contiguous table rows)
+    - Headings (# ...)
+    - Blockquotes (> ...)
+    - Link reference definitions ([id]: url)
+    - HTML block lines (<tag>...</tag>)
+    - Any line containing backticks (inline code exemption)
+    - Any line containing URLs (http/https or <http...>)
 
-List handling:
-- Detects list items (bullets, numbered, and task lists).
-- Rewraps the *text payload* of the list item to <= 120 chars.
-- Preserves the list marker and checkbox prefix exactly.
-- Uses a deterministic continuation indent.
+    List handling features:
 
-Limitations (intentional safety):
-- Does NOT attempt to reflow multi-paragraph list items (items with blank lines inside).
-- Treats continuation lines as part of the item only when they are indented beyond the marker.
+    - Detects list items (bullets, numbered, and task lists)
+    - Rewraps the text payload of list items to <= 120 chars
+    - Preserves list markers and checkbox prefixes exactly
+    - Uses deterministic continuation indent
 
-Usage:
-    python3 fix_md013_line_length_option_b.py <path>
+    Limitations (intentional safety):
 
-Where <path> may be:
-- a single .md file
-- a directory (recursively processes *.md)
+    - Does NOT reflow multi-paragraph list items (items with blank lines inside)
+    - Treats continuation lines as part of item only when indented beyond marker
 
-Exit codes:
-    0 success (even if no changes)
-    2 usage / input errors
+:Environment Variables:
+    None
+
+:Examples:
+    Process a single Markdown file::
+
+        python3 fix_md013_line_length_option_b.py README.md
+
+    Process all Markdown files in a directory::
+
+        python3 fix_md013_line_length_option_b.py docs/
+
+:Exit Codes:
+    0
+        Success (even if no changes were made)
+    2
+        Usage error or input path not found
 """
 
 from __future__ import annotations
@@ -70,7 +81,11 @@ TASK_BOX_RE = re.compile(r"^\[(?P<state>[ xX])\]\s+")
 
 
 def _starts_fence(line: str) -> Optional[Tuple[str, int]]:
-    """If line starts a fence, return (fence_char, fence_len)."""
+    """Check if line starts a fenced code block.
+
+    :param line: The line to check
+    :returns: Tuple of (fence_char, fence_len) if fence detected, None otherwise
+    """
     m = FENCE_RE.match(line)
     if not m:
         return None
@@ -79,7 +94,13 @@ def _starts_fence(line: str) -> Optional[Tuple[str, int]]:
 
 
 def _ends_fence(line: str, fence_char: str, fence_len: int) -> bool:
-    """Close fence must match the opening fence char and be at least as long."""
+    """Check if line closes a fenced code block.
+
+    :param line: The line to check
+    :param fence_char: The fence character from opening fence (` or ~)
+    :param fence_len: The length of the opening fence
+    :returns: True if this line closes the fence, False otherwise
+    """
     m = FENCE_RE.match(line)
     if not m:
         return False
@@ -88,19 +109,32 @@ def _ends_fence(line: str, fence_char: str, fence_len: int) -> bool:
 
 
 def _is_table_block(lines: List[str], i: int) -> bool:
-    """Detect a table by checking current line and the next line: header + separator."""
+    """Detect if current line starts a table block.
+
+    :param lines: All lines in the file
+    :param i: Current line index
+    :returns: True if current and next line form a table header+separator
+    """
     if i + 1 >= len(lines):
         return False
     return bool(TABLE_ROW_RE.match(lines[i]) and TABLE_SEP_RE.match(lines[i + 1]))
 
 
 def _is_indented_code(line: str) -> bool:
-    """Treat 4-space (or tab) indented lines as code blocks (outside lists)."""
+    """Check if line is an indented code block (4 spaces or tab).
+
+    :param line: The line to check
+    :returns: True if line starts with 4 spaces or a tab
+    """
     return line.startswith("    ") or line.startswith("\t")
 
 
 def _should_skip_line(line: str) -> bool:
-    """Lines we should never reflow."""
+    """Check if line should never be reflowed.
+
+    :param line: The line to check
+    :returns: True if line should be skipped (heading, blockquote, etc.)
+    """
     if not line.strip():
         return True
     if HEADING_RE.match(line):
@@ -124,7 +158,13 @@ def _wrap_text(
     initial_indent: str = "",
     subsequent_indent: str = "",
 ) -> List[str]:
-    """Wrap text to MAX_LEN, without breaking words."""
+    """Wrap text to MAX_LEN without breaking words.
+
+    :param text: The text to wrap
+    :param initial_indent: Indent for first line
+    :param subsequent_indent: Indent for continuation lines
+    :returns: List of wrapped lines
+    """
     wrapped = textwrap.fill(
         text,
         width=MAX_LEN,
@@ -137,17 +177,14 @@ def _wrap_text(
 
 
 def _parse_list_prefix(line: str) -> Optional[Tuple[str, str, str, str]]:
-    """
-    Parse list prefix components.
+    """Parse list prefix components.
 
-    Returns:
-        (base_indent, marker, checkbox, text)
-
-    Where:
-        base_indent: leading spaces (0..3)
-        marker: "-", "*", "+", or "1."
-        checkbox: "" or "[ ] " / "[x] " (including trailing space)
-        text: remaining text after marker (+ optional checkbox)
+    :param line: The line to parse
+    :returns: Tuple of (base_indent, marker, checkbox, text) or None if not a list item
+        - base_indent: leading spaces (0..3)
+        - marker: "-", "*", "+", or "1."
+        - checkbox: "" or "[ ] " / "[x] " (including trailing space)
+        - text: remaining text after marker (+ optional checkbox)
     """
     m = LIST_ITEM_PREFIX_RE.match(line)
     if not m:
@@ -167,20 +204,24 @@ def _parse_list_prefix(line: str) -> Optional[Tuple[str, str, str, str]]:
 
 
 def _is_new_list_item(line: str) -> bool:
+    """Check if line starts a new list item.
+
+    :param line: The line to check
+    :returns: True if line starts a list item
+    """
     return _parse_list_prefix(line) is not None
 
 
 def _collect_list_item(lines: List[str], start: int) -> Tuple[int, str, str, str, str]:
-    """
-    Collect a list item starting at `start`.
+    """Collect a list item starting at given index.
 
-    Returns:
-        (next_index, base_indent, marker, checkbox, payload_text)
+    Stops at blank line (does not support multi-paragraph items).
+    Continuation lines included only if indented beyond marker prefix.
+    Stops if new list item at same-or-less indent starts.
 
-    Notes:
-      - Stops at blank line (does not support multi-paragraph items).
-      - Continuation lines are included only if they are indented beyond the marker prefix.
-      - Stops if a new list item at same-or-less indent starts.
+    :param lines: All lines in the file
+    :param start: Starting line index
+    :returns: Tuple of (next_index, base_indent, marker, checkbox, payload_text)
     """
     parsed = _parse_list_prefix(lines[start])
     if not parsed:
@@ -216,10 +257,10 @@ def _collect_list_item(lines: List[str], start: int) -> Tuple[int, str, str, str
         indent_len = len(line) - len(line.lstrip(" "))
         if indent_len >= prefix_len:
             cont = line.strip()
-            # Safety: if continuation includes inline code or URL, keep original list block as-is.
-            # We'll signal by returning the original payload unmodified by embedding a marker.
+            # Safety: if continuation includes inline code or URL, preserve original lines.
             if "`" in cont or URL_RE.search(cont):
-                return start + 1, base_indent, marker, checkbox, "__DO_NOT_TOUCH_LIST_ITEM__"
+                # Return sentinel tuple to signal unsafe content
+                return i, base_indent, marker, checkbox, "__UNSAFE_LIST_ITEM__"
             parts.append(cont)
             i += 1
             continue
@@ -232,9 +273,13 @@ def _collect_list_item(lines: List[str], start: int) -> Tuple[int, str, str, str
 
 
 def _collect_paragraph(lines: List[str], start: int) -> Tuple[int, List[str]]:
-    """
-    Collect consecutive lines that form a plain paragraph block.
+    """Collect consecutive lines forming a plain paragraph block.
+
     Stops at blank line or any structure-sensitive line.
+
+    :param lines: All lines in the file
+    :param start: Starting line index
+    :returns: Tuple of (next_index, paragraph_lines)
     """
     buf: List[str] = []
     i = start
@@ -256,6 +301,11 @@ def _collect_paragraph(lines: List[str], start: int) -> Tuple[int, List[str]]:
 
 
 def _rewrite_file(path: Path) -> bool:
+    """Rewrite a single Markdown file with MD013 fixes applied.
+
+    :param path: Path to the Markdown file
+    :returns: True if file was modified, False otherwise
+    """
     original = path.read_text(encoding="utf-8")
     lines = original.splitlines()
 
@@ -307,7 +357,7 @@ def _rewrite_file(path: Path) -> bool:
             next_i, base_indent, marker, checkbox, payload = _collect_list_item(lines, i)
 
             # If we detected unsafe content for this list item, copy original line(s) unchanged.
-            if payload == "__DO_NOT_TOUCH_LIST_ITEM__":
+            if payload == "__UNSAFE_LIST_ITEM__":
                 out.extend(lines[i:next_i])
                 i = next_i
 
@@ -320,7 +370,7 @@ def _rewrite_file(path: Path) -> bool:
             prefix = f"{base_indent}{marker} {checkbox}"
             subsequent = " " * len(prefix)
 
-            if payload and len(prefix) + 1 + len(payload) > MAX_LEN:
+            if payload and (len(prefix) + 1 + len(payload) > MAX_LEN):
                 out.extend(_wrap_text(payload, initial_indent=prefix, subsequent_indent=subsequent))
             else:
                 # Keep item as-is (but normalize single-space after prefix)
@@ -350,7 +400,11 @@ def _rewrite_file(path: Path) -> bool:
             out.append(lines[i])
             i += 1
 
-    new = "\n".join(out) + ("\n" if original.endswith("\n") else "")
+    # Handle final newline: preserve original file's trailing newline behavior
+    if original:
+        new = "\n".join(out) + ("\n" if original.endswith("\n") else "")
+    else:
+        new = ""
     if new != original:
         path.write_text(new, encoding="utf-8")
         return True
@@ -358,15 +412,23 @@ def _rewrite_file(path: Path) -> bool:
 
 
 def _iter_md_files(path: Path) -> Iterable[Path]:
+    """Iterate over Markdown files in path.
+
+    :param path: File or directory path
+    :returns: Generator yielding Path objects for each .md file
+    """
     if path.is_file():
         if path.suffix.lower() == ".md":
             yield path
         return
-    for p in sorted(path.rglob("*.md")):
-        yield p
+    yield from sorted(path.rglob("*.md"))
 
 
 def main() -> int:
+    """Main entry point for the script.
+
+    :returns: Exit code (0 for success, 2 for errors)
+    """
     if len(sys.argv) != 2:
         print("Usage: fix_md013_line_length_option_b.py <file-or-directory>", file=sys.stderr)
         return 2
