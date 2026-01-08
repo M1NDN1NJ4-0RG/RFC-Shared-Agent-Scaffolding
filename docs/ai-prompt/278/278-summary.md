@@ -555,3 +555,139 @@ repo-lint check --ci --only python
 ---
 
 
+## Phase 3.7.1: Broad Exception Handler Inventory
+
+### Summary Statistics
+
+- **Total broad exception handlers:** 38
+  - `except Exception as <var>:` — 29 instances
+  - `except Exception:` — 9 instances
+  - Bare `except:` — 0 instances
+
+### Classification by Context
+
+| Category | Count | Files |
+|----------|-------|-------|
+| CLI Boundary (acceptable) | 17 | cli.py (9), cli_argparse.py (5), scripts (3) |
+| Tooling Wrappers (needs review) | 13 | preflight_automerge_ruleset.py (8), install_helpers.py (2), doctor.py (5) |
+| Library Code (unacceptable) | 6 | base.py (1), validator.py (1), bash_treesitter.py (2), add_future_annotations.py (1), run_tests.py (1) |
+| Tests (acceptable) | 1 | test_safe_run.py (1) |
+
+### Detailed Inventory
+
+#### CLI Boundary (17 instances - ACCEPTABLE with documentation)
+
+**tools/repo_lint/cli.py (9 instances):**
+1. Line 962: `list_langs` error handling - CLI boundary
+2. Line 1023: `list_tools` error handling - CLI boundary
+3. Line 1080: `tool_help` error handling - CLI boundary
+4. Line 1173: `dump_config` error handling - CLI boundary
+5. Line 1252: `validate_config` error handling - CLI boundary
+6. Line 1270: `check` command error handling - CLI boundary
+7. Line 1434: `which` command error handling - CLI boundary
+8. Line 1637: `env` command error handling - CLI boundary
+9. Line 1944: `activate` command error handling - CLI boundary
+
+**tools/repo_lint/cli_argparse.py (5 instances):**
+10. Line 216: NamingRunner initialization failure (intentional skip if config missing) - CLI boundary
+11. Line 305: Runner execution failure with traceback - CLI boundary
+12. Line 391: Parallel runner failure - CLI boundary
+13. Line 753: Auto-fix policy load failure - CLI boundary
+14. Line 933: Top-level main() error handler - CLI boundary
+
+**Scripts (3 instances):**
+15. scripts/bootstrap_watch.py:100 - CLI script error boundary
+16. wrappers/python3/run_tests.py:162 - CLI script error boundary
+17. wrappers/python3/scripts/preflight_automerge_ruleset.py:479 - CLI arg parse error
+
+**Verdict:** These are CLI boundaries where we convert exceptions into clean error messages + non-zero exit codes. **KEEP** but document the pattern.
+
+---
+
+#### Tooling Wrappers (13 instances - NEEDS REVIEW)
+
+**wrappers/python3/scripts/preflight_automerge_ruleset.py (8 instances):**
+1. Line 264: `run_gh_cli` - swallows all exceptions, returns None
+2. Line 490: `--want` JSON parse - swallows all exceptions
+3. Line 503: `gh` JSON parse - swallows all exceptions
+4. Line 509: `http_get` failure - swallows all exceptions
+5. Line 515: JSON parse failure - swallows all exceptions
+6. Line 545: `gh` JSON parse failure - swallows all exceptions
+7. Line 554: `http_get` failure - swallows all exceptions
+8. Line 560: JSON parse failure - swallows all exceptions
+
+**tools/repo_lint/install/install_helpers.py (2 instances):**
+9. Line 144: Virtual environment creation - re-raises with context
+10. Line 282: Directory removal - logs error but continues
+
+**tools/repo_lint/doctor.py (5 instances):**
+11. Line 59: Repository root detection - returns error status
+12. Line 74: Virtual environment check - returns error status
+13. Line 121: Config file check - returns error status
+14. Line 166: Tool availability check - returns error status
+15. Line 199: PATH sanity check - returns error status
+
+**Verdict:** Mixed quality. 
+- `doctor.py` uses broad exceptions but returns structured error status (**ACCEPTABLE** for diagnostic tool)
+- `install_helpers.py` Line 144 re-raises properly (**GOOD**), Line 282 needs narrowing
+- `preflight_automerge_ruleset.py` silently swallows failures (**BAD** - needs narrowing)
+
+---
+
+#### Library Code (6 instances - UNACCEPTABLE, MUST FIX)
+
+**tools/repo_lint/runners/base.py:302:**
+- Context: Tool method execution failure
+- Current behavior: Logs error, creates error result
+- Issue: Too broad, should narrow to specific failure modes
+- **Action:** Narrow to `subprocess.CalledProcessError`, `FileNotFoundError`, `OSError`
+
+**tools/repo_lint/docstrings/validator.py:55:**
+- Context: File read error
+- Current behavior: Returns ValidationError
+- Issue: Too broad, file I/O has specific exceptions
+- **Action:** Narrow to `OSError`, `UnicodeDecodeError`
+
+**tools/repo_lint/docstrings/helpers/bash_treesitter.py:128:**
+- Context: Bash script parsing failure
+- Current behavior: Returns error dict
+- Issue: Parsing has specific error types
+- **Action:** Narrow to tree-sitter specific exceptions + `OSError`
+
+**scripts/docstring_validators/helpers/bash_treesitter.py:128:**
+- Context: Same as above (duplicate file - legacy)
+- **Action:** Same as above + mark for removal (duplicate)
+
+**scripts/add_future_annotations.py:258:**
+- Context: File processing skip logic
+- Current behavior: Skips file with verbose message
+- Issue: File I/O has specific exceptions
+- **Action:** Narrow to `OSError`, `UnicodeDecodeError`, `SyntaxError`
+
+**wrappers/python3/run_tests.py:162:**
+- Context: Actually a CLI boundary but in a library-style script
+- **Action:** Keep as CLI boundary but add comment
+
+---
+
+#### Tests (1 instance - ACCEPTABLE)
+
+**wrappers/python3/tests/test_safe_run.py:262:**
+- Context: Test cleanup - `p.kill()` in finally block
+- Current behavior: Silently swallows exceptions during process cleanup
+- Verdict: **ACCEPTABLE** - test cleanup should not fail tests
+
+---
+
+### Recommendations
+
+1. **CLI Boundaries (17):** Document the pattern, keep as-is
+2. **doctor.py (5):** Keep as-is (diagnostic tool pattern is acceptable)
+3. **install_helpers.py (2):** Fix line 282 (narrow to `OSError`)
+4. **preflight_automerge_ruleset.py (8):** Narrow all JSON parse errors to `json.JSONDecodeError`, HTTP errors to specific types
+5. **base.py (1):** Narrow to `subprocess.CalledProcessError`, `FileNotFoundError`, `OSError`
+6. **validator.py (1):** Narrow to `OSError`, `UnicodeDecodeError`
+7. **bash_treesitter.py (2):** Narrow to tree-sitter exceptions + `OSError`, remove duplicate
+8. **add_future_annotations.py (1):** Narrow to `OSError`, `UnicodeDecodeError`, `SyntaxError`
+
+**Priority:** Fix library code first (6 instances), then tooling wrappers (11 instances excluding doctor.py).
