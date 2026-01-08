@@ -125,9 +125,9 @@
           "create_files": ["source/test.txt"]
         },
         "command_variants": [
-          {"args": ["source", "output.tar.gz"], "expected_file": "output.tar.gz"},
-          {"args": ["source", "output.tar.bz2"], "expected_file": "output.tar.bz2"},
-          {"args": ["source", "output.zip"], "expected_file": "output.zip"}
+          { "args": ["source", "output.tar.gz"], "expected_file": "output.tar.gz" },
+          { "args": ["source", "output.tar.bz2"], "expected_file": "output.tar.bz2" },
+          { "args": ["source", "output.zip"], "expected_file": "output.zip" }
         ],
         "expected": {
           "exit_code": 0
@@ -179,8 +179,8 @@
         "description": "Should succeed when all required status checks are present in ruleset",
         "mock_responses": {
           "rulesets_list": [
-            {"id": 111, "name": "Main - PR Only + Green CI"},
-            {"id": 222, "name": "Other Ruleset"}
+            { "id": 111, "name": "Main - PR Only + Green CI" },
+            { "id": 222, "name": "Other Ruleset" }
           ],
           "ruleset_detail": {
             "id": 111,
@@ -197,17 +197,21 @@
                 "type": "required_status_checks",
                 "parameters": {
                   "strict_required_status_checks_policy": false,
-                  "required_status_checks": [
-                    {"context": "lint"},
-                    {"context": "test"}
-                  ]
+                  "required_status_checks": [{ "context": "lint" }, { "context": "test" }]
                 }
               }
             ]
           }
         },
         "command": {
-          "args": ["--repo", "owner/repo", "--ruleset-name", "Main - PR Only + Green CI", "--want", "[\"lint\", \"test\"]"],
+          "args": [
+            "--repo",
+            "owner/repo",
+            "--ruleset-name",
+            "Main - PR Only + Green CI",
+            "--want",
+            "[\"lint\", \"test\"]"
+          ],
           "env": {
             "GITHUB_TOKEN": "dummy_token"
           }
@@ -225,7 +229,7 @@
         "mock_responses": {
           "rulesets_list": {
             "status": 401,
-            "body": {"message": "Bad credentials"}
+            "body": { "message": "Bad credentials" }
           }
         },
         "command": {
@@ -245,9 +249,7 @@
         "m0_spec": ["M0-P2-I2"],
         "description": "Should return exit code 3 (usage error) when ruleset name not found",
         "mock_responses": {
-          "rulesets_list": [
-            {"id": 999, "name": "Different Ruleset"}
-          ]
+          "rulesets_list": [{ "id": 999, "name": "Different Ruleset" }]
         },
         "command": {
           "args": ["--repo", "owner/repo", "--ruleset-name", "Nonexistent", "--want", "[]"],
@@ -266,9 +268,7 @@
         "m0_spec": ["M0-P2-I2"],
         "description": "Should fail when required status check is missing from ruleset",
         "mock_responses": {
-          "rulesets_list": [
-            {"id": 111, "name": "Main - PR Only + Green CI"}
-          ],
+          "rulesets_list": [{ "id": 111, "name": "Main - PR Only + Green CI" }],
           "ruleset_detail": {
             "id": 111,
             "name": "Main - PR Only + Green CI",
@@ -276,16 +276,21 @@
               {
                 "type": "required_status_checks",
                 "parameters": {
-                  "required_status_checks": [
-                    {"context": "lint"}
-                  ]
+                  "required_status_checks": [{ "context": "lint" }]
                 }
               }
             ]
           }
         },
         "command": {
-          "args": ["--repo", "owner/repo", "--ruleset-name", "Main - PR Only + Green CI", "--want", "[\"lint\", \"test\"]"],
+          "args": [
+            "--repo",
+            "owner/repo",
+            "--ruleset-name",
+            "Main - PR Only + Green CI",
+            "--want",
+            "[\"lint\", \"test\"]"
+          ],
           "env": {
             "GITHUB_TOKEN": "dummy_token"
           }
