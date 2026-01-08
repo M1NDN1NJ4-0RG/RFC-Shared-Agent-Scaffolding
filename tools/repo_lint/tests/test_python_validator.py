@@ -201,7 +201,7 @@ class TestPythonValidator(unittest.TestCase):
 
 def my_function(x):
     """Function docstring.
-    
+
     :param x: Input value
     :returns: Output value
     """
