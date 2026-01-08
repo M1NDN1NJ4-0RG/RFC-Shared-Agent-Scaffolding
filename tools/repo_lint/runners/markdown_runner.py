@@ -162,7 +162,8 @@ class MarkdownRunner(Runner):
         violations = []
 
         # Combine stdout and stderr (markdownlint-cli2 may use either)
-        output = stdout + stderr
+        # Add newline to properly separate lines when combining
+        output = stdout + "\n" + stderr
 
         for line in output.splitlines():
             line = line.strip()
@@ -181,13 +182,21 @@ class MarkdownRunner(Runner):
             # Example: README.md:7:81 error MD013/line-length Line length [Expected: 120; Actual: 185]
             if ":" in line and ("error" in line or "warning" in line):
                 try:
-                    # Split on first colon to get file
-                    parts = line.split(":", 3)
-                    if len(parts) >= 4:
+                    # Split into file, line, and the rest (which starts with column)
+                    parts = line.split(":", 2)
+                    if len(parts) >= 3:
                         file_path = parts[0]
                         line_number = parts[1]
-                        # Rest is the message (skip column number)
-                        message = parts[3].strip()
+                        rest = parts[2].lstrip()
+
+                        # Drop the column number if present; keep the remaining message
+                        # Format after split: "81 error MD013/line-length Line length..."
+                        column_and_message = rest.split(" ", 1)
+                        if len(column_and_message) == 2:
+                            message = column_and_message[1].strip()
+                        else:
+                            # If splitting fails, treat the entire rest as the message
+                            message = rest
 
                         violations.append(
                             Violation(
