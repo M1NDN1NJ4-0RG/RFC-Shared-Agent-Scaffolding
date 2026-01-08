@@ -51,7 +51,7 @@
 #     - helper tools via taiki-e/install-action (includes taplo)
 #   - Markdown linting (conditional):
 #     - Node.js 20 setup when *.md exists
-#     - markdownlint-cli installed globally when *.md exists
+#     - markdownlint-cli2 installed globally when *.md exists
 #
 # Outputs:
 #   - Job name MUST be `copilot-setup-steps` for Copilot to pick it up
@@ -342,13 +342,14 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Install markdownlint-cli (when Markdown exists)
+      - name: Install markdownlint-cli2 (when Markdown exists)
         if: ${{ hashFiles('**/*.md') != '' }}
         shell: bash
         run: |
           set -euo pipefail
-          npm install -g markdownlint-cli@0.41.0
-          markdownlint --version
+          npm install -g markdownlint-cli2@0.20.0
+          # Note: markdownlint-cli2 version is verified later in the
+          # "Verify key tools are available" step to keep all tool checks together.
 
       - name: Verify key tools are available
         shell: bash
@@ -400,6 +401,7 @@ jobs:
           fi
 
           if git ls-files '*.md' | rg -q .; then
-            command -v markdownlint
-            markdownlint --version
+            command -v markdownlint-cli2
+            # Use --no-globs to prevent config file from triggering linting during version check
+            markdownlint-cli2 --version --no-globs
           fi
