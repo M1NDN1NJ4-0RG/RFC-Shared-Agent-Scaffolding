@@ -98,6 +98,9 @@ def main():
         print("Make sure you're running from the repository root.", file=sys.stderr)
         return 1
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI script that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"Error: {e}", file=sys.stderr)
         return 1
 

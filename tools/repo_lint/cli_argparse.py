@@ -214,6 +214,10 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     try:
         cross_language_runners.append(("naming", "Naming Conventions", NamingRunner()))
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI orchestration)
+        # Intentionally skip the naming runner if config is missing/invalid
+        # to allow other checks to continue. This is a graceful degradation pattern.
+        # See: docs/contributing/python-exception-handling-policy.md
         # If naming runner fails to initialize (e.g., config missing), skip it
         if args.verbose and not use_json:
             safe_print(f"⚠️  Naming validation skipped: {e}", f"WARNING: Naming validation skipped: {e}")
@@ -303,6 +307,11 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                 results = action_callback(runner)
 
         except Exception as e:
+            # POLICY: Broad exception catch acceptable here (orchestration boundary)
+            # This is runner orchestration code that catches all runner failures to ensure
+            # one failing runner doesn't break others. The exception is logged with full traceback
+            # and converted to a structured error result.
+            # See: docs/contributing/python-exception-handling-policy.md
             error_msg = f"Runner failed: {str(e)}"
             traceback.print_exc()
 
@@ -389,6 +398,10 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
                         break
 
                 except Exception as e:
+                    # POLICY: Broad exception catch acceptable here (parallel runner error handling)
+                    # This catches failures from parallel runner execution to ensure one failing runner
+                    # doesn't break the entire check. The exception is logged and converted to error result.
+                    # See: docs/contributing/python-exception-handling-policy.md
                     safe_print(f"❌ Runner {name} failed: {e}", f"ERROR: Runner {name} failed: {e}")
                     if args.verbose:
                         traceback.print_exc()
@@ -751,6 +764,9 @@ def cmd_fix(args: argparse.Namespace) -> int:
         print("")
         return ExitCode.INTERNAL_ERROR
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         safe_print(f"❌ Failed to load auto-fix policy: {e}", f"ERROR: Failed to load auto-fix policy: {e}")
         print("")
         return ExitCode.INTERNAL_ERROR
@@ -931,6 +947,9 @@ def main() -> None:
         sys.exit(ExitCode.MISSING_TOOLS)
 
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # Top-level CLI handler that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         safe_print(f"❌ Internal error: {e}", f"Internal error: {e}")
         if args.verbose:
             traceback.print_exc()

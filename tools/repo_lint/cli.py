@@ -960,6 +960,9 @@ def list_langs():
 
         sys.exit(0)
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"❌ Error loading language registry: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -1021,6 +1024,9 @@ def list_tools(lang):
 
         sys.exit(0)
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"❌ Error loading tool registry: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -1078,6 +1084,9 @@ def tool_help(tool):
         print("\nAvailable tools: Run 'repo-lint list-tools' to see all tools", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"❌ Error loading tool registry: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -1171,6 +1180,9 @@ def dump_config(output_format, config_dir):
 
         sys.exit(0)
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"❌ Error loading configuration: {e}", file=sys.stderr)
         if _is_verbose_enabled():
             import traceback
@@ -1250,6 +1262,9 @@ def validate_config(config_path):
         print(f"   {e}", file=sys.stderr)
         sys.exit(1)
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"❌ Error validating configuration: {e}", file=sys.stderr)
         if _is_verbose_enabled():
             import traceback
@@ -1268,6 +1283,9 @@ def main():
         print("\nRun 'repo-lint install' to install missing tools", file=sys.stderr)
         sys.exit(ExitCode.MISSING_TOOLS)
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # Top-level CLI handler that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         safe_print(f"❌ Internal error: {e}", f"Internal error: {e}")
         import traceback
 
@@ -1432,6 +1450,9 @@ def which_cmd(output_json):
         sys.exit(0)
 
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"❌ Error gathering environment information: {e}", file=sys.stderr)
         sys.exit(1)
 
@@ -1635,6 +1656,9 @@ def env_cmd(venv, shell, install_snippet, path_only):
         sys.exit(0)
 
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"❌ Error generating environment snippet: {e}", file=sys.stderr)
         import traceback
 
@@ -1942,6 +1966,9 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
             sys.exit(result.returncode)
 
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # CLI command that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"❌ Error activating virtual environment: {e}", file=sys.stderr)
         import traceback
 
