@@ -181,43 +181,35 @@ jobs:
           export PATH="$HOME/.local/bin:$PATH"
 
           # Install Python tools for the agent session (user-level so we don't need sudo).
-            python -m pip install --user -r /dev/stdin <<'REQS'
-            # Formatting / lint / test
-            black
-            ruff
-            pylint
+          python -m pip install --user \
+            black \
+            click \
+            httpx \
+            jmespath \
+            json5 \
+            jsonschema \
+            mdformat \
+            napalm \
+            netmiko \
+            ntc-templates \
+            orjson \
+            paramiko \
+            pydantic \
+            pylint \
+            pytest \
+            requests \
+            rich \
+            rich-click \
+            ruamel.yaml \
+            ruff \
+            tenacity \
+            textfsm \
+            toml \
+            tomlkit \
+            tomli-w \
+            tqdm \
+            typer \
             yamllint
-            pytest
-            mdformat
-
-            # CLI / UI
-            click
-            rich
-            rich-click
-            tqdm
-            typer
-
-            # Networking
-            # paramiko
-            # netmiko
-            # napalm
-            # textfsm
-            # ntc-templates
-
-            # Data formats
-            json5
-            jsonschema
-            orjson
-            ruamel.yaml
-            toml
-            tomlkit
-            tomli-w
-
-            # HTTP / retry
-            requests
-            httpx
-            tenacity
-            REQS
 
           # Install repo-lint from THIS repository (editable).
           # NOTE: This repo packages repo-lint from the repository root (pyproject.toml at repo root).
