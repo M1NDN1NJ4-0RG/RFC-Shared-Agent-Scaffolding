@@ -32,7 +32,6 @@
 from __future__ import annotations
 
 import inspect
-import logging
 import re
 import shutil
 import subprocess
@@ -44,6 +43,10 @@ from pathlib import Path
 from typing import List
 
 from tools.repo_lint.common import LintResult, MissingToolError
+from tools.repo_lint.logging_utils import get_logger
+
+# Get logger for this module
+logger = get_logger(__name__)
 
 
 # DEPRECATED (Phase 2.9): Use get_excluded_paths() instead
@@ -293,7 +296,7 @@ class Runner(ABC):
                     result = future.result()
                     # Verify that tool methods return single LintResult, not lists
                     if isinstance(result, list):
-                        logging.warning(
+                        logger.warning(
                             "Tool method %s returned a list instead of single LintResult. Using first result only.",
                             method_name,
                         )
@@ -306,7 +309,7 @@ class Runner(ABC):
                     # The exception is logged with full traceback and converted to a structured error result.
                     # See: docs/contributing/python-exception-handling-policy.md
                     # Log full exception for debugging
-                    logging.error("Tool method %s failed with exception:\n%s", method_name, traceback.format_exc())
+                    logger.error("Tool method %s failed with exception:\n%s", method_name, traceback.format_exc())
                     # Create error result for failed tool
                     results_map[method_name] = LintResult(
                         tool=method_name, passed=False, violations=[], error=f"Tool execution failed: {str(e)}"

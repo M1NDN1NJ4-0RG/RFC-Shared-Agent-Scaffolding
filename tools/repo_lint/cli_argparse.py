@@ -55,6 +55,7 @@ from tools.repo_lint.install.install_helpers import (
     print_perl_tool_instructions,
     print_powershell_tool_instructions,
 )
+from tools.repo_lint.logging_utils import configure_logging, set_verbose_mode
 from tools.repo_lint.policy import get_policy_summary, load_policy, validate_policy
 from tools.repo_lint.reporting import print_install_instructions, report_results
 from tools.repo_lint.runners.bash_runner import BashRunner
@@ -919,6 +920,19 @@ def main() -> None:
     """
     parser = create_parser()
     args = parser.parse_args()
+
+    # Configure logging based on CLI arguments
+    # Note: This must happen early, before any logging occurs
+    ci_mode = getattr(args, "ci", False)
+    verbose = getattr(args, "verbose", False)
+    quiet = getattr(args, "quiet", False) if hasattr(args, "quiet") else False
+
+    # Set verbose mode if requested
+    if verbose:
+        set_verbose_mode(True)
+
+    # Configure logging with appropriate handler (Rich for TTY, plain for CI)
+    configure_logging(ci_mode=ci_mode, quiet=quiet)
 
     # If no command specified, show help
     if not args.command:

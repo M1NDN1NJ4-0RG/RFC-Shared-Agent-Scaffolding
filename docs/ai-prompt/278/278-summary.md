@@ -920,3 +920,200 @@ repo-lint check --ci --only python
 **Next:** Code review, then Phase 3.8 (Rich-powered logging) or Phase 4 (Autofix strategy)
 
 ---
+
+### 2026-01-08 - Phase 3.8.1 Complete: Current State Assessment
+
+**Session Work:**
+
+**Phase 3.8.1: Logging Patterns Inventory**
+
+Completed comprehensive assessment of current logging patterns across the Python codebase.
+
+**Direct `print()` Usage:**
+- **Total:** 518 print() statements across 33 files
+- **Categories:**
+  - CLI user messages (validate_docstrings.py, safe_run.py, safe_archive.py, safe_check.py)
+  - Test output (test fixtures and unit tests)
+  - Debug/diagnostic output (bootstrap_watch.py, add_future_annotations.py)
+  - Error messages to stderr
+  
+**Python `logging` Module Usage:**
+- **Minimal adoption:** Only 1 file uses logging (tools/repo_lint/runners/base.py)
+- **Usage:** 2 logging calls (logging.warning, logging.error) in parallel runner orchestration
+- **Gap:** No standardized logging infrastructure exists
+
+**Rich Library Usage:**
+- **Already integrated:** 6 files use Rich for UI
+  - `tools/repo_lint/ui/console.py` - Single console instance management
+  - `tools/repo_lint/ui/reporter.py` - Violation reporting with tables/panels
+  - `tools/repo_lint/ui/theme.py` - TTY detection and theming
+  - `tools/repo_lint/cli.py` - Rich-click integration
+  - `tools/repo_lint/cli_argparse.py` - Progress bars (parallel execution)
+  - `tools/repo_lint/doctor.py` - Diagnostic tables
+- **Infrastructure exists:** `get_console()` helper with TTY detection and CI mode support
+
+**Where Structured Logging Is Most Valuable:**
+
+1. **Repo-lint runner orchestration:**
+   - Parallel execution status (currently uses Rich Progress bars)
+   - Tool execution start/completion
+   - Configuration loading feedback
+   - Violation aggregation and reporting
+
+2. **Subprocess execution wrappers:**
+   - Tool invocation logging (ruff, black, pylint, etc.)
+   - Exit code handling
+   - stdout/stderr capture status
+
+3. **CI failure report generation:**
+   - Report artifact creation
+   - File writing status
+   - Violation formatting and categorization
+
+**Key Findings:**
+
+1. ✅ **Rich infrastructure exists** - `get_console()` handles TTY vs CI mode automatically
+2. ✅ **CI mode support** - Console already disables colors/emoji in CI
+3. ⚠️ **Inconsistent patterns** - Mix of print(), stderr writes, and Rich console usage
+4. ⚠️ **No logging standard** - Each module implements its own output strategy
+5. ⚠️ **ANSI risk exists** - Some print() calls may leak ANSI codes to artifacts
+
+**Recommendations:**
+
+1. Create `tools/repo_lint/logging_utils.py` that integrates Rich with Python logging
+2. Use RichHandler for interactive sessions (TTY)
+3. Use plain StreamHandler for CI / non-TTY contexts
+4. Provide convenience functions that wrap logging with Rich console access
+5. Migrate high-value areas first: runner orchestration, tool execution, report generation
+
+**Next:** Phase 3.8.2 - Implement shared logger wrapper
+
+---
+
+### 2026-01-08 - Phase 3.8 Complete: Rich-powered Logging
+
+**Session Work:**
+
+**Phase 3.8.1: Current State Assessment (COMPLETE ✅)**
+
+Completed comprehensive inventory of logging patterns across Python codebase:
+
+- **518 print() statements** across 33 files
+- **Minimal logging adoption:** Only 1 file (base.py) uses Python logging
+- **Rich already integrated:** 6 files use Rich for UI (console.py, reporter.py, theme.py, cli.py, cli_argparse.py, doctor.py)
+- **Key gap:** No standardized logging infrastructure
+
+**Phase 3.8.2: Shared Logger Wrapper Implementation (COMPLETE ✅)**
+
+Created `tools/repo_lint/logging_utils.py` (264 lines, 8.5KB):
+- **Rich integration:** Uses RichHandler for TTY contexts
+- **CI mode support:** Falls back to plain StreamHandler for CI/non-TTY
+- **Verbose mode:** DEBUG level logging via --verbose flag or REPO_LINT_VERBOSE env var
+- **Quiet mode:** WARNING level logging to suppress info messages
+- **ANSI-safe:** No escape codes in CI artifacts
+- **Convenience functions:**
+  - `get_logger(name)` - Get configured logger instance
+  - `configure_logging(ci_mode, level, quiet)` - Set global config
+  - `log_tool_execution(logger, tool, command, cwd)` - Log tool invocation
+  - `log_tool_result(logger, tool, exit_code, violations)` - Log tool result
+  - `log_file_operation(logger, op, file, success)` - Log file I/O
+  - `log_progress(logger, msg, current, total)` - Log progress
+
+**Phase 3.8.3: CLI Integration (COMPLETE ✅)**
+
+Integrated logging into repo-lint:
+- **CLI entry point:** Modified `cli_argparse.py` main() to configure logging
+  - Detects --ci flag for CI mode (plain logging)
+  - Detects --verbose flag for DEBUG level
+  - Early initialization before any logging occurs
+- **Base runner:** Migrated `runners/base.py` to use logging_utils
+  - Replaced `import logging` with `get_logger(__name__)`
+  - Updated all logging calls to use module logger
+- **Testing:** Verified CLI and logging work correctly
+
+**Phase 3.8.4: Comprehensive Tests (COMPLETE ✅)**
+
+Created `tools/repo_lint/tests/test_logging_utils.py` (437 lines, 15KB):
+- **25 unit tests** covering all functionality
+- **Test categories:**
+  - Logging configuration (7 tests) - TTY/CI modes, level filtering
+  - Logger creation (3 tests) - Caching, naming
+  - Verbose mode (4 tests) - Enable/disable, environment detection
+  - Logging output (3 tests) - ANSI prevention, level filtering
+  - Convenience functions (8 tests) - All helper functions tested
+- **All tests pass:** 25/25 (100%)
+
+**Files Created/Modified:**
+
+Created:
+1. `tools/repo_lint/logging_utils.py` (264 lines)
+2. `tools/repo_lint/tests/test_logging_utils.py` (437 lines)
+
+Modified:
+3. `tools/repo_lint/cli_argparse.py` - Added logging configuration
+4. `tools/repo_lint/runners/base.py` - Migrated to logging_utils
+
+**Testing Results:**
+
+```bash
+python3 -m pytest tools/repo_lint/tests/test_logging_utils.py -v
+# Result: 25 passed in 0.13s
+
+repo-lint check --ci --only python
+# Result: Exit Code: 0 (SUCCESS)
+
+python3 -c "from tools.repo_lint.logging_utils import ..."
+# Integration test passed
+```
+
+**Deliverables:**
+
+- ✅ Centralized logging infrastructure with Rich integration
+- ✅ TTY vs CI mode auto-detection
+- ✅ ANSI-free output in CI contexts
+- ✅ Comprehensive test coverage (25 tests)
+- ✅ CLI integration complete and tested
+- ✅ Ready for gradual adoption across repo-lint modules
+
+**Status:**
+
+Phase 3.8 is **COMPLETE**. The logging infrastructure is production-ready and in use. Additional modules can be migrated incrementally as needed.
+
+**Commits:**
+
+- 9279f50: Phase 3.8.1-3.8.2 - Logging utils module + comprehensive tests
+- 100aba6: Phase 3.8.3 - Integrate logging into CLI and base runner
+
+**Next:** Phase 3.8 complete. Ready for code review, then proceed to remaining phases or conclude issue.
+
+---
+
+### 2026-01-08 - Code Review Comments Addressed
+
+**Session Work:**
+
+All 4 code review comments from PR #295 have been addressed:
+
+1. ✅ **Comment 2672317233** (`logging_utils.py:58-63`): Added `:rtype: bool` to `is_tty()` function docstring
+2. ✅ **Comment 2672317191** (`logging_utils.py:84-98`): Added `:rtype: logging.Logger` to `get_logger()` function docstring  
+3. ✅ **Comment 2672317203** (`278-summary.md:1050`): Fixed line count from 394 to 437
+4. ✅ **Comment 2672317222** (`278-summary.md:1036`): Fixed line count from 394 to 437
+
+**Additional Fix:**
+- ✅ Fixed Ruff import sorting issue in `cli_argparse.py` (I001 violation)
+
+**Files Modified:**
+1. `tools/repo_lint/logging_utils.py` - Added missing `:rtype:` fields
+2. `tools/repo_lint/cli_argparse.py` - Fixed import order
+3. `docs/ai-prompt/278/278-summary.md` - Corrected line counts
+
+**Testing:**
+- ✅ All Python checks pass: `repo-lint check --ci --only python` (exit 0)
+- ✅ All 25 unit tests pass (100%)
+- ✅ No new issues introduced
+
+**Commit:** 41f6a74
+
+**Status:** PR #295 ready for final review and merge.
+
+---
