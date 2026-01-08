@@ -2,26 +2,40 @@
 
 ## NEXT
 
-**All code review comments for PR #289 have been addressed!**
+**Phase 3.5.4: PARTIALLY COMPLETE - Moving to Phase 3.6**
 
-✅ **Comment #2670754995 (Parsing Bug):** FIXED in commit 3ac82d4
-✅ **Comment #2670754989 (Test Coverage):** FIXED in commit 3ac82d4
+Markdown auto-fix completed:
+- ✅ Reduced from 7,501 to 1,888 violations (75% reduction, 5,613 auto-fixed)
+- ⚠️ Remaining 1,888 violations are mostly MD013/line-length requiring manual review
+- Decision: Defer remaining line-length fixes to future cleanup sessions (not blocking)
 
-**Current Status:**
+**Phase 3.6: TOML Contracts + Linting Support (START NOW)**
 
-- Parsing logic fixed (`line.split(":", 2)` instead of `split(":", 3)`)
-- Comprehensive test suite added (15 tests, 100% pass rate)
-- All Python linting passes (`repo-lint check --ci --only python` = 0)
-- Ready for final review and merge
+Following the same pattern as Markdown (Phase 3.5), implement TOML linting:
 
-**After PR Merge:**
+1. **Phase 3.6.1:** Define TOML contract (docs/contributing/toml-contracts.md)
+   - Document formatting/indentation conventions
+   - Define key ordering, whitespace rules, quoting policy
+   - Set scope (all `*.toml` files, exclusions if any)
 
-Continue with Phase 3.5.4 or move to Phase 3.6:
+2. **Phase 3.6.2:** Configure Taplo (taplo.toml)
+   - Map contract rules to Taplo configuration
+   - Test baseline violations
 
-- Phase 3.5.4: Repo baseline cleanup (fix 3,800 Markdown violations)
-- Phase 3.6: TOML contracts + linting support (similar to Markdown implementation)
-- Phase 3.7: Reduce overly-broad exception handling
-- Phase 3.8: Rich-powered logging
+3. **Phase 3.6.3:** Integrate TOML runner into repo-lint
+   - Create tools/repo_lint/runners/toml_runner.py
+   - Add to CLI (--lang toml, --only toml)
+   - Support check and fix modes
+
+4. **Phase 3.6.4:** Repo baseline cleanup
+   - Run auto-fix where safe
+   - Manual fixes if needed
+
+5. **Phase 3.6.5:** Comprehensive tests
+   - Create test_toml_runner.py
+   - Follow same pattern as test_markdown_runner.py
+
+**Locked Decision:** Use **Taplo** for TOML linting/formatting (from issue #278)
 
 ---
 
