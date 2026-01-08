@@ -65,7 +65,9 @@ TABLE_SEP_RE = re.compile(r"^\s{0,3}\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*
 # Lists:
 # - Bullet or numbered marker
 # - Optional task checkbox immediately after marker
-LIST_ITEM_PREFIX_RE = re.compile(r"^(?P<indent>\s{0,3})(?P<marker>[-*+]|\d+\.)\s+")
+LIST_ITEM_PREFIX_RE = re.compile(
+    r"^(?P<indent>\s{0,3})(?P<marker>[-*+]|\d{1,4}\.)\s+"
+)
 TASK_BOX_RE = re.compile(r"^\[(?P<state>[ xX])\]\s+")
 
 
@@ -214,7 +216,7 @@ def _collect_list_item(lines: List[str], start: int) -> Tuple[int, str, str, str
 
         # Continuation line: must be indented sufficiently
         indent_len = len(line) - len(line.lstrip(" "))
-        if indent_len >= prefix_len or indent_len >= (len(base_indent) + 2):
+        if indent_len >= prefix_len:
             cont = line.strip()
             # Safety: if continuation includes inline code or URL, keep original list block as-is.
             # We'll signal by returning the original payload unmodified by embedding a marker.
@@ -308,8 +310,13 @@ def _rewrite_file(path: Path) -> bool:
 
             # If we detected unsafe content for this list item, copy original line(s) unchanged.
             if payload == "__DO_NOT_TOUCH_LIST_ITEM__":
-                out.append(line)
-                i += 1
+                out.extend(lines[i:next_i])
+                i = next_i
+
+                # Preserve following blank line if present
+                if i < len(lines) and not lines[i].strip():
+                    out.append(lines[i])
+                    i += 1
                 continue
 
             prefix = f"{base_indent}{marker} {checkbox}"
@@ -333,7 +340,11 @@ def _rewrite_file(path: Path) -> bool:
         next_i, para_lines = _collect_paragraph(lines, i)
         para_text = " ".join(s.strip() for s in para_lines).strip()
 
-        if para_text and len(para_text) > MAX_LEN:
+        if (
+            para_text
+            and len(para_text) > MAX_LEN
+            and any(len(l) > MAX_LEN for l in para_lines)
+        ):
             out.extend(_wrap_text(para_text))
         else:
             out.extend(para_lines)
@@ -369,6 +380,9 @@ def main() -> int:
     root = Path(sys.argv[1])
     if not root.exists():
         print(f"ERROR: path not found: {root}", file=sys.stderr)
+        return 2
+    if not (root.is_file() or root.is_dir()):
+        print(f"ERROR: path must be a file or directory: {root}", file=sys.stderr)
         return 2
 
     changed_any = False
