@@ -47,6 +47,7 @@ import time
 import traceback
 
 from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
+from tools.repo_lint.logging_utils import configure_logging, set_verbose_mode
 from tools.repo_lint.install.install_helpers import (
     cleanup_repo_local,
     get_venv_path,
@@ -919,6 +920,19 @@ def main() -> None:
     """
     parser = create_parser()
     args = parser.parse_args()
+
+    # Configure logging based on CLI arguments
+    # Note: This must happen early, before any logging occurs
+    ci_mode = getattr(args, "ci", False)
+    verbose = getattr(args, "verbose", False)
+    quiet = getattr(args, "quiet", False) if hasattr(args, "quiet") else False
+
+    # Set verbose mode if requested
+    if verbose:
+        set_verbose_mode(True)
+
+    # Configure logging with appropriate handler (Rich for TTY, plain for CI)
+    configure_logging(ci_mode=ci_mode, quiet=quiet)
 
     # If no command specified, show help
     if not args.command:

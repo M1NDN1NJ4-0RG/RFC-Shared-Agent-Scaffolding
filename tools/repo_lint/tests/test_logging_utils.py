@@ -3,6 +3,23 @@
 :Purpose:
     Comprehensive test coverage for the logging utilities module including
     TTY vs non-TTY formatting, log level filtering, and ANSI code prevention.
+
+:Environment Variables:
+    - REPO_LINT_VERBOSE: Used in tests to verify verbose mode detection
+
+:Examples:
+    Run all tests::
+
+        python3 -m pytest tools/repo_lint/tests/test_logging_utils.py -v
+
+    Run specific test class::
+
+        python3 -m pytest tools/repo_lint/tests/test_logging_utils.py::TestLoggingConfiguration -v
+
+:Exit Codes:
+    Test module exit codes (from pytest):
+    - 0: All tests passed
+    - 1: One or more tests failed
 """
 
 from __future__ import annotations
