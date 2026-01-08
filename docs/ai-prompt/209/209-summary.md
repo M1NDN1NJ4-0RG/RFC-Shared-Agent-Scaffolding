@@ -8,7 +8,8 @@
 
 ## Problem Statement
 
-Copilot agents repeatedly fail the repository's mandatory "repo-lint before commit" rules due to environment/tooling drift:
+Copilot agents repeatedly fail the repository's mandatory "repo-lint before commit" rules due to environment/tooling
+drift:
 
 - `repo-lint` is not installed or not on PATH
 - Required linters aren't installed (black/ruff/pylint/shellcheck/shfmt/etc.)

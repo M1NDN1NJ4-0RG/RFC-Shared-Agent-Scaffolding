@@ -2,7 +2,10 @@
 
 ## Executive Summary
 
-The bootstrap script orchestrates installation of development toolchains (Python, Shell, PowerShell, Perl) plus required utilities (actionlint, ripgrep) to establish a reproducible development environment. After Phase 2 hardening, all critical external commands use deterministic exit codes via fail-fast wrappers, eliminating silent failures and partial-install states.
+The bootstrap script orchestrates installation of development toolchains (Python, Shell, PowerShell, Perl) plus required
+utilities (actionlint, ripgrep) to establish a reproducible development environment. After Phase 2 hardening, all
+critical external commands use deterministic exit codes via fail-fast wrappers, eliminating silent failures and
+partial-install states.
 
 **Key characteristics:**
 

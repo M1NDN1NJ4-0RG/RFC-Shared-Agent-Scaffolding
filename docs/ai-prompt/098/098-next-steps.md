@@ -26,7 +26,8 @@ Related: Issue #098, PRs (various)
 **Changes Made:**
 
 - Fixed comment #2654347311: Added Progress Tracker section with all phase completion status
-- Fixed comment #2654347318: Clarified test statements to "Not run (documentation-only)" instead of contradictory "pass (not run)"
+- Fixed comment #2654347318: Clarified test statements to "Not run (documentation-only)" instead of contradictory "pass
+  (not run)"
 - Fixed comment #2654347323: Changed `./testing/` directory link to specific file `./testing/conformance-tests.md`
 - Fixed comment #2654347328: Updated Last Updated field from 2025-12-30 to 2025-12-31
 
@@ -98,15 +99,12 @@ Related: Issue #098, PRs (various)
   - "Key Directories" section explaining purpose of each major directory
   - Clear indication that rust/ is canonical and wrappers invoke it
 - **Item 6.2 (Docs Index Start-Here):** Enhanced docs/README.md with persona-based navigation
-  - **Users section:** For people using the tools
-    - Links to RFC, Usage Guide, Wrapper Discovery
-    - Quick example showing build and run
-  - **Contributors section:** For people contributing code
-    - Links to CONTRIBUTING.md, Contributing Guide, Docstring Contracts, Testing
-    - Pre-PR checklist (naming, lint check, tests)
-  - **Maintainers section:** For architecture and design work
-    - Links to Canonical Structure, Contract Extraction, Risk Analysis, Rust Tool
-    - Decision logs and history index
+  - **Users section:** For people using the tools - Links to RFC, Usage Guide, Wrapper Discovery - Quick example showing
+    build and run
+  - **Contributors section:** For people contributing code - Links to CONTRIBUTING.md, Contributing Guide, Docstring
+    Contracts, Testing - Pre-PR checklist (naming, lint check, tests)
+  - **Maintainers section:** For architecture and design work - Links to Canonical Structure, Contract Extraction, Risk
+    Analysis, Rust Tool - Decision logs and history index
   - Each persona has "You want to:" and "Start with:" sections for clarity
 - **Item 6.1 (Rename scripts/):** SKIPPED (optional, not needed)
   - Repository has both `scripts/` (validation scripts) and `tools/` (Python packages)
@@ -198,11 +196,9 @@ Related: Issue #098, PRs (various)
   - Item 5.5.0: Marked Sub-Items 5.5.0.1, 5.5.0.2, 5.5.0.4 as complete [x]
   - Sub-Item 5.5.0.3 remains incomplete [ ] with detailed notes on affected files
   - Item 5.5.1: All 4 sub-items marked complete [x] with completion notes
-  - Item 5.5.2: All 6 sub-items marked complete [x] with detailed implementation evidence
-    - Replaced large "Copilot Work Packet" section with completion summary
-    - Listed all 7 modular validators with checkmarks
-    - Documented structure-aware parsers (Tree-sitter, PPI, ParseFile, AST)
-    - Referenced 31 comprehensive tests and test fixtures
+  - Item 5.5.2: All 6 sub-items marked complete [x] with detailed implementation evidence - Replaced large "Copilot Work
+    Packet" section with completion summary - Listed all 7 modular validators with checkmarks - Documented
+    structure-aware parsers (Tree-sitter, PPI, ParseFile, AST) - Referenced 31 comprehensive tests and test fixtures
   - Item 5.5.3: All 3 sub-items marked complete [x]
   - Item 5.5.4: All 4 sub-items marked complete [x]
 - Added status headers for each major item showing completion via Issue #110

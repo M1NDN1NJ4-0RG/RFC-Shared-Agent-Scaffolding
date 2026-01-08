@@ -7,7 +7,8 @@
 CI must NOT lint/docstring-validate the purpose-built unsafe fixtures directory:
 `conformance/repo-lint/unsafe-fix-fixtures/python/`
 
-Right now CI is picking up files it should not. Also, only Python has unsafe-fix fixtures — we need parity scaffolding for the other languages.
+Right now CI is picking up files it should not. Also, only Python has unsafe-fix fixtures — we need parity scaffolding
+for the other languages.
 
 ---
 
@@ -46,7 +47,8 @@ Create the missing fixture dirs (even if minimal initially):
 
 For EACH language, add at least:
 
-- 1 fixture file that should trigger an **unsafe** fixer (or a placeholder fixture if unsafe fixers aren’t implemented for that language yet)
+- 1 fixture file that should trigger an **unsafe** fixer (or a placeholder fixture if unsafe fixers aren’t implemented
+  for that language yet)
 - A short README.md in the language folder explaining:
   - these files are intentionally non-conforming
   - they are excluded from CI lint/docstring checks
@@ -55,7 +57,8 @@ For EACH language, add at least:
 Important:
 
 - These fixtures MUST NOT cause CI lint/docstring failures.
-- If unsafe mode isn’t implemented for a language yet, add the directory + README + a placeholder fixture file and document “TODO: unsafe fixers not implemented yet”.
+- If unsafe mode isn’t implemented for a language yet, add the directory + README + a placeholder fixture file and
+  document “TODO: unsafe fixers not implemented yet”.
 
 ---
 

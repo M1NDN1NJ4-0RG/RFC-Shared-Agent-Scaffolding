@@ -224,31 +224,23 @@ All code review comments from rounds 1-5 have been addressed. Ready for Phase 2.
 1. **Fixed Black Table Formatting (Task A):**
    - **Problem:** Black violations displayed as `. -` in File/Line columns
    - **Root Cause:** Single summary violation with file="." and line=None
-   - **Solution:** Parse Black stdout to extract per-file violations
-     - Regex match "would reformat <filepath>" lines
-     - Convert absolute paths to repo-relative paths
-     - Create one Violation per file with proper filename
-     - Use line=1 as placeholder (Black doesn't provide line numbers)
-     - Fallback to summary violation if parsing fails
+   - **Solution:** Parse Black stdout to extract per-file violations - Regex match "would reformat <filepath>" lines -
+     Convert absolute paths to repo-relative paths - Create one Violation per file with proper filename - Use line=1 as
+     placeholder (Black doesn't provide line numbers) - Fallback to summary violation if parsing fails
    - **Result:** Black now shows actual filenames instead of `. -`
 
 2. **Implemented Duplicate Filename Disambiguation (Task B):**
    - **Problem:** Multiple files with same basename (e.g., test.py) are indistinguishable
-   - **Solution:** Smart display name selection in reporter
-     - Pre-scan violations to count basename occurrences
-     - Unique basenames: show just filename
-     - Duplicate basenames: show full relative path from repo root
-     - Maintains stable column alignment
+   - **Solution:** Smart display name selection in reporter - Pre-scan violations to count basename occurrences - Unique
+     basenames: show just filename - Duplicate basenames: show full relative path from repo root - Maintains stable
+     column alignment
    - **Location:** `tools/repo_lint/ui/reporter.py` render_failures() method
    - **Result:** Duplicate basenames now disambiguated automatically
 
 3. **Language-Specific Docstring Validator Naming:**
-   - **Changed:** All docstring validators now use language-specific names
-     - validate_docstrings → python-docstrings
-     - validate_docstrings → bash-docstrings
-     - validate_docstrings → perl-docstrings
-     - validate_docstrings → powershell-docstrings
-     - rust-docstrings (already correct, no change)
+   - **Changed:** All docstring validators now use language-specific names - validate_docstrings → python-docstrings -
+     validate_docstrings → bash-docstrings - validate_docstrings → perl-docstrings - validate_docstrings →
+     powershell-docstrings - rust-docstrings (already correct, no change)
    - **Rationale:** Matches Rust pattern, differentiates language-specific checks
    - **Verified:** All 15 runners show correct names in output
 
@@ -838,34 +830,24 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 
   **Advanced Usage Section (lines 500-650, new subsections):**
 
-  1. **Output Modes: Interactive vs CI** (new subsection)
-     - Interactive Mode features: Rich formatting, colors, tables, panels, icons, progress indicators
-     - CI Mode features: plain text, no colors, no icons, stable output, greppable format
-     - Example outputs for both modes
-     - When to use CI mode: GitHub Actions, output redirection, scripting, Windows CMD issues
+  1. **Output Modes: Interactive vs CI** (new subsection) - Interactive Mode features: Rich formatting, colors, tables,
+     panels, icons, progress indicators - CI Mode features: plain text, no colors, no icons, stable output, greppable
+     format - Example outputs for both modes - When to use CI mode: GitHub Actions, output redirection, scripting,
+     Windows CMD issues
 
-  2. **Theme Customization** (new subsection, ~150 lines)
-     - Explanation of YAML-based theme system
-     - Default theme example with full YAML structure
-     - Custom theme creation guide
-     - Three methods to apply custom themes: CLI flag, env var, per-command
-     - Theme precedence hierarchy (5 levels)
-     - Available color names (standard, bright, special)
-     - Available border styles (ascii, rounded, heavy, double)
+  2. **Theme Customization** (new subsection, ~150 lines) - Explanation of YAML-based theme system - Default theme
+     example with full YAML structure - Custom theme creation guide - Three methods to apply custom themes: CLI flag,
+     env var, per-command - Theme precedence hierarchy (5 levels) - Available color names (standard, bright, special) -
+     Available border styles (ascii, rounded, heavy, double)
 
   **Troubleshooting Section (lines 420-485, new subsection):**
 
-  1. **Windows-Specific Issues** (new subsection, ~65 lines)
-     - Issue: Rich output not displaying in Command Prompt
-       - Solutions: Use Windows Terminal, use PowerShell, force CI mode
-     - Issue: PowerShell completion not working
-       - Solution: Check/set execution policy to RemoteSigned
-     - Issue: "python: command not found"
-       - Solutions: Try py/python3 commands, create alias, verify PATH
-     - Issue: Line ending differences (CRLF vs LF)
-       - Solution: Configure Git autocrlf, .gitattributes settings
-     - Issue: Theme colors not appearing
-       - Solutions: Enable ANSI support, use PowerShell 7+, use Windows Terminal, force CI mode
+  1. **Windows-Specific Issues** (new subsection, ~65 lines) - Issue: Rich output not displaying in Command Prompt -
+     Solutions: Use Windows Terminal, use PowerShell, force CI mode - Issue: PowerShell completion not working -
+     Solution: Check/set execution policy to RemoteSigned - Issue: "python: command not found" - Solutions: Try
+     py/python3 commands, create alias, verify PATH - Issue: Line ending differences (CRLF vs LF) - Solution: Configure
+     Git autocrlf, .gitattributes settings - Issue: Theme colors not appearing - Solutions: Enable ANSI support, use
+     PowerShell 7+, use Windows Terminal, force CI mode
 
 **Changes Made:**
 
@@ -1050,10 +1032,9 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - **Phase 2.5 Blocker #1: Update test_output_format.py** ✅ COMPLETE
   - All 7 tests updated to verify Rich table/panel format instead of plain text
   - Tests now use CI mode for deterministic rendering (no terminal-specific escape codes)
-  - Test expectations match actual Rich Reporter output:
-    - Success case: Rich panel with "Summary" header and "Exit Code: 0 (SUCCESS)"
-    - Violations case: Rich tables with File/Line/Message columns, per-tool panels, Summary panel
-    - Counts: "Total Violations: N" in Summary panel
+  - Test expectations match actual Rich Reporter output: - Success case: Rich panel with "Summary" header and "Exit
+    Code: 0 (SUCCESS)" - Violations case: Rich tables with File/Line/Message columns, per-tool panels, Summary panel -
+    Counts: "Total Violations: N" in Summary panel
   - Tests verify deterministic output (no timestamps, no random data)
 
 - **Fixed test import issues across 4 test files**
@@ -1169,7 +1150,8 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 
 - Per task instructions: "Consolidate all content from these files into `160-overview.md` in the most logical/efficient locations"
 - Per task instructions: "Normalize wording so requirements are explicit (MUST/SHOULD/MAY), consistent, and testable"
-- Per task instructions: "If any new requirement conflicts with existing text, resolve it by updating the overview to the correct final intent"
+- Per task instructions: "If any new requirement conflicts with existing text, resolve it by updating the overview to
+  the correct final intent"
 - Per new requirement: "Also add a `160-human-decisions-2.md` file for any decisions you think may need a human decision"
 - Following repository minimal-change principle: do not implement features without human approval
 - Following escalation policy: surface major decisions requiring human input before proceeding
@@ -1234,20 +1216,12 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 
 - **Phase 2.4: Improve CLI usability** ✅ COMPLETE
   - Migrated from argparse to Click framework (✅ requirement)
-  - Added Rich formatting for beautiful help output (✅ requirement)
-    - Rich panels with borders for main help
-    - Tables for command lists
-    - Colored text and formatting
-    - Better UX than plain argparse
-  - Enabled shell completion support (✅ requirement)
-    - Bash: _REPO_LINT_COMPLETE=bash_source repo-lint
-    - Zsh: _REPO_LINT_COMPLETE=zsh_source repo-lint
-    - Fish: _REPO_LINT_COMPLETE=fish_source repo-lint
-  - Created HOW-TO-USE-THIS-TOOL.md (✅ requirement)
-    - Installation guide
-    - Common commands and examples
-    - Shell completion setup per shell
-    - Comprehensive troubleshooting
+  - Added Rich formatting for beautiful help output (✅ requirement) - Rich panels with borders for main help - Tables
+    for command lists - Colored text and formatting - Better UX than plain argparse
+  - Enabled shell completion support (✅ requirement) - Bash: _REPO_LINT_COMPLETE=bash_source repo-lint - Zsh:
+    _REPO_LINT_COMPLETE=zsh_source repo-lint - Fish: _REPO_LINT_COMPLETE=fish_source repo-lint
+  - Created HOW-TO-USE-THIS-TOOL.md (✅ requirement) - Installation guide - Common commands and examples - Shell
+    completion setup per shell - Comprehensive troubleshooting
   - Fixed PyYAML CI issue by adding to ALL workflow pip install commands
   - Backward compatible: both `repo-lint` and `python3 -m tools.repo_lint` work
 
@@ -1290,9 +1264,8 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 
 - Addressed second round of code review feedback:
   1. Fixed MissingToolError constructor calls (API contract violation)
-  2. Extracted magic values to constants for maintainability:
-     - SEMANTIC_VERSION_PATTERN for version validation
-     - DEFAULT_ALLOWED_KEYS for config validation
+  2. Extracted magic values to constants for maintainability: - SEMANTIC_VERSION_PATTERN for version validation -
+     DEFAULT_ALLOWED_KEYS for config validation
   3. Fixed import order in config_validator.py (I001 Ruff issue)
 - All files re-formatted with Black
 - All files pass Ruff checks
@@ -1483,7 +1456,8 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 
 **Rationale:**
 
-- Per locked-in decision #3: "Resolve the current mismatch between install/version_pins.py and requirements-dev.txt so there is one canonical source of truth for tool versions"
+- Per locked-in decision #3: "Resolve the current mismatch between install/version_pins.py and requirements-dev.txt so
+  there is one canonical source of truth for tool versions"
 - This is already done - version_pins.py is the source, and pyproject.toml is in sync
 - Installer uses pinned versions, ensuring deterministic linting behavior
 
@@ -1636,7 +1610,8 @@ All 6 Phase 1 items are now complete:
 
 - **Item 4: Ensure missing docstring validator is detected** ✅
   - Updated all 4 runner files (Python, Bash, Perl, PowerShell) to use clearer error message
-  - Changed from "Docstring validator script not found" to "Docstring validation SKIPPED: validator script not found at {path}. This check was not executed."
+  - Changed from "Docstring validator script not found" to "Docstring validation SKIPPED: validator script not found at
+    {path}. This check was not executed."
   - Makes it crystal clear that the check was skipped, not that it failed
 
 - **Item 5: Validate non-Python unsafe mode behavior** ✅

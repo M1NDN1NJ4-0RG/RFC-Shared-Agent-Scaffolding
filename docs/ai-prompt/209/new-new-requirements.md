@@ -57,7 +57,8 @@ No “out of scope.” No deferrals. Missing tools are a blocker.
 
 ## 3) Draft the replacement document for ambiguous session rules (MANDATORY)
 
-Create a new document (path/name your choice, but propose a final location) that will serve as the **canonical replacement** for any ambiguous wording about:
+Create a new document (path/name your choice, but propose a final location) that will serve as the **canonical
+replacement** for any ambiguous wording about:
 
 - Session Start requirements
 - Session End requirements

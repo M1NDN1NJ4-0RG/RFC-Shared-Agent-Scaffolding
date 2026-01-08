@@ -8,15 +8,18 @@
 
 ## Overview
 
-This document outlines the plan for executing Mode A benchmarks as defined in Issue #248. Mode A benchmarks the complete developer experience of installing tooling from scratch (after warming caches).
+This document outlines the plan for executing Mode A benchmarks as defined in Issue #248. Mode A benchmarks the complete
+developer experience of installing tooling from scratch (after warming caches).
 
-**Current Status:** Mode B (verification-only) benchmarks have been successfully completed. Mode A is deferred due to Rust bootstrapper limitation requiring pre-existing virtual environment.
+**Current Status:** Mode B (verification-only) benchmarks have been successfully completed. Mode A is deferred due to
+Rust bootstrapper limitation requiring pre-existing virtual environment.
 
 ---
 
 ## Benchmark Goals
 
-Mode A measures the **end-to-end installation performance** of both Bash and Rust bootstrappers, simulating a developer setting up their environment for the first time (with warm network/package caches).
+Mode A measures the **end-to-end installation performance** of both Bash and Rust bootstrappers, simulating a developer
+setting up their environment for the first time (with warm network/package caches).
 
 ### What Mode A Tests
 
@@ -43,7 +46,8 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
 
 **Issue:** When `.venv` doesn't exist, the Rust bootstrapper fails to create it before attempting pip operations.
 
-**Status of Previous Fix:** The exit code 19 issue related to actionlint detection has been resolved (tools can now be verified correctly). However, the fresh installation workflow (Mode A) remains blocked by the venv creation issue.
+**Status of Previous Fix:** The exit code 19 issue related to actionlint detection has been resolved (tools can now be
+verified correctly). However, the fresh installation workflow (Mode A) remains blocked by the venv creation issue.
 
 **Required Fix:** The Rust bootstrapper needs to be updated to:
 

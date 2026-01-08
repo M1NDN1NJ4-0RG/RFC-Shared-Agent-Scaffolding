@@ -15,7 +15,8 @@
 
 1. **Section: "⚠️ MANDATORY FIRST STEP ⚠️" (lines 3-18)**
    - **Requirement:** "Read `docs/contributing/session-compliance-requirements.md` **IMMEDIATELY** at session start."
-   - **Prohibition:** "You may NOT: Explore files, Analyze the problem, Read repository contents, Plan changes, Make any code modifications"
+   - **Prohibition:** "You may NOT: Explore files, Analyze the problem, Read repository contents, Plan changes, Make any
+     code modifications"
    - **Timing:** "Until you have read the complete Session Compliance Requirements document."
 
 2. **Section: "SESSION START REQUIREMENTS (MANDATORY)" (lines 113-124)**
@@ -35,8 +36,10 @@
    - **Consequence:** "Failure to read this document when starting NEW work is a violation."
 
 2. **Section: "Session Start Requirements (MANDATORY)" (lines 38-85)**
-   - **When:** "At the start of NEW work sessions, immediately upon first message, before ANY repo exploration/analysis/work."
-   - **PROHIBITION:** "You may NOT read files, explore the repository, analyze the problem, or plan changes until the bootstrapper has completed successfully (exit 0)."
+   - **When:** "At the start of NEW work sessions, immediately upon first message, before ANY repo
+     exploration/analysis/work."
+   - **PROHIBITION:** "You may NOT read files, explore the repository, analyze the problem, or plan changes until the
+     bootstrapper has completed successfully (exit 0)."
    - **Exception:** "Reading this file and `.github/copilot-instructions.md` is permitted before bootstrap."
    - **Ordered Checklist:**
      1. Run `./scripts/session-start.sh` (MUST exit 0)
@@ -70,7 +73,8 @@ Copilot immediately began working on Issue #235 WITHOUT running `./scripts/sessi
 - **Timestamp:** 2026-01-07 05:59:18 +0000
 - **Commit Message:** "Initialize issue #235 session journals for Mode A benchmark work"
 - **File Modified:** `docs/ai-prompt/235/235-summary.md` (created)
-- **Content Evidence:** The summary file states "Session start compliance completed" but this was AFTER the file was created, meaning exploration/analysis happened BEFORE session start.
+- **Content Evidence:** The summary file states "Session start compliance completed" but this was AFTER the file was
+  created, meaning exploration/analysis happened BEFORE session start.
 
 **Concrete Evidence from Commit:**
 
@@ -132,12 +136,13 @@ Between receiving the problem statement and running `./scripts/session-start.sh`
 - Implicit requirement: Reading instructions implies following them
 - `.github/copilot-instructions.md` line 3: "⚠️ MANDATORY FIRST STEP ⚠️"
 
-**Observed Behavior:**
-In BOTH sessions, Copilot demonstrated it HAD read the instructions (referenced them explicitly) but did NOT follow the ordering requirements.
+**Observed Behavior:** In BOTH sessions, Copilot demonstrated it HAD read the instructions (referenced them explicitly)
+but did NOT follow the ordering requirements.
 
 **Evidence:**
 
-- **Current Session:** Stated "I'll start by analyzing the problem statement and comments" and "Let me start by following the instructions" AFTER already violating them
+- **Current Session:** Stated "I'll start by analyzing the problem statement and comments" and "Let me start by
+  following the instructions" AFTER already violating them
 - **Pattern:** Reads `.github/copilot-instructions.md`, acknowledges it exists, then proceeds to violate its first requirement
 
 **Impact:**
@@ -160,7 +165,8 @@ The agent receives instructions from multiple sources simultaneously:
 3. Problem statement in user message
 4. Contextual expectations (PR review response pattern)
 
-When these conflict, the agent defaults to "solve the problem immediately" mode rather than "follow procedural requirements first" mode.
+When these conflict, the agent defaults to "solve the problem immediately" mode rather than "follow procedural
+requirements first" mode.
 
 **Supporting Evidence:**
 
@@ -660,14 +666,14 @@ git push origin feature-branch-no-compliance
 
 ## Summary
 
-**Root Cause (Most Likely):**
-Instruction precedence conflict combined with lack of hard enforcement gates. Agent reads instructions but prioritizes "solve the problem" directive over "follow procedure first" when they appear to conflict.
+**Root Cause (Most Likely):** Instruction precedence conflict combined with lack of hard enforcement gates. Agent reads
+instructions but prioritizes "solve the problem" directive over "follow procedure first" when they appear to conflict.
 
-**Key Evidence:**
-Multiple sessions show agent reads instructions (quotes from them) but does not execute session start FIRST, even when explicitly prohibited from working before bootstrap completes.
+**Key Evidence:** Multiple sessions show agent reads instructions (quotes from them) but does not execute session start
+FIRST, even when explicitly prohibited from working before bootstrap completes.
 
-**Critical Missing Element:**
-No automated enforcement. Instructions are plain text with no verification mechanism. Agent can (and did) claim compliance without proof.
+**Critical Missing Element:** No automated enforcement. Instructions are plain text with no verification mechanism.
+Agent can (and did) claim compliance without proof.
 
 **Recommended Priority:**
 

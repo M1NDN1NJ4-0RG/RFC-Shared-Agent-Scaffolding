@@ -7,7 +7,9 @@ Related: Issue #90, PR (TBD)
 
 # EPIC: Repository Restructure & Documentation Reorganization (RFC-Shared-Agent-Scaffolding)
 
-**Goal:** Refactor the repository layout to a clean, scalable structure with consistent naming, consolidated documentation, and updated references (docs links, scripts, workflows, tests) — **without breaking behavior** at any point.
+**Goal:** Refactor the repository layout to a clean, scalable structure with consistent naming, consolidated
+documentation, and updated references (docs links, scripts, workflows, tests) — **without breaking behavior** at any
+point.
 
 **Non negotiables:**
 

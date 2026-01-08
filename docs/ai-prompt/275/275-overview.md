@@ -104,7 +104,8 @@ A) Buffered output per runner (recommended)
 
 - [ ] Capture stdout/stderr for each runner’s tool invocations (subprocess capture)
 - [ ] Store per-runner log buffer
-- [ ] Print buffers in deterministic order after all futures complete (or after each completes, but still printed in deterministic order)
+- [ ] Print buffers in deterministic order after all futures complete (or after each completes, but still printed in
+      deterministic order)
 
 B) “Quiet workers + summary printer”**
 

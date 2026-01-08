@@ -25,7 +25,8 @@ This work is NOT DONE until:
   - errors encountered
   - the exact command you are running next
   - the exact file you are editing next
-- **DO NOT END THE SESSION** unless you are approaching token/context/time limits. If you must stop, follow the Safety Valve section exactly.
+- **DO NOT END THE SESSION** unless you are approaching token/context/time limits. If you must stop, follow the Safety
+  Valve section exactly.
 
 ---
 
@@ -67,7 +68,8 @@ ls -la tools/repo_lint/tests/** || true
 
 ## 3) CREATE FIXTURES (EACH MUST CONTAIN MULTIPLE VIOLATIONS)
 
-Create these exact files (and only these files for this issue). Each file must contain **multiple violations** for its intended tool.
+Create these exact files (and only these files for this issue). Each file must contain **multiple violations** for its
+intended tool.
 
 ### Bash
 

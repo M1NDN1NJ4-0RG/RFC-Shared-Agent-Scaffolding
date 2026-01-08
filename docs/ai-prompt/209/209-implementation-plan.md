@@ -10,7 +10,9 @@
 
 ## Executive Summary
 
-This plan outlines the implementation of a Bash-based bootstrapper script that automates the setup of the repo-lint toolchain and development environment. The bootstrapper will be the canonical session-start compliance gate for Copilot agents working on this repository.
+This plan outlines the implementation of a Bash-based bootstrapper script that automates the setup of the repo-lint
+toolchain and development environment. The bootstrapper will be the canonical session-start compliance gate for Copilot
+agents working on this repository.
 
 **Key Insight:** A Rust implementation already exists (`rust/src/bootstrap.rs` [**REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`]), but the requirement specifies a **Bash script** at `scripts/bootstrap-repo-lint-toolchain.sh`. This plan assumes both implementations will coexist, with the Bash script potentially serving as a lighter-weight alternative for shell-based workflows.
 
@@ -587,7 +589,8 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - **Windows Support**: Bash script targets Unix-like systems; Windows support would require PowerShell version
 - **Advanced Features**: Defer `--cleanup`, `--force`, verbose modes unless requested
 - **Rust vs Bash Decision**: Defer decision on which implementation is canonical; assume coexistence for now
-- **Tool Version Management**: Defer pinning system tool versions (shellcheck, shfmt, etc.) to specific versions unless required
+- **Tool Version Management**: Defer pinning system tool versions (shellcheck, shfmt, etc.) to specific versions unless
+  required
 - **Offline Installation**: Defer support for air-gapped/offline environments
 - **Custom Tool Paths**: Defer support for installing tools in non-standard locations
 
@@ -624,10 +627,12 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ### High Risks
 
 1. **Platform Variability**: Different Linux distributions may require different package managers or package names
-   - **Mitigation**: Focus on Debian/Ubuntu (apt) as primary target; provide manual install instructions for other platforms
+   - **Mitigation**: Focus on Debian/Ubuntu (apt) as primary target; provide manual install instructions for other
+     platforms
 
 2. **Sudo Requirements**: Many tool installations require sudo, which may not be available in all environments
-   - **Mitigation**: Detect missing sudo and fail gracefully with clear instructions; support user-level installations where possible
+   - **Mitigation**: Detect missing sudo and fail gracefully with clear instructions; support user-level installations
+     where possible
 
 3. **Network Dependency**: Tool installations require internet access
    - **Mitigation**: Document network requirement; consider caching strategy for CI environments
