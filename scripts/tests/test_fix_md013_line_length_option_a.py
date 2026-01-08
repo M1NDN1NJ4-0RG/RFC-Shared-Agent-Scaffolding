@@ -62,7 +62,6 @@ class TestOptionA(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
     def _write_and_process(self, content: str) -> str:
         """Write content to temp file, process it, and return result.
-        
         :param content: Markdown content to process
         :returns: Processed content after running the fixer
         """
