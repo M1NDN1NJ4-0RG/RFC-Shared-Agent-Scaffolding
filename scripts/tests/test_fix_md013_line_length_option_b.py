@@ -44,7 +44,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import the module under test
-import fix_md013_line_length_option_b as fixer
+import fix_md013_line_length_option_b as fixer  # pylint: disable=wrong-import-position
 
 
 class TestOptionB(unittest.TestCase):
@@ -60,10 +60,14 @@ class TestOptionB(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def _write_and_process(self, content: str) -> str:
-        """Write content to temp file, process it, and return result."""
+        """Write content to temp file, process it, and return result.
+        
+        :param content: Markdown content to process
+        :returns: Processed content after running the fixer
+        """
         test_file = self.temp_path / "test.md"
         test_file.write_text(content, encoding="utf-8")
-        fixer._rewrite_file(test_file)
+        fixer._rewrite_file(test_file)  # pylint: disable=protected-access
         return test_file.read_text(encoding="utf-8")
 
     def test_plain_paragraph_wrapping(self):
@@ -148,10 +152,11 @@ class TestOptionB(unittest.TestCase):
         # Should have [x] checkbox
         self.assertTrue(lines[0].startswith("- [x] "))
 
-    def test_task_list_uppercase_X_wrapping(self):
+    def test_task_list_uppercase_x_wrapping(self):
         """Task items with uppercase X should preserve [X] checkbox."""
         content = (
-            "- [X] This is a very long checked task item with uppercase X that " "exceeds the maximum line length\n"
+            "- [X] This is a very long checked task item with uppercase X that "
+            "exceeds the maximum line length\n"
         )
         result = self._write_and_process(content)
         lines = result.splitlines()
@@ -173,7 +178,8 @@ class TestOptionB(unittest.TestCase):
     def test_list_with_inline_code_preserved(self):
         """List items with inline code should not be wrapped (safety)."""
         content = (
-            "- This is a list item with `inline_code` that is very long and " "exceeds the maximum line length limit\n"
+            "- This is a list item with `inline_code` that is very long and "
+            "exceeds the maximum line length limit\n"
         )
         result = self._write_and_process(content)
         # Should be preserved unchanged due to inline code
@@ -181,14 +187,20 @@ class TestOptionB(unittest.TestCase):
 
     def test_list_with_url_preserved(self):
         """List items with URLs should not be wrapped (safety)."""
-        content = "- Check out https://example.com/very/long/url for more information " "that exceeds the line limit\n"
+        content = (
+            "- Check out https://example.com/very/long/url for more information "
+            "that exceeds the line limit\n"
+        )
         result = self._write_and_process(content)
         # Should be preserved unchanged due to URL
         self.assertEqual(result, content)
 
     def test_list_continuation_with_code_preserved(self):
         """List with continuation containing code should be preserved."""
-        content = "- First line\n" "  continuation with `code` that is very long and exceeds limit\n"
+        content = (
+            "- First line\n"
+            "  continuation with `code` that is very long and exceeds limit\n"
+        )
         result = self._write_and_process(content)
         # Should preserve original due to code in continuation
         self.assertIn("First line", result)
@@ -271,13 +283,19 @@ class TestOptionB(unittest.TestCase):
 
     def test_link_reference_definitions_preserved(self):
         """Link reference definitions should be preserved unchanged."""
-        content = "[id]: https://example.com/very/long/url/that/exceeds/the/" "maximum/line/length/limit\n"
+        content = (
+            "[id]: https://example.com/very/long/url/that/exceeds/the/"
+            "maximum/line/length/limit\n"
+        )
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
     def test_html_blocks_preserved(self):
         """HTML blocks should be preserved unchanged."""
-        content = "<div class='container' style='width: 100%; " "background-color: red;'>Content</div>\n"
+        content = (
+            "<div class='container' style='width: 100%; "
+            "background-color: red;'>Content</div>\n"
+        )
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
@@ -315,11 +333,11 @@ class TestOptionB(unittest.TestCase):
         test_file.write_text(content, encoding="utf-8")
 
         # First run
-        fixer._rewrite_file(test_file)
+        fixer._rewrite_file(test_file)  # pylint: disable=protected-access
         first_result = test_file.read_text(encoding="utf-8")
 
         # Second run
-        fixer._rewrite_file(test_file)
+        fixer._rewrite_file(test_file)  # pylint: disable=protected-access
         second_result = test_file.read_text(encoding="utf-8")
 
         self.assertEqual(first_result, second_result)

@@ -49,7 +49,6 @@ import textwrap
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
-
 MAX_LEN = 120
 
 FENCE_RE = re.compile(r"^(?P<indent>[ \t]{0,3})(?P<fence>`{3,}|~{3,})(?P<rest>.*)$")
