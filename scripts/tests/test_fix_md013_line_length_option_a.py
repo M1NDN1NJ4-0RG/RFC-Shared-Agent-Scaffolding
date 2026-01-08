@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# pylint: disable=implicit-str-concat
+# fmt: off
 """Unit tests for fix_md013_line_length_option_a.py script.
 
 This module provides comprehensive test coverage for the conservative MD013 fixer,

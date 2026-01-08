@@ -137,9 +137,10 @@ All **functional behavior** must be identical.
 
 ## Version History
 
-- **v1.0** (2025-12-26): Initial conformance vectors for M2-P1-I1 - safe_run: 5 vectors (success, failure, SIGINT,
-  custom log dir, snippet) - preflight_automerge_ruleset: 4 vectors (success, auth fail, ruleset not found, missing
-  context) - safe_archive: 4 vectors (success, compression, no-clobber default, no-clobber strict)
+- **v1.0** (2025-12-26): Initial conformance vectors for M2-P1-I1
+  - safe_run: 5 vectors (success, failure, SIGINT, custom log dir, snippet)
+  - preflight_automerge_ruleset: 4 vectors (success, auth fail, ruleset not found, missing context)
+  - safe_archive: 4 vectors (success, compression, no-clobber default, no-clobber strict)
 
 ---
 
