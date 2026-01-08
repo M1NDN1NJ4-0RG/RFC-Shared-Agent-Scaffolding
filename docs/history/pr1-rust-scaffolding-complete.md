@@ -10,7 +10,8 @@
 
 ## Executive Summary
 
-PR1 successfully implements Rust tooling scaffolding and comprehensive documentation for the new canonical architecture. The Rust project builds successfully, tests pass, and all documentation is in place to guide future implementation work.
+PR1 successfully implements Rust tooling scaffolding and comprehensive documentation for the new canonical architecture.
+The Rust project builds successfully, tests pass, and all documentation is in place to guide future implementation work.
 
 ---
 
@@ -230,7 +231,8 @@ PR2 will add:
 - Test harness for comparing Rust output to expected outputs
 - No actual implementation - just the test framework
 
-**Hard stop enforced:** No actual implementation work was done in this PR, per EPIC requirements. Implementation begins in PR3.
+**Hard stop enforced:** No actual implementation work was done in this PR, per EPIC requirements. Implementation begins
+in PR3.
 
 ---
 

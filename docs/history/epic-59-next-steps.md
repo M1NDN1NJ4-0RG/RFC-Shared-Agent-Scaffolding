@@ -4,7 +4,8 @@
 
 **Status:** Phases 0, 1, 2, 4, and 5 COMPLETE ✅ | Phase 3 DEFERRED (requires Windows testing)
 
-This EPIC addresses post-audit cleanup tasks to improve cross-platform predictability, documentation clarity, and future-proof UX.
+This EPIC addresses post-audit cleanup tasks to improve cross-platform predictability, documentation clarity, and
+future-proof UX.
 
 ## Completed Work
 
@@ -252,7 +253,8 @@ If investigating PowerShell Ctrl-C behavior in the future:
 - Phases 0, 1, 2, 4, 5: Fully implemented and tested
 - Phase 3: Deferred (requires Windows-specific testing)
 
-**Quality:** All changes are minimal, surgical, and backwards-compatible. No contract changes, only documentation clarifications and error handling improvements.
+**Quality:** All changes are minimal, surgical, and backwards-compatible. No contract changes, only documentation
+clarifications and error handling improvements.
 
 **Next Steps:**
 

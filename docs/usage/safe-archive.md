@@ -142,7 +142,8 @@ echo "Release archive created: ${ARCHIVE}"
 
 ## Archive Contents
 
-The archive contains all files and directories from the source directory. The directory structure is preserved relative to the source directory.
+The archive contains all files and directories from the source directory. The directory structure is preserved relative
+to the source directory.
 
 ### Example
 
