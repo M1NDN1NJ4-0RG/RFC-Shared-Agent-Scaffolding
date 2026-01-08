@@ -1162,8 +1162,10 @@ Created `test_python_validator.py` with 11 comprehensive tests:
 10. ✅ test_exit_codes_content_validation - Exit codes content checked
 11. ✅ test_syntax_error_skips_symbol_validation - Graceful syntax error handling
 
+Also created `test_bash_validator.py` with 7 tests covering the Bash docstring validator behavior.
+
 **Test Results:**
-- All 11 tests pass (100%)
+- All 18 tests pass (100%) — 11 Python + 7 Bash
 - All Python linting passes (exit 0): black ✅, ruff ✅, pylint ✅, python-docstrings ✅
 
 **Commits:**

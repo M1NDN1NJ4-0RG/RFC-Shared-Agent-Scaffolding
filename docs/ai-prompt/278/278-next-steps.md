@@ -32,7 +32,7 @@ This means ALL phases including 4, 5, 6 are MANDATORY (not optional/recommended)
 
 **Phase 3.4.4: Docstring Validator Unit Tests (IN PROGRESS)**
 - [x] test_python_validator.py (11 tests, 100% pass)
-- [ ] test_bash_validator.py
+- [x] test_bash_validator.py (7 tests, 100% pass)
 - [ ] test_powershell_validator.py
 - [ ] test_perl_validator.py
 - [ ] test_rust_validator.py
