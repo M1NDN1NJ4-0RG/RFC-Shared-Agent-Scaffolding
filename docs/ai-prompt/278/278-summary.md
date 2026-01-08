@@ -343,3 +343,66 @@
 - Then proceed to Phase 3.6 (TOML contracts + linting)
 
 ---
+
+### 2026-01-08 - Code Review Comments Addressed: Parsing Bug + Test Coverage
+
+**Session Work:**
+
+**Code Review Comment #2670754995: Output Parsing Bug (FIXED)**
+- **Issue:** The parsing logic used `line.split(":", 3)` expecting 4 parts, but the actual format "README.md:7:81 error MD013..." only produces 3 parts when split with limit 3.
+- **Fix:** Changed to `line.split(":", 2)` to get 3 parts (file, line, rest), then parse column and message from rest.
+- **Implementation:**
+  - Split on ":" with limit 2 → gets ["file", "line", "column message"]
+  - Take rest (part[2]), lstrip, then split on first space
+  - First part is column number (ignored), second part is the actual message
+- **Testing:** Added unit test `test_parse_markdownlint_output_single_violation` to verify correct parsing.
+
+**Code Review Comment #2670754989: Missing Test Coverage (FIXED)**
+- **Issue:** MarkdownRunner lacked test coverage while other language runners (YAMLRunner, PythonRunner, BashRunner) have comprehensive test files.
+- **Fix:** Created `tools/repo_lint/tests/test_markdown_runner.py` with 15 comprehensive unit tests:
+  1. `test_has_files_detects_md` - Verifies .md file detection
+  2. `test_has_files_returns_false_when_no_files` - Empty file list handling
+  3. `test_check_tools_detects_missing_tool` - Missing tool detection
+  4. `test_check_tools_returns_empty_when_installed` - Tool available check
+  5. `test_run_markdownlint_with_config_file` - Config file usage verification
+  6. `test_run_markdownlint_fix_mode` - --fix flag in fix mode
+  7. `test_run_markdownlint_check_mode_no_fix_flag` - No --fix in check mode
+  8. `test_parse_markdownlint_output_single_violation` - Single violation parsing
+  9. `test_parse_markdownlint_output_multiple_violations` - Multiple violations
+  10. `test_parse_markdownlint_output_skips_summary_lines` - Skip summary/header lines
+  11. `test_parse_markdownlint_output_handles_stderr` - stderr output parsing
+  12. `test_parse_markdownlint_output_empty_output` - Empty output handling
+  13. `test_run_markdownlint_empty_file_list` - Empty file list returns success
+  14. `test_check_returns_violations` - Check mode integration test
+  15. `test_fix_applies_fixes` - Fix mode integration test
+- **Result:** All 15 tests pass (100%)
+
+**Additional Fixes:**
+- Added newline when combining stdout+stderr to prevent line concatenation bug
+  - Changed `stdout + stderr` to `stdout + "\n" + stderr`
+  - Prevents violations from different streams being merged into one line
+- Auto-fixed trailing whitespace via `repo-lint fix --only python`
+
+**Testing Results:**
+```bash
+python3 -m pytest tools/repo_lint/tests/test_markdown_runner.py -v
+# Result: 15 passed in 0.07s
+
+repo-lint check --ci --only python
+# Result: Exit Code: 0 (SUCCESS)
+```
+
+**Status:**
+- Both code review comments: ✅ FULLY ADDRESSED
+- Parsing bug: ✅ FIXED
+- Test coverage: ✅ COMPREHENSIVE (15 tests, 100% pass)
+
+**Commits:**
+- 3ac82d4: Address code review comments: fix parsing bug and add comprehensive tests
+
+**Next Actions:**
+- All code review comments for PR #289 are now addressed
+- Ready for final review and merge
+- After merge: Continue with Phase 3.5.4 (Repo baseline cleanup) or Phase 3.6 (TOML contracts)
+
+---

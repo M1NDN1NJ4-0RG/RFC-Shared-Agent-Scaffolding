@@ -2,28 +2,24 @@
 
 ## NEXT
 
-**Phase 3.5.4: Repo Baseline Cleanup (Markdown)**
+**All code review comments for PR #289 have been addressed!**
 
-The Markdown runner is integrated and working, but there are 3,790 violations to fix. Options:
+✅ **Comment #2670754995 (Parsing Bug):** FIXED in commit 3ac82d4
+✅ **Comment #2670754989 (Test Coverage):** FIXED in commit 3ac82d4
 
-1. **Gradual rollout approach (RECOMMENDED):**
-   - Add per-file-ignores to exclude all current violations
-   - Enforce on new/changed files only
-   - Fix violations incrementally in dedicated cleanup sessions
+**Current Status:**
+- Parsing logic fixed (`line.split(":", 2)` instead of `split(":", 3)`)
+- Comprehensive test suite added (15 tests, 100% pass rate)
+- All Python linting passes (`repo-lint check --ci --only python` = 0)
+- Ready for final review and merge
 
-2. **Auto-fix what's safe:**
-   - Run `repo-lint fix --lang markdown` to auto-fix deterministic violations
-   - Manually fix remaining violations (line length, language tags, etc.)
+**After PR Merge:**
 
-**Decision needed:** How to handle the 3,790 existing violations?
-
-**After 3.5.4, continue with:**
-
-1. Phase 3.5.5: Comprehensive tests for Markdown runner
-2. Phase 3.6: TOML contracts + linting support (similar to Markdown)
-3. Phase 3.7: Reduce overly-broad exception handling
-4. Phase 3.8: Rich-powered logging
-5. Phase 3.3: Implement PEP 526 checker (deferred until after 3.5-3.8)
+Continue with Phase 3.5.4 or move to Phase 3.6:
+- Phase 3.5.4: Repo baseline cleanup (fix 3,800 Markdown violations)
+- Phase 3.6: TOML contracts + linting support (similar to Markdown implementation)
+- Phase 3.7: Reduce overly-broad exception handling
+- Phase 3.8: Rich-powered logging
 
 ---
 
@@ -33,25 +29,29 @@ The Markdown runner is integrated and working, but there are 3,790 violations to
 - [x] Created Markdown contract document
 - [x] Configured markdownlint-cli2
 - [x] Integrated Markdown runner into repo-lint
-- [x] All tests passing
+- [x] Fixed parsing bug (code review)
+- [x] Added comprehensive tests (code review)
 
 **Current State:**
 - ✅ Markdown linting works: `repo-lint check --lang markdown`
 - ✅ Auto-fix works: `repo-lint fix --lang markdown`
-- ⚠️ 3,790 violations exist across repository (baseline)
-- ✅ New requirements addressed (Markdown Best Practices, 120 char line length)
+- ✅ All tests pass: 15/15 (100%)
+- ✅ All Python checks pass
+- ⚠️ 3,790 Markdown violations exist across repository (baseline)
 
 ## Resume Pointers
 
 **Branch:** copilot/enforce-python-type-annotations
 
 **Key Commands:**
-- `repo-lint check --ci` - All checks pass except Markdown violations
+- `python3 -m pytest tools/repo_lint/tests/test_markdown_runner.py -v` - Run Markdown runner tests
 - `repo-lint check --lang markdown` - Shows 3,790 Markdown violations
 - `repo-lint fix --lang markdown` - Auto-fix safe violations
 
 **Recent Commits:**
 - 6a8f637: Phase 3.5.1-3.5.2 (contract + config)
 - c040b9a: Phase 3.5.3 (integration)
+- 2c7b953: Fixed unused json import (code review)
+- 3ac82d4: Fixed parsing bug + added comprehensive tests (code review)
 
-**Ready for:** Phase 3.5.4 decision + implementation, or Phase 3.5.5 (tests), or move to Phase 3.6 (TOML)
+**Ready for:** PR merge, then Phase 3.5.4 or Phase 3.6
