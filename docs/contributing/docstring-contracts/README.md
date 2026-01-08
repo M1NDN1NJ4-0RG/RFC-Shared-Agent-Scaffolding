@@ -1,12 +1,12 @@
 # Docstring Contracts
 
-**Version:** 1.2
-**Last Updated:** 2025-12-29
-**Purpose:** Define clear, testable, and enforceable documentation standards for all scripts, configuration files, and code symbols in this repository.
+**Version:** 1.2 **Last Updated:** 2025-12-29 **Purpose:** Define clear, testable, and enforceable documentation
+standards for all scripts, configuration files, and code symbols in this repository.
 
 ## Why Docstring Contracts
 
-This repository is built around **contracts**: clear, testable requirements that prevent drift across languages and reduce ambiguity for humans and AI coding agents.
+This repository is built around **contracts**: clear, testable requirements that prevent drift across languages and
+reduce ambiguity for humans and AI coding agents.
 
 Docstring contracts ensure:
 
@@ -86,7 +86,8 @@ Each language has its own contract document that specifies:
 
 ### Future Contracts (DRAFT)
 
-These contracts are preliminary and **not yet enforced by the validator**. Use them as guidance if adding these languages to the repository, but expect refinement before official adoption.
+These contracts are preliminary and **not yet enforced by the validator**. Use them as guidance if adding these
+languages to the repository, but expect refinement before official adoption.
 
 | Language | Extensions | Contract Document | Status |
 |----------|------------|-------------------|--------|
@@ -99,13 +100,15 @@ These contracts are preliminary and **not yet enforced by the validator**. Use t
 
 ### Esoteric / Satirical Contracts (UNOFFICIAL)
 
-These contracts exist for entertainment, educational, or satirical purposes. **Do not use these languages in this repository.**
+These contracts exist for entertainment, educational, or satirical purposes. **Do not use these languages in this
+repository.**
 
 | Language | Extensions | Contract Document | Status | Warning Level |
 |----------|------------|-------------------|--------|---------------|
 | Malbolge | `.mb`, `.malbolge` | [malbolge.md](./malbolge.md) | EXPERIMENTAL | ⚠️⚠️⚠️ EXISTENTIAL DREAD |
 
-**Note:** The Malbolge contract demonstrates that even the most absurd and impractical languages can theoretically follow documentation standards. It serves as a reminder to appreciate readable, maintainable code.
+**Note:** The Malbolge contract demonstrates that even the most absurd and impractical languages can theoretically
+follow documentation standards. It serves as a reminder to appreciate readable, maintainable code.
 
 ## Required Semantic Sections (All Languages)
 
@@ -126,7 +129,8 @@ Every script's documentation must cover these concepts (using idiomatic section 
 
 ### Symbol-Level Documentation
 
-Every function, class, method, and subroutine must be documented. See **[symbol-level-contracts.md](./symbol-level-contracts.md)** for detailed requirements per language.
+Every function, class, method, and subroutine must be documented. See
+**[symbol-level-contracts.md](./symbol-level-contracts.md)** for detailed requirements per language.
 
 **Minimum requirements:**
 
@@ -134,11 +138,13 @@ Every function, class, method, and subroutine must be documented. See **[symbol-
 - Classes/structs: Purpose, attributes/fields
 - Public APIs: Full documentation including examples
 
-**Phase 5.5 enforcement:** Public/exported symbols only. Private helper documentation recommended but not required initially.
+**Phase 5.5 enforcement:** Public/exported symbols only. Private helper documentation recommended but not required
+initially.
 
 ## Semantic Section to Language Keyword Mapping
 
-This table maps the required semantic concepts to their language-specific keywords. Use this when writing documentation or prompting AI tools.
+This table maps the required semantic concepts to their language-specific keywords. Use this when writing documentation
+or prompting AI tools.
 
 | Semantic Concept | Bash | PowerShell | Python | Perl | Rust | YAML |
 |-----------------|------|------------|--------|------|------|------|
@@ -153,7 +159,8 @@ This table maps the required semantic concepts to their language-specific keywor
 
 **Key observations:**
 
-- Exit codes have different homes in different languages (dedicated section in most, embedded in description for PowerShell/YAML)
+- Exit codes have different homes in different languages (dedicated section in most, embedded in description for
+  PowerShell/YAML)
 - Usage is sometimes combined with examples (Rust, PowerShell)
 - Environment variables may be grouped with other inputs (Bash) or separate (most languages)
 
@@ -188,7 +195,8 @@ The validator enforces contracts on **ALL scripts repository-wide**:
 
 **Exclusions**: Build artifacts (`dist/`, `target/`), dependencies (`node_modules/`), and Rust test files (`rust/tests/`) are excluded from validation.
 
-This means **any new script added anywhere in the repository** will be validated against its language's docstring contract.
+This means **any new script added anywhere in the repository** will be validated against its language's docstring
+contract.
 
 ## Validator
 
@@ -410,7 +418,8 @@ See docs/contributing/docstring-contracts/[language].md for the contract.
 
 - AI may use generic/incomplete documentation
 
-✅ **Specific contract reference:** "Add Bash docstring following docs/contributing/docstring-contracts/bash.md with all required sections"
+✅ **Specific contract reference:** "Add Bash docstring following docs/contributing/docstring-contracts/bash.md with all
+required sections"
 
 ❌ **Missing exit codes:** "Document this function"
 
