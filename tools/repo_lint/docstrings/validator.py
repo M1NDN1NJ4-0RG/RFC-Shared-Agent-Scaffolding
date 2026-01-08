@@ -52,7 +52,9 @@ def validate_file(file_path: Path) -> List[ValidationError]:
     """
     try:
         content = file_path.read_text(encoding="utf-8")
-    except Exception as e:
+    except (OSError, UnicodeDecodeError) as e:
+        # OSError: File access errors (permission, not found, etc.)
+        # UnicodeDecodeError: File is not valid UTF-8
         return [ValidationError(str(file_path), ["read error"], str(e))]
 
     # Dispatch to appropriate validator

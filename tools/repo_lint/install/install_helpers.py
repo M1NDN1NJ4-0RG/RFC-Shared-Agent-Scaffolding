@@ -279,7 +279,8 @@ def cleanup_repo_local(verbose: bool = False) -> Tuple[bool, List[str]]:
             shutil.rmtree(dir_path, ignore_errors=False)
             messages.append(f"✓ Removed {dir_name}/ ({description})")
 
-        except Exception as e:
+        except OSError as e:
+            # OSError: File system errors (permission denied, directory not empty, etc.)
             success = False
             messages.append(f"✗ Failed to remove {dir_name}/: {e}")
 
