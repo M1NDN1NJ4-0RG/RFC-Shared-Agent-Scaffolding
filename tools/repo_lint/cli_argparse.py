@@ -47,7 +47,6 @@ import time
 import traceback
 
 from tools.repo_lint.common import ExitCode, MissingToolError, safe_print
-from tools.repo_lint.logging_utils import configure_logging, set_verbose_mode
 from tools.repo_lint.install.install_helpers import (
     cleanup_repo_local,
     get_venv_path,
@@ -56,6 +55,7 @@ from tools.repo_lint.install.install_helpers import (
     print_perl_tool_instructions,
     print_powershell_tool_instructions,
 )
+from tools.repo_lint.logging_utils import configure_logging, set_verbose_mode
 from tools.repo_lint.policy import get_policy_summary, load_policy, validate_policy
 from tools.repo_lint.reporting import print_install_instructions, report_results
 from tools.repo_lint.runners.bash_runner import BashRunner

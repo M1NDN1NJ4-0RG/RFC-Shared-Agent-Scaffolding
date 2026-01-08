@@ -59,6 +59,7 @@ def is_tty() -> bool:
     """Check if stdout is a TTY.
 
     :returns: True if stdout is a TTY, False otherwise
+    :rtype: bool
     """
     return sys.stdout.isatty()
 
@@ -90,6 +91,7 @@ def get_logger(name: str) -> logging.Logger:
 
     :param name: Logger name (typically __name__ from calling module)
     :returns: Configured Logger instance
+    :rtype: logging.Logger
 
     :Example:
         >>> logger = get_logger(__name__)

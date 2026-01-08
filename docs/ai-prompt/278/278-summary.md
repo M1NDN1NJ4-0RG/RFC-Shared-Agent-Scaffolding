@@ -1033,7 +1033,7 @@ Integrated logging into repo-lint:
 
 **Phase 3.8.4: Comprehensive Tests (COMPLETE ✅)**
 
-Created `tools/repo_lint/tests/test_logging_utils.py` (394 lines, 15KB):
+Created `tools/repo_lint/tests/test_logging_utils.py` (437 lines, 15KB):
 - **25 unit tests** covering all functionality
 - **Test categories:**
   - Logging configuration (7 tests) - TTY/CI modes, level filtering
@@ -1047,7 +1047,7 @@ Created `tools/repo_lint/tests/test_logging_utils.py` (394 lines, 15KB):
 
 Created:
 1. `tools/repo_lint/logging_utils.py` (264 lines)
-2. `tools/repo_lint/tests/test_logging_utils.py` (394 lines)
+2. `tools/repo_lint/tests/test_logging_utils.py` (437 lines)
 
 Modified:
 3. `tools/repo_lint/cli_argparse.py` - Added logging configuration
