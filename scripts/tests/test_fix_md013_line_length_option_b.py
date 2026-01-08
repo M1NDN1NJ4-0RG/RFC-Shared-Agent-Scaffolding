@@ -461,7 +461,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
     def test_parent_with_nested_items_followed_by_siblings(self):
         """Parent list item with nested items followed by sibling items.
-        
+
         This is the EXACT pattern from docstring-contracts/README.md Version History
         that was breaking: a parent bullet with nested sub-items, followed by
         more top-level siblings.
@@ -481,10 +481,10 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         lines = result.splitlines()
 
         # Remove blank lines and heading for analysis
-        list_lines = [l for l in lines if l.strip() and not l.startswith("#")]
+        list_lines = [line for line in lines if line.strip() and not line.startswith("#")]
 
         # Should have exactly 3 top-level items
-        top_level = [l for l in list_lines if l.startswith("- ")]
+        top_level = [line for line in list_lines if line.startswith("- ")]
         self.assertEqual(len(top_level), 3, f"Expected 3 top-level items, got {len(top_level)}: {top_level}")
 
         # First item should be the "Added symbol-level" item
@@ -497,7 +497,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertIn("Aligned test runner", top_level[2])
 
         # Should have exactly 4 nested items (with 2-space indent)
-        nested = [l for l in list_lines if l.startswith("  - ")]
+        nested = [line for line in list_lines if line.startswith("  - ")]
         self.assertEqual(len(nested), 4, f"Expected 4 nested items, got {len(nested)}: {nested}")
 
 
