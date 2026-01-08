@@ -145,7 +145,51 @@ python3 scripts/validate_docstrings.py
 
 See [Docstring Contracts](#docstring-contracts) for details.
 
-### 3. YAML Linting
+### 3. Python Code Quality
+
+**ALL Python code MUST meet the repository's code quality standards.**
+
+```bash
+# Run Python linting checks
+repo-lint check --only python
+
+# Or run individual tools:
+black --check tools/ scripts/
+ruff check tools/ scripts/
+pylint tools/ scripts/
+```
+
+Python code quality requirements:
+
+- **Type Annotations** (PEP 526 + Function Annotations):
+  - All module-level variables and class attributes MUST be annotated
+  - All function parameters and return types MUST be annotated
+  - Functions returning nothing MUST use explicit `-> None`
+  - See [Python Typing Policy](./python-typing-policy.md) for complete requirements
+
+- **Docstring Return Types**:
+  - Functions returning non-None values MUST include `:rtype:` in their docstring
+  - Do NOT add `:rtype: None` for functions returning None
+  - See [Python Docstring Contract](./docstring-contracts/python.md) for format
+
+- **Exception Handling**:
+  - Avoid broad `except Exception:` in library code
+  - Use specific exception types (FileNotFoundError, ValueError, etc.)
+  - Preserve exception context with `raise ... from e`
+  - See [Python Exception Handling Policy](./python-exception-handling-policy.md)
+
+- **Code Formatting** (enforced by Black):
+  - Line length: 120 characters
+  - Target: Python 3.8+
+  - Auto-format with: `black tools/ scripts/`
+
+- **Style Checks** (enforced by Ruff):
+  - PEP 8 naming conventions (snake_case, PascalCase)
+  - Import sorting (isort)
+  - Type annotation completeness (flake8-annotations / ANN*)
+  - Prefer `Optional[T]` over `T | None` for Python 3.8+ compatibility
+
+### 4. YAML Linting
 
 **ALL YAML files MUST pass yamllint and actionlint checks.**
 
@@ -169,14 +213,14 @@ YAML linting rules (defined in `.yamllint`):
 
 See [YAML Docstring Contract](./docstring-contracts/yaml.md) for documentation requirements.
 
-### 4. Structure Validation
+### 5. Structure Validation
 
 ```bash
 # Validate directory structure
 ./scripts/validate-structure.sh
 ```
 
-### 5. Conformance Tests
+### 6. Conformance Tests
 
 ```bash
 # Run Rust conformance tests
@@ -184,7 +228,7 @@ cd rust/
 cargo test --test conformance
 ```
 
-### 6. Wrapper Tests
+### 7. Wrapper Tests
 
 ```bash
 # Test all wrappers
@@ -201,7 +245,7 @@ cd ../python3/
 ./run-tests.sh
 ```
 
-### 7. Drift Detection
+### 8. Drift Detection
 
 Strict parity is enforced across all implementations. See [allowed-drift.md](./allowed-drift.md) for policy.
 
@@ -335,6 +379,14 @@ See templates in:
 1. **Run all checks locally**:
 
    ```bash
+   # All linting checks (recommended)
+   repo-lint check --ci
+   
+   # Or run individual checks:
+   
+   # Python code quality
+   repo-lint check --only python
+   
    # YAML linting
    make lint-yaml
    
