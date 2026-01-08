@@ -55,7 +55,9 @@
 //! assert_eq!(result.unwrap(), 1);
 //! ```
 
+#[cfg(unix)]
 use signal_hook::consts::{SIGINT, SIGTERM};
+#[cfg(unix)]
 use signal_hook::flag;
 use std::env;
 use std::fs::{self, File};
@@ -177,12 +179,16 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
 
     // Signal handling: track which signal we received
     // Use separate flags so we can differentiate SIGINT (130) from SIGTERM (143)
+    #[cfg(unix)]
     let sigint_received = Arc::new(AtomicBool::new(false));
+    #[cfg(unix)]
     let sigterm_received = Arc::new(AtomicBool::new(false));
 
     // Register signal handlers for both SIGTERM and SIGINT
+    #[cfg(unix)]
     flag::register(SIGTERM, Arc::clone(&sigterm_received))
         .map_err(|e| format!("Failed to register SIGTERM handler: {}", e))?;
+    #[cfg(unix)]
     flag::register(SIGINT, Arc::clone(&sigint_received))
         .map_err(|e| format!("Failed to register SIGINT handler: {}", e))?;
 
@@ -207,10 +213,9 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
     let stdout_events = Arc::clone(&events);
     let stdout_seq = Arc::clone(&seq_counter);
     let stdout_buf = Arc::clone(&stdout_buffer);
-    #[allow(clippy::lines_filter_map_ok)]
     let stdout_handle = thread::spawn(move || {
         let reader = BufReader::new(stdout);
-        for line in reader.lines().flatten() {
+        for line in reader.lines().map_while(Result::ok) {
             // Print to console
             println!("{}", line);
             // Store in buffer
@@ -232,10 +237,9 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
     let stderr_events = Arc::clone(&events);
     let stderr_seq = Arc::clone(&seq_counter);
     let stderr_buf = Arc::clone(&stderr_buffer);
-    #[allow(clippy::lines_filter_map_ok)]
     let stderr_handle = thread::spawn(move || {
         let reader = BufReader::new(stderr);
-        for line in reader.lines().flatten() {
+        for line in reader.lines().map_while(Result::ok) {
             // Print to console
             eprintln!("{}", line);
             // Store in buffer
@@ -255,8 +259,14 @@ pub fn execute(command: &[String]) -> Result<i32, String> {
     // Wait for the command to complete, checking for signals
     let exit_status = loop {
         // Check if we received a signal - check SIGINT first (more specific)
+        #[cfg(unix)]
         let got_sigint = sigint_received.load(Ordering::SeqCst);
+        #[cfg(unix)]
         let got_sigterm = sigterm_received.load(Ordering::SeqCst);
+        #[cfg(not(unix))]
+        let got_sigint = false;
+        #[cfg(not(unix))]
+        let got_sigterm = false;
 
         if got_sigint || got_sigterm {
             // Kill the child process

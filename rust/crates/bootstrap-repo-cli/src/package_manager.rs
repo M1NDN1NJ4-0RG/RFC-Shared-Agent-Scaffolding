@@ -111,6 +111,10 @@ impl PackageManagerOps for AptOps {
             return Ok(());
         }
 
+        // NOTE: Using sudo -n (non-interactive) which will fail fast if password required
+        // This is intentional: CI environments should have passwordless sudo configured
+        // TODO: Consider checking for passwordless sudo availability before attempting
+        // FUTURE: Provide fallback authentication methods or clearer error messages
         let output = Command::new("sudo")
             .args(["-n", "apt-get", "update", "-qq"])
             .output()
@@ -122,6 +126,21 @@ impl PackageManagerOps for AptOps {
             })?;
 
         if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            
+            // Provide helpful error message if sudo password is required
+            if stderr.contains("a password is required") || stderr.contains("no password") {
+                return Err(BootstrapError::CommandFailed {
+                    command: "sudo apt-get update".to_string(),
+                    exit_code: output.status.code(),
+                    stderr: format!(
+                        "sudo requires password (passwordless sudo not configured). \
+                        In CI environments, ensure the runner has passwordless sudo access. \
+                        Original error: {}",
+                        stderr
+                    ),
+                });
+            }
             let stderr = String::from_utf8_lossy(&output.stderr);
             eprintln!(
                 "Warning: `sudo apt-get update -qq` failed (treated as non-fatal, continuing). stderr:\n{}",
@@ -144,6 +163,7 @@ impl PackageManagerOps for AptOps {
         }
 
         // Use non-interactive mode and deterministic flags for CI
+        // NOTE: sudo -n will fail fast if password required (intentional for CI)
         let mut cmd = Command::new("sudo");
         cmd.args(["-n", "apt-get", "install", "-y", "-qq", package]);
         cmd.env("DEBIAN_FRONTEND", "noninteractive");
@@ -158,10 +178,25 @@ impl PackageManagerOps for AptOps {
             })?;
 
         if !output.status.success() {
+            let stderr = String::from_utf8_lossy(&output.stderr);
+            
+            // Provide helpful error if sudo password required
+            if stderr.contains("a password is required") || stderr.contains("no password") {
+                return Err(BootstrapError::CommandFailed {
+                    command: format!("sudo apt-get install {}", package),
+                    exit_code: output.status.code(),
+                    stderr: format!(
+                        "sudo requires password (passwordless sudo not configured). \
+                        Ensure CI runner has passwordless sudo. Original error: {}",
+                        stderr
+                    ),
+                });
+            }
+            
             return Err(BootstrapError::InstallFailed {
                 tool: package.to_string(),
                 exit_code: output.status.code().unwrap_or(-1),
-                stderr: String::from_utf8_lossy(&output.stderr).to_string(),
+                stderr: stderr.to_string(),
             });
         }
 

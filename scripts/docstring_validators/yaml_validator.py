@@ -62,22 +62,37 @@ class YAMLValidator:
 
         The header block consists of all consecutive comment lines (starting with #)
         from the beginning of the file, stopping at the first non-comment, non-blank line.
-        YAML document separators (---) are treated as blank lines and don't stop extraction.
+        YAML document separators (---) at the start are included, but subsequent ones
+        stop extraction (indicating multiple documents).
 
         :param content: File content as string
         :returns: The complete header block as a string
         """
         lines = content.split("\n")
         header_lines = []
+        seen_content = False  # Track if we've seen actual YAML content yet
 
         for line in lines:
             stripped = line.strip()
-            # Continue collecting if it's a comment, blank line, or YAML document separator
-            if stripped.startswith("#") or stripped == "" or stripped == "---":
+
+            # Always include comments and blank lines in header
+            if stripped.startswith("#") or stripped == "":
                 header_lines.append(line)
-            else:
-                # Stop at the first actual YAML content line
-                break
+                continue
+
+            # Handle YAML document separator (---)
+            if stripped == "---":
+                # If we haven't seen content yet, include this separator (document start)
+                # If we have seen content, stop here (multiple documents)
+                if not seen_content:
+                    header_lines.append(line)
+                    continue
+                else:
+                    break
+
+            # First actual YAML content - stop extraction
+            seen_content = True
+            break
 
         return "\n".join(header_lines)
 
