@@ -266,9 +266,12 @@ class Runner(ABC):
                 if tool_name_match:
                     tool_name = tool_name_match.group(1)
                     # Verify the method matches check() behavior by checking if tool filtering applies
-                    # Only call _should_run_tool if it exists; otherwise, include all discovered methods
-                    should_run_tool = getattr(self, "_should_run_tool", None)
-                    if should_run_tool is None or should_run_tool(tool_name):
+                    # Use explicit hasattr check for clarity instead of getattr with fallback
+                    if hasattr(self, "_should_run_tool"):
+                        if self._should_run_tool(tool_name):
+                            tool_methods.append((name, method))
+                    else:
+                        # Runner doesn't implement tool filtering; include all discovered methods
                         tool_methods.append((name, method))
 
         # If no tool methods found or only one, fall back to sequential
