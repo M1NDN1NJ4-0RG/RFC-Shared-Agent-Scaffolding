@@ -5,7 +5,8 @@
 
 ## Purpose
 
-Bash scripts in this repository use a **top-of-file comment header** to document their purpose, usage, and behavior. This contract defines the required sections and formatting rules.
+Bash scripts in this repository use a **top-of-file comment header** to document their purpose,
+usage, and behavior. This contract defines the required sections and formatting rules.
 
 ## Required Semantic Sections
 

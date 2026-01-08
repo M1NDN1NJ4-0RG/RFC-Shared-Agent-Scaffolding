@@ -1,54 +1,75 @@
 # Contributing to RFC-Shared-Agent-Scaffolding
 
-Thank you for your interest in contributing! This repository implements the RFC-Shared-Agent-Scaffolding contract
-(v0.1.0) - a restartable, failure-resilient operating model for AI coding agents.
+Thank you for your interest in contributing! This repository implements the
+RFC-Shared-Agent-Scaffolding contract (v0.1.0) - a restartable, failure-resilient operating
+model for AI coding agents.
 
 ## Quick Start
 
-1. 1. 1. 1. **Read the documentation** - Start with [docs/README.md](./docs/README.md) for an overview 2. **Review the
-   RFC** - [rfc-shared-agent-scaffolding-v0.1.0.md](./rfc-shared-agent-scaffolding-v0.1.0.md) defines the contract
-3. **Check the roadmap** - [EPIC #33](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) tracks the Rust canonical tool implementation
-4. 4. 4. **Install linting tools** - Run `python3 -m tools.repo_lint install` (or `./scripts/run-linters.sh --install`)
-   5. 5. **Before every commit:** - Run `python3 -m tools.repo_lint check` to lint all code - - Run relevant test suites
-   for code you changed - Verify all CI checks pass 6. **Follow the guidelines** - See detailed contributing guide below
+1. **Read the documentation** - Start with [docs/README.md](./docs/README.md) for an overview
+2. **Review the RFC** -
+   [rfc-shared-agent-scaffolding-v0.1.0.md](./rfc-shared-agent-scaffolding-v0.1.0.md) defines
+   the contract
+3. **Check the roadmap** -
+   [EPIC #33](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) tracks
+   the Rust canonical tool implementation
+4. **Install linting tools** - Run `python3 -m tools.repo_lint install` (or
+   `./scripts/run-linters.sh --install`)
+5. **Before every commit:**
+   - Run `python3 -m tools.repo_lint check` to lint all code
+   - Run relevant test suites for code you changed
+   - Verify all CI checks pass
+6. **Follow the guidelines** - See detailed contributing guide below
 
 ## Essential Documentation
 
 ### For Contributors
 
-🛠️ **[Bootstrapper Toolchain User Manual](./docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md)** -
-Session-start compliance and toolchain setup
+🛠️ **[Bootstrapper Toolchain User Manual](./docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md)** - Session-start compliance and toolchain setup
 
-- - - - Bootstrapping repo-lint and all development tools - Virtual environment setup - Platform-specific installation
-  (macOS/Linux) - Troubleshooting and verification
+- Bootstrapping repo-lint and all development tools
+- Virtual environment setup
+- Platform-specific installation (macOS/Linux)
+- Troubleshooting and verification
 
 📝 **[Contributing Guide](./docs/contributing/contributing-guide.md)** - Complete guide to contributing
 
-- - - - Workflow and PR process - Code style and conventions - Testing requirements - Review process
+- Workflow and PR process
+- Code style and conventions
+- Testing requirements
+- Review process
 
 📋 **[Docstring Contracts](./docs/contributing/docstring-contracts/README.md)** - Required documentation standards
 
-- - - - Language-specific templates - Required sections and format - Examples and validation - **All scripts must follow
-  their language contract**
+- Language-specific templates
+- Required sections and format
+- Examples and validation
+- **All scripts must follow their language contract**
 
 🤖 **[AI Agent Constraints](./docs/contributing/ai-constraints.md)** - Safety rules for AI agents
 
-- - - - Prohibited dangerous commands (unsafe fixes, destructive operations) - Required escalation procedures -
-  Human-only vs AI-allowed operations - **AI agents must follow these constraints**
+- Prohibited dangerous commands (unsafe fixes, destructive operations)
+- Required escalation procedures
+- Human-only vs AI-allowed operations
+- **AI agents must follow these constraints**
 
 ### For Testing
 
 🧪 **[Testing Documentation](./docs/testing/)** - How to run and write tests
 
-- - - - Rust canonical tool tests - Wrapper tests (Bash, Perl, Python, PowerShell) - Conformance testing - CI/CD
-  pipeline
+- Rust canonical tool tests
+- Wrapper tests (Bash, Perl, Python, PowerShell)
+- Conformance testing
+- CI/CD pipeline
 
 ### For Architecture Understanding
 
 🏗️ **[Architecture Documentation](./docs/architecture/)** - System design and structure
 
-- - - - Canonical directory structure - Rust canonical tool design - Wrapper discovery algorithm - Cross-platform
-  considerations
+- Canonical directory structure
+- Rust canonical tool design
+- Wrapper discovery algorithm
+- Cross-platform considerations
 
 ## Key Contribution Rules
 
@@ -86,28 +107,30 @@ Enforced by CI via `.github/workflows/naming-enforcement.yml`
 
 **Every script must include proper documentation headers:**
 
-- - - **Bash** (`.sh`, `.bash`, `.zsh`) - See
-  [bash-contract.md](./docs/contributing/docstring-contracts/bash-contract.md) - **PowerShell** (`.ps1`) - See
-  [powershell-contract.md](./docs/contributing/docstring-contracts/powershell-contract.md) - **Python** (`.py`) - See
-  [python-contract.md](./docs/contributing/docstring-contracts/python-contract.md) - **Perl** (`.pl`, `.pm`) - See
-  [perl-contract.md](./docs/contributing/docstring-contracts/perl-contract.md) - **Rust** (`.rs`) - See
-  [rust-contract.md](./docs/contributing/docstring-contracts/rust-contract.md)
+- **Bash** (`.sh`, `.bash`, `.zsh`) - See [bash-contract.md](./docs/contributing/docstring-contracts/bash-contract.md)
+- **PowerShell** (`.ps1`) - See [powershell-contract.md](./docs/contributing/docstring-contracts/powershell-contract.md)
+- **Python** (`.py`) - See [python-contract.md](./docs/contributing/docstring-contracts/python-contract.md)
+- **Perl** (`.pl`, `.pm`) - See [perl-contract.md](./docs/contributing/docstring-contracts/perl-contract.md)
+- **Rust** (`.rs`) - See [rust-contract.md](./docs/contributing/docstring-contracts/rust-contract.md)
 
 Enforced by CI via `.github/workflows/docstring-contract.yml`
 
 ### Git Workflow
 
-1. 1. 1. **Use `git mv` for renames** - Preserves file history 2. 2. **Keep commits focused** - One logical change per
-   commit 3. **Write clear commit messages** - Describe what and why 4. **Reference issues** - Link commits to GitHub
-   issues when applicable
+1. **Use `git mv` for renames** - Preserves file history
+2. **Keep commits focused** - One logical change per commit
+3. **Write clear commit messages** - Describe what and why
+4. **Reference issues** - Link commits to GitHub issues when applicable
 
 ### Testing Requirements
 
 Before submitting a PR:
 
-1. 1. 1. **Run linters** - `python3 -m tools.repo_lint check` (or `./scripts/run-linters.sh`) 2. 2. **Run tests** -
-   Language-specific test suites must pass 3. **Run conformance** - For wrapper changes: `make conformance` 4. **Verify
-   structure** - `scripts/validate-structure.sh` 5. **Check docstrings** - Automatically included in `repo-lint check`
+1. **Run linters** - `python3 -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
+2. **Run tests** - Language-specific test suites must pass
+3. **Run conformance** - For wrapper changes: `make conformance`
+4. **Verify structure** - `scripts/validate-structure.sh`
+5. **Check docstrings** - Automatically included in `repo-lint check`
 
 ### Code Quality and Linting
 
@@ -115,9 +138,11 @@ Before submitting a PR:
 
 All code must adhere to language-specific standards:
 
-- - - - **Python**: 120-character lines, Black formatting, Ruff + Pylint compliance - **Bash**: ShellCheck warnings
-  addressed, shfmt formatting - **PowerShell**: PSScriptAnalyzer error-level compliance - **Perl**: Perl::Critic
-  severity 5 compliance - **YAML**: yamllint compliance
+- **Python**: 120-character lines, Black formatting, Ruff + Pylint compliance
+- **Bash**: ShellCheck warnings addressed, shfmt formatting
+- **PowerShell**: PSScriptAnalyzer error-level compliance
+- **Perl**: Perl::Critic severity 5 compliance
+- **YAML**: yamllint compliance
 
 **Canonical Linting Tool: `repo-lint`**
 
@@ -141,31 +166,36 @@ python3 -m tools.repo_lint install
 
 **REQUIRED Before Every Commit:**
 
-1. 1. 1. Run `python3 -m tools.repo_lint check` (or `./scripts/run-linters.sh`) 2. 2. Run the full relevant test
-   suite(s) for impacted code 3. Ensure CI remains green (no "commit first, lint later")
+1. Run `python3 -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
+2. Run the full relevant test suite(s) for impacted code
+3. Ensure CI remains green (no "commit first, lint later")
 
 **Configuration files:**
 
-- - - Python tools (Black, Ruff, Pylint): `pyproject.toml` - YAML: `.yamllint` - Perl: `.perlcriticrc`
+- Python tools (Black, Ruff, Pylint): `pyproject.toml`
+- YAML: `.yamllint`
+- Perl: `.perlcriticrc`
 
 All Python tools are configured for 120-character line length and compatible rule sets.
 
 **CI behavior:**
 
-- - - - Black formatting is **automatically applied** for same-repo PRs - For fork PRs, a patch artifact is provided if
-  formatting is needed - All other linters must pass without errors
+- Black formatting is **automatically applied** for same-repo PRs
+- For fork PRs, a patch artifact is provided if formatting is needed
+- All other linters must pass without errors
 
 **Tool installation:**
 
-- - - `python3 -m tools.repo_lint install` installs Python tools in a local virtual environment (`.venv-lint/`) - -
-  Manual installation instructions are provided for non-Python tools (shellcheck, shfmt, PSScriptAnalyzer, Perl::Critic)
-  - CI installs all tools explicitly (no auto-install in CI mode)
+- `python3 -m tools.repo_lint install` installs Python tools in a local virtual environment (`.venv-lint/`)
+- Manual installation instructions are provided for non-Python tools (shellcheck, shfmt, PSScriptAnalyzer, Perl::Critic)
+- CI installs all tools explicitly (no auto-install in CI mode)
 
 ### Pull Request Guidelines
 
-- - - - **Small, focused PRs** - Easier to review and merge - **Clear description** - Explain what changed and why -
-  **All checks must pass** - CI validates naming, docstrings, tests, conformance - **Address review feedback** - Engage
-  constructively with reviewers
+- **Small, focused PRs** - Easier to review and merge
+- **Clear description** - Explain what changed and why
+- **All checks must pass** - CI validates naming, docstrings, tests, conformance
+- **Address review feedback** - Engage constructively with reviewers
 
 ## Development Setup
 
@@ -231,7 +261,7 @@ make conformance
 
 - **Questions?** Open a [GitHub Discussion](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/discussions)
 - **Bug reports?** Open a [GitHub Issue](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues)
-- - - - **Security concerns?** See [SECURITY.md](./SECURITY.md) if it exists, or open a private security advisory
+- **Security concerns?** See [SECURITY.md](./SECURITY.md) if it exists, or open a private security advisory
 
 ## Code of Conduct
 

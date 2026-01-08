@@ -5,7 +5,9 @@
 
 ## Purpose
 
-Rust source files in this repository use **Rustdoc** to document modules, functions, structs, and other items. Rustdoc comments support Markdown and integrate with `cargo doc` for generated documentation.
+Rust source files in this repository use **Rustdoc** to document modules, functions, structs,
+and other items. Rustdoc comments support Markdown and integrate with `cargo doc` for
+generated documentation.
 
 ## Required Semantic Sections
 

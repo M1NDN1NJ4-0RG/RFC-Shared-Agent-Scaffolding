@@ -1,11 +1,14 @@
 # Python Docstring Contract
 
 **Language:** Python 3 (`.py`)
-**Canonical style:** Module docstring using `"""..."""` with reStructuredText (reST) field format per **PEP 287**
+**Canonical style:** Module docstring using `"""..."""` with reStructuredText (reST) field
+format per **PEP 287**
 
 ## Purpose
 
-Python scripts in this repository use **module-level docstrings** to document their purpose, usage, and behavior. The style follows **PEP 287** reStructuredText (reST) conventions using field lists for structured sections.
+Python scripts in this repository use **module-level docstrings** to document their purpose,
+usage, and behavior. The style follows **PEP 287** reStructuredText (reST) conventions using
+field lists for structured sections.
 
 ## Required Semantic Sections
 

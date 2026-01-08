@@ -5,7 +5,8 @@
 
 ## Purpose
 
-PowerShell scripts in this repository use **comment-based help** to document their purpose, usage, and behavior. This follows PowerShell's built-in help system conventions.
+PowerShell scripts in this repository use **comment-based help** to document their purpose,
+usage, and behavior. This follows PowerShell's built-in help system conventions.
 
 ## Required Semantic Sections
 
