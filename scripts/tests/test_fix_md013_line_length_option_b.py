@@ -151,8 +151,7 @@ class TestOptionB(unittest.TestCase):
     def test_task_list_uppercase_X_wrapping(self):
         """Task items with uppercase X should preserve [X] checkbox."""
         content = (
-            "- [X] This is a very long checked task item with uppercase X that "
-            "exceeds the maximum line length\n"
+            "- [X] This is a very long checked task item with uppercase X that " "exceeds the maximum line length\n"
         )
         result = self._write_and_process(content)
         lines = result.splitlines()
@@ -174,8 +173,7 @@ class TestOptionB(unittest.TestCase):
     def test_list_with_inline_code_preserved(self):
         """List items with inline code should not be wrapped (safety)."""
         content = (
-            "- This is a list item with `inline_code` that is very long and "
-            "exceeds the maximum line length limit\n"
+            "- This is a list item with `inline_code` that is very long and " "exceeds the maximum line length limit\n"
         )
         result = self._write_and_process(content)
         # Should be preserved unchanged due to inline code
@@ -183,20 +181,14 @@ class TestOptionB(unittest.TestCase):
 
     def test_list_with_url_preserved(self):
         """List items with URLs should not be wrapped (safety)."""
-        content = (
-            "- Check out https://example.com/very/long/url for more information "
-            "that exceeds the line limit\n"
-        )
+        content = "- Check out https://example.com/very/long/url for more information " "that exceeds the line limit\n"
         result = self._write_and_process(content)
         # Should be preserved unchanged due to URL
         self.assertEqual(result, content)
 
     def test_list_continuation_with_code_preserved(self):
         """List with continuation containing code should be preserved."""
-        content = (
-            "- First line\n"
-            "  continuation with `code` that is very long and exceeds limit\n"
-        )
+        content = "- First line\n" "  continuation with `code` that is very long and exceeds limit\n"
         result = self._write_and_process(content)
         # Should preserve original due to code in continuation
         self.assertIn("First line", result)
@@ -279,19 +271,13 @@ class TestOptionB(unittest.TestCase):
 
     def test_link_reference_definitions_preserved(self):
         """Link reference definitions should be preserved unchanged."""
-        content = (
-            "[id]: https://example.com/very/long/url/that/exceeds/the/"
-            "maximum/line/length/limit\n"
-        )
+        content = "[id]: https://example.com/very/long/url/that/exceeds/the/" "maximum/line/length/limit\n"
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
     def test_html_blocks_preserved(self):
         """HTML blocks should be preserved unchanged."""
-        content = (
-            "<div class='container' style='width: 100%; "
-            "background-color: red;'>Content</div>\n"
-        )
+        content = "<div class='container' style='width: 100%; " "background-color: red;'>Content</div>\n"
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
@@ -327,23 +313,20 @@ class TestOptionB(unittest.TestCase):
         )
         test_file = self.temp_path / "test.md"
         test_file.write_text(content, encoding="utf-8")
-        
+
         # First run
         fixer._rewrite_file(test_file)
         first_result = test_file.read_text(encoding="utf-8")
-        
+
         # Second run
         fixer._rewrite_file(test_file)
         second_result = test_file.read_text(encoding="utf-8")
-        
+
         self.assertEqual(first_result, second_result)
 
     def test_no_list_marker_duplication(self):
         """Ensure list markers are not duplicated (historical bug check)."""
-        content = (
-            "1. First item with very long text that should not cause marker "
-            "duplication when wrapped\n"
-        )
+        content = "1. First item with very long text that should not cause marker " "duplication when wrapped\n"
         result = self._write_and_process(content)
         # Should not have "1. 1. " or similar
         self.assertNotIn("1. 1. ", result)
@@ -352,10 +335,7 @@ class TestOptionB(unittest.TestCase):
 
     def test_no_checkbox_breakage(self):
         """Ensure checkbox syntax is not broken (historical bug check)."""
-        content = (
-            "- [x] Task with very long description exceeding line limit that "
-            "needs wrapping\n"
-        )
+        content = "- [x] Task with very long description exceeding line limit that " "needs wrapping\n"
         result = self._write_and_process(content)
         # Should still have valid checkbox
         self.assertIn("- [x]", result)
@@ -367,11 +347,7 @@ class TestOptionB(unittest.TestCase):
 
     def test_no_list_collapse(self):
         """Ensure multiple list items don't collapse into one (historical bug check)."""
-        content = (
-            "- First item\n"
-            "- Second item\n"
-            "- Third item\n"
-        )
+        content = "- First item\n" "- Second item\n" "- Third item\n"
         result = self._write_and_process(content)
         # Should have three separate list items
         self.assertEqual(result.count("- "), 3)
@@ -391,11 +367,7 @@ class TestOptionB(unittest.TestCase):
 
     def test_blank_lines_between_list_items(self):
         """Blank lines between list items should be preserved."""
-        content = (
-            "- First item\n"
-            "\n"
-            "- Second item\n"
-        )
+        content = "- First item\n" "\n" "- Second item\n"
         result = self._write_and_process(content)
         lines = result.splitlines(keepends=True)
         # Should have blank line
@@ -407,28 +379,24 @@ class TestOptionB(unittest.TestCase):
         result = fixer._parse_list_prefix("- Item text")
         self.assertIsNotNone(result)
         self.assertEqual(result[1], "-")
-        
+
         # Numbered list
         result = fixer._parse_list_prefix("1. Item text")
         self.assertIsNotNone(result)
         self.assertEqual(result[1], "1.")
-        
+
         # Task list
         result = fixer._parse_list_prefix("- [ ] Task text")
         self.assertIsNotNone(result)
         self.assertEqual(result[2], "[ ] ")
-        
+
         # Not a list
         result = fixer._parse_list_prefix("Regular text")
         self.assertIsNone(result)
 
     def test_list_with_multiple_paragraphs_stops_at_blank(self):
         """List items should stop at blank lines (no multi-paragraph support)."""
-        content = (
-            "- First paragraph of item\n"
-            "\n"
-            "  Second paragraph should not be part of item\n"
-        )
+        content = "- First paragraph of item\n" "\n" "  Second paragraph should not be part of item\n"
         result = self._write_and_process(content)
         # Should preserve structure
         self.assertIn("\n\n", result)

@@ -217,10 +217,7 @@ class TestOptionA(unittest.TestCase):
 
     def test_html_blocks_preserved(self):
         """HTML blocks should be preserved unchanged."""
-        content = (
-            "<div class='container' style='width: 100%; "
-            "background-color: red;'>Content</div>\n"
-        )
+        content = "<div class='container' style='width: 100%; " "background-color: red;'>Content</div>\n"
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
@@ -244,10 +241,7 @@ class TestOptionA(unittest.TestCase):
 
     def test_url_angle_bracket_exemption(self):
         """Lines containing angle-bracket URLs should not be reflowed."""
-        content = (
-            "Visit <https://example.com/very/long/url> for documentation "
-            "that exceeds the line length limit\n"
-        )
+        content = "Visit <https://example.com/very/long/url> for documentation " "that exceeds the line length limit\n"
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
@@ -283,24 +277,20 @@ class TestOptionA(unittest.TestCase):
         )
         test_file = self.temp_path / "test.md"
         test_file.write_text(content, encoding="utf-8")
-        
+
         # First run
         fixer._rewrite_file(test_file)
         first_result = test_file.read_text(encoding="utf-8")
-        
+
         # Second run
         fixer._rewrite_file(test_file)
         second_result = test_file.read_text(encoding="utf-8")
-        
+
         self.assertEqual(first_result, second_result)
 
     def test_no_list_marker_duplication(self):
         """Ensure list markers are not duplicated (historical bug check)."""
-        content = (
-            "1. First item with very long text that should not cause marker "
-            "duplication\n"
-            "2. Second item\n"
-        )
+        content = "1. First item with very long text that should not cause marker " "duplication\n" "2. Second item\n"
         result = self._write_and_process(content)
         # Should not have "1. 1. " or similar
         self.assertNotIn("1. 1. ", result)
@@ -318,22 +308,13 @@ class TestOptionA(unittest.TestCase):
 
     def test_mixed_list_markers(self):
         """Lists with different markers should all be preserved."""
-        content = (
-            "- Bullet item\n"
-            "* Asterisk item\n"
-            "+ Plus item\n"
-            "1. Numbered item\n"
-        )
+        content = "- Bullet item\n" "* Asterisk item\n" "+ Plus item\n" "1. Numbered item\n"
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
     def test_blank_lines_between_paragraphs(self):
         """Blank lines between paragraphs should be preserved."""
-        content = (
-            "First paragraph.\n"
-            "\n"
-            "Second paragraph.\n"
-        )
+        content = "First paragraph.\n" "\n" "Second paragraph.\n"
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
