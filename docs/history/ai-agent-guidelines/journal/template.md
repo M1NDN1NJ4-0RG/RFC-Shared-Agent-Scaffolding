@@ -27,12 +27,12 @@ Brief description of what was accomplished in this PR.
 
 ## Changes Made
 
-- - - [ ] Change 1 - [ ] Change 2 - [ ] Change 3
+- - - - [ ] Change 1 - [ ] Change 2 - [ ] Change 3
 
 **Example:**
 
-- - - [x] Updated Bash safe-run.sh to capture stdout and stderr separately - [x] Added `=== STDOUT ===` and `=== STDERR
-  ===` markers - - [x] Updated tests to validate split streams - [x] Verified all tests pass
+- - - - [x] Updated Bash safe-run.sh to capture stdout and stderr separately - [x] Added `=== STDOUT ===` and `===
+  STDERR ===` markers - - [x] Updated tests to validate split streams - [x] Verified all tests pass
 
 ---
 
@@ -54,11 +54,11 @@ cd scripts/python3 && python3 -m unittest discover -v
 
 **Next steps or remaining work:**
 
-- - - [ ] Follow-up item 1 (if any) - [ ] Follow-up item 2 (if any)
+- - - - [ ] Follow-up item 1 (if any) - [ ] Follow-up item 2 (if any)
 
 **Example:**
 
-- - - [ ] Align Perl implementation (tracked in next chunk) - [ ] Add conformance vectors for edge cases
+- - - - [ ] Align Perl implementation (tracked in next chunk) - [ ] Add conformance vectors for edge cases
 
 ---
 
@@ -66,22 +66,22 @@ cd scripts/python3 && python3 -m unittest discover -v
 
 **What worked well:**
 
-- - - Clear M0 contract decisions made implementation straightforward - Tests caught edge cases early
+- - - - Clear M0 contract decisions made implementation straightforward - Tests caught edge cases early
 
 **What could improve:**
 
-- - - Need better documentation for test setup - Consider automating conformance vector validation
+- - - - Need better documentation for test setup - Consider automating conformance vector validation
 
 ---
 
 ## References
 
-- - - **Epic:** #3 (Epic Tracker) - **Milestone:** M0 / M1 / M2 / M3 / M4 - **Phase:** P1 / P2 / etc. - **Item:** I1 /
+- - - - **Epic:** #3 (Epic Tracker) - **Milestone:** M0 / M1 / M2 / M3 / M4 - **Phase:** P1 / P2 / etc. - **Item:** I1 /
   I2 / etc. - **Related Issues:** #X, #Y
 
 **Example:**
 
-- - - Epic: #3 - Milestone: M0 - Phase: M0-P1 - Item: M0-P1-I1 - Related: RFC v0.1.0 section 7.1
+- - - - Epic: #3 - Milestone: M0 - Phase: M0-P1 - Item: M0-P1-I1 - Related: RFC v0.1.0 section 7.1
 
 ---
 

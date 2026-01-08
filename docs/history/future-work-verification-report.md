@@ -14,8 +14,8 @@ use file search or grep to locate the referenced code sections.
 
 **Key Findings:**
 
-- - - **FW-001**: ✅ **IMPLEMENTED** - Signal handling exists but test remains incomplete - **FW-002**: ✅ **ACCURATE** -
-  safe-check is scaffolding only - **FW-003**: ✅ **ACCURATE** - safe-archive is scaffolding only - **FW-004**: ✅
+- - - - **FW-001**: ✅ **IMPLEMENTED** - Signal handling exists but test remains incomplete - **FW-002**: ✅ **ACCURATE**
+  - safe-check is scaffolding only - **FW-003**: ✅ **ACCURATE** - safe-archive is scaffolding only - **FW-004**: ✅
   **ACCURATE** - Preflight not implemented - **FW-005**: ✅ **ACCURATE** - No programmatic vector mapping - **FW-006**: ✅
   **ACCURATE** - Enhancement opportunities documented - **FW-007**: ✅ **ACCURATE** - Enhancement opportunities
   documented - **FW-008, FW-009, FW-010**: ✅ **ACCURATE** - Status correctly documented
@@ -37,7 +37,7 @@ From future-work.md:
 
 **File: `rust/src/safe_run.rs`**
 
-1. 1. 1. **Signal handler registration (lines 184-187):**
+1. 1. 1. 1. **Signal handler registration (lines 184-187):**
 
 ```rust
 flag::register(SIGTERM, Arc::clone(&sigterm_received))
@@ -46,7 +46,7 @@ flag::register(SIGINT, Arc::clone(&sigint_received))
     .map_err(|e| format!("Failed to register SIGINT handler: {}", e))?;
 ```
 
-1. 1. 1. **Signal handling loop (lines 256-300):**
+1. 1. 1. 1. **Signal handling loop (lines 256-300):**
 
 ```rust
 let exit_status = loop {
@@ -98,7 +98,7 @@ let exit_status = loop {
     // ... continues polling for child exit
 ```
 
-1. 1. 1. **ABORTED log creation (line 279):**
+1. 1. 1. 1. **ABORTED log creation (line 279):**
 
 ```rust
 let log_path = save_log(
@@ -111,7 +111,7 @@ let log_path = save_log(
 )?;
 ```
 
-1. 1. 1. **Correct exit codes (lines 295-299):**
+1. 1. 1. 1. **Correct exit codes (lines 295-299):**
 
 ```rust
 let exit_code = if got_sigint {
@@ -150,9 +150,9 @@ fn test_safe_run_003_sigterm_aborted() {
 
 ### Recommendations
 
-1. 1. 1. **Update future-work.md** to reflect that signal handling IS implemented 2. **Update test status** - The test
-   is incomplete, not the implementation 3. **Consider removing `#[ignore]`** and implementing the actual signal test 4.
-   4. **Alternative**: Move FW-001 to a "Completed" section with note about test gap
+1. 1. 1. 1. **Update future-work.md** to reflect that signal handling IS implemented 2. **Update test status** - The
+   test is incomplete, not the implementation 3. **Consider removing `#[ignore]`** and implementing the actual signal
+   test 4. 4. **Alternative**: Move FW-001 to a "Completed" section with note about test gap
 
 ### Suggested future-work.md Update
 
@@ -269,7 +269,7 @@ fn archive_command(&self, _command: &[String]) -> Result<i32, String> {
 
 Confirmed 4 ignored tests for safe-archive:
 
-- - Line 561: `test_safe_archive_001_basic` - Line 618: `test_safe_archive_002_compression_formats` - Line 687:
+- - - Line 561: `test_safe_archive_001_basic` - Line 618: `test_safe_archive_002_compression_formats` - Line 687:
   `test_safe_archive_003_no_clobber_auto_suffix` - Line 751: `test_safe_archive_004_no_clobber_strict`
 
 All tests are placeholders with `#[ignore]` attributes.
@@ -315,7 +315,7 @@ No `octocrab`, `github-rs`, `wiremock`, or `mockito` crates present.
 
 Confirmed 3 ignored tests for preflight:
 
-- - Line 838: `test_preflight_001_success` - Line 873: `test_preflight_002_auth_failure` - Line 907:
+- - - Line 838: `test_preflight_001_success` - Line 873: `test_preflight_002_auth_failure` - Line 907:
   `test_preflight_003_ruleset_not_found`
 
 All tests are placeholders that only validate vector structure, not actual preflight behavior.
@@ -338,7 +338,7 @@ This is a test coverage gap.
 
 ### Recommendations
 
-1. 1. **Update future-work.md** to note that `preflight-004` vector exists but has no test 2. **Consider adding** a
+1. 1. 1. **Update future-work.md** to note that `preflight-004` vector exists but has no test 2. **Consider adding** a
    placeholder test for `preflight-004` to maintain 1:1 mapping
 
 ---
@@ -404,7 +404,7 @@ From future-work.md:
 
 No snapshot update mode, coverage tools, benchmarks, or fuzzing infrastructure found:
 
-1. 1. **No snapshot update mode**: Searched for `SNAPSHOT_UPDATE` - not found 2. **No coverage integration**: No
+1. 1. 1. **No snapshot update mode**: Searched for `SNAPSHOT_UPDATE` - not found 2. **No coverage integration**: No
    `tarpaulin` or coverage config in Cargo.toml 3. **No benchmarks**: No `[[bench]]` sections in Cargo.toml 4. **No
    fuzzing**: No `cargo-fuzz` or `fuzz/` directory
 
@@ -429,9 +429,9 @@ From future-work.md:
 
 No advanced performance optimizations or plugin architecture found:
 
-1. 1. **Binary size optimization**: No `strip = true` or LTO configuration in Cargo.toml 2. 2. **Plugin architecture**:
-   No hook/plugin system in source code 3. **Telemetry**: No structured logging beyond basic eprintln! calls 4.
-   **Performance profiling**: No profiling infrastructure present
+1. 1. 1. **Binary size optimization**: No `strip = true` or LTO configuration in Cargo.toml 2. 2. **Plugin
+   architecture**: No hook/plugin system in source code 3. **Telemetry**: No structured logging beyond basic eprintln!
+   calls 4. **Performance profiling**: No profiling infrastructure present
 
 ### Recommendations
 
@@ -471,7 +471,7 @@ This is the only inaccuracy found in future-work.md. All other items accurately 
 
 ### Recommended Actions
 
-1. 1. **Update `docs/future-work.md`** - Revise FW-001 to reflect implemented status 2. 2. **Consider test
+1. 1. 1. **Update `docs/future-work.md`** - Revise FW-001 to reflect implemented status 2. 2. **Consider test
    implementation** - Either implement the full signal test or document it as lower priority 3. **Optional: Add
    preflight-004 test** - Create placeholder test to maintain vector coverage 4. **No other changes needed** - FW-002
    through FW-010 are accurate
