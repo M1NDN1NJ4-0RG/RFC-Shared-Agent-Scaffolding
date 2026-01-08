@@ -232,7 +232,7 @@ class JsonRunner(Runner):
 
             try:
                 # Read and parse JSON
-                with open(file_path, "r", encoding="utf-8") as f:
+                with open(file_path, encoding="utf-8") as f:
                     data = json.load(f)
 
                 # Must be a dict/object at root level
