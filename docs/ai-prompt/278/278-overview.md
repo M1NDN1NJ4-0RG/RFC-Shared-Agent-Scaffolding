@@ -400,7 +400,107 @@ This includes:
 - [ ] Regression tests:
   - [ ] add a regression test for every bug found in TOML integration so it cannot reoccur
 
+
 **Deliverable:** TOML linting in `repo_lint` is heavily tested and stable.
+
+### 3.7 Reduce overly-broad exception handling (MANDATORY)
+
+We need to identify and reduce occurrences of overly-broad exception handling (especially `except Exception as e:`) to improve correctness, debuggability, and avoid swallowing real failures.
+
+#### 3.7.1 Repo-wide inventory (MANDATORY)
+
+- [ ] Use `rg` (ripgrep) to locate broad exception handlers across the repo:
+  - [ ] `except Exception as e:`
+  - [ ] `except Exception:`
+  - [ ] bare `except:` (if any)
+- [ ] Produce counts by category and a list of exact file paths.
+- [ ] Classify each finding by context:
+  - [ ] CLI boundary / user-facing error handling
+  - [ ] tooling wrappers calling subprocesses
+  - [ ] library code paths
+  - [ ] tests/fixtures
+
+**Deliverable:** Add a section to `{ISSUE_NUMBER}-summary.md` with counts + a table of findings (path, category, reason).
+
+#### 3.7.2 Define the policy (MANDATORY)
+
+- [ ] Define acceptable vs unacceptable broad exception usage:
+  - [ ] Acceptable: CLI boundary where we convert exceptions into a clean error message + non-zero exit
+  - [ ] Unacceptable: library code swallowing exceptions without re-raising or without narrowing the exception type
+- [ ] Define minimum required behavior when catching exceptions:
+  - [ ] replace broad `Exception` with built-in exception classes where possible
+  - [ ] create custom exception types where a domain-specific error improves clarity
+  - [ ] always include actionable context in the error message (file/tool/action)
+  - [ ] preserve the original exception via exception chaining (`raise ... from e`) when re-raising
+
+**Deliverable:** Add this policy to `docs/contributing/python-typing-policy.md` or a new canonical doc if more appropriate (must be linked from contributing docs).
+
+#### 3.7.3 Implementation plan (MANDATORY)
+
+- [ ] For each broad exception site, decide one of:
+  - [ ] Narrow to an appropriate built-in exception type(s)
+  - [ ] Introduce a custom exception class (add to a canonical module, e.g. `tools/repo_lint/exceptions.py` or equivalent)
+  - [ ] Keep broad catch ONLY if it’s a CLI boundary, and document why
+- [ ] Update code to:
+  - [ ] narrow exceptions
+  - [ ] add `raise ... from e` where re-raising
+  - [ ] ensure exit codes remain correct and consistent
+
+#### 3.7.4 EXTREMELY COMPREHENSIVE tests (MANDATORY, NO SHORTCUTS)
+
+- [ ] Unit tests that validate exception behavior:
+  - [ ] expected exception types are raised for library code
+  - [ ] CLI boundary catches produce correct user message + non-zero exit
+  - [ ] exception chaining is preserved when intended
+- [ ] Regression tests:
+  - [ ] add a regression test for every bug found while tightening exception handling
+
+**Deliverable:** Broad exception handling is reduced repo-wide and remaining uses are intentional, documented, and tested.
+
+### 3.8 Rich-powered logging (MANDATORY)
+
+We want consistent, high-signal logging across the repo with Rich formatting where it makes sense, without breaking CI logs or artifact readability.
+
+#### 3.8.1 Current state assessment (MANDATORY)
+
+- [ ] Inventory current logging patterns in Python code:
+  - [ ] direct `print()` usage
+  - [ ] `logging` module usage
+  - [ ] Rich console output usage (if any)
+- [ ] Identify where structured logging is most valuable:
+  - [ ] repo-lint runner orchestration
+  - [ ] subprocess execution wrappers
+  - [ ] CI failure report generation
+
+**Deliverable:** Add a section to `{ISSUE_NUMBER}-summary.md` describing current logging patterns and where to standardize.
+
+#### 3.8.2 Implement a shared logger wrapper (MANDATORY)
+
+- [ ] Create a shared logger utility that integrates Rich with Python `logging`:
+  - [ ] Use RichHandler for pretty logs when attached to a TTY
+  - [ ] Automatically fall back to plain logging in CI / non-TTY contexts
+  - [ ] Provide consistent log levels and formatting
+  - [ ] Support a `--verbose` / `--quiet` style toggle where applicable
+- [ ] Ensure logs do NOT inject ANSI escape sequences into persisted artifacts unless explicitly intended.
+
+**Deliverable:** A canonical logging module (e.g., `tools/repo_lint/logging_utils.py` or repo-equivalent) used by repo-lint and other Python tooling.
+
+#### 3.8.3 Adopt the logger across repo-lint (MANDATORY)
+
+- [ ] Replace ad-hoc `print()` statements with logger calls where appropriate.
+- [ ] Ensure parallel execution (if enabled) still produces deterministic, readable output.
+- [ ] Ensure CI output remains readable and artifact files remain ANSI-clean.
+
+#### 3.8.4 EXTREMELY COMPREHENSIVE tests (MANDATORY, NO SHORTCUTS)
+
+- [ ] Unit tests for logging behavior:
+  - [ ] TTY vs non-TTY formatting differences
+  - [ ] log level filtering (quiet/verbose)
+  - [ ] no ANSI codes in failure report artifacts
+- [ ] Integration tests:
+  - [ ] repo-lint check --ci produces stable logs + stable artifact outputs
+
+**Deliverable:** Logging is “fancy” interactively, stable in CI, and consistent repo-wide.
 
 ## Phase 4 — Autofix strategy (recommended: staged, not all-at-once)
 
