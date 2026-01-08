@@ -989,3 +989,101 @@ Completed comprehensive assessment of current logging patterns across the Python
 **Next:** Phase 3.8.2 - Implement shared logger wrapper
 
 ---
+
+### 2026-01-08 - Phase 3.8 Complete: Rich-powered Logging
+
+**Session Work:**
+
+**Phase 3.8.1: Current State Assessment (COMPLETE ✅)**
+
+Completed comprehensive inventory of logging patterns across Python codebase:
+
+- **518 print() statements** across 33 files
+- **Minimal logging adoption:** Only 1 file (base.py) uses Python logging
+- **Rich already integrated:** 6 files use Rich for UI (console.py, reporter.py, theme.py, cli.py, cli_argparse.py, doctor.py)
+- **Key gap:** No standardized logging infrastructure
+
+**Phase 3.8.2: Shared Logger Wrapper Implementation (COMPLETE ✅)**
+
+Created `tools/repo_lint/logging_utils.py` (264 lines, 8.5KB):
+- **Rich integration:** Uses RichHandler for TTY contexts
+- **CI mode support:** Falls back to plain StreamHandler for CI/non-TTY
+- **Verbose mode:** DEBUG level logging via --verbose flag or REPO_LINT_VERBOSE env var
+- **Quiet mode:** WARNING level logging to suppress info messages
+- **ANSI-safe:** No escape codes in CI artifacts
+- **Convenience functions:**
+  - `get_logger(name)` - Get configured logger instance
+  - `configure_logging(ci_mode, level, quiet)` - Set global config
+  - `log_tool_execution(logger, tool, command, cwd)` - Log tool invocation
+  - `log_tool_result(logger, tool, exit_code, violations)` - Log tool result
+  - `log_file_operation(logger, op, file, success)` - Log file I/O
+  - `log_progress(logger, msg, current, total)` - Log progress
+
+**Phase 3.8.3: CLI Integration (COMPLETE ✅)**
+
+Integrated logging into repo-lint:
+- **CLI entry point:** Modified `cli_argparse.py` main() to configure logging
+  - Detects --ci flag for CI mode (plain logging)
+  - Detects --verbose flag for DEBUG level
+  - Early initialization before any logging occurs
+- **Base runner:** Migrated `runners/base.py` to use logging_utils
+  - Replaced `import logging` with `get_logger(__name__)`
+  - Updated all logging calls to use module logger
+- **Testing:** Verified CLI and logging work correctly
+
+**Phase 3.8.4: Comprehensive Tests (COMPLETE ✅)**
+
+Created `tools/repo_lint/tests/test_logging_utils.py` (394 lines, 15KB):
+- **25 unit tests** covering all functionality
+- **Test categories:**
+  - Logging configuration (7 tests) - TTY/CI modes, level filtering
+  - Logger creation (3 tests) - Caching, naming
+  - Verbose mode (4 tests) - Enable/disable, environment detection
+  - Logging output (3 tests) - ANSI prevention, level filtering
+  - Convenience functions (8 tests) - All helper functions tested
+- **All tests pass:** 25/25 (100%)
+
+**Files Created/Modified:**
+
+Created:
+1. `tools/repo_lint/logging_utils.py` (264 lines)
+2. `tools/repo_lint/tests/test_logging_utils.py` (394 lines)
+
+Modified:
+3. `tools/repo_lint/cli_argparse.py` - Added logging configuration
+4. `tools/repo_lint/runners/base.py` - Migrated to logging_utils
+
+**Testing Results:**
+
+```bash
+python3 -m pytest tools/repo_lint/tests/test_logging_utils.py -v
+# Result: 25 passed in 0.13s
+
+repo-lint check --ci --only python
+# Result: Exit Code: 0 (SUCCESS)
+
+python3 -c "from tools.repo_lint.logging_utils import ..."
+# Integration test passed
+```
+
+**Deliverables:**
+
+- ✅ Centralized logging infrastructure with Rich integration
+- ✅ TTY vs CI mode auto-detection
+- ✅ ANSI-free output in CI contexts
+- ✅ Comprehensive test coverage (25 tests)
+- ✅ CLI integration complete and tested
+- ✅ Ready for gradual adoption across repo-lint modules
+
+**Status:**
+
+Phase 3.8 is **COMPLETE**. The logging infrastructure is production-ready and in use. Additional modules can be migrated incrementally as needed.
+
+**Commits:**
+
+- 9279f50: Phase 3.8.1-3.8.2 - Logging utils module + comprehensive tests
+- 100aba6: Phase 3.8.3 - Integrate logging into CLI and base runner
+
+**Next:** Phase 3.8 complete. Ready for code review, then proceed to remaining phases or conclude issue.
+
+---
