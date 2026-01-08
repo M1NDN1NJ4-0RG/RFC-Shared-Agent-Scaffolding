@@ -12,6 +12,7 @@
     - _run_taplo() uses `taplo fmt` in fix mode (not --check)
     - _run_taplo() uses `taplo fmt --check` in check mode
     - _parse_taplo_output() correctly parses violation format
+    - _extract_file_path_from_taplo_error() helper method edge cases
     - Empty file lists are handled correctly
     - Both check() and fix() modes work correctly
 
@@ -45,6 +46,7 @@
     - Tests use unittest.mock to avoid executing actual linters
     - Tests verify command-line arguments passed to subprocess
     - Tests verify output parsing handles the correct format
+    - Includes dedicated unit tests for _extract_file_path_from_taplo_error() helper
 """
 
 from __future__ import annotations
@@ -279,6 +281,90 @@ ERROR operation failed
         violations = self.runner._parse_taplo_output("", "", [])
 
         self.assertEqual(len(violations), 0)
+
+    def test_extract_file_path_quoted_path(self):
+        """Test extracting file path with quotes.
+
+        :Purpose:
+            Verify extraction of quoted path from Taplo error line.
+        """
+        line = 'ERROR taplo:format_files: the file is not properly formatted path="pyproject.toml"'
+
+        result = self.runner._extract_file_path_from_taplo_error(line)
+
+        self.assertEqual(result, "pyproject.toml")
+
+    def test_extract_file_path_unquoted_path(self):
+        """Test extracting file path without quotes.
+
+        :Purpose:
+            Verify extraction of unquoted path from Taplo error line.
+        """
+        line = "ERROR taplo:format_files: the file is not properly formatted path=pyproject.toml other=data"
+
+        result = self.runner._extract_file_path_from_taplo_error(line)
+
+        self.assertEqual(result, "pyproject.toml")
+
+    def test_extract_file_path_with_leading_dot_slash(self):
+        """Test extracting file path with ./ prefix.
+
+        :Purpose:
+            Verify that ./ prefix is normalized away.
+        """
+        line = 'ERROR taplo:format_files: the file is not properly formatted path="./pyproject.toml"'
+
+        result = self.runner._extract_file_path_from_taplo_error(line)
+
+        self.assertEqual(result, "pyproject.toml")
+
+    def test_extract_file_path_missing_path_attribute(self):
+        """Test extracting file path when path= is missing.
+
+        :Purpose:
+            Verify None is returned when path attribute is not found.
+        """
+        line = "ERROR taplo:format_files: the file is not properly formatted"
+
+        result = self.runner._extract_file_path_from_taplo_error(line)
+
+        self.assertIsNone(result)
+
+    def test_extract_file_path_malformed_input(self):
+        """Test extracting file path from malformed input.
+
+        :Purpose:
+            Verify None is returned for malformed input that causes parsing errors.
+        """
+        line = "path="  # Edge case: path= at end with no value
+
+        result = self.runner._extract_file_path_from_taplo_error(line)
+
+        self.assertEqual(result, "")  # Empty string is returned, not None
+
+    def test_extract_file_path_quoted_path_no_closing_quote(self):
+        """Test extracting file path with opening quote but no closing quote.
+
+        :Purpose:
+            Verify graceful handling when closing quote is missing.
+        """
+        line = 'ERROR taplo:format_files: path="pyproject.toml'
+
+        result = self.runner._extract_file_path_from_taplo_error(line)
+
+        self.assertEqual(result, "pyproject.toml")
+
+    def test_extract_file_path_nested_directory(self):
+        """Test extracting file path with nested directory structure.
+
+        :Purpose:
+            Verify paths with directories are extracted correctly.
+        """
+        line = 'ERROR taplo:format_files: the file is not properly formatted path="config/settings.toml"'
+
+        result = self.runner._extract_file_path_from_taplo_error(line)
+
+        self.assertEqual(result, "config/settings.toml")
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
     def test_run_taplo_empty_file_list(self, mock_run):
