@@ -4,7 +4,8 @@
 **Decision Date:** 2025-12-31
 **Applies To:** Issue #160 (Phase 2 & Phase 3)
 
-This section is the **single source of truth** for the decisions below. The remainder of this document must be interpreted in accordance with these locked-in decisions.
+This section is the **single source of truth** for the decisions below. The remainder of this document must be
+interpreted in accordance with these locked-in decisions.
 
 ## Phase 2 Decisions
 
@@ -15,7 +16,8 @@ This section is the **single source of truth** for the decisions below. The rema
 **Non-negotiable requirements:**
 
 - Provide a standard install + entrypoint so contributors can run `repo-lint ...` directly (while keeping `python3 -m tools.repo_lint ...` working as a compatibility path during transition).
-- The packaged tool must be as **self-contained** as reasonably possible (ship the Python code + required Python dependencies).
+- The packaged tool must be as **self-contained** as reasonably possible (ship the Python code + required Python
+  dependencies).
 - Repository-local workflows/docs must standardize on the preferred invocation (`repo-lint`) once packaging lands.
 
 **Expected deliverables:**
@@ -32,8 +34,10 @@ This section is the **single source of truth** for the decisions below. The rema
 **Explicit constraints:**
 
 - **NO automatic renaming** of files (no “auto-change” behavior). Naming enforcement is **check-only**.
-- Naming rules MUST be defined externally via a **YAML rules/vectors file** (per-language rules). This is intentionally user-configurable.
-- This approach is not limited to naming: **all user-tunable rulesets** (linting rules, docstring rules/contracts, naming standards) should be configurable via **external config files**, rather than hardcoded.
+- Naming rules MUST be defined externally via a **YAML rules/vectors file** (per-language rules). This is intentionally
+  user-configurable.
+- This approach is not limited to naming: **all user-tunable rulesets** (linting rules, docstring rules/contracts,
+  naming standards) should be configurable via **external config files**, rather than hardcoded.
   - Config files MUST live under: `conformance/repo-lint/`.
   - We will use **exactly three** top-level rules files:
     - `conformance/repo-lint/repo-lint-naming-rules.yaml`
@@ -158,9 +162,11 @@ This section is the **single source of truth** for the decisions below. The rema
 
 ## Overview
 
-Phase 1 (Critical Fixes) of Issue #160 is **COMPLETE** and ready for merge. All 6 high-priority items have been implemented, tested (20 tests passing), and code-reviewed.
+Phase 1 (Critical Fixes) of Issue #160 is **COMPLETE** and ready for merge. All 6 high-priority items have been
+implemented, tested (20 tests passing), and code-reviewed.
 
-This document outlines **decisions that require human approval** before proceeding with Phase 2 (Major Enhancements) and Phase 3 (Polish & Minor Improvements).
+This document outlines **decisions that require human approval** before proceeding with Phase 2 (Major Enhancements) and
+Phase 3 (Polish & Minor Improvements).
 
 ---
 
@@ -246,7 +252,8 @@ All Phase 1 items are done and do NOT require further decisions:
 - Should naming enforcement be blocking (CI fails) or advisory (warnings)?
 - Are the rules in `docs/contributing/naming-and-style.md` stable and complete?
 
-**Recommended Option:** **Option 1 (YES — Add naming enforcement)** as **CHECK-ONLY** with **external YAML rules** + **strict pre-ingest config validation** (APPROVED — locked in).
+**Recommended Option:** **Option 1 (YES — Add naming enforcement)** as **CHECK-ONLY** with **external YAML rules** +
+**strict pre-ingest config validation** (APPROVED — locked in).
 
 ---
 
@@ -467,8 +474,10 @@ All Phase 1 items are done and do NOT require further decisions:
 ## Next Steps
 
 1. **Merge Phase 1 PR** (already complete and ready).
-2. **Proceed with Phase 2 & Phase 3 implementation** exactly as specified in **Locked-In Human Decisions (Authoritative)** above.
-3. Implement the new features behind clear contracts/config validation so the packaged tool remains deterministic and safe.
+2. **Proceed with Phase 2 & Phase 3 implementation** exactly as specified in **Locked-In Human Decisions
+   (Authoritative)** above.
+3. Implement the new features behind clear contracts/config validation so the packaged tool remains deterministic and
+   safe.
 4. Update and verify documentation and references as part of the same overall workstream.
 5. Close Issue #160 once all approved deliverables are complete and CI is green.
 

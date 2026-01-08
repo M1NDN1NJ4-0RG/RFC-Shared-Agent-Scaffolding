@@ -25,10 +25,9 @@ This guide covers installation, common commands, shell completion, and troublesh
 - [Advanced Usage](#advanced-usage)
   - [Output Modes: Interactive vs CI](#output-modes-interactive-vs-ci)
   - [Theme Customization](#theme-customization)
-  - [Custom Configuration](#custom-configuration)
-    - [Viewing Current Configuration](#viewing-current-configuration)
-    - [Validating Configuration Files](#validating-configuration-files)
-    - [Configuration Precedence](#configuration-precedence)
+  - [Custom Configuration](#custom-configuration) - [Viewing Current Configuration](#viewing-current-configuration) -
+    [Validating Configuration Files](#validating-configuration-files) - [Configuration
+    Precedence](#configuration-precedence)
   - [Pre-Commit Hooks](#integrating-with-pre-commit-hooks)
   - [CI/CD Integration](#cicd-integration)
 - [Getting Help](#getting-help)
@@ -569,7 +568,8 @@ All three commands (`which`, `env`, `activate`) use the same venv resolution pre
 These files exist to:
 
 - **Test the linters themselves**: Ensure `repo-lint` runners correctly invoke tools like `black`, `ruff`, `shellcheck`, `clippy`, etc.
-- **Validate violation detection**: Confirm that violation messages, file names, and line numbers are accurately reported
+- **Validate violation detection**: Confirm that violation messages, file names, and line numbers are accurately
+  reported
 - **Provide conformance testing**: Enable "vector mode" testing where the tool scans intentionally bad code
 - **Document expected behavior**: Serve as living examples of what each linter should catch
 
@@ -848,7 +848,8 @@ This section details **exactly** what fixture files exist for each language, wha
 - **Missing docstrings**: Functions/classes without documentation
 - **Formatting**: Lines that are too long, inconsistent indentation, etc.
 
-**Why These Violations**: These are the most common Python code quality issues that linters should catch. By testing against these specific patterns, we ensure the runners correctly invoke and parse tool output.
+**Why These Violations**: These are the most common Python code quality issues that linters should catch. By testing
+against these specific patterns, we ensure the runners correctly invoke and parse tool output.
 
 #### Bash Fixtures
 
@@ -869,7 +870,8 @@ This section details **exactly** what fixture files exist for each language, wha
 - **Unused variables**: Variables declared but never referenced
 - **Improper cd usage**: `cd /tmp` without error handling
 
-**Why These Violations**: Shellcheck catches critical bugs that can cause scripts to fail in production. These test cases ensure the Bash runner correctly identifies these issues.
+**Why These Violations**: Shellcheck catches critical bugs that can cause scripts to fail in production. These test
+cases ensure the Bash runner correctly identifies these issues.
 
 #### Perl Fixtures
 
@@ -889,7 +891,8 @@ This section details **exactly** what fixture files exist for each language, wha
 - **Using @_ directly**: `print $_[0]` instead of unpacking arguments
 - **Punctuation variables**: Using `$_` without clear context
 
-**Why These Violations**: Perlcritic enforces best practices that make Perl code more maintainable and less error-prone. These fixtures test that the Perl runner correctly applies these policies.
+**Why These Violations**: Perlcritic enforces best practices that make Perl code more maintainable and less error-prone.
+These fixtures test that the Perl runner correctly applies these policies.
 
 #### PowerShell Fixtures
 
@@ -910,7 +913,8 @@ This section details **exactly** what fixture files exist for each language, wha
 - **Positional parameters**: Not using named parameters
 - **Missing ShouldProcess**: Remove-* functions without -WhatIf/-Confirm support
 
-**Why These Violations**: PowerShell has strict conventions for module and cmdlet development. These fixtures ensure the PowerShell runner enforces these standards.
+**Why These Violations**: PowerShell has strict conventions for module and cmdlet development. These fixtures ensure the
+PowerShell runner enforces these standards.
 
 #### YAML Fixtures
 
@@ -932,7 +936,8 @@ This section details **exactly** what fixture files exist for each language, wha
 - **Inconsistent indentation**: Wrong indentation levels
 - **Deprecated Actions syntax**: Old workflow commands
 
-**Why These Violations**: YAML is whitespace-sensitive and easy to break. These fixtures test that the YAML runner catches common formatting and syntax errors.
+**Why These Violations**: YAML is whitespace-sensitive and easy to break. These fixtures test that the YAML runner
+catches common formatting and syntax errors.
 
 #### Rust Fixtures
 
@@ -963,7 +968,9 @@ Each fixture file has a corresponding `.RESET.diff` file that can restore the fi
 
 #### What are RESET.diff files
 
-RESET.diff files are git-format patch files that contain the difference between the "fixed" state (after running auto-formatters) and the "bad" state (with intentional violations). They allow you to restore fixtures to their canonical violating state.
+RESET.diff files are git-format patch files that contain the difference between the "fixed" state (after running
+auto-formatters) and the "bad" state (with intentional violations). They allow you to restore fixtures to their
+canonical violating state.
 
 #### When to use RESET.diff files
 

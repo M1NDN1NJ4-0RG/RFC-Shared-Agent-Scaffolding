@@ -4,7 +4,8 @@
 
 The `bootstrap-repo-lint-toolchain.sh` script automates the setup of all development tools required for contributing to this repository. It is designed to be run at the start of every Copilot agent session to ensure a consistent, compliant development environment.
 
-**New in v2:** The script now features a default-on progress UI that provides real-time feedback during installation, automatically adapting to interactive (TTY) and CI/non-TTY environments.
+**New in v2:** The script now features a default-on progress UI that provides real-time feedback during installation,
+automatically adapting to interactive (TTY) and CI/non-TTY environments.
 
 ## Quick Start
 
@@ -165,7 +166,8 @@ The script creates a Python virtual environment at:
 
 ### PATH Management
 
-**CRITICAL:** The bootstrapper activates the virtual environment within the script context, but **your shell session needs manual activation**.
+**CRITICAL:** The bootstrapper activates the virtual environment within the script context, but **your shell session
+needs manual activation**.
 
 After running the bootstrapper, you **MUST** activate the environment:
 

@@ -130,7 +130,8 @@ Copilot repeatedly fails the repository’s mandatory “repo-lint before commit
 - CI failures become non-actionable because the agent can’t reproduce checks locally
 - the agent then stalls asking for “exact install commands” instead of fixing issues
 
-This repository already treats tooling compliance as mandatory. The missing piece is a **single, deterministic bootstrapper** that Copilot can run at the **start of every session** to install/verify everything it needs.
+This repository already treats tooling compliance as mandatory. The missing piece is a **single, deterministic
+bootstrapper** that Copilot can run at the **start of every session** to install/verify everything it needs.
 
 ## Goal
 
@@ -206,14 +207,16 @@ At the end, the bootstrapper must run a minimal verification gate and fail non-z
 
 - `repo-lint check --ci`  (or a narrower run if needed for speed, but default should be full gate)
 
-If the verification fails due to missing tools, that is treated as bootstrap failure and must clearly list missing tools.
+If the verification fails due to missing tools, that is treated as bootstrap failure and must clearly list missing
+tools.
 
 ### R5 — Deterministic behavior / no ambiguity
 
 - Must print clear “what I’m doing / what failed / how to fix” messages
 - Must have stable exit codes (document them in the script header)
 - Must not silently skip required components
-- Must be CI-friendly (no interactive prompts unless explicitly required; if unavoidable, detect and error with instructions)
+- Must be CI-friendly (no interactive prompts unless explicitly required; if unavoidable, detect and error with
+  instructions)
 
 ### R6 — Documentation updates
 

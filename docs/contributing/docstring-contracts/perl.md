@@ -14,7 +14,8 @@ Every Perl script must include these POD sections (using `=head1` headers):
 1. **=head1 NAME** - Script name and one-line summary
 2. **=head1 SYNOPSIS** - Usage examples (invocation patterns)
 3. **=head1 DESCRIPTION** - What the script does and does NOT do
-4. **=head1 BINARY DISCOVERY** or **=head1 ENVIRONMENT VARIABLES** - Configuration (for wrappers, use BINARY DISCOVERY; for others, use ENVIRONMENT VARIABLES if applicable)
+4. **=head1 BINARY DISCOVERY** or **=head1 ENVIRONMENT VARIABLES** - Configuration (for wrappers, use BINARY DISCOVERY;
+   for others, use ENVIRONMENT VARIABLES if applicable)
 5. **=head1 ENVIRONMENT VARIABLES** - Variables used and defaults (if not already covered)
 6. **=head1 EXIT CODES** - At least: 0 = success, non-zero = failure types
 7. **=head1 EXAMPLES** - Minimum 1 concrete usage example
@@ -630,7 +631,8 @@ Failure
   script.pl <command> [args...]
 ```
 
-✅ **Correct:** Escape angle brackets in non-code context (or use as-is in code examples - POD is forgiving for indented code)
+✅ **Correct:** Escape angle brackets in non-code context (or use as-is in code examples - POD is forgiving for indented
+code)
 
 ```perl
 =head1 SYNOPSIS

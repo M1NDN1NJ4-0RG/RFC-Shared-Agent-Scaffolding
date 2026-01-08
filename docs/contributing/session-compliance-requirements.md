@@ -1,10 +1,13 @@
 # Session Start/End Compliance Requirements (Canonical)
 
-**Document Purpose:** This document defines the mandatory compliance requirements for Copilot agents working in this repository. It replaces any ambiguous or conflicting wording about session start, session end, and pre-commit requirements found elsewhere.
+**Document Purpose:** This document defines the mandatory compliance requirements for Copilot agents working in this
+repository. It replaces any ambiguous or conflicting wording about session start, session end, and pre-commit
+requirements found elsewhere.
 
 **Authority:** This document supersedes any conflicting guidance. When in doubt, follow this document.
 
-**MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work. Failure to read this document when starting NEW work is a violation.
+**MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work. Failure to
+read this document when starting NEW work is a violation.
 
 **Exception (allowed before anything else):** Reading `docs/contributing/session-compliance-requirements.md` and `.github/copilot-instructions.md` is permitted before doing any work.
 
@@ -35,7 +38,8 @@ After completing Session Start, you MUST execute the requested work.
 
 ### Non-negotiable behavior
 
-- **No “catch-up only” sessions.** Reading docs and then stopping to summarize “what we should do next” is a violation unless you are blocked or near context limits.
+- **No “catch-up only” sessions.** Reading docs and then stopping to summarize “what we should do next” is a violation
+  unless you are blocked or near context limits.
 - **Implementation over narration.** Do the work.
 - **Minimum progress rule:** In every session, you MUST do at least one of:
   - Produce a meaningful commit (preferred), OR
@@ -158,9 +162,8 @@ Exit codes for `repo-lint check --ci`:
 
 5. **Address ALL Copilot Code Review comments (MANDATORY)**
    - Treat **every** Copilot Code Review comment as a **required action**.
-   - You may skip a comment **ONLY** if implementing it would:
-     - Break existing, passing tests or CI checks (verified), OR
-     - Violate an explicit technical constraint stated in the issue/PR description.
+   - You may skip a comment **ONLY** if implementing it would: - Break existing, passing tests or CI checks (verified),
+     OR - Violate an explicit technical constraint stated in the issue/PR description.
    - If you defer an item for **future usage**, you MUST:
      - Leave a nearby, durable `TODO` / `FUTURE:` note in the relevant file explaining **what** and **why**.
      - Only comment out code when necessary to keep builds/tests passing (e.g., Rust compile/build).

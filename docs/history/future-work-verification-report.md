@@ -482,7 +482,8 @@ This is the only inaccuracy found in future-work.md. All other items accurately 
 
 ### Overall Assessment
 
-**future-work.md is 90% accurate.** Only one item (FW-001) needs updating. The documentation quality is high and provides clear, actionable guidance for future work.
+**future-work.md is 90% accurate.** Only one item (FW-001) needs updating. The documentation quality is high and
+provides clear, actionable guidance for future work.
 
 ---
 

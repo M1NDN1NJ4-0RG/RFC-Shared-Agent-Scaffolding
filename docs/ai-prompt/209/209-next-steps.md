@@ -117,8 +117,8 @@ Documentation (Phase 4) and testing updates (Phase 5)
 
 - `scripts/tests/test_bootstrap_repo_lint_toolchain.py`: Fixed trailing whitespace
 
-**Changes Made:**
-Applied ruff --unsafe-fixes to remove 6 trailing whitespace violations in embedded shell scripts within Python test file.
+**Changes Made:** Applied ruff --unsafe-fixes to remove 6 trailing whitespace violations in embedded shell scripts
+within Python test file.
 
 **MANDATORY COMPLIANCE CHECKS PASSED:**
 ✅ black: All done! ✨ 🍰 ✨
@@ -633,8 +633,10 @@ Implemented Phase 1 of the implementation plan (Issue #209, comment #3702826930)
 **Script Features:**
 
 1. **Comprehensive Bash docstrings** following `docs/contributing/docstring-contracts/bash.md`:
-   - Top-level script docstring with all required sections (DESCRIPTION, USAGE, INPUTS, OUTPUTS, EXAMPLES, NOTES, PLATFORM COMPATIBILITY)
-   - Function-level docstrings for all 9 functions (log, warn, die, find_repo_root, ensure_venv, activate_venv, determine_install_target, install_repo_lint, verify_repo_lint, main)
+   - Top-level script docstring with all required sections (DESCRIPTION, USAGE, INPUTS, OUTPUTS, EXAMPLES, NOTES,
+     PLATFORM COMPATIBILITY)
+   - Function-level docstrings for all 9 functions (log, warn, die, find_repo_root, ensure_venv, activate_venv,
+     determine_install_target, install_repo_lint, verify_repo_lint, main)
    - Documented exit codes: 0, 1, 10, 11, 12, 13, 14
    - All examples prefixed with `#` as required
 
@@ -710,7 +712,8 @@ repo-lint check --only bash
 
 **Design Decisions:**
 
-1. Install target logic simplified to only check for pyproject.toml at repo root (not tools/repo_lint/) since the package is defined at root level
+1. Install target logic simplified to only check for pyproject.toml at repo root (not tools/repo_lint/) since the
+   package is defined at root level
 2. Used `command -v` instead of `which` for better portability
 3. Added explicit venv activation verification
 4. Used `--quiet` flag for pip to reduce noise while keeping our own progress messages
@@ -848,19 +851,14 @@ Created comprehensive planning documentation as requested in the agent instructi
    - Noted that Rust implementation exists but Bash script is what's requested
 
 3. **209-implementation-plan.md** (Detailed Plan):
-   - **6 Phases** with detailed items and sub-items:
-     - Phase 1: Core bootstrapper script (repo root discovery, venv setup, repo-lint install/verify)
-     - Phase 2: Tool installation (rgrep, Python, Shell, PowerShell, Perl toolchains)
-     - Phase 3: Verification gate and error handling
-     - Phase 4: Documentation (inline, external, Copilot integration)
-     - Phase 5: Testing and validation
-     - Phase 6: CI integration and rollout
+   - **6 Phases** with detailed items and sub-items: - Phase 1: Core bootstrapper script (repo root discovery, venv
+     setup, repo-lint install/verify) - Phase 2: Tool installation (rgrep, Python, Shell, PowerShell, Perl toolchains) -
+     Phase 3: Verification gate and error handling - Phase 4: Documentation (inline, external, Copilot integration) -
+     Phase 5: Testing and validation - Phase 6: CI integration and rollout
    - **All sub-items have checkboxes** for tracking progress
-   - **TODOs & Deferrments section** at bottom:
-     - Immediate TODOs (P0): Core script, tool installation, verification, docs, testing
-     - Secondary TODOs (P1): Copilot integration, automated tests
-     - Deferrments: macOS support, Windows support, advanced features
-     - Out of Scope: IDE integration, multi-repo support, tool config
+   - **TODOs & Deferrments section** at bottom: - Immediate TODOs (P0): Core script, tool installation, verification,
+     docs, testing - Secondary TODOs (P1): Copilot integration, automated tests - Deferrments: macOS support, Windows
+     support, advanced features - Out of Scope: IDE integration, multi-repo support, tool config
    - **Success Metrics**: Quantitative (100% success rate, idempotency) and qualitative (ease of use)
    - **Risk Assessment**: High/medium/low risks with mitigations
    - **Appendix**: Related issues, docs, code, external resources

@@ -8,7 +8,9 @@
 
 ## Overview
 
-This directory contains canonical test vectors that define the expected behavior of all scripts in the RFC Shared Agent Scaffolding system. All language bundles (Bash, Python 3, Perl, PowerShell) **MUST** pass these conformance tests to ensure behavioral parity.
+This directory contains canonical test vectors that define the expected behavior of all scripts in the RFC Shared Agent
+Scaffolding system. All language bundles (Bash, Python 3, Perl, PowerShell) **MUST** pass these conformance tests to
+ensure behavioral parity.
 
 ---
 

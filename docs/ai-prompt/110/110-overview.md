@@ -9,7 +9,8 @@ Related: Issue #110, PRs #132, #137
 
 ## Goal
 
-Replace the ad-hoc "run everything" linter helper with a **proper Python package + CLI** that becomes the **single source of truth** for repo linting and docstring validation across all supported languages.
+Replace the ad-hoc "run everything" linter helper with a **proper Python package + CLI** that becomes the **single
+source of truth** for repo linting and docstring validation across all supported languages.
 
 This tool must be:
 
@@ -163,7 +164,8 @@ All requirements from the original issue have been implemented:
 
 **✅ ALL PHASE 6 ITEMS COMPLETE**
 
-All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is operational, verified in CI, and serving as the canonical gate. Legacy workflows migrated per Option B. Issue #110 ready for closure.
+All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is operational, verified in CI, and serving
+as the canonical gate. Legacy workflows migrated per Option B. Issue #110 ready for closure.
 
 ---
 

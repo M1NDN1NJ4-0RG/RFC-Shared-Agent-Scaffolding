@@ -565,11 +565,9 @@ The repository has a sophisticated multi-level contract system:
   - **Severity:** Medium
   - **Description:** Implement subset of Pylint rules as tree-sitter queries
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/python/pylint_rules.rs`
-  - **Sub-Items:**
-    - [ ] Sub-Item 2.2.3.1: Missing docstrings (functions, classes, modules)
-    - [ ] Sub-Item 2.2.3.2: Unused imports
-    - [ ] Sub-Item 2.2.3.3: Undefined variables
-    - [ ] Sub-Item 2.2.3.4: Line length violations (>120 chars)
+  - **Sub-Items:** - [ ] Sub-Item 2.2.3.1: Missing docstrings (functions, classes, modules) - [ ] Sub-Item 2.2.3.2:
+    Unused imports - [ ] Sub-Item 2.2.3.3: Undefined variables - [ ] Sub-Item 2.2.3.4: Line length violations (>120
+    chars)
   - **Notes:** Start with high-value rules, expand incrementally
 
 ---
@@ -580,13 +578,10 @@ The repository has a sophisticated multi-level contract system:
   - **Severity:** High
   - **Description:** Reimplement ShellCheck's most critical rules
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/bash/shellcheck.rs`
-  - **Challenges:**
-    - ShellCheck has ~400 rules; full parity is impractical
-    - Bash parsing is notoriously complex (quoting, expansion, heredocs)
-  - **Approach:**
-    - Use tree-sitter-bash for AST
-    - Implement top 20 ShellCheck rules (SC2086, SC2046, SC2006, etc.)
-    - Provide opt-in "strict mode" for full ShellCheck via external tool
+  - **Challenges:** - ShellCheck has ~400 rules; full parity is impractical - Bash parsing is notoriously complex
+    (quoting, expansion, heredocs)
+  - **Approach:** - Use tree-sitter-bash for AST - Implement top 20 ShellCheck rules (SC2086, SC2046, SC2006, etc.) -
+    Provide opt-in "strict mode" for full ShellCheck via external tool
   - **Implementation:**
 
     ```rust
@@ -623,12 +618,10 @@ The repository has a sophisticated multi-level contract system:
 - [ ] **Item 2.4.1: PSScriptAnalyzer equivalent**
   - **Severity:** High
   - **Description:** Implement PowerShell linting rules
-  - **Challenges:**
-    - PSScriptAnalyzer is .NET-based, cannot easily embed
-    - tree-sitter-powershell grammar may be incomplete
-  - **Approach:**
-    - Implement basic rules via tree-sitter (e.g., verb-noun functions, CmdletBinding)
-    - Provide "enhanced mode" that shells out to PSScriptAnalyzer if available
+  - **Challenges:** - PSScriptAnalyzer is .NET-based, cannot easily embed - tree-sitter-powershell grammar may be
+    incomplete
+  - **Approach:** - Implement basic rules via tree-sitter (e.g., verb-noun functions, CmdletBinding) - Provide "enhanced
+    mode" that shells out to PSScriptAnalyzer if available
   - **Implementation:**
 
     ```rust
@@ -657,12 +650,10 @@ The repository has a sophisticated multi-level contract system:
 - [ ] **Item 2.5.1: Perl::Critic equivalent rules**
   - **Severity:** Medium
   - **Description:** Implement severity 5 Perl::Critic rules
-  - **Challenges:**
-    - Perl is notoriously hard to parse (context-sensitive, TIMTOWTDI)
-    - tree-sitter-perl grammar is experimental
-  - **Approach:**
-    - Implement ~10 basic rules (use strict, use warnings, bareword filehandles)
-    - Provide opt-in mode to shell out to Perl::Critic
+  - **Challenges:** - Perl is notoriously hard to parse (context-sensitive, TIMTOWTDI) - tree-sitter-perl grammar is
+    experimental
+  - **Approach:** - Implement ~10 basic rules (use strict, use warnings, bareword filehandles) - Provide opt-in mode to
+    shell out to Perl::Critic
   - **Implementation:**
 
     ```rust
@@ -769,10 +760,8 @@ The repository has a sophisticated multi-level contract system:
 - [ ] **Item 3.1.3: Test IDE integration**
   - **Severity:** Medium
   - **Description:** Verify autocomplete/validation in VS Code, JetBrains, Vim
-  - **Sub-Items:**
-    - [ ] Sub-Item 3.1.3.1: VS Code (YAML extension with schema support)
-    - [ ] Sub-Item 3.1.3.2: JetBrains IDEs (IntelliJ, PyCharm, RustRover)
-    - [ ] Sub-Item 3.1.3.3: Vim (with ALE or coc-yaml)
+  - **Sub-Items:** - [ ] Sub-Item 3.1.3.1: VS Code (YAML extension with schema support) - [ ] Sub-Item 3.1.3.2:
+    JetBrains IDEs (IntelliJ, PyCharm, RustRover) - [ ] Sub-Item 3.1.3.3: Vim (with ALE or coc-yaml)
   - **Documentation:** Add screenshots to `tools/repo_lint_rust/docs/ide-setup.md`
 
 ---
@@ -840,10 +829,8 @@ The repository has a sophisticated multi-level contract system:
 - [ ] **Item 4.1.2: `fix` command (safe auto-fixes)**
   - **Severity:** High
   - **Description:** Apply formatters + safe lint fixes
-  - **Sub-Items:**
-    - [ ] Sub-Item 4.1.2.1: Safe fixes only (no behavior changes)
-    - [ ] Sub-Item 4.1.2.2: Policy validation (deny-by-default)
-    - [ ] Sub-Item 4.1.2.3: Exit code 1 if violations remain after fixes
+  - **Sub-Items:** - [ ] Sub-Item 4.1.2.1: Safe fixes only (no behavior changes) - [ ] Sub-Item 4.1.2.2: Policy
+    validation (deny-by-default) - [ ] Sub-Item 4.1.2.3: Exit code 1 if violations remain after fixes
 
 - [ ] **Item 4.1.3: `fix --unsafe` command (dangerous fixes)**
   - **Severity:** High
@@ -867,12 +854,10 @@ The repository has a sophisticated multi-level contract system:
   - **Severity:** High
   - **Description:** Validate required sections per language contract
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/docstrings/`
-  - **Sub-Items:**
-    - [ ] Sub-Item 4.2.1.1: Python (Purpose, Usage, Exit Codes, Examples)
-    - [ ] Sub-Item 4.2.1.2: Bash (DESCRIPTION, USAGE, EXAMPLES, EXIT CODES)
-    - [ ] Sub-Item 4.2.1.3: PowerShell (.SYNOPSIS, .DESCRIPTION, .EXAMPLE, Exit Codes)
-    - [ ] Sub-Item 4.2.1.4: Perl (=head1 NAME, DESCRIPTION, SYNOPSIS, EXAMPLES)
-    - [ ] Sub-Item 4.2.1.5: Rust (//! # Purpose, //! # Examples, //! # Exit Behavior)
+  - **Sub-Items:** - [ ] Sub-Item 4.2.1.1: Python (Purpose, Usage, Exit Codes, Examples) - [ ] Sub-Item 4.2.1.2: Bash
+    (DESCRIPTION, USAGE, EXAMPLES, EXIT CODES) - [ ] Sub-Item 4.2.1.3: PowerShell (.SYNOPSIS, .DESCRIPTION, .EXAMPLE,
+    Exit Codes) - [ ] Sub-Item 4.2.1.4: Perl (=head1 NAME, DESCRIPTION, SYNOPSIS, EXAMPLES) - [ ] Sub-Item 4.2.1.5: Rust
+    (//! # Purpose, //! # Examples, //! # Exit Behavior)
   - **Implementation:**
 
     ```rust
@@ -998,22 +983,14 @@ The repository has a sophisticated multi-level contract system:
   - **Severity:** Medium
   - **Description:** Document YAML config structure and schema
   - **Files:** `tools/repo_lint_rust/docs/configuration.md`
-  - **Content:**
-    - Schema reference
-    - Per-language rule configuration
-    - IDE setup for autocomplete/validation
-    - Examples
+  - **Content:** - Schema reference - Per-language rule configuration - IDE setup for autocomplete/validation - Examples
 
 - [ ] **Item 5.2.3: Migration guide for users**
   - **Severity:** High
   - **Description:** Step-by-step migration from Python to Rust version
   - **Files:** `docs/migration/python-to-rust-repo-lint.md`
-  - **Content:**
-    - Why migrate (performance, no dependencies)
-    - Breaking changes (if any)
-    - Config file migration (JSON → YAML)
-    - CI workflow updates
-    - Rollback procedure
+  - **Content:** - Why migrate (performance, no dependencies) - Breaking changes (if any) - Config file migration (JSON
+    → YAML) - CI workflow updates - Rollback procedure
 
 ---
 
@@ -1187,7 +1164,8 @@ def main():
 
 ### Behavioral Contracts (from `contract-extraction.md`)
 
-**Impact:** The Rust migration does NOT affect wrapper contracts, as repo_lint is orthogonal to safe-run/safe-check/safe-archive wrappers.
+**Impact:** The Rust migration does NOT affect wrapper contracts, as repo_lint is orthogonal to
+safe-run/safe-check/safe-archive wrappers.
 
 **Relevant Contracts:**
 

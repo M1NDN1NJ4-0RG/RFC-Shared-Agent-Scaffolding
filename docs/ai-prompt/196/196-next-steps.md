@@ -164,8 +164,8 @@ None. All linting errors resolved.
 - `rust/Cargo.toml`: Added [[bin]] entry for bootstrap-repo-cli
 - `docs/ai-prompt/196/196-next-steps.md`: Updated journal
 
-**Changes Made:**
-Following @m1ndn1nj4's direction to implement Q1 Option A (Full Replication) and Q2 Option A (New standalone binary in existing Cargo workspace):
+**Changes Made:** Following @m1ndn1nj4's direction to implement Q1 Option A (Full Replication) and Q2 Option A (New
+standalone binary in existing Cargo workspace):
 
 1. **Created comprehensive Rust implementation** with complete feature parity to bash script:
    - Repository root finding (walks up from current dir)
@@ -173,13 +173,9 @@ Following @m1ndn1nj4's direction to implement Q1 Option A (Full Replication) and
    - pip upgrade and repo-lint installation
    - Install target detection (tools/repo_cli vs repo root)
    - Verification of repo-lint installation
-   - System tool installation via apt-get, go, cpan, pwsh
-     - shellcheck (apt-get)
-     - shfmt (go install)
-     - ripgrep (apt-get)
-     - PowerShell (apt-get + Microsoft repos)
-     - PSScriptAnalyzer (pwsh module)
-     - Perl::Critic and PPI (cpan/apt-get)
+   - System tool installation via apt-get, go, cpan, pwsh - shellcheck (apt-get) - shfmt (go install) - ripgrep
+     (apt-get) - PowerShell (apt-get + Microsoft repos) - PSScriptAnalyzer (pwsh module) - Perl::Critic and PPI
+     (cpan/apt-get)
    - Tool verification
    - Validation run (repo-lint check --ci --only bash)
    - Success summary
@@ -317,11 +313,8 @@ None. Implementation complete and functional.
 
 - **Files Modified**:
   - cli.py: Import safe_print, fix 2 error messages
-  - cli_argparse.py: Fix 22 instances across:
-    - Warning messages (5 instances)
-    - Error messages (8 instances)
-    - Success messages (4 instances)
-    - Box drawing separators (5 instances)
+  - cli_argparse.py: Fix 22 instances across: - Warning messages (5 instances) - Error messages (8 instances) - Success
+    messages (4 instances) - Box drawing separators (5 instances)
 
 **Verification:**
 

@@ -1,6 +1,7 @@
 # Historical Documentation
 
-This directory contains historical documents, decision logs, and progress summaries from the development of the RFC-Shared-Agent-Scaffolding repository.
+This directory contains historical documents, decision logs, and progress summaries from the development of the
+RFC-Shared-Agent-Scaffolding repository.
 
 ## Purpose
 
@@ -74,7 +75,8 @@ Archived guidelines for AI agents working on this repository:
 - [AI Agent Guidelines](./ai-agent-guidelines/) - Sharded agent instructions and journal
   - `agent/` - Sharded rule files (core rules, git workflow, testing standards, etc.)
   - `journal/` - PR log templates and tracking
-  - [Wrappers README (Legacy)](./ai-agent-guidelines/wrappers-readme-legacy.md) - Original wrappers README (moved from wrappers/)
+  - [Wrappers README (Legacy)](./ai-agent-guidelines/wrappers-readme-legacy.md) - Original wrappers README (moved from
+    wrappers/)
 
 ## How to Use This Directory
 

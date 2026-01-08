@@ -76,7 +76,8 @@
 
 ### Deviations from 098 Plan
 
-**None significant.** The implementation matches the original Phase 5 specification. The work was simply executed under Issue #110 instead of #098.
+**None significant.** The implementation matches the original Phase 5 specification. The work was simply executed under
+Issue #110 instead of #098.
 
 ---
 
@@ -84,7 +85,8 @@
 
 ### Planned Work (from 098-overview.md)
 
-**Goal:** Expand docstring validation tooling to enforce documentation standards not only at file/module level, but also for **symbols** (classes, functions, methods, language equivalents) across Python, Bash, Perl, PowerShell, and Rust.
+**Goal:** Expand docstring validation tooling to enforce documentation standards not only at file/module level, but also
+for **symbols** (classes, functions, methods, language equivalents) across Python, Bash, Perl, PowerShell, and Rust.
 
 **Items:**
 
@@ -409,7 +411,8 @@ as Phase 5 and Phase 3 Item 3.7.
 - ✅ Perl: POD validation via PPI
 - ✅ Rust: `///` rustdoc validation
 
-**All validators enforce the "no skipping private symbols" policy per Issue #110 Phase 0 Item 0.9 and Phase 3 Item 3.7.3.**
+**All validators enforce the "no skipping private symbols" policy per Issue #110 Phase 0 Item 0.9 and Phase 3 Item
+3.7.3.**
 
 ### CI Integration
 
@@ -537,7 +540,8 @@ as Phase 5 and Phase 3 Item 3.7.
 4. Full CI integration via umbrella workflow
 5. Enforcement of "no skipping private symbols" policy
 
-**Repository is in excellent shape.** The only remaining work is minor documentation cleanup to reach 100% completion of Phase 5.5.0.
+**Repository is in excellent shape.** The only remaining work is minor documentation cleanup to reach 100% completion of
+Phase 5.5.0.
 
 ---
 

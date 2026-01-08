@@ -29,13 +29,15 @@ These decisions are **locked in** for this issue and should be treated as requir
 
 6. **Docstring `:rtype:` policy:** require `:rtype:` **only** when a function/method returns a **non-None** value. Do **not** require `:rtype:` for `None`.
 
-7. **Rollout strategy (initial):** start with **maximum compatibility** and **measurement-first** enforcement (report-only / baseline) so we can see how bad the churn would be, then tighten gradually.
+7. **Rollout strategy (initial):** start with **maximum compatibility** and **measurement-first** enforcement
+   (report-only / baseline) so we can see how bad the churn would be, then tighten gradually.
 
 8. **Markdown tooling:** use **markdownlint-cli2**.
 
 9. **TOML tooling:** use **Taplo**.
 
-10. **Progress UI:** optional. If added, use **Rich** (not tqdm) and keep it **off by default**; enable only when attached to a TTY to avoid CI log spam.
+10. **Progress UI:** optional. If added, use **Rich** (not tqdm) and keep it **off by default**; enable only when
+    attached to a TTY to avoid CI log spam.
 
 ---
 
@@ -180,7 +182,8 @@ If `repo_lint` cannot fully enforce PEP 526 + `:rtype:`:
 
 **Deliverable:** new repo-lint rule(s) with unit tests + integration in `repo-lint check --ci`
 
-**Note:** Investigation complete - Ruff ANN* handles function annotations but NOT module-level/class attribute annotations. Custom checker needed for PEP 526 scope.
+**Note:** Investigation complete - Ruff ANN* handles function annotations but NOT module-level/class attribute
+annotations. Custom checker needed for PEP 526 scope.
 
 ---
 
@@ -454,11 +457,13 @@ We need to identify and reduce occurrences of overly-broad exception handling (e
 - [ ] Regression tests:
   - [ ] add a regression test for every bug found while tightening exception handling
 
-**Deliverable:** Broad exception handling is reduced repo-wide and remaining uses are intentional, documented, and tested.
+**Deliverable:** Broad exception handling is reduced repo-wide and remaining uses are intentional, documented, and
+tested.
 
 ### 3.8 Rich-powered logging (MANDATORY)
 
-We want consistent, high-signal logging across the repo with Rich formatting where it makes sense, without breaking CI logs or artifact readability.
+We want consistent, high-signal logging across the repo with Rich formatting where it makes sense, without breaking CI
+logs or artifact readability.
 
 #### 3.8.1 Current state assessment (MANDATORY)
 

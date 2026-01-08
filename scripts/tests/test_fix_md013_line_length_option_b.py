@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# pylint: disable=implicit-str-concat
+# fmt: off
 """Unit tests for fix_md013_line_length_option_b.py script.
 
 This module provides comprehensive test coverage for the list-aware MD013 fixer,
@@ -44,10 +46,10 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Import the module under test
-import fix_md013_line_length_option_b as fixer
+import fix_md013_line_length_option_b as fixer  # pylint: disable=wrong-import-position
 
 
-class TestOptionB(unittest.TestCase):
+class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
     """Test suite for fix_md013_line_length_option_b.py."""
 
     def setUp(self):
@@ -60,10 +62,14 @@ class TestOptionB(unittest.TestCase):
         self.temp_dir.cleanup()
 
     def _write_and_process(self, content: str) -> str:
-        """Write content to temp file, process it, and return result."""
+        """Write content to temp file, process it, and return result.
+
+        :param content: Markdown content to process
+        :returns: Processed content after running the fixer
+        """
         test_file = self.temp_path / "test.md"
         test_file.write_text(content, encoding="utf-8")
-        fixer._rewrite_file(test_file)
+        fixer._rewrite_file(test_file)  # pylint: disable=protected-access
         return test_file.read_text(encoding="utf-8")
 
     def test_plain_paragraph_wrapping(self):
@@ -148,7 +154,7 @@ class TestOptionB(unittest.TestCase):
         # Should have [x] checkbox
         self.assertTrue(lines[0].startswith("- [x] "))
 
-    def test_task_list_uppercase_X_wrapping(self):
+    def test_task_list_uppercase_x_wrapping(self):
         """Task items with uppercase X should preserve [X] checkbox."""
         content = (
             "- [X] This is a very long checked task item with uppercase X that " "exceeds the maximum line length\n"
@@ -181,14 +187,20 @@ class TestOptionB(unittest.TestCase):
 
     def test_list_with_url_preserved(self):
         """List items with URLs should not be wrapped (safety)."""
-        content = "- Check out https://example.com/very/long/url for more information " "that exceeds the line limit\n"
+        content = (
+            "- Check out https://example.com/very/long/url for more information "
+            "that exceeds the line limit\n"
+        )
         result = self._write_and_process(content)
         # Should be preserved unchanged due to URL
         self.assertEqual(result, content)
 
     def test_list_continuation_with_code_preserved(self):
         """List with continuation containing code should be preserved."""
-        content = "- First line\n" "  continuation with `code` that is very long and exceeds limit\n"
+        content = (
+            "- First line\n"
+            "  continuation with `code` that is very long and exceeds limit\n"
+        )
         result = self._write_and_process(content)
         # Should preserve original due to code in continuation
         self.assertIn("First line", result)
@@ -271,13 +283,19 @@ class TestOptionB(unittest.TestCase):
 
     def test_link_reference_definitions_preserved(self):
         """Link reference definitions should be preserved unchanged."""
-        content = "[id]: https://example.com/very/long/url/that/exceeds/the/" "maximum/line/length/limit\n"
+        content = (
+            "[id]: https://example.com/very/long/url/that/exceeds/the/"
+            "maximum/line/length/limit\n"
+        )
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
     def test_html_blocks_preserved(self):
         """HTML blocks should be preserved unchanged."""
-        content = "<div class='container' style='width: 100%; " "background-color: red;'>Content</div>\n"
+        content = (
+            "<div class='container' style='width: 100%; "
+            "background-color: red;'>Content</div>\n"
+        )
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
@@ -315,18 +333,21 @@ class TestOptionB(unittest.TestCase):
         test_file.write_text(content, encoding="utf-8")
 
         # First run
-        fixer._rewrite_file(test_file)
+        fixer._rewrite_file(test_file)  # pylint: disable=protected-access
         first_result = test_file.read_text(encoding="utf-8")
 
         # Second run
-        fixer._rewrite_file(test_file)
+        fixer._rewrite_file(test_file)  # pylint: disable=protected-access
         second_result = test_file.read_text(encoding="utf-8")
 
         self.assertEqual(first_result, second_result)
 
     def test_no_list_marker_duplication(self):
         """Ensure list markers are not duplicated (historical bug check)."""
-        content = "1. First item with very long text that should not cause marker " "duplication when wrapped\n"
+        content = (
+            "1. First item with very long text that should not cause marker "
+            "duplication when wrapped\n"
+        )
         result = self._write_and_process(content)
         # Should not have "1. 1. " or similar
         self.assertNotIn("1. 1. ", result)
@@ -335,7 +356,10 @@ class TestOptionB(unittest.TestCase):
 
     def test_no_checkbox_breakage(self):
         """Ensure checkbox syntax is not broken (historical bug check)."""
-        content = "- [x] Task with very long description exceeding line limit that " "needs wrapping\n"
+        content = (
+            "- [x] Task with very long description exceeding line limit that "
+            "needs wrapping\n"
+        )
         result = self._write_and_process(content)
         # Should still have valid checkbox
         self.assertIn("- [x]", result)
@@ -376,22 +400,22 @@ class TestOptionB(unittest.TestCase):
     def test_parse_list_prefix(self):
         """Test _parse_list_prefix function directly."""
         # Bullet list
-        result = fixer._parse_list_prefix("- Item text")
+        result = fixer._parse_list_prefix("- Item text")  # pylint: disable=protected-access
         self.assertIsNotNone(result)
         self.assertEqual(result[1], "-")
 
         # Numbered list
-        result = fixer._parse_list_prefix("1. Item text")
+        result = fixer._parse_list_prefix("1. Item text")  # pylint: disable=protected-access
         self.assertIsNotNone(result)
         self.assertEqual(result[1], "1.")
 
         # Task list
-        result = fixer._parse_list_prefix("- [ ] Task text")
+        result = fixer._parse_list_prefix("- [ ] Task text")  # pylint: disable=protected-access
         self.assertIsNotNone(result)
         self.assertEqual(result[2], "[ ] ")
 
         # Not a list
-        result = fixer._parse_list_prefix("Regular text")
+        result = fixer._parse_list_prefix("Regular text")  # pylint: disable=protected-access
         self.assertIsNone(result)
 
     def test_list_with_multiple_paragraphs_stops_at_blank(self):
@@ -400,6 +424,81 @@ class TestOptionB(unittest.TestCase):
         result = self._write_and_process(content)
         # Should preserve structure
         self.assertIn("\n\n", result)
+
+    def test_version_history_nested_list_structure(self):
+        """Nested list structure like Version History should be preserved exactly.
+
+        This is a regression test for the bug where nested list items were
+        incorrectly treated as continuations of their parent item.
+        """
+        content = (
+            "- **v1.0** (2025-12-26): Initial conformance vectors for M2-P1-I1\n"
+            "  - safe_run: 5 vectors (success, failure, SIGINT, custom log dir, snippet)\n"
+            "  - preflight_automerge_ruleset: 4 vectors (success, auth fail, ruleset not found, missing context)\n"
+            "  - safe_archive: 4 vectors (success, compression, no-clobber default, no-clobber strict)\n"
+        )
+        result = self._write_and_process(content)
+        lines = result.splitlines()
+
+        # First line should be the parent item (may be wrapped if too long)
+        self.assertTrue(lines[0].startswith("- **v1.0**"))
+
+        # Nested items should start with "  - " (2 space indent + dash)
+        nested_lines = [
+            line
+            for line in lines
+            if line.strip().startswith("- safe_run:")
+            or line.strip().startswith("- preflight_automerge_ruleset:")
+            or line.strip().startswith("- safe_archive:")
+        ]
+
+        # Should have 3 nested items preserved as separate lines, not mangled into parent
+        self.assertEqual(len(nested_lines), 3, f"Expected 3 nested list items, got {len(nested_lines)}: {nested_lines}")
+
+        # Each nested item should maintain its "  - " prefix (2 space indent)
+        for line in nested_lines:
+            self.assertTrue(line.startswith("  - "), f"Nested item should start with '  - ', got: {line}")
+
+    def test_parent_with_nested_items_followed_by_siblings(self):
+        """Parent list item with nested items followed by sibling items.
+        
+        This is the EXACT pattern from docstring-contracts/README.md Version History
+        that was breaking: a parent bullet with nested sub-items, followed by
+        more top-level siblings.
+        """
+        content = (
+            "### Version 1.2\n"
+            "\n"
+            "- **Added symbol-level documentation contracts** (symbol-level-contracts.md)\n"
+            "  - Defined requirements for functions, classes, methods across all languages\n"
+            "  - Established enforcement scope (public/exported symbols minimum)\n"
+            "  - Created templates and examples for Python, Bash, Perl, PowerShell, Rust\n"
+            "  - Added pragma/exemption support for symbol-level documentation\n"
+            "- Updated Perl script naming convention from kebab-case to snake_case\n"
+            "- Aligned test runner naming across languages\n"
+        )
+        result = self._write_and_process(content)
+        lines = result.splitlines()
+
+        # Remove blank lines and heading for analysis
+        list_lines = [l for l in lines if l.strip() and not l.startswith("#")]
+
+        # Should have exactly 3 top-level items
+        top_level = [l for l in list_lines if l.startswith("- ")]
+        self.assertEqual(len(top_level), 3, f"Expected 3 top-level items, got {len(top_level)}: {top_level}")
+
+        # First item should be the "Added symbol-level" item
+        self.assertTrue(top_level[0].startswith("- **Added symbol-level"))
+
+        # Second item should be "Updated Perl"
+        self.assertIn("Updated Perl", top_level[1])
+
+        # Third item should be "Aligned test runner"
+        self.assertIn("Aligned test runner", top_level[2])
+
+        # Should have exactly 4 nested items (with 2-space indent)
+        nested = [l for l in list_lines if l.startswith("  - ")]
+        self.assertEqual(len(nested), 4, f"Expected 4 nested items, got {len(nested)}: {nested}")
 
 
 if __name__ == "__main__":

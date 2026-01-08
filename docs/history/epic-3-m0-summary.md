@@ -8,7 +8,8 @@
 
 ## M0 Decisions Summary
 
-All M0 (Contract Clarity) decision gates have been resolved and documented. The behavioral contract is now frozen and implementation work can proceed.
+All M0 (Contract Clarity) decision gates have been resolved and documented. The behavioral contract is now frozen and
+implementation work can proceed.
 
 ### Quick Reference Table
 

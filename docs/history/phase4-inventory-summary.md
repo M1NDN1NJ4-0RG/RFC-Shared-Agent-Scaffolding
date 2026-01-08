@@ -6,7 +6,8 @@
 
 ## Overview
 
-This document summarizes the naming convention analysis performed in Phase 4.2. It consolidates findings from automated scans and manual review.
+This document summarizes the naming convention analysis performed in Phase 4.2. It consolidates findings from automated
+scans and manual review.
 
 ## File Naming Violations
 

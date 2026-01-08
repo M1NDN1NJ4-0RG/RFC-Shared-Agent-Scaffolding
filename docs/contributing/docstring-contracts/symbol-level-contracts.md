@@ -1,12 +1,12 @@
 # Symbol-Level Documentation Contracts
 
-**Version:** 1.0
-**Last Updated:** 2025-12-29
-**Purpose:** Define documentation requirements for functions, classes, methods, and other code symbols across all supported languages.
+**Version:** 1.0 **Last Updated:** 2025-12-29 **Purpose:** Define documentation requirements for functions, classes,
+methods, and other code symbols across all supported languages.
 
 ## Overview
 
-This document extends the file/module-level docstring contracts to cover **symbol-level documentation** - the documentation of individual functions, classes, methods, and language equivalents.
+This document extends the file/module-level docstring contracts to cover **symbol-level documentation** - the
+documentation of individual functions, classes, methods, and language equivalents.
 
 **Scope:** This contract applies to all symbols in:
 
@@ -15,7 +15,8 @@ This document extends the file/module-level docstring contracts to cover **symbo
 - Wrapper scripts (all functions)
 - Utility scripts (all functions)
 
-**Goal:** Ensure every function, class, and method is self-documenting with clear purpose, parameters, return values, and examples where appropriate.
+**Goal:** Ensure every function, class, and method is self-documenting with clear purpose, parameters, return values,
+and examples where appropriate.
 
 ---
 

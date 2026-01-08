@@ -3,7 +3,8 @@
 ## Context
 
 Right now, `rust/Cargo.toml` defines a single package (`safe-run`) that also builds the `bootstrap-repo-cli` binary via a second `[[bin]]`.
-That coupling means building one tends to build (or at least *touch*) the other, which slows iteration and makes CI/workflows harder to reason about.
+That coupling means building one tends to build (or at least *touch*) the other, which slows iteration and makes
+CI/workflows harder to reason about.
 
 There also appears to be an earlier “proto” Rust bootstrapper iteration living in the repo (not the current `bootstrap_v2` implementation), and we want it removed completely.
 
@@ -22,7 +23,8 @@ There also appears to be an earlier “proto” Rust bootstrapper iteration livi
 - `cargo build -p safe-run` succeeds even if `bootstrap-repo-cli` is broken (i.e., it does not build it).
 - `cargo build -p bootstrap-repo-cli` succeeds even if `safe-run` is broken (i.e., it does not build it).
 - Existing workflows/scripts that build or run these binaries are updated and passing.
-- All references to the removed proto bootstrapper are gone (or replaced with an explicit “removed/replaced” note where historical docs must remain).
+- All references to the removed proto bootstrapper are gone (or replaced with an explicit “removed/replaced” note where
+  historical docs must remain).
 - `rg -n "rust/src/bootstrap\.rs|\bbootstrap\.rs\b"` returns **no** matches (except where explicitly allowed by the issue, if any).
 - When changes include Rust/source/script changes, `repo-lint check --ci` exits **0**.
 - `repo-lint --help` works in the agent environment (verifies the toolchain is available).

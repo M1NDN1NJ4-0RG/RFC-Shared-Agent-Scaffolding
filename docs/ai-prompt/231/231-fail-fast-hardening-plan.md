@@ -19,7 +19,8 @@ The script already uses:
 2) failures are only warned (non-fatal) when they should be fatal, and
 3) fail-fast is **too aggressive** in the wrong place (fragile logging pipelines can kill the run).
 
-The goal is to harden the script so it **always fails with the correct message + exit code** and never “falls through” into a partially-installed zombie environment.
+The goal is to harden the script so it **always fails with the correct message + exit code** and never “falls through”
+into a partially-installed zombie environment.
 
 ---
 
@@ -28,7 +29,8 @@ The goal is to harden the script so it **always fails with the correct message +
 ### G0 — Preserve intent and structure
 
 - Do **not** delete large blocks of functionality.
-- Keep the overall “Phase” structure and existing exit codes unless a new deterministic exit code is explicitly required.
+- Keep the overall “Phase” structure and existing exit codes unless a new deterministic exit code is explicitly
+  required.
 - Improve fail-fast behavior without turning the script into a different tool.
 
 ### G1 — Every external command must either
@@ -289,7 +291,8 @@ Any fallback attempt (e.g., snap) must:
 
 ### 2.6 `install_rgrep()` — ripgrep must be REQUIRED (no grep fallback)
 
-**Current issue:** The script currently treats ripgrep as optional in behavior (warn + continue) even though it is described as “required” in places.
+**Current issue:** The script currently treats ripgrep as optional in behavior (warn + continue) even though it is
+described as “required” in places.
 
 #### 2.6-A Enforce ripgrep as a hard requirement
 
@@ -339,9 +342,8 @@ If repo-lint has a documented exit code contract, link/quote it in comments.
 **Implementation Requirements:**
 
 - If `repo-lint doctor` already exists:
-  - run it as part of the verification gate in a way that clearly distinguishes:
-    - operational/toolchain errors (must fail the bootstrap)
-    - legitimate lint violations (acceptable depending on mode)
+  - run it as part of the verification gate in a way that clearly distinguishes: - operational/toolchain errors (must
+    fail the bootstrap) - legitimate lint violations (acceptable depending on mode)
 - If `repo-lint doctor` is incomplete:
   - extend it so it provides a deterministic self-test suitable for the bootstrapper gate.
 
@@ -536,7 +538,8 @@ This task is complete only when:
 
 ### 6.2 Produce a detailed plan to re-implement this tool as a modular Rust binary
 
-**Goal:** Provide a concrete, modular, maintainable path to migrate from Bash to Rust so we can add/remove tools cleanly over time.
+**Goal:** Provide a concrete, modular, maintainable path to migrate from Bash to Rust so we can add/remove tools cleanly
+over time.
 
 **Required output (minimum):**
 
@@ -552,8 +555,9 @@ This task is complete only when:
   - testing strategy (unit tests + integration tests that replace/augment `scripts/tests/test_bootstrap_repo_lint_toolchain.py`)
   - backwards compatibility plan (how to keep the Bash entrypoint until Rust is ready)
 
-**Architecture expectations:**
-**Locked recommendation:** Start with a statically-compiled installer registry (no dynamic plugins initially) plus config-driven enable/disable; keep the Bash entrypoint as a thin wrapper until Rust reaches feature parity and tests prove it.
+**Architecture expectations:** **Locked recommendation:** Start with a statically-compiled installer registry (no
+dynamic plugins initially) plus config-driven enable/disable; keep the Bash entrypoint as a thin wrapper until Rust
+reaches feature parity and tests prove it.
 
 - The Rust design must explicitly support:
   - enabling/disabling tool installers via configuration
@@ -567,13 +571,16 @@ This task is complete only when:
 
 **Requirements:**
 
-- Identify which operations can be parallelized safely (examples include downloading multiple independent artifacts, fetching package metadata, or pre-check/detect steps).
-- Identify which operations must remain sequential (examples include package-manager locks, PATH mutations, environment activation, and installs that depend on prior steps).
+- Identify which operations can be parallelized safely (examples include downloading multiple independent artifacts,
+  fetching package metadata, or pre-check/detect steps).
+- Identify which operations must remain sequential (examples include package-manager locks, PATH mutations, environment
+  activation, and installs that depend on prior steps).
 - The plan must explicitly discuss:
   - process-level vs thread-level concurrency choices
   - shared resource risks (filesystem paths, temp dirs, package manager locks, caches)
   - deterministic logging/output ordering (so CI logs remain readable)
-  - retry + exponential backoff strategy for network/package operations (including jitter, max attempts, and what is safe/unsafe to retry)
+  - retry + exponential backoff strategy for network/package operations (including jitter, max attempts, and what is
+    safe/unsafe to retry)
   - fallback behavior when concurrency is disabled or unsupported
 
 **Acceptance Criteria:**
@@ -853,7 +860,8 @@ This task is complete only when:
 
 #### 6.2-P Safe retries + exponential backoff (WHERE SAFE)
 
-**Goal:** Make installs resilient to transient failures (network flakiness, temporary 5xx responses, package mirror hiccups) without masking real problems.
+**Goal:** Make installs resilient to transient failures (network flakiness, temporary 5xx responses, package mirror
+hiccups) without masking real problems.
 
 **Requirements:**
 

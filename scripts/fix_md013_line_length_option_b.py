@@ -59,7 +59,6 @@ import textwrap
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
-
 MAX_LEN = 120
 
 FENCE_RE = re.compile(r"^(?P<indent>[ \t]{0,3})(?P<fence>`{3,}|~{3,})(?P<rest>.*)$")
@@ -245,13 +244,10 @@ def _collect_list_item(lines: List[str], start: int) -> Tuple[int, str, str, str
         if REF_DEF_RE.match(line) or HTML_BLOCK_RE.match(line):
             break
 
-        # New list item at same-or-less indent => stop
+        # New list item (nested or at same/less indent) => stop
+        # This preserves nested list structures
         if _is_new_list_item(line):
-            next_parsed = _parse_list_prefix(line)
-            if next_parsed:
-                next_indent = len(next_parsed[0])
-                if next_indent <= len(base_indent):
-                    break
+            break
 
         # Continuation line: must be indented sufficiently
         indent_len = len(line) - len(line.lstrip(" "))
