@@ -250,7 +250,14 @@ def _rewrite_file(path: Path) -> bool:
         next_i, para_lines = _collect_paragraph(lines, i)
         para_text = " ".join(s.strip() for s in para_lines).strip()
 
-        if para_text and len(para_text) > MAX_LEN:
+        # Only reflow if the paragraph is too long *and* at least one original
+        # line actually exceeds MAX_LEN, to avoid rewrapping already-compliant
+        # formatting.
+        if (
+            para_text
+            and len(para_text) > MAX_LEN
+            and any(len(line) > MAX_LEN for line in para_lines)
+        ):
             out.extend(_wrap_paragraph(para_text))
         else:
             out.extend(para_lines)
