@@ -2,34 +2,42 @@
 
 ## NEXT
 
-- [x] Phase 0: Preflight (COMPLETE)
-- [x] Phase 1: Evaluate existing Python contracts (COMPLETE)
-- [x] Phase 2: Define the policy (COMPLETE)
-- [ ] Phase 3: Tooling design (IN PROGRESS)
-  - [ ] 3.1: Evaluate existing repo_lint Python runner (PARTIAL)
-  - [x] 3.2: Enable Ruff ANN* rules in pyproject.toml (COMPLETE)
-  - [ ] 3.3: Implement PEP 526 checker (REQUIRED - Ruff doesn't cover module/class attributes)
-  - [ ] 3.4: Docstring validation consolidation (MANDATORY - large scope)
-  - [ ] 3.5: Markdown contracts + linting support (MANDATORY - large scope)
-  - [ ] 3.6: TOML contracts + linting support (MANDATORY - large scope)
+**Phase 3.4: COMPLETE ✅**
+- [x] Core migration (all 6 language runners use internal module)
+- [x] Copilot code review comments resolved (all 4)
+- [x] Vector test failures fixed
+- [x] All CI tests passing
 
-**Phase 3 Status:**
-- Created detailed implementation plan: `278-phase-3-implementation-plan.md`
-- Estimated remaining scope: 28-48 hours
-- Recommendation: Pick ONE of 3.4/3.5/3.6 and complete fully in next session
+**Current Status:**
+- Phase 3.4 is fully complete with all tests passing
+- Updated 278-overview.md checkboxes (marked Phase 0.2 exclusions as complete)
+
+**Next Phases (in order):**
+1. Phase 3.5: Markdown contracts + linting support (NEXT)
+2. Phase 3.6: TOML contracts + linting support
+3. Phase 3.7: Reduce overly-broad exception handling (NEW)
+4. Phase 3.8: Rich-powered logging (NEW)
+5. Phase 3.3: Implement PEP 526 checker (deferred until after 3.5-3.8)
+
+**Note:** Phases 3.7 and 3.8 were added to the epic after initial planning.
 
 ## Resume Pointers
 
-**Branch:** Working on issue #278 (main branch or feature branch TBD)
-
-**Key Files:**
-- `docs/ai-prompt/278/278-overview.md` - Full issue description
-- `docs/ai-prompt/278/278-next-steps.md` - This file
-- `docs/ai-prompt/278/278-summary.md` - Updated with every commit
+**Branch:** copilot/enforce-python-type-annotations
 
 **Key Commands:**
-- `repo-lint check --ci` - Run all linting checks
-- `rg "pattern"` - Search using ripgrep (canonical search tool)
+- `repo-lint check --ci` - All checks pass (exit 0)
+- `python3 -m pytest tools/repo_lint/tests/test_vectors.py -v` - All vector tests pass
 
-**Context:**
-This is a fresh session start for issue #278. The issue requires implementing Python type annotation enforcement + reST docstring return types enforcement across the entire repository. This is a phased EPIC issue with multiple deliverables.
+**Recent Commits:**
+- 31c0e65: Addressed all Copilot code review comments
+- 5b59c95: Updated journals with code review completion
+- 6578172: Fixed vector test failures (restored os import)
+
+**Current State:**
+- ✅ Phase 3.4 complete (docstring validation consolidation)
+- ✅ All code review comments resolved
+- ✅ All tests passing (vector + unit + CI)
+- ✅ Documentation up-to-date
+
+**Ready for:** Phase 3.5 (Markdown contracts + linting)

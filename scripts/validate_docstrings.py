@@ -1,81 +1,25 @@
 #!/usr/bin/env python3
 """Docstring contract validator for RFC-Shared-Agent-Scaffolding.
 
+DEPRECATED: This script is now a thin CLI wrapper around the internal
+tools.repo_lint.docstrings module. For programmatic use, import the
+internal module directly.
+
 This script validates that all scripts, YAML files, and code symbols conform to their
 language-specific docstring contracts as defined in docs/contributing/docstring-contracts/.
 
 :Purpose:
-    Enforces consistent, discoverable documentation across all supported languages
-    by validating the presence of required docstring sections at both file/module level
-    and symbol level (functions, classes, methods). Supports pragma ignores for
-    intentional omissions and basic content validation for exit codes.
+    Provides CLI interface for docstring validation. The actual validation logic
+    has been migrated to tools.repo_lint.docstrings for first-class integration
+    with repo_lint.
 
 :Architecture:
-
-    The validator operates in several phases:
-
-    **Phase 1: File Discovery**
-        - Uses ``git ls-files`` to get all tracked files in the repository
-        - Filters files based on IN_SCOPE_PATTERNS (by extension)
-        - Excludes files matching EXCLUDE_PATTERNS (build artifacts, etc.)
-
-    **Phase 2: Language Classification**
-        - Maps file extension to language (``.py`` → Python, ``.sh`` → Bash, etc.)
-        - Dispatches to appropriate validator module based on language
-
-    **Phase 3: File/Module-Level Validation**
-        - Extracts documentation block from file (module docstring, header comments, POD, etc.)
-        - Validates presence of required sections per language contract
-        - Checks basic content requirements (e.g., exit codes 0 and 1 documented)
-
-    **Phase 4: Symbol-Level Validation** (Phase 5.5 expansion)
-        - Parses source file to extract symbols (functions, classes, methods, subs)
-        - For each symbol, validates presence of documentation
-        - Checks for required doc sections (Args, Returns, etc.) per language
-        - Validates all symbols (public and private) unless explicitly exempted via pragma
-
-:Symbol Discovery Mechanisms:
-
-    Each language validator uses appropriate parsing techniques:
-
-    - **Python:** AST module to parse syntax tree and extract FunctionDef, AsyncFunctionDef,
-      ClassDef nodes. Validates presence of docstrings and required sections (Args, Returns, etc.)
-    - **Bash:** Regex patterns to detect function definitions (function name() or name())
-      and checks for comment blocks immediately preceding the definition
-    - **Perl:** Regex to detect 'sub name' declarations and checks for POD documentation
-      (=head2, =item, etc.) or inline comments preceding the sub
-    - **PowerShell:** Regex to detect 'function Name' declarations and checks for
-      comment-based help blocks (<# .SYNOPSIS ... #>) preceding or within the function
-    - **Rust:** Regex to detect 'pub fn', 'pub struct', 'pub enum', etc. and checks
-      for rustdoc comments (///) preceding the item
-
-:Modular Design (Phase 5.5):
-
-    Language-specific validation logic is isolated in separate modules under
-    ``scripts/docstring_validators/``:
-
-    - ``common.py``: Shared utilities (ValidationError, pragma checking, exit code validation)
-    - ``bash_validator.py``: BashValidator class
-    - ``powershell_validator.py``: PowerShellValidator class
-    - ``python_validator.py``: PythonValidator class (uses AST)
-    - ``perl_validator.py``: PerlValidator class
-    - ``rust_validator.py``: RustValidator class
-    - ``yaml_validator.py``: YAMLValidator class
-
-    This script serves as the CLI entrypoint, handling:
-    - Argument parsing
-    - File discovery via git
-    - Dispatch to language-specific validators
-    - Unified result reporting
-
-:Reporting:
-
-    - Collects all violations (file path, symbol name if applicable, missing sections)
-    - Outputs actionable error messages with line numbers where possible
-    - Returns exit code 0 (pass) or 1 (fail)
+    This is now a compatibility wrapper that:
+    - Parses CLI arguments
+    - Calls the internal validation module
+    - Formats and displays results
 
 :CLI Interface:
-
     Run from repository root::
 
         python3 scripts/validate_docstrings.py
@@ -98,7 +42,6 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
         python3 scripts/validate_docstrings.py --no-content-checks
 
 :Pragma Support:
-
     Scripts can use pragma comments to intentionally skip specific section checks::
 
         # noqa: SECTION_NAME
@@ -111,27 +54,16 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
         # noqa: EXITCODES  - Skip exit codes content validation
         # noqa: D102       - Skip function docstring requirement (Python)
 
-:Content Validation:
-
-    The validator performs basic content checks on exit code sections:
-
-    - Checks for presence of exit codes 0 and 1
-    - Lenient pattern matching for exit code documentation
-    - Can be disabled with --no-content-checks or pragma comments
-
 :Exit Codes:
-
     0
         All files conform to contracts
     1
         One or more files failed validation
 
 :Environment Variables:
-
     None. Operates on current repository state.
 
 :Examples:
-
     Validate all files::
 
         python3 scripts/validate_docstrings.py
@@ -141,7 +73,6 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
         python3 scripts/validate_docstrings.py --file script.sh --file tool.py
 
 :Notes:
-
     - File-level validation checks presence of sections, not content quality
     - Symbol-level validation enforces documentation on all symbols (public and private)
       unless explicitly exempted via pragma
@@ -153,13 +84,11 @@ language-specific docstring contracts as defined in docs/contributing/docstring-
 from __future__ import annotations
 
 import argparse
-import subprocess
 import sys
-import warnings
 from pathlib import Path
 from typing import List
 
-# Add scripts directory to path for imports
+# Add repository root to path for tools.repo_lint imports
 try:
     scripts_dir = Path(__file__).resolve().parent
     repo_root = scripts_dir.parent  # Get repository root (parent of scripts/)
@@ -168,89 +97,23 @@ except NameError:
     scripts_dir = Path.cwd()
     repo_root = scripts_dir
 
-if str(scripts_dir) not in sys.path:
-    sys.path.insert(0, str(scripts_dir))
-
-# Add repository root to path for tools.repo_lint imports (Phase 2.9)
 if str(repo_root) not in sys.path:
     sys.path.insert(0, str(repo_root))
 
-# Import validator classes from modular package
+# Import from internal module
 # pylint: disable=wrong-import-position
-from docstring_validators.bash_validator import BashValidator  # noqa: E402
-from docstring_validators.common import ValidationError  # noqa: E402
-from docstring_validators.perl_validator import PerlValidator  # noqa: E402
-from docstring_validators.powershell_validator import PowerShellValidator  # noqa: E402
-from docstring_validators.python_validator import PythonValidator  # noqa: E402
-from docstring_validators.rust_validator import RustValidator  # noqa: E402
-from docstring_validators.yaml_validator import YAMLValidator  # noqa: E402
-
-# Access common module for SKIP_CONTENT_CHECKS flag
-common_module = sys.modules["docstring_validators.common"]  # noqa: E402
-
-
-# Phase 2.9 YAML-first migration: Patterns loaded from YAML configuration
-# DEPRECATED: Direct constant access will be removed in future version
-
-
-def _get_in_scope_patterns():
-    """Load in-scope patterns from YAML configuration (Phase 2.9).
-
-    :returns: List of file patterns to include in validation
-    """
-    # pylint: disable=import-outside-toplevel
-    from tools.repo_lint.yaml_loader import get_in_scope_patterns
-
-    return get_in_scope_patterns()
-
-
-def _get_exclude_patterns():
-    """Load exclusion patterns from YAML configuration (Phase 2.9).
-
-    :returns: List of file patterns to exclude from validation
-    """
-    # pylint: disable=import-outside-toplevel
-    from tools.repo_lint.yaml_loader import get_exclusion_patterns
-
-    return get_exclusion_patterns()
-
-
-# Backward compatibility with deprecation warning
-def __getattr__(name):
-    """Provide backward compatibility for pattern constants with deprecation warning.
-
-    :param name: Attribute name being accessed
-    :returns: Pattern list from YAML config
-    :raises AttributeError: If attribute doesn't exist
-    """
-    if name == "IN_SCOPE_PATTERNS":
-        warnings.warn(
-            "IN_SCOPE_PATTERNS constant is deprecated. Use _get_in_scope_patterns() instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return _get_in_scope_patterns()
-    elif name == "EXCLUDE_PATTERNS":
-        warnings.warn(
-            "EXCLUDE_PATTERNS constant is deprecated. Use _get_exclude_patterns() instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
-        return _get_exclude_patterns()
-    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+from tools.repo_lint.docstrings import ValidationError, validate_files  # noqa: E402
+from tools.repo_lint.yaml_loader import get_exclusion_patterns, get_in_scope_patterns  # noqa: E402
 
 
 def get_tracked_files(include_fixtures: bool = False) -> List[Path]:
-    """Get all tracked files matching in-scope patterns using git (YAML-first, Phase 2.9).
+    """Get all tracked files matching in-scope patterns using git.
 
     :param include_fixtures: Whether to include test fixture files (vector mode)
     :returns: List of Path objects for files that match in-scope patterns and are not excluded
-
-    :Note:
-        Updated in Phase 2.9 to load patterns from YAML configuration instead of
-        hardcoded constants. When include_fixtures=True (vector mode), test fixture
-        files are included in the results.
     """
+    import subprocess
+
     try:
         result = subprocess.run(
             ["git", "ls-files"],
@@ -263,20 +126,15 @@ def get_tracked_files(include_fixtures: bool = False) -> List[Path]:
         print("Error: Could not get tracked files from git", file=sys.stderr)
         sys.exit(1)
 
-    # Load patterns from YAML configuration (Phase 2.9)
-    in_scope_patterns = _get_in_scope_patterns()
-    exclude_patterns = _get_exclude_patterns()
+    # Load patterns from YAML configuration
+    in_scope_patterns = get_in_scope_patterns()
+    exclude_patterns = get_exclusion_patterns()
 
     # Filter files by patterns
-    # Note: Using repository root to construct absolute paths from git ls-files relative paths
     repo_root_dir = Path.cwd()
     matched_files = []
 
     # Directories to exclude (test fixtures with intentional violations)
-    # TODO: Remove this hardcoded list and use get_linting_exclusion_paths() from yaml_loader  # pylint: disable=fixme
-    # This duplicates the YAML config and is not maintainable. Should call the aggregation
-    # function instead of maintaining a parallel list here.
-    # NOTE: These are also in YAML config, but kept here for directory-based filtering
     exclude_dirs = [
         Path("conformance/repo-lint/vectors/fixtures"),
         Path("conformance/repo-lint/fixtures/violations"),
@@ -289,9 +147,6 @@ def get_tracked_files(include_fixtures: bool = False) -> List[Path]:
         p = Path(file_path)
 
         # Check if file is in an excluded directory
-        # Compatibility-friendly check: treat file as excluded if it is the
-        # directory itself or is located within that directory.
-        # Skip fixture exclusions when in vector mode (include_fixtures=True)
         excluded = False
         if not include_fixtures:
             for exclude_dir in exclude_dirs:
@@ -320,75 +175,35 @@ def get_tracked_files(include_fixtures: bool = False) -> List[Path]:
     return matched_files
 
 
-def get_language_from_extension(file_path: Path) -> str:
-    """Determine language from file extension.
-
-    :param file_path: Path to file
-    :returns: Language name (python, bash, perl, powershell, yaml, rust) or empty string if unknown"""
-    suffix = file_path.suffix.lower()
-
-    if suffix in [".sh", ".bash", ".zsh"]:
-        return "bash"
-    elif suffix == ".ps1":
-        return "powershell"
-    elif suffix == ".py":
-        return "python"
-    elif suffix in [".pl", ".pm"]:
-        return "perl"
-    elif suffix == ".rs":
-        return "rust"
-    elif suffix in [".yml", ".yaml"]:
-        return "yaml"
-    else:
-        return ""
-
-
 def filter_files_by_language(files: List[Path], language: str) -> List[Path]:
     """Filter files to only those matching specified language.
 
     :param files: List of file paths to filter
     :param language: Language to filter by (python, bash, perl, powershell, yaml, rust, all)
-    :returns: Filtered list of file paths"""
+    :returns: Filtered list of file paths
+    """
     if language == "all":
         return files
 
-    return [f for f in files if get_language_from_extension(f) == language]
+    # Determine language from extension
+    lang_extensions = {
+        "bash": [".sh", ".bash", ".zsh"],
+        "powershell": [".ps1"],
+        "python": [".py"],
+        "perl": [".pl", ".pm"],
+        "rust": [".rs"],
+        "yaml": [".yml", ".yaml"],
+    }
 
-
-def validate_file(file_path: Path) -> List[ValidationError]:
-    """Validate a single file based on its extension.
-
-    :param file_path: Path to file to validate
-    :returns: List of validation errors (empty if file passes)"""
-    try:
-        content = file_path.read_text(encoding="utf-8")
-    except Exception as e:
-        return [ValidationError(str(file_path), ["read error"], str(e))]
-
-    # Dispatch to appropriate validator
-    suffix = file_path.suffix.lower()
-
-    if suffix in [".sh", ".bash", ".zsh"]:
-        return BashValidator.validate(file_path, content)
-    elif suffix == ".ps1":
-        return PowerShellValidator.validate(file_path, content)
-    elif suffix == ".py":
-        return PythonValidator.validate(file_path, content)
-    elif suffix in [".pl", ".pm"]:
-        return PerlValidator.validate(file_path, content)
-    elif suffix == ".rs":
-        return RustValidator.validate(file_path, content)
-    elif suffix in [".yml", ".yaml"]:
-        return YAMLValidator.validate(file_path, content)
-    else:
-        # Unknown extension, skip
-        return []
+    allowed_extensions = lang_extensions.get(language, [])
+    return [f for f in files if f.suffix.lower() in allowed_extensions]
 
 
 def main() -> int:
     """Main entry point.
 
-    :returns: Exit code (0 for success, 1 for failure)"""
+    :returns: Exit code (0 for success, 1 for failure)
+    """
     # Parse command-line arguments
     parser = argparse.ArgumentParser(
         description="Validate docstring contracts for scripts and YAML files.",
@@ -433,6 +248,8 @@ Examples:
     args = parser.parse_args()
 
     # Set global flag for content checks in common module
+    import tools.repo_lint.docstrings.common as common_module  # noqa: E402
+
     common_module.SKIP_CONTENT_CHECKS = args.no_content_checks
 
     print("🔍 Validating docstring contracts...\n")
@@ -458,11 +275,8 @@ Examples:
     if args.language != "all":
         print(f"Filtered to {len(files)} {args.language} file(s) (from {original_count} total)\n")
 
-    # Validate each file
-    errors: List[ValidationError] = []
-    for file_path in files:
-        file_errors = validate_file(file_path)
-        errors.extend(file_errors)
+    # Validate using internal module
+    errors: List[ValidationError] = validate_files(files, language=args.language)
 
     # Report results
     if errors:

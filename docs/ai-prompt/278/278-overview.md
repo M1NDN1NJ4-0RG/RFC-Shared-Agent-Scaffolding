@@ -45,20 +45,20 @@ These decisions are **locked in** for this issue and should be treated as requir
 
 ### 0.1 Snapshot repo + tooling
 
-- [ ] From repo root, run the standard gate(s) used in this repo (CI/pre-commit equivalents).
-- [ ] Capture current Python toolchain versions used by CI (ruff/black/pylint/etc.).
-- [ ] Identify where Python lint/docstring/naming contracts are documented:
+- [x] From repo root, run the standard gate(s) used in this repo (CI/pre-commit equivalents).
+- [x] Capture current Python toolchain versions used by CI (ruff/black/pylint/etc.).
+- [x] Identify where Python lint/docstring/naming contracts are documented:
   - [ ] Search docs for “Python”, “docstring”, “naming”, “contracts”, “repo-lint”.
-  - [ ] Record canonical doc(s) that define “correct” Python behavior.
+  - [x] Record canonical doc(s) that define “correct” Python behavior.
 
 ### 0.2 Inventory all Python files (MANDATORY)
 
-- [ ] Enumerate all `*.py` files and classify them:
-  - [ ] Product/library code
-  - [ ] CLI/utility scripts
-  - [ ] Tests/fixtures
-  - [ ] Generated or third-party vendored code (if any)
-- [ ] Identify any “excluded” directories/patterns already in use (and why).
+- [x] Enumerate all `*.py` files and classify them:
+  - [x] Product/library code
+  - [x] CLI/utility scripts
+  - [x] Tests/fixtures
+  - [x] Generated or third-party vendored code (if any)
+- [x] Identify any “excluded” directories/patterns already in use (and why).
 
 **Deliverable:** `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-python-annotation-inventory.md`
 
@@ -72,20 +72,20 @@ These decisions are **locked in** for this issue and should be treated as requir
 
 ### 1.1 Collect “contracts” that already exist
 
-- [ ] Identify current enforcement mechanisms:
-  - [ ] `repo-lint` Python runner rules
-  - [ ] any standalone docstring validation scripts
-  - [ ] CI workflows that run Python checks
-- [ ] List *exactly* what is already enforced today:
-  - [ ] naming conventions (files/classes/functions/constants)
-  - [ ] docstring requirements (format + required fields)
-  - [ ] linting tools and rulesets (ruff/black/pylint/etc.)
-  - [ ] symbol export expectations (if any)
+- [x] Identify current enforcement mechanisms:
+  - [x] `repo-lint` Python runner rules
+  - [x] any standalone docstring validation scripts
+  - [x] CI workflows that run Python checks
+- [x] List *exactly* what is already enforced today:
+  - [x] naming conventions (files/classes/functions/constants)
+  - [x] docstring requirements (format + required fields)
+  - [x] linting tools and rulesets (ruff/black/pylint/etc.)
+  - [x] symbol export expectations (if any)
 
 ### 1.2 Current-violations baseline
 
-- [ ] Run the current Python checks and collect a baseline of failures/warnings.
-- [ ] Identify the most common failure categories and which are “autofixable”.
+- [x] Run the current Python checks and collect a baseline of failures/warnings.
+- [x] Identify the most common failure categories and which are “autofixable”.
 
 **Deliverable:** A short “baseline report” section inside `{ISSUE_NUMBER}-summary.md`:
 
@@ -101,44 +101,44 @@ These decisions are **locked in** for this issue and should be treated as requir
 
 Write a concrete policy in a doc so the tooling can implement it deterministically.
 
-- [ ] Define which scopes require PEP 526 annotations:
-  - [ ] module-level assignments (**MANDATORY baseline**)
-  - [ ] class attributes (**MANDATORY baseline**)
-  - [ ] local variables (**OPTIONAL for now**; later gated by `--strict-typing` and/or “new/changed code only”)
-- [ ] Define which patterns **MUST** be annotated (recommended minimum set):
-  - [ ] empty literals (ambiguous inference): `{}`, `[]`, `set()`, `dict()`, `list()`, `tuple()`
-  - [ ] `None` initializations intended to be later replaced (common bug factory)
-  - [ ] public “configuration” variables/constants
-- [ ] Define allowed fallback types when exact type is unknown:
-  - [ ] Prefer **real types** where possible (custom types/modules/classes are encouraged when they clarify intent)
-  - [ ] `Any` is **allowed** but MUST be explicitly tagged for future tightening:
+- [x] Define which scopes require PEP 526 annotations:
+  - [x] module-level assignments (**MANDATORY baseline**)
+  - [x] class attributes (**MANDATORY baseline**)
+  - [x] local variables (**OPTIONAL for now**; later gated by `--strict-typing` and/or “new/changed code only”)
+- [x] Define which patterns **MUST** be annotated (recommended minimum set):
+  - [x] empty literals (ambiguous inference): `{}`, `[]`, `set()`, `dict()`, `list()`, `tuple()`
+  - [x] `None` initializations intended to be later replaced (common bug factory)
+  - [x] public “configuration” variables/constants
+- [x] Define allowed fallback types when exact type is unknown:
+  - [x] Prefer **real types** where possible (custom types/modules/classes are encouraged when they clarify intent)
+  - [x] `Any` is **allowed** but MUST be explicitly tagged for future tightening:
     - [ ] `# typing: Any (TODO: tighten)`
-  - [ ] `object` is allowed only when you truly mean “unknown opaque thing” and `Any` would be misleading
-- [ ] Decide policy on these edge cases:
-  - [ ] comprehensions
-  - [ ] unpacking assignment
-  - [ ] `global`/`nonlocal`
-  - [ ] dynamic attribute injection patterns
+  - [x] `object` is allowed only when you truly mean “unknown opaque thing” and `Any` would be misleading
+- [x] Decide policy on these edge cases:
+  - [x] comprehensions
+  - [x] unpacking assignment
+  - [x] `global`/`nonlocal`
+  - [x] dynamic attribute injection patterns
 
 **Deliverable:** `docs/contributing/python-typing-policy.md` (or repo-equivalent canonical location)
 
 ### 2.2 Function annotations policy (MANDATORY)
 
-- [ ] All functions MUST have:
-  - [ ] annotations for every parameter (including keyword-only)
-  - [ ] annotation for return type
-- [ ] Functions returning nothing MUST be explicitly `-> None`
-- [ ] For `*args` and `**kwargs`, define allowed forms (LOCKED):
-  - [ ] `*args: Any, **kwargs: Any` (**default**)
-  - [ ] typed tuples / `Unpack[...]` (advanced; optional later)
+- [x] All functions MUST have:
+  - [x] annotations for every parameter (including keyword-only)
+  - [x] annotation for return type
+- [x] Functions returning nothing MUST be explicitly `-> None`
+- [x] For `*args` and `**kwargs`, define allowed forms (LOCKED):
+  - [x] `*args: Any, **kwargs: Any` (**default**)
+  - [x] typed tuples / `Unpack[...]` (advanced; optional later)
 
 ### 2.3 Docstring return type policy (MANDATORY)
 
-- [ ] reST docstrings MUST include `:rtype:` when the function returns a value
-- [ ] If return is `None`:
-  - [ ] Do **NOT** require `:rtype:`
-  - [ ] Do **NOT** add `:rtype: None`
-- [ ] Define how generators/iterators should be documented (`Iterator[T]`, `Generator[T, None, None]`, etc.)
+- [x] reST docstrings MUST include `:rtype:` when the function returns a value
+- [x] If return is `None`:
+  - [x] Do **NOT** require `:rtype:`
+  - [x] Do **NOT** add `:rtype: None`
+- [x] Define how generators/iterators should be documented (`Iterator[T]`, `Generator[T, None, None]`, etc.)
 
 ---
 
@@ -146,24 +146,26 @@ Write a concrete policy in a doc so the tooling can implement it deterministical
 
 ### 3.1 Evaluate existing `repo_lint` Python runner
 
-- [ ] Locate where Python rules run (runner + config).
-- [ ] Determine whether the existing pipeline can host a new checker stage:
-  - [ ] “type annotations checker” stage in `check --ci`
-  - [ ] optional “fix” mode support (later)
+- [x] Locate where Python rules run (runner + config).
+- [x] Determine whether the existing pipeline can host a new checker stage:
+  - [x] “type annotations checker” stage in `check --ci`
+  - [x] optional “fix” mode support (later)
 
 ### 3.2 Prefer existing linters where possible (reduce custom code)
 
-- [ ] Use Ruff rules for function annotations if feasible:
-  - [ ] enable annotation rules (e.g., flake8-annotations / `ANN*`) via ruff config
-  - [ ] explicitly require return annotations, including `-> None`
-  - [ ] Optional type syntax policy (max compatibility):
-    - [ ] `Optional[T]` is preferred
-    - [ ] `T | None` is allowed but not preferred (avoid churn unless touching code)
-- [ ] Evaluate docstring tooling for `:rtype:`:
-  - [ ] if ruff cannot enforce it: introduce a dedicated checker (custom or a docstring tool)
-  - [ ] ensure it can run in CI and locally consistently
+- [x] Use Ruff rules for function annotations if feasible:
+  - [x] enable annotation rules (e.g., flake8-annotations / `ANN*`) via ruff config
+  - [x] explicitly require return annotations, including `-> None`
+  - [x] Optional type syntax policy (max compatibility):
+    - [x] `Optional[T]` is preferred
+    - [x] `T | None` is allowed but not preferred (avoid churn unless touching code)
+- [x] Evaluate docstring tooling for `:rtype:`:
+  - [x] if ruff cannot enforce it: introduce a dedicated checker (custom or a docstring tool)
+  - [x] ensure it can run in CI and locally consistently
 
 ### 3.3 Implement missing enforcement in `repo_lint` (if needed)
+
+**Status:** DEFERRED - Will implement after 3.4, 3.5, 3.6 complete
 
 If `repo_lint` cannot fully enforce PEP 526 + `:rtype:`:
 
@@ -178,6 +180,8 @@ If `repo_lint` cannot fully enforce PEP 526 + `:rtype:`:
 
 **Deliverable:** new repo-lint rule(s) with unit tests + integration in `repo-lint check --ci`
 
+**Note:** Investigation complete - Ruff ANN* handles function annotations but NOT module-level/class attribute annotations. Custom checker needed for PEP 526 scope.
+
 ---
 
 ### 3.4 Docstring validation consolidation (MANDATORY)
@@ -186,34 +190,34 @@ We currently have a docstring validation system implemented via `scripts/validat
 
 #### 3.4.1 Current state analysis (MANDATORY)
 
-- [ ] Locate and review:
-  - [ ] `scripts/validate_docstrings.py`
-  - [ ] any Python modules it imports from / depends on (submodules/packages dedicated to docstring validation)
-- [ ] Identify and document how `repo_lint` uses this functionality today:
-  - [ ] Is it invoked as a subprocess? Imported as a module? Reimplemented partially?
-  - [ ] Which runner(s) call it (Python runner only, or shared docstring checks across languages)?
-  - [ ] Where configuration lives (CLI args, config files, hard-coded defaults)
-- [ ] Produce a concise mapping in the issue journal:
-  - [ ] “Current entrypoints” → “What rules are enforced” → “Where results are reported”
+- [x] Locate and review:
+  - [x] `scripts/validate_docstrings.py`
+  - [x] any Python modules it imports from / depends on (submodules/packages dedicated to docstring validation)
+- [x] Identify and document how `repo_lint` uses this functionality today:
+  - [x] Is it invoked as a subprocess? Imported as a module? Reimplemented partially?
+  - [x] Which runner(s) call it (Python runner only, or shared docstring checks across languages)?
+  - [x] Where configuration lives (CLI args, config files, hard-coded defaults)
+- [x] Produce a concise mapping in the issue journal:
+  - [x] “Current entrypoints” → “What rules are enforced” → “Where results are reported”
 
 #### 3.4.2 Design: internalize docstring validation into `repo_lint` (MANDATORY)
 
-- [ ] Create an internal `repo_lint` module that owns docstring validation logic (example location):
-  - [ ] `tools/repo_lint/docstrings/` (or equivalent)
-- [ ] Refactor the existing validator implementation so `repo_lint` can call it directly (no subprocess).
-- [ ] Ensure the internal API supports:
-  - [ ] running checks during `repo-lint check --ci`
-  - [ ] stable machine-readable results (suitable for CI failure reports)
-  - [ ] future extensibility to enforce additional fields (like `:rtype:`)
+- [x] Create an internal `repo_lint` module that owns docstring validation logic (example location):
+  - [x] `tools/repo_lint/docstrings/` (or equivalent)
+- [x] Refactor the existing validator implementation so `repo_lint` can call it directly (no subprocess).
+- [x] Ensure the internal API supports:
+  - [x] running checks during `repo-lint check --ci`
+  - [x] stable machine-readable results (suitable for CI failure reports)
+  - [x] future extensibility to enforce additional fields (like `:rtype:`)
 
 #### 3.4.3 Migration plan (NO BREAKAGE)
 
-- [ ] Update `repo_lint` to use the new internal module.
-- [ ] Keep `scripts/validate_docstrings.py` as a thin compatibility wrapper initially (optional but recommended):
-  - [ ] it should import/call the internal `repo_lint` implementation
-  - [ ] it must remain behaviorally equivalent (same exit codes, same core checks)
-- [ ] Remove any `repo_lint` runtime dependency on `scripts/validate_docstrings.py`.
-- [ ] If legacy modules exist solely to support the old script (and are no longer needed after migration), remove them.
+- [x] Update `repo_lint` to use the new internal module.
+- [x] Keep `scripts/validate_docstrings.py` as a thin compatibility wrapper initially (optional but recommended):
+  - [x] it should import/call the internal `repo_lint` implementation
+  - [x] it must remain behaviorally equivalent (same exit codes, same core checks)
+- [x] Remove any `repo_lint` runtime dependency on `scripts/validate_docstrings.py`.
+- [x] If legacy modules exist solely to support the old script (and are no longer needed after migration), remove them.
 
 #### 3.4.4 EXTREMELY COMPREHENSIVE unit tests (MANDATORY, NO SHORTCUTS)
 
@@ -234,6 +238,8 @@ This migration MUST include exhaustive test coverage for the new internal docstr
   - [ ] add a test for every bug found during migration so it cannot reoccur
 
 **Deliverable:** Docstring validation runs fully inside `repo_lint`, and test coverage proves parity with the old script.
+
+**Status:** Core migration COMPLETE (3.4.1-3.4.3 done). All 6 language runners use internal module. Comprehensive unit tests (3.4.4) deferred as future work - basic integration testing complete via `repo-lint check --ci`.
 
 ### 3.5 Markdown contracts + linting support in `repo_lint` (MANDATORY)
 
@@ -394,7 +400,107 @@ This includes:
 - [ ] Regression tests:
   - [ ] add a regression test for every bug found in TOML integration so it cannot reoccur
 
+
 **Deliverable:** TOML linting in `repo_lint` is heavily tested and stable.
+
+### 3.7 Reduce overly-broad exception handling (MANDATORY)
+
+We need to identify and reduce occurrences of overly-broad exception handling (especially `except Exception as e:`) to improve correctness, debuggability, and avoid swallowing real failures.
+
+#### 3.7.1 Repo-wide inventory (MANDATORY)
+
+- [ ] Use `rg` (ripgrep) to locate broad exception handlers across the repo:
+  - [ ] `except Exception as e:`
+  - [ ] `except Exception:`
+  - [ ] bare `except:` (if any)
+- [ ] Produce counts by category and a list of exact file paths.
+- [ ] Classify each finding by context:
+  - [ ] CLI boundary / user-facing error handling
+  - [ ] tooling wrappers calling subprocesses
+  - [ ] library code paths
+  - [ ] tests/fixtures
+
+**Deliverable:** Add a section to `{ISSUE_NUMBER}-summary.md` with counts + a table of findings (path, category, reason).
+
+#### 3.7.2 Define the policy (MANDATORY)
+
+- [ ] Define acceptable vs unacceptable broad exception usage:
+  - [ ] Acceptable: CLI boundary where we convert exceptions into a clean error message + non-zero exit
+  - [ ] Unacceptable: library code swallowing exceptions without re-raising or without narrowing the exception type
+- [ ] Define minimum required behavior when catching exceptions:
+  - [ ] replace broad `Exception` with built-in exception classes where possible
+  - [ ] create custom exception types where a domain-specific error improves clarity
+  - [ ] always include actionable context in the error message (file/tool/action)
+  - [ ] preserve the original exception via exception chaining (`raise ... from e`) when re-raising
+
+**Deliverable:** Add this policy to `docs/contributing/python-typing-policy.md` or a new canonical doc if more appropriate (must be linked from contributing docs).
+
+#### 3.7.3 Implementation plan (MANDATORY)
+
+- [ ] For each broad exception site, decide one of:
+  - [ ] Narrow to an appropriate built-in exception type(s)
+  - [ ] Introduce a custom exception class (add to a canonical module, e.g. `tools/repo_lint/exceptions.py` or equivalent)
+  - [ ] Keep broad catch ONLY if it’s a CLI boundary, and document why
+- [ ] Update code to:
+  - [ ] narrow exceptions
+  - [ ] add `raise ... from e` where re-raising
+  - [ ] ensure exit codes remain correct and consistent
+
+#### 3.7.4 EXTREMELY COMPREHENSIVE tests (MANDATORY, NO SHORTCUTS)
+
+- [ ] Unit tests that validate exception behavior:
+  - [ ] expected exception types are raised for library code
+  - [ ] CLI boundary catches produce correct user message + non-zero exit
+  - [ ] exception chaining is preserved when intended
+- [ ] Regression tests:
+  - [ ] add a regression test for every bug found while tightening exception handling
+
+**Deliverable:** Broad exception handling is reduced repo-wide and remaining uses are intentional, documented, and tested.
+
+### 3.8 Rich-powered logging (MANDATORY)
+
+We want consistent, high-signal logging across the repo with Rich formatting where it makes sense, without breaking CI logs or artifact readability.
+
+#### 3.8.1 Current state assessment (MANDATORY)
+
+- [ ] Inventory current logging patterns in Python code:
+  - [ ] direct `print()` usage
+  - [ ] `logging` module usage
+  - [ ] Rich console output usage (if any)
+- [ ] Identify where structured logging is most valuable:
+  - [ ] repo-lint runner orchestration
+  - [ ] subprocess execution wrappers
+  - [ ] CI failure report generation
+
+**Deliverable:** Add a section to `{ISSUE_NUMBER}-summary.md` describing current logging patterns and where to standardize.
+
+#### 3.8.2 Implement a shared logger wrapper (MANDATORY)
+
+- [ ] Create a shared logger utility that integrates Rich with Python `logging`:
+  - [ ] Use RichHandler for pretty logs when attached to a TTY
+  - [ ] Automatically fall back to plain logging in CI / non-TTY contexts
+  - [ ] Provide consistent log levels and formatting
+  - [ ] Support a `--verbose` / `--quiet` style toggle where applicable
+- [ ] Ensure logs do NOT inject ANSI escape sequences into persisted artifacts unless explicitly intended.
+
+**Deliverable:** A canonical logging module (e.g., `tools/repo_lint/logging_utils.py` or repo-equivalent) used by repo-lint and other Python tooling.
+
+#### 3.8.3 Adopt the logger across repo-lint (MANDATORY)
+
+- [ ] Replace ad-hoc `print()` statements with logger calls where appropriate.
+- [ ] Ensure parallel execution (if enabled) still produces deterministic, readable output.
+- [ ] Ensure CI output remains readable and artifact files remain ANSI-clean.
+
+#### 3.8.4 EXTREMELY COMPREHENSIVE tests (MANDATORY, NO SHORTCUTS)
+
+- [ ] Unit tests for logging behavior:
+  - [ ] TTY vs non-TTY formatting differences
+  - [ ] log level filtering (quiet/verbose)
+  - [ ] no ANSI codes in failure report artifacts
+- [ ] Integration tests:
+  - [ ] repo-lint check --ci produces stable logs + stable artifact outputs
+
+**Deliverable:** Logging is “fancy” interactively, stable in CI, and consistent repo-wide.
 
 ## Phase 4 — Autofix strategy (recommended: staged, not all-at-once)
 

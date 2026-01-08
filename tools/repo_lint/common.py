@@ -196,3 +196,46 @@ def get_default_exclude_patterns() -> List[str]:
         "conformance/repo-lint/vectors/fixtures/",
         "scripts/tests/fixtures/",
     ]
+
+
+def convert_validation_errors_to_violations(errors: List, tool_name: str) -> List[Violation]:
+    """Convert ValidationError objects to Violation objects for repo_lint reporting.
+
+    :param errors: List of ValidationError objects from docstring validators
+    :param tool_name: Name of the tool reporting violations (e.g., "python-docstrings")
+
+    :returns: List of Violation objects suitable for LintResult, limited to 20 items
+
+    :Note:
+        This function provides a standardized conversion from the internal
+        docstring validation ValidationError format to the repo_lint Violation
+        format. It handles symbol information, missing sections, and message
+        formatting consistently across all language runners.
+    """
+    import os
+
+    violations = []
+    for error in errors:
+        file_basename = os.path.basename(error.file_path)
+
+        if error.missing_sections:
+            sections = ", ".join(error.missing_sections)
+            if error.symbol_name:
+                message = f"Symbol '{error.symbol_name}': Missing {sections}"
+            else:
+                message = f"Missing required sections: {sections}"
+        else:
+            message = error.message
+
+        if error.message and error.missing_sections:
+            message += f" ({error.message})"
+
+        violations.append(
+            Violation(
+                tool=tool_name,
+                file=file_basename,
+                line=error.line_number,
+                message=message,
+            )
+        )
+    return violations[:20]  # Limit output

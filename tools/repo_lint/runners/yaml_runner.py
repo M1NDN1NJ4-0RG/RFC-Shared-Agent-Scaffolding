@@ -6,7 +6,7 @@
 :Tools:
     - yamllint: YAML linter (required)
     - actionlint: GitHub Actions workflow linter (optional)
-    - yaml-docstrings: YAML docstring contract validator (required)
+    - Internal docstring validator: YAML docstring contract validator (required)
 
 :Environment Variables:
     None
@@ -27,10 +27,10 @@
 from __future__ import annotations
 
 import subprocess
-import sys
 from typing import List
 
-from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.common import LintResult, Violation, convert_validation_errors_to_violations
+from tools.repo_lint.docstrings import validate_files
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
@@ -186,7 +186,7 @@ class YAMLRunner(Runner):
         return LintResult(tool="actionlint", passed=False, violations=violations[:20])  # Limit output
 
     def _run_docstring_validation(self) -> LintResult:
-        """Run YAML docstring contract validation.
+        """Run YAML docstring contract validation using internal module.
 
         Validates that YAML configuration files follow the repository's
         docstring contract requirements.
@@ -194,19 +194,6 @@ class YAMLRunner(Runner):
         :returns:
             LintResult for yaml-docstrings
         """
-        validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
-
-        if not validator_script.exists():
-            return LintResult(
-                tool="yaml-docstrings",
-                passed=False,
-                violations=[],
-                error=(
-                    f"Docstring validation SKIPPED: validator script not found at "
-                    f"{validator_script}. This check was not executed."
-                ),
-            )
-
         # Get YAML files to validate
         yaml_files = get_tracked_files(
             ["**/*.yml", "**/*.yaml"], self.repo_root, include_fixtures=self._include_fixtures
@@ -215,28 +202,13 @@ class YAMLRunner(Runner):
         if not yaml_files:
             return LintResult(tool="yaml-docstrings", passed=True, violations=[])
 
-        # Run validator with --language yaml flag
-        result = subprocess.run(
-            [sys.executable, str(validator_script), "--language", "yaml"]
-            + (["--include-fixtures"] if self._include_fixtures else []),
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        # Use internal validator module
+        errors = validate_files(yaml_files, language="yaml")
 
-        if result.returncode == 0:
+        if not errors:
             return LintResult(tool="yaml-docstrings", passed=True, violations=[])
 
-        violations = []
-        error_indicators = ("❌", "ERROR", "violation")
-        for line in result.stdout.splitlines():
-            stripped = line.strip()
-            if (
-                stripped
-                and not stripped.startswith("Checking")
-                and any(indicator in stripped for indicator in error_indicators)
-            ):
-                violations.append(Violation(tool="yaml-docstrings", file=".", line=None, message=stripped))
+        # Convert ValidationError objects to Violation objects using shared helper
+        violations = convert_validation_errors_to_violations(errors, "yaml-docstrings")
 
-        return LintResult(tool="yaml-docstrings", passed=False, violations=violations[:20])  # Limit output
+        return LintResult(tool="yaml-docstrings", passed=False, violations=violations)

@@ -2,11 +2,11 @@
 
 :Purpose:
     Runs all Perl linting tools as defined in the repository standards.
-    Integrates with existing validate_docstrings.py script.
+    Uses internal docstring validation module.
 
 :Tools:
     - Perl::Critic: Perl source code analyzer
-    - validate_docstrings.py: Docstring contract validation
+    - Internal docstring validator: Docstring contract validation
 
 :Environment Variables:
     None
@@ -27,10 +27,10 @@
 from __future__ import annotations
 
 import subprocess
-import sys
 from typing import List
 
-from tools.repo_lint.common import LintResult, Violation, filter_excluded_paths
+from tools.repo_lint.common import LintResult, Violation, convert_validation_errors_to_violations, filter_excluded_paths
+from tools.repo_lint.docstrings import validate_files
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
 
@@ -137,45 +137,22 @@ class PerlRunner(Runner):
         return LintResult(tool="perlcritic", passed=False, violations=violations[:20])  # Limit output
 
     def _run_docstring_validation(self) -> LintResult:
-        """Run Perl docstring validation.
+        """Run Perl docstring validation using internal module.
 
         :returns:
             LintResult for docstring validation
         """
-        validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
-
-        if not validator_script.exists():
-            return LintResult(
-                tool="perl-docstrings",
-                passed=False,
-                violations=[],
-                error=f"Docstring validation SKIPPED: validator script not found at {validator_script}. "
-                "This check was not executed.",
-            )
-
         perl_files = self._get_perl_files()
         if not perl_files:
             return LintResult(tool="perl-docstrings", passed=True, violations=[])
 
-        # Run validator for perl language only (no need for --file args with --language flag)
-        cmd = [sys.executable, str(validator_script), "--language", "perl"]
-        if self._include_fixtures:
-            cmd.append("--include-fixtures")
+        # Use internal validator module
+        errors = validate_files(perl_files, language="perl")
 
-        result = subprocess.run(
-            cmd,
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-
-        if result.returncode == 0:
+        if not errors:
             return LintResult(tool="perl-docstrings", passed=True, violations=[])
 
-        violations = []
-        for line in result.stdout.splitlines():
-            if "❌" in line or "ERROR" in line or "violation" in line.lower():
-                violations.append(Violation(tool="perl-docstrings", file=".", line=None, message=line.strip()))
+        # Convert ValidationError objects to Violation objects using shared helper
+        violations = convert_validation_errors_to_violations(errors, "perl-docstrings")
 
-        return LintResult(tool="perl-docstrings", passed=False, violations=violations[:20])  # Limit output
+        return LintResult(tool="perl-docstrings", passed=False, violations=violations)
