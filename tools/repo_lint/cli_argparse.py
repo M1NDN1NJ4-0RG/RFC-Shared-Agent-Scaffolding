@@ -190,7 +190,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             )
 
     # Debug timing mode
-    # TODO: Consider removing debug timing mode or making it development-only
+    # TODO: Consider removing debug timing mode or making it development-only  # pylint: disable=fixme
     # FUTURE: Evaluate if this complexity is needed in production (Copilot review comment)
     debug_timing = os.getenv("REPO_LINT_DEBUG_TIMING", "").lower() in ("1", "true", "yes")
 

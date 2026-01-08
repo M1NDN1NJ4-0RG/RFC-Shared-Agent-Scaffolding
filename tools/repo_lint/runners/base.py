@@ -244,7 +244,7 @@ class Runner(ABC):
                methods to parallelize. The current pattern matches methods starting with
                '_run_' that aren't fix/format/helper/util methods.
         """
-        # TODO: CRITICAL - Replace introspection with explicit declaration pattern
+        # TODO: CRITICAL - Replace introspection with explicit declaration pattern  # pylint: disable=fixme
         # FUTURE: Add @parallelizable decorator or _parallelizable_methods class attribute
         # Current implementation relies on naming conventions which is fragile and may not
         # be reliable across all runners. This should be refactored to use explicit opt-in.
