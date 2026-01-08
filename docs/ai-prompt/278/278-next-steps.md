@@ -2,40 +2,40 @@
 
 ## NEXT
 
-**Phase 3.5.4: PARTIALLY COMPLETE - Moving to Phase 3.6**
+**Phase 3.6.5: Comprehensive Tests for TOML Runner (NEXT TASK)**
 
-Markdown auto-fix completed:
-- ✅ Reduced from 7,501 to 1,888 violations (75% reduction, 5,613 auto-fixed)
-- ⚠️ Remaining 1,888 violations are mostly MD013/line-length requiring manual review
-- Decision: Defer remaining line-length fixes to future cleanup sessions (not blocking)
+Create comprehensive unit tests for the TOML runner following the pattern established by test_markdown_runner.py (15 tests, 100% pass rate).
 
-**Phase 3.6: TOML Contracts + Linting Support (START NOW)**
+**Required Tests:**
 
-Following the same pattern as Markdown (Phase 3.5), implement TOML linting:
+1. `test_has_files_detects_toml` - Verify .toml file detection
+2. `test_has_files_returns_false_when_no_files` - Empty file list handling
+3. `test_check_tools_detects_missing_tool` - Missing Taplo detection
+4. `test_check_tools_returns_empty_when_installed` - Tool available check
+5. `test_run_taplo_with_config_file` - Config file usage verification
+6. `test_run_taplo_fix_mode` - Verify fix mode uses `taplo fmt` (not --check)
+7. `test_run_taplo_check_mode_uses_check_flag` - Verify check mode uses `--check`
+8. `test_parse_taplo_output_single_violation` - Single violation parsing
+9. `test_parse_taplo_output_multiple_violations` - Multiple violations
+10. `test_parse_taplo_output_skips_info_lines` - Skip INFO/WARN lines
+11. `test_parse_taplo_output_handles_stderr` - stderr output parsing
+12. `test_parse_taplo_output_empty_output` - Empty output handling
+13. `test_run_taplo_empty_file_list` - Empty file list returns success
+14. `test_check_returns_violations` - Check mode integration test
+15. `test_fix_applies_fixes` - Fix mode integration test
 
-1. **Phase 3.6.1:** Define TOML contract (docs/contributing/toml-contracts.md)
-   - Document formatting/indentation conventions
-   - Define key ordering, whitespace rules, quoting policy
-   - Set scope (all `*.toml` files, exclusions if any)
+**Implementation Steps:**
+1. Create `tools/repo_lint/tests/test_toml_runner.py`
+2. Follow test_markdown_runner.py structure exactly
+3. Use `side_effect` for multiple subprocess calls (git + taplo)
+4. Mock `command_exists` for tool detection tests
+5. Mock `subprocess.run` for Taplo execution
+6. Run tests: `python3 -m pytest tools/repo_lint/tests/test_toml_runner.py -v`
+7. Ensure 100% pass rate (15/15 tests)
 
-2. **Phase 3.6.2:** Configure Taplo (taplo.toml)
-   - Map contract rules to Taplo configuration
-   - Test baseline violations
-
-3. **Phase 3.6.3:** Integrate TOML runner into repo-lint
-   - Create tools/repo_lint/runners/toml_runner.py
-   - Add to CLI (--lang toml, --only toml)
-   - Support check and fix modes
-
-4. **Phase 3.6.4:** Repo baseline cleanup
-   - Run auto-fix where safe
-   - Manual fixes if needed
-
-5. **Phase 3.6.5:** Comprehensive tests
-   - Create test_toml_runner.py
-   - Follow same pattern as test_markdown_runner.py
-
-**Locked Decision:** Use **Taplo** for TOML linting/formatting (from issue #278)
+**After Phase 3.6.5:**
+- Phase 3.6 will be COMPLETE
+- Move to Phase 3.7 (Reduce overly-broad exception handling) or Phase 3.8 (Rich logging)
 
 ---
 

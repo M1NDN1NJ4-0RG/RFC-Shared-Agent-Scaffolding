@@ -444,3 +444,29 @@ repo-lint check --ci --only python
 - After merge: Continue with Phase 3.5.4 (Repo baseline cleanup) or Phase 3.6 (TOML contracts)
 
 ---
+
+
+### 2026-01-08 - Phase 3.5.4 Partial + Phase 3.6.1-3.6.4 Complete
+
+**Session Work:**
+
+**Phase 3.5.4: Markdown Baseline Cleanup (PARTIAL)**
+- Ran `repo-lint fix --lang markdown` to auto-fix safe violations
+- **Reduced violations: 7,501 → 1,888 (75% reduction)**
+- Fixed 5,613 violations automatically
+- Remaining 1,888 violations are mostly MD013/line-length requiring manual review
+- **Decision:** Defer remaining line-length fixes to future cleanup sessions
+- Commit: 226c3c2
+
+**Phase 3.6.1-3.6.4: TOML Contracts + Linting (COMPLETE)**
+- Created docs/contributing/toml-contracts.md (11KB) - 8 core rule categories
+- Created taplo.toml configuration
+- Created tools/repo_lint/runners/toml_runner.py (7.5KB)
+- Integrated into CLI (added "toml" language support)
+- Auto-formatted all TOML files: **0 violations (100% clean)**
+- Commits: a523651, 9a1d56d, 3672998
+
+**Status:** Phase 3.5.4 (partial), Phase 3.6.1-3.6.4 (complete)
+**Next:** Phase 3.6.5 (comprehensive tests for TOML runner)
+
+---
