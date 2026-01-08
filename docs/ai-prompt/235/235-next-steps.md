@@ -16,6 +16,69 @@ Related: Issue #235, PRs #240
 
 ## DONE (EXTREMELY DETAILED)
 
+### 2026-01-07 23:33 UTC - Parity Tests + YAML Validator + Code Review Fixes (COMPLETE)
+**Files Changed:**
+- `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs`: NEW - Parity tests (11 tests, 100% passing)
+- `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs`: Added dry-run helper
+- `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs`: Fixed dry-run mode
+- `rust/crates/bootstrap-repo-cli/src/package_manager.rs`: Added sudo error handling
+- `rust/crates/safe-run/src/safe_run.rs`: Added cfg guards, clippy fixes
+- `.github/workflows/copilot-setup-steps.yml`: Added Side effects section
+- `scripts/docstring_validators/yaml_validator.py`: Dynamic header extraction
+- `tools/repo_lint/cli_argparse.py`: Added TODO for debug timing
+- `tools/repo_lint/runners/base.py`: Enhanced TODO for introspection
+- `docs/ai-prompt/235/235-next-steps.md`: Updated journals
+- `docs/ai-prompt/235/235-summary.md`: Updated session summary
+
+**Session Achievements:**
+1. **Parity Tests Implementation (COMPLETE):**
+   - Created comprehensive test suite: 11 tests, 100% passing (~42s)
+   - Test coverage: version/help, doctor/verify, dry-run, CI, JSON, profiles, args, root detection, exit codes
+   - Fixed dry-run mode in repo-lint + all Python tool installers
+   - Created `install_and_verify_python_tool()` helper for consistency
+
+2. **Parity Report Verification (ALL ADDRESSED):**
+   - ✅ Bash wrapper docstrings - Already compliant
+   - ✅ repo-lint installation - RepoLintInstaller registered
+   - ✅ Verification gate - Part of execute_plan
+   - ✅ Default profile - Set to "dev" in config
+   - ✅ Parity tests - Implemented and passing
+
+3. **YAML Validator Improvements (NEW REQUIREMENT):**
+   - Removed hardcoded 50-line limit
+   - Implemented dynamic header block extraction
+   - Handles YAML document separators correctly (includes first ---, stops at subsequent)
+   - All YAML files in repo now pass validation
+
+4. **Code Review Fixes (ALL 6 COMMENTS ADDRESSED):**
+   - Comment 1: Added `#[cfg(unix)]` guards to signal_hook usage (Windows compatibility)
+   - Comment 2: Added TODO for debug timing mode (out of scope, documented)
+   - Comment 3: Enhanced TODO for introspection pattern (out of scope, documented)
+   - Comment 4: Replaced `flatten()` with `map_while(Result::ok)` (clippy clean)
+   - Comment 5: YAML separator handling (already correct in improved validator)
+   - Comment 6: Added sudo password error messages + TODOs
+
+**Quality Gates:**
+- Rust build: ✅ SUCCESS (both safe-run and bootstrap-repo-cli)
+- Parity tests: ✅ 11/11 passing
+- repo-lint check --ci: ✅ EXIT 0 (all 17 runners pass)
+- Rustfmt: ✅ PASS
+- Clippy: ✅ PASS (all warnings resolved)
+- All linters: ✅ PASS
+
+**Technical Improvements:**
+- Windows compatibility via conditional compilation
+- Better error messages for CI troubleshooting
+- Cleaner code (clippy warnings resolved)
+- Smarter YAML validation (no arbitrary limits)
+
+**Next Steps:**
+- Run performance benchmarks (Bash vs Rust)
+- Document benchmark results
+- Integrate Rust bootstrapper in CI workflows
+
+---
+
 ### 2026-01-07 23:33 UTC - Parity Tests Implementation + Dry-Run Fixes
 **Files Changed:**
 - `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs`: NEW - Comprehensive parity test suite (11 tests, all passing)
