@@ -491,10 +491,10 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertTrue(top_level[0].startswith("- **Added symbol-level"))
 
         # Second item should be "Updated Perl"
-        self.assertTrue("Updated Perl" in top_level[1])
+        self.assertIn("Updated Perl", top_level[1])
 
         # Third item should be "Aligned test runner"
-        self.assertTrue("Aligned test runner" in top_level[2])
+        self.assertIn("Aligned test runner", top_level[2])
 
         # Should have exactly 4 nested items (with 2-space indent)
         nested = [l for l in list_lines if l.startswith("  - ")]
