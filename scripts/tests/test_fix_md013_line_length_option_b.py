@@ -459,6 +459,47 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         for line in nested_lines:
             self.assertTrue(line.startswith("  - "), f"Nested item should start with '  - ', got: {line}")
 
+    def test_parent_with_nested_items_followed_by_siblings(self):
+        """Parent list item with nested items followed by sibling items.
+        
+        This is the EXACT pattern from docstring-contracts/README.md Version History
+        that was breaking: a parent bullet with nested sub-items, followed by
+        more top-level siblings.
+        """
+        content = (
+            "### Version 1.2\n"
+            "\n"
+            "- **Added symbol-level documentation contracts** (symbol-level-contracts.md)\n"
+            "  - Defined requirements for functions, classes, methods across all languages\n"
+            "  - Established enforcement scope (public/exported symbols minimum)\n"
+            "  - Created templates and examples for Python, Bash, Perl, PowerShell, Rust\n"
+            "  - Added pragma/exemption support for symbol-level documentation\n"
+            "- Updated Perl script naming convention from kebab-case to snake_case\n"
+            "- Aligned test runner naming across languages\n"
+        )
+        result = self._write_and_process(content)
+        lines = result.splitlines()
+        
+        # Remove blank lines and heading for analysis
+        list_lines = [l for l in lines if l.strip() and not l.startswith("#")]
+        
+        # Should have exactly 3 top-level items
+        top_level = [l for l in list_lines if l.startswith("- ")]
+        self.assertEqual(len(top_level), 3, f"Expected 3 top-level items, got {len(top_level)}: {top_level}")
+        
+        # First item should be the "Added symbol-level" item
+        self.assertTrue(top_level[0].startswith("- **Added symbol-level"))
+        
+        # Second item should be "Updated Perl"
+        self.assertTrue("Updated Perl" in top_level[1])
+        
+        # Third item should be "Aligned test runner"
+        self.assertTrue("Aligned test runner" in top_level[2])
+        
+        # Should have exactly 4 nested items (with 2-space indent)
+        nested = [l for l in list_lines if l.startswith("  - ")]
+        self.assertEqual(len(nested), 4, f"Expected 4 nested items, got {len(nested)}: {nested}")
+
 
 if __name__ == "__main__":
     unittest.main()
