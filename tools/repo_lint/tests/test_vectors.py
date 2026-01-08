@@ -206,6 +206,18 @@ def run_docstring_validator(fixture_path: Path) -> List[Dict]:
         cwd=REPO_ROOT,
     )
 
+    # DEBUG: Print output for CI debugging
+    if not result.stdout and not result.stderr:
+        print(f"\n⚠️  DEBUG: No output from validator!")
+        print(f"    Exit code: {result.returncode}")
+        print(f"    Fixture: {fixture_path}")
+        print(f"    Validator script: {validator_script}")
+        print(f"    CWD: {REPO_ROOT}")
+    elif result.returncode == 0:
+        print(f"\n⚠️  DEBUG: Validator returned 0 (expected 1 for violations)")
+        print(f"    Stdout: {result.stdout[:200]}")
+        print(f"    Stderr: {result.stderr[:200]}")
+
     # Parse output (validator exits non-zero on violations, which is expected)
     violations = parse_docstring_validator_output(result.stdout + result.stderr)
 
