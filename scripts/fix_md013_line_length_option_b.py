@@ -438,7 +438,7 @@ def main() -> int:
         print(f"ERROR: path not found: {root}", file=sys.stderr)
         return 2
     if not (root.is_file() or root.is_dir()):
-        print(f"ERROR: path must be a file or directory: {root}", file=sys.stderr)
+        print(f"ERROR: path must be a regular file or directory: {root}", file=sys.stderr)
         return 2
 
     changed_any = False
