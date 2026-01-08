@@ -56,9 +56,7 @@ from unittest.mock import MagicMock, patch
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.runners.markdown_runner import (
-    MarkdownRunner,
-)  # noqa: E402  # pylint: disable=wrong-import-position
+from tools.repo_lint.runners.markdown_runner import MarkdownRunner  # noqa: E402 pylint: disable=wrong-import-position
 
 
 class TestMarkdownRunner(unittest.TestCase):
@@ -67,6 +65,8 @@ class TestMarkdownRunner(unittest.TestCase):
     :Purpose:
         Validates markdownlint-cli2 integration.
     """
+
+    # pylint: disable=protected-access
 
     def setUp(self):
         """Set up test fixtures.
