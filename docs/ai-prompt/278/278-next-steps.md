@@ -2,44 +2,74 @@
 
 ## NEXT
 
-**Phase 3.7 or 3.8: Choose Next Phase**
+**Phase 3.7.3: Implementation Plan for Exception Handler Narrowing**
 
-Phase 3.6 is now COMPLETE. Choose the next phase to work on:
+Based on the Phase 3.7.1 inventory, we identified 38 broad exception handlers requiring attention. We need to create an implementation plan and then execute the fixes.
 
-**Option 1: Phase 3.7 - Reduce overly-broad exception handling**
-**Option 2: Phase 3.8 - Rich-powered logging**
+### Execution Strategy
 
-Both phases are MANDATORY and will need to be completed.
+**Priority 1: Library Code (6 instances) - MUST FIX**
+
+These are the highest priority because they can hide bugs and make debugging difficult:
+
+1. `tools/repo_lint/runners/base.py:302` - Tool method execution
+2. `tools/repo_lint/docstrings/validator.py:55` - File read error
+3. `tools/repo_lint/docstrings/helpers/bash_treesitter.py:128` - Bash parsing
+4. `scripts/docstring_validators/helpers/bash_treesitter.py:128` - Duplicate (mark for removal)
+5. `scripts/add_future_annotations.py:258` - File processing
+6. `wrappers/python3/run_tests.py:162` - Actually CLI boundary (add comment)
+
+**Priority 2: Tooling Wrappers (11 instances) - SHOULD FIX**
+
+Excluding doctor.py (5 instances which are acceptable), we have:
+
+7-14. `wrappers/python3/scripts/preflight_automerge_ruleset.py` (8 instances) - JSON parsing + HTTP
+15. `tools/repo_lint/install/install_helpers.py:282` - Directory removal
+
+**Priority 3: Documentation (17 instances) - DOCUMENT PATTERN**
+
+CLI boundary handlers are acceptable per policy, but should have inline comments referencing the policy.
+
+### Implementation Steps
+
+1. **Create exceptions module** (if needed):
+   - [ ] Create `tools/repo_lint/exceptions.py` with base exceptions
+   - [ ] Define `RepoLintError`, `MissingToolError`, `ConfigurationError`
+
+2. **Fix library code** (Priority 1):
+   - [ ] Fix base.py:302 (narrow to subprocess + file errors)
+   - [ ] Fix validator.py:55 (narrow to OSError + UnicodeDecodeError)
+   - [ ] Fix bash_treesitter.py:128 (narrow to tree-sitter exceptions)
+   - [ ] Remove duplicate bash_treesitter.py in scripts/
+   - [ ] Fix add_future_annotations.py:258 (narrow to file + syntax errors)
+   - [ ] Add comment to run_tests.py:162 (acceptable CLI boundary)
+
+3. **Fix tooling wrappers** (Priority 2):
+   - [ ] Fix preflight_automerge_ruleset.py (narrow JSON to JSONDecodeError)
+   - [ ] Fix install_helpers.py:282 (narrow to OSError)
+
+4. **Document CLI boundaries** (Priority 3):
+   - [ ] Add policy reference comments to cli.py handlers
+   - [ ] Add policy reference comments to cli_argparse.py handlers
+
+### Testing Requirements
+
+For each fix:
+- [ ] Verify existing tests still pass
+- [ ] Add new test cases if exception behavior changed
+- [ ] Run `repo-lint check --ci` to ensure no regressions
 
 ---
 
 ## Recent Completion
 
-**Phase 3.6.5: COMPLETE ✅ (100% test coverage)**
+**Phase 3.7.2: COMPLETE ✅**
 
-- Created comprehensive test suite for TOML runner
-- All 15 tests pass (100% pass rate)
-- Follows exact pattern from test_markdown_runner.py
-- Fixed pylint violations (too-many-nested-blocks)
+- Created `docs/contributing/python-exception-handling-policy.md` (14KB)
+- Defined acceptable vs unacceptable patterns
+- Documented required behaviors (narrow types, exception chaining, actionable messages)
+- Fixed pylint violation in test_toml_runner.py
 - All Python checks pass (exit 0)
-
-**Test Coverage Achieved:**
-
-1. ✅ `test_has_files_detects_toml` - Verify .toml file detection
-2. ✅ `test_has_files_returns_false_when_no_files` - Empty file list
-3. ✅ `test_check_tools_detects_missing_tool` - Missing Taplo detection
-4. ✅ `test_check_tools_returns_empty_when_installed` - Tool available check
-5. ✅ `test_run_taplo_with_config_file` - Config file usage
-6. ✅ `test_run_taplo_fix_mode` - Fix mode uses `taplo fmt` (not --check)
-7. ✅ `test_run_taplo_check_mode_uses_check_flag` - Check mode uses --check
-8. ✅ `test_parse_taplo_output_single_violation` - Single violation parsing
-9. ✅ `test_parse_taplo_output_multiple_violations` - Multiple violations
-10. ✅ `test_parse_taplo_output_skips_info_lines` - Skip INFO/WARN lines
-11. ✅ `test_parse_taplo_output_handles_stderr` - stderr output parsing
-12. ✅ `test_parse_taplo_output_empty_output` - Empty output handling
-13. ✅ `test_run_taplo_empty_file_list` - Empty file list returns success
-14. ✅ `test_check_returns_violations` - Check mode integration test
-15. ✅ `test_fix_applies_fixes` - Fix mode integration test
 
 ---
 

@@ -691,3 +691,38 @@ repo-lint check --ci --only python
 8. **add_future_annotations.py (1):** Narrow to `OSError`, `UnicodeDecodeError`, `SyntaxError`
 
 **Priority:** Fix library code first (6 instances), then tooling wrappers (11 instances excluding doctor.py).
+
+### 2026-01-08 - Phase 3.7.2 Complete: Exception Handling Policy
+
+**Policy Document Created:** `docs/contributing/python-exception-handling-policy.md` (14KB)
+
+**Policy Contents:**
+
+- Core principles: narrow types, preserve context, fail fast, document
+- Acceptable patterns defined:
+  - ✅ CLI boundary handlers (convert to user message + exit code)
+  - ✅ Diagnostic/doctor tools (structured error returns)
+  - ✅ Test cleanup code (finally blocks)
+- Unacceptable patterns defined:
+  - ❌ Broad catches in library code
+- Required behaviors documented:
+  - Use specific exception types (FileNotFoundError, json.JSONDecodeError, etc.)
+  - Preserve exception context via chaining (`raise ... from e`)
+  - Include actionable context in error messages
+- Custom exception guidelines:
+  - Location: `tools/repo_lint/exceptions.py`
+  - Template provided for base and derived exceptions
+- Exit code standards defined (0/1/2/3)
+- Migration strategy provided with examples
+
+**Additional Fix:**
+
+- Fixed pylint R0904 in test_toml_runner.py (too-many-public-methods)
+- Added `# pylint: disable=too-many-public-methods` with justification
+- All Python checks pass (exit 0)
+
+**Next:** Phase 3.7.3 - Create implementation plan for narrowing 17 broad exception handlers
+
+**Commit:** d07e860
+
+---
