@@ -2,13 +2,13 @@
 
 :Purpose:
     Runs all Python linting and formatting tools as defined in the repository
-    standards. Integrates with existing validate_docstrings.py script.
+    standards. Uses internal docstring validation module.
 
 :Tools:
     - Black: Code formatter (PEP 8 compliant)
     - Ruff: Fast Python linter (replaces Flake8)
     - Pylint: Comprehensive static analysis
-    - validate_docstrings.py: Docstring contract validation
+    - Internal docstring validator: Docstring contract validation
 
 :Environment Variables:
     None
@@ -30,10 +30,10 @@ from __future__ import annotations
 
 import os
 import subprocess
-import sys
 from typing import List
 
 from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.docstrings import validate_files
 from tools.repo_lint.policy import is_category_allowed
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
@@ -416,54 +416,51 @@ class PythonRunner(Runner):
         return LintResult(tool="pylint", passed=False, violations=violations[:20])  # Limit output
 
     def _run_docstring_validation(self) -> LintResult:
-        """Run Python docstring validation.
+        """Run Python docstring validation using internal module.
 
         :returns:
             LintResult for docstring validation
         """
-        validator_script = self.repo_root / "scripts" / "validate_docstrings.py"
+        # Get Python files to validate
+        files = get_tracked_files(["**/*.py"], self.repo_root, include_fixtures=self._include_fixtures)
 
-        if not validator_script.exists():
-            return LintResult(
-                tool="python-docstrings",
-                passed=False,
-                violations=[],
-                error=f"Docstring validation SKIPPED: validator script not found at {validator_script}. "
-                "This check was not executed.",
-            )
-
-        # Build command with include-fixtures flag if in vector mode
-        cmd = [sys.executable, str(validator_script), "--language", "python"]
-        if self._include_fixtures:
-            cmd.append("--include-fixtures")
-
-        result = subprocess.run(
-            cmd,
-            cwd=self.repo_root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-
-        if result.returncode == 0:
+        if not files:
             return LintResult(tool="python-docstrings", passed=True, violations=[])
 
-        violations = []
-        for line in result.stdout.splitlines():
-            if "❌" in line or "ERROR" in line or "violation" in line.lower():
-                # Parse docstring validator output
-                # Format can be:
-                # ❌ /path/to/file.py:123
-                # ❌ /path/to/file.py
-                # ❌ Validation FAILED: ...
-                parsed = self._parse_lint_output(line.strip())
-                violations.append(
-                    Violation(
-                        tool="python-docstrings",
-                        file=parsed["file"],
-                        line=parsed["line"],
-                        message=parsed["message"],
-                    )
-                )
+        # Use internal validator module
+        errors = validate_files(files, language="python")
 
-        return LintResult(tool="python-docstrings", passed=False, violations=violations[:20])  # Limit output
+        if not errors:
+            return LintResult(tool="python-docstrings", passed=True, violations=[])
+
+        # Convert ValidationError objects to Violation objects
+        violations = []
+        for error in errors:
+            # Extract file basename from path
+            file_basename = os.path.basename(error.file_path)
+
+            # Format message from missing sections
+            if error.missing_sections:
+                sections = ", ".join(error.missing_sections)
+                if error.symbol_name:
+                    message = f"Symbol '{error.symbol_name}': Missing {sections}"
+                else:
+                    message = f"Missing required sections: {sections}"
+            else:
+                message = error.message
+
+            # Add additional context if present
+            if error.message and error.missing_sections:
+                message += f" ({error.message})"
+
+            violations.append(
+                Violation(
+                    tool="python-docstrings",
+                    file=file_basename,
+                    line=error.line_number,
+                    message=message,
+                )
+            )
+
+        # Limit output to avoid overwhelming CI logs
+        return LintResult(tool="python-docstrings", passed=False, violations=violations[:20])
