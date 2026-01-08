@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=wrong-import-position  # Test file needs special setup
 """Unit tests for Markdown runner (markdownlint-cli2).
 
 :Purpose:
@@ -56,8 +57,8 @@ from unittest.mock import MagicMock, patch
 repo_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(repo_root))
 
-from tools.repo_lint.runners.markdown_runner import (
-    MarkdownRunner,
+from tools.repo_lint.runners.markdown_runner import (  # noqa: E402
+    MarkdownRunner,  # noqa: E402
 )  # noqa: E402  # pylint: disable=wrong-import-position
 
 
