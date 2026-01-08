@@ -60,7 +60,7 @@ sys.path.insert(0, str(repo_root))
 
 from tools.repo_lint.runners.toml_runner import (  # noqa: E402
     TomlRunner,  # noqa: E402
-)  # noqa: E402  # pylint: disable=wrong-import-position
+)  # noqa: E402
 
 
 class TestTomlRunner(unittest.TestCase):
