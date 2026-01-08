@@ -140,7 +140,7 @@
 
 ### Current Session (20)
 
-20. (pending) - Re-run benchmarks with functional Rust bootstrapper and update results
+1. (pending) - Re-run benchmarks with functional Rust bootstrapper and update results
 
 ## Current Status
 

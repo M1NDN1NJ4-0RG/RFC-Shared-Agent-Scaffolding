@@ -85,7 +85,7 @@
 ## 📊 Overall Wrapper Conversion Results
 
 | Wrapper | Before | After | Reduction | Tests Passing |
-|---------|--------|-------|-----------|---------------|
+| --------- | -------- | ------- | ----------- | --------------- |
 | **Bash** | 227 lines | 113 lines | 50% | 15/17 (88%) |
 | **Perl** | 358 lines | 140 lines | 61% | 46/46 (100%) ✅ |
 | **Python3** | 350 lines | 130 lines | 63% | 18/20 (90%) |

@@ -1,6 +1,6 @@
 @copilot 🚨 **MANDATORY FIRST STEP (NON-NEGOTIABLE): RUN THE FULL BOOTSTRAP TOOLCHAIN**
 
-**Do not write tests. Do not claim fixes. Do not analyze.**  
+**Do not write tests. Do not claim fixes. Do not analyze.**
 Run the repo’s documented bootstrap sequence **FIRST**, and paste the **exact commands + success output snippet**.
 
 ---

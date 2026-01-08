@@ -18,7 +18,7 @@ The contract is now frozen and implementation work can proceed.
 ## Quick Reference
 
 | Item ID | Decision | Status |
-|---------|----------|--------|
+| --------- | ---------- | -------- |
 | **M0-P1-I1** | Split stdout/stderr with section markers | ✅ DECIDED |
 | **M0-P1-I2** | `{ISO8601}-pid{PID}-{STATUS}.log` format | ✅ DECIDED |
 | **M0-P1-I3** | Hybrid: auto-suffix default, opt-in strict | ✅ DECIDED |
@@ -78,7 +78,7 @@ The contract is now frozen and implementation work can proceed.
 Replace the existing table with:
 
 | Stable ID | Title | Status | Issue Link |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | M0-P1-I1 | `safe-run` Logging Semantics | ✅ DECIDED | See M0-DECISIONS.md |
 | M0-P1-I2 | Failure Log File Naming Scheme | ✅ DECIDED | See M0-DECISIONS.md |
 | M0-P1-I3 | `safe-archive` No-Clobber Semantics | ✅ DECIDED | See M0-DECISIONS.md |

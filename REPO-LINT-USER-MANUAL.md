@@ -685,7 +685,7 @@ Use vector mode when:
 #### How Vector Mode Changes Behavior
 
 | Mode | Fixtures Scanned? | Use Case |
-|------|-------------------|----------|
+| ------ | ------------------- | ---------- |
 | **Normal** (`repo-lint check`) | ❌ No | Daily development |
 | **CI Mode** (`repo-lint check --ci`) | ❌ No | CI/CD pipelines |
 | **Vector Mode** (`repo-lint check --include-fixtures`) | ✅ **Yes** | Testing linting infrastructure |
@@ -730,7 +730,7 @@ $ repo-lint check --include-fixtures --lang python
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
   Runner                Status    Files   Violations   Duration
- ─────────────────────────────────────────────────────────────── 
+ ───────────────────────────────────────────────────────────────
   black                 ✅ PASS      20            0       0.2s
   ruff                  ❌ FAIL      20           45       0.3s
   pylint                ❌ FAIL      20           67       1.2s
@@ -784,7 +784,9 @@ The repository has **multiple safeguards** to prevent fixtures from being modifi
 1. **Black Auto-Fix Workflow**: Hardcoded regex exclusion
 
    ```yaml
-   --exclude='(tools/repo_lint/tests/fixtures/|conformance/repo-lint/fixtures/|...)'
+
+ --exclude='(tools/repo_lint/tests/fixtures/ | conformance/repo-lint/fixtures/ | ...)'
+
    ```
 
    Black's auto-formatter will **never** touch fixture files, even if they violate formatting rules.
@@ -798,7 +800,7 @@ The repository has **multiple safeguards** to prevent fixtures from being modifi
 
    The naming enforcer skips dedicated `naming-violations.*` test files (which intentionally use wrong naming conventions).
 
-3. **Default Exclusion in repo-lint**: Built-in protection
+1. **Default Exclusion in repo-lint**: Built-in protection
    - All runners have `include_fixtures=False` by default
    - Fixtures are excluded unless `--include-fixtures` is explicitly provided
    - This prevents accidental scanning or fixing
@@ -832,7 +834,7 @@ This section details **exactly** what fixture files exist for each language, wha
 **Location**: `tools/repo_lint/tests/fixtures/python/`
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
-|------|----------------|---------------------|---------|
+| ------ | ---------------- | --------------------- | --------- |
 | `python_all_docstring_violations.py` | `validate_docstrings` | Missing module docstring, missing function docstrings, missing class docstrings, missing method docstrings | Validates docstring enforcement across all Python construct types (module, function, class, method) |
 | `python_black_violations.py` | `black` | Line length violations, inconsistent quotes, missing whitespace, wrong number of blank lines | Tests Black formatter detection across various formatting issues |
 | `python_pylint_violations.py` | `pylint` | Unused variables, unused imports, too many local variables, redefined builtins, too few public methods | Validates pylint's detection of code quality issues and style violations |
@@ -855,7 +857,7 @@ This section details **exactly** what fixture files exist for each language, wha
 **Location**: `tools/repo_lint/tests/fixtures/bash/`
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
-|------|----------------|---------------------|---------|
+| ------ | ---------------- | --------------------- | --------- |
 | `bash-docstring-violations.sh` | `validate_docstrings` | Missing file-level comments, missing function documentation | Validates Bash docstring enforcement for scripts and functions |
 | `bash-shellcheck-violations.sh` | `shellcheck` | SC2086 (unquoted variable expansion), SC2155 (declare and assign separately), SC2034 (unused variable), SC2164 (cd without error checking) | Tests shellcheck's detection of common Bash scripting pitfalls and best practice violations |
 | `bash-shfmt-violations.sh` | `shfmt` | Inconsistent indentation (tabs vs spaces), missing space in if statement, bad case statement formatting | Validates shfmt's formatting checks for Bash scripts |
@@ -876,7 +878,7 @@ This section details **exactly** what fixture files exist for each language, wha
 **Location**: `tools/repo_lint/tests/fixtures/perl/`
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
-|------|----------------|---------------------|---------|
+| ------ | ---------------- | --------------------- | --------- |
 | `perl_docstring_violations.pl` | `validate_docstrings` | Missing POD documentation, missing subroutine documentation | Validates Perl docstring enforcement using POD (Plain Old Documentation) format |
 | `perl-perlcritic_violations.pl` | `perlcritic` | Excessive complexity, using @_ directly, using punctuation variables | Tests perlcritic's "Perl Best Practices" policy enforcement |
 | `perl-perlNamingViolations.pl` | Naming enforcement | camelCase, ALLUPPERCASE, and mixedCase function names; PascalCase variable names | **Intentionally** violates Perl naming conventions to test naming enforcement |
@@ -896,7 +898,7 @@ This section details **exactly** what fixture files exist for each language, wha
 **Location**: `tools/repo_lint/tests/fixtures/powershell/`
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
-|------|----------------|---------------------|---------|
+| ------ | ---------------- | --------------------- | --------- |
 | `PowershellAllDocstringViolations.ps1` | `validate_docstrings` | Missing function comments, missing `.SYNOPSIS`, incomplete help blocks | Validates PowerShell docstring enforcement using comment-based help |
 | `PowershellPsScriptAnalyzerViolations.ps1` | `PSScriptAnalyzer` | Unused variables, using aliases instead of full cmdlet names, positional parameters, missing ShouldProcess support | Tests PSScriptAnalyzer's PowerShell best practices and cmdlet development standards |
 | `Powershell-naming-violations.ps1` | Naming enforcement | Functions without Verb-Noun naming, unapproved verbs, missing verbs, snake_case variables instead of PascalCase | **Intentionally** violates PowerShell naming conventions to test naming enforcement |
@@ -917,7 +919,7 @@ This section details **exactly** what fixture files exist for each language, wha
 **Location**: `tools/repo_lint/tests/fixtures/yaml/`
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
-|------|----------------|---------------------|---------|
+| ------ | ---------------- | --------------------- | --------- |
 | `yaml-all-docstring-violations.yaml` | `validate_docstrings` | Missing file-level comments, missing section documentation | Validates YAML docstring enforcement (expecting top-of-file comments) |
 | `yaml-actionlint-violations.yaml` | `actionlint` | Using deprecated set-output command, missing shell specification, deprecated action versions | Tests actionlint's validation of GitHub Actions workflow files |
 | `yaml-yamllint-violations.yaml` | `yamllint` | Line too long, trailing spaces, inconsistent indentation, missing document start marker | Validates yamllint's YAML formatting and style enforcement |
@@ -939,7 +941,7 @@ This section details **exactly** what fixture files exist for each language, wha
 **Location**: `tools/repo_lint/tests/fixtures/rust/`
 
 | File | Tool(s) Tested | Violation Categories | Purpose |
-|------|----------------|---------------------|---------|
+| ------ | ---------------- | --------------------- | --------- |
 | `rust-all-docstring.violations.rs` | `validate_docstrings` | Missing module docs (`//!`), missing function docs, missing struct docs, missing impl docs, missing method docs | Validates Rust docstring enforcement for modules, functions, structs, and public APIs |
 | `rust-clippy-violations.rs` | `clippy` | Needless return, unnecessary clone, manual string formatting, comparison to bool | Tests clippy's lint suggestions for idiomatic Rust code |
 | `rust-rustfmt-violations.rs` | `rustfmt` | Bad spacing in function signatures, inconsistent indentation, bad brace placement | Validates rustfmt's formatting checks for Rust code |
@@ -1150,7 +1152,7 @@ source ~/.config/fish/config.fish
 ```powershell
 # Generate completion script
 $env:_REPO_LINT_COMPLETE = "powershell_source"
-repo-lint | Out-File -FilePath "$HOME\Documents\WindowsPowerShell\repo-lint-complete.ps1" -Encoding UTF8
+ repo-lint | Out-File -FilePath "$HOME\Documents\WindowsPowerShell\repo-lint-complete.ps1" -Encoding UTF8
 
 # Add to PowerShell profile
 if (!(Test-Path $PROFILE)) {
@@ -1167,7 +1169,7 @@ Add-Content $PROFILE ". `"$HOME\Documents\WindowsPowerShell\repo-lint-complete.p
 ```powershell
 # Generate completion script
 $env:_REPO_LINT_COMPLETE = "powershell_source"
-repo-lint | Out-File -FilePath "$HOME\.config\powershell\repo-lint-complete.ps1" -Encoding UTF8
+ repo-lint | Out-File -FilePath "$HOME\.config\powershell\repo-lint-complete.ps1" -Encoding UTF8
 
 # Add to PowerShell 7+ profile
 if (!(Test-Path $PROFILE)) {
@@ -1207,7 +1209,7 @@ repo-lint check --<TAB>
 
 ```bash
 # Verify installation
-pip list | grep repo-lint
+ pip list | grep repo-lint
 
 # If not found, install it
 pip install -e .
@@ -1324,7 +1326,7 @@ In CI workflows, ensure tools are installed before running repo-lint:
 
 ```yaml
 - name: Install dependencies
-  run: |
+ run: |
     python3 -m pip install --upgrade pip
     python3 -m pip install black==24.10.0 ruff==0.8.4 pylint==3.3.2 yamllint==1.35.1 PyYAML>=6.0
 
@@ -1376,7 +1378,7 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # Then regenerate and load completion script
 $env:_REPO_LINT_COMPLETE = "powershell_source"
-repo-lint | Out-File -FilePath "$HOME\.config\powershell\repo-lint-complete.ps1" -Encoding UTF8
+ repo-lint | Out-File -FilePath "$HOME\.config\powershell\repo-lint-complete.ps1" -Encoding UTF8
 . $PROFILE
 ```
 
@@ -1395,7 +1397,7 @@ python3 -m tools.repo_lint check
 Set-Alias -Name python -Value py
 
 # Verify Python is in PATH
-$env:PATH -split ';' | Select-String python
+ $env:PATH -split ';' | Select-String python
 ```
 
 #### Issue: Line ending differences (CRLF vs LF)
@@ -1549,22 +1551,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
-        run: |
+ run: |
           python -m pip install --upgrade pip
           pip install -e .
-      
+
       - name: Run repo-lint (uses AUTO parallelism by default)
         run: repo-lint check --ci --json
         # Parallel execution is enabled by default
         # AUTO will use min(max(cpu_count-1, 1), 8) workers
-      
+
       # Optional: Explicit worker count for deterministic CI performance
       - name: Run repo-lint with explicit worker count
         run: repo-lint check --ci --jobs 4
@@ -1692,14 +1694,14 @@ interactive:
     warning: "yellow"
     info: "blue"
     metadata: "dim"
-  
+
   icons:
     pass: "✓"
     fail: "✗"
     warn: "⚠️"
     skip: "○"
     running: "▶"
-  
+
   borders:
     style: "rounded"  # Options: ascii, rounded, heavy, double
     color: "cyan"
@@ -1729,12 +1731,12 @@ interactive:
     failure: "bright_red"
     warning: "bright_yellow"
     info: "bright_blue"
-  
+
   icons:
     pass: "✅"
     fail: "❌"
     warn: "⚠️"
-  
+
   borders:
     style: "heavy"
     color: "magenta"
@@ -1784,7 +1786,7 @@ REPO_LINT_UI_THEME=/path/to/theme.yaml repo-lint check
 
 #### Available Border Styles
 
-- `ascii` - Simple ASCII characters (`+`, `-`, `|`)
+- `ascii` - Simple ASCII characters (`+`, `-`, ` | `)
 - `rounded` - Rounded corners (╭, ╮, ╰, ╯)
 - `heavy` - Heavy borders (┏, ┓, ┗, ┛)
 - `double` - Double-line borders (╔, ╗, ╚, ╝)
@@ -1853,7 +1855,7 @@ If you encounter bugs or have feature requests:
 ## Summary of Exit Codes
 
 | Code | Meaning | Action |
-|------|---------|--------|
+| ------ | --------- | -------- |
 | 0 | Success | All checks passed |
 | 1 | Violations found | Fix issues and re-run |
 | 2 | Missing tools (CI) | Install required tools |

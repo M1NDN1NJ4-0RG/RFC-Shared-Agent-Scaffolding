@@ -28,32 +28,32 @@
   Python Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                        Linting Results                        
-                                                               
-  Runner              Status    Files   Violations   Duration  
- ───────────────────────────────────────────────────────────── 
-  black               ❌ FAIL       -            1          -  
-  ruff                ✅ PASS       -            0          -  
-  pylint              ✅ PASS       -            0          -  
-  python-docstrings   ✅ PASS       -            0          -  
-                                                               
+                        Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 black Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 1 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                              
-  File               Line   Message                                                                                           
- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  <multiple files>      -   Code formatting does not match Black style. Run 'python3 -m tools.repo_lint fix' to auto-format.  
-                                                                                                                              
+  Runner              Status    Files   Violations   Duration
+ ─────────────────────────────────────────────────────────────
+  black               ❌ FAIL       -            1          -
+  ruff                ✅ PASS       -            0          -
+  pylint              ✅ PASS       -            0          -
+  python-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 4           
-    Passed: 3                
-    Failed: 1                
-  Total Violations: 1        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 black Failures
+  Found 1 violation(s)
+
+
+  File               Line   Message
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  <multiple files>      -   Code formatting does not match Black style. Run 'python3 -m tools.repo_lint fix' to auto-format.
+
+
+           Summary
+  Total Runners: 4
+    Passed: 3
+    Failed: 1
+  Total Violations: 1
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

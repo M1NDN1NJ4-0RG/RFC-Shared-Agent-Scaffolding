@@ -14,7 +14,7 @@
 ## Tool Versions
 
 | Tool | Version |
-|------|---------|
+| ------ | --------- |
 | Python | 3.12.3 |
 | Black | 24.10.0 |
 | Ruff | 0.8.4 |
@@ -32,7 +32,7 @@
 ## Violations by Tool
 
 | Tool | Count | Status |
-|------|-------|--------|
+| ------ | ------- | -------- |
 | **Ruff** | 246 | ❌ FAILED |
 | **Pylint** | 20 | ❌ FAILED |
 | **validate_docstrings (PowerShell)** | 60 | ❌ FAILED |
@@ -259,7 +259,7 @@ No PSScriptAnalyzer violations detected (Error severity).
 **Required Fix:**
 
 - Refactor long lines to fit within 120 characters
-- Use YAML multiline strings where appropriate (`>`, `|`)
+- Use YAML multiline strings where appropriate (`>`, ` | `)
 - May require splitting complex expressions
 
 ---

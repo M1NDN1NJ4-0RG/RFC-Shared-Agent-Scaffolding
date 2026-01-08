@@ -28,32 +28,32 @@
   Rust Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  rustfmt           ✅ PASS       -            0          -  
-  clippy            ❌ FAIL       -            2          -  
-  rust-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                clippy Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 2 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                
-  File                    Line   Message                                        
- ────────────────────────────────────────────────────────────────────────────── 
-  src/bootstrap_main.rs    130   unused_variables: unused variable: `progress`  
-  src/bootstrap_main.rs    130   unused_variables: unused variable: `progress`  
-                                                                                
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  rustfmt           ✅ PASS       -            0          -
+  clippy            ❌ FAIL       -            2          -
+  rust-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 2        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                clippy Failures
+  Found 2 violation(s)
+
+
+  File                    Line   Message
+ ──────────────────────────────────────────────────────────────────────────────
+  src/bootstrap_main.rs    130   unused_variables: unused variable: `progress`
+  src/bootstrap_main.rs    130   unused_variables: unused variable: `progress`
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 2
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

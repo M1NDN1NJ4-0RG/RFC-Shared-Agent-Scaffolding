@@ -137,7 +137,7 @@ set -euo pipefail
 #
 # DESCRIPTION:
 #   Detailed description of what the script does.
-#   
+#
 #   State what it does NOT do if relevant for clarity.
 #
 # USAGE:

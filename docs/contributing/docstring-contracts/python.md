@@ -303,7 +303,7 @@ from pathlib import Path
 
 def find_binary():
     """Find the canonical binary using the discovery order.
-    
+
     :returns: Path to the binary if found, None otherwise
     :rtype: Path or None
     """
@@ -312,7 +312,7 @@ def find_binary():
 
 def main():
     """Main entry point.
-    
+
     :returns: Exit code (0 for success, non-zero for failure)
     :rtype: int
     """

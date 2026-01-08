@@ -169,7 +169,7 @@ The repository has a sophisticated multi-level contract system:
     [workspace]
     members = ["repo-lint", "repo-lint-core", "repo-lint-parsers"]
     resolver = "2"
-    
+
     [workspace.dependencies]
     # Shared versions across crates
     serde = { version = "1.0", features = ["derive"] }
@@ -191,10 +191,10 @@ The repository has a sophisticated multi-level contract system:
     # .cargo/config.toml
     [build]
     target-dir = "../../dist/rust-build"
-    
+
     [target.x86_64-unknown-linux-musl]
     linker = "x86_64-linux-musl-gcc"
-    
+
     [target.x86_64-pc-windows-gnu]
     linker = "x86_64-w64-mingw32-gcc"
     ```
@@ -214,14 +214,14 @@ The repository has a sophisticated multi-level contract system:
 
     ```rust
     use clap::{Parser, Subcommand};
-    
+
     #[derive(Parser)]
     #[command(name = "repo-lint", version, about = "Unified multi-language linting")]
     struct Cli {
         #[command(subcommand)]
         command: Commands,
     }
-    
+
     #[derive(Subcommand)]
     enum Commands {
         Check {
@@ -269,14 +269,14 @@ The repository has a sophisticated multi-level contract system:
     $schema: "./policy.schema.json"
     version: "2.0"
     policy: deny_by_default
-    
+
     allowed_categories:
       - category: FORMAT.BLACK
         tool: embedded  # No external black needed
         safe: true
         mutating: true
         description: "Python code formatter (Rust implementation)"
-    
+
       - category: LINT.RUFF.SAFE
         tool: embedded
         safe: true
@@ -287,14 +287,14 @@ The repository has a sophisticated multi-level contract system:
     ```rust
     use schemars::{schema_for, JsonSchema};
     use serde::{Deserialize, Serialize};
-    
+
     #[derive(Serialize, Deserialize, JsonSchema)]
     struct PolicyConfig {
         version: String,
         policy: PolicyMode,
         allowed_categories: Vec<Category>,
     }
-    
+
     // Generate schema.json:
     let schema = schema_for!(PolicyConfig);
     ```
@@ -309,7 +309,7 @@ The repository has a sophisticated multi-level contract system:
     ```rust
     use serde_yaml;
     use validator::Validate;
-    
+
     pub fn load_policy(path: &Path) -> Result<PolicyConfig> {
         let content = fs::read_to_string(path)?;
         let config: PolicyConfig = serde_yaml::from_str(&content)?;
@@ -355,12 +355,12 @@ The repository has a sophisticated multi-level contract system:
         fn fix(&self, files: &[PathBuf], config: &Config, unsafe_mode: bool) -> Result<FixResult>;
         fn can_fix_unsafe(&self) -> bool { false }
     }
-    
+
     pub struct CheckResult {
         pub violations: Vec<Violation>,
         pub passed: bool,
     }
-    
+
     pub struct Violation {
         pub file: PathBuf,
         pub line: usize,
@@ -384,7 +384,7 @@ The repository has a sophisticated multi-level contract system:
         MissingTools = 2,
         InternalError = 3,
     }
-    
+
     impl From<ExitCode> for i32 {
         fn from(code: ExitCode) -> i32 {
             code as i32
@@ -400,15 +400,15 @@ The repository has a sophisticated multi-level contract system:
 
     ```rust
     use thiserror::Error;
-    
+
     #[derive(Error, Debug)]
     pub enum LintError {
         #[error("Configuration error: {0}")]
         Config(String),
-        
+
         #[error("Parser error in {file}:{line} - {msg}")]
         Parse { file: String, line: usize, msg: String },
-        
+
         #[error("IO error: {0}")]
         Io(#[from] std::io::Error),
     }
@@ -457,20 +457,21 @@ The repository has a sophisticated multi-level contract system:
         bash: tree_sitter::Parser,
         // ... per language
     }
-    
+
     impl Parser {
         pub fn parse_file(&mut self, path: &Path) -> Result<tree_sitter::Tree> {
             let ext = path.extension().unwrap().to_str().unwrap();
             let parser = match ext {
                 "py" => &mut self.python,
-                "sh" | "bash" => &mut self.bash,
+
+ "sh" | "bash" => &mut self.bash,
                 // ...
                 _ => return Err(anyhow!("Unsupported file type: {}", ext)),
             };
-            
+
             let content = fs::read_to_string(path)?;
             let tree = parser.parse(&content, None)
-                .ok_or_else(|| anyhow!("Parse failed"))?;
+ .ok_or_else( |  | anyhow!("Parse failed"))?;
             Ok(tree)
         }
     }
@@ -489,13 +490,13 @@ The repository has a sophisticated multi-level contract system:
       (!  (expression_statement (string)) )
     ) @func.missing_doc
     "#;
-    
+
     pub fn find_missing_docstrings(tree: &Tree, source: &str) -> Vec<Violation> {
         let query = Query::new(tree_sitter_python::language(), PYTHON_MISSING_DOCSTRING).unwrap();
         let mut cursor = QueryCursor::new();
         let matches = cursor.matches(&query, tree.root_node(), source.as_bytes());
-        
-        matches.map(|m| {
+
+ matches.map( | m | {
             let node = m.captures[0].node;
             Violation {
                 line: node.start_position().row + 1,
@@ -523,7 +524,7 @@ The repository has a sophisticated multi-level contract system:
 
     ```rust
     use std::process::Command;
-    
+
     pub fn format_python(file: &Path) -> Result<bool> {
         // If ruff is embedded as library (future):
         // use ruff::format;
@@ -547,7 +548,7 @@ The repository has a sophisticated multi-level contract system:
 
     ```rust
     use ruff_linter::{check_file, LintConfig};
-    
+
     pub fn lint_python(file: &Path, config: &Config) -> Result<Vec<Violation>> {
         let ruff_config = LintConfig {
             select: config.python_rules.clone(),
@@ -555,11 +556,12 @@ The repository has a sophisticated multi-level contract system:
             // ...
         };
         let violations = check_file(file, &ruff_config)?;
-        Ok(violations.into_iter().map(|v| Violation::from_ruff(v)).collect())
+
+ Ok(violations.into_iter().map( | v | Violation::from_ruff(v)).collect())
     }
     ```
 
-  - **Fallback:** Embed ruff binary in executable using `include_bytes!()` or build-time resource bundling
+- **Fallback:** Embed ruff binary in executable using `include_bytes!()` or build-time resource bundling
 
 - [ ] **Item 2.2.3: Pylint equivalent checks (tree-sitter based)**
   - **Severity:** Medium
@@ -592,13 +594,13 @@ The repository has a sophisticated multi-level contract system:
     ```rust
     pub fn check_bash(tree: &Tree, source: &str) -> Vec<Violation> {
         let mut violations = Vec::new();
-        
+
         // SC2086: Double quote to prevent globbing and word splitting
         violations.extend(check_unquoted_expansion(tree, source));
-        
+
         // SC2006: Use $(...) instead of legacy `...`
         violations.extend(check_legacy_backticks(tree, source));
-        
+
         // ... top 20 rules
         violations
     }
@@ -634,13 +636,13 @@ The repository has a sophisticated multi-level contract system:
     ```rust
     pub fn check_powershell(tree: &Tree, source: &str) -> Vec<Violation> {
         let mut violations = Vec::new();
-        
+
         // Rule: Functions should use Verb-Noun naming
         violations.extend(check_function_naming(tree, source));
-        
+
         // Rule: Use approved verbs (Get, Set, New, Remove, etc.)
         violations.extend(check_approved_verbs(tree, source));
-        
+
         violations
     }
     ```
@@ -668,12 +670,12 @@ The repository has a sophisticated multi-level contract system:
     ```rust
     pub fn check_perl(tree: &Tree, source: &str) -> Vec<Violation> {
         let mut violations = Vec::new();
-        
+
         // Rule: Require "use strict;" and "use warnings;"
         if !source.contains("use strict") {
             violations.push(Violation { message: "Missing 'use strict;'", ... });
         }
-        
+
         violations
     }
     ```
@@ -692,14 +694,15 @@ The repository has a sophisticated multi-level contract system:
     pub fn check_yaml(path: &Path) -> Result<Vec<Violation>> {
         let content = fs::read_to_string(path)?;
         let _doc: serde_yaml::Value = serde_yaml::from_str(&content)?;
-        
+
         // Check line length
         let violations = content.lines()
             .enumerate()
-            .filter(|(_, line)| line.len() > 120)
-            .map(|(i, _)| Violation { line: i + 1, message: "Line too long", ... })
+
+ .filter( | (*, line) | line.len() > 120)
+ .map( | (i,*) | Violation { line: i + 1, message: "Line too long", ... })
             .collect();
-        
+
         Ok(violations)
     }
     ```
@@ -729,21 +732,21 @@ The repository has a sophisticated multi-level contract system:
 
     ```rust
     use schemars::{schema_for, JsonSchema};
-    
+
     #[derive(Serialize, Deserialize, JsonSchema)]
     struct PolicyConfig {
         /// Schema version (semver)
         #[schemars(regex = r"^\d+\.\d+$")]
         version: String,
-        
+
         /// Policy mode: "allow_by_default" or "deny_by_default"
         #[schemars(default = "deny_by_default")]
         policy: PolicyMode,
-        
+
         /// List of allowed auto-fix categories
         allowed_categories: Vec<Category>,
     }
-    
+
     // Generate schema:
     fn generate_schema() {
         let schema = schema_for!(PolicyConfig);
@@ -794,7 +797,7 @@ The repository has a sophisticated multi-level contract system:
         - id: "F401"  # Unused import
           enabled: true
           severity: error
-    
+
     bash:
       rules:
         - id: "SC2086"  # Unquoted expansion
@@ -879,10 +882,11 @@ The repository has a sophisticated multi-level contract system:
     pub fn validate_python_docstring(tree: &Tree, source: &str) -> Vec<Violation> {
         let module_docstring = extract_module_docstring(tree, source);
         let required = vec!["Purpose", "Usage", "Exit Codes", "Examples"];
-        
+
         required.iter()
-            .filter(|section| !module_docstring.contains(section))
-            .map(|section| Violation {
+
+ .filter( | section | !module_docstring.contains(section))
+ .map( | section | Violation {
                 message: format!("Missing required docstring section: {}", section),
                 // ...
             })
@@ -913,14 +917,15 @@ The repository has a sophisticated multi-level contract system:
 
     ```rust
     pub struct DocstringRewriteFixer;
-    
+
     impl UnsafeFixer for DocstringRewriteFixer {
         fn name(&self) -> &str { "docstring_rewrite" }
-        
+
         fn can_fix(&self, file: &Path) -> bool {
-            file.extension().map(|e| e == "py").unwrap_or(false)
+
+ file.extension().map( | e | e == "py").unwrap_or(false)
         }
-        
+
         fn fix(&self, file: &Path, config: &Config) -> Result<FixResult> {
             // Parse AST, find docstrings, rewrite format
             // Generate patch + forensics
@@ -948,12 +953,13 @@ The repository has a sophisticated multi-level contract system:
 
     ```yaml
     - name: Build static Linux binary
-      run: |
+
+ run: |
         cargo build --release --target x86_64-unknown-linux-musl
         strip target/x86_64-unknown-linux-musl/release/repo-lint
     ```
 
-  - **Testing:** Verify on Alpine Linux (musl-based)
+- **Testing:** Verify on Alpine Linux (musl-based)
 
 - [ ] **Item 5.1.2: Cross-compile for Windows/macOS**
   - **Severity:** High
@@ -964,9 +970,10 @@ The repository has a sophisticated multi-level contract system:
     ```yaml
     - name: Build Windows binary
       run: cross build --release --target x86_64-pc-windows-gnu
-    
+
     - name: Build macOS binaries
-      run: |
+
+ run: |
         cross build --release --target x86_64-apple-darwin
         cross build --release --target aarch64-apple-darwin
     ```
@@ -1036,10 +1043,10 @@ The repository has a sophisticated multi-level contract system:
     ```yaml
     - name: Run Python repo-lint
       run: python3 -m tools.repo_lint check --json > python-results.json
-    
+
     - name: Run Rust repo-lint
       run: ./dist/repo-lint check --json > rust-results.json
-    
+
     - name: Compare results
       run: ./scripts/compare-lint-results.py python-results.json rust-results.json
     ```
@@ -1054,20 +1061,21 @@ The repository has a sophisticated multi-level contract system:
 
     ```rust
     use criterion::{black_box, criterion_group, criterion_main, Criterion};
-    
+
     fn bench_python_files(c: &mut Criterion) {
-        c.bench_function("lint 100 Python files", |b| {
-            b.iter(|| {
+
+ c.bench_function("lint 100 Python files", | b | {
+ b.iter( |  | {
                 lint_all_python_files(black_box("tools/"));
             });
         });
     }
-    
+
     criterion_group!(benches, bench_python_files);
     criterion_main!(benches);
     ```
 
-  - **Metrics:** Speedup factor, peak memory usage
+- **Metrics:** Speedup factor, peak memory usage
 
 ---
 
@@ -1084,7 +1092,7 @@ The repository has a sophisticated multi-level contract system:
     ```yaml
     # OLD:
     - run: python3 -m tools.repo_lint check --ci
-    
+
     # NEW:
     - run: ./dist/repo-lint check --ci
     ```
@@ -1485,7 +1493,7 @@ criterion = "0.5"
 ### Appendix B: Performance Targets
 
 | Metric | Python Baseline | Rust Target | Speedup |
-|--------|----------------|-------------|---------|
+| -------- | ---------------- | ------------- | --------- |
 | Lint 100 Python files | 8.5s | <1s | 8-10x |
 | Lint 1000 Python files | 85s | <10s | 8-10x |
 | Parse single 5000-line file | 120ms | <10ms | 10-15x |
@@ -1496,7 +1504,7 @@ criterion = "0.5"
 ### Appendix C: Migration Timeline (Estimated)
 
 | Phase | Duration | Cumulative | Dependencies |
-|-------|----------|------------|--------------|
+| ------- | ---------- | ------------ | -------------- |
 | M1: Foundation | 3 weeks | 3 weeks | None |
 | M2: Embedded Linting | 8 weeks | 11 weeks | M1 complete |
 | M3: YAML Config | 2 weeks | 13 weeks | M1 complete |

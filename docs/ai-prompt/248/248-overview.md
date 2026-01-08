@@ -9,7 +9,7 @@
 ~~~markdown
 # [EPIC] [BLOCKER TO: ISSUE #235] Bootstrapper parity + Dev benchmarks + expanded release matrix (linux arm64)
 
-**Related:** ***BLOCKER TO:*** Issue #235 (Rust Migration Plan: Modular Toolchain Bootstrapper)  
+**Related:** ***BLOCKER TO:*** Issue #235 (Rust Migration Plan: Modular Toolchain Bootstrapper)
 **Scope:** Bring Rust bootstrapper behavior to required parity with the Bash bootstrapper, define/execute a Dev benchmark plan, and expand release artifacts to include Linux arm64.
 
 ---
@@ -37,7 +37,7 @@ We want **parity where it matters**, but we are intentionally keeping **profiles
 - Rust must run an equivalent verification step automatically at the end of install **when the profile requires repo-lint**.
 
 ### C) Keep Rust profiles (intentional divergence)
-- Rust will remain profile-driven (dev/ci/full).  
+- Rust will remain profile-driven (dev/ci/full).
 - Session scripts will enforce that the correct profile is used for the current context.
 
 ---

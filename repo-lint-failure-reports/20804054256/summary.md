@@ -25,33 +25,33 @@
 🔍 Running repository linters and formatters...
 
 
-                        Linting Results                        
-                                                               
-  Runner              Status    Files   Violations   Duration  
- ───────────────────────────────────────────────────────────── 
-  black               ✅ PASS       -            0          -  
-  ruff                ✅ PASS       -            0          -  
-  pylint              ✅ PASS       -            0          -  
-  python-docstrings   ❌ FAIL       -            1          -  
-                                                               
+                        Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           python-docstrings Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-  Found 1 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                               
-  File          Line   Message                                                                                                                 
- ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  __init__.py      -   Missing required sections: Exit Codes content (Exit codes incomplete: No exit codes found (expected at least 0 and 1))  
-                                                                                                                                               
+  Runner              Status    Files   Violations   Duration
+ ─────────────────────────────────────────────────────────────
+  black               ✅ PASS       -            0          -
+  ruff                ✅ PASS       -            0          -
+  pylint              ✅ PASS       -            0          -
+  python-docstrings   ❌ FAIL       -            1          -
 
-           Summary           
-  Total Runners: 4           
-    Passed: 3                
-    Failed: 1                
-  Total Violations: 1        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           python-docstrings Failures
+  Found 1 violation(s)
+
+
+  File          Line   Message
+ ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  __init__.py      -   Missing required sections: Exit Codes content (Exit codes incomplete: No exit codes found (expected at least 0 and 1))
+
+
+           Summary
+  Total Runners: 4
+    Passed: 3
+    Failed: 1
+  Total Violations: 1
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 
 ## Vector Test Failures

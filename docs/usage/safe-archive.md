@@ -22,7 +22,7 @@ safe-run archive [OPTIONS] <source> <destination>
 ## Supported Formats
 
 | Extension | Format | Compression |
-|-----------|--------|-------------|
+| ----------- | -------- | ------------- |
 | `.tar.gz`, `.tgz` | Tar + Gzip | Fast, good compression |
 | `.tar.bz2`, `.tbz2` | Tar + Bzip2 | Slower, better compression |
 | `.zip` | ZIP | Cross-platform compatibility |
@@ -66,7 +66,7 @@ safe-run archive --no-clobber source/ output.tar.gz
 ## Exit Codes
 
 | Code | Meaning |
-|------|---------|
+| ------ | --------- |
 | 0 | Archive created successfully |
 | 2 | Invalid arguments or source not found |
 | 40 | No-clobber collision in strict mode |
@@ -199,7 +199,7 @@ README.md
 ## Comparison with safe-run
 
 | Feature | safe-run | safe-run archive |
-|---------|----------|------------------|
+| --------- | ---------- | ------------------ |
 | Purpose | Execute commands with logging | Create directory archives |
 | Output | Log files on failure | Archive files always |
 | Success case | No artifacts | Creates archive |

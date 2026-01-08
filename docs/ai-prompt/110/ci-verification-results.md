@@ -89,7 +89,7 @@ The umbrella workflow `.github/workflows/repo-lint-and-docstring-enforcement.yml
 ### Comparison with Legacy Workflows
 
 | Feature | Legacy Workflows | Umbrella Workflow | Status |
-|---------|-----------------|-------------------|--------|
+| --------- | ----------------- | ------------------- | -------- |
 | **Python linting** | Black, Ruff, Pylint | Black, Ruff, Pylint | ✅ PARITY |
 | **Bash linting** | ShellCheck, shfmt | ShellCheck, shfmt | ✅ PARITY |
 | **PowerShell linting** | PSScriptAnalyzer | PSScriptAnalyzer | ✅ PARITY |

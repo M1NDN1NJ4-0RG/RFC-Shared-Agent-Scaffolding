@@ -47,7 +47,7 @@ Every PowerShell script must include these sections (using PowerShell help keywo
 ```powershell
 .DESCRIPTION
   Does something useful.
-  
+
   Exit Codes:
     0    Success
     1    Failure
@@ -95,7 +95,7 @@ See [exit-codes-contract.md](./exit-codes-contract.md) for canonical exit code m
 .NOTES
   - Constraint or invariant 1
   - Constraint or invariant 2
-  
+
   Author: <if applicable>
   Version: <if applicable>
 
@@ -132,7 +132,7 @@ param(
 
 .DESCRIPTION
   Detailed description of behavior.
-  
+
   Exit Codes:
     0    Success
     1    Failure
@@ -170,16 +170,16 @@ param(
 
 .DESCRIPTION
   Detailed description of what the script does.
-  
+
   State what it does NOT do if relevant for clarity.
-  
+
   Binary Discovery Order (for wrappers):
     1. BIN_PATH environment variable (if set and valid)
     2. ./path/to/dev/binary.exe (dev mode, relative to repo root)
     3. ./dist/<os>/<arch>/binary.exe (CI artifacts)
     4. PATH lookup (system installation)
     5. Error with installation instructions (exit 127)
-  
+
   Exit Codes:
     0      Success
     1      General failure
@@ -228,7 +228,7 @@ param(
   - Do not modify discovery order without updating docs
   - Exit codes must match canonical tool behavior
   - Always preserve child process exit codes
-  
+
   Platform: Windows, Linux, macOS (PowerShell Core 7.0+)
   Version: 1.0.0
 
@@ -241,7 +241,7 @@ param(
 param(
     [Parameter(Mandatory=$true, Position=0)]
     [string[]]$Command,
-    
+
     [Parameter(Mandatory=$false)]
     [switch]$Verbose
 )
@@ -360,7 +360,7 @@ The validator does NOT check:
 ```powershell
 .DESCRIPTION
   This script processes files.
-  
+
   Exit Codes:
     0    Success
     1    Failure

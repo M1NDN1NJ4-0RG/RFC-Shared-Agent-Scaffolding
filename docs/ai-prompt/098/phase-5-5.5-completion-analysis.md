@@ -142,7 +142,7 @@ scripts/docstring_validators/
 """
 :Architecture:
     The validator operates in several phases:
-    
+
     **Phase 1: File Discovery** ...
     **Phase 2: Language Classification** ...
     **Phase 3: File/Module-Level Validation** ...
@@ -206,7 +206,7 @@ docs/contributing/naming-and-style.md:333:
 - `run-tests.pl` → `run_tests.pl`
 
 docs/ai-prompt/098/098-overview.md:348:
-- Use `rg` to find kebab-case references (e.g., `run-tests.pl`) 
+- Use `rg` to find kebab-case references (e.g., `run-tests.pl`)
   and update them to snake_case (e.g., `run_tests.pl`).
 ```
 
@@ -243,10 +243,10 @@ From Issue #110 body, Phase 3 Item 3.7:
 ### Item 3.7 — Docstring validator modularization + symbol scanners
 (Imported from Repo Cleanup EPIC Phase 5.5) (High)
 
-> Why this is here: `repo_lint` is the orchestrator, but symbol-level 
-> docstring enforcement lives in `scripts/validate_docstrings.py`. 
-> The older Repo Cleanup EPIC (paused mid-Phase 5.5) defines the missing work 
-> (per-language validators and real parsers). To avoid drift, we track 
+> Why this is here: `repo_lint` is the orchestrator, but symbol-level
+> docstring enforcement lives in `scripts/validate_docstrings.py`.
+> The older Repo Cleanup EPIC (paused mid-Phase 5.5) defines the missing work
+> (per-language validators and real parsers). To avoid drift, we track
 > that dependency here too.
 ```
 
@@ -264,7 +264,7 @@ From Issue #110 body, Phase 3 Item 3.7:
 ### Phase 5 Completion Evidence
 
 | Sub-Item | Description | Status | Evidence |
-|----------|-------------|--------|----------|
+| ---------- | ------------- | -------- | ---------- |
 | 5.1.1 | Document run-tests.sh behavior | ✅ | Issue #110 Phase 5 |
 | 5.1.2 | Define parity requirements | ✅ | Issue #110 Phase 5 |
 | 5.1.3 | Decide naming conventions | ✅ | `naming-and-style.md` + runners exist |
@@ -284,7 +284,7 @@ From Issue #110 body, Phase 3 Item 3.7:
 ### Phase 5.5 Completion Evidence
 
 | Item | Description | Status | Evidence |
-|------|-------------|--------|----------|
+| ------ | ------------- | -------- | ---------- |
 | **5.5.0** | **Preflight: Perl filename normalization** | ⚠️ **3/4** | **Gap: Sub-Item 5.5.0.3** |
 | 5.5.0.1 | Inventory Perl files | ✅ | All files are snake_case |
 | 5.5.0.2 | Rename to snake_case | ✅ | Completed (verified) |
@@ -376,8 +376,8 @@ rg "\w+-\w+\.pl" docs/ --type md
 
 **Status:** ✅ COMPLETE (Implemented via Issue #110)
 
-**Cross-Reference:** This work was absorbed into and completed by 
-[Issue #110: Build repo_lint Python Package/CLI](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/110) 
+**Cross-Reference:** This work was absorbed into and completed by
+[Issue #110: Build repo_lint Python Package/CLI](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/110)
 as Phase 5 and Phase 3 Item 3.7.
 
 ### Item 5.1 — Define the contract for "equivalent" (High)
@@ -565,7 +565,7 @@ rg "Parser::ParseFile" scripts/docstring_validators/powershell_validator.py
 rg "run-tests\.pl" docs/ --type md
 
 # Verify naming conventions
-cat docs/contributing/naming-and-style.md | head -120
+ cat docs/contributing/naming-and-style.md | head -120
 ```
 
 All verification completed on: 2025-12-30

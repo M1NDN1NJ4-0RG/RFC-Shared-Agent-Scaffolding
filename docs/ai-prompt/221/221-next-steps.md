@@ -259,7 +259,7 @@ export PERL5LIB="$HOME/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"
 # Verify fixtures excluded
 repo-lint check --ci --only python  # Should show 0 violations, no fixture files
 
-# Verify vector mode includes fixtures  
+# Verify vector mode includes fixtures
 repo-lint check --include-fixtures --only python  # Should show violations IN fixture files
 
 # Run tests

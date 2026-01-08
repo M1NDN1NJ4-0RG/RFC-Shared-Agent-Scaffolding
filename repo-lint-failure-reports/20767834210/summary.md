@@ -28,50 +28,50 @@
   Rust Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  rustfmt           ❌ FAIL       -           20          -  
-  clippy            ✅ PASS       -            0          -  
-  rust-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-  Found 20 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                     
-  File   Line   Message                                                                                                              
- ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:164:  
-  .         -   // 11. Run automatic verification gate (repo-lint check --ci)                                                        
-  .         -   // This runs if repo-lint was in the plan (profile includes it)                                                      
-  .         -   -    let repo_lint_in_plan = plan.phases.iter().any(|phase| {                                                        
-  .         -   -        phase                                                                                                       
-  .         -   -            .steps                                                                                                  
-  .         -   -            .iter()                                                                                                 
-  .         -   -            .any(|step| step.installer == "repo-lint")                                                              
-  .         -   -    });                                                                                                             
-  .         -   +    let repo_lint_in_plan = plan                                                                                    
-  .         -   +        .phases                                                                                                     
-  .         -   +        .iter()                                                                                                     
-  .         -   +        .any(|phase| phase.steps.iter().any(|step| step.installer == "repo-lint"));                                 
-  .         -   if repo_lint_in_plan && !dry_run {                                                                                   
-  .         -   println!("\n🔍 Running verification gate (repo-lint check --ci)...");                                                
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:188:  
-  .         -   println!("  ✓ Verification gate passed (no violations)");                                                            
-  .         -   }                                                                                                                    
-  .         -   1 => {                                                                                                               
-  .         -   -                        println!("  ✓ Verification gate passed (tools functional, violations found)");              
-                                                                                                                                     
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  rustfmt           ❌ FAIL       -           20          -
+  clippy            ✅ PASS       -            0          -
+  rust-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 20       
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures
+  Found 20 violation(s)
+
+
+  File   Line   Message
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:164:
+  .         -   // 11. Run automatic verification gate (repo-lint check --ci)
+  .         -   // This runs if repo-lint was in the plan (profile includes it)
+  .         -   -    let repo_lint_in_plan = plan.phases.iter().any(|phase| {
+  .         -   -        phase
+  .         -   -            .steps
+  .         -   -            .iter()
+  .         -   -            .any(|step| step.installer == "repo-lint")
+  .         -   -    });
+  .         -   +    let repo_lint_in_plan = plan
+  .         -   +        .phases
+  .         -   +        .iter()
+  .         -   +        .any(|phase| phase.steps.iter().any(|step| step.installer == "repo-lint"));
+  .         -   if repo_lint_in_plan && !dry_run {
+  .         -   println!("\n🔍 Running verification gate (repo-lint check --ci)...");
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:188:
+  .         -   println!("  ✓ Verification gate passed (no violations)");
+  .         -   }
+  .         -   1 => {
+  .         -   -                        println!("  ✓ Verification gate passed (tools functional, violations found)");
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 20
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

@@ -120,7 +120,7 @@ public class BinaryWrapper
     {
         if (string.IsNullOrEmpty(binaryName))
             throw new ArgumentNullException(nameof(binaryName));
-            
+
         this.binaryName = binaryName;
     }
 

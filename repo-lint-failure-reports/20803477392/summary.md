@@ -107,7 +107,7 @@
 2026-01-08T02:42:36.3562296Z ##[debug]lfs = false
 2026-01-08T02:42:36.3563299Z ##[debug]submodules = false
 2026-01-08T02:42:36.3564360Z ##[debug]recursive submodules = false
-2026-01-08T02:42:36.3565538Z ##[debug]GitHub Host URL = 
+2026-01-08T02:42:36.3565538Z ##[debug]GitHub Host URL =
 2026-01-08T02:42:36.3567879Z ::add-matcher::/home/runner/work/_actions/actions/checkout/11bd71901bbe5b1630ceea73d27597364c9af683/dist/problem-matcher.json
 2026-01-08T02:42:36.3639023Z ##[debug]Added matchers: 'checkout-git'. Problem matchers scan action output for known warning or error strings and report these inline.
 2026-01-08T02:42:36.3643967Z Syncing repository: M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding
@@ -204,22 +204,22 @@
 2026-01-08T02:42:37.1550247Z ##[group]Checking out the ref
 2026-01-08T02:42:37.1552774Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/288/merge
 2026-01-08T02:42:37.2234041Z Note: switching to 'refs/remotes/pull/288/merge'.
-2026-01-08T02:42:37.2235005Z 
+2026-01-08T02:42:37.2235005Z
 2026-01-08T02:42:37.2235627Z You are in 'detached HEAD' state. You can look around, make experimental
 2026-01-08T02:42:37.2237289Z changes and commit them, and you can discard any commits you make in this
 2026-01-08T02:42:37.2239517Z state without impacting any branches by switching back to a branch.
-2026-01-08T02:42:37.2240428Z 
+2026-01-08T02:42:37.2240428Z
 2026-01-08T02:42:37.2241035Z If you want to create a new branch to retain commits you create, you may
 2026-01-08T02:42:37.2242726Z do so (now or later) by using -c with the switch command. Example:
-2026-01-08T02:42:37.2243561Z 
+2026-01-08T02:42:37.2243561Z
 2026-01-08T02:42:37.2243911Z   git switch -c <new-branch-name>
-2026-01-08T02:42:37.2244497Z 
+2026-01-08T02:42:37.2244497Z
 2026-01-08T02:42:37.2245188Z Or undo this operation with:
-2026-01-08T02:42:37.2245714Z 
+2026-01-08T02:42:37.2245714Z
 2026-01-08T02:42:37.2246034Z   git switch -
-2026-01-08T02:42:37.2246480Z 
+2026-01-08T02:42:37.2246480Z
 2026-01-08T02:42:37.2247216Z Turn off this advice by setting config variable advice.detachedHead to false
-2026-01-08T02:42:37.2248204Z 
+2026-01-08T02:42:37.2248204Z
 2026-01-08T02:42:37.2249379Z HEAD is now at f1babcc Merge cd9b384aa0c015b074e2ba168e3b7d3464af8a63 into c243618685d70d49119e6e4bcb143fab8bb2eaa2
 2026-01-08T02:42:37.2252217Z ##[debug]0
 2026-01-08T02:42:37.2253360Z ##[debug]
@@ -291,7 +291,7 @@
 2026-01-08T02:42:37.4140549Z ::group::Installed versions
 2026-01-08T02:42:37.4142184Z ##[group]Installed versions
 2026-01-08T02:42:37.4144778Z ##[debug]Semantic version spec of 3.11 is 3.11
-2026-01-08T02:42:37.4147153Z ##[debug]isExplicit: 
+2026-01-08T02:42:37.4147153Z ##[debug]isExplicit:
 2026-01-08T02:42:37.4148513Z ##[debug]explicit? false
 2026-01-08T02:42:37.4161817Z ##[debug]isExplicit: 3.10.19
 2026-01-08T02:42:37.4163437Z ##[debug]explicit? true
@@ -365,7 +365,7 @@
 2026-01-08T02:42:40.7499718Z Downloading pygments-2.19.2-py3-none-any.whl (1.2 MB)
 2026-01-08T02:42:40.7811295Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 39.0 MB/s  0:00:00
 2026-01-08T02:42:40.8032153Z Installing collected packages: pygments, pluggy, packaging, iniconfig, pytest
-2026-01-08T02:42:41.6141812Z 
+2026-01-08T02:42:41.6141812Z
 2026-01-08T02:42:41.6151737Z Successfully installed iniconfig-2.3.0 packaging-25.0 pluggy-1.6.0 pygments-2.19.2 pytest-9.0.2
 2026-01-08T02:42:41.6591373Z ##[debug]Finishing: Install pytest
 2026-01-08T02:42:41.6598912Z ##[debug]Evaluating condition for step: 'Run vector tests'
@@ -394,71 +394,71 @@
 2026-01-08T02:42:42.0488690Z rootdir: /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
 2026-01-08T02:42:42.0489268Z configfile: pyproject.toml
 2026-01-08T02:42:42.0489508Z collecting ... collected 6 items
-2026-01-08T02:42:42.0489765Z 
+2026-01-08T02:42:42.0489765Z
 2026-01-08T02:42:42.1116760Z tools/repo_lint/tests/test_vectors.py::test_python_docstring_vectors FAILED [ 16%]
 2026-01-08T02:42:42.1123423Z tools/repo_lint/tests/test_vectors.py::test_bash_docstring_vectors SKIPPED [ 33%]
 2026-01-08T02:42:42.1130058Z tools/repo_lint/tests/test_vectors.py::test_powershell_docstring_vectors SKIPPED [ 50%]
 2026-01-08T02:42:42.1136539Z tools/repo_lint/tests/test_vectors.py::test_perl_docstring_vectors SKIPPED [ 66%]
 2026-01-08T02:42:42.1145419Z tools/repo_lint/tests/test_vectors.py::test_vector_fixtures_exist PASSED [ 83%]
 2026-01-08T02:42:42.1374578Z tools/repo_lint/tests/test_vectors.py::test_vector_schema_validation PASSED [100%]
-2026-01-08T02:42:42.1375325Z 
+2026-01-08T02:42:42.1375325Z
 2026-01-08T02:42:42.1375599Z =================================== FAILURES ===================================
 2026-01-08T02:42:42.1376277Z ________________________ test_python_docstring_vectors _________________________
-2026-01-08T02:42:42.1376742Z 
+2026-01-08T02:42:42.1376742Z
 2026-01-08T02:42:42.1376919Z     def test_python_docstring_vectors():
 2026-01-08T02:42:42.1377436Z         """Test Python docstring validation vectors.
-2026-01-08T02:42:42.1377948Z     
+2026-01-08T02:42:42.1377948Z
 2026-01-08T02:42:42.1378193Z         :Purpose:
 2026-01-08T02:42:42.1378720Z             Validates that Python docstring enforcement produces expected violations
 2026-01-08T02:42:42.1379494Z             for missing docstrings, pragma exemptions, and edge cases.
-2026-01-08T02:42:42.1380032Z     
+2026-01-08T02:42:42.1380032Z
 2026-01-08T02:42:42.1380377Z         :note: Loads and runs all Python docstring vectors from:
 2026-01-08T02:42:42.1381029Z             conformance/repo-lint/vectors/docstrings/python-docstring-*.json
 2026-01-08T02:42:42.1381809Z         """
 2026-01-08T02:42:42.1382126Z         # Find all Python docstring vectors
 2026-01-08T02:42:42.1382709Z         vector_files = list(DOCSTRINGS_DIR.glob("python-docstring-*.json"))
 2026-01-08T02:42:42.1383375Z         assert vector_files, "No Python docstring vectors found"
-2026-01-08T02:42:42.1383867Z     
+2026-01-08T02:42:42.1383867Z
 2026-01-08T02:42:42.1384151Z         for vector_file in vector_files:
 2026-01-08T02:42:42.1385039Z             vector = load_vector(vector_file)
 2026-01-08T02:42:42.1385512Z             fixture_path = REPO_ROOT / vector["fixture"]
-2026-01-08T02:42:42.1385887Z     
+2026-01-08T02:42:42.1385887Z
 2026-01-08T02:42:42.1386170Z             # Run docstring validator on fixture
 2026-01-08T02:42:42.1386688Z             actual_violations = run_docstring_validator(fixture_path)
-2026-01-08T02:42:42.1387178Z     
+2026-01-08T02:42:42.1387178Z
 2026-01-08T02:42:42.1387469Z             # Compare with expected violations
 2026-01-08T02:42:42.1388203Z >           compare_violations(actual_violations, vector["expected_violations"], vector["id"])
-2026-01-08T02:42:42.1388734Z 
-2026-01-08T02:42:42.1388916Z tools/repo_lint/tests/test_vectors.py:323: 
-2026-01-08T02:42:42.1389419Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-2026-01-08T02:42:42.1389794Z 
+2026-01-08T02:42:42.1388734Z
+2026-01-08T02:42:42.1388916Z tools/repo_lint/tests/test_vectors.py:323:
+2026-01-08T02:42:42.1389419Z _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+2026-01-08T02:42:42.1389794Z
 2026-01-08T02:42:42.1389901Z actual = []
 2026-01-08T02:42:42.1391534Z expected = [{'line': 27, 'message': "Function 'no_doc' is missing a docstring", 'path': 'conformance/repo-lint/vectors/fixtures/p...ring", 'path': 'conformance/repo-lint/vectors/fixtures/python/docstring_test.py', 'rule_id': 'DOCSTRING.MISSING', ...}]
 2026-01-08T02:42:42.1393207Z vector_id = 'python-docstring-001'
-2026-01-08T02:42:42.1393491Z 
+2026-01-08T02:42:42.1393491Z
 2026-01-08T02:42:42.1393925Z     def compare_violations(actual: List[Dict], expected: List[Dict], vector_id: str) -> None:
 2026-01-08T02:42:42.1395021Z         """Compare actual vs expected violations and assert match.
-2026-01-08T02:42:42.1395521Z     
+2026-01-08T02:42:42.1395521Z
 2026-01-08T02:42:42.1395942Z         :param actual: List of actual violations from running validator
 2026-01-08T02:42:42.1396615Z             expected: List of expected violations from vector file
 2026-01-08T02:42:42.1397215Z             vector_id: ID of test vector (for error messages)
-2026-01-08T02:42:42.1397675Z     
+2026-01-08T02:42:42.1397675Z
 2026-01-08T02:42:42.1398060Z         :raises AssertionError: If violations don't match expected
-2026-01-08T02:42:42.1398564Z     
+2026-01-08T02:42:42.1398564Z
 2026-01-08T02:42:42.1398939Z         :note: Compares violations by normalized fields:
 2026-01-08T02:42:42.1399408Z             - rule_id
 2026-01-08T02:42:42.1399750Z             - symbol
 2026-01-08T02:42:42.1400039Z             - symbol_kind
 2026-01-08T02:42:42.1400318Z             - line
 2026-01-08T02:42:42.1400596Z             - severity
-2026-01-08T02:42:42.1400864Z     
+2026-01-08T02:42:42.1400864Z
 2026-01-08T02:42:42.1401539Z             Path matching is relaxed (basename only) to handle absolute vs relative paths.
 2026-01-08T02:42:42.1402287Z             Message matching uses substring match to handle variation in error text.
 2026-01-08T02:42:42.1402870Z         """
 2026-01-08T02:42:42.1403241Z         # Sort both lists by symbol and line for stable comparison
 2026-01-08T02:42:42.1403942Z         actual_sorted = sorted(actual, key=lambda v: (v.get("symbol", ""), v.get("line", 0)))
 2026-01-08T02:42:42.1404859Z         expected_sorted = sorted(expected, key=lambda v: (v.get("symbol", ""), v.get("line", 0)))
-2026-01-08T02:42:42.1405487Z     
+2026-01-08T02:42:42.1405487Z
 2026-01-08T02:42:42.1405771Z         # Build diagnostic message
 2026-01-08T02:42:42.1406207Z         if len(actual_sorted) != len(expected_sorted):
 2026-01-08T02:42:42.1406740Z             msg = f"\n{vector_id}: Violation count mismatch\n"
@@ -470,28 +470,28 @@
 2026-01-08T02:42:42.1410036Z             for v in actual_sorted:
 2026-01-08T02:42:42.1410601Z                 msg += f"  - {v.get('symbol')} (line {v.get('line')}): {v.get('rule_id')}\n"
 2026-01-08T02:42:42.1411337Z >           pytest.fail(msg)
-2026-01-08T02:42:42.1411706Z E           Failed: 
+2026-01-08T02:42:42.1411706Z E           Failed:
 2026-01-08T02:42:42.1412112Z E           python-docstring-001: Violation count mismatch
 2026-01-08T02:42:42.1412881Z E           Expected 3 violations, got 0
-2026-01-08T02:42:42.1413316Z E           
+2026-01-08T02:42:42.1413316Z E
 2026-01-08T02:42:42.1413618Z E           Expected violations:
 2026-01-08T02:42:42.1414102Z E             - MissingClassDoc (line 31): DOCSTRING.MISSING
 2026-01-08T02:42:42.1414672Z E             - method_without_doc (line 36): DOCSTRING.MISSING
 2026-01-08T02:42:42.1415208Z E             - no_doc (line 27): DOCSTRING.MISSING
-2026-01-08T02:42:42.1415627Z E           
+2026-01-08T02:42:42.1415627Z E
 2026-01-08T02:42:42.1415930Z E           Actual violations:
-2026-01-08T02:42:42.1416177Z 
+2026-01-08T02:42:42.1416177Z
 2026-01-08T02:42:42.1416378Z tools/repo_lint/tests/test_vectors.py:260: Failed
 2026-01-08T02:42:42.1416927Z =========================== short test summary info ============================
-2026-01-08T02:42:42.1417734Z FAILED tools/repo_lint/tests/test_vectors.py::test_python_docstring_vectors - Failed: 
+2026-01-08T02:42:42.1417734Z FAILED tools/repo_lint/tests/test_vectors.py::test_python_docstring_vectors - Failed:
 2026-01-08T02:42:42.1418480Z python-docstring-001: Violation count mismatch
 2026-01-08T02:42:42.1418952Z Expected 3 violations, got 0
-2026-01-08T02:42:42.1419207Z 
+2026-01-08T02:42:42.1419207Z
 2026-01-08T02:42:42.1419350Z Expected violations:
 2026-01-08T02:42:42.1419738Z   - MissingClassDoc (line 31): DOCSTRING.MISSING
 2026-01-08T02:42:42.1420263Z   - method_without_doc (line 36): DOCSTRING.MISSING
 2026-01-08T02:42:42.1420748Z   - no_doc (line 27): DOCSTRING.MISSING
-2026-01-08T02:42:42.1421049Z 
+2026-01-08T02:42:42.1421049Z
 2026-01-08T02:42:42.1421334Z Actual violations:
 2026-01-08T02:42:42.1422037Z ==================== 1 failed, 2 passed, 3 skipped in 0.09s ====================
 2026-01-08T02:42:42.1576199Z ##[error]Process completed with exit code 1.

@@ -205,11 +205,11 @@ jobs:
   validate:
     name: Validation Job
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Run validation
         run: |
           echo "Validation logic here"
@@ -293,20 +293,20 @@ jobs:
   validate:
     name: Run All Validations
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
+
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.8'
-      
+
       - name: Run validation script
         run: |
           python3 scripts/validate.py
-      
+
       - name: Upload validation report on failure
         if: failure()
         uses: actions/upload-artifact@v3

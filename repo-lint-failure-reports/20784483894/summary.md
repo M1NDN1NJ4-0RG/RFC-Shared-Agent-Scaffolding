@@ -28,50 +28,50 @@
   Rust Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  rustfmt           ❌ FAIL       -           20          -  
-  clippy            ✅ PASS       -            0          -  
-  rust-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-  Found 20 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                     
-  File   Line   Message                                                                                                              
- ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:192:  
-  .         -   println!("\n🔍 Running verification gate (repo-lint check --ci)...");                                                
-  .         -   let repo_lint_bin = ctx.repo_lint_bin();                                                                             
-  .         -   -                                                                                                                    
-  .         -   +                                                                                                                    
-  .         -   // Add .venv/bin to PATH for the subprocess so Python tools are accessible                                           
-  .         -   let venv_bin = ctx.venv_path.join("bin");                                                                            
-  .         -   let current_path = std::env::var("PATH").unwrap_or_default();                                                        
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:199:  
-  .         -   -                                                                                                                    
-  .         -   +                                                                                                                    
-  .         -   // Add Perl environment for Perl tools                                                                               
-  .         -   let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());                                     
-  .         -   let perl_home = format!("{}/perl5", home);                                                                           
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:203:  
-  .         -   let perl_bin = format!("{}/bin", perl_home);                                                                         
-  .         -   let perl5lib = format!("{}/lib/perl5", perl_home);                                                                   
-  .         -   -                                                                                                                    
-  .         -   +                                                                                                                    
-  .         -   let new_path = format!("{}:{}:{}", perl_bin, venv_bin.display(), current_path);                                      
-                                                                                                                                     
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  rustfmt           ❌ FAIL       -           20          -
+  clippy            ✅ PASS       -            0          -
+  rust-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 20       
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures
+  Found 20 violation(s)
+
+
+  File   Line   Message
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:192:
+  .         -   println!("\n🔍 Running verification gate (repo-lint check --ci)...");
+  .         -   let repo_lint_bin = ctx.repo_lint_bin();
+  .         -   -
+  .         -   +
+  .         -   // Add .venv/bin to PATH for the subprocess so Python tools are accessible
+  .         -   let venv_bin = ctx.venv_path.join("bin");
+  .         -   let current_path = std::env::var("PATH").unwrap_or_default();
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:199:
+  .         -   -
+  .         -   +
+  .         -   // Add Perl environment for Perl tools
+  .         -   let home = std::env::var("HOME").unwrap_or_else(|_| "/home/runner".to_string());
+  .         -   let perl_home = format!("{}/perl5", home);
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_main.rs:203:
+  .         -   let perl_bin = format!("{}/bin", perl_home);
+  .         -   let perl5lib = format!("{}/lib/perl5", perl_home);
+  .         -   -
+  .         -   +
+  .         -   let new_path = format!("{}:{}:{}", perl_bin, venv_bin.display(), current_path);
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 20
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

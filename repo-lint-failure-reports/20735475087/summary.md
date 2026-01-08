@@ -28,31 +28,31 @@
   Bash Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  shellcheck        ❌ FAIL       -            1          -  
-  shfmt             ✅ PASS       -            0          -  
-  bash-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              shellcheck Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
-  Found 1 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                                   
-  File   Line   Message                                                                                                                            
- ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-            -   scripts/bootstrap-repo-lint-toolchain.sh:1060:11: warning: Declare and assign separately to avoid masking return values. [SC2155]  
-                                                                                                                                                   
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  shellcheck        ❌ FAIL       -            1          -
+  shfmt             ✅ PASS       -            0          -
+  bash-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 1        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              shellcheck Failures
+  Found 1 violation(s)
+
+
+  File   Line   Message
+ ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+            -   scripts/bootstrap-repo-lint-toolchain.sh:1060:11: warning: Declare and assign separately to avoid masking return values. [SC2155]
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 1
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

@@ -381,20 +381,20 @@ See templates in:
    ```bash
    # All linting checks (recommended)
    repo-lint check --ci
-   
+
    # Or run individual checks:
-   
+
    # Python code quality
    repo-lint check --only python
-   
+
    # YAML linting
    make lint-yaml
-   
+
    # Docstrings, structure, and references
    python3 scripts/validate_docstrings.py
    ./scripts/validate-structure.sh
    ./scripts/verify-repo-references.sh
-   
+
    # Tests
    cd rust/ && cargo test
    cd ../wrappers/bash/ && ./run-tests.sh

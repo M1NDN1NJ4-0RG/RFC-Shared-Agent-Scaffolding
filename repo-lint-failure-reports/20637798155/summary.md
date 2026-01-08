@@ -24,7 +24,7 @@ You MUST extract:
 
 ## Non-negotiable deliverable
 You must **IDENTIFY AND FIX** the underlying causes. Do not write a “forensic report” as the primary output. The primary output is:
-1) code fixes  
+1) code fixes
 2) proof (commands + outputs) that the fixes work
 
 ---
@@ -69,15 +69,15 @@ If you believe an outcome “cannot happen,” you MUST prove it via a test that
 
 ## Testing requirements (MUST BE UNIT-LEVEL, DETERMINISTIC)
 You MUST add or extend unit tests that validate both:
-1) **file selection** (exact included/excluded path sets)  
+1) **file selection** (exact included/excluded path sets)
 2) **runner isolation** (no cross-language leakage)
 
 Existing test file that must remain clean and compliant if modified:
 - `tools/repo_lint/tests/test_fixture_vector_mode.py`
 
 Any test files you touch or create MUST pass:
-- repo-lint linting  
-- docstring contract validation  
+- repo-lint linting
+- docstring contract validation
 
 MANDATORY: **Do not commit** until lint + docstrings + tests all pass locally.
 
@@ -135,8 +135,8 @@ No exceptions. No “already covered above.” The journal must stand alone.
 ## Session limit contingency (MANDATORY)
 If you are approaching session/context limits before completing this task:
 
-1) **STOP making changes immediately.**  
-2) Write **EXTREMELY DETAILED** next steps into **THIS FILE** (no substitutes, no summaries):  
+1) **STOP making changes immediately.**
+2) Write **EXTREMELY DETAILED** next steps into **THIS FILE** (no substitutes, no summaries):
    - `docs/ai-prompt/221/221-next-steps.md`
 3) The next steps MUST include:
    - exact files to open

@@ -75,7 +75,7 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
    ```bash
    # Run Bash bootstrapper once to populate all caches
    ./scripts/bootstrap-repo-lint-toolchain.sh
-   
+
    # Run Rust bootstrapper once to populate any Rust-specific caches
    # IMPORTANT: Only run this if the venv creation fix has been implemented
    # Test first: rm -rf .venv && ./rust/target/release/bootstrap-repo-cli install --profile dev
@@ -88,10 +88,10 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
    ```bash
    # Check pip cache
    ls ~/.cache/pip/
-   
+
    # Check cargo cache
    ls ~/.cargo/registry/
-   
+
    # Check system package manager cache
    # (varies by OS: apt cache, homebrew cache, etc.)
    ```

@@ -105,7 +105,7 @@ wrapper_script bash -c "exit N"
 ### Results: Bash Wrapper
 
 | Exit Code | Expected | Actual | Status |
-|-----------|----------|--------|--------|
+| ----------- | ---------- | -------- | -------- |
 | 0 | 0 | 0 | ✅ |
 | 1 | 1 | 1 | ✅ |
 | 7 | 7 | 7 | ✅ |
@@ -118,7 +118,7 @@ wrapper_script bash -c "exit N"
 ### Results: Perl Wrapper
 
 | Exit Code | Expected | Actual | Status |
-|-----------|----------|--------|--------|
+| ----------- | ---------- | -------- | -------- |
 | 0 | 0 | 0 | ✅ |
 | 1 | 1 | 1 | ✅ |
 | 7 | 7 | 7 | ✅ |
@@ -131,7 +131,7 @@ wrapper_script bash -c "exit N"
 ### Results: Python3 Wrapper
 
 | Exit Code | Expected | Actual | Status |
-|-----------|----------|--------|--------|
+| ----------- | ---------- | -------- | -------- |
 | 0 | 0 | 0 | ✅ |
 | 1 | 1 | 1 | ✅ |
 | 7 | 7 | 7 | ✅ |
@@ -162,7 +162,7 @@ wrapper_script bash -c "exit N"
 ### Results: Bash Wrapper
 
 | Test Case | Expected Output | Actual Output | Status |
-|-----------|----------------|---------------|--------|
+| ----------- | ---------------- | --------------- | -------- |
 | Empty arg | `\n` + `after` | Contains `after` | ✅ |
 | Spaces | `hello world` | `hello world` | ✅ |
 | Metacharacters | `test;echo hacked` (literal) | `test;echo hacked` | ✅ |
@@ -172,7 +172,7 @@ wrapper_script bash -c "exit N"
 ### Results: Perl Wrapper
 
 | Test Case | Expected Output | Actual Output | Status |
-|-----------|----------------|---------------|--------|
+| ----------- | ---------------- | --------------- | -------- |
 | Empty arg | `\n` + `after` | Contains `after` | ✅ |
 | Spaces | `hello world` | `hello world` | ✅ |
 | Metacharacters | `test;echo hacked` (literal) | `test;echo hacked` | ✅ |
@@ -182,7 +182,7 @@ wrapper_script bash -c "exit N"
 ### Results: Python3 Wrapper
 
 | Test Case | Expected Output | Actual Output | Status |
-|-----------|----------------|---------------|--------|
+| ----------- | ---------------- | --------------- | -------- |
 | Empty arg | `\n` + `after` | Contains `after` | ✅ |
 | Spaces | `hello world` | `hello world` | ✅ |
 | Metacharacters | `test;echo hacked` (literal) | `test;echo hacked` | ✅ |

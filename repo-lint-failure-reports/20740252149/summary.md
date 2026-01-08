@@ -28,64 +28,64 @@
   Rust Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  rustfmt           ❌ FAIL       -           20          -  
-  clippy            ❌ FAIL       -            6          -  
-  rust-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-  Found 20 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                             
-  File   Line   Message                                                                                                                      
- ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_v2/checkpoint.rs:90:  
-  .         -   // Create parent directory if needed                                                                                         
-  .         -   if let Some(parent) = path.parent() {                                                                                        
-  .         -   fs::create_dir_all(parent).map_err(|e| {                                                                                     
-  .         -   -                BootstrapError::ConfigError(format!(                                                                        
-  .         -   -                    "Failed to create checkpoint directory: {}",                                                            
-  .         -   -                    e                                                                                                       
-  .         -   -                ))                                                                                                          
-  .         -   +                BootstrapError::ConfigError(format!("Failed to create checkpoint directory: {}", e))                        
-  .         -   })?;                                                                                                                         
-  .         -   }                                                                                                                            
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_v2/config.rs:79:      
-  .         -   if config_path.exists() {                                                                                                    
-  .         -   // Parse TOML file                                                                                                           
-  .         -   let contents = fs::read_to_string(&config_path).map_err(|e| {                                                                
-  .         -   -                BootstrapError::ConfigError(format!(                                                                        
-  .         -   -                    "Failed to read .bootstrap.toml: {}",                                                                   
-  .         -   -                    e                                                                                                       
-  .         -   -                ))                                                                                                          
-  .         -   +                BootstrapError::ConfigError(format!("Failed to read .bootstrap.toml: {}", e))                               
-                                                                                                                                             
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  rustfmt           ❌ FAIL       -           20          -
+  clippy            ❌ FAIL       -            6          -
+  rust-docstrings   ✅ PASS       -            0          -
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                clippy Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 6 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                
-  File                           Line   Message                                                                                 
- ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  src/bootstrap_v2/doctor.rs      315   unused_imports: unused import: `OsType`                                                 
-  src/bootstrap_v2/doctor.rs      316   unused_imports: unused import: `std::path::PathBuf`                                     
-  src/bootstrap_v2/executor.rs     89   clippy::unnecessary_cast: casting to the same type is unnecessary (`usize` -> `usize`)  
-  src/bootstrap_v2/executor.rs    277   clippy::manual_map: manual implementation of `Option::map`                              
-  src/bootstrap_v2/executor.rs     89   clippy::unnecessary_cast: casting to the same type is unnecessary (`usize` -> `usize`)  
-  src/bootstrap_v2/executor.rs    277   clippy::manual_map: manual implementation of `Option::map`                              
-                                                                                                                                
 
-           Summary           
-  Total Runners: 3           
-    Passed: 1                
-    Failed: 2                
-  Total Violations: 26       
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures
+  Found 20 violation(s)
+
+
+  File   Line   Message
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_v2/checkpoint.rs:90:
+  .         -   // Create parent directory if needed
+  .         -   if let Some(parent) = path.parent() {
+  .         -   fs::create_dir_all(parent).map_err(|e| {
+  .         -   -                BootstrapError::ConfigError(format!(
+  .         -   -                    "Failed to create checkpoint directory: {}",
+  .         -   -                    e
+  .         -   -                ))
+  .         -   +                BootstrapError::ConfigError(format!("Failed to create checkpoint directory: {}", e))
+  .         -   })?;
+  .         -   }
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_v2/config.rs:79:
+  .         -   if config_path.exists() {
+  .         -   // Parse TOML file
+  .         -   let contents = fs::read_to_string(&config_path).map_err(|e| {
+  .         -   -                BootstrapError::ConfigError(format!(
+  .         -   -                    "Failed to read .bootstrap.toml: {}",
+  .         -   -                    e
+  .         -   -                ))
+  .         -   +                BootstrapError::ConfigError(format!("Failed to read .bootstrap.toml: {}", e))
+
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                clippy Failures
+  Found 6 violation(s)
+
+
+  File                           Line   Message
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  src/bootstrap_v2/doctor.rs      315   unused_imports: unused import: `OsType`
+  src/bootstrap_v2/doctor.rs      316   unused_imports: unused import: `std::path::PathBuf`
+  src/bootstrap_v2/executor.rs     89   clippy::unnecessary_cast: casting to the same type is unnecessary (`usize` -> `usize`)
+  src/bootstrap_v2/executor.rs    277   clippy::manual_map: manual implementation of `Option::map`
+  src/bootstrap_v2/executor.rs     89   clippy::unnecessary_cast: casting to the same type is unnecessary (`usize` -> `usize`)
+  src/bootstrap_v2/executor.rs    277   clippy::manual_map: manual implementation of `Option::map`
+
+
+           Summary
+  Total Runners: 3
+    Passed: 1
+    Failed: 2
+  Total Violations: 26
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

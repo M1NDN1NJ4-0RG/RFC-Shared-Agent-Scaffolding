@@ -120,12 +120,12 @@ Pre-flight baseline validation has been completed successfully. All four languag
 
 **Test Suite Coverage:**
 
-| Language    | Tests  | Status | Framework        | Coverage                          |
-|-------------|--------|--------|------------------|-----------------------------------|
-| Bash        | 4      | ✅ PASS | Custom (lib.sh)  | safe-run, safe-archive, safe-check, preflight |
-| Perl        | 46     | ✅ PASS | Test::More       | All contract behaviors + signals  |
-| Python3     | 20     | ✅ PASS | unittest         | M0 contract + event ledger        |
-| PowerShell  | 17     | ✅ PASS | Pester 5+        | All behaviors + merged view       |
+| Language | Tests | Status | Framework | Coverage |
+| ------------- | -------- | -------- | ------------------ | ----------------------------------- |
+| Bash | 4 | ✅ PASS | Custom (lib.sh) | safe-run, safe-archive, safe-check, preflight |
+| Perl | 46 | ✅ PASS | Test::More | All contract behaviors + signals |
+| Python3 | 20 | ✅ PASS | unittest | M0 contract + event ledger |
+| PowerShell | 17 | ✅ PASS | Pester 5+ | All behaviors + merged view |
 
 **Test Quality Validation:**
 

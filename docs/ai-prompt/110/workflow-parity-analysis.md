@@ -109,7 +109,7 @@ Changes to:
 ### ✅ Linting Coverage (FULL PARITY)
 
 | Tool/Check | Legacy Workflow | Umbrella Workflow | Notes |
-|------------|----------------|-------------------|-------|
+| ------------ | ---------------- | ------------------- | ------- |
 | Black (Python) | `lint-and-format-checker.yml` | `repo-lint-python` via `tools.repo_lint` | ✅ Same |
 | Ruff (Python) | `lint-and-format-checker.yml` | `repo-lint-python` via `tools.repo_lint` | ✅ Same |
 | Pylint (Python) | `lint-and-format-checker.yml` | `repo-lint-python` via `tools.repo_lint` | ✅ Same |
@@ -122,7 +122,7 @@ Changes to:
 ### ⚠️ Docstring Validation Coverage (PARTIAL PARITY)
 
 | Aspect | Legacy (`docstring-contract.yml`) | Umbrella Workflow | Parity Status |
-|--------|-----------------------------------|-------------------|---------------|
+| -------- | ----------------------------------- | ------------------- | --------------- |
 | **Scope** | ALL files repository-wide | Per-language (only changed languages) | ⚠️ **DIFFERENT** |
 | **Invocation** | `validate_docstrings.py` (no args) | `validate_docstrings.py --language <lang>` per runner | ⚠️ **DIFFERENT** |
 | **Trigger** | ANY script/YAML/doc change | Only when language files change (or shared_tooling) | ⚠️ **DIFFERENT** |
@@ -148,7 +148,7 @@ Changes to:
 ### ✅ Auto-Fix Behavior (FULL PARITY)
 
 | Feature | Legacy | Umbrella | Notes |
-|---------|--------|----------|-------|
+| --------- | -------- | ---------- | ------- |
 | Black auto-format | ✅ In `lint-python` job | ✅ In `Auto-Fix: Black` job | Same behavior |
 | Same-repo only | ✅ Yes | ✅ Yes | Same |
 | Fork patch artifact | ✅ Yes | ✅ Yes | Same |

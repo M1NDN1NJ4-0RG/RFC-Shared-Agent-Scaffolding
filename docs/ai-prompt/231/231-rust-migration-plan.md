@@ -66,17 +66,17 @@ impl ExitCode {
 pub enum BootstrapError {
     #[error("Not in git repository")]
     NotInRepo,
-    
+
     #[error("Virtual environment activation failed: {0}")]
     VenvActivation(String),
-    
+
     #[error("Installation failed: {tool} ({exit_code})")]
     InstallFailed {
         tool: String,
         exit_code: i32,
         stderr: String,
     },
-    
+
     // ... more variants
 }
 
@@ -102,29 +102,29 @@ impl BootstrapError {
 pub trait Installer: Send + Sync {
     /// Unique identifier
     fn id(&self) -> &'static str;
-    
+
     /// Human-readable name
     fn name(&self) -> &'static str;
-    
+
     /// Description for help text
     fn description(&self) -> &'static str;
-    
+
     /// Tools this installer depends on
     fn dependencies(&self) -> Vec<&'static str> {
         vec![]
     }
-    
+
     /// Can this run concurrently with others?
     fn concurrency_safe(&self) -> bool {
         false  // Conservative default
     }
-    
+
     /// Detect if already installed
     async fn detect(&self, ctx: &Context) -> Result<Option<Version>>;
-    
+
     /// Perform installation
     async fn install(&self, ctx: &Context) -> Result<InstallResult>;
-    
+
     /// Verify installation succeeded
     async fn verify(&self, ctx: &Context) -> Result<VerifyResult>;
 }
@@ -182,7 +182,7 @@ impl InstallerRegistry {
         let mut registry = Self {
             installers: HashMap::new(),
         };
-        
+
         // Register all installers
         registry.register(Box::new(PythonBlackInstaller));
         registry.register(Box::new(PythonRuffInstaller));
@@ -190,20 +190,20 @@ impl InstallerRegistry {
         registry.register(Box::new(RipgrepInstaller));
         registry.register(Box::new(ShellcheckInstaller));
         // ... all tools
-        
+
         registry
     }
-    
+
     pub fn register(&mut self, installer: Box<dyn Installer>) {
         self.installers.insert(installer.id(), installer);
     }
-    
+
     pub fn get(&self, id: &str) -> Option<&dyn Installer> {
         self.installers.get(id).map(|b| &**b)
     }
-    
-    pub fn resolve_dependencies(&self, ids: &[&str]) 
-        -> Result<Vec<&dyn Installer>> 
+
+    pub fn resolve_dependencies(&self, ids: &[&str])
+        -> Result<Vec<&dyn Installer>>
     {
         // Topological sort with dependency resolution
         // ...
@@ -253,13 +253,13 @@ impl ExecutionPlan {
     ) -> Result<Self> {
         let required_tools = config.resolve_tools()?;
         let installers = registry.resolve_dependencies(&required_tools)?;
-        
+
         let mut plan = ExecutionPlan {
             phases: vec![],
             total_steps: 0,
             estimated_duration: None,
         };
-        
+
         // Phase 1: Detection (parallel safe)
         let detect_steps = installers.iter()
             .map(|i| Step {
@@ -270,30 +270,30 @@ impl ExecutionPlan {
                 concurrency_safe: true,
             })
             .collect();
-        
+
         plan.phases.push(Phase {
             name: "Detection".into(),
             steps: detect_steps,
             can_parallelize: true,
         });
-        
+
         // Phase 2: Installation (respects concurrency_safe)
         // ...
-        
+
         Ok(plan)
     }
-    
+
     pub fn print_human(&self) {
         println!("Execution Plan:");
         for phase in &self.phases {
             println!("  Phase: {}", phase.name);
             for step in &phase.steps {
-                println!("    - {} ({})", step.id, 
+                println!("    - {} ({})", step.id,
                     if step.concurrency_safe { "parallel" } else { "sequential" });
             }
         }
     }
-    
+
     pub fn to_json(&self) -> serde_json::Value {
         // Machine-readable output
         // ...
@@ -309,13 +309,13 @@ pub fn build_dependency_graph(
 ) -> Result<DependencyGraph> {
     let mut graph = DiGraph::new();
     let mut node_map = HashMap::new();
-    
+
     // Add nodes
     for installer in installers {
         let node = graph.add_node(installer.id());
         node_map.insert(installer.id(), node);
     }
-    
+
     // Add edges (dependencies)
     for installer in installers {
         let from_node = node_map[installer.id()];
@@ -325,12 +325,12 @@ pub fn build_dependency_graph(
             }
         }
     }
-    
+
     // Detect cycles
     if petgraph::algo::is_cyclic_directed(&graph) {
         return Err(BootstrapError::CyclicDependency);
     }
-    
+
     Ok(DependencyGraph { graph, node_map })
 }
 ```
@@ -365,7 +365,7 @@ pub async fn execute_phase(
     if phase.can_parallelize {
         // Use tokio::spawn for each concurrent-safe step
         let mut tasks = vec![];
-        
+
         for step in &phase.steps {
             if step.concurrency_safe {
                 let step = step.clone();
@@ -375,7 +375,7 @@ pub async fn execute_phase(
                 }));
             }
         }
-        
+
         // Await all parallel tasks
         let results = futures::future::join_all(tasks).await;
         // ...
@@ -422,10 +422,10 @@ where
 {
     let mut attempts = 0;
     let mut delay = policy.initial_delay;
-    
+
     loop {
         attempts += 1;
-        
+
         match operation().await {
             Ok(result) => return Ok(result),
             Err(e) if attempts >= policy.max_attempts => {
@@ -439,7 +439,7 @@ where
                         delay.as_secs_f64() * (1.0 + jitter)
                     );
                 }
-                
+
                 tokio::time::sleep(delay).await;
                 delay = (delay * 2).min(policy.max_delay);
             }
@@ -502,7 +502,7 @@ impl ProgressReporter {
             mode,
         }
     }
-    
+
     pub fn add_task(&self, id: String, name: String) -> TaskHandle {
         let bar = self.multi.add(ProgressBar::new_spinner());
         bar.set_style(
@@ -511,15 +511,15 @@ impl ProgressReporter {
                 .unwrap()
         );
         bar.set_message(format!("{}: Pending", name));
-        
+
         let task = ProgressTask {
             bar,
             status: TaskStatus::Pending,
             elapsed: Instant::now(),
         };
-        
+
         self.tasks.lock().unwrap().insert(id.clone(), task);
-        
+
         TaskHandle {
             id,
             reporter: self.clone(),
@@ -536,11 +536,11 @@ impl TaskHandle {
     pub fn set_running(&self, msg: &str) {
         // Update task status and UI
     }
-    
+
     pub fn set_success(&self, msg: &str) {
         // Mark complete with checkmark
     }
-    
+
     pub fn set_failed(&self, error: &str) {
         // Mark failed with X
     }
@@ -681,14 +681,14 @@ impl Config {
             Self::default()
         }
     }
-    
-    pub fn resolve_tools(&self, profile: &str, overrides: &[String]) 
-        -> Result<Vec<String>> 
+
+    pub fn resolve_tools(&self, profile: &str, overrides: &[String])
+        -> Result<Vec<String>>
     {
         let mut tools = self.profiles.get(profile)
             .map(|p| p.tools.clone())
             .unwrap_or_default();
-        
+
         tools.extend_from_slice(overrides);
         Ok(tools)
     }
@@ -712,7 +712,7 @@ impl Context {
                 stderr: vec![],
             });
         }
-        
+
         // Real execution
         cmd.output().await
             .map_err(|e| BootstrapError::CommandFailed(e))
@@ -738,18 +738,18 @@ impl Checkpoint {
         std::fs::write(path, json)?;
         Ok(())
     }
-    
+
     pub fn load(repo_root: &Path) -> Result<Option<Self>> {
         let path = repo_root.join(".bootstrap.checkpoint");
         if !path.exists() {
             return Ok(None);
         }
-        
+
         let json = std::fs::read_to_string(path)?;
         let checkpoint = serde_json::from_str(&json)?;
         Ok(Some(checkpoint))
     }
-    
+
     pub fn is_valid(&self, current_plan: &ExecutionPlan) -> bool {
         // Check if plan hash matches
         self.plan_hash == current_plan.compute_hash()
@@ -778,11 +778,11 @@ impl PackageManagerOps for HomebrewOps {
     async fn install(&self, package: &str, version: Option<&str>) -> Result<()> {
         let mut cmd = Command::new("brew");
         cmd.arg("install").arg(package);
-        
+
         if let Some(v) = version {
             cmd.arg(format!("{}@{}", package, v));
         }
-        
+
         let output = cmd.output().await?;
         if !output.status.success() {
             return Err(BootstrapError::InstallFailed {
@@ -805,13 +805,13 @@ pub struct AptOps;
 pub fn detect_os() -> Result<OsType> {
     #[cfg(target_os = "macos")]
     return Ok(OsType::MacOS);
-    
+
     #[cfg(target_os = "linux")]
     return Ok(OsType::Linux);
-    
+
     #[cfg(target_os = "windows")]
     return Ok(OsType::Windows);
-    
+
     #[cfg(not(any(
         target_os = "macos",
         target_os = "linux",
@@ -852,26 +852,26 @@ pub fn detect_package_manager(os: &OsType) -> PackageManager {
 ```rust
 pub async fn doctor(ctx: &Context) -> Result<DiagnosticReport> {
     let mut report = DiagnosticReport::default();
-    
+
     // Check repo root
     report.add_check("Repository", check_repo(&ctx.repo_root).await);
-    
+
     // Check package manager
-    report.add_check("Package Manager", 
+    report.add_check("Package Manager",
         check_package_manager(&ctx.package_manager).await);
-    
+
     // Check Python
     report.add_check("Python", check_python().await);
-    
+
     // Check network
     report.add_check("Network", check_network().await);
-    
+
     // Check disk space
     report.add_check("Disk Space", check_disk_space(&ctx.repo_root).await);
-    
+
     // Check permissions
     report.add_check("Permissions", check_permissions().await);
-    
+
     Ok(report)
 }
 
@@ -906,7 +906,7 @@ impl DiagnosticReport {
             }
         }
     }
-    
+
     pub fn exit_code(&self) -> ExitCode {
         if self.checks.iter().any(|c| matches!(c.status, CheckStatus::Fail)) {
             ExitCode::VerificationFailed
@@ -980,13 +980,13 @@ fi
 #[tokio::test]
 async fn test_parity_with_bash() {
     let temp_repo = create_test_repo();
-    
+
     // Run Bash version
     let bash_output = run_bash_bootstrap(&temp_repo).await;
-    
+
     // Run Rust version
     let rust_output = run_rust_bootstrap(&temp_repo).await;
-    
+
     // Compare:
     assert_eq!(bash_output.exit_code, rust_output.exit_code);
     assert_eq!(bash_output.installed_tools, rust_output.installed_tools);
@@ -1174,12 +1174,12 @@ pub struct RipgrepInstaller;
 impl Installer for RipgrepInstaller {
     fn id(&self) -> &'static str { "ripgrep" }
     fn name(&self) -> &'static str { "ripgrep" }
-    fn description(&self) -> &'static str { 
+    fn description(&self) -> &'static str {
         "Fast recursive search tool (REQUIRED)"
     }
-    
+
     fn concurrency_safe(&self) -> bool { true }
-    
+
     async fn detect(&self, _ctx: &Context) -> Result<Option<Version>> {
         let output = Command::new("rg").arg("--version").output().await?;
         if output.status.success() {
@@ -1189,7 +1189,7 @@ impl Installer for RipgrepInstaller {
             Ok(None)
         }
     }
-    
+
     async fn install(&self, ctx: &Context) -> Result<InstallResult> {
         match ctx.package_manager {
             PackageManager::Homebrew => {
@@ -1206,17 +1206,17 @@ impl Installer for RipgrepInstaller {
             }
             _ => return Err(BootstrapError::NoPackageManager),
         }
-        
+
         let version = self.detect(ctx).await?
             .ok_or(BootstrapError::InstallVerificationFailed)?;
-        
+
         Ok(InstallResult {
             version,
             installed_new: true,
             log_messages: vec![],
         })
     }
-    
+
     async fn verify(&self, ctx: &Context) -> Result<VerifyResult> {
         match self.detect(ctx).await? {
             Some(version) => Ok(VerifyResult {

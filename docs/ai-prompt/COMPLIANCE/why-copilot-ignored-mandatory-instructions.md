@@ -361,22 +361,22 @@ The goal is to make ignoring instructions **impossible or immediately visible** 
      ```bash
      #!/usr/bin/env bash
      set -euo pipefail
-     
+
      # Check if ANY session-start proof exists from last 10 minutes
      if [ ! -d ".session-compliance" ]; then
          echo "ERROR: No .session-compliance directory found"
          echo "You MUST run ./scripts/session-start.sh first"
          exit 2
      fi
-     
+
      LATEST_PROOF=$(find .session-compliance -name "session-start-*.proof" -mmin -10 2>/dev/null | sort | tail -1)
-     
+
      if [ -z "$LATEST_PROOF" ]; then
          echo "ERROR: No recent session-start proof found (checked last 10 minutes)"
          echo "You MUST run ./scripts/session-start.sh before making commits"
          exit 2
      fi
-     
+
      echo "✓ Session compliance verified: $LATEST_PROOF"
      cat "$LATEST_PROOF"
      exit 0
@@ -425,13 +425,13 @@ sleep 601 && ./scripts/verify-session-compliance.sh
      ```bash
      #!/usr/bin/env bash
      # Pre-commit hook: Verify session compliance
-     
+
      # Allow bypass with env var (for emergencies only)
      if [ "${BYPASS_SESSION_COMPLIANCE:-0}" = "1" ]; then
          echo "WARNING: Bypassing session compliance check (BYPASS_SESSION_COMPLIANCE=1)"
          exit 0
      fi
-     
+
      # Run verification
      if ! ./scripts/verify-session-compliance.sh >/dev/null 2>&1; then
          echo "========================================="
@@ -446,7 +446,7 @@ sleep 601 && ./scripts/verify-session-compliance.sh
          echo ""
          exit 1
      fi
-     
+
      exit 0
      ```
 
@@ -458,14 +458,14 @@ sleep 601 && ./scripts/verify-session-compliance.sh
 
      ```markdown
      ### Automated Enforcement (Pre-Commit Hook)
-     
+
      To prevent accidental violations, install the pre-commit hook:
-     
+
      ~~~bash
      cp .githooks/pre-commit .git/hooks/pre-commit
      chmod +x .git/hooks/pre-commit
      ~~~
-     
+
      This hook verifies session start was completed before allowing commits.
      ```
 
@@ -503,24 +503,24 @@ git commit -m "test"
 
      ```markdown
      ## 🛑 HALT - MANDATORY FIRST STEP 🛑
-     
+
      **STOP. DO NOT PROCEED UNTIL YOU COMPLETE THIS STEP.**
-     
+
      Before doing ANYTHING else (reading problem statement, viewing files, planning):
-     
+
      1. Read `docs/contributing/session-compliance-requirements.md` IN FULL
      2. Execute the Session Start checklist from that document
      3. Verify `.session-compliance/session-start-*.proof` file exists
-     
+
      **PROHIBITION:** You are FORBIDDEN from:
      - Exploring files
      - Analyzing the problem
      - Reading repository contents (except the two instruction files)
      - Planning changes
      - Making any code modifications
-     
+
      **UNTIL:** `./scripts/session-start.sh` has completed with exit code 0 AND created the proof artifact.
-     
+
      **This is NON-NEGOTIABLE. If you skip this step, the human will escalate immediately.**
      ```
 
@@ -558,21 +558,21 @@ grep -A 5 "HALT" .github/copilot-instructions.md
      ```bash
      #!/usr/bin/env bash
      set -euo pipefail
-     
+
      ISSUE_NUM="$1"
      JOURNAL_FILE="docs/ai-prompt/$ISSUE_NUM/$ISSUE_NUM-summary.md"
-     
+
      if [ ! -f "$JOURNAL_FILE" ]; then
          echo "ERROR: Journal file not found: $JOURNAL_FILE"
          exit 1
      fi
-     
+
      # Check if journal references session start proof
      if ! grep -q "session-start.*proof" "$JOURNAL_FILE"; then
          echo "WARNING: Journal does not reference session-start proof artifact"
          echo "Add proof file path to journal to verify session compliance"
      fi
-     
+
      echo "✓ Journal validation complete"
      ```
 
@@ -606,26 +606,26 @@ grep -A 5 "HALT" .github/copilot-instructions.md
 
      ```yaml
      name: Session Compliance Check
-     
+
      on:
        pull_request:
          types: [opened, synchronize]
-     
+
      jobs:
        verify-session-start:
          runs-on: ubuntu-latest
          steps:
            - uses: actions/checkout@v4
-           
+
            - name: Check for session-start proof artifacts
              run: |
                if [ -d ".session-compliance" ]; then
                  echo "✓ Session compliance directory exists"
                  ls -la .session-compliance/
-                 
+
                  PROOF_COUNT=$(find .session-compliance -name "session-start-*.proof" 2>/dev/null | wc -l)
                  echo "Found $PROOF_COUNT session-start proof files"
-                 
+
                  if [ "$PROOF_COUNT" -eq 0 ]; then
                    echo "WARNING: No session-start proofs found in .session-compliance/"
                    echo "This suggests session-start.sh may not have been run"

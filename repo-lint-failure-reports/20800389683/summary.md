@@ -25,33 +25,33 @@
 🔍 Running repository linters and formatters...
 
 
-                        Linting Results                        
-                                                               
-  Runner              Status    Files   Violations   Duration  
- ───────────────────────────────────────────────────────────── 
-  black               ✅ PASS       -            0          -  
-  ruff                ❌ FAIL       -            1          -  
-  pylint              ✅ PASS       -            0          -  
-  python-docstrings   ✅ PASS       -            0          -  
-                                                               
+                        Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ruff Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
-  Found 1 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                             
-  File              Line   Message                                                           
- ─────────────────────────────────────────────────────────────────────────────────────────── 
-  cli_argparse.py    557   N806 Variable `MAX_AUTO_WORKERS` in function should be lowercase  
-                                                                                             
+  Runner              Status    Files   Violations   Duration
+ ─────────────────────────────────────────────────────────────
+  black               ✅ PASS       -            0          -
+  ruff                ❌ FAIL       -            1          -
+  pylint              ✅ PASS       -            0          -
+  python-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 4           
-    Passed: 3                
-    Failed: 1                
-  Total Violations: 1        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ruff Failures
+  Found 1 violation(s)
+
+
+  File              Line   Message
+ ───────────────────────────────────────────────────────────────────────────────────────────
+  cli_argparse.py    557   N806 Variable `MAX_AUTO_WORKERS` in function should be lowercase
+
+
+           Summary
+  Total Runners: 4
+    Passed: 3
+    Failed: 1
+  Total Violations: 1
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 
 ## YAML Linting Failures
@@ -60,31 +60,31 @@
 🔍 Running repository linters and formatters...
 
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  yamllint          ✅ PASS       -            0          -  
-  yaml-docstrings   ❌ FAIL       -            2          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            yaml-docstrings Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-  Found 2 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                          
-  File   Line   Message                                                                                                                   
- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   ❌ Validation FAILED: 1 violation(s) in 1 file(s)                                                                         
-  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.github/workflows/copilot-setup-steps.yml  
-                                                                                                                                          
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  yamllint          ✅ PASS       -            0          -
+  yaml-docstrings   ❌ FAIL       -            2          -
 
-           Summary           
-  Total Runners: 2           
-    Passed: 1                
-    Failed: 1                
-  Total Violations: 2        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            yaml-docstrings Failures
+  Found 2 violation(s)
+
+
+  File   Line   Message
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  .         -   ❌ Validation FAILED: 1 violation(s) in 1 file(s)
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/.github/workflows/copilot-setup-steps.yml
+
+
+           Summary
+  Total Runners: 2
+    Passed: 1
+    Failed: 1
+  Total Violations: 2
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

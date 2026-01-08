@@ -29,7 +29,7 @@ This audit identifies:
 ### 1.1 Integrated Scripts (✅ Already Called by repo_lint)
 
 | Script | Integrated By | Status | Notes |
-|--------|---------------|--------|-------|
+| -------- | --------------- | -------- | ------- |
 | `scripts/validate_docstrings.py` | All language runners | ✅ Integrated | Called via subprocess in `_run_docstring_validation()` |
 | `scripts/docstring_validators/*.py` | `validate_docstrings.py` | ✅ Integrated | Modular validators, imported by main script |
 
@@ -44,7 +44,7 @@ This audit identifies:
 ### 1.2 Wrapper Scripts (✅ Thin Delegates to repo_lint)
 
 | Script | Purpose | Status | Notes |
-|--------|---------|--------|-------|
+| -------- | --------- | -------- | ------- |
 | `scripts/run-linters.sh` | Bash wrapper for `repo-lint` CLI | ✅ Wrapper Only | `exec python3 -m tools.repo_lint "$COMMAND"` (line 63) |
 
 **Analysis:** This is a thin convenience wrapper with no business logic. Maps `--fix` and `--install` to `repo-lint` commands. Does not need integration work.
@@ -52,7 +52,7 @@ This audit identifies:
 ### 1.3 Standalone Scripts (⚠️ Not Currently Integrated)
 
 | Script | Purpose | Integration Status | Recommendation |
-|--------|---------|-------------------|----------------|
+| -------- | --------- | ------------------- | ---------------- |
 | `scripts/validate-structure.sh` | Repository structure validation | ⚠️ Standalone | Consider future integration (Phase 3?) |
 | `scripts/verify-repo-references.sh` | Cross-reference validation | ⚠️ Standalone | Consider future integration (Phase 3?) |
 
@@ -173,7 +173,7 @@ EXCLUDED_PATHS = [
 ### 3.1 Current YAML Files
 
 | File | Purpose | Status | Contract Compliance |
-|------|---------|--------|---------------------|
+| ------ | --------- | -------- | --------------------- |
 | `conformance/repo-lint/repo-lint-naming-rules.yaml` | Filename conventions per language | ✅ Exists | ✅ Compliant |
 | `conformance/repo-lint/repo-lint-docstring-rules.yaml` | Docstring requirements per language | ✅ Exists | ✅ Compliant |
 | `conformance/repo-lint/repo-lint-linting-rules.yaml` | Linting tool configs per language | ✅ Exists | ⚠️ Duplicate with version_pins.py |
@@ -184,7 +184,7 @@ EXCLUDED_PATHS = [
 ### 3.2 Missing YAML Files (Needed for Phase 2.9)
 
 | Missing Config | Purpose | Priority | Recommendation |
-|----------------|---------|----------|----------------|
+| ---------------- | --------- | ---------- | ---------------- |
 | `repo-lint-file-patterns.yaml` | File discovery patterns and exclusions | HIGH | Create in Phase 2.9 |
 | `repo-lint-exception-rules.yaml` | Centralized exception rules (Phase 2.6) | DEFER | Create in Phase 2.6 |
 
@@ -291,7 +291,7 @@ Phase 2.9 is complete when:
 ## 6. Risk Analysis
 
 | Risk | Impact | Mitigation |
-|------|--------|------------|
+| ------ | -------- | ------------ |
 | Breaking existing workflows | HIGH | Maintain backward compatibility, add deprecation warnings |
 | YAML schema invalid | MEDIUM | Use existing config_validator, add schema tests |
 | Performance impact from YAML loading | LOW | Cache loaded configs, only load once per run |

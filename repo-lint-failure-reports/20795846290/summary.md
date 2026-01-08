@@ -25,33 +25,33 @@
 🔍 Running repository linters and formatters...
 
 
-                        Linting Results                        
-                                                               
-  Runner              Status    Files   Violations   Duration  
- ───────────────────────────────────────────────────────────── 
-  black               ✅ PASS       -            0          -  
-  ruff                ✅ PASS       -            0          -  
-  pylint              ❌ FAIL       -            2          -  
-  python-docstrings   ✅ PASS       -            0          -  
-                                                               
+                        Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pylint Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 2 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                          
-  File      Line   Message                                                                                
- ──────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  base.py    269   W0621: Redefining name 'LintResult' from outer scope (line 41) (redefined-outer-name)  
-  base.py    269   W0404: Reimport 'LintResult' (imported line 41) (reimported)                           
-                                                                                                          
+  Runner              Status    Files   Violations   Duration
+ ─────────────────────────────────────────────────────────────
+  black               ✅ PASS       -            0          -
+  ruff                ✅ PASS       -            0          -
+  pylint              ❌ FAIL       -            2          -
+  python-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 4           
-    Passed: 3                
-    Failed: 1                
-  Total Violations: 2        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pylint Failures
+  Found 2 violation(s)
+
+
+  File      Line   Message
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────
+  base.py    269   W0621: Redefining name 'LintResult' from outer scope (line 41) (redefined-outer-name)
+  base.py    269   W0404: Reimport 'LintResult' (imported line 41) (reimported)
+
+
+           Summary
+  Total Runners: 4
+    Passed: 3
+    Failed: 1
+  Total Violations: 2
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

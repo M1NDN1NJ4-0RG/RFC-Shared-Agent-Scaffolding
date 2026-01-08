@@ -322,7 +322,7 @@ install_args = ["--upgrade"]
 ### Environment Variables
 
 | Variable | Description | Default |
-|----------|-------------|---------|
+| ---------- | ------------- | --------- |
 | `BOOTSTRAP_BIN` | Force specific binary | Auto-detect |
 | `BOOTSTRAP_JOBS` | Override parallelism | CI=2, interactive=4 |
 | `BOOTSTRAP_FORCE_LEGACY` | Use legacy Bash | 0 |
@@ -339,7 +339,7 @@ If `.bootstrap.toml` is missing:
 All exit codes match the legacy Bash bootstrapper for compatibility.
 
 | Code | Constant | Meaning |
-|------|----------|---------|
+| ------ | ---------- | --------- |
 | 0 | Success | All operations completed successfully |
 | 1 | UsageError | Invalid arguments or missing config |
 | 10 | NotInRepo | Not in a git repository |
@@ -626,7 +626,7 @@ pub trait Installer: Send + Sync {
     fn description(&self) -> &'static str;
     fn dependencies(&self) -> Vec<&'static str>;
     fn concurrency_safe(&self) -> bool;
-    
+
     async fn detect(&self, ctx: &Context) -> Result<Option<Version>>;
     async fn install(&self, ctx: &Context) -> Result<InstallResult>;
     async fn verify(&self, ctx: &Context) -> Result<VerifyResult>;

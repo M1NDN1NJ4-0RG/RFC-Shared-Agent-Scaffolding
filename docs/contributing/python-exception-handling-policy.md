@@ -11,10 +11,10 @@ ______________________________________________________________________
 ## Core Principles
 
 1. **Narrow exception types** when the failure mode is known and specific
-1. **Preserve exception context** via exception chaining (`raise ... from e`)
-1. **Fail fast** in library code - don't swallow exceptions that callers need to see
-1. **Convert cleanly** at CLI boundaries - turn exceptions into user-friendly messages + exit codes
-1. **Document intentional broad catches** with inline comments explaining why
+2. **Preserve exception context** via exception chaining (`raise ... from e`)
+3. **Fail fast** in library code - don't swallow exceptions that callers need to see
+4. **Convert cleanly** at CLI boundaries - turn exceptions into user-friendly messages + exit codes
+5. **Document intentional broad catches** with inline comments explaining why
 
 ______________________________________________________________________
 
@@ -35,7 +35,7 @@ Broad exception handlers (`except Exception as e:`) are **ACCEPTABLE** at CLI bo
 **Example (GOOD):**
 
 ```python
-def main(argv: list[str] | None = None) -> int:
+ def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
     try:
         args = parse_args(argv)
@@ -78,7 +78,7 @@ Broad exception handlers are **ACCEPTABLE** in diagnostic tools (like `repo-lint
 ```python
 def check_tool_availability(tool: str) -> tuple[bool, str, str]:
     """Check if a tool is available.
-    
+
     :returns: (success, message, detail)
     """
     try:
@@ -138,7 +138,7 @@ def read_config(path: Path) -> dict:
 ```python
 def read_config(path: Path) -> dict:
     """Read configuration file.
-    
+
     :raises FileNotFoundError: Config file does not exist
     :raises json.JSONDecodeError: Config file is not valid JSON
     :raises OSError: Config file cannot be read
@@ -148,7 +148,7 @@ def read_config(path: Path) -> dict:
     except OSError as e:
         # Re-raise with context
         raise OSError(f"Failed to read config from {path}") from e
-    
+
     try:
         return json.loads(content)
     except json.JSONDecodeError as e:
@@ -257,8 +257,8 @@ When appropriate, create custom exception types to clarify domain-specific error
 Create custom exceptions when:
 
 1. You need to distinguish this error type from built-in exceptions
-1. You want callers to be able to catch this specific error type
-1. The error represents a domain-specific failure mode
+2. You want callers to be able to catch this specific error type
+3. The error represents a domain-specific failure mode
 
 ### Custom Exception Location
 
@@ -276,7 +276,7 @@ class RepoLintError(Exception):
 
 class MissingToolError(RepoLintError):
     """Raised when a required tool is not installed."""
-    
+
     def __init__(self, tool: str, message: str = "") -> None:
         self.tool = tool
         default_msg = f"Required tool not found: {tool}"
@@ -284,7 +284,7 @@ class MissingToolError(RepoLintError):
 
 class ConfigurationError(RepoLintError):
     """Raised when configuration is invalid."""
-    
+
     def __init__(self, config_path: Path, issue: str) -> None:
         self.config_path = config_path
         self.issue = issue
@@ -298,7 +298,7 @@ ______________________________________________________________________
 CLI tools MUST use consistent exit codes:
 
 | Exit Code | Meaning |
-|-----------|---------|
+| ----------- | --------- |
 | 0 | Success |
 | 1 | Violations found (linting) or general error |
 | 2 | Missing required tools |
@@ -324,10 +324,10 @@ ______________________________________________________________________
 For existing code with overly-broad exception handlers:
 
 1. **Identify the failure modes** by examining the code or running tests
-1. **Narrow to specific exception types** that cover the actual failure modes
-1. **Add exception chaining** (`raise ... from e`) when re-raising
-1. **Add tests** that verify the correct exception type is raised
-1. **Document** any remaining broad catches with inline comments
+2. **Narrow to specific exception types** that cover the actual failure modes
+3. **Add exception chaining** (`raise ... from e`) when re-raising
+4. **Add tests** that verify the correct exception type is raised
+5. **Document** any remaining broad catches with inline comments
 
 ______________________________________________________________________
 
@@ -338,7 +338,7 @@ ______________________________________________________________________
 ```python
 def load_config(path: Path) -> dict:
     """Load configuration from YAML file.
-    
+
     :param path: Path to configuration file
     :returns: Configuration dictionary
     :raises FileNotFoundError: Config file does not exist
@@ -356,7 +356,7 @@ def load_config(path: Path) -> dict:
             e.encoding, e.object, e.start, e.end,
             f"Config file {path} is not valid UTF-8"
         ) from e
-    
+
     try:
         return yaml.safe_load(content)
     except yaml.YAMLError as e:
@@ -368,7 +368,7 @@ def load_config(path: Path) -> dict:
 ```python
 def run_tool(tool: str, args: list[str]) -> subprocess.CompletedProcess:
     """Run an external tool.
-    
+
     :param tool: Tool name
     :param args: Tool arguments
     :returns: Completed process result
@@ -398,9 +398,9 @@ def run_tool(tool: str, args: list[str]) -> subprocess.CompletedProcess:
 ### Example 3: CLI Boundary (Acceptable Broad Catch)
 
 ```python
-def main(argv: list[str] | None = None) -> int:
+ def main(argv: list[str] | None = None) -> int:
     """CLI entry point.
-    
+
     :param argv: Command line arguments (or None for sys.argv)
     :returns: Exit code (0 = success, non-zero = error)
     """
@@ -442,7 +442,7 @@ ______________________________________________________________________
 ## Summary
 
 | Pattern | Acceptable? | Requirements |
-|---------|-------------|--------------|
+| --------- | ------------- | -------------- |
 | Broad catch at CLI boundary | ✅ YES | User-friendly message + non-zero exit + verbose mode |
 | Broad catch in diagnostic tools | ✅ YES | Structured error return (success, message, detail) |
 | Broad catch in test cleanup | ✅ YES | Must be in finally block, cleanup-only |

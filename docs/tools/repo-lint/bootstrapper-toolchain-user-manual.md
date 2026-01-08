@@ -207,21 +207,21 @@ shfmt --version
 ## Exit Codes
 
 | Code | Meaning |
-|------|---------|
-| 0    | Success - all operations completed |
-| 1    | Generic failure |
-| 10   | Repository root not found |
-| 11   | Virtual environment creation or activation failed |
-| 12   | No valid install target (missing pyproject.toml) |
-| 13   | repo-lint not found on PATH after installation |
-| 14   | repo-lint --help command failed |
-| 15   | Python toolchain installation failed |
-| 16   | Shell toolchain installation failed |
-| 17   | PowerShell toolchain installation failed |
-| 18   | Perl toolchain installation failed |
-| 19   | Verification gate failed (repo-lint check --ci) |
-| 20   | actionlint installation failed |
-| 21   | ripgrep installation failed (required tool) |
+| ------ | --------- |
+| 0 | Success - all operations completed |
+| 1 | Generic failure |
+| 10 | Repository root not found |
+| 11 | Virtual environment creation or activation failed |
+| 12 | No valid install target (missing pyproject.toml) |
+| 13 | repo-lint not found on PATH after installation |
+| 14 | repo-lint --help command failed |
+| 15 | Python toolchain installation failed |
+| 16 | Shell toolchain installation failed |
+| 17 | PowerShell toolchain installation failed |
+| 18 | Perl toolchain installation failed |
+| 19 | Verification gate failed (repo-lint check --ci) |
+| 20 | actionlint installation failed |
+| 21 | ripgrep installation failed (required tool) |
 
 ## Idempotency
 

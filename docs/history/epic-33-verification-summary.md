@@ -15,7 +15,7 @@ All work claimed complete in PRs P0–P3.5 has been forensically verified agains
 ## Verification Results by PR
 
 | PR | Title | Tests | Status | Notes |
-|----|-------|-------|--------|-------|
+| ---- | ------- | ------- | -------- | ------- |
 | **P0** | Pre-flight Baseline Validation | 100 | ✅ PASS | Structure normalized, all languages pass |
 | **P1** | Docs & Rust Scaffolding | N/A | ✅ PASS | 659 lines of docs, builds in 0.04s |
 | **P2** | Conformance Harness + Fixtures | 10 | ✅ PASS | 13 tests written, infrastructure complete |

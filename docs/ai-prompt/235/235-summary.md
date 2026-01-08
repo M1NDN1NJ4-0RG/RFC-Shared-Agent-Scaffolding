@@ -27,7 +27,7 @@
 
 ### Dry-Run Mode Fixes ✅
 
-3. **Problem Identified:**
+1. **Problem Identified:**
    - Installers calling detect() after dry-run, failing when tools not installed
    - Affected: repo-lint and all Python tools
 
@@ -43,7 +43,7 @@
 
 ### Parity Report Verification ✅
 
-6. **Confirmed all recommendations addressed:**
+1. **Confirmed all recommendations addressed:**
    - ✅ Bash wrapper docstrings - Already compliant
    - ✅ repo-lint installation - RepoLintInstaller registered
    - ✅ Verification gate - Part of execute_plan
@@ -65,7 +65,7 @@
 
 ### Code Review Fixes (All 6 Comments Addressed)
 
-7. **Unix-specific signal handling:**
+1. **Unix-specific signal handling:**
    - Added `#[cfg(unix)]` guards to signal_hook usage
    - Ensures Windows compatibility
 

@@ -128,7 +128,7 @@
   - Generator/iterator types use proper generic types
 - Documented Optional/Union syntax policy:
   - PREFER `Optional[T]` for compatibility
-  - ALLOW `T | None` but avoid churn
+- ALLOW `T | None` but avoid churn
 - Provided complete examples and edge case handling
 
 **Key policy decisions locked in:**
@@ -445,12 +445,12 @@ repo-lint check --ci --only python
 
 ---
 
-
 ### 2026-01-08 - Phase 3.5.4 Partial + Phase 3.6.1-3.6.4 Complete
 
 **Session Work:**
 
 **Phase 3.5.4: Markdown Baseline Cleanup (PARTIAL)**
+
 - Ran `repo-lint fix --lang markdown` to auto-fix safe violations
 - **Reduced violations: 7,501 → 1,888 (75% reduction)**
 - Fixed 5,613 violations automatically
@@ -459,6 +459,7 @@ repo-lint check --ci --only python
 - Commit: 226c3c2
 
 **Phase 3.6.1-3.6.4: TOML Contracts + Linting (COMPLETE)**
+
 - Created docs/contributing/toml-contracts.md (11KB) - 8 core rule categories
 - Created taplo.toml configuration
 - Created tools/repo_lint/runners/toml_runner.py (7.5KB)
@@ -554,7 +555,6 @@ repo-lint check --ci --only python
 
 ---
 
-
 ## Phase 3.7.1: Broad Exception Handler Inventory
 
 ### Summary Statistics
@@ -567,7 +567,7 @@ repo-lint check --ci --only python
 ### Classification by Context
 
 | Category | Count | Files |
-|----------|-------|-------|
+| ---------- | ------- | ------- |
 | CLI Boundary (acceptable) | 17 | cli.py (9), cli_argparse.py (5), scripts (3) |
 | Tooling Wrappers (needs review) | 13 | preflight_automerge_ruleset.py (8), install_helpers.py (2), doctor.py (5) |
 | Library Code (unacceptable) | 6 | base.py (1), validator.py (1), bash_treesitter.py (2), add_future_annotations.py (1), run_tests.py (1) |
@@ -578,6 +578,7 @@ repo-lint check --ci --only python
 #### CLI Boundary (17 instances - ACCEPTABLE with documentation)
 
 **tools/repo_lint/cli.py (9 instances):**
+
 1. Line 962: `list_langs` error handling - CLI boundary
 2. Line 1023: `list_tools` error handling - CLI boundary
 3. Line 1080: `tool_help` error handling - CLI boundary
@@ -607,6 +608,7 @@ repo-lint check --ci --only python
 #### Tooling Wrappers (13 instances - NEEDS REVIEW)
 
 **wrappers/python3/scripts/preflight_automerge_ruleset.py (8 instances):**
+
 1. Line 264: `run_gh_cli` - swallows all exceptions, returns None
 2. Line 490: `--want` JSON parse - swallows all exceptions
 3. Line 503: `gh` JSON parse - swallows all exceptions
@@ -627,7 +629,8 @@ repo-lint check --ci --only python
 14. Line 166: Tool availability check - returns error status
 15. Line 199: PATH sanity check - returns error status
 
-**Verdict:** Mixed quality. 
+**Verdict:** Mixed quality.
+
 - `doctor.py` uses broad exceptions but returns structured error status (**ACCEPTABLE** for diagnostic tool)
 - `install_helpers.py` Line 144 re-raises properly (**GOOD**), Line 282 needs narrowing
 - `preflight_automerge_ruleset.py` silently swallows failures (**BAD** - needs narrowing)
@@ -637,34 +640,40 @@ repo-lint check --ci --only python
 #### Library Code (6 instances - UNACCEPTABLE, MUST FIX)
 
 **tools/repo_lint/runners/base.py:302:**
+
 - Context: Tool method execution failure
 - Current behavior: Logs error, creates error result
 - Issue: Too broad, should narrow to specific failure modes
 - **Action:** Narrow to `subprocess.CalledProcessError`, `FileNotFoundError`, `OSError`
 
 **tools/repo_lint/docstrings/validator.py:55:**
+
 - Context: File read error
 - Current behavior: Returns ValidationError
 - Issue: Too broad, file I/O has specific exceptions
 - **Action:** Narrow to `OSError`, `UnicodeDecodeError`
 
 **tools/repo_lint/docstrings/helpers/bash_treesitter.py:128:**
+
 - Context: Bash script parsing failure
 - Current behavior: Returns error dict
 - Issue: Parsing has specific error types
 - **Action:** Narrow to tree-sitter specific exceptions + `OSError`
 
 **scripts/docstring_validators/helpers/bash_treesitter.py:128:**
+
 - Context: Same as above (duplicate file - legacy)
 - **Action:** Same as above + mark for removal (duplicate)
 
 **scripts/add_future_annotations.py:258:**
+
 - Context: File processing skip logic
 - Current behavior: Skips file with verbose message
 - Issue: File I/O has specific exceptions
 - **Action:** Narrow to `OSError`, `UnicodeDecodeError`, `SyntaxError`
 
 **wrappers/python3/run_tests.py:162:**
+
 - Context: Actually a CLI boundary but in a library-style script
 - **Action:** Keep as CLI boundary but add comment
 
@@ -673,6 +682,7 @@ repo-lint check --ci --only python
 #### Tests (1 instance - ACCEPTABLE)
 
 **wrappers/python3/tests/test_safe_run.py:262:**
+
 - Context: Test cleanup - `p.kill()` in finally block
 - Current behavior: Silently swallows exceptions during process cleanup
 - Verdict: **ACCEPTABLE** - test cleanup should not fail tests
@@ -746,6 +756,7 @@ User reported Copilot setup workflow was failing after markdownlint-cli2 install
 **Fix Applied:**
 
 Modified `.github/workflows/copilot-setup-steps.yml` line 405:
+
 - **Before:** `markdownlint-cli2 --version`
 - **After:** `markdownlint-cli2 --version --no-globs`
 
@@ -774,31 +785,37 @@ The `--no-globs` flag tells markdownlint-cli2 to ignore the glob patterns in the
 Addressed all 3 Copilot Code Review comments from PR #293:
 
 **Comment 1 (python-exception-handling-policy.md:44) - NameError risk in Example 1**
+
 - **Issue:** `args.verbose` referenced but `args` not defined in function signature
 - **Fix:** Updated example to define `args` parameter and handle potential NameError using `getattr()` with locals() check
 - **Result:** Example now shows safe pattern: `getattr(args if 'args' in locals() else None, 'verbose', False)`
 
 **Comment 2 (copilot-setup-steps.yml:351) - Unexplained commented version check**
+
 - **Issue:** `markdownlint-cli2 --version` commented out without explanation
 - **Fix:** Added explanatory comment: "Note: markdownlint-cli2 version is verified later in the 'Verify key tools are available' step to keep all tool checks together."
 - **Result:** Clarifies deferred verification pattern used in workflow
 
 **Comment 3 (python-exception-handling-policy.md:416) - NameError in Example 3**
+
 - **Issue:** `args.verbose` could cause NameError if `parse_args()` fails
 - **Fix:** Initialize `verbose = False` before try block, capture `args.verbose` inside try block, use captured `verbose` in exception handler
 - **Result:** Example now demonstrates safe verbose flag handling that survives early parse_args() failures
 
 **Additional Work:**
+
 - Auto-formatted `python-exception-handling-policy.md` with mdformat (formatting improvements)
 - Verified YAML syntax with yamllint (exit 0)
 - Ran full pre-commit gate: `repo-lint check --ci` (exit 1 - only MD baseline violations, acceptable)
 
 **Testing:**
+
 - ✅ All Python checks pass (black, ruff, pylint, docstrings)
 - ✅ YAML validation passes
 - ✅ Only Markdown baseline violations remain (not in scope)
 
 **Status:**
+
 - All 3 code review comments: ✅ FULLY ADDRESSED
 - Ready for review approval
 
@@ -849,43 +866,49 @@ Addressed ALL 38 broad exception handlers identified in Phase 3.7.1 inventory.
 **Priority 2: Tooling Wrappers (11 instances) - COMPLETE ✅**
 
 7-15. `wrappers/python3/scripts/preflight_automerge_ruleset.py` (9 instances)
-   - Line 264: Narrowed to `subprocess.CalledProcessError, FileNotFoundError, OSError`
-   - Line 482: Narrowed to `ValueError, KeyError`
-   - Line 495: Narrowed to `json.JSONDecodeError, ValueError`
-   - Line 510: Narrowed to `json.JSONDecodeError`
-   - Line 517: Narrowed to `OSError, RuntimeError`
-   - Line 523: Narrowed to `json.JSONDecodeError`
-   - Line 552: Narrowed to `json.JSONDecodeError`
-   - Line 562: Narrowed to `OSError, RuntimeError`
-   - Line 568: Narrowed to `json.JSONDecodeError`
-   - Rationale: JSON parsing and HTTP operations have specific exception types
 
-16. `tools/repo_lint/install/install_helpers.py:282`
-   - Context: Directory removal during cleanup
-   - Fix: Narrowed to `OSError`
-   - Rationale: File system operations raise OSError and its subclasses
+- Line 264: Narrowed to `subprocess.CalledProcessError, FileNotFoundError, OSError`
+- Line 482: Narrowed to `ValueError, KeyError`
+- Line 495: Narrowed to `json.JSONDecodeError, ValueError`
+- Line 510: Narrowed to `json.JSONDecodeError`
+- Line 517: Narrowed to `OSError, RuntimeError`
+- Line 523: Narrowed to `json.JSONDecodeError`
+- Line 552: Narrowed to `json.JSONDecodeError`
+- Line 562: Narrowed to `OSError, RuntimeError`
+- Line 568: Narrowed to `json.JSONDecodeError`
+- Rationale: JSON parsing and HTTP operations have specific exception types
+
+1. `tools/repo_lint/install/install_helpers.py:282`
+
+- Context: Directory removal during cleanup
+- Fix: Narrowed to `OSError`
+- Rationale: File system operations raise OSError and its subclasses
 
 17-21. `tools/repo_lint/doctor.py` (5 instances)
-   - Action: No changes needed
-   - Rationale: Diagnostic tool pattern is acceptable per policy
+
+- Action: No changes needed
+- Rationale: Diagnostic tool pattern is acceptable per policy
 
 **Priority 3: CLI Boundaries (17 instances) - COMPLETE ✅**
 
 22-30. `tools/repo_lint/cli.py` (9 instances)
-   - All CLI command handlers documented with policy references
-   - Commands: list_langs, list_tools, tool_help, dump_config, validate_config, check, which, env, activate
+
+- All CLI command handlers documented with policy references
+- Commands: list_langs, list_tools, tool_help, dump_config, validate_config, check, which, env, activate
 
 31-35. `tools/repo_lint/cli_argparse.py` (5 instances)
-   - Line 216: Naming runner initialization (graceful degradation)
-   - Line 305: Runner execution orchestration
-   - Line 391: Parallel runner error handling
-   - Line 753: Auto-fix policy loading
-   - Line 933: Top-level main() error handler
-   - All documented with policy references
 
-36. `scripts/bootstrap_watch.py:100`
-   - CLI script main function
-   - Documented with policy reference
+- Line 216: Naming runner initialization (graceful degradation)
+- Line 305: Runner execution orchestration
+- Line 391: Parallel runner error handling
+- Line 753: Auto-fix policy loading
+- Line 933: Top-level main() error handler
+- All documented with policy references
+
+1. `scripts/bootstrap_watch.py:100`
+
+- CLI script main function
+- Documented with policy reference
 
 37-38. Already handled in Priority 1 and Priority 2
 
@@ -930,19 +953,22 @@ repo-lint check --ci --only python
 Completed comprehensive assessment of current logging patterns across the Python codebase.
 
 **Direct `print()` Usage:**
+
 - **Total:** 518 print() statements across 33 files
 - **Categories:**
   - CLI user messages (validate_docstrings.py, safe_run.py, safe_archive.py, safe_check.py)
   - Test output (test fixtures and unit tests)
   - Debug/diagnostic output (bootstrap_watch.py, add_future_annotations.py)
   - Error messages to stderr
-  
+
 **Python `logging` Module Usage:**
+
 - **Minimal adoption:** Only 1 file uses logging (tools/repo_lint/runners/base.py)
 - **Usage:** 2 logging calls (logging.warning, logging.error) in parallel runner orchestration
 - **Gap:** No standardized logging infrastructure exists
 
 **Rich Library Usage:**
+
 - **Already integrated:** 6 files use Rich for UI
   - `tools/repo_lint/ui/console.py` - Single console instance management
   - `tools/repo_lint/ui/reporter.py` - Violation reporting with tables/panels
@@ -1006,6 +1032,7 @@ Completed comprehensive inventory of logging patterns across Python codebase:
 **Phase 3.8.2: Shared Logger Wrapper Implementation (COMPLETE ✅)**
 
 Created `tools/repo_lint/logging_utils.py` (264 lines, 8.5KB):
+
 - **Rich integration:** Uses RichHandler for TTY contexts
 - **CI mode support:** Falls back to plain StreamHandler for CI/non-TTY
 - **Verbose mode:** DEBUG level logging via --verbose flag or REPO_LINT_VERBOSE env var
@@ -1022,6 +1049,7 @@ Created `tools/repo_lint/logging_utils.py` (264 lines, 8.5KB):
 **Phase 3.8.3: CLI Integration (COMPLETE ✅)**
 
 Integrated logging into repo-lint:
+
 - **CLI entry point:** Modified `cli_argparse.py` main() to configure logging
   - Detects --ci flag for CI mode (plain logging)
   - Detects --verbose flag for DEBUG level
@@ -1034,6 +1062,7 @@ Integrated logging into repo-lint:
 **Phase 3.8.4: Comprehensive Tests (COMPLETE ✅)**
 
 Created `tools/repo_lint/tests/test_logging_utils.py` (437 lines, 15KB):
+
 - **25 unit tests** covering all functionality
 - **Test categories:**
   - Logging configuration (7 tests) - TTY/CI modes, level filtering
@@ -1046,6 +1075,7 @@ Created `tools/repo_lint/tests/test_logging_utils.py` (437 lines, 15KB):
 **Files Created/Modified:**
 
 Created:
+
 1. `tools/repo_lint/logging_utils.py` (264 lines)
 2. `tools/repo_lint/tests/test_logging_utils.py` (437 lines)
 
@@ -1095,19 +1125,22 @@ Phase 3.8 is **COMPLETE**. The logging infrastructure is production-ready and in
 All 4 code review comments from PR #295 have been addressed:
 
 1. ✅ **Comment 2672317233** (`logging_utils.py:58-63`): Added `:rtype: bool` to `is_tty()` function docstring
-2. ✅ **Comment 2672317191** (`logging_utils.py:84-98`): Added `:rtype: logging.Logger` to `get_logger()` function docstring  
+2. ✅ **Comment 2672317191** (`logging_utils.py:84-98`): Added `:rtype: logging.Logger` to `get_logger()` function docstring
 3. ✅ **Comment 2672317203** (`278-summary.md:1050`): Fixed line count from 394 to 437
 4. ✅ **Comment 2672317222** (`278-summary.md:1036`): Fixed line count from 394 to 437
 
 **Additional Fix:**
+
 - ✅ Fixed Ruff import sorting issue in `cli_argparse.py` (I001 violation)
 
 **Files Modified:**
+
 1. `tools/repo_lint/logging_utils.py` - Added missing `:rtype:` fields
 2. `tools/repo_lint/cli_argparse.py` - Fixed import order
 3. `docs/ai-prompt/278/278-summary.md` - Corrected line counts
 
 **Testing:**
+
 - ✅ All Python checks pass: `repo-lint check --ci --only python` (exit 0)
 - ✅ All 25 unit tests pass (100%)
 - ✅ No new issues introduced
@@ -1125,6 +1158,7 @@ All 4 code review comments from PR #295 have been addressed:
 **Phase 6.1: Update Repo Docs to Reflect New Contracts (COMPLETE ✅)**
 
 Updated `docs/contributing/contributing-guide.md`:
+
 - Added comprehensive "Python Code Quality" section (new section 3)
 - Documented all Python linting requirements:
   - Type annotations (PEP 526 + function annotations)
@@ -1144,6 +1178,7 @@ Updated `docs/contributing/contributing-guide.md`:
 **Phase 6.2: Verify Docs Match Reality (COMPLETE ✅)**
 
 Configuration verification:
+
 - ✅ `pyproject.toml` Ruff ANN* rules enabled (line 93)
 - ✅ Per-file ignores for gradual rollout (line 108: all files excluded initially)
 - ✅ Black config: line-length 120, Python 3.8+ target
@@ -1151,10 +1186,12 @@ Configuration verification:
 - ✅ ANN401 ignored (allows `Any` with explicit tags)
 
 CI workflow verification:
+
 - ✅ `.github/workflows/repo-lint-and-docstring-enforcement.yml` runs `repo-lint check --ci --only python`
 - ✅ Workflows match documentation
 
 Cross-reference verification:
+
 - ✅ All Python contract documents exist and are comprehensive:
   - `python-typing-policy.md` (734 lines)
   - `python-exception-handling-policy.md`
@@ -1166,9 +1203,11 @@ Cross-reference verification:
   - README.md → CONTRIBUTING.md
 
 **Validation:**
+
 - ✅ All Python checks pass: `repo-lint check --ci --only python` (exit 0)
 
 **Files Modified:**
+
 1. `docs/contributing/contributing-guide.md` - Added Python Code Quality section
 
 **Commit:** d05a247
@@ -1182,6 +1221,7 @@ Cross-reference verification:
 **Session Work:**
 
 **Phase 6.1-6.2: Documentation Updates (COMPLETE ✅)**
+
 - Updated `docs/contributing/contributing-guide.md`:
   - Added comprehensive "Python Code Quality" section (new section 3)
   - Documented type annotations, docstring `:rtype:` policy, exception handling
@@ -1197,25 +1237,28 @@ Cross-reference verification:
 - All Python checks pass (exit 0)
 
 **Phase 3.4.4: Comprehensive Unit Tests for Docstring Validators (PARTIAL ✅)**
+
 - Created `tools/repo_lint/tests/test_python_docstring_validator.py`:
   - 11 comprehensive unit tests (100% pass rate)
   - Tests module docstring validation (4 tests)
   - Tests symbol-level validation (3 tests)
   - Tests pragma ignore functionality (1 test)
   - Tests error formatting and determinism (3 tests)
-- All Python checks pass (exit 0)
 - All 11 unit tests pass
 
 **Files Modified:**
+
 1. `docs/contributing/contributing-guide.md` - Added Python Code Quality section
-2. `tools/repo_lint/tests/test_python_docstring_validator.py` (NEW - 398 lines, 11 tests)
+2. `tools/repo_lint/tests/test_python_docstring_validator.py` (NEW - 427 lines, 11 tests)
 
 **Commits:**
+
 - d05a247: Phase 6.1-6.2 complete
 - 6fd00da: Update journals acknowledging all phases mandatory
 - c06ba47: Phase 3.4.4 partial - Python validator tests
 
 **Remaining Work:**
+
 - Phase 3.4.4: Tests for 5 more language validators (Bash, PowerShell, Perl, Rust, YAML)
 - Phase 3.5.5: Extended Markdown runner tests
 - Phase 4: Autofix strategy (4.1-4.2)

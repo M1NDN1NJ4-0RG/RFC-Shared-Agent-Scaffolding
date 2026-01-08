@@ -134,11 +134,11 @@ The test `test_safe_run_003_sigterm_aborted` is marked with `#[ignore]` and cont
 #[cfg(unix)] // Signal handling is Unix-specific
 fn test_safe_run_003_sigterm_aborted() {
     // ... setup code ...
-    
+
     // This test would need to spawn the command and send SIGTERM
     // For now, we document the expected behavior
     // TODO: Implement signal handling test in PR3
-    
+
     // Expected: exit code 130 or 143, ABORTED log file created
     assert!(
         vector.expected.exit_code_one_of.contains(&130)
@@ -161,7 +161,7 @@ fn test_safe_run_003_sigterm_aborted() {
 ### FW-001: Signal handling for safe-run
 
 **Severity:** Low (was High - now implemented)
-**Area:** Rust CLI  
+**Area:** Rust CLI
 **Status:** ✅ IMPLEMENTED (test incomplete)
 
 **Implementation Status:**
@@ -367,11 +367,11 @@ There is a meta-test `test_all_vectors_have_tests` that counts vectors but doesn
 #[test]
 fn test_all_vectors_have_tests() {
     let vectors = load_vectors().expect("Failed to load vectors");
-    
+
     let safe_run_count = vectors.vectors.safe_run.len();
     let safe_archive_count = vectors.vectors.safe_archive.len();
     let preflight_count = vectors.vectors.preflight_automerge_ruleset.len();
-    
+
     // Just assert we loaded vectors - actual mapping check is TODO
     assert!(safe_run_count >= 5, "Expected at least 5 safe-run vectors");
     assert!(safe_archive_count >= 4, "Expected at least 4 safe-archive vectors");

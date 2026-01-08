@@ -92,17 +92,17 @@ Typed errors with `thiserror`:
 pub enum BootstrapError {
     #[error("Not in git repository")]
     NotInRepo,
-    
+
     #[error("Virtual environment activation failed: {0}")]
     VenvActivation(String),
-    
+
     #[error("Installation failed: {tool} ({exit_code})")]
     InstallFailed {
         tool: String,
         exit_code: i32,
         stderr: String,
     },
-    
+
     // ... more variants
 }
 
@@ -129,7 +129,7 @@ pub trait Installer: Send + Sync {
     fn description(&self) -> &'static str;
     fn dependencies(&self) -> Vec<&'static str>;
     fn concurrency_safe(&self) -> bool;
-    
+
     async fn detect(&self, ctx: &Context) -> Result<Option<Version>>;
     async fn install(&self, ctx: &Context) -> Result<InstallResult>;
     async fn verify(&self, ctx: &Context) -> Result<VerifyResult>;
@@ -150,17 +150,17 @@ impl InstallerRegistry {
         let mut registry = Self {
             installers: HashMap::new(),
         };
-        
+
         // Register all installers
         registry.register(Box::new(RipgrepInstaller));
         registry.register(Box::new(PythonBlackInstaller));
         // ... all tools
-        
+
         registry
     }
-    
-    pub fn resolve_dependencies(&self, ids: &[&str]) 
-        -> Result<Vec<&dyn Installer>> 
+
+    pub fn resolve_dependencies(&self, ids: &[&str])
+        -> Result<Vec<&dyn Installer>>
     {
         // Topological sort using petgraph
     }
@@ -208,18 +208,18 @@ pub async fn execute_phase(
         // Parallel execution with semaphore and locks
         let semaphore = Arc::new(Semaphore::new(ctx.jobs));
         let mut tasks = vec![];
-        
+
         for step in &phase.steps {
             let permit = semaphore.clone().acquire_owned().await?;
             let lock = acquire_locks(&step.required_locks).await?;
-            
+
             tasks.push(tokio::spawn(async move {
                 let _permit = permit;
                 let _lock = lock;
                 execute_step(&step, &ctx).await
             }));
         }
-        
+
         futures::future::join_all(tasks).await
     } else {
         // Sequential execution
@@ -336,29 +336,29 @@ impl Installer for MyToolInstaller {
     fn id(&self) -> &'static str {
         "my-tool"
     }
-    
+
     fn name(&self) -> &'static str {
         "MyTool"
     }
-    
+
     fn description(&self) -> &'static str {
         "Description of my tool"
     }
-    
+
     fn dependencies(&self) -> Vec<&'static str> {
         vec![] // Or list dependency IDs
     }
-    
+
     fn concurrency_safe(&self) -> bool {
         true // Or false if requires exclusive access
     }
-    
+
     async fn detect(&self, _ctx: &Context) -> Result<Option<Version>, BootstrapError> {
         // Check if tool is installed
         let output = Command::new("my-tool")
             .arg("--version")
             .output()?;
-        
+
         if output.status.success() {
             let version_str = String::from_utf8_lossy(&output.stdout);
             let version = parse_version(&version_str)?;
@@ -367,7 +367,7 @@ impl Installer for MyToolInstaller {
             Ok(None)
         }
     }
-    
+
     async fn install(&self, ctx: &Context) -> Result<InstallResult, BootstrapError> {
         // Install using package manager
         match &ctx.package_manager {
@@ -384,18 +384,18 @@ impl Installer for MyToolInstaller {
             }
             _ => return Err(BootstrapError::UnsupportedPackageManager),
         }
-        
+
         // Verify installation
         let version = self.detect(ctx).await?
             .ok_or(BootstrapError::InstallVerificationFailed)?;
-        
+
         Ok(InstallResult {
             version,
             installed_new: true,
             log_messages: vec![],
         })
     }
-    
+
     async fn verify(&self, ctx: &Context) -> Result<VerifyResult, BootstrapError> {
         match self.detect(ctx).await? {
             Some(version) => Ok(VerifyResult {
@@ -430,10 +430,10 @@ impl InstallerRegistry {
         let mut registry = Self {
             installers: HashMap::new(),
         };
-        
+
         // ... existing installers
         registry.register(Box::new(MyToolInstaller));
-        
+
         registry
     }
 }
@@ -448,15 +448,15 @@ In `tests/integration_tests.rs`:
 async fn test_my_tool_installer() {
     let ctx = create_test_context();
     let installer = MyToolInstaller;
-    
+
     // Test detection
     let detected = installer.detect(&ctx).await;
     assert!(detected.is_ok());
-    
+
     // Test installation (dry-run)
     let result = installer.install(&ctx).await;
     assert!(result.is_ok());
-    
+
     // Test verification
     let verify = installer.verify(&ctx).await;
     assert!(verify.is_ok());
@@ -477,7 +477,7 @@ Located in each module:
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_exit_code_mapping() {
         let error = BootstrapError::NotInRepo;
@@ -495,7 +495,7 @@ Located in `tests/integration_tests.rs`:
 async fn test_full_install_flow_dry_run() {
     let temp_dir = tempfile::tempdir().unwrap();
     let ctx = create_test_context_in(&temp_dir);
-    
+
     // Test full flow
     let result = run_install(&ctx).await;
     assert!(result.is_ok());
@@ -511,7 +511,7 @@ Compare Rust vs Bash behavior:
 async fn test_parity_with_bash() {
     let bash_output = run_bash_bootstrap().await;
     let rust_output = run_rust_bootstrap().await;
-    
+
     assert_eq!(bash_output.exit_code, rust_output.exit_code);
     assert_eq!(bash_output.installed_tools, rust_output.installed_tools);
 }

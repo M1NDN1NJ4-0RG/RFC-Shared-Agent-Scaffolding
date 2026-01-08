@@ -33,7 +33,7 @@ Example: Test suite passed, file processed successfully, binary executed and com
 
 ```
 Meaning: Operation failed, generic error
-When to use: 
+When to use:
   - Command execution failed
   - Validation errors detected
   - Business logic errors

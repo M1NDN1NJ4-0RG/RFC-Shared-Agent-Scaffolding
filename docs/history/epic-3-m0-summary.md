@@ -13,7 +13,7 @@ All M0 (Contract Clarity) decision gates have been resolved and documented. The 
 ### Quick Reference Table
 
 | Stable ID | Decision | Status | Documentation |
-|-----------|----------|--------|---------------|
+| ----------- | ---------- | -------- | --------------- |
 | **M0-P1-I1** | Split stdout/stderr with `=== STDOUT ===` / `=== STDERR ===` markers | ✅ DECIDED | M0-DECISIONS.md, RFC v0.1.0 §7.1 |
 | **M0-P1-I2** | `{ISO8601}-pid{PID}-{STATUS}.log` format in `.agent/FAIL-LOGS/` | ✅ DECIDED | M0-DECISIONS.md, RFC v0.1.0 §7.2 |
 | **M0-P1-I3** | Hybrid no-clobber: auto-suffix default, opt-in strict mode | ✅ DECIDED | M0-DECISIONS.md, RFC v0.1.0 §7.3 |
@@ -25,7 +25,7 @@ All M0 (Contract Clarity) decision gates have been resolved and documented. The 
 ## M1 Implementation Status
 
 | Stable ID | Item | Status | Notes |
-|-----------|------|--------|-------|
+| ----------- | ------ | -------- | ------- |
 | **M1-P1-I1** | jq Error Noise Suppression | ✅ COMPLETED | PR #4 |
 | **M1-P2-I1** | Test vs Implementation Drift (Python 3) | ✅ COMPLETED | PR #8 |
 | **M1-P3-I1** | Python 2 Support Policy | ✅ DECIDED | Option A: Dropped (PR #9) |
@@ -107,7 +107,7 @@ Security:
 **Decision:** Stable exit code ranges
 
 | Code | Meaning | Examples |
-|------|---------|----------|
+| ------ | --------- | ---------- |
 | 0 | Success | Operation completed |
 | 1 | General failure | Unclassified error |
 | 2 | Auth/permission | Missing token, 401, 403 |

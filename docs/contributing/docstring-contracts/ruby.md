@@ -109,7 +109,7 @@ class BinaryWrapper
   # @raise [ArgumentError] if binary_name is nil or empty
   def initialize(binary_name)
     raise ArgumentError, 'binary_name cannot be nil or empty' if binary_name.nil? || binary_name.empty?
-    
+
     @binary_name = binary_name
     @cached_path = nil
   end
@@ -296,10 +296,10 @@ end
 def execute_binary(binary_path, args)
   # Execute and capture output
   stdout, stderr, status = Open3.capture3(binary_path.to_s, *args)
-  
+
   $stdout.print stdout
   $stderr.print stderr
-  
+
   status.exitstatus
 end
 

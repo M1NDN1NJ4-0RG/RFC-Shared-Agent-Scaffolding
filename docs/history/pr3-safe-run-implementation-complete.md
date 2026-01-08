@@ -126,7 +126,7 @@ Exit ≠ 0: Create log file, print snippet (if enabled), exit with same code
 ### Conformance Tests (4/5 passing)
 
 | Test ID | Test Name | Status | Coverage |
-|---------|-----------|--------|----------|
+| --------- | ----------- | -------- | ---------- |
 | safe-run-001 | Success produces no artifacts | ✅ PASS | No .agent dir created on exit 0 |
 | safe-run-002 | Failure creates log with split streams | ✅ PASS | Log file naming, content markers, exit code |
 | safe-run-003 | SIGTERM/SIGINT creates ABORTED log | ⏸️ IGNORED | Signal handling (deferred) |
@@ -138,7 +138,7 @@ Exit ≠ 0: Create log file, print snippet (if enabled), exit with same code
 ### Unit Tests (5/5 passing)
 
 | Test | Purpose | Status |
-|------|---------|--------|
+| ------ | --------- | -------- |
 | `cli::tests::verify_cli` | Clap CLI structure valid | ✅ PASS |
 | `cli::tests::test_version_format` | Version strings non-empty | ✅ PASS |
 | `safe_run::tests::test_shell_escape_simple` | Basic arg escaping | ✅ PASS |

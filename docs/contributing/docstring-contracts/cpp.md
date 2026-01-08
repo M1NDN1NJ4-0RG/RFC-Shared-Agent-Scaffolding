@@ -41,7 +41,7 @@ Every C++ source file should include these sections in header comments:
 /**
  * @file script.cpp
  * @brief One-line summary of what this file does
- * 
+ *
  * @details
  * Detailed description of what the file does.
  * Multiple paragraphs are allowed.
@@ -58,7 +58,7 @@ Every C++ source file should include these sections in header comments:
  *
  * @platform
  * Linux/Unix/Windows with C++17 compiler (GCC 7+, Clang 5+, MSVC 2017+)
- * 
+ *
  * @see exit-codes-contract.md
  */
 
@@ -71,7 +71,7 @@ namespace fs = std::filesystem;
 
 /**
  * @brief Main entry point
- * 
+ *
  * @param argc Argument count
  * @param argv Argument vector
  * @return Exit code (0 for success, non-zero for failure)
@@ -180,7 +180,7 @@ public:
 /**
  * @file script.cpp
  * @brief One-line summary of what this script does
- * 
+ *
  * @details
  * Detailed description of behavior.
  *
@@ -213,7 +213,7 @@ int main(int argc, char* argv[]) {
 /**
  * @file wrapper.cpp
  * @brief Wrapper for canonical tool execution
- * 
+ *
  * @details
  * This program discovers and invokes the canonical implementation.
  * It does NOT reimplement any contract logic - purely a thin wrapper.
@@ -238,7 +238,7 @@ int main(int argc, char* argv[]) {
  *
  * @author Repository contributors
  * @version 1.0
- * 
+ *
  * @see docs/architecture/wrapper-discovery.md
  * @see exit-codes-contract.md
  */
@@ -275,7 +275,7 @@ fs::path find_binary(const std::string& binary_name) {
             return path;
         }
     }
-    
+
     // Additional discovery logic...
     throw std::runtime_error("Binary '" + binary_name + "' not found");
 }
@@ -293,7 +293,7 @@ fs::path find_binary(const std::string& binary_name) {
  * This implementation uses execv (POSIX) to avoid shell injection vulnerabilities.
  * On Windows, use CreateProcess or similar APIs instead of system().
  */
-int execute_binary(const fs::path& binary_path, 
+int execute_binary(const fs::path& binary_path,
                    const std::vector<std::string>& args) {
 #ifdef _WIN32
     // Windows implementation using CreateProcess would go here
@@ -359,10 +359,10 @@ int main(int argc, char* argv[]) {
         }
 
         auto binary_path = find_binary("tool");
-        
+
         std::vector<std::string> args(argv + 1, argv + argc);
         return execute_binary(binary_path, args);
-        
+
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
         return 1;

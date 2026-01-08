@@ -150,7 +150,7 @@ This section is the **single source of truth** for the decisions below. The rema
 
 # Issue #160 - Human Decisions Required
 
-**Status:** Phase 1 Complete ✅ | Phase 2 & 3 Awaiting Direction
+ **Status:** Phase 1 Complete ✅ | Phase 2 & 3 Awaiting Direction
 **Last Updated:** 2025-12-31
 **Related:** Issue #160, `docs/ai-prompt/160/160-overview.md`
 
@@ -452,7 +452,7 @@ All Phase 1 items are done and do NOT require further decisions:
 ## Summary of Decisions Needed
 
 | # | Decision | Phase | Priority | Recommended |
-|---|----------|-------|----------|-------------|
+| --- | ---------- | ------- | ---------- | ------------- |
 | 1 | Make `repo_lint` installable package | Phase 2 | Medium | Yes — package repo_lint |
 | 2 | Integrate naming-and-style enforcement | Phase 2 | Medium | Yes — check-only naming via external YAML + strict validation |
 | 3 | Pin external tool versions | Phase 2 | Low | Yes — pin versions (single source of truth) |

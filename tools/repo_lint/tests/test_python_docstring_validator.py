@@ -36,7 +36,9 @@
 
     Run specific test::
 
-        python3 -m pytest tools/repo_lint/tests/test_python_docstring_validator.py::TestModuleDocstring::test_missing_module_docstring -v
+        python3 -m pytest \\
+            tools/repo_lint/tests/test_python_docstring_validator.py::TestModuleDocstring::test_missing_module_docstring \\
+            -v
 """
 
 from __future__ import annotations
@@ -65,8 +67,6 @@ class TestModuleDocstring(unittest.TestCase):
 
         :Purpose:
             Ensure validator accepts complete, valid module docstrings.
-
-        :rtype: None
         """
         content = '''"""Test module.
 
@@ -89,8 +89,6 @@ def example() -> None:
 
     :Purpose:
         Example purpose.
-
-    :rtype: None
     """
     pass
 '''
@@ -102,8 +100,6 @@ def example() -> None:
 
         :Purpose:
             Ensure validator detects files without module docstrings.
-
-        :rtype: None
         """
         content = """# No docstring here
 def example():
@@ -125,8 +121,6 @@ def example():
 
         :Purpose:
             Ensure validator catches missing Purpose section.
-
-        :rtype: None
         """
         content = '''"""Test module.
 
@@ -157,8 +151,6 @@ def example():
 
         :Purpose:
             Ensure validator catches missing Examples section.
-
-        :rtype: None
         """
         content = '''"""Test module.
 
@@ -197,8 +189,6 @@ class TestSymbolDocstrings(unittest.TestCase):
 
         :Purpose:
             Ensure validator accepts properly documented functions.
-
-        :rtype: None
         """
         content = '''"""Module docstring.
 
@@ -221,8 +211,6 @@ def example_function() -> None:
 
     :Purpose:
         Does something.
-
-    :rtype: None
     """
     pass
 '''
@@ -234,8 +222,6 @@ def example_function() -> None:
 
         :Purpose:
             Ensure validator catches undocumented functions.
-
-        :rtype: None
         """
         content = '''"""Module docstring.
 
@@ -268,8 +254,6 @@ def example_function():
 
         :Purpose:
             Ensure validator accepts properly documented classes.
-
-        :rtype: None
         """
         content = '''"""Module docstring.
 
@@ -299,8 +283,6 @@ class ExampleClass:
 
         :Purpose:
             Example method purpose.
-
-        :rtype: None
         """
         pass
 '''
@@ -320,20 +302,71 @@ class TestPragmaIgnore(unittest.TestCase):
         """Test that pragma ignore suppresses validation errors.
 
         :Purpose:
-            Ensure # noqa: DOCSTRING pragma works as expected.
-
-        :rtype: None
+            Ensure # noqa: D103 pragma on function definition line
+            suppresses missing-function-docstring validation errors.
         """
-        # Note: This test assumes the validator checks for pragma comments.
-        # If not implemented, this would need to be added to the validator.
-        content = """# noqa: DOCSTRING
+        # First, validate a function without a docstring and without any pragma;
+        # this should produce one or more docstring validation errors.
+        content_without_pragma = '''"""Module docstring.
+
+:Purpose:
+    Test
+
+:Environment Variables:
+    None
+
+:Examples:
+    Example
+
+:Exit Codes:
+    0
+        Success
+"""
+
 def example():
     pass
+'''
+        errors_without_pragma = PythonValidator.validate(
+            Path("test_without_pragma.py"),
+            content_without_pragma,
+        )
+        self.assertGreater(
+            len(errors_without_pragma),
+            0,
+            "Function without docstring and without pragma should produce errors",
+        )
+
+        # Now add a pragma that the validator is expected to understand.
+        # The implementation checks for `# noqa: D103` on the function
+        # definition line to ignore missing public function docstring errors.
+        content_with_pragma = '''"""Module docstring.
+
+:Purpose:
+    Test
+
+:Environment Variables:
+    None
+
+:Examples:
+    Example
+
+:Exit Codes:
+    0
+        Success
 """
-        errors = PythonValidator.validate(Path("test.py"), content)
-        # With pragma, should have no errors (or fewer errors)
-        # This is a basic check - actual behavior depends on implementation
-        self.assertIsInstance(errors, list)
+
+def example():  # noqa: D103
+    pass
+'''
+        errors_with_pragma = PythonValidator.validate(
+            Path("test_with_pragma.py"),
+            content_with_pragma,
+        )
+        self.assertEqual(
+            len(errors_with_pragma),
+            0,
+            "Pragma # noqa: D103 on function definition line should suppress " "missing docstring errors",
+        )
 
 
 class TestErrorFormatting(unittest.TestCase):
@@ -349,8 +382,6 @@ class TestErrorFormatting(unittest.TestCase):
 
         :Purpose:
             Ensure error messages reference the file being validated.
-
-        :rtype: None
         """
         content = """# No docstring
 def example():
@@ -365,8 +396,6 @@ def example():
 
         :Purpose:
             Ensure error messages are actionable by listing missing items.
-
-        :rtype: None
         """
         content = """# No docstring
 def example():
@@ -382,8 +411,6 @@ def example():
 
         :Purpose:
             Ensure error messages explain what went wrong.
-
-        :rtype: None
         """
         content = """# No docstring
 def example():

@@ -28,31 +28,31 @@
   Rust Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  rustfmt           ✅ PASS       -            0          -  
-  clippy            ❌ FAIL       -            1          -  
-  rust-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                clippy Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 1 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                           
-  File                Line   Message                                                       
- ───────────────────────────────────────────────────────────────────────────────────────── 
-  bootstrap_main.rs    140   clippy::collapsible_if: this `if` statement can be collapsed  
-                                                                                           
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  rustfmt           ✅ PASS       -            0          -
+  clippy            ❌ FAIL       -            1          -
+  rust-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 1        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                clippy Failures
+  Found 1 violation(s)
+
+
+  File                Line   Message
+ ─────────────────────────────────────────────────────────────────────────────────────────
+  bootstrap_main.rs    140   clippy::collapsible_if: this `if` statement can be collapsed
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 1
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

@@ -190,6 +190,7 @@ Do this for each fixture file:
 ~~~bash
 git diff --no-color -- tools/repo_lint/tests/<...>/<fixture> > tools/repo_lint/tests/<...>/<fixture>.RESET.diff
 ~~~
+
 1) Sanity check the diff file is non-empty:
 
 ~~~bash
@@ -210,6 +211,7 @@ For each fixture:
 ~~~bash
 git apply --whitespace=nowarn tools/repo_lint/tests/<...>/<fixture>.RESET.diff
 ~~~
+
 1) Verify the fixture is restored to canonical (use `git diff` to confirm it matches the expected “bad” content state you authored).
 2) If `git apply` fails:
    - FIX the `.RESET.diff` generation process (do not “force apply”)
@@ -242,12 +244,14 @@ If you are approaching token/context/time limits:
 ~~~plaintext
 docs/ai-prompt/160/160-next-steps.md
 ~~~
+
 1) The journal MUST include:
 
 - Exact stopping point (what was completed vs not)
 - Exact next commands to run
 - Exact next files to edit
 - Any known failing checks and where to look
+
 1) Stop ONLY after the repo is clean and resumable:
 
 ~~~bash

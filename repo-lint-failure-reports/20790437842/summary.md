@@ -28,41 +28,41 @@
   Rust Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  rustfmt           ❌ FAIL       -           11          -  
-  clippy            ✅ PASS       -            0          -  
-  rust-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-  Found 11 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                            
-  File   Line   Message                                                                                                                     
- ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_v2/activate.rs:153:  
-  .         -   println!("source {}/bin/activate", venv_path.display());                                                                    
-  .         -   println!("# Configure Perl environment");                                                                                   
-  .         -   println!("export PATH=\"{}:$PATH\"", perl_bin);                                                                             
-  .         -   -    println!("export PERL5LIB=\"{}${{PERL5LIB:+:${{PERL5LIB}}}}\"", perl_lib);                                             
-  .         -   +    println!(                                                                                                              
-  .         -   +        "export PERL5LIB=\"{}${{PERL5LIB:+:${{PERL5LIB}}}}\"",                                                             
-  .         -   +        perl_lib                                                                                                           
-  .         -   +    );                                                                                                                     
-  .         -   println!("export BOOTSTRAP_ACTIVATED=1");                                                                                   
-  .         -   }                                                                                                                           
-                                                                                                                                            
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  rustfmt           ❌ FAIL       -           11          -
+  clippy            ✅ PASS       -            0          -
+  rust-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 11       
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures
+  Found 11 violation(s)
+
+
+  File   Line   Message
+ ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/src/bootstrap_v2/activate.rs:153:
+  .         -   println!("source {}/bin/activate", venv_path.display());
+  .         -   println!("# Configure Perl environment");
+  .         -   println!("export PATH=\"{}:$PATH\"", perl_bin);
+  .         -   -    println!("export PERL5LIB=\"{}${{PERL5LIB:+:${{PERL5LIB}}}}\"", perl_lib);
+  .         -   +    println!(
+  .         -   +        "export PERL5LIB=\"{}${{PERL5LIB:+:${{PERL5LIB}}}}\"",
+  .         -   +        perl_lib
+  .         -   +    );
+  .         -   println!("export BOOTSTRAP_ACTIVATED=1");
+  .         -   }
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 11
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

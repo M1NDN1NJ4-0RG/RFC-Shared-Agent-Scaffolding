@@ -79,7 +79,7 @@ export BOOTSTRAP_BIN="$HOME/.bootstrap/bin/bootstrap-repo-cli"
 ### Basic Usage
 
 | Bash | Rust |
-|------|------|
+| ------ | ------ |
 | `./scripts/bootstrap-repo-lint-toolchain.sh` | `bootstrap-repo-cli install` |
 | `./scripts/bootstrap-repo-lint-toolchain.sh --all` | `bootstrap-repo-cli install --profile full` |
 | `./scripts/bootstrap-repo-lint-toolchain.sh --python` | `bootstrap-repo-cli install --profile dev` |
@@ -89,7 +89,7 @@ export BOOTSTRAP_BIN="$HOME/.bootstrap/bin/bootstrap-repo-cli"
 ### Advanced Options
 
 | Bash | Rust |
-|------|------|
+| ------ | ------ |
 | N/A (always installs) | `--dry-run` (plan without installing) |
 | Auto-detected | `--ci` (CI mode: plain output, no TTY) |
 | N/A | `--json` (JSON output for automation) |
@@ -204,7 +204,7 @@ min_version = "14.0.0"  # Require minimum version
 Both versions use the same exit codes for compatibility:
 
 | Code | Meaning |
-|------|---------|
+| ------ | --------- |
 | 0 | Success |
 | 1 | Usage error |
 | 10 | Not in repository |
@@ -312,7 +312,7 @@ bootstrap-repo-cli install --offline
 
 ```yaml
 - name: Download Rust bootstrapper
-  run: |
+ run: |
     curl -L -o bootstrap.tar.gz \
       https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases/latest/download/bootstrap-repo-cli-linux-x86_64.tar.gz
     tar xzf bootstrap.tar.gz

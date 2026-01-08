@@ -249,10 +249,10 @@ class BinaryWrapper {
      */
     async execute(args: string[]): Promise<number> {
         const binaryPath = await this.findBinary();
-        
+
         return new Promise((resolve, reject) => {
             const child = spawn(binaryPath, args);
-            
+
             child.on('exit', code => resolve(code ?? 1));
             child.on('error', err => reject(err));
         });

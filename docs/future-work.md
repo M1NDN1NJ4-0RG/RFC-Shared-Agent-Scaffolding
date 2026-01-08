@@ -15,7 +15,7 @@ This document tracks **explicitly-marked future work** found in the repository. 
 ## Active Items Summary
 
 | ID | Severity | Area | Title |
-|----|----------|------|-------|
+| ---- | ---------- | ------ | ------- |
 | [FW-001](#fw-001-signal-handling-for-safe-run) | Low | Rust CLI | Signal handling for safe-run (SIGTERM/SIGINT) - ✅ IMPLEMENTED |
 | [FW-002](#fw-002-safe-check-subcommand-implementation) | Medium | Rust CLI | safe-check subcommand implementation - ✅ COMPLETE |
 | [FW-003](#fw-003-safe-archive-subcommand-implementation) | Medium | Rust CLI | safe-archive subcommand implementation - ✅ COMPLETE |
@@ -528,7 +528,7 @@ grep -rn \
 
 ```bash
 rg -n \
-  "TODO|FIXME|deferred|not yet implemented|scaffolding only|future (PR|implementation)|placeholder|Future (Enhancements|Work)" \
+ "TODO | FIXME | deferred | not yet implemented | scaffolding only | future (PR | implementation) | placeholder | Future (Enhancements | Work)" \
   -g "*.{rs,md,toml,sh,py,pl,ps1}" \
   --iglob "!target/*" \
   --iglob "!dist/*" \
@@ -665,22 +665,24 @@ Code review identified security hardening opportunities in GitHub Actions workfl
 
      ```bash
      wget -qO /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64
-     echo "EXPECTED_SHA256  /tmp/shfmt" | sha256sum -c -
+
+ echo "EXPECTED_SHA256  /tmp/shfmt" | sha256sum -c -
      chmod +x /tmp/shfmt
      sudo mv /tmp/shfmt /usr/local/bin/shfmt
      ```
 
-2. **PowerShell repository setup (lines 85-88 in weekly workflow):**
+1. **PowerShell repository setup (lines 85-88 in weekly workflow):**
    - Add GPG key verification for Microsoft APT repository
    - Verify package signatures before installation
    - Example:
 
      ```bash
-     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+
+ wget -qO- <https://packages.microsoft.com/keys/microsoft.asc> | gpg --dearmor > microsoft.gpg
      sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
      ```
 
-3. **PSScriptAnalyzer installation (line 95 in weekly workflow):**
+1. **PSScriptAnalyzer installation (line 95 in weekly workflow):**
    - Consider adding `-SkipPublisherCheck` only when necessary
    - Verify module publisher/signature when possible
    - Document why signature checks are skipped if needed
@@ -736,7 +738,7 @@ We want CI failures (and their forensic context) to be **reviewable from the rep
 **Debug-mode switch (repo-controlled):**
 GitHub’s UI “Enable debug logging” toggle cannot be enabled programmatically by workflows, so implement debug mode via one of:
 
-- **Workflow dispatch input** (preferred): `debug_logging: true|false`
+- **Workflow dispatch input** (preferred): `debug_logging: true | false`
 - **Separate debug workflow**: e.g., `Umbrella CI (Debug)` / `Repo Lint (Debug)`
 
 When debug mode is enabled, increase verbosity consistently (examples):

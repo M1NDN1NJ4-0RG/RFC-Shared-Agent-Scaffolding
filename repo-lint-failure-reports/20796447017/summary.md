@@ -25,32 +25,32 @@
 🔍 Running repository linters and formatters...
 
 
-                        Linting Results                        
-                                                               
-  Runner              Status    Files   Violations   Duration  
- ───────────────────────────────────────────────────────────── 
-  black               ✅ PASS       -            0          -  
-  ruff                ✅ PASS       -            0          -  
-  pylint              ❌ FAIL       -            1          -  
-  python-docstrings   ✅ PASS       -            0          -  
-                                                               
+                        Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pylint Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 1 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                         
-  File              Line   Message                                                       
- ─────────────────────────────────────────────────────────────────────────────────────── 
-  cli_argparse.py    336   R1702: Too many nested blocks (6/5) (too-many-nested-blocks)  
-                                                                                         
+  Runner              Status    Files   Violations   Duration
+ ─────────────────────────────────────────────────────────────
+  black               ✅ PASS       -            0          -
+  ruff                ✅ PASS       -            0          -
+  pylint              ❌ FAIL       -            1          -
+  python-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 4           
-    Passed: 3                
-    Failed: 1                
-  Total Violations: 1        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pylint Failures
+  Found 1 violation(s)
+
+
+  File              Line   Message
+ ───────────────────────────────────────────────────────────────────────────────────────
+  cli_argparse.py    336   R1702: Too many nested blocks (6/5) (too-many-nested-blocks)
+
+
+           Summary
+  Total Runners: 4
+    Passed: 3
+    Failed: 1
+  Total Violations: 1
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

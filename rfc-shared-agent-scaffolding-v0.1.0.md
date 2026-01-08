@@ -246,7 +246,7 @@ All implementations MUST continue to emit the M0-compliant split sections with e
    ```
    === STDOUT ===
    ...stdout content...
-   
+
    ```
 
 2. A `STDERR` section:
@@ -416,7 +416,7 @@ Token values MUST never be logged. If no auth available, exit with code 2.
 **Decision:** Stable exit code ranges
 
 | Code | Meaning |
-|------|---------|
+| ------ | --------- |
 | 0 | Success |
 | 1 | General failure |
 | 2 | Auth/permission error |

@@ -83,7 +83,7 @@ main()
 All exit codes are deterministic and documented:
 
 | Code | Trigger | Message Pattern |
-|------|---------|----------------|
+| ------ | --------- | ---------------- |
 | 0 | Success | All components installed |
 | 1 | Usage error | Invalid arguments |
 | 10 | Environment | Not in a git repository |

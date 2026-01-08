@@ -28,35 +28,35 @@
   Python Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                        Linting Results                        
-                                                               
-  Runner              Status    Files   Violations   Duration  
- ───────────────────────────────────────────────────────────── 
-  black               ✅ PASS       -            0          -  
-  ruff                ✅ PASS       -            0          -  
-  pylint              ✅ PASS       -            0          -  
-  python-docstrings   ❌ FAIL       -            3          -  
-                                                               
+                        Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           python-docstrings Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-  Found 3 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                              
-  File   Line   Message                                                                                                       
- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   ❌ Validation FAILED: 2 violation(s) in 1 file(s)                                                             
-  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap_watch.py     
-  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap_watch.py:17  
-                                                                                                                              
+  Runner              Status    Files   Violations   Duration
+ ─────────────────────────────────────────────────────────────
+  black               ✅ PASS       -            0          -
+  ruff                ✅ PASS       -            0          -
+  pylint              ✅ PASS       -            0          -
+  python-docstrings   ❌ FAIL       -            3          -
 
-           Summary           
-  Total Runners: 4           
-    Passed: 3                
-    Failed: 1                
-  Total Violations: 3        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           python-docstrings Failures
+  Found 3 violation(s)
+
+
+  File   Line   Message
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  .         -   ❌ Validation FAILED: 2 violation(s) in 1 file(s)
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap_watch.py
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap_watch.py:17
+
+
+           Summary
+  Total Runners: 4
+    Passed: 3
+    Failed: 1
+  Total Violations: 3
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 
 ## Bash Linting Failures
@@ -68,33 +68,33 @@
   Bash Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  shellcheck        ✅ PASS       -            0          -  
-  shfmt             ✅ PASS       -            0          -  
-  bash-docstrings   ❌ FAIL       -            3          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            bash-docstrings Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            
-  Found 3 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                             
-  File   Line   Message                                                                                                                      
- ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   ❌ Validation FAILED: 2 violation(s) in 1 file(s)                                                                            
-  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap-repo-lint-toolchain.sh:196  
-  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap-repo-lint-toolchain.sh:242  
-                                                                                                                                             
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  shellcheck        ✅ PASS       -            0          -
+  shfmt             ✅ PASS       -            0          -
+  bash-docstrings   ❌ FAIL       -            3          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 3        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            bash-docstrings Failures
+  Found 3 violation(s)
+
+
+  File   Line   Message
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  .         -   ❌ Validation FAILED: 2 violation(s) in 1 file(s)
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap-repo-lint-toolchain.sh:196
+  .         -   ❌ /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/scripts/bootstrap-repo-lint-toolchain.sh:242
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 3
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

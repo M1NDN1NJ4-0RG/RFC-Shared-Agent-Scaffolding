@@ -203,7 +203,7 @@ test result: ok. 18 passed; 0 failed; 0 ignored
            .iter()
            .find(|v| v.id == "safe-run-006")
            .expect("Vector safe-run-006 not found");
-       
+
        // Test implementation
    }
    ```

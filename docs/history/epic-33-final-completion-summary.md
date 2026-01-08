@@ -21,7 +21,7 @@ EPIC #33 "Rust Canonical Tool + Thin Compatibility Wrappers" has been **successf
 ## 📊 Milestone Completion Summary
 
 | Milestone | Description | Status | Tests | Notes |
-|-----------|-------------|--------|-------|-------|
+| ----------- | ------------- | -------- | ------- | ------- |
 | **P0** | Pre-flight Baseline Validation | ✅ COMPLETE | 100/100 | Structure normalized, CI enforced |
 | **P1** | Docs & Rust Scaffolding | ✅ COMPLETE | N/A | 659 lines of documentation |
 | **P2** | Conformance Harness + Fixtures | ✅ COMPLETE | 10/10 meta tests | 13 conformance tests written |
@@ -48,7 +48,7 @@ EPIC #33 "Rust Canonical Tool + Thin Compatibility Wrappers" has been **successf
 **Per-Wrapper Breakdown:**
 
 | Language | Before | After | Reduction | Percentage |
-|----------|--------|-------|-----------|------------|
+| ---------- | -------- | ------- | ----------- | ------------ |
 | Bash | 227 | 113 | 114 | 50% |
 | Perl | 358 | 140 | 218 | 61% |
 | Python3 | 350 | 130 | 220 | 63% |
@@ -171,7 +171,7 @@ All wrappers follow standardized 5-step cascade per `docs/wrapper-discovery.md`:
 ## 📚 Documentation Deliverables
 
 | Document | Lines | Purpose |
-|----------|-------|---------|
+| ---------- | ------- | --------- |
 | `docs/rust-canonical-tool.md` | 148 | Architecture, module structure, development guide |
 | `docs/wrapper-discovery.md` | 224 | Binary discovery rules, testing strategy |
 | `docs/conformance-contract.md` | 287 | Output format, exit codes, artifact rules |

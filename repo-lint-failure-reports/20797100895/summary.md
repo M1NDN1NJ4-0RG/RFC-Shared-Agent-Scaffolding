@@ -25,33 +25,33 @@
 🔍 Running repository linters and formatters...
 
 
-                        Linting Results                        
-                                                               
-  Runner              Status    Files   Violations   Duration  
- ───────────────────────────────────────────────────────────── 
-  black               ✅ PASS       -            0          -  
-  ruff                ✅ PASS       -            0          -  
-  pylint              ❌ FAIL       -            2          -  
-  python-docstrings   ✅ PASS       -            0          -  
-                                                               
+                        Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pylint Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 2 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                          
-  File      Line   Message                                                                                                
- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  base.py    246   W0511: TODO: Replace introspection with explicit declaration pattern (decorator or attribute) (fixme)  
-  base.py    291   W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)                      
-                                                                                                                          
+  Runner              Status    Files   Violations   Duration
+ ─────────────────────────────────────────────────────────────
+  black               ✅ PASS       -            0          -
+  ruff                ✅ PASS       -            0          -
+  pylint              ❌ FAIL       -            2          -
+  python-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 4           
-    Passed: 3                
-    Failed: 1                
-  Total Violations: 2        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                pylint Failures
+  Found 2 violation(s)
+
+
+  File      Line   Message
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  base.py    246   W0511: TODO: Replace introspection with explicit declaration pattern (decorator or attribute) (fixme)
+  base.py    291   W1203: Use lazy % formatting in logging functions (logging-fstring-interpolation)
+
+
+           Summary
+  Total Runners: 4
+    Passed: 3
+    Failed: 1
+  Total Violations: 2
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

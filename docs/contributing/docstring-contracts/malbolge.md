@@ -53,7 +53,7 @@ Every Malbolge program should theoretically include these sections (good luck):
 ```malbolge
 // Program: hello-world.mb
 // Description: Attempts to print "Hello, World!" after 200+ hours of trial and error
-// 
+//
 // Detailed Behavior:
 //   This program MAY print "Hello, World!" to stdout.
 //   It may also summon Cthulhu. Results may vary.
@@ -68,7 +68,7 @@ Every Malbolge program should theoretically include these sections (good luck):
 //   666  - Successfully summoned eldritch horror
 //   ???  - Self-modifying code achieved consciousness
 //
-// Platform: 
+// Platform:
 //   - Any platform with a Malbolge interpreter
 //   - A strong stomach
 //   - Backup of your sanity
@@ -91,7 +91,7 @@ Every Malbolge program should theoretically include these sections (good luck):
 //   Expected: "Hello, World!" or heat death of universe
 //   Actual: *incomprehensible screaming*
 //
-// See: 
+// See:
 //   - docs/malbolge-survival-guide.md (doesn't exist)
 //   - exit-codes-contract.md (even it can't help you)
 //   - Your therapist

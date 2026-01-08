@@ -25,50 +25,50 @@
 🔍 Running repository linters and formatters...
 
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  rustfmt           ❌ FAIL       -           20          -  
-  clippy            ✅ PASS       -            0          -  
-  rust-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-  Found 20 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                                                               
-  File   Line   Message                                                                                                                                        
- ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/bootstrap-repo-cli/tests/parity_tests.rs:25:   
-  .         -   //! cargo test --test parity_tests                                                                                                             
-  .         -   //! ```                                                                                                                                        
-  .         -   -use std::process::Command;                                                                                                                    
-  .         -   use std::path::PathBuf;                                                                                                                        
-  .         -   +use std::process::Command;                                                                                                                    
-  .         -   /// Get repository root for test execution                                                                                                     
-  .         -   fn repo_root() -> PathBuf {                                                                                                                    
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/bootstrap-repo-cli/tests/parity_tests.rs:80:   
-  .         -   !rust_output.stdout.is_empty(),                                                                                                                
-  .         -   "Rust --version produced no output"                                                                                                            
-  .         -   );                                                                                                                                             
-  .         -   -                                                                                                                                              
-  .         -   +                                                                                                                                              
-  .         -   // NOTE: Bash bootstrapper does not support --version flag                                                                                     
-  .         -   // This is an expected behavioral difference - Rust adds version support                                                                       
-  .         -   // which is a usability improvement over the Bash version                                                                                      
-  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/bootstrap-repo-cli/tests/parity_tests.rs:105:  
-  .         -   "Rust --help failed with: {}",                                                                                                                 
-  .         -   String::from_utf8_lossy(&rust_output.stderr)                                                                                                   
-                                                                                                                                                               
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  rustfmt           ❌ FAIL       -           20          -
+  clippy            ✅ PASS       -            0          -
+  rust-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 20       
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                rustfmt Failures
+  Found 20 violation(s)
+
+
+  File   Line   Message
+ ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/bootstrap-repo-cli/tests/parity_tests.rs:25:
+  .         -   //! cargo test --test parity_tests
+  .         -   //! ```
+  .         -   -use std::process::Command;
+  .         -   use std::path::PathBuf;
+  .         -   +use std::process::Command;
+  .         -   /// Get repository root for test execution
+  .         -   fn repo_root() -> PathBuf {
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/bootstrap-repo-cli/tests/parity_tests.rs:80:
+  .         -   !rust_output.stdout.is_empty(),
+  .         -   "Rust --version produced no output"
+  .         -   );
+  .         -   -
+  .         -   +
+  .         -   // NOTE: Bash bootstrapper does not support --version flag
+  .         -   // This is an expected behavioral difference - Rust adds version support
+  .         -   // which is a usability improvement over the Bash version
+  .         -   Diff in /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding/rust/crates/bootstrap-repo-cli/tests/parity_tests.rs:105:
+  .         -   "Rust --help failed with: {}",
+  .         -   String::from_utf8_lossy(&rust_output.stderr)
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 20
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

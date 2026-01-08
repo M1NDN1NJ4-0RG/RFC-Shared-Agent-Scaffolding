@@ -127,7 +127,7 @@ use std::process;
 ///
 /// ```
 /// use crate::module::function_name;
-/// 
+///
 /// let result = function_name(arg1, arg2);
 /// assert_eq!(result, expected);
 /// ```

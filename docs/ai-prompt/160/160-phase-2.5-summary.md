@@ -117,7 +117,7 @@ All follow the Help Content Contract mandated in Phase 2.5 requirements.
 ### Interactive Mode (TTY)
 
 ```
-                  Linting Results                   
+                  Linting Results
 ╭────────┬─────────┬───────┬────────────┬──────────╮
 │ Runner │ Status  │ Files │ Violations │ Duration │
 ├────────┼─────────┼───────┼────────────┼──────────┤

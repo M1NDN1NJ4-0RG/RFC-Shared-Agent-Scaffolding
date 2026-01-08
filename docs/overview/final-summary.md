@@ -62,7 +62,7 @@ This work completed a formal RCA (Root Cause Analysis) and conformance verificat
 **Evidence Summary:**
 
 | Vector | Bash | Perl | Python3 | PowerShell |
-|--------|------|------|---------|------------|
+| -------- | ------ | ------ | --------- | ------------ |
 | Repo root detection | ✅ PASS | ✅ PASS | ✅ PASS | 🔧 FIXED |
 | Exit code propagation | ✅ PASS | ✅ PASS | ✅ PASS | ⏸️ Windows validation needed |
 | Argument quoting | ✅ PASS | ✅ PASS | ✅ PASS | ⏸️ Windows validation needed |
@@ -94,7 +94,7 @@ This work completed a formal RCA (Root Cause Analysis) and conformance verificat
    ```powershell
    # OLD: Used working directory
    $current = (Get-Location).Path
-   
+
    # NEW: Uses script location (like bash/perl/python3)
    $scriptPath = $PSCommandPath
    $current = Split-Path -Parent (Resolve-Path $scriptPath).Path
@@ -120,7 +120,7 @@ This work completed a formal RCA (Root Cause Analysis) and conformance verificat
        Write-Err "ERROR: Binary not found at path: $binary"
        exit 127
    }
-   
+
    # Improved error messages and defensive handling
    ```
 
@@ -156,7 +156,7 @@ Detailed analysis of 13 vectors:
 **Summary Table:**
 
 | Priority | Count | Status |
-|----------|-------|--------|
+| ---------- | ------- | -------- |
 | P0 (Critical) | 4 | ✅ All fixed/validated |
 | P1 (High) | 5 | ✅ 1 fixed, 4 validated/documented |
 | P2 (Medium) | 4 | ✅ Validated via tests |

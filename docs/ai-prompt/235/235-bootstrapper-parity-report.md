@@ -86,7 +86,7 @@ This report compares:
 ### Tools Installed
 
 | Category | Tool | Detection Method | Install Method |
-|----------|------|------------------|----------------|
+| ---------- | ------ | ------------------ | ---------------- |
 | **Core** | repo-lint | `repo-lint --help` | `pip install -e .` (editable) |
 | **Python** | black | `black --version` | `pip install black` |
 | **Python** | ruff | `ruff --version` | `pip install ruff` |
@@ -116,7 +116,7 @@ source .venv/bin/activate  # Sets VIRTUAL_ENV, modifies PATH
 ### Exit Codes
 
 | Code | Meaning |
-|------|---------|
+| ------ | --------- |
 | 0 | Success |
 | 1 | Generic failure |
 | 10 | Repository root not found |
@@ -154,7 +154,7 @@ source .venv/bin/activate  # Sets VIRTUAL_ENV, modifies PATH
 ### Tools Supported (via Installers)
 
 | Category | Tool | Installer Struct | Detection | Install | Verify |
-|----------|------|------------------|-----------|---------|--------|
+| ---------- | ------ | ------------------ | ----------- | --------- | -------- |
 | **System** | ripgrep | `RipgrepInstaller` | ✅ | ✅ | ✅ |
 | **Python** | black | `BlackInstaller` | ✅ | ✅ | ✅ |
 | **Python** | ruff | `RuffInstaller` | ✅ | ✅ | ✅ |
@@ -174,7 +174,7 @@ source .venv/bin/activate  # Sets VIRTUAL_ENV, modifies PATH
 ### CLI Commands
 
 ```bash
-bootstrap install [--profile dev|ci|full] [--jobs N] [--dry-run] [--offline] [--allow-downgrade] [--ci] [--json] [--verbose]
+ bootstrap install [--profile dev | ci | full] [--jobs N] [--dry-run] [--offline] [--allow-downgrade] [--ci] [--json] [--verbose]
 bootstrap doctor [--strict] [--json]
 bootstrap verify [--profile dev] [--json] [--verbose]
 ```
@@ -182,7 +182,7 @@ bootstrap verify [--profile dev] [--json] [--verbose]
 ### Global Flags
 
 | Flag | Purpose | Implemented |
-|------|---------|-------------|
+| ------ | --------- | ------------- |
 | `--dry-run` | No actual changes | ✅ |
 | `--ci` | CI mode | ✅ |
 | `--json` | JSON output | ✅ |
@@ -196,7 +196,7 @@ bootstrap verify [--profile dev] [--json] [--verbose]
 **File:** `rust/src/bootstrap_v2/exit_codes.rs`
 
 | Code | Variant | Meaning |
-|------|---------|---------|
+| ------ | --------- | --------- |
 | 0 | Success | All operations completed |
 | 1 | UsageError | Invalid arguments or missing config |
 | 10 | NotInRepo | Not in git repository |
@@ -217,7 +217,7 @@ bootstrap verify [--profile dev] [--json] [--verbose]
 ### Core Components
 
 | Module | Purpose | Status |
-|--------|---------|--------|
+| -------- | --------- | -------- |
 | `cli.rs` | Command-line parsing | ✅ Complete |
 | `exit_codes.rs` | Exit code constants | ✅ Complete |
 | `errors.rs` | Error hierarchy | ✅ Complete |
@@ -639,13 +639,13 @@ bootstrap verify [--profile dev] [--json] [--verbose]
 #[tokio::test]
 async fn test_parity_with_bash() {
     let temp_repo = create_test_repo();
-    
+
     // Run Bash version
     let bash_output = run_bash_bootstrap(&temp_repo).await;
-    
+
     // Run Rust version
     let rust_output = run_rust_bootstrap(&temp_repo).await;
-    
+
     // Compare:
     assert_eq!(bash_output.exit_code, rust_output.exit_code);
     assert_eq!(bash_output.installed_tools, rust_output.installed_tools);

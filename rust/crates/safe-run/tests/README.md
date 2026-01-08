@@ -110,14 +110,14 @@ fn test_my_new_vector() {
         .expect("Vector not found");
 
     let temp = TempDir::new().expect("Failed to create temp dir");
-    
+
     let mut cmd = Command::new(get_safe_run_binary());
     cmd.current_dir(temp.path());
     cmd.arg("run");
     cmd.args(&vector.command.args);
 
     let mut assert = cmd.assert();
-    
+
     if let Some(exit_code) = vector.expected.exit_code {
         assert = assert.code(exit_code);
     }

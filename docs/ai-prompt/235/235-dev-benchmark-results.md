@@ -73,7 +73,7 @@ This mode benchmarks the **verification gate** behavior, which is the most frequ
 ### Bash Verification: `repo-lint check --ci`
 
 | Metric | Value |
-|--------|-------|
+| -------- | ------- |
 | **Mean** | 43.178 s |
 | **Std Dev** | 0.737 s |
 | **Median** | 42.813 s |
@@ -109,7 +109,7 @@ Run 10: 42.769
 **Status:** ✅ Functional (Fixed 2026-01-07)
 
 | Metric | Value |
-|--------|-------|
+| -------- | ------- |
 | **Mean** | 1.362 s |
 | **Std Dev** | 0.006 s |
 | **Median** | ~1.358 s |
@@ -160,7 +160,7 @@ Run 10: 1.375  ← max
 ### Behavioral Mismatches
 
 | Aspect | Bash | Rust | Status |
-|--------|------|------|--------|
+| -------- | ------ | ------ | -------- |
 | Fresh install | ✅ Works | ⚠️  Requires pre-existing venv | **Documented Limitation** |
 | Verify-only | ✅ Works (~43.9s) | ✅ Works (~1.4s) | **✅ Parity Achieved** |
 | repo-lint install | ✅ Automatic | ✅ Automatic | **✅ Parity Achieved** |

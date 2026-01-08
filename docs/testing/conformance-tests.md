@@ -38,19 +38,19 @@ test_repo_root_detection() {
   local tmp wrapper
   tmp="$(mktemp -d)"
   wrapper="$tmp/safe-run-test.sh"
-  
+
   cp "$REPO_ROOT/wrappers/bash/scripts/safe-run.sh" "$wrapper"
-  
+
   (
     cd "$tmp"  # Outside repo
     export SAFE_RUN_BIN="$RUST_BIN"
     output=$(bash "$wrapper" echo "test" 2>&1)
     rc=$?
-    
-    [[ "$rc" -eq 0 ]] || return 1
-    [[ "$output" == "test" ]] || return 1
+
+ [[ "$rc" -eq 0 ]] |  | return 1
+ [[ "$output" == "test" ]] |  | return 1
   )
-  
+
   rm -rf "$tmp"
 }
 ```
@@ -61,15 +61,15 @@ Describe "Repository root detection" {
   It "works with SAFE_RUN_BIN from any directory" {
     $tempDir = New-Item -ItemType Directory -Path (Join-Path $env:TEMP ([System.IO.Path]::GetRandomFileName()))
     $tempScript = Join-Path $tempDir "safe-run-test.ps1"
-    
+
     Copy-Item $ScriptUnderTest $tempScript
-    
+
     Push-Location $tempDir
     try {
       $env:SAFE_RUN_BIN = $global:SafeRunBin
       $output = & pwsh -NoProfile -File $tempScript echo "test" 2>&1
-      $LASTEXITCODE | Should -Be 0
-      $output | Should -Be "test"
+ $LASTEXITCODE | Should -Be 0
+ $output | Should -Be "test"
     } finally {
       Pop-Location
       Remove-Item -Recurse -Force $tempDir
@@ -111,13 +111,13 @@ Describe "Repository root detection" {
 test_exit_code_propagation() {
   local codes=(0 1 7 42 127 255)
   local code rc
-  
+
   for code in "${codes[@]}"; do
     set +e
     SAFE_RUN_BIN="$RUST_BIN" bash "$WRAPPER" bash -c "exit $code" >/dev/null 2>&1
     rc=$?
     set -e
-    
+
     if [[ "$rc" -ne "$code" ]]; then
       echo "Exit code mismatch: expected $code, got $rc"
       return 1
@@ -129,11 +129,11 @@ test_exit_code_propagation() {
 ```powershell
 # PowerShell test
 Describe "Exit code propagation" {
-  @(0, 1, 7, 42, 127, 255) | ForEach-Object {
+ @(0, 1, 7, 42, 127, 255) | ForEach-Object {
     It "forwards exit code $_" {
       $env:SAFE_RUN_BIN = $global:SafeRunBin
-      & pwsh -NoProfile -File $ScriptUnderTest pwsh -NoProfile -Command "exit $_" 2>&1 | Out-Null
-      $LASTEXITCODE | Should -Be $_
+ & pwsh -NoProfile -File $ScriptUnderTest pwsh -NoProfile -Command "exit $_" 2>&1 | Out-Null
+ $LASTEXITCODE | Should -Be $_
     }
   }
 }
@@ -165,9 +165,9 @@ Describe "Exit code propagation" {
 test_empty_argument() {
   local output
   output=$(SAFE_RUN_BIN="$RUST_BIN" bash "$WRAPPER" echo "" "after" 2>&1)
-  
+
   # Output should contain "after"
-  echo "$output" | grep -q "after" || return 1
+ echo "$output" | grep -q "after" |  | return 1
 }
 ```
 
@@ -190,8 +190,8 @@ test_empty_argument() {
 test_spaces_in_argument() {
   local output
   output=$(SAFE_RUN_BIN="$RUST_BIN" bash "$WRAPPER" echo "hello world" 2>&1)
-  
-  [[ "$output" == "hello world" ]] || return 1
+
+ [[ "$output" == "hello world" ]] |  | return 1
 }
 ```
 
@@ -215,9 +215,9 @@ test_spaces_in_argument() {
 test_metacharacters_not_interpreted() {
   local output
   output=$(SAFE_RUN_BIN="$RUST_BIN" bash "$WRAPPER" echo "test;echo hacked" 2>&1)
-  
-  [[ "$output" == "test;echo hacked" ]] || return 1
-  ! echo "$output" | grep -q "^hacked$" || return 1
+
+ [[ "$output" == "test;echo hacked" ]] |  | return 1
+ ! echo "$output" | grep -q "^hacked$" |  | return 1
 }
 ```
 
@@ -248,23 +248,23 @@ test_metacharacters_not_interpreted() {
 test_safe_log_dir_inheritance() {
   local tmp
   tmp="$(mktemp -d)"
-  
+
   (
     cd "$tmp"
     export SAFE_LOG_DIR="$tmp/custom_logs"
     mkdir -p "$SAFE_LOG_DIR"
     export SAFE_RUN_BIN="$RUST_BIN"
-    
+
     # Run failing command
-    bash "$WRAPPER" bash -c "exit 1" >/dev/null 2>&1 || true
-    
+ bash "$WRAPPER" bash -c "exit 1" >/dev/null 2>&1 |  | true
+
     # Check custom directory has log
-    [[ -n "$(ls "$SAFE_LOG_DIR"/*-FAIL.log 2>/dev/null || true)" ]] || return 1
-    
+ [[ -n "$(ls "$SAFE_LOG_DIR"/*-FAIL.log 2>/dev/null |  | true)" ]] |  | return 1
+
     # Check default directory has no logs
-    [[ -z "$(ls .agent/FAIL-LOGS/*-FAIL.log 2>/dev/null || true)" ]] || return 1
+ [[ -z "$(ls .agent/FAIL-LOGS/*-FAIL.log 2>/dev/null |  | true)" ]] |  | return 1
   )
-  
+
   rm -rf "$tmp"
 }
 ```
@@ -290,25 +290,25 @@ test_safe_log_dir_inheritance() {
 test_safe_snippet_lines_inheritance() {
   local tmp err
   tmp="$(mktemp -d)"
-  
+
   (
     cd "$tmp"
     export SAFE_SNIPPET_LINES=3
     export SAFE_RUN_BIN="$RUST_BIN"
-    
+
     set +e
     err=$((bash "$WRAPPER" bash -c 'printf "L1\nL2\nL3\nL4\nL5\nL6\nL7\nL8\nL9\nL10\n"; exit 2') 2>&1 1>/dev/null)
     rc=$?
     set -e
-    
-    [[ "$rc" -eq 2 ]] || return 1
-    
+
+ [[ "$rc" -eq 2 ]] |  | return 1
+
     # Should contain last 3 lines
-    echo "$err" | grep -q "L8" || return 1
-    echo "$err" | grep -q "L9" || return 1
-    echo "$err" | grep -q "L10" || return 1
+ echo "$err" | grep -q "L8" |  | return 1
+ echo "$err" | grep -q "L9" |  | return 1
+ echo "$err" | grep -q "L10" |  | return 1
   )
-  
+
   rm -rf "$tmp"
 }
 ```
@@ -341,22 +341,22 @@ test_binary_not_found_error() {
   local tmp wrapper err rc
   tmp="$(mktemp -d)"
   wrapper="$tmp/safe-run-test.sh"
-  
+
   cp "$REPO_ROOT/wrappers/bash/scripts/safe-run.sh" "$wrapper"
-  
+
   (
     cd "$tmp"
     unset SAFE_RUN_BIN
-    
+
     set +e
     err=$(bash "$wrapper" echo "test" 2>&1)
     rc=$?
     set -e
-    
-    [[ "$rc" -eq 127 ]] || return 1
-    echo "$err" | grep -q "Rust canonical tool not found" || return 1
+
+ [[ "$rc" -eq 127 ]] |  | return 1
+ echo "$err" | grep -q "Rust canonical tool not found" |  | return 1
   )
-  
+
   rm -rf "$tmp"
 }
 ```
@@ -414,7 +414,7 @@ This test should be run in CI matrix and requires wrapper debug output or inspec
 ## Coverage Matrix
 
 | Test | Bash | Perl | Python3 | PowerShell | Status |
-|------|------|------|---------|------------|--------|
+| ------ | ------ | ------ | --------- | ------------ | -------- |
 | repo-root-001 | ✅ | ✅ | ✅ | 🔧 Added | Instrumented |
 | exit-code-001 | ✅ | ✅ | ✅ | ⏸️ Need Windows | Instrumented |
 | arg-quote-001 | ✅ | ✅ | ✅ | ⏸️ Need Windows | Instrumented |

@@ -28,65 +28,65 @@
   Bash Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                         Linting Results                         
-                                                                 
-  Runner                Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────────── 
-  shellcheck            ✅ PASS       -            0          -  
-  shfmt                 ✅ PASS       -            0          -  
-  validate_docstrings   ❌ FAIL       -           18          -  
-                                                                 
+                         Linting Results
 
-                          validate_docstrings Failures                          
-  Found 18 violation(s)                                                         
-                                                                                
-                                                                                
-  File   Line   Message                                                         
- ────────────────────────────────────────────────────────────────────────────── 
-  .         -   ❌ Validation FAILED: 17 violation(s) in 2 file(s)              
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-  .         -   ❌                                                              
-                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…  
-                                                                                
+  Runner                Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────────
+  shellcheck            ✅ PASS       -            0          -
+  shfmt                 ✅ PASS       -            0          -
+  validate_docstrings   ❌ FAIL       -           18          -
 
-                                    Summary                                     
-  Total Runners: 3                                                              
-    Passed: 2                                                                   
-    Failed: 1                                                                   
-  Total Violations: 18                                                          
-                                                                                
-  Exit Code: 1 (VIOLATIONS)                                                     
-                                                                                
+
+                          validate_docstrings Failures
+  Found 18 violation(s)
+
+
+  File   Line   Message
+ ──────────────────────────────────────────────────────────────────────────────
+  .         -   ❌ Validation FAILED: 17 violation(s) in 2 file(s)
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+  .         -   ❌
+                /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Age…
+
+
+                                    Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 18
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 

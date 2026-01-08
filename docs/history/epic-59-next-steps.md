@@ -133,7 +133,7 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
 
    ```
    ERROR: 'safe-run check' is not yet implemented.
-   
+
    This subcommand is scaffolding only and does not perform any checks.
    Use the 'run' subcommand for safe command execution:
      safe-run run <command> [args...]
@@ -223,17 +223,17 @@ If investigating PowerShell Ctrl-C behavior in the future:
    # Build Rust binary
    cd rust
    cargo build --release
-   
+
    # Set up test
    $env:SAFE_LOG_DIR = ".agent\FAIL-LOGS"
    $binary = ".\rust\target\release\safe-run.exe"
-   
+
    # Test 1: Direct invocation (current approach)
    & $binary run ping -n 60 localhost
    # Press Ctrl-C after ~5 seconds
    # Check: .agent\FAIL-LOGS for ABORTED log
    # Check: exit code (should be 130 or 143)
-   
+
    # Test 2: Start-Process approach (if direct fails)
    $proc = Start-Process -FilePath $binary -ArgumentList "run","ping","-n","60","localhost" -NoNewWindow -Wait -PassThru
    # Press Ctrl-C after ~5 seconds

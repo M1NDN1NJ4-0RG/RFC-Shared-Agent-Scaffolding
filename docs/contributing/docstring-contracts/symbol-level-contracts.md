@@ -53,10 +53,10 @@ Every function and method must have a docstring with:
 ```python
 def function_name(arg1: str, arg2: int = 0) -> bool:
     """Brief summary of what this function does.
-    
+
     More detailed description if needed. Can span multiple lines
     and paragraphs.
-    
+
     :param arg1: Description of first argument
     :type arg1: str
     :param arg2: Description of second argument. Defaults to 0.
@@ -65,9 +65,9 @@ def function_name(arg1: str, arg2: int = 0) -> bool:
     :rtype: bool
     :raises ValueError: If arg1 is empty
     :raises IOError: If file cannot be read
-    
+
     Example::
-    
+
         >>> function_name("test", 5)
         True
     """
@@ -81,14 +81,14 @@ When types are in annotations, you can use the compact form:
 ```python
 def function_name(arg1: str, arg2: int = 0) -> bool:
     """Brief summary of what this function does.
-    
+
     :param arg1: Description of first argument
     :param arg2: Description of second argument. Defaults to 0.
     :returns: True if successful, False otherwise
     :raises ValueError: If arg1 is empty
-    
+
     Example::
-    
+
         >>> function_name("test", 5)
         True
     """
@@ -100,23 +100,23 @@ def function_name(arg1: str, arg2: int = 0) -> bool:
 ```python
 class ClassName:
     """Brief summary of what this class represents.
-    
+
     More detailed description of the class purpose, behavior,
     and usage patterns.
-    
+
     :ivar attribute1: Description of public attribute
     :ivar attribute2: Description of another attribute
-    
+
     Example::
-    
+
         >>> obj = ClassName()
         >>> obj.method()
         result
     """
-    
+
     def __init__(self, param: str):
         """Initialize ClassName.
-        
+
         :param param: Description of initialization parameter
         """
         pass
@@ -240,21 +240,21 @@ function Find-RepoRoot {
     <#
     .SYNOPSIS
     Find the repository root directory.
-    
+
     .DESCRIPTION
     Walks up from the current directory until it finds .git/
     Returns the absolute path to repository root.
-    
+
     .OUTPUTS
     String. Absolute path to repository root.
-    
+
     .EXAMPLE
     $root = Find-RepoRoot
-    
+
     .NOTES
     Returns $null if repository root not found.
     #>
-    
+
     $dir = Get-Location
     while ($dir.Path -ne $dir.Root.Path) {
         if (Test-Path (Join-Path $dir ".git")) {

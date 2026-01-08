@@ -56,14 +56,14 @@ Describe "Repository root detection" {
     # Copy script to temp location
     $tempScript = Join-Path $env:TEMP "safe-run-test.ps1"
     Copy-Item $ScriptUnderTest $tempScript
-    
+
     # Change to temp directory (OUTSIDE repo)
     Push-Location $env:TEMP
     try {
       # Script should still find repo via SAFE_RUN_BIN or fail with proper error
       # NOT crash because it's looking in wrong directory
       $env:SAFE_RUN_BIN = "nonexistent"
-      & $tempScript echo test 2>&1 | Should -Match "Rust canonical tool not found"
+ & $tempScript echo test 2>&1 | Should -Match "Rust canonical tool not found"
     } finally {
       Pop-Location
       Remove-Item $tempScript -ErrorAction SilentlyContinue
@@ -124,7 +124,7 @@ test_safe_run_bin_override_without_validation() {
   export SAFE_RUN_BIN=/nonexistent/binary
   # Should fail during exec, not during discovery
   # Error message should come from exec, not from wrapper's validation
-  ./safe-run.sh echo test 2>&1 | grep -v "Searched locations"
+ ./safe-run.sh echo test 2>&1 | grep -v "Searched locations"
 }
 ```
 
@@ -250,7 +250,7 @@ test_argument_edge_cases() {
     'echo "\$PATH"'
     'printf "a\nb\nc"'
   )
-  
+
   for cmd in "${cases[@]}"; do
     # Run through each wrapper and compare outputs
   done
@@ -368,9 +368,9 @@ $os = if ($PSVersionTable.PSVersion.Major -ge 6) {
 ```bash
 # Unix only
 test_sigint_exit_code() {
-  timeout 1s ./safe-run.sh sleep 10 || rc=$?
+ timeout 1s ./safe-run.sh sleep 10 |  | rc=$?
   # Should be 143 (SIGTERM) or 130 (SIGINT), not 1 or 124
-  [[ "$rc" -eq 143 || "$rc" -eq 130 ]]
+ [[ "$rc" -eq 143 |  | "$rc" -eq 130 ]]
 }
 ```
 
@@ -451,7 +451,7 @@ test_env_var_inheritance() {
   export SAFE_RUN_VIEW=merged
   export SAFE_LOG_DIR=/tmp/custom
   export SAFE_SNIPPET_LINES=5
-  
+
   # Run command and verify Rust binary received these env vars
   # (Check behavior changes based on these vars)
 }
@@ -574,9 +574,9 @@ test_concurrent_invocations() {
     ./safe-run.sh bash -c "sleep 0.1; exit 1" &
   done
   wait
-  
+
   # Should have exactly 10 distinct log files
-  count=$(ls .agent/FAIL-LOGS/*.log | wc -l)
+ count=$(ls .agent/FAIL-LOGS/*.log | wc -l)
   [[ "$count" -eq 10 ]]
 }
 ```
@@ -613,7 +613,7 @@ test_concurrent_invocations() {
 ## Summary of Risk Vectors
 
 | ID | Vector | Priority | Wrapper Affected | Needs Fix |
-|----|--------|----------|------------------|-----------|
+| ---- | -------- | ---------- | ------------------ | ----------- |
 | 1 | PowerShell repo root uses working dir | P0 | PowerShell | ✅ YES |
 | 2 | SAFE_RUN_BIN validation | P0 | All | ❌ No (compliant) |
 | 3 | PowerShell $LASTEXITCODE null handling | P0 | PowerShell | ✅ YES |

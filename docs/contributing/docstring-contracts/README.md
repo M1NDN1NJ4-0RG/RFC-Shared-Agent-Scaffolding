@@ -76,7 +76,7 @@ Each language has its own contract document that specifies:
 - **Examples** (real files in this repo that follow the contract)
 
 | Language | Extensions | Contract Document |
-|----------|------------|-------------------|
+| ---------- | ------------ | ------------------- |
 | Bash | `.sh`, `.bash`, `.zsh` | [bash.md](./bash.md) |
 | PowerShell | `.ps1` | [powershell.md](./powershell.md) |
 | Python 3 | `.py` | [python.md](./python.md) |
@@ -89,7 +89,7 @@ Each language has its own contract document that specifies:
 These contracts are preliminary and **not yet enforced by the validator**. Use them as guidance if adding these languages to the repository, but expect refinement before official adoption.
 
 | Language | Extensions | Contract Document | Status |
-|----------|------------|-------------------|--------|
+| ---------- | ------------ | ------------------- | -------- |
 | JavaScript/Node.js | `.js`, `.mjs` | [javascript.md](./javascript.md) | DRAFT |
 | C | `.c`, `.h` | [c.md](./c.md) | DRAFT |
 | C++ | `.cpp`, `.hpp`, `.cc`, `.hh`, `.cxx` | [cpp.md](./cpp.md) | DRAFT |
@@ -102,7 +102,7 @@ These contracts are preliminary and **not yet enforced by the validator**. Use t
 These contracts exist for entertainment, educational, or satirical purposes. **Do not use these languages in this repository.**
 
 | Language | Extensions | Contract Document | Status | Warning Level |
-|----------|------------|-------------------|--------|---------------|
+| ---------- | ------------ | ------------------- | -------- | --------------- |
 | Malbolge | `.mb`, `.malbolge` | [malbolge.md](./malbolge.md) | EXPERIMENTAL | ⚠️⚠️⚠️ EXISTENTIAL DREAD |
 
 **Note:** The Malbolge contract demonstrates that even the most absurd and impractical languages can theoretically follow documentation standards. It serves as a reminder to appreciate readable, maintainable code.
@@ -141,7 +141,7 @@ Every function, class, method, and subroutine must be documented. See **[symbol-
 This table maps the required semantic concepts to their language-specific keywords. Use this when writing documentation or prompting AI tools.
 
 | Semantic Concept | Bash | PowerShell | Python | Perl | Rust | YAML |
-|-----------------|------|------------|--------|------|------|------|
+| ----------------- | ------ | ------------ | -------- | ------ | ------ | ------ |
 | **Name/Summary** | `# script.sh - Summary` | `.SYNOPSIS` | First line of `"""` | `=head1 NAME` | `//! # Title` | `# Workflow:` or `# File:` |
 | **Description** | `DESCRIPTION:` | `.DESCRIPTION` | First paragraph or `Purpose` section | `=head1 DESCRIPTION` | `//! # Purpose` | `# Purpose:` |
 | **Usage** | `USAGE:` | `.SYNOPSIS` or `.EXAMPLE` | `CLI Interface` or `Usage` section | `=head1 SYNOPSIS` | `//! # Examples` (with bash blocks) | `# Triggers:` or `# Usage:` |
@@ -263,15 +263,15 @@ IN_SCOPE_PATTERNS = [
 # Create a validator class
 class NewLanguageValidator:
     """Validates NewLanguage docstrings."""
-    
+
     REQUIRED_SECTIONS = [
         r"pattern for section 1",
         r"pattern for section 2",
         # ... map to required semantic sections
     ]
-    
+
     SECTION_NAMES = ["Section1", "Section2", ...]
-    
+
     @staticmethod
     def validate(file_path: Path, content: str) -> Optional[ValidationError]:
         """Validate NewLanguage docstring."""

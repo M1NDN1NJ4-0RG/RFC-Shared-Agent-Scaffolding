@@ -40,7 +40,7 @@ Every C source file should include these sections in header comments:
 /**
  * @file script-name.c
  * @brief One-line summary of what this file does
- * 
+ *
  * @details
  * Detailed description of what the file does.
  * Multiple paragraphs are allowed.
@@ -57,7 +57,7 @@ Every C source file should include these sections in header comments:
  *
  * @platform
  * Linux/Unix with GCC 4.8+ or Clang 3.4+
- * 
+ *
  * @see exit-codes-contract.md
  */
 
@@ -67,7 +67,7 @@ Every C source file should include these sections in header comments:
 
 /**
  * @brief Main entry point
- * 
+ *
  * @param argc Argument count
  * @param argv Argument vector
  * @return Exit code (0 for success, non-zero for failure)
@@ -132,7 +132,7 @@ int find_binary(const char *binary_name, char *result_path);
 /**
  * @file script.c
  * @brief One-line summary of what this script does
- * 
+ *
  * @details
  * Detailed description of behavior.
  *
@@ -165,7 +165,7 @@ int main(int argc, char *argv[]) {
 /**
  * @file wrapper.c
  * @brief Wrapper for canonical tool execution
- * 
+ *
  * @details
  * This program discovers and invokes the canonical implementation.
  * It does NOT reimplement any contract logic - purely a thin wrapper.
@@ -190,7 +190,7 @@ int main(int argc, char *argv[]) {
  *
  * @author Repository contributors
  * @version 1.0
- * 
+ *
  * @see docs/architecture/wrapper-discovery.md
  * @see exit-codes-contract.md
  */
@@ -220,7 +220,7 @@ int find_binary(const char *binary_name, char *path) {
         path[PATH_MAX - 1] = '\0';
         return 0;
     }
-    
+
     // Additional discovery logic...
     return -1;
 }
@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
 
     // Execute binary
     execv(binary_path, &argv[1]);
-    
+
     // If we get here, exec failed
     perror("execv");
     return 1;

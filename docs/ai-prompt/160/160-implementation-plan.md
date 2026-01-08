@@ -130,7 +130,7 @@
   ```bash
   repo-lint which black
   # Output: /home/user/.venv-lint/bin/black (version 24.10.0)
-  
+
   repo-lint which shellcheck
   # Output: /usr/bin/shellcheck (version 0.9.0)
   ```

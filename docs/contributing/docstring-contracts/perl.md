@@ -44,10 +44,10 @@ script-name.pl - One-line summary of what this script does
 
   # Basic usage
   script-name.pl -- <command> [args...]
-  
+
   # Optional leading "--" separator
   script-name.pl <command> [args...]
-  
+
   # Examples
   script-name.pl -- echo "Hello, world!"
   script-name.pl perl my-script.pl
@@ -156,7 +156,7 @@ Binary not found - canonical tool is not installed or discoverable
 
   # Execute a simple command
   script-name.pl -- echo "Hello, world!"
-  
+
   # Without leading separator
   script-name.pl echo "test"
 
@@ -165,7 +165,7 @@ Binary not found - canonical tool is not installed or discoverable
   # Override binary path
   export BINARY_PATH=/custom/path
   script-name.pl -- test-command
-  
+
   # Set log directory
   export LOG_DIR=/tmp/logs
   script-name.pl -- failing-command
@@ -320,10 +320,10 @@ script-name.pl - One-line summary of what this script does
 
   # Basic usage - execute a command with enhanced logging
   script-name.pl -- <command> [args...]
-  
+
   # Optional leading "--" separator
   script-name.pl <command> [args...]
-  
+
   # Examples
   script-name.pl -- echo "Hello, world!"
   script-name.pl perl my-script.pl
@@ -439,7 +439,7 @@ Binary not found
 
   # Execute a simple command
   script-name.pl -- echo "Hello, world!"
-  
+
   # Without separator
   script-name.pl echo "test"
 
@@ -636,7 +636,7 @@ Failure
 =head1 SYNOPSIS
 
   script.pl E<lt>commandE<gt> [args...]
-  
+
   # Or in code examples (indented), use directly:
   script.pl <command> [args...]
 ```

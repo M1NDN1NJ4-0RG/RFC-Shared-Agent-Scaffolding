@@ -8,7 +8,7 @@
 ## Quick Reference
 
 | Shard | When to Load | Size |
-|-------|-------------|------|
+| ------- | ------------- | ------ |
 | `10_CORE_RULES.md` | **Always** (first read after bootstrap) | Small |
 | `20_GIT_WORKFLOW.md` | When working with git/PRs | Medium |
 | `21_AUTO_MERGE_WAITING.md` | When using auto-merge workflow | Small |

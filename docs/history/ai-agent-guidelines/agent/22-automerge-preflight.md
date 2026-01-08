@@ -77,7 +77,7 @@ Example: `'["lint", "test", "build"]'`
 ## Exit Codes
 
 | Code | Meaning | Action |
-|------|---------|--------|
+| ------ | --------- | -------- |
 | 0 | Success - All required checks present in ruleset | Proceed with auto-merge |
 | 2 | Auth/permission error (401, 403) | Check GITHUB_TOKEN |
 | 3 | Ruleset not found or validation error | Fix inputs, check ruleset name |

@@ -56,16 +56,16 @@ Each vector file (e.g., `python-docstring-001.json`) contains:
   "id": "python-docstring-001",
   "name": "Human-readable test name",
   "description": "What this vector tests",
-  "language": "python | bash | powershell | perl | yaml | rust",
+ "language": "python | bash | powershell | perl | yaml | rust",
   "fixture": "path/to/fixture/file",
   "expected_violations": [
     {
       "rule_id": "DOCSTRING.MISSING",
       "path": "conformance/repo-lint/vectors/fixtures/python/docstring_test.py",
       "symbol": "function_name",
-      "symbol_kind": "function | method | class | sub",
+ "symbol_kind": "function | method | class | sub",
       "line": 12,
-      "severity": "error | warning",
+ "severity": "error | warning",
       "message": "Descriptive error message"
     }
   ],
@@ -85,7 +85,7 @@ Each vector file (e.g., `python-docstring-001.json`) contains:
 ### Violation Object Fields
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ------- | ------ | ---------- | ------------- |
 | `rule_id` | string | Yes | Stable rule identifier (e.g., `DOCSTRING.MISSING`, `LINT.RUFF.E501`) |
 | `path` | string | Yes | Relative path to the file with the violation |
 | `symbol` | string | Yes | Full symbol name (e.g., `ClassName.method_name`) |
@@ -97,7 +97,7 @@ Each vector file (e.g., `python-docstring-001.json`) contains:
 ### Pass Object Fields
 
 | Field | Type | Required | Description |
-|-------|------|----------|-------------|
+| ------- | ------ | ---------- | ------------- |
 | `symbol` | string | Yes | Symbol name that should not produce a violation |
 | `symbol_kind` | string | Yes | Symbol type |
 | `reason` | string | Yes | Why this symbol should pass |
@@ -154,17 +154,17 @@ def test_python_docstring_001():
     # Load vector
     vector_path = Path("conformance/repo-lint/vectors/docstrings/python-docstring-001.json")
     vector = json.loads(vector_path.read_text())
-    
+
     # Run linter
     runner = PythonRunner(repo_root=Path.cwd())
     result = runner.check(only_docstrings=True, files=[vector["fixture"]])
-    
+
     # Normalize violations to schema
     actual_violations = normalize_violations(result.violations)
-    
+
     # Compare
     assert actual_violations == vector["expected_violations"]
-    
+
     # Verify passes
     for expected_pass in vector["expected_passes"]:
         assert not any(v["symbol"] == expected_pass["symbol"] for v in actual_violations)

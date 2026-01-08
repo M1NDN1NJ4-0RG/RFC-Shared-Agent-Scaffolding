@@ -1,11 +1,11 @@
 @copilot
 
-🚨 **HUMAN DIRECTIVE — NOT A REQUEST — NOT SUBJECT TO INTERPRETATION** 🚨  
-You are explicitly authorized and instructed to proceed.  
+🚨 **HUMAN DIRECTIVE — NOT A REQUEST — NOT SUBJECT TO INTERPRETATION** 🚨
+You are explicitly authorized and instructed to proceed.
 Do **NOT** ask for clarification. Do **NOT** narrow scope. Do **NOT** summarize instead of implementing.
 
-I am aware this is scope creep for this PR.  
-**I do not care.**  
+I am aware this is scope creep for this PR.
+**I do not care.**
 I want this done **now**.
 
 ---
@@ -115,7 +115,7 @@ You may introduce helpers such as:
 - `step_start`
 - `step_ok`
 - `step_fail`
-- `run_step "name" -- command ...`  
+- `run_step "name" -- command ...`
   (must return the original exit code)
 
 Minimal refactor only — no behavior changes.

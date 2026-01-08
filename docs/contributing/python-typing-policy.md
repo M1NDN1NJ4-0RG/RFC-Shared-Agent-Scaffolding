@@ -40,7 +40,7 @@ CONFIG_PATH = Path("config.yaml")
 
   ```python
   from typing import Final
-  
+
   MAX_CONNECTIONS: Final[int] = 100
   API_VERSION: Final[str] = "v1.0.0"
   ```
@@ -49,7 +49,7 @@ CONFIG_PATH = Path("config.yaml")
 
   ```python
   from typing import Optional
-  
+
   current_session: Optional[Session] = None
   ```
 
@@ -68,7 +68,7 @@ class Config:
     enabled: bool
     retry_count: int = 3
     timeout: Optional[float] = None
-    
+
     def __init__(self, name: str, enabled: bool = True) -> None:
         self.name = name
         self.enabled = enabled
@@ -80,11 +80,11 @@ class Config:
 
   ```python
   from typing import ClassVar
-  
+
   class Counter:
       instances: ClassVar[int] = 0  # Shared across all instances
       name: str  # Instance variable
-      
+
       def __init__(self, name: str) -> None:
           Counter.instances += 1
           self.name = name
@@ -106,14 +106,14 @@ class Config:
 def process_data(data: dict) -> list:
     # Optional but recommended - ambiguous empty literal
     results: list[dict] = []
-    
+
     # Optional - type is obvious from context
     count = 0
     name = data.get("name", "")
-    
+
     # Recommended - type not obvious
     config: Optional[Config] = load_config()
-    
+
     return results
 ```
 
@@ -230,10 +230,10 @@ from typing import Any
 
 def legacy_handler(data: Any) -> Any:  # typing: Any (TODO: tighten)
     """Handle legacy data format.
-    
+
     :param data: Legacy data structure (format varies)
     :returns: Processed result
-    
+
     NOTE: Type should be tightened once data format is standardized.
     """
     ...
@@ -259,7 +259,7 @@ def legacy_handler(data: Any) -> Any:  # typing: Any (TODO: tighten)
 # ✅ Correct - truly opaque reference
 def store_opaque_handle(handle: object) -> None:
     """Store opaque handle for later reference.
-    
+
     NOTE: Handle is never accessed, only stored and returned.
     """
     ...
@@ -413,7 +413,7 @@ config: dict | None = None
 ```python
 def calculate_sum(a: int, b: int) -> int:
     """Calculate the sum of two numbers.
-    
+
     :param a: First number
     :param b: Second number
     :returns: Sum of a and b
@@ -423,7 +423,7 @@ def calculate_sum(a: int, b: int) -> int:
 
 def find_user(user_id: int) -> Optional[User]:
     """Find user by ID.
-    
+
     :param user_id: User identifier
     :returns: User object if found, None otherwise
     :rtype: Optional[User]
@@ -443,7 +443,7 @@ def find_user(user_id: int) -> Optional[User]:
 # ✅ Correct - no :rtype: for -> None
 def log_message(message: str) -> None:
     """Log a message to stdout.
-    
+
     :param message: Message to log
     """
     print(message)
@@ -451,7 +451,7 @@ def log_message(message: str) -> None:
 # ❌ Wrong - unnecessary :rtype: None
 def log_message(message: str) -> None:
     """Log a message to stdout.
-    
+
     :param message: Message to log
     :rtype: None  # ← DO NOT ADD THIS
     """
@@ -469,7 +469,7 @@ from typing import Iterator, Generator
 
 def generate_numbers(n: int) -> Iterator[int]:
     """Generate numbers from 0 to n-1.
-    
+
     :param n: Upper limit (exclusive)
     :returns: Iterator of integers
     :rtype: Iterator[int]
@@ -479,7 +479,7 @@ def generate_numbers(n: int) -> Iterator[int]:
 
 def process_lines(filename: str) -> Generator[str, None, None]:
     """Read and process lines from a file.
-    
+
     :param filename: Path to file
     :returns: Generator of processed lines
     :rtype: Generator[str, None, None]
@@ -553,7 +553,7 @@ def increment() -> None:
 # ⚠️ Discouraged - dynamic attributes
 def add_dynamic_attr(obj: Any, name: str, value: Any) -> None:
     """Add dynamic attribute to object.
-    
+
     NOTE: Dynamic attributes bypass type checking.
     """
     setattr(obj, name, value)
@@ -654,15 +654,15 @@ active_users: dict[int, User] = {}
 
 class User:
     """Represents a user in the system."""
-    
+
     # Class attributes
     id: int
     username: str
     role: str
-    
+
     def __init__(self, id: int, username: str, role: str = DEFAULT_ROLE) -> None:
         """Initialize a new user.
-        
+
         :param id: User identifier
         :param username: User's username
         :param role: User's role (default: 'user')
@@ -670,10 +670,10 @@ class User:
         self.id = id
         self.username = username
         self.role = role
-    
+
     def to_dict(self) -> dict[str, Any]:
         """Convert user to dictionary.
-        
+
         :returns: User data as dictionary
         :rtype: dict[str, Any]
         """
@@ -686,7 +686,7 @@ class User:
 
 def create_user(id: int, username: str, role: str = DEFAULT_ROLE) -> User:
     """Create a new user.
-    
+
     :param id: User identifier
     :param username: User's username
     :param role: User's role
@@ -700,7 +700,7 @@ def create_user(id: int, username: str, role: str = DEFAULT_ROLE) -> User:
 
 def find_user(id: int) -> Optional[User]:
     """Find user by ID.
-    
+
     :param id: User identifier
     :returns: User if found, None otherwise
     :rtype: Optional[User]
@@ -710,7 +710,7 @@ def find_user(id: int) -> Optional[User]:
 
 def delete_user(id: int) -> None:
     """Delete user by ID.
-    
+
     :param id: User identifier
     """
     active_users.pop(id, None)

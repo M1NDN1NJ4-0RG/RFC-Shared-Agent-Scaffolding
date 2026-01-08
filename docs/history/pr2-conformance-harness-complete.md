@@ -92,7 +92,7 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
 ### safe-run (5/5 vectors)
 
 | Test ID | Test Name | Vector | Status |
-|---------|-----------|--------|--------|
+| --------- | ----------- | -------- | -------- |
 | `test_safe_run_001_success_no_artifacts` | safe-run-001 | Success, no artifacts | ✅ Ignored |
 | `test_safe_run_002_failure_creates_log` | safe-run-002 | Failure, split log, exit code | ✅ Ignored |
 | `test_safe_run_003_sigterm_aborted` | safe-run-003 | Signal handling (Unix) | ✅ Ignored |
@@ -102,7 +102,7 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
 ### safe-archive (4/4 vectors)
 
 | Test ID | Test Name | Vector | Status |
-|---------|-----------|--------|--------|
+| --------- | ----------- | -------- | -------- |
 | `test_safe_archive_001_basic` | safe-archive-001 | Basic archiving | ✅ Ignored |
 | `test_safe_archive_002_compression_formats` | safe-archive-002 | tar.gz, tar.bz2, zip | ✅ Ignored |
 | `test_safe_archive_003_no_clobber_auto_suffix` | safe-archive-003 | Auto-suffix collision | ✅ Ignored |
@@ -111,7 +111,7 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
 ### preflight (3/4 vectors)
 
 | Test ID | Test Name | Vector | Status |
-|---------|-----------|--------|--------|
+| --------- | ----------- | -------- | -------- |
 | `test_preflight_001_success` | preflight-001 | Success | ✅ Ignored |
 | `test_preflight_002_auth_failure` | preflight-002 | Auth failure | ✅ Ignored |
 | `test_preflight_003_ruleset_not_found` | preflight-003 | Ruleset not found | ✅ Ignored |
@@ -119,7 +119,7 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
 ### Meta-tests (3 tests)
 
 | Test | Purpose | Status |
-|------|---------|--------|
+| ------ | --------- | -------- |
 | `test_load_vectors` | Validates vector loading | ✅ Passing |
 | `test_safe_run_vector_structure` | Validates vector schema | ✅ Passing |
 | `test_all_vectors_have_tests` | Validates test coverage | ✅ Passing |
@@ -127,7 +127,7 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
 ### Snapshot utilities (3 tests)
 
 | Test | Purpose | Status |
-|------|---------|--------|
+| ------ | --------- | -------- |
 | `test_normalize_line_endings` | CRLF → LF normalization | ✅ Passing |
 | `test_normalize_pid` | PID placeholder | ✅ Passing |
 | `test_normalize_timestamp` | Timestamp placeholder | ✅ Passing |

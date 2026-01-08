@@ -28,32 +28,32 @@
   Rust Linting
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-                       Linting Results                       
-                                                             
-  Runner            Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────── 
-  rustfmt           ✅ PASS       -            0          -  
-  clippy            ❌ FAIL       -            2          -  
-  rust-docstrings   ✅ PASS       -            0          -  
-                                                             
+                       Linting Results
 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                clippy Failures                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
-  Found 2 violation(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
-                                                                                                                          
-  File                    Line   Message                                                                                  
- ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── 
-  src/bootstrap_main.rs    119   E0277: `std::option::Option<std::string::String>` doesn't implement `std::fmt::Display`  
-  src/bootstrap_main.rs    119   E0277: `std::option::Option<std::string::String>` doesn't implement `std::fmt::Display`  
-                                                                                                                          
+  Runner            Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────
+  rustfmt           ✅ PASS       -            0          -
+  clippy            ❌ FAIL       -            2          -
+  rust-docstrings   ✅ PASS       -            0          -
 
-           Summary           
-  Total Runners: 3           
-    Passed: 2                
-    Failed: 1                
-  Total Violations: 2        
-                             
-  Exit Code: 1 (VIOLATIONS)  
-                             
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                clippy Failures
+  Found 2 violation(s)
+
+
+  File                    Line   Message
+ ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  src/bootstrap_main.rs    119   E0277: `std::option::Option<std::string::String>` doesn't implement `std::fmt::Display`
+  src/bootstrap_main.rs    119   E0277: `std::option::Option<std::string::String>` doesn't implement `std::fmt::Display`
+
+
+           Summary
+  Total Runners: 3
+    Passed: 2
+    Failed: 1
+  Total Violations: 2
+
+  Exit Code: 1 (VIOLATIONS)
+
 ```
 
