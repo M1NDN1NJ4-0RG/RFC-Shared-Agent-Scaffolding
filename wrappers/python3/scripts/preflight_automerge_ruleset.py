@@ -479,9 +479,9 @@ def main(argv: List[str]) -> int:
     """
     try:
         parsed = parse_args(argv)
-    except (ValueError, KeyError) as e:
+    except (ValueError, IndexError) as e:
         # ValueError: Invalid argument values
-        # KeyError: Missing required argument
+        # IndexError: Missing required argument
         eprint(f"ERROR: {e}")
         return 3
     if parsed is None:
