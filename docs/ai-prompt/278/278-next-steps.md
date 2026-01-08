@@ -30,15 +30,14 @@ This means ALL phases including 4, 5, 6 are MANDATORY (not optional/recommended)
 - [ ] 3.3.4: Comprehensive unit tests
 - [ ] 3.3.5: Integration with `repo-lint check --ci`
 
-**Phase 3.4.4: Docstring Validator Unit Tests (DEFERRED - MEDIUM PRIORITY)**
-- [ ] Create test files for internal validators:
-  - [ ] test_python_validator.py
-  - [ ] test_bash_validator.py
-  - [ ] test_powershell_validator.py
-  - [ ] test_perl_validator.py
-  - [ ] test_rust_validator.py
-  - [ ] test_yaml_validator.py
-  - [ ] test_validator_common.py
+**Phase 3.4.4: Docstring Validator Unit Tests (IN PROGRESS)**
+- [x] test_python_validator.py (11 tests, 100% pass)
+- [ ] test_bash_validator.py
+- [ ] test_powershell_validator.py
+- [ ] test_perl_validator.py
+- [ ] test_rust_validator.py
+- [ ] test_yaml_validator.py
+- [ ] test_validator_common.py
 - [ ] Golden fixtures for each language (pass/fail cases)
 - [ ] Regression tests for bugs found during migration
 
@@ -47,6 +46,14 @@ This means ALL phases including 4, 5, 6 are MANDATORY (not optional/recommended)
 - Covers: file detection, tool checking, parsing, check/fix modes
 - Integration tests included
 - Mark as COMPLETE
+
+**Phase 3.9: JSON/JSONC Linting Support (NEW MANDATORY)**
+- [ ] 3.9.1: Define JSON/JSONC contract document
+- [ ] 3.9.2: Choose enforcement mechanism (Prettier)
+- [ ] 3.9.3: Integrate JSON/JSONC checks into repo_lint
+- [ ] 3.9.4: Update copilot-setup-steps.yml to install Prettier
+- [ ] 3.9.5: Repo baseline cleanup
+- [ ] 3.9.6: EXTREMELY COMPREHENSIVE tests (MANDATORY, NO SHORTCUTS)
 
 **Phase 4: Autofix Strategy (ALL MANDATORY)**
 - [ ] 4.1: Add non-destructive autofix where safe
@@ -81,26 +88,33 @@ This means ALL phases including 4, 5, 6 are MANDATORY (not optional/recommended)
 ### Recommended Execution Order
 
 **Priority 1: Complete Deferred Test Coverage**
-1. Phase 3.5.5: Mark as complete (already done)
-2. Phase 3.4.4: Add docstring validator unit tests
+1. Phase 3.4.4: Continue Python validator tests (5 more validators + common)
+2. Phase 3.5.5: Mark as complete (already done - 15 tests)
 
-**Priority 2: Implement Custom PEP 526 Checker**
-3. Phase 3.3: Custom checker for module-level/class annotations
+**Priority 2: Add JSON/JSONC Support (NEW MANDATORY)**
+3. Phase 3.9: JSON/JSONC linting via Prettier
+   - Define contracts
+   - Install Prettier in copilot-setup-steps.yml
+   - Integrate into repo-lint
+   - Comprehensive tests
 
-**Priority 3: Autofix and Rollout**
-4. Phase 4: Autofix strategy
-5. Phase 5: CI enforcement rollout
+**Priority 3: Implement Custom PEP 526 Checker**
+4. Phase 3.3: Custom checker for module-level/class annotations
 
-**Priority 4: Documentation**
-6. Phase 6: Documentation updates
+**Priority 4: Autofix and Rollout**
+5. Phase 4: Autofix strategy
+6. Phase 5: CI enforcement rollout
+
+**Priority 5: Documentation**
+7. Phase 6: Documentation updates
 
 ### Next Immediate Action
 
-Start with Phase 3.4.4 (docstring validator tests) because:
-- Validates the Phase 3.4 migration was correct
-- Establishes test patterns for Phase 3.3 custom checker
-- Lower risk than implementing new checker first
-- Can be done incrementally (one validator at a time)
+**UPDATED:** Start Phase 3.9 (JSON/JSONC linting support) because:
+- New mandatory requirement from human
+- Follows proven pattern from Phase 3.5 (Markdown) and 3.6 (TOML)
+- Required infrastructure update (copilot-setup-steps.yml)
+- Can be completed incrementally and independently
 
 ---
 
