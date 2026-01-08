@@ -17,7 +17,7 @@ All Copilot code review comments from PR #296 addressed (commit ea8dd88).
 
 ### Work Completed This Session
 
-- [x] Created `scripts/fix-md013-line-length.py` (saved to repo)
+- [x] Created `scripts/fix_md013_line_length.py` (saved to repo)
 - [x] Applied intelligent paragraph rewrapping to 234 markdown files
 - [x] Script now rewraps inline code (backtick exemption removed)
 - [x] Fixed contributing docs, ai-prompt journals, architecture docs
