@@ -28,8 +28,40 @@
 
 All Python linting now passes (black, ruff, pylint, python-docstrings all exit 0).
 
+## Commit 2: Add comprehensive unit tests
+
+### Changes Made
+
+Created exhaustive test suites for both scripts:
+- `scripts/tests/test_fix_md013_line_length_option_a.py` (27 tests)
+- `scripts/tests/test_fix_md013_line_length_option_b.py` (33 tests)
+
+**Test coverage includes:**
+- Bullet lists (-), asterisk (*), plus (+) markers
+- Numbered lists (1., 2., etc.)
+- Task lists (- [ ], - [x], - [X])
+- Nested lists with correct indentation
+- List items with continuation lines
+- Fenced code blocks (backticks and tildes)
+- Indented code blocks (4 spaces/tab)
+- Tables (header + separator + rows)
+- Blockquotes, headings, link references
+- HTML blocks
+- Inline code exemption (backticks)
+- URL exemption (http/https and angle brackets)
+- Newline behavior (final newline preservation)
+- Empty file handling
+- Deterministic output (idempotency)
+- Historical bug checks:
+  - No list marker duplication
+  - No checkbox syntax breakage
+  - No list item collapse
+
+All 60 tests pass successfully.
+
 ## Next Steps
 
-- Create comprehensive unit tests for both scripts
-- Address remaining unresolved PR review comments (test coverage)
+- Pre-commit gate: run repo-lint check --ci until exit 0
+- Initiate Copilot Code Review
+- Address any code review feedback
 

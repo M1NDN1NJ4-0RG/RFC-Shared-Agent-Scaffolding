@@ -13,8 +13,9 @@ Add files via upload - Two new Python scripts for fixing Markdown MD013 line-len
 - [x] Address resolved Copilot Code Review comments
 - [x] Fix pylint violations (use-yield-from)
 - [x] Fix python-docstrings violations (missing docstrings and reST format)
-- [ ] Create comprehensive unit tests for both scripts
-- [ ] Address remaining unresolved PR review comments (test coverage)
-- [ ] Validate scripts on real repository files
+- [x] Create comprehensive unit tests for both scripts (60 tests, all passing)
+- [ ] Pre-commit gate: verify repo-lint check --ci passes
+- [ ] Initiate and address Copilot Code Review
+- [ ] Validate scripts on real repository files (controlled batches)
 - [ ] Apply MD013 fixes in controlled batches
 
