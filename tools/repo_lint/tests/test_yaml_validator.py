@@ -212,7 +212,7 @@ name: Test
 """
         # The validator should only check the header block
         # This is more of an implementation detail test
-        header = YAMLValidator._extract_header_block(content)
+        header = YAMLValidator._extract_header_block(content)  # pylint: disable=protected-access
         self.assertIn("# Workflow: Test", header)
         self.assertNotIn("# This is not part of header", header)
 
