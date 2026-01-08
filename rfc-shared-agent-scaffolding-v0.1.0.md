@@ -11,10 +11,14 @@
 
 This RFC defines a restartable, failure-resilient operating model for AI coding agents.
 
-Version 8 adds an important lens: the system is not “bureaucratic rigor” for its own sake. It is **operational scar tissue** from running constrained agents (small context, rigid output limits, cheaper/free tiers) alongside more capable agents. In practice, the scaffolding acts as a **compatibility layer** (a “hypervisor”) that allows:
+Version 8 adds an important lens: the system is not “bureaucratic rigor” for its own sake. It is **operational scar
+tissue** from running constrained agents (small context, rigid output limits, cheaper/free tiers) alongside more capable
+agents. In practice, the scaffolding acts as a **compatibility layer** (a “hypervisor”) that allows:
 
-- **Constrained agents** (e.g., small context windows, strict output limits) to function safely via sharding, journaling, stop conditions, and serialized handoff files.
-- **More capable agents** to unlock “higher gears” (e.g., CI-gated auto-merge) because safety proofs are explicit and persistent on disk.
+- **Constrained agents** (e.g., small context windows, strict output limits) to function safely via sharding,
+  journaling, stop conditions, and serialized handoff files.
+- **More capable agents** to unlock “higher gears” (e.g., CI-gated auto-merge) because safety proofs are explicit and
+  persistent on disk.
 
 v8 also introduces:
 
@@ -36,7 +40,8 @@ As of v0.1.1, the contract behaviors defined in this RFC are **canonically imple
 - Artifact generation and no-clobber semantics
 - Command execution behaviors (safe-run, safe-check, safe-archive)
 
-**Language-specific wrappers** (Bash, Perl, Python3, PowerShell) are now **thin invokers** that discover and execute the Rust binary. They:
+**Language-specific wrappers** (Bash, Perl, Python3, PowerShell) are now **thin invokers** that discover and execute the
+Rust binary. They:
 
 1. Locate the Rust binary via deterministic discovery rules (see `docs/architecture/wrapper-discovery.md`)
 2. Pass through all arguments without modification
@@ -69,7 +74,8 @@ The Rust canonical tool provides:
 
 ## 1. Problem Statement
 
-LLM-based coding agents can perform multi-day refactors and CI-gated workflows, but without an operational model, their work is fragile:
+LLM-based coding agents can perform multi-day refactors and CI-gated workflows, but without an operational model, their
+work is fragile:
 
 - Sessions are volatile.
 - Context is finite.
@@ -83,9 +89,11 @@ Reliability requires treating agents like fallible workers with volatile memory 
 
 ## 2. Observational Trigger (Empirical Epiphany)
 
-Testing on a large refactor (~9,200 LOC monolithic JS → modular TS) showed recovery depends on **externalized state discipline**, not model intelligence.
+Testing on a large refactor (~9,200 LOC monolithic JS → modular TS) showed recovery depends on **externalized state
+discipline**, not model intelligence.
 
-Large context windows delay—but do not eliminate—the need to chunk. When trackers exceed a single message, chunking becomes inevitable.
+Large context windows delay—but do not eliminate—the need to chunk. When trackers exceed a single message, chunking
+becomes inevitable.
 
 ---
 
@@ -120,7 +128,8 @@ Constrained agents can:
 **Mitigation pattern:** explicit stop conditions and serialized continuation.
 
 - Work is broken into bounded items.
-- The agent is required to stop at a boundary and provide a deterministic continuation prompt (or journal state) before output truncation becomes fatal.
+- The agent is required to stop at a boundary and provide a deterministic continuation prompt (or journal state) before
+  output truncation becomes fatal.
 
 ### 4.2 Bootloader / Feature Flag Logic
 
@@ -134,7 +143,8 @@ Feature flags implemented as files (e.g., `.agent/auto-merge.enabled`) persist a
 
 ### 4.3 Anti-Hallucination File System
 
-Snapshot/patch patterns (e.g., patch files, version logs) reduce blast radius when an agent forgets which file it’s editing or truncates content.
+Snapshot/patch patterns (e.g., patch files, version logs) reduce blast radius when an agent forgets which file it’s
+editing or truncates content.
 
 Hard safety defaults:
 
@@ -220,7 +230,8 @@ Wrappers MUST be used for critical commands. They must:
 
 This section extends M0-P1-I1 with deterministic cross-stream ordering guarantees and human-friendly merged views.
 
-**Motivation:** While split stdout/stderr sections (M0-P1-I1) preserve per-stream ordering, they do not guarantee temporal interleaving across streams due to OS scheduling and buffering differences. This enhancement provides:
+**Motivation:** While split stdout/stderr sections (M0-P1-I1) preserve per-stream ordering, they do not guarantee
+temporal interleaving across streams due to OS scheduling and buffering differences. This enhancement provides:
 
 1. A contractually guaranteed **observed-order event ledger** with global sequence numbers
 2. An optional **merged view** for human readability
@@ -232,8 +243,9 @@ This section extends M0-P1-I1 with deterministic cross-stream ordering guarantee
 - **stderr stream**: Bytes emitted by the child process on stderr
 - **meta stream**: Wrapper-generated informational lines (start/end markers, exit code, etc.)
 
-**Observed Order Definition:**
-The order in which the wrapper receives bytes/lines/chunks from stdout/stderr pipes. This is subject to OS scheduling and buffering, so it is not "ground truth emission-time order," but it is the only order we can contractually guarantee without merging streams in the child process.
+**Observed Order Definition:** The order in which the wrapper receives bytes/lines/chunks from stdout/stderr pipes. This
+is subject to OS scheduling and buffering, so it is not "ground truth emission-time order," but it is the only order we
+can contractually guarantee without merging streams in the child process.
 
 **Requirements:**
 
@@ -256,7 +268,8 @@ All implementations MUST continue to emit the M0-compliant split sections with e
    ...stderr content...
    ```
 
-Per-stream ordering MUST be preserved. Content MUST NOT be lost. No stdout content may appear in the STDERR section and vice versa.
+Per-stream ordering MUST be preserved. Content MUST NOT be lost. No stdout content may appear in the STDERR section and
+vice versa.
 
 **Note:** The M0 format uses `=== STDOUT ===` and `=== STDERR ===` markers. These MUST be preserved for backward compatibility.
 
@@ -435,7 +448,8 @@ Wrapper failure fallback remains mandatory.
 
 **Decision:** Kebab-case required for script surfaces only
 
-Script files in this repository MUST use kebab-case naming (lowercase letters and digits separated by hyphens only). This rule applies **only to script surfaces** (executable entrypoints), not to language-specific source files.
+Script files in this repository MUST use kebab-case naming (lowercase letters and digits separated by hyphens only).
+This rule applies **only to script surfaces** (executable entrypoints), not to language-specific source files.
 
 **Scope — Script Surfaces (kebab-case REQUIRED):**
 
@@ -464,7 +478,8 @@ Script files in this repository MUST use kebab-case naming (lowercase letters an
 
 **Rationale:**
 
-- **Script surfaces:** Consistent naming prevents path drift across language implementations, reduces cognitive load, simplifies CI automation, aligns with cross-OS/cross-language portability
+- **Script surfaces:** Consistent naming prevents path drift across language implementations, reduces cognitive load,
+  simplifies CI automation, aligns with cross-OS/cross-language portability
 - **Rust sources:** Follow Rust ecosystem conventions (Cargo/module expectations, standard style guidelines)
 - **Goal:** Clarity and correctness, not aesthetic purity
 
@@ -484,11 +499,13 @@ Script files in this repository MUST use kebab-case naming (lowercase letters an
 
 ## 8. New: Token Budget / Runway Check (Normative for Constrained Agents)
 
-Constrained agents often cannot reliably introspect their remaining context. To prevent starting work that will likely truncate mid-edit, agents MUST perform a **runway check** before beginning large refactor items.
+Constrained agents often cannot reliably introspect their remaining context. To prevent starting work that will likely
+truncate mid-edit, agents MUST perform a **runway check** before beginning large refactor items.
 
 ### 8.1 Rule
 
-Before starting a work item that involves editing a file or diff larger than a threshold (default: 300 lines), the agent MUST:
+Before starting a work item that involves editing a file or diff larger than a threshold (default: 300 lines), the agent
+MUST:
 
 - estimate whether it can complete the item *and* produce a complete patch/output within its remaining budget,
 - and if uncertain, STOP and request a fresh session or narrower scope.
