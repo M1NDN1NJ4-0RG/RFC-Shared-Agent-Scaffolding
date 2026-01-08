@@ -35,7 +35,7 @@
 
     Run specific test::
 
-        python3 -m pytest tools/repo_lint/tests/test_python_docstring_validator.py::TestModuleDocstring::test_missing_module_docstring -v
+        python3 -m pytest tools/repo_lint/tests/test_python_docstring_validator.py::TestModuleDocstring::test_missing_module_docstring -v  # pylint: disable=line-too-long
 """
 
 from __future__ import annotations
