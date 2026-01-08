@@ -2,7 +2,8 @@
 
 **Last Updated:** 2025-12-28
 
-This guide explains how to contribute to the RFC-Shared-Agent-Scaffolding repository, including conventions, required checks, and workflow standards.
+This guide explains how to contribute to the RFC-Shared-Agent-Scaffolding repository, including conventions, required
+checks, and workflow standards.
 
 ---
 
@@ -303,7 +304,8 @@ All scripts must include:
 1. **Purpose** - What the script does
 2. **Usage** - How to invoke it
 3. **Arguments/Parameters** - What inputs it accepts
-4. **Exit Codes** - What each exit code means (see [exit-codes-contract.md](./docstring-contracts/exit-codes-contract.md))
+4. **Exit Codes** - What each exit code means (see
+   [exit-codes-contract.md](./docstring-contracts/exit-codes-contract.md))
 5. **Examples** - Concrete usage examples
 6. **Environment Variables** (if applicable)
 7. **Error Conditions** - What can go wrong

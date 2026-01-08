@@ -3,8 +3,7 @@ Implement and ENFORCE AI Next-Steps Journals as a mandatory workflow requirement
 1) Location and naming (MANDATORY)
 
 - Ensure directory exists: docs/ai-prompt/
-- EXACTLY ONE file per ORIGINAL issue number:
-  docs/ai-prompt/<ISSUE_NUMBER>-next-steps.md
+- EXACTLY ONE file per ORIGINAL issue number: docs/ai-prompt/<ISSUE_NUMBER>-next-steps.md
 - Use the ORIGINAL issue number (not PR number unless explicitly instructed by a human).
 - Do NOT create multiple files for the same issue.
 - Do NOT delete or overwrite history.

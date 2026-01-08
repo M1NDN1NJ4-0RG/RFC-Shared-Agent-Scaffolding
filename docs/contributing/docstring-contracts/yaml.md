@@ -5,7 +5,8 @@
 
 ## Purpose
 
-YAML configuration files in this repository use a **top-of-file comment header** to document their purpose, usage, and behavior. This applies to GitHub Actions workflows, issue templates, and other YAML configurations.
+YAML configuration files in this repository use a **top-of-file comment header** to document their purpose, usage, and
+behavior. This applies to GitHub Actions workflows, issue templates, and other YAML configurations.
 
 ## Required Semantic Sections
 

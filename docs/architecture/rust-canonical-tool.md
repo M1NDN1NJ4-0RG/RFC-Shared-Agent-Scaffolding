@@ -6,7 +6,8 @@ The Rust Canonical Tool is the **single source of truth** for the behavior contr
 
 ## Purpose
 
-Prior to this implementation, four independent language wrappers (Bash, Perl, Python3, PowerShell) each maintained their own implementation of the contract. This led to:
+Prior to this implementation, four independent language wrappers (Bash, Perl, Python3, PowerShell) each maintained their
+own implementation of the contract. This led to:
 
 - **Drift risk:** Different regex dialects, buffering semantics, exit code handling
 - **Maintenance burden:** N implementations to update for each behavior change
@@ -141,8 +142,8 @@ before writing the failure log. This design ensures complete output capture but 
 implications for commands that produce very large output volumes:
 
 - **Normal usage**: Memory overhead is minimal for typical command output (< 10MB)
-- **Large output**: Commands producing hundreds of MB or more of output will temporarily
-  consume that memory until the failure log is written
+- **Large output**: Commands producing hundreds of MB or more of output will temporarily consume that memory until the
+  failure log is written
 - **Mitigation**: For extremely high-throughput scenarios, consider:
   - Using `SAFE_SNIPPET_LINES` sparingly (higher values print more to stderr)
   - Monitoring memory usage in resource-constrained environments
@@ -152,10 +153,10 @@ implications for commands that produce very large output volumes:
 
 The following enhancements are under consideration for future releases:
 
-- **Streaming-to-file mode**: Write output directly to log files instead of buffering
-  entirely in memory, reducing peak memory usage for high-volume commands
-- **Bounded buffering**: Implement a ring buffer with configurable size limits to cap
-  memory usage while preserving recent output
+- **Streaming-to-file mode**: Write output directly to log files instead of buffering entirely in memory, reducing peak
+  memory usage for high-volume commands
+- **Bounded buffering**: Implement a ring buffer with configurable size limits to cap memory usage while preserving
+  recent output
 - **Snippet size limits**: Add warnings or automatic capping of `SAFE_SNIPPET_LINES`
   values to prevent accidentally printing extremely large outputs to stderr
 

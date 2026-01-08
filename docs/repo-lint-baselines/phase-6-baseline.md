@@ -313,7 +313,8 @@ Per the Phase 6 completion instructions, violations will be remediated in this o
   - FORMAT.SHFMT (all Bash files)
   - LINT.RUFF.SAFE (safe Ruff fixes only, no unsafe fixes)
 
-- **Docstring Enforcement:** Per Phase 3 Item 3.7.3, ALL symbols (public and private) require documentation. No implicit skipping.
+- **Docstring Enforcement:** Per Phase 3 Item 3.7.3, ALL symbols (public and private) require documentation. No implicit
+  skipping.
 
 - **Flake8 Migration:** Ruff has replaced Flake8 per Phase 0 Item 0.8.1. The `.flake8` file and Flake8 CI steps will be removed after remediation is complete.
 

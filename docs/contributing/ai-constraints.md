@@ -6,15 +6,19 @@
 
 ## Overview
 
-This document defines explicit safety constraints and prohibited operations for AI agents working in this repository. These rules exist to prevent destructive, irreversible, or dangerous operations that require explicit human oversight and approval.
+This document defines explicit safety constraints and prohibited operations for AI agents working in this repository.
+These rules exist to prevent destructive, irreversible, or dangerous operations that require explicit human oversight
+and approval.
 
-**Key Principle:** AI agents are productivity tools, not autonomous decision-makers for dangerous operations. When in doubt, stop and escalate.
+**Key Principle:** AI agents are productivity tools, not autonomous decision-makers for dangerous operations. When in
+doubt, stop and escalate.
 
 ---
 
 ## Dangerous Commands — AI Prohibited Without Human Permission
 
-AI agents (including GitHub Copilot, code assistants, and automated bots) are **NOT ALLOWED** to run the following commands or operations without explicit human permission in the current PR/issue thread.
+AI agents (including GitHub Copilot, code assistants, and automated bots) are **NOT ALLOWED** to run the following
+commands or operations without explicit human permission in the current PR/issue thread.
 
 ### Unsafe Fix Mode (STRICTLY PROHIBITED)
 
@@ -23,7 +27,8 @@ AI agents (including GitHub Copilot, code assistants, and automated bots) are **
 - These are **human-only commands**. They require explicit human permission in the PR thread or issue.
 - Unsafe fixes can alter code behavior in non-obvious ways and MUST be human-reviewed before execution.
 
-**Rationale:** Unsafe fixers may change semantics, refactor code structure, or modify comments/docstrings in ways that require human judgment. Running them without permission risks introducing unintended behavior changes.
+**Rationale:** Unsafe fixers may change semantics, refactor code structure, or modify comments/docstrings in ways that
+require human judgment. Running them without permission risks introducing unintended behavior changes.
 
 ### Destructive Cleanup/Uninstall Commands
 
