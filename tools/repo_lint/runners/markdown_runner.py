@@ -169,8 +169,13 @@ class MarkdownRunner(Runner):
             line = line.strip()
 
             # Skip summary lines and empty lines
-            if not line or line.startswith("markdownlint-cli2") or line.startswith("Finding:") or \
-               line.startswith("Linting:") or line.startswith("Summary:"):
+            if (
+                not line
+                or line.startswith("markdownlint-cli2")
+                or line.startswith("Finding:")
+                or line.startswith("Linting:")
+                or line.startswith("Summary:")
+            ):
                 continue
 
             # Try to parse violation line: file:line:column error MD### message
@@ -195,8 +200,6 @@ class MarkdownRunner(Runner):
                         )
                 except (ValueError, IndexError):
                     # If parsing fails, include the raw line as a generic violation
-                    violations.append(
-                        Violation(tool="markdownlint-cli2", file=".", line=None, message=line)
-                    )
+                    violations.append(Violation(tool="markdownlint-cli2", file=".", line=None, message=line))
 
         return violations

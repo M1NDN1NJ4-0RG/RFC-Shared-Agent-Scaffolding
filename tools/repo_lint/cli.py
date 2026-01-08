@@ -311,7 +311,9 @@ def cli(ctx):
 )
 @click.option(
     "--lang",
-    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "all"], case_sensitive=False),
+    type=click.Choice(
+        ["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "all"], case_sensitive=False
+    ),
     help="Filter checks to specified language (python|bash|powershell|perl|yaml|rust|markdown|all)",
 )
 @click.option(
@@ -556,7 +558,9 @@ def check(
 )
 @click.option(
     "--lang",
-    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "all"], case_sensitive=False),
+    type=click.Choice(
+        ["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "all"], case_sensitive=False
+    ),
     help="Filter fixes to specified language (python|bash|powershell|perl|yaml|rust|markdown|all)",
 )
 @click.option(
