@@ -225,7 +225,7 @@ def run_docstring_validator(fixture_path: Path) -> List[Dict]:
 
     # Parse output (validator exits non-zero on violations, which is expected)
     violations = parse_docstring_validator_output(result.stdout + result.stderr)
-    
+
     print(f"    Violations found: {len(violations)}")
     for v in violations[:3]:
         print(f"      - {v.get('symbol')} at line {v.get('line')}")
