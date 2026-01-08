@@ -60,12 +60,13 @@
     
     // MD013: Line length limit
     // Policy: 120 chars (extended from default 80 for technical docs)
-    // Exceptions: code blocks, tables automatically excluded
+    // Exceptions: code blocks, tables, URLs automatically excluded
     "MD013": {
       "line_length": 120,
       "code_blocks": false,  // Code blocks exempt (can exceed 120)
       "tables": false,        // Tables exempt
       "headings": true,       // Headings checked (but relaxed in practice)
+      "ignore_urls": true,    // Lines with URLs exempt
       "strict": false,        // Allow some flexibility
       "stern": false
     },
