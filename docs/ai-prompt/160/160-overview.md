@@ -40,7 +40,8 @@ These decisions are **final and binding** for all Issue #160 work. All implement
 
 # [EPIC] - `repo_lint` Improvement Plan
 
-This plan outlines prioritized phases to address all findings. Each item includes context, affected components, and suggested fixes.
+This plan outlines prioritized phases to address all findings. Each item includes context, affected components, and
+suggested fixes.
 
 **NOTE:** All work MUST comply with the Locked-In Human Decisions above.
 
@@ -126,7 +127,8 @@ This plan outlines prioritized phases to address all findings. Each item include
 
 - [x] **Integrate naming-and-style enforcement** (Severity: **Medium**)
   - **Context:** The future work suggests `repo_lint` should enforce filename conventions (kebab-case, etc.). Currently, naming checks are done via CI or manual scripts, not by `repo_lint`.
-  - **Affected Files:** Likely add a new runner or extend an existing one. Could be a new "General" runner that checks all files, or integrate into common checks.
+  - **Affected Files:** Likely add a new runner or extend an existing one. Could be a new "General" runner that checks
+    all files, or integrate into common checks.
   - **Fix Steps:**
     - Define a "NamingRunner" (or add to `common.py`) that loads naming rules (from `docs/contributing/naming-and-style.md` or encode them).
     - In `check()`, gather all files and verify their names match regex per-language (e.g. Python `.py` files snake_case, non-scripts kebab-case).
@@ -161,7 +163,8 @@ This plan outlines prioritized phases to address all findings. Each item include
   - **Rationale:** Improves readability and prevents technical debt.
 
 - [ ] **Add or improve docstrings in the code** (Severity: **Low**)
-  - **Context:** Given the emphasis on contracts and documentation, the code should be thoroughly documented. Some private methods or CLI helpers lack docstrings.
+  - **Context:** Given the emphasis on contracts and documentation, the code should be thoroughly documented. Some
+    private methods or CLI helpers lack docstrings.
   - **Affected Files:** Missing or incomplete docstrings (e.g. CLI parser creation, internal helpers).
   - **Fix Steps:** Audit all public functions/methods in `repo_lint` for missing documentation. Add descriptive docstrings (Purpose, parameters, return values). Align with reST or Google style per the repository's convention.
   - **Rationale:** Helps future maintainers and ensures consistency with the project's documentation standards.
@@ -177,7 +180,8 @@ This plan outlines prioritized phases to address all findings. Each item include
   - **Rationale:** Keeps documentation accurate and helps onboard contributors.
 
 - [ ] **Test coverage for runners (Optional)** (Severity: **Low**)
-  - **Context:** While we have tests for each runner, they focus on isolated behavior. Integration tests (e.g. simulate a small mixed-language repo) could catch cross-cutting issues.
+  - **Context:** While we have tests for each runner, they focus on isolated behavior. Integration tests (e.g. simulate
+    a small mixed-language repo) could catch cross-cutting issues.
   - **Affected Files:** Possibly add new test files.
   - **Fix Steps:** Create integration tests that run `repo_lint check` on test repos with known violations in multiple languages, verifying combined output.
   - **Rationale:** Ensures end-to-end functionality remains correct as improvements are made.
@@ -246,9 +250,11 @@ This plan outlines prioritized phases to address all findings. Each item include
 
 ## Phase 2.6 – Centralized Exception Rules (Planned, NOT STARTED)
 
-**Goal:** Add a strict, centralized YAML "exceptions roster" that declares *what to ignore, where, and why* — with strong validation, auditability, and predictable CI behavior — **without removing pragma support**.
+**Goal:** Add a strict, centralized YAML "exceptions roster" that declares *what to ignore, where, and why* — with
+strong validation, auditability, and predictable CI behavior — **without removing pragma support**.
 
-**Core Principle:** Exceptions are **data**, not **inline code graffiti**. Pragmas remain supported (backward compatible). The YAML exceptions file becomes a first-class alternative (and preferred in docs).
+**Core Principle:** Exceptions are **data**, not **inline code graffiti**. Pragmas remain supported (backward
+compatible). The YAML exceptions file becomes a first-class alternative (and preferred in docs).
 
 - [ ] **Create Exceptions Schema & Validator** (Severity: **High**)
   - **Context:** Need centralized YAML config for ignore/exceptions with strict validation.
@@ -264,51 +270,41 @@ This plan outlines prioritized phases to address all findings. Each item include
 - [ ] **Integrate Exceptions into Results & Reporting** (Severity: **High**)
   - **Context:** Filter violations via exceptions YAML before reporting; track ignored counts.
   - **Affected Files:** Results model, reporting layer
-  - **Requirements:**
-    - Violations carry metadata: tool, code, file, symbol
-    - Filter violations before reporting
-    - Track: original vs ignored vs remaining counts
-    - CI FAIL on expired exceptions; TTY shows red panel
+  - **Requirements:** - Violations carry metadata: tool, code, file, symbol - Filter violations before reporting -
+    Track: original vs ignored vs remaining counts - CI FAIL on expired exceptions; TTY shows red panel
   - **Rationale:** Makes exception usage visible and prevents expired exceptions from going stale.
 
 - [ ] **Keep Pragma Support & Add Conflict Detection** (Severity: **High**)
   - **Context:** Pragmas remain fully supported; YAML is additional mechanism.
   - **Affected Files:** CLI, runners
-  - **Requirements:**
-    - Pragmas remain supported (no breaking changes)
-    - Add pragma warning toggle (configurable)
-    - If YAML + pragma conflict → ALWAYS warn (even if warnings disabled)
-    - Precedence: YAML exceptions > pragmas (deterministic)
+  - **Requirements:** - Pragmas remain supported (no breaking changes) - Add pragma warning toggle (configurable) - If
+    YAML + pragma conflict → ALWAYS warn (even if warnings disabled) - Precedence: YAML exceptions > pragmas
+    (deterministic)
   - **Rationale:** Backward compatibility while encouraging centralized approach.
 
 - [ ] **Implement Symbol/Scope Matching** (Severity: **Medium**)
   - **Context:** Exceptions need to target specific modules, classes, functions, files, paths, globs.
   - **Affected Files:** Exception application logic
-  - **Requirements:**
-    - Python: module + qualified name matching
-    - PowerShell/Bash/Perl/Rust: file/path scoping (AST symbol optional)
-    - Regex matching with explicit anchoring requirements
+  - **Requirements:** - Python: module + qualified name matching - PowerShell/Bash/Perl/Rust: file/path scoping (AST
+    symbol optional) - Regex matching with explicit anchoring requirements
   - **Rationale:** Precise targeting prevents over-broad exceptions.
 
 - [ ] **Add Documentation for Exceptions** (Severity: **Medium**)
   - **Context:** Users need clear guidance on YAML exceptions vs pragmas.
   - **Affected Files:** `tools/repo_lint/HOW-TO-USE-THIS-TOOL.md`
-  - **Requirements:**
-    - Add "Exceptions YAML" section with schema examples
-    - Document "Pragmas remain supported" explicitly
-    - Document pragma warning toggle behavior
-    - Document conflict rules and precedence
+  - **Requirements:** - Add "Exceptions YAML" section with schema examples - Document "Pragmas remain supported"
+    explicitly - Document pragma warning toggle behavior - Document conflict rules and precedence
   - **Rationale:** Clear documentation ensures adoption and correct usage.
 
 - [ ] **Add Exception Tests** (Severity: **High**)
   - **Context:** Validate exception application, expiration, conflicts.
   - **Affected Files:** New test files
-  - **Requirements:**
-    - Validator tests: missing markers, wrong config_type, bad regex, expired exceptions
-    - Integration tests: violations + exceptions (counts verified), pragma + YAML conflicts
+  - **Requirements:** - Validator tests: missing markers, wrong config_type, bad regex, expired exceptions - Integration
+    tests: violations + exceptions (counts verified), pragma + YAML conflicts
   - **Rationale:** Ensures exceptions work correctly and catch regressions.
 
-**Rationale:** Centralized exceptions with expiration and audit trails prevent "eternal mold" and improve maintainability.
+**Rationale:** Centralized exceptions with expiration and audit trails prevent "eternal mold" and improve
+maintainability.
 
 ---
 
@@ -513,18 +509,19 @@ This plan outlines prioritized phases to address all findings. Each item include
     - Migrated exclusions from hardcoded constants to YAML
     - Added backward compatibility with deprecation warnings
     - Single source of truth: all configs in `conformance/repo-lint/*.yaml`
-  - **Requirements:**
-    - All configurable behavior MUST be in YAML (not hard-coded constants or ad-hoc env vars)
-    - Strict validation enforced
-    - CLI flags override config but cannot violate contracts
-    - Contract-critical behavior MUST NOT be disable-able
+  - **Requirements:** - All configurable behavior MUST be in YAML (not hard-coded constants or ad-hoc env vars) - Strict
+    validation enforced - CLI flags override config but cannot violate contracts - Contract-critical behavior MUST NOT
+    be disable-able
   - **Rationale:** Centralized, validated configuration prevents drift and improves maintainability.
 
 **Rationale:** Cross-cutting contracts ensure consistency and quality across all features.
 
 ---
 
-Each fix above should be committed with clear messages, linking to issues if the repository uses an issue tracker. Prioritize the Phase 1 items immediately, as they address correctness and compliance issues. Phase 2 implements requested features and contract alignments from the "Future Work" document. Phase 3 covers residual improvements and housekeeping.
+Each fix above should be committed with clear messages, linking to issues if the repository uses an issue tracker.
+Prioritize the Phase 1 items immediately, as they address correctness and compliance issues. Phase 2 implements
+requested features and contract alignments from the "Future Work" document. Phase 3 covers residual improvements and
+housekeeping.
 
 ## Progress Tracker
 

@@ -1,6 +1,7 @@
 # [EPIC] - `repo_lint` Improvement Plan
 
-This plan outlines prioritized phases to address all findings. Each item includes context, affected components, and suggested fixes.
+This plan outlines prioritized phases to address all findings. Each item includes context, affected components, and
+suggested fixes.
 
 **NOTE:** This is a summary document. For the canonical, up-to-date status, see `160-overview.md`.
 
@@ -97,7 +98,8 @@ This plan outlines prioritized phases to address all findings. Each item include
 
 - [ ] **Integrate naming-and-style enforcement** (Severity: **Medium**)
   - **Context:** The future work suggests `repo_lint` should enforce filename conventions (kebab-case, etc.). Currently, naming checks are done via CI or manual scripts, not by `repo_lint`.
-  - **Affected Files:** Likely add a new runner or extend an existing one. Could be a new “General” runner that checks all files, or integrate into common checks.
+  - **Affected Files:** Likely add a new runner or extend an existing one. Could be a new “General” runner that checks
+    all files, or integrate into common checks.
   - **Fix Steps:**
     - Define a “NamingRunner” (or add to `common.py`) that loads naming rules (from `docs/contributing/naming-and-style.md` or encode them).
     - In `check()`, gather all files and verify their names match regex per-language (e.g. Python `.py` files snake_case, non-scripts kebab-case).
@@ -132,7 +134,8 @@ This plan outlines prioritized phases to address all findings. Each item include
   - **Rationale:** Improves readability and prevents technical debt.
 
 - [ ] **Add or improve docstrings in the code** (Severity: **Low**)
-  - **Context:** Given the emphasis on contracts and documentation, the code should be thoroughly documented. Some private methods or CLI helpers lack docstrings.
+  - **Context:** Given the emphasis on contracts and documentation, the code should be thoroughly documented. Some
+    private methods or CLI helpers lack docstrings.
   - **Affected Files:** Missing or incomplete docstrings (e.g. CLI parser creation, internal helpers).
   - **Fix Steps:** Audit all public functions/methods in `repo_lint` for missing documentation. Add descriptive docstrings (Purpose, parameters, return values). Align with reST or Google style per the repository’s convention.
   - **Rationale:** Helps future maintainers and ensures consistency with the project’s documentation standards.
@@ -148,11 +151,15 @@ This plan outlines prioritized phases to address all findings. Each item include
   - **Rationale:** Keeps documentation accurate and helps onboard contributors.
 
 - [ ] **Test coverage for runners (Optional)** (Severity: **Low**)
-  - **Context:** While we have tests for each runner, they focus on isolated behavior. Integration tests (e.g. simulate a small mixed-language repo) could catch cross-cutting issues.
+  - **Context:** While we have tests for each runner, they focus on isolated behavior. Integration tests (e.g. simulate
+    a small mixed-language repo) could catch cross-cutting issues.
   - **Affected Files:** Possibly add new test files.
   - **Fix Steps:** Create integration tests that run `repo_lint check` on test repos with known violations in multiple languages, verifying combined output.
   - **Rationale:** Ensures end-to-end functionality remains correct as improvements are made.
 
 ---
 
-Each fix above should be committed with clear messages, linking to issues if the repository uses an issue tracker. Prioritize the Phase 1 items immediately, as they address correctness and compliance issues. Phase 2 implements requested features and contract alignments from the “Future Work” document. Phase 3 covers residual improvements and housekeeping.
+Each fix above should be committed with clear messages, linking to issues if the repository uses an issue tracker.
+Prioritize the Phase 1 items immediately, as they address correctness and compliance issues. Phase 2 implements
+requested features and contract alignments from the “Future Work” document. Phase 3 covers residual improvements and
+housekeeping.

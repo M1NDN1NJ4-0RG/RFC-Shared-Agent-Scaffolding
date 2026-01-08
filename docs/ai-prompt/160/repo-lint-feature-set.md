@@ -15,7 +15,8 @@ We need THREE complementary UX variants:
 - Must follow Phase 2.5 Console Output + Rich-Click Help Content Contracts.
 - GENERAL RULE (MANDATORY): Any third-party packages rolled into `repo-lint` (new Python deps, extras, or vendored libs) MUST be added to every CI workflow/action/job that depends on them, or CI will fail.
 - This includes: lint/test umbrella workflows, repo-lint-specific workflows, and any helper workflows that invoke `repo-lint`.
-- Dependency installation steps MUST be updated in lockstep with code changes (same PR), and verified on all supported OS runners.
+- Dependency installation steps MUST be updated in lockstep with code changes (same PR), and verified on all supported
+  OS runners.
 - Packaging note: if using extras (e.g., `.[dev]`, `.[lint]`), CI MUST install the correct extra(s) explicitly.
 
 ## Mandatory: Internal Integration Contract (No “Mystery Helper Scripts”)
@@ -35,8 +36,10 @@ This requirement does NOT apply to:
 
 - The helper MUST live under the `repo-lint` package/module namespace (e.g., `tools/repo_lint/...`) and be included in packaging (wheel/sdist).
 - The helper MUST have a stable, testable Python API (even if it can also be executed as a script).
-- Any configuration it uses MUST be wired into the conformance YAML system (and validated by the same strict config validator).
-- Invocation MUST be centralized through a single internal interface (no ad-hoc subprocess strings scattered across runners).
+- Any configuration it uses MUST be wired into the conformance YAML system (and validated by the same strict config
+  validator).
+- Invocation MUST be centralized through a single internal interface (no ad-hoc subprocess strings scattered across
+  runners).
 - The helper MUST be documented in `HOW-TO-USE-THIS-TOOL.md` and referenced in the Tool Registry Contract (where applicable).
 - The helper MUST have unit tests covering:
   - success paths
@@ -85,7 +88,8 @@ MUST be migrated to YAML-first configuration **wherever it is safe and does not 
   - Baseline conformance configs in `conformance/repo-lint/` (committed)
   - Optional user overrides supplied explicitly via CLI flags (never auto-discovered in CI)
 - CLI flags MUST override config defaults, but MUST NOT allow violating contracts.
-- Contract-critical behavior MUST NOT be disable-able via config (e.g., config validation itself, contract enforcement, unsafe-mode acknowledgements).
+- Contract-critical behavior MUST NOT be disable-able via config (e.g., config validation itself, contract enforcement,
+  unsafe-mode acknowledgements).
 
 ### Required CLI support
 
@@ -101,7 +105,8 @@ MUST be migrated to YAML-first configuration **wherever it is safe and does not 
 
 ## Mandatory: Rich-Click CLI Granularity for `check` / `fix` (Per-language + Per-tool + Summary Modes)
 
-We need extremely granular, Rich-Click-documented options for running **specific tools** and controlling **how much output** is emitted.
+We need extremely granular, Rich-Click-documented options for running **specific tools** and controlling **how much
+output** is emitted.
 
 ### Command surface (minimum)
 
@@ -552,7 +557,8 @@ Wire into Click CLI. Ensure Rich-Click help includes:
 - [ ] Rich-Click help groups options into panels with consistent headings (Filtering/Output/Execution/Info).
 - [ ] `repo-lint doctor` exists and produces a green/red checklist; supports `--format`, `--report`, and `--ci`.
 - [ ] Any non-`repo-lint` helper scripts required by `repo-lint` are fully integrated into the `repo-lint` package namespace, documented, and covered by unit tests (CI workflows excluded).
-- [ ] Any behavior that can be configured externally (including behavior currently driven by constants/env/CLI-only toggles) is migrated to YAML-first configuration without allowing contract violations.
+- [ ] Any behavior that can be configured externally (including behavior currently driven by constants/env/CLI-only
+      toggles) is migrated to YAML-first configuration without allowing contract violations.
 - [ ] `--config`, `--dump-config` (TTY-only), and `--validate-config` (no linting) are implemented, documented, and tested.
 - [ ] `--ci` mode is deterministic: no auto-discovered configs; only explicit `--config` is honored.
 - [ ] Any new third-party dependencies introduced for `repo-lint` are reflected in all CI workflows/actions/jobs that rely on them (including correct extras), verified across supported OS runners.

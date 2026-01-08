@@ -9,31 +9,41 @@ Related: Issue #156
 
 ## Description
 
-You are an expert in software engineering, code migration, Rust development, repository management, and documentation analysis, with a focus on forensic-level audits and migration planning. You are tasked with a thorough, critical analysis of specific elements in this GitHub repository to develop a migration plan. Since you can access the repository directly from GitHub using your agent, review the entire repository structure, including all folders, subfolders, and files.
+You are an expert in software engineering, code migration, Rust development, repository management, and documentation
+analysis, with a focus on forensic-level audits and migration planning. You are tasked with a thorough, critical
+analysis of specific elements in this GitHub repository to develop a migration plan. Since you can access the repository
+directly from GitHub using your agent, review the entire repository structure, including all folders, subfolders, and
+files.
 
 Based on your comprehensive analysis, synthesize all findings into a detailed migration plan for transforming `repo_lint` into a self-contained Rust binary, addressing all specified requirements (embedded AST/linting, YAML configs with schema validation and IDE support) and additional considerations (e.g., performance, testing, distribution).
 
 Then, create a Markdown document in `docs/ai-prompt/156/` called `repo-lint-rust-binary-migration-plan.md`. Format this document as a properly formatted GitHub Issue, structured in a Milestone / Phase / Item / Sub-Item approach with checkboxes. Include a section near the bottom for adding "TODOs" and "Deferments".
 
-Provide your response in a clear, step-by-step format in this issue's comments, including any high-level rationale from your analysis. If you need to execute code or use tools to analyze files, do so as part of your process.
+Provide your response in a clear, step-by-step format in this issue's comments, including any high-level rationale from
+your analysis. If you need to execute code or use tools to analyze files, do so as part of your process.
 
 ## Milestones
 
 ### Milestone 1: Repository Analysis and Planning
 
 - [ ] Phase 1.1: Thoroughly read and analyze **every Markdown document (.md file)** in the repository
-  - [ ] Item 1.1.1: Review files including, but not limited to, README.md, future-work.md, any docs/ folder contents, and all other .md files scattered throughout
-  - [ ] Item 1.1.2: Read each one in full, understanding the content, topics, relationships, technical details, and any implicit or explicit references to tools, features, or future plans
+  - [ ] Item 1.1.1: Review files including, but not limited to, README.md, future-work.md, any docs/ folder contents,
+        and all other .md files scattered throughout
+  - [ ] Item 1.1.2: Read each one in full, understanding the content, topics, relationships, technical details, and any
+        implicit or explicit references to tools, features, or future plans
   - [ ] Item 1.1.3: Take notes on overarching themes, inconsistencies, or gaps across all documents
-  - [ ] Item 1.1.4: Pay close attention to sections or content related to **CONTRACT ADHERENCE**, which is plainly laid out in many of these Markdown files
+  - [ ] Item 1.1.4: Pay close attention to sections or content related to **CONTRACT ADHERENCE**, which is plainly laid
+        out in many of these Markdown files
     - [ ] Sub-Item 1.1.4.1: Identify and analyze all defined contracts (e.g., agent contracts, behavioral guidelines, or agreements)
     - [ ] Sub-Item 1.1.4.2: Check for any contradictions between contracts across different files or sections
     - [ ] Sub-Item 1.1.4.3: Flag inconsistencies, ambiguities, overlaps, or potential violations in contract definitions, enforcement, or adherence mechanisms
 
 - [ ] Phase 1.2: Focus on the tool named `repo_lint` within the repository
-  - [ ] Item 1.2.1: Locate and identify all associated components, such as code files, scripts, modules, configurations, dependencies, or documentation mentions
+  - [ ] Item 1.2.1: Locate and identify all associated components, such as code files, scripts, modules, configurations,
+        dependencies, or documentation mentions
   - [ ] Item 1.2.2: Conduct a forensic analysis of it to inform a migration plan
-  - [ ] Item 1.2.3: Be vicious and exhaustive in identifying challenges, requirements, and opportunities; call out **everything** relevant to migrating it to a completely self-contained Rust binary, including:
+  - [ ] Item 1.2.3: Be vicious and exhaustive in identifying challenges, requirements, and opportunities; call out
+        **everything** relevant to migrating it to a completely self-contained Rust binary, including:
     - [ ] Sub-Item 1.2.3.1: Current implementation details: Language(s) used, architecture, dependencies, AST parsing mechanisms, linting logic, configuration handling (e.g., current JSON usage), and integration points
     - [ ] Sub-Item 1.2.3.2: Migration feasibility: Potential pitfalls in porting to Rust, such as replicating AST and linting for supported languages (e.g., Python, JavaScript), embedding required tools/libraries into the binary (e.g., using Rust crates like syn for Rust AST, tree-sitter for multi-language parsing)
     - [ ] Sub-Item 1.2.3.3: Self-containment: Strategies to bundle all AST and linting tools within the binary (no external dependencies at runtime), including static linking and cross-compilation for platforms
@@ -49,13 +59,16 @@ Provide your response in a clear, step-by-step format in this issue's comments, 
 - [ ] Phase 1.3: Review the file `future-work.md` specifically
   - [ ] Item 1.3.1: Extract and analyze **anything** related to the `repo_lint` tool, including planned features, improvements, bug fixes, integrations, or references
   - [ ] Item 1.3.2: Cross-reference this with your analysis from Phase 1.2 to incorporate into the migration plan
-  - [ ] Item 1.3.3: Be vicious here too: Critique the future plans for feasibility in a Rust context, priority during migration, completeness, or potential pitfalls
-  - [ ] Item 1.3.4: Additionally, check for any contract adherence elements in these future plans, including potential contradictions with existing contracts
+  - [ ] Item 1.3.3: Be vicious here too: Critique the future plans for feasibility in a Rust context, priority during
+        migration, completeness, or potential pitfalls
+  - [ ] Item 1.3.4: Additionally, check for any contract adherence elements in these future plans, including potential
+        contradictions with existing contracts
 
 ### Milestone 2: Synthesis and Output Creation
 
 - [ ] Phase 2.1: Synthesize findings into migration plan
-  - [ ] Item 2.1.1: Address all specified requirements (embedded AST/linting, YAML configs with schema validation and IDE support)
+  - [ ] Item 2.1.1: Address all specified requirements (embedded AST/linting, YAML configs with schema validation and
+        IDE support)
   - [ ] Item 2.1.2: Include additional considerations (e.g., performance, testing, distribution)
 
 - [ ] Phase 2.2: Create the Markdown document `repo-lint-rust-binary-migration-plan.md` in `docs/ai-prompt/156/`
@@ -104,5 +117,6 @@ Provide your response in a clear, step-by-step format in this issue's comments, 
 ### 2025-12-30 23:32 - Session start
 
 - Created 156-overview.md and 156-next-steps.md journal files
-- Installed required tooling (black, pylint, pytest, ruff, yamllint, shellcheck, shfmt, pwsh, PSScriptAnalyzer, Perl::Critic, PPI)
+- Installed required tooling (black, pylint, pytest, ruff, yamllint, shellcheck, shfmt, pwsh, PSScriptAnalyzer,
+  Perl::Critic, PPI)
 - Beginning comprehensive repository analysis per issue requirements
