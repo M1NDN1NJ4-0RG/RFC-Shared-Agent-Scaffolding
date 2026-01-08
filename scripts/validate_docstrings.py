@@ -5,6 +5,16 @@ DEPRECATED: This script is now a thin CLI wrapper around the internal
 tools.repo_lint.docstrings module. For programmatic use, import the
 internal module directly.
 
+Migration Timeline:
+- 2026-01-08: Script converted to wrapper (Phase 3.4 complete)
+- Future: This wrapper will be maintained for backwards compatibility
+- Recommended: Use `repo-lint check --lang <language>` instead
+
+Migration Guide:
+- Replace: `python3 scripts/validate_docstrings.py`
+- With: `repo-lint check --lang python` (or bash, powershell, etc.)
+- For programmatic use: `from tools.repo_lint.docstrings import validate_files`
+
 This script validates that all scripts, YAML files, and code symbols conform to their
 language-specific docstring contracts as defined in docs/contributing/docstring-contracts/.
 
