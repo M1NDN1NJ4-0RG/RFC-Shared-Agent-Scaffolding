@@ -54,8 +54,8 @@ TABLE_ROW_RE = re.compile(r"^\s{0,3}\|.*\|\s*$")
 TABLE_SEP_RE = re.compile(r"^\s{0,3}\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$")
 
 # Lists: bullets, numbered, and task lists.
-LIST_ITEM_RE = re.compile(r"^(\s{0,3})([-*+]|\d+\.)\s+")
-TASK_LIST_RE = re.compile(r"^(\s{0,3})([-*+]|\d+\.)\s+\[[ xX]\]\s+")
+LIST_ITEM_RE = re.compile(r"^(\s{0,3})([-*+]|\d{1,4}\.)\s+")
+TASK_LIST_RE = re.compile(r"^(\s{0,3})([-*+]|\d{1,4}\.)\s+\[[ xX]\]\s+")
 
 
 def _starts_fence(line: str) -> Optional[Tuple[str, int]]:
