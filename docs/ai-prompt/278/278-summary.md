@@ -526,3 +526,32 @@ repo-lint check --ci --only python
 
 ---
 
+### 2026-01-08 - Fixed markdownlint-cli2 Installation in Copilot Setup Workflow
+
+**Issue Identified:**
+
+- `.github/workflows/copilot-setup-steps.yml` was installing `markdownlint-cli@0.41.0`
+- This is the WRONG tool - the repo requires `markdownlint-cli2` (per Locked Decision #8)
+- `MarkdownRunner` expects the `markdownlint-cli2` command (not `markdownlint`)
+- This caused missing tool errors at session start
+
+**Fix Applied:**
+
+- Updated workflow to install `markdownlint-cli2@0.20.0` instead of `markdownlint-cli@0.41.0`
+- Updated all 3 references in the workflow file:
+  - Line 54: Comment documentation
+  - Line 345-351: Installation step
+  - Line 402-405: Verification step
+- Verified YAML is valid (yamllint exit 0)
+
+**Testing:**
+
+- Manual installation confirmed: `npm install -g markdownlint-cli2` works
+- `markdownlint-cli2 --version` outputs: `markdownlint-cli2 v0.20.0 (markdownlint v0.38.0)`
+- `repo-lint check --ci` now exits 1 (violations exist) instead of 2 (missing tools)
+
+**Commit:** cac9e15
+
+---
+
+
