@@ -29,7 +29,6 @@
 
 from __future__ import annotations
 
-import json
 import subprocess
 from typing import List
 
