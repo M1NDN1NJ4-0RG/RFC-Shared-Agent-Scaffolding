@@ -31,12 +31,11 @@ helpers (download, verify, checksum, version parsing, command execution, logging
 development, refactor immediately as part of the same change.
 
 9) **Session execution + journaling is mandatory** - Each session must implement **as much as possible** within the
-scoped phase(s) before stopping. - At the start of the work, create the journal file if it does not exist:
-     - `docs/ai-prompt/<ISSUE#>/<ISSUE_NUMBER>-next-steps.md`
-   - - At the end of **every** session, update that file with **exact, resumable notes**, including: - What was changed
-     (files + brief intent) - What remains (as checkboxes) - Any required follow-ups, edge cases, or hazards (clearly
-     called out) - If token/context limits or other constraints are hit: - Stop starting new work - Commit/persist
-     completed work - Leave the repo and the journal in a clean, resumable state
+scoped phase(s) before stopping. - At the start of the work, create the journal file if it does not exist: -
+`docs/ai-prompt/<ISSUE#>/<ISSUE_NUMBER>-next-steps.md` - - At the end of **every** session, update that file with
+**exact, resumable notes**, including: - What was changed (files + brief intent) - What remains (as checkboxes) - Any
+required follow-ups, edge cases, or hazards (clearly called out) - If token/context limits or other constraints are hit:
+- Stop starting new work - Commit/persist completed work - Leave the repo and the journal in a clean, resumable state
 
 ---
 
@@ -44,41 +43,26 @@ scoped phase(s) before stopping. - At the start of the work, create the journal 
 
 These items are explicitly decided. Implementation may vary, but behavior must match.
 
-- - **CLI semantics are fixed:**
-  - `install` always performs `detect → install → verify` (fail-fast). No `--no-verify` flag.
-  - `verify` is **verify-only** (no installs, no downloads).
-  - `doctor` is diagnostics; `doctor --strict` treats WARN as FAIL.
-- - **Config policy:**
-  - The binary supports defaults when `.bootstrap.toml` is absent.
-  - **For this repo in CI:** `.bootstrap.toml` is **required**. Missing config in CI exits with **UsageError (1)** and a clear message.
-- - **Concurrency policy:**
-  - Default jobs: **CI = 2**; Interactive = `min(4, num_cpus)`.
-  - Support override via `--jobs <N>` and `BOOTSTRAP_JOBS`.
-  - - Add per-host HTTP concurrency limit: **2 requests per host**. - **Locking policy:** - A lock manager is
-    **mandatory**.
-  - Standard lock names are fixed constants: `brew_lock`, `apt_lock`, `cache_lock`, `venv_lock`.
-- - **Retry policy:**
-  - Retries are allowed **only** for `RetryClass::Transient`.
-  - Respect HTTP `Retry-After` when present (e.g., 429/503).
-  - `RetryClass::Security` (checksum/signature mismatch) fails immediately.
-  - Total retry budget is enforced (`max_total_time`).
-- - **Package manager lock contention:** - Do **not** retry installs. - Use lock-wait with backoff only. - Max lock-wait
-  time: **CI = 60s**; Interactive = **180s**. - **Checkpointing:** - Checkpoint/resume is **OFF by default**.
-  - Enable only via `--checkpoint` / `--resume`.
-- - **Progress UI:** - v1 uses **indicatif only** (no ratatui/full-screen TUI). - Avoid ANSI styling in CI/non-TTY. -
-  **Runtime:** - Use **tokio** (required). - **HTTP/TLS:**
-  - Use `reqwest` with **rustls** (no OpenSSL-vendored requirement in the plan).
-- - **Wrapper binary resolution order:**
-  1) `$BOOTSTRAP_BIN` if set
-  2) `$REPO_ROOT/.bootstrap/bin/bootstrap`
-  3) `$REPO_ROOT/target/release/bootstrap` (dev-only fallback)
-  4) legacy Bash
-- **Downgrades:**
-  - Disallowed by default.
-  - Allowed only with explicit `--allow-downgrade` (and forbidden in CI unless explicitly passed).
-- - **Caching:** - Per-user cache, keyed by tool/version/platform/arch and protected by checksums. - **Offline mode:**
-  - Support `--offline`: use cache only; if required artifacts missing, fail-fast.
-- - **Supply-chain hardening:** - Any direct-download installer requires checksum verification (hard requirement). -
+- - - **CLI semantics are fixed:** - `install` always performs `detect → install → verify` (fail-fast). No `--no-verify`
+  flag. - `verify` is **verify-only** (no installs, no downloads). - `doctor` is diagnostics; `doctor --strict` treats
+  WARN as FAIL. - - **Config policy:** - The binary supports defaults when `.bootstrap.toml` is absent. - **For this
+  repo in CI:** `.bootstrap.toml` is **required**. Missing config in CI exits with **UsageError (1)** and a clear
+  message. - - **Concurrency policy:** - Default jobs: **CI = 2**; Interactive = `min(4, num_cpus)`. - Support override
+  via `--jobs <N>` and `BOOTSTRAP_JOBS`. - - Add per-host HTTP concurrency limit: **2 requests per host**. - **Locking
+  policy:** - A lock manager is **mandatory**. - Standard lock names are fixed constants: `brew_lock`, `apt_lock`,
+  `cache_lock`, `venv_lock`. - - **Retry policy:** - Retries are allowed **only** for `RetryClass::Transient`. - Respect
+  HTTP `Retry-After` when present (e.g., 429/503). - `RetryClass::Security` (checksum/signature mismatch) fails
+  immediately. - Total retry budget is enforced (`max_total_time`). - - **Package manager lock contention:** - Do
+  **not** retry installs. - Use lock-wait with backoff only. - Max lock-wait time: **CI = 60s**; Interactive = **180s**.
+  - **Checkpointing:** - Checkpoint/resume is **OFF by default**. - Enable only via `--checkpoint` / `--resume`. - -
+  **Progress UI:** - v1 uses **indicatif only** (no ratatui/full-screen TUI). - Avoid ANSI styling in CI/non-TTY. -
+  **Runtime:** - Use **tokio** (required). - **HTTP/TLS:** - Use `reqwest` with **rustls** (no OpenSSL-vendored
+  requirement in the plan). - - **Wrapper binary resolution order:** 1) `$BOOTSTRAP_BIN` if set 2)
+  `$REPO_ROOT/.bootstrap/bin/bootstrap` 3) `$REPO_ROOT/target/release/bootstrap` (dev-only fallback) 4) legacy Bash -
+  **Downgrades:** - Disallowed by default. - Allowed only with explicit `--allow-downgrade` (and forbidden in CI unless
+  explicitly passed). - - **Caching:** - Per-user cache, keyed by tool/version/platform/arch and protected by checksums.
+  - **Offline mode:** - Support `--offline`: use cache only; if required artifacts missing, fail-fast. - -
+  **Supply-chain hardening:** - Any direct-download installer requires checksum verification (hard requirement). -
   Signature verification is optional when upstream provides it. - **Scope constraints:** - No Windows support in v1. -
   No plugin system in v1. - **Performance metric:** - 30–50% speedup is a **goal**, not a release gate.
 
@@ -86,9 +70,10 @@ These items are explicitly decided. Implementation may vary, but behavior must m
 
 ## Executive Summary
 
-This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (Bash) to a modular Rust binary that preserves deterministic behavior while adding:
+This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (Bash) to a modular Rust binary that
+preserves deterministic behavior while adding:
 
-- - Parallel execution (where safe) - Rich progress UI - Structured logging - Better error handling - Easier tool
+- - - Parallel execution (where safe) - Rich progress UI - Structured logging - Better error handling - Easier tool
   addition/removal
 
 **Target:** Self-contained binary with no external Bash dependency, backwards-compatible during transition.
@@ -101,15 +86,11 @@ This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (B
 
 **CLI Framework:**
 
-- Use `clap` (derive API) for argument parsing
-- Subcommands: `install`, `doctor`, `verify`
-- Flags: `--dry-run`, `--ci`, `--json`, `--verbose`
-- - Semantics (HARD REQUIREMENTS):
-  - `install` always runs `detect → install → verify` and fails fast.
-  - `verify` is verify-only (no installs, no downloads).
-  - `doctor` is diagnostics; `doctor --strict` treats WARN as FAIL.
-- Concurrency flag: `--jobs <N>` (default CI=2; Interactive=min(4,num_cpus)); env override `BOOTSTRAP_JOBS`.
-- Add flags: `--offline`, `--allow-downgrade`, `--strict` (doctor).
+- - Use `clap` (derive API) for argument parsing - Subcommands: `install`, `doctor`, `verify` - Flags: `--dry-run`,
+  `--ci`, `--json`, `--verbose` - - Semantics (HARD REQUIREMENTS): - `install` always runs `detect → install → verify`
+  and fails fast. - `verify` is verify-only (no installs, no downloads). - `doctor` is diagnostics; `doctor --strict`
+  treats WARN as FAIL. - Concurrency flag: `--jobs <N>` (default CI=2; Interactive=min(4,num_cpus)); env override
+  `BOOTSTRAP_JOBS`. - Add flags: `--offline`, `--allow-downgrade`, `--strict` (doctor).
 
 **Example CLI:**
 
@@ -434,27 +415,25 @@ pub fn build_dependency_graph(
 
 **Parallel-safe operations:**
 
-- - Detection phase (read-only checks) - Independent tool downloads (different artifacts) - Version parsing (no side
+- - - Detection phase (read-only checks) - Independent tool downloads (different artifacts) - Version parsing (no side
   effects)
 
 **Sequential-only operations:**
 
-- - Virtual environment creation (filesystem race) - Package manager lock (apt/brew single-instance) - PATH mutations
+- - - Virtual environment creation (filesystem race) - Package manager lock (apt/brew single-instance) - PATH mutations
   (shell environment ordering) - Installations with shared dependencies
 
 **Additional concurrency requirements (MUST):**
 
-- Use a **global concurrency limit** (e.g., `--jobs <N>`; default to a conservative value) to prevent saturating CI/network.
-- Introduce **resource locks** so steps can declare shared resources they require (examples: `apt_lock`, `brew_lock`, `cache_lock`, `venv_lock`).
-  - - Even “parallel-safe” steps must not run concurrently if they require the same lock.
+- - Use a **global concurrency limit** (e.g., `--jobs <N>`; default to a conservative value) to prevent saturating
+  CI/network. - Introduce **resource locks** so steps can declare shared resources they require (examples: `apt_lock`,
+  `brew_lock`, `cache_lock`, `venv_lock`). - - Even “parallel-safe” steps must not run concurrently if they require the
+  same lock.
 
 **Locked defaults:**
 
-- Default `--jobs`:
-  - - CI mode: **2**
-  - Interactive: `min(4, num_cpus)`
-- Environment override: `BOOTSTRAP_JOBS=<N>`
-- - HTTP per-host concurrency limit: **2** concurrent requests per host
+- - Default `--jobs`: - - CI mode: **2** - Interactive: `min(4, num_cpus)` - Environment override: `BOOTSTRAP_JOBS=<N>`
+  - - HTTP per-host concurrency limit: **2** concurrent requests per host
 
 **Implementation:**
 
@@ -589,18 +568,16 @@ where
 
 **Apply to:**
 
-- - Package metadata refresh: YES (idempotent) - Artifact downloads: YES (idempotent) - apt/brew install: NO (lock
+- - - Package metadata refresh: YES (idempotent) - Artifact downloads: YES (idempotent) - apt/brew install: NO (lock
   conflicts, partial state) - Version detection: NO (fast, local)
 
 **Additional retry rules (MUST):**
 
-- Implement a classifier that maps failures to `RetryClass`.
-  - Only `RetryClass::Transient` may be retried.
-- Respect HTTP `Retry-After` headers when present (429/503), bounded by the retry budget.
-  - `RetryClass::Security` must fail immediately.
-- - For package-manager lock contention (apt/brew): - Do **not** retry the install itself. - Instead, implement an
-  explicit **lock-wait with backoff** (sequential) and then proceed once the lock clears. - Max lock-wait time: CI=60s;
-  Interactive=180s.
+- - Implement a classifier that maps failures to `RetryClass`. - Only `RetryClass::Transient` may be retried. - Respect
+  HTTP `Retry-After` headers when present (429/503), bounded by the retry budget. - `RetryClass::Security` must fail
+  immediately. - - For package-manager lock contention (apt/brew): - Do **not** retry the install itself. - Instead,
+  implement an explicit **lock-wait with backoff** (sequential) and then proceed once the lock clears. - Max lock-wait
+  time: CI=60s; Interactive=180s.
 
 ---
 
@@ -608,15 +585,14 @@ where
 
 **Policy (LOCKED):**
 
-- v1 uses `indicatif` only (no ratatui/full-screen TUI).
-- - CI/non-TTY output must be clean and parseable (no ANSI styling).
+- - v1 uses `indicatif` only (no ratatui/full-screen TUI). - - CI/non-TTY output must be clean and parseable (no ANSI
+  styling).
 
 ### 5.1 Multi-Task Progress Display
 
 **Library stack:**
 
-- `indicatif` for progress bars/spinners
-- - Custom multi-line renderer for concurrent tasks
+- - `indicatif` for progress bars/spinners - - Custom multi-line renderer for concurrent tasks
 
 ~~~rust
 pub struct ProgressReporter {
@@ -771,8 +747,8 @@ pub enum ProgressEvent {
 
 **Policy (LOCKED):**
 
-- The binary supports defaults when `.bootstrap.toml` is absent.
-- **For this repo in CI:** `.bootstrap.toml` is **required**. If missing in CI mode, exit with `UsageError (1)` and a clear message.
+- - The binary supports defaults when `.bootstrap.toml` is absent. - **For this repo in CI:** `.bootstrap.toml` is
+  **required**. If missing in CI mode, exit with `UsageError (1)` and a clear message.
 
 ~~~toml
 [profile.dev]
@@ -859,9 +835,8 @@ impl Config {
 
 **Policy (LOCKED):**
 
-- - Checkpointing/resume is **OFF by default**.
-- Enable only via `--checkpoint` (write state) and `--resume` (resume from state).
-- - State files live outside the repo by default (cache dirs), unless explicitly overridden.
+- - - Checkpointing/resume is **OFF by default**. - Enable only via `--checkpoint` (write state) and `--resume` (resume
+  from state). - - State files live outside the repo by default (cache dirs), unless explicitly overridden.
 
 ### 7.1 Dry-Run Implementation
 
@@ -973,9 +948,9 @@ pub struct AptOps; // MUST: use non-interactive apt-get flags and deterministic 
 
 **Apt requirements (MUST):**
 
-- Use non-interactive mode (e.g., `DEBIAN_FRONTEND=noninteractive`) and deterministic flags.
-- In CI, use `sudo -n` (or equivalent) so privilege prompts fail fast instead of hanging.
-- - Do not retry installs; only lock-wait/backoff is allowed for lock contention.
+- - Use non-interactive mode (e.g., `DEBIAN_FRONTEND=noninteractive`) and deterministic flags. - In CI, use `sudo -n`
+  (or equivalent) so privilege prompts fail fast instead of hanging. - - Do not retry installs; only lock-wait/backoff
+  is allowed for lock contention.
 
 ### 8.2 OS Detection
 
@@ -1027,8 +1002,7 @@ pub fn detect_package_manager(os: &OsType) -> PackageManager {
 
 **Locked behavior:**
 
-- - Default: WARN does not fail the command.
-- `doctor --strict` (and CI when configured) treats WARN as FAIL.
+- - - Default: WARN does not fail the command. - `doctor --strict` (and CI when configured) treats WARN as FAIL.
 
 ### 9.1 Doctor Command
 
@@ -1150,19 +1124,19 @@ exec "$REPO_ROOT/scripts/.legacy/bootstrap-repo-lint-toolchain.sh" "$@"
 
 **Phase 1: Parallel development**
 
-- - Develop Rust version with feature parity - Run both in CI for comparison - Fix behavioral differences
+- - - Develop Rust version with feature parity - Run both in CI for comparison - Fix behavioral differences
 
 **Phase 2: Opt-in**
 
-- - Make Rust version available - Document how to use it - Gather feedback
+- - - Make Rust version available - Document how to use it - Gather feedback
 
 **Phase 3: Default**
 
-- - Rust becomes default - Bash available as fallback - Monitor for issues
+- - - Rust becomes default - Bash available as fallback - Monitor for issues
 
 **Phase 4: Deprecation**
 
-- - Remove Bash fallback - Archive legacy script - Update all documentation
+- - - Remove Bash fallback - Archive legacy script - Update all documentation
 
 ### 10.3 Behavioral Parity Testing
 
@@ -1242,48 +1216,46 @@ jobs:
 
 ### Explicit Non-Goals
 
-1. 1. **Windows support in v1** - Focus on macOS/Linux first - Windows support is additive later
+1. 1. 1. **Windows support in v1** - Focus on macOS/Linux first - Windows support is additive later
 
-2. 2. **Plugin system** - Static registry only - No dynamic loading - Simplifies distribution
+2. 2. 2. **Plugin system** - Static registry only - No dynamic loading - Simplifies distribution
 
-3. 3. **GUI interface** - CLI only - Rich TUI is acceptable - No graphical desktop app
+3. 3. 3. **GUI interface** - CLI only - Rich TUI is acceptable - No graphical desktop app
 
-4. 4. **Parallel package manager calls** - Too risky (lock conflicts) - Keep package manager operations sequential
+4. 4. 4. **Parallel package manager calls** - Too risky (lock conflicts) - Keep package manager operations sequential
 
 ### Constraints
 
-1. 1. **Zero external runtime dependencies** - Must work on fresh macOS/Linux - No Ruby, Python, or Node required to run
-   bootstrapper itself
+1. 1. 1. **Zero external runtime dependencies** - Must work on fresh macOS/Linux - No Ruby, Python, or Node required to
+   run bootstrapper itself
 
-2. 2. **Backwards compatibility** - Must preserve all exit codes - Must preserve CLI interface during transition
+2. 2. 2. **Backwards compatibility** - Must preserve all exit codes - Must preserve CLI interface during transition
 
-3. 3. **CI headless mode** - Must work without TTY - Must produce parseable logs
+3. 3. 3. **CI headless mode** - Must work without TTY - Must produce parseable logs
 
-4. 4. **Downgrades are disallowed by default**
-   - Downgrades require explicit `--allow-downgrade`.
-   - - CI must not perform downgrades unless explicitly configured.
+4. 4. 4. **Downgrades are disallowed by default** - Downgrades require explicit `--allow-downgrade`. - - CI must not
+   perform downgrades unless explicitly configured.
 
-5. 5. **Caching is per-user and checksum-protected** - Cache keys must include tool/version/platform/arch. - Direct
+5. 5. 5. **Caching is per-user and checksum-protected** - Cache keys must include tool/version/platform/arch. - Direct
    downloads must be checksum verified before entering cache.
 
-6. 6. **Offline mode is supported**
-   - `--offline` uses cache only; if required artifacts are missing, fail fast.
+6. 6. 6. **Offline mode is supported** - `--offline` uses cache only; if required artifacts are missing, fail fast.
 
-7. 7. **Supply-chain hardening is mandatory for direct downloads** - Checksums are required for any direct-download
+7. 7. 7. **Supply-chain hardening is mandatory for direct downloads** - Checksums are required for any direct-download
    installer. - Signature verification is optional when upstream provides it.
 
 ---
 
 ## Success Metrics
 
-1. 1. **Performance:** - Performance is a **goal**, not a release gate. - Target 30–50% faster than Bash where safe
+1. 1. 1. **Performance:** - Performance is a **goal**, not a release gate. - Target 30–50% faster than Bash where safe
    parallelism applies (measured across CI runs).
 
-2. 2. **Reliability:** - Zero flaky failures in CI - All exit codes deterministic
+2. 2. 2. **Reliability:** - Zero flaky failures in CI - All exit codes deterministic
 
-3. 3. **Maintainability:** - Adding new tool takes < 50 LOC - No platform-specific bugs for 6 months
+3. 3. 3. **Maintainability:** - Adding new tool takes < 50 LOC - No platform-specific bugs for 6 months
 
-4. 4. **User Experience:** - Live progress UI rated "clear" by 5+ users - Doctor command resolves 80%+ of issues
+4. 4. 4. **User Experience:** - Live progress UI rated "clear" by 5+ users - Doctor command resolves 80%+ of issues
 
 ---
 
@@ -1293,25 +1265,25 @@ jobs:
 
 **Mitigation:**
 
-- - Comprehensive parity tests - Run both versions in CI - Document all intentional differences
+- - - Comprehensive parity tests - Run both versions in CI - Document all intentional differences
 
 ### Risk: Performance Regression
 
 **Mitigation:**
 
-- - Benchmark every PR - Profile to find bottlenecks - Have "fast" CI profile for quick feedback
+- - - Benchmark every PR - Profile to find bottlenecks - Have "fast" CI profile for quick feedback
 
 ### Risk: Platform-Specific Bugs
 
 **Mitigation:**
 
-- - Test matrix: macOS x Linux x (Homebrew|apt|snap) - Virtualized test environments - User beta testing program
+- - - Test matrix: macOS x Linux x (Homebrew|apt|snap) - Virtualized test environments - User beta testing program
 
 ### Risk: Maintenance Burden During Transition
 
 **Mitigation:**
 
-- - Minimize changes to Bash during Rust development - Feature freeze Bash once Rust reaches parity - Time-boxed
+- - - Minimize changes to Bash during Rust development - Feature freeze Bash once Rust reaches parity - Time-boxed
   transition (6 months max)
 
 ---
@@ -1320,18 +1292,18 @@ jobs:
 
 **Optimistic (1 developer, full-time):**
 
-- - Phase 1-2 (Core): 2 weeks - Phase 3-4 (Concurrency): 1 week - Phase 5 (UI): 1 week - Phase 6-7 (Config/Features): 1
-  week - Phase 8-9 (Platform/Diagnostics): 1 week - Phase 10 (Migration): 2 weeks - Testing/Polish: 2 weeks
+- - - Phase 1-2 (Core): 2 weeks - Phase 3-4 (Concurrency): 1 week - Phase 5 (UI): 1 week - Phase 6-7 (Config/Features):
+  1 week - Phase 8-9 (Platform/Diagnostics): 1 week - Phase 10 (Migration): 2 weeks - Testing/Polish: 2 weeks
 
 **Total: ~10 weeks**
 
 **Realistic (1 developer, part-time):**
 
-- - 20-24 weeks
+- - - 20-24 weeks
 
 **Conservative (accounting for unknowns):**
 
-- - 6 months to production-ready
+- - - 6 months to production-ready
 
 ---
 
@@ -1410,24 +1382,17 @@ impl Installer for RipgrepInstaller {
 
 ### Appendix B: Recommended Crates
 
-- **CLI:** `clap` (argument parsing)
-- **Async:** `tokio` (runtime)
-- **Progress:** `indicatif` (progress bars)
-- **Config:** `serde`, `toml` (configuration)
-- **Error:** `thiserror`, `anyhow` (error handling)
-- **Graph:** `petgraph` (dependency resolution)
-- **Version:** `semver` (version comparison)
-- **Logging:** `tracing` (structured logging)
-- **HTTP:** `reqwest` (downloads)
-- **TTY:** `atty` (terminal detection)
+- - **CLI:** `clap` (argument parsing) - **Async:** `tokio` (runtime) - **Progress:** `indicatif` (progress bars) -
+  **Config:** `serde`, `toml` (configuration) - **Error:** `thiserror`, `anyhow` (error handling) - **Graph:**
+  `petgraph` (dependency resolution) - **Version:** `semver` (version comparison) - **Logging:** `tracing` (structured
+  logging) - **HTTP:** `reqwest` (downloads) - **TTY:** `atty` (terminal detection)
 
 ### Appendix C: Open Questions
 
-1. 1. Plugin system: **NO** (v1 uses static registry only). 2. Windows support: **NO** (v1 is macOS/Linux only).
-3. Version downgrades: **DISALLOWED by default**; require `--allow-downgrade`.
-4. 4. Cache scope: **per-user**, keyed by tool/version/platform/arch and checksum-protected.
-5. Parallel downloads: bounded by `--jobs` plus per-host concurrency limit (2).
-6. Offline mode: **SUPPORTED** via `--offline` (cache-only; fail if missing).
+1. 1. 1. Plugin system: **NO** (v1 uses static registry only). 2. Windows support: **NO** (v1 is macOS/Linux only). 3.
+   Version downgrades: **DISALLOWED by default**; require `--allow-downgrade`. 4. 4. Cache scope: **per-user**, keyed by
+   tool/version/platform/arch and checksum-protected. 5. Parallel downloads: bounded by `--jobs` plus per-host
+   concurrency limit (2). 6. Offline mode: **SUPPORTED** via `--offline` (cache-only; fail if missing).
 
 ---
 
@@ -1437,7 +1402,7 @@ impl Installer for RipgrepInstaller {
 
 Last Updated: 2026-01-06
 
-- - [x] Phase 1: Core Infrastructure - [x] 1.1 Project Setup (Cargo.toml, dependencies, CLI) - [x] 1.2 Exit Code
+- - - [x] Phase 1: Core Infrastructure - [x] 1.1 Project Setup (Cargo.toml, dependencies, CLI) - [x] 1.2 Exit Code
   Constants (all 22 codes) - [x] 1.3 Error Type Hierarchy (BootstrapError with thiserror) - [x] Phase 2: Installer
   Registry & Trait (Foundation) - [x] 2.1 Core Installer Interface (trait, registry, dependency resolution) - [x] 2.2
   Context Object & Package Managers - [x] 2.3 Concrete Installers (ripgrep, black, ruff, pylint) - [ ] Phase 3:
@@ -1456,15 +1421,14 @@ infrastructure) and Phase 2.1-2.3 (installer foundation).
 
 **Commits:**
 
-- `3a0931d`: Initialize issue #235 journal and analyze repository state
-- `de0fc64`: Phase 1.1-1.3: Implement core infrastructure (exit codes, errors, context, CLI)
-- `43e9b4c`: Phase 2.1-2.2: Add package managers and concrete installer implementations
-- `4816e22`: Address code review: Remove pragmas and complete docstrings
+- - `3a0931d`: Initialize issue #235 journal and analyze repository state - `de0fc64`: Phase 1.1-1.3: Implement core
+  infrastructure (exit codes, errors, context, CLI) - `43e9b4c`: Phase 2.1-2.2: Add package managers and concrete
+  installer implementations - `4816e22`: Address code review: Remove pragmas and complete docstrings
 
 **Key Achievements:**
 
-- - All 22 exit codes defined matching bash script contract - Complete error hierarchy with thiserror integration - Full
-  CLI with clap (install/doctor/verify subcommands) - Package manager abstractions (Homebrew, apt-get) with CI
+- - - All 22 exit codes defined matching bash script contract - Complete error hierarchy with thiserror integration -
+  Full CLI with clap (install/doctor/verify subcommands) - Package manager abstractions (Homebrew, apt-get) with CI
   compliance - Installer registry with dependency resolution - 4 concrete installers (ripgrep, black, ruff, pylint) -
   All quality gates passed (build, lint, tests, code review, docstrings)
 

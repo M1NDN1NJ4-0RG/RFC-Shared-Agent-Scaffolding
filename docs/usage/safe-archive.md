@@ -2,7 +2,8 @@
 
 ## Overview
 
-The `safe-run archive` subcommand creates compressed archives from source directories. It supports multiple compression formats and provides no-clobber protection to prevent accidental data loss.
+The `safe-run archive` subcommand creates compressed archives from source directories. It supports multiple compression
+formats and provides no-clobber protection to prevent accidental data loss.
 
 ## Usage
 
@@ -12,12 +13,11 @@ safe-run archive [OPTIONS] <source> <destination>
 
 ### Arguments
 
-- `<source>` - Source directory to archive
-- `<destination>` - Destination archive path (.tar.gz, .tar.bz2, or .zip)
+- - `<source>` - Source directory to archive - `<destination>` - Destination archive path (.tar.gz, .tar.bz2, or .zip)
 
 ### Options
 
-- `--no-clobber` - Enable strict no-clobber mode (fail if destination exists)
+- - `--no-clobber` - Enable strict no-clobber mode (fail if destination exists)
 
 ## Supported Formats
 
@@ -179,21 +179,19 @@ README.md
 
 ### Implementation
 
-- **Tar archives**: Uses the `tar` crate with `flate2` (gzip) or `bzip2` compression
-- **Zip archives**: Uses the `zip` crate with deflate compression
-- - **No-clobber**: Filesystem-level checking before archive creation - **Auto-suffix**: Numeric suffix (.1, .2, etc.)
-  inserted before final extension
+- - **Tar archives**: Uses the `tar` crate with `flate2` (gzip) or `bzip2` compression - **Zip archives**: Uses the
+  `zip` crate with deflate compression - - **No-clobber**: Filesystem-level checking before archive creation -
+  **Auto-suffix**: Numeric suffix (.1, .2, etc.) inserted before final extension
 
 ### Performance Considerations
 
-- - Compression is single-threaded (Rust standard library limitation)
-- For large directories, `.tar.gz` offers the best balance of speed and compression
-- `.tar.bz2` provides better compression but is significantly slower
-- `.zip` is fastest for cross-platform compatibility but has larger archive sizes
+- - - Compression is single-threaded (Rust standard library limitation) - For large directories, `.tar.gz` offers the
+  best balance of speed and compression - `.tar.bz2` provides better compression but is significantly slower - `.zip` is
+  fastest for cross-platform compatibility but has larger archive sizes
 
 ### Platform Notes
 
-- - **Unix/Linux**: Full support for all formats - **macOS**: Full support for all formats - **Windows**: Full support
+- - - **Unix/Linux**: Full support for all formats - **macOS**: Full support for all formats - **Windows**: Full support
   for all formats (no special handling needed)
 
 ## Comparison with safe-run
@@ -208,7 +206,7 @@ README.md
 
 ## Contract References
 
-- - **safe-archive-001**: Basic archive creation - **safe-archive-002**: Multiple compression formats -
+- - - **safe-archive-001**: Basic archive creation - **safe-archive-002**: Multiple compression formats -
   **safe-archive-003**: No-clobber with auto-suffix - **safe-archive-004**: No-clobber strict mode
 
 See `conformance/vectors.json` for detailed test vectors.

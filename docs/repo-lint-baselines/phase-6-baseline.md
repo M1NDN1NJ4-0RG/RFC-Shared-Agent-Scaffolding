@@ -6,8 +6,8 @@
 
 ## Executive Summary
 
-- - **Total Violations:** 388 - **Tools with Violations:** 10 of 13 - **Files Impacted:** ~50+ (across all languages) -
-  **Status:** Baseline established prior to remediation
+- - - **Total Violations:** 388 - **Tools with Violations:** 10 of 13 - **Files Impacted:** ~50+ (across all languages)
+  - **Status:** Baseline established prior to remediation
 
 ## Tool Versions
 
@@ -56,24 +56,18 @@
 
 **Categories:**
 
-- Unused imports (`F401`)
-- Unused variables (`F841`)
-- Line too long (`E501`)
-- Missing docstrings (`D` series)
-- - Complexity issues - Import order issues
+- - Unused imports (`F401`) - Unused variables (`F841`) - Line too long (`E501`) - Missing docstrings (`D` series) - -
+  Complexity issues - Import order issues
 
 **Impacted Areas:**
 
-- `tools/repo_lint/` - Core linting package
-- `scripts/` - Utility scripts
-- `wrappers/python3/` - Python wrappers
-- `conformance/` - Test fixtures
+- - `tools/repo_lint/` - Core linting package - `scripts/` - Utility scripts - `wrappers/python3/` - Python wrappers -
+  `conformance/` - Test fixtures
 
 **Required Fix:**
 
-- - Remove unused imports and variables
-- Fix line length violations (120 char limit per `pyproject.toml`)
-- Address other Ruff violations per policy (safe fixes only in `repo-lint fix`)
+- - - Remove unused imports and variables - Fix line length violations (120 char limit per `pyproject.toml`) - Address
+  other Ruff violations per policy (safe fixes only in `repo-lint fix`)
 
 ### Pylint (20 violations)
 
@@ -81,15 +75,15 @@
 
 **Categories:**
 
-- - Code quality issues - Naming convention violations - Docstring issues - Complexity warnings
+- - - Code quality issues - Naming convention violations - Docstring issues - Complexity warnings
 
 **Impacted Areas:**
 
-- - Similar to Ruff, but with stricter quality checks
+- - - Similar to Ruff, but with stricter quality checks
 
 **Required Fix:**
 
-- - Address Pylint-specific quality issues - Ensure docstrings are complete - Refactor complex functions if necessary
+- - - Address Pylint-specific quality issues - Ensure docstrings are complete - Refactor complex functions if necessary
 
 ### Black (0 violations)
 
@@ -107,17 +101,15 @@ All Python code is correctly formatted with Black (line-length=120).
 
 **Categories:**
 
-- - Quoting issues - Undefined variables - Syntax issues - Best practice violations
+- - - Quoting issues - Undefined variables - Syntax issues - Best practice violations
 
 **Impacted Areas:**
 
-- `scripts/` - Shell helper scripts
-- `wrappers/bash/` - Bash wrapper scripts
-- - Test fixtures
+- - `scripts/` - Shell helper scripts - `wrappers/bash/` - Bash wrapper scripts - - Test fixtures
 
 **Required Fix:**
 
-- - Add proper quoting around variables - Fix undefined variable references - Address best practice violations
+- - - Add proper quoting around variables - Fix undefined variable references - Address best practice violations
 
 ### shfmt (1 violation)
 
@@ -125,15 +117,15 @@ All Python code is correctly formatted with Black (line-length=120).
 
 **Categories:**
 
-- - Indentation issues (2 spaces, -i 2) - Code formatting inconsistencies
+- - - Indentation issues (2 spaces, -i 2) - Code formatting inconsistencies
 
 **Impacted Areas:**
 
-- - One or more Bash scripts with formatting issues
+- - - One or more Bash scripts with formatting issues
 
 **Required Fix:**
 
-- Run `shfmt -i 2 -ci -w <file>` to auto-fix
+- - Run `shfmt -i 2 -ci -w <file>` to auto-fix
 
 ### Docstring Validation (Bash) (0 violations)
 
@@ -157,22 +149,20 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Categories:**
 
-- - Missing function documentation - Missing parameter documentation - Incomplete docstrings
+- - - Missing function documentation - Missing parameter documentation - Incomplete docstrings
 
 **Impacted Files:**
 
-- `conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1` (intentional test fixture)
-- `scripts/tests/fixtures/powershell/EdgeCases.ps1` (intentional test fixture)
-- `wrappers/powershell/scripts/PreflightAutomergeRuleset.ps1` (~8 functions)
-- `wrappers/powershell/scripts/SafeArchive.ps1` (~4 functions)
-- `wrappers/powershell/scripts/SafeCheck.ps1` (~2 functions)
-- `wrappers/powershell/scripts/SafeRun.ps1` (~2 functions)
+- - `conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1` (intentional test fixture) -
+  `scripts/tests/fixtures/powershell/EdgeCases.ps1` (intentional test fixture) -
+  `wrappers/powershell/scripts/PreflightAutomergeRuleset.ps1` (~8 functions) -
+  `wrappers/powershell/scripts/SafeArchive.ps1` (~4 functions) - `wrappers/powershell/scripts/SafeCheck.ps1` (~2
+  functions) - `wrappers/powershell/scripts/SafeRun.ps1` (~2 functions)
 
 **Required Fix:**
 
-- - Add complete docstrings to all functions (public AND private)
-- Follow PowerShell docstring contract (`.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, etc.)
-- Test fixtures: mark with `# noqa: FUNCTION` pragma or document per contract
+- - - Add complete docstrings to all functions (public AND private) - Follow PowerShell docstring contract (`.SYNOPSIS`,
+  `.DESCRIPTION`, `.PARAMETER`, etc.) - Test fixtures: mark with `# noqa: FUNCTION` pragma or document per contract
 
 ---
 
@@ -184,19 +174,18 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Categories:**
 
-- `Subroutines::ProhibitSubroutinePrototypes` (1 violation)
-- `Subroutines::ProhibitExplicitReturnUndef` (8+ violations)
+- - `Subroutines::ProhibitSubroutinePrototypes` (1 violation) - `Subroutines::ProhibitExplicitReturnUndef` (8+
+  violations)
 
 **Impacted Files:**
 
-- `scripts/tests/fixtures/perl/edge_cases.pl`
-- `wrappers/perl/scripts/preflight_automerge_ruleset.pl`
-- `wrappers/perl/scripts/safe_run.pl`
+- - `scripts/tests/fixtures/perl/edge_cases.pl` - `wrappers/perl/scripts/preflight_automerge_ruleset.pl` -
+  `wrappers/perl/scripts/safe_run.pl`
 
 **Required Fix:**
 
-- - Remove subroutine prototypes (use modern Perl signatures if needed)
-- Replace `return undef` with `return` (Perl best practice)
+- - - Remove subroutine prototypes (use modern Perl signatures if needed) - Replace `return undef` with `return` (Perl
+  best practice)
 
 ### Docstring Validation (Perl) (20 violations)
 
@@ -204,20 +193,19 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Categories:**
 
-- - Missing POD documentation - Incomplete function documentation
+- - - Missing POD documentation - Incomplete function documentation
 
 **Impacted Files:**
 
-- `conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl` (~4 violations, intentional test fixture)
-- `scripts/docstring_validators/helpers/parse_perl_ppi.pl` (1 violation)
-- `scripts/tests/fixtures/perl/edge_cases.pl` (1 violation, test fixture)
-- `wrappers/perl/run_tests.pl` (~4 violations)
-- `wrappers/perl/scripts/preflight_automerge_ruleset.pl` (~7 violations)
+- - `conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl` (~4 violations, intentional test fixture) -
+  `scripts/docstring_validators/helpers/parse_perl_ppi.pl` (1 violation) - `scripts/tests/fixtures/perl/edge_cases.pl`
+  (1 violation, test fixture) - `wrappers/perl/run_tests.pl` (~4 violations) -
+  `wrappers/perl/scripts/preflight_automerge_ruleset.pl` (~7 violations)
 
 **Required Fix:**
 
-- - Add POD documentation to all subroutines (public AND private) - Follow Perl docstring contract
-- Test fixtures: mark with `# noqa: FUNCTION` pragma or document per contract
+- - - Add POD documentation to all subroutines (public AND private) - Follow Perl docstring contract - Test fixtures:
+  mark with `# noqa: FUNCTION` pragma or document per contract
 
 ---
 
@@ -229,20 +217,18 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Categories:**
 
-- `line-length` warnings (120 character limit)
+- - `line-length` warnings (120 character limit)
 
 **Impacted Files:**
 
-- `.github/ISSUE_TEMPLATE/multi-phase-form.yml` (1 violation)
-- `.github/workflows/drift-detection.yml` (13 violations)
-- `.github/workflows/lint-and-format-checker.yml` (1 violation)
-- `.github/workflows/pr-body-guardrails.yml` (5 violations)
+- - `.github/ISSUE_TEMPLATE/multi-phase-form.yml` (1 violation) - `.github/workflows/drift-detection.yml` (13
+  violations) - `.github/workflows/lint-and-format-checker.yml` (1 violation) -
+  `.github/workflows/pr-body-guardrails.yml` (5 violations)
 
 **Required Fix:**
 
-- - Refactor long lines to fit within 120 characters
-- Use YAML multiline strings where appropriate (`>`, ` | `)
-- - May require splitting complex expressions
+- - - Refactor long lines to fit within 120 characters - Use YAML multiline strings where appropriate (`>`, ` | `) - -
+  May require splitting complex expressions
 
 ---
 
@@ -266,30 +252,33 @@ No Clippy lint issues detected.
 
 Per the Phase 6 completion instructions, violations will be remediated in this order:
 
-1. 1. **Python** (Black ✅ / Ruff ❌ / Pylint ❌ / Docstrings ✅) - Fix Ruff violations (246) - Fix Pylint violations (20)
+1. 1. 1. **Python** (Black ✅ / Ruff ❌ / Pylint ❌ / Docstrings ✅) - Fix Ruff violations (246) - Fix Pylint violations
+   (20)
 
-2. 2. **Bash** (ShellCheck ❌ / shfmt ❌ / Docstrings ✅) - Fix ShellCheck violations (12) - Fix shfmt violations (1)
+2. 2. 2. **Bash** (ShellCheck ❌ / shfmt ❌ / Docstrings ✅) - Fix ShellCheck violations (12) - Fix shfmt violations (1)
 
-3. 3. **PowerShell** (PSScriptAnalyzer ✅ / Docstrings ❌) - Fix docstring violations (60)
+3. 3. 3. **PowerShell** (PSScriptAnalyzer ✅ / Docstrings ❌) - Fix docstring violations (60)
 
-4. 4. **Perl** (Perl::Critic ❌ / Docstrings ❌) - Fix Perl::Critic violations (9) - Fix docstring violations (20)
+4. 4. 4. **Perl** (Perl::Critic ❌ / Docstrings ❌) - Fix Perl::Critic violations (9) - Fix docstring violations (20)
 
-5. 5. **YAML** (yamllint ❌) - Fix yamllint violations (20)
+5. 5. 5. **YAML** (yamllint ❌) - Fix yamllint violations (20)
 
 ---
 
 ## Notes
 
-- **Test Fixtures:** Some violations are in intentional test fixtures (e.g., `conformance/repo-lint/vectors/fixtures/`) designed to trigger violations for vector testing. These may be exempt or require `# noqa` pragmas.
+- - **Test Fixtures:** Some violations are in intentional test fixtures (e.g.,
+  `conformance/repo-lint/vectors/fixtures/`) designed to trigger violations for vector testing. These may be exempt or
+  require `# noqa` pragmas.
 
-- **Auto-Fix Policy:** Per Phase 0 Item 0.9.1, `repo-lint fix` may only apply:
-  - - FORMAT.BLACK (all Python files) - FORMAT.SHFMT (all Bash files) - LINT.RUFF.SAFE (safe Ruff fixes only, no unsafe
-    fixes)
+- - **Auto-Fix Policy:** Per Phase 0 Item 0.9.1, `repo-lint fix` may only apply: - - FORMAT.BLACK (all Python files) -
+  FORMAT.SHFMT (all Bash files) - LINT.RUFF.SAFE (safe Ruff fixes only, no unsafe fixes)
 
-- - **Docstring Enforcement:** Per Phase 3 Item 3.7.3, ALL symbols (public and private) require documentation. No
+- - - **Docstring Enforcement:** Per Phase 3 Item 3.7.3, ALL symbols (public and private) require documentation. No
   implicit skipping.
 
-- **Flake8 Migration:** Ruff has replaced Flake8 per Phase 0 Item 0.8.1. The `.flake8` file and Flake8 CI steps will be removed after remediation is complete.
+- - **Flake8 Migration:** Ruff has replaced Flake8 per Phase 0 Item 0.8.1. The `.flake8` file and Flake8 CI steps will
+  be removed after remediation is complete.
 
 ---
 

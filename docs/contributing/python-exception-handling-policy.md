@@ -12,11 +12,10 @@ ______________________________________________________________________
 
 ## Core Principles
 
-1. 1. **Narrow exception types** when the failure mode is known and specific
-2. **Preserve exception context** via exception chaining (`raise ... from e`)
-3. 3. **Fail fast** in library code - don't swallow exceptions that callers need to see 4. **Convert cleanly** at CLI
-   boundaries - turn exceptions into user-friendly messages + exit codes 5. **Document intentional broad catches** with
-   inline comments explaining why
+1. 1. 1. **Narrow exception types** when the failure mode is known and specific 2. **Preserve exception context** via
+   exception chaining (`raise ... from e`) 3. 3. **Fail fast** in library code - don't swallow exceptions that callers
+   need to see 4. **Convert cleanly** at CLI boundaries - turn exceptions into user-friendly messages + exit codes 5.
+   **Document intentional broad catches** with inline comments explaining why
 
 ______________________________________________________________________
 
@@ -24,14 +23,14 @@ ______________________________________________________________________
 
 ### ACCEPTABLE: CLI Boundary Pattern
 
-Broad exception handlers (`except Exception as e:`) are **ACCEPTABLE** at CLI boundaries where the goal is to convert any unexpected error into a clean user-facing message and non-zero exit code.
+Broad exception handlers (`except Exception as e:`) are **ACCEPTABLE** at CLI boundaries where the goal is to convert
+any unexpected error into a clean user-facing message and non-zero exit code.
 
 **Requirements:**
 
-- - MUST be at top-level CLI entry points (main functions, command handlers) - MUST produce a clear error message for
-  the user - MUST exit with a non-zero exit code
-- SHOULD include `--verbose` or `--debug` mode that shows full traceback
-- - SHOULD include the exception type/message in the error output
+- - - MUST be at top-level CLI entry points (main functions, command handlers) - MUST produce a clear error message for
+  the user - MUST exit with a non-zero exit code - SHOULD include `--verbose` or `--debug` mode that shows full
+  traceback - - SHOULD include the exception type/message in the error output
 
 **Example (GOOD):**
 
@@ -66,13 +65,13 @@ def process_file(path: Path) -> dict:
 
 ### ACCEPTABLE: Diagnostic/Doctor Tools
 
-Broad exception handlers are **ACCEPTABLE** in diagnostic tools (like `repo-lint doctor`) where the goal is to report on system state without failing.
+Broad exception handlers are **ACCEPTABLE** in diagnostic tools (like `repo-lint doctor`) where the goal is to report on
+system state without failing.
 
 **Requirements:**
 
-- - MUST return structured error status (success/failure + message) - MUST NOT silently swallow exceptions - log or
-  return error details
-- SHOULD use a tuple return pattern: `(success: bool, message: str, detail: str)`
+- - - MUST return structured error status (success/failure + message) - MUST NOT silently swallow exceptions - log or
+  return error details - SHOULD use a tuple return pattern: `(success: bool, message: str, detail: str)`
 
 **Example (GOOD):**
 
@@ -96,9 +95,8 @@ the actual test result.
 
 **Requirements:**
 
-- MUST be in a `finally` block or test teardown
-- - MUST be cleanup-only operations (closing files, killing processes, etc.) - MAY silently swallow exceptions (test
-  cleanup should not fail tests)
+- - MUST be in a `finally` block or test teardown - - MUST be cleanup-only operations (closing files, killing processes,
+  etc.) - MAY silently swallow exceptions (test cleanup should not fail tests)
 
 **Example (GOOD):**
 
@@ -169,16 +167,15 @@ ______________________________________________________________________
 
 **Prefer specific built-in exceptions:**
 
-- `FileNotFoundError`, `PermissionError`, `IsADirectoryError` instead of `OSError` when you know the failure mode
-- `json.JSONDecodeError` instead of `Exception` for JSON parsing
-- `subprocess.CalledProcessError` instead of `Exception` for subprocess failures
-- `ValueError`, `TypeError`, `KeyError` for data validation
-- `UnicodeDecodeError` instead of `Exception` for encoding issues
+- - `FileNotFoundError`, `PermissionError`, `IsADirectoryError` instead of `OSError` when you know the failure mode -
+  `json.JSONDecodeError` instead of `Exception` for JSON parsing - `subprocess.CalledProcessError` instead of
+  `Exception` for subprocess failures - `ValueError`, `TypeError`, `KeyError` for data validation - `UnicodeDecodeError`
+  instead of `Exception` for encoding issues
 
 **When to use broader types:**
 
-- `OSError` is acceptable when catching any file I/O error (it covers `FileNotFoundError`, `PermissionError`, etc.)
-- `Exception` is acceptable **only** at CLI boundaries or in diagnostic tools (see above)
+- - `OSError` is acceptable when catching any file I/O error (it covers `FileNotFoundError`, `PermissionError`, etc.) -
+  `Exception` is acceptable **only** at CLI boundaries or in diagnostic tools (see above)
 
 ### 2. Preserve Exception Context via Chaining
 
@@ -208,7 +205,7 @@ Error messages MUST include enough context for the user to diagnose the problem.
 
 **Good error messages include:**
 
-- - Which file/resource failed - What operation was being attempted - Relevant values (paths, tool names, etc.)
+- - - Which file/resource failed - What operation was being attempted - Relevant values (paths, tool names, etc.)
 
 **Example (GOOD):**
 
@@ -232,7 +229,7 @@ except FileNotFoundError:
 If you MUST use a broad exception handler (e.g., wrapping a third-party library with unpredictable exceptions), add an
 inline comment explaining:
 
-- - Why the broad catch is necessary - What failure modes are expected - Whether this is temporary (TODO: narrow when
+- - - Why the broad catch is necessary - What failure modes are expected - Whether this is temporary (TODO: narrow when
   possible)
 
 **Example (ACCEPTABLE with documentation):**
@@ -258,15 +255,14 @@ When appropriate, create custom exception types to clarify domain-specific error
 
 Create custom exceptions when:
 
-1. 1. You need to distinguish this error type from built-in exceptions 2. You want callers to be able to catch this
+1. 1. 1. You need to distinguish this error type from built-in exceptions 2. You want callers to be able to catch this
    specific error type 3. The error represents a domain-specific failure mode
 
 ### Custom Exception Location
 
 Custom exceptions MUST be defined in a canonical module:
 
-- `tools/repo_lint/exceptions.py` for repo-lint exceptions
-- Module-level `exceptions.py` for other packages
+- - `tools/repo_lint/exceptions.py` for repo-lint exceptions - Module-level `exceptions.py` for other packages
 
 ### Custom Exception Template
 
@@ -324,11 +320,10 @@ ______________________________________________________________________
 
 For existing code with overly-broad exception handlers:
 
-1. 1. **Identify the failure modes** by examining the code or running tests 2. **Narrow to specific exception types**
-   that cover the actual failure modes
-3. **Add exception chaining** (`raise ... from e`) when re-raising
-4. 4. **Add tests** that verify the correct exception type is raised 5. **Document** any remaining broad catches with
-   inline comments
+1. 1. 1. **Identify the failure modes** by examining the code or running tests 2. **Narrow to specific exception types**
+   that cover the actual failure modes 3. **Add exception chaining** (`raise ... from e`) when re-raising 4. 4. **Add
+   tests** that verify the correct exception type is raised 5. **Document** any remaining broad catches with inline
+   comments
 
 ______________________________________________________________________
 
@@ -434,7 +429,7 @@ ______________________________________________________________________
 
 ## References
 
-- - PEP 3134 - Exception Chaining and Embedded Tracebacks
+- - - PEP 3134 - Exception Chaining and Embedded Tracebacks
 - Python Built-in Exceptions: <https://docs.python.org/3/library/exceptions.html>
 - Best Practices for Exception Handling: <https://docs.python-guide.org/writing/gotchas/#exceptions>
 

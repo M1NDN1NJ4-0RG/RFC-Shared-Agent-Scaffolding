@@ -38,7 +38,7 @@ CONFIG_PATH = Path("config.yaml")
 
 **Special cases:**
 
-- **Constants:** Use `Final[T]` for immutable constants (Python 3.8+)
+- - **Constants:** Use `Final[T]` for immutable constants (Python 3.8+)
 
   ```python
   from typing import Final
@@ -47,7 +47,7 @@ CONFIG_PATH = Path("config.yaml")
   API_VERSION: Final[str] = "v1.0.0"
   ```
 
-- - **Optional module-level variables:**
+- - - **Optional module-level variables:**
 
   ```python
   from typing import Optional
@@ -78,7 +78,7 @@ class Config:
 
 **Special cases:**
 
-- **Class variables vs. instance variables:** Use `ClassVar[T]` for class-level variables
+- - **Class variables vs. instance variables:** Use `ClassVar[T]` for class-level variables
 
   ```python
   from typing import ClassVar
@@ -94,11 +94,12 @@ class Config:
 
 ### Local Variables (OPTIONAL FOR NOW)
 
-**Requirement:** Local variable annotations are OPTIONAL for now. They may be enforced later via `--strict-typing` mode or "new/changed code only" policy.
+**Requirement:** Local variable annotations are OPTIONAL for now. They may be enforced later via `--strict-typing` mode
+or "new/changed code only" policy.
 
 **Recommended practice:** Annotate local variables when:
 
-- - Type is not obvious from context - Variable is initialized to a generic value (e.g., empty list/dict) - Variable
+- - - Type is not obvious from context - Variable is initialized to a generic value (e.g., empty list/dict) - Variable
   type changes or is reused with different types (anti-pattern, but if it exists)
 
 **Examples:**
@@ -153,7 +154,8 @@ empty_set: Set[int] = set()
 
 ### None Initializations (MANDATORY)
 
-**Requirement:** Variables initialized to `None` that will be assigned a value later MUST use `Optional[T]` type annotation.
+**Requirement:** Variables initialized to `None` that will be assigned a value later MUST use `Optional[T]` type
+annotation.
 
 **Rationale:** `None` initializations are a common bug factory when the intended type is unclear.
 
@@ -245,14 +247,15 @@ def legacy_handler(data: Any) -> Any:  # typing: Any (TODO: tighten)
 
 **When to use `Any`:**
 
-- - Working with truly dynamic data (JSON APIs with varying schemas) - Interfacing with untyped third-party libraries -
-  Temporary solution during migration (must be tracked and resolved)
+- - - Working with truly dynamic data (JSON APIs with varying schemas) - Interfacing with untyped third-party libraries
+  - Temporary solution during migration (must be tracked and resolved)
 
 ### Using `object` (Rare)
 
 **Requirement:** Use `object` ONLY when you truly mean "unknown opaque thing" and `Any` would be misleading.
 
-**Rationale:** `object` is more restrictive than `Any` (only base object methods available) and should be used intentionally.
+**Rationale:** `object` is more restrictive than `Any` (only base object methods available) and should be used
+intentionally.
 
 **Examples:**
 
@@ -278,8 +281,8 @@ def process_unknown(data: object) -> None:
 
 **Requirement:** Every function and method MUST have:
 
-1. 1. Type annotations for every parameter (including keyword-only)
-2. Return type annotation (including explicit `-> None`)
+1. 1. 1. Type annotations for every parameter (including keyword-only) 2. Return type annotation (including explicit `->
+   None`)
 
 **Rationale:** Function signatures are contracts that enable type checking, IDE support, and documentation.
 
@@ -361,7 +364,8 @@ def create_user(name: str, **kwargs: Unpack[UserKwargs]) -> User:
     ...
 ```
 
-**Note:** Advanced `Unpack[...]` typing may be adopted later for specific high-value cases, but is NOT required initially.
+**Note:** Advanced `Unpack[...]` typing may be adopted later for specific high-value cases, but is NOT required
+initially.
 
 ---
 
@@ -395,7 +399,8 @@ config: dict | None = None
 
 **Policy:** PEP 604 union syntax (`T | None`) is ALLOWED but NOT preferred.
 
-**Avoid churn rule:** Only update `Optional[T]` → `T | None` when touching code for another reason. Do NOT create "syntax cleanup" PRs.
+**Avoid churn rule:** Only update `Optional[T]` → `T | None` when touching code for another reason. Do NOT create
+"syntax cleanup" PRs.
 
 **Rationale:** Avoid unnecessary churn while allowing modern syntax in new code.
 
@@ -407,7 +412,8 @@ config: dict | None = None
 
 **Requirement:** Functions/methods that return a non-None value MUST include `:rtype:` in their reST docstring.
 
-**Rationale:** Docstring `:rtype:` provides human-readable documentation that complements machine-readable type annotations.
+**Rationale:** Docstring `:rtype:` provides human-readable documentation that complements machine-readable type
+annotations.
 
 **Examples:**
 
@@ -531,7 +537,8 @@ status, message = result
 
 ### `global` and `nonlocal`
 
-**Policy:** Variables used with `global`/`nonlocal` should be annotated at their original declaration site, not at the `global`/`nonlocal` statement.
+**Policy:** Variables used with `global`/`nonlocal` should be annotated at their original declaration site, not at the
+`global`/`nonlocal` statement.
 
 **Examples:**
 
@@ -546,7 +553,8 @@ def increment() -> None:
 
 ### Dynamic Attribute Injection
 
-**Policy:** Avoid dynamic attribute injection when possible. If unavoidable, document in docstring and use `setattr` with type comment.
+**Policy:** Avoid dynamic attribute injection when possible. If unavoidable, document in docstring and use `setattr`
+with type comment.
 
 **Examples:**
 
@@ -573,21 +581,21 @@ class DynamicConfig(TypedDict, total=False):
 
 **Status:** Current phase
 
-- - Run Ruff ANN* rules in report-only mode - Collect baseline violations (722 errors as of 2026-01-07) - No CI failures
-  yet
+- - - Run Ruff ANN* rules in report-only mode - Collect baseline violations (722 errors as of 2026-01-07) - No CI
+  failures yet
 
 ### Phase 2: Gradual Rollout
 
 **Planned:**
 
-- - Enable Ruff ANN* rules for NEW code only (via CI diff) - Allow existing violations to be fixed incrementally -
+- - - Enable Ruff ANN* rules for NEW code only (via CI diff) - Allow existing violations to be fixed incrementally -
   Provide autofix suggestions where safe
 
 ### Phase 3: Full Enforcement
 
 **Target:**
 
-- - All Python code MUST pass Ruff ANN* checks - CI fails on new violations - Baseline violations tracked and resolved
+- - - All Python code MUST pass Ruff ANN* checks - CI fails on new violations - Baseline violations tracked and resolved
 
 ---
 
@@ -599,14 +607,11 @@ class DynamicConfig(TypedDict, total=False):
 
 **Enabled rules:**
 
-- `ANN001` - Missing type annotation for function argument
-- `ANN201` - Missing return type annotation for public function
-- `ANN202` - Missing return type annotation for private function
-- `ANN204` - Missing return type annotation for special method
-- `ANN206` - Missing return type annotation for class method
-- `ANN002` - Missing type annotation for `*args`
-- `ANN003` - Missing type annotation for `**kwargs`
-- `ANN401` - Dynamically typed expressions (Any) discouraged (warning only)
+- - `ANN001` - Missing type annotation for function argument - `ANN201` - Missing return type annotation for public
+  function - `ANN202` - Missing return type annotation for private function - `ANN204` - Missing return type annotation
+  for special method - `ANN206` - Missing return type annotation for class method - `ANN002` - Missing type annotation
+  for `*args` - `ANN003` - Missing type annotation for `**kwargs` - `ANN401` - Dynamically typed expressions (Any)
+  discouraged (warning only)
 
 **Configuration:** `pyproject.toml`
 
@@ -614,7 +619,7 @@ class DynamicConfig(TypedDict, total=False):
 
 **Recommended:** Use IDEs with Python type checking support:
 
-- - VS Code with Pylance - PyCharm (built-in) - mypy for CLI type checking
+- - - VS Code with Pylance - PyCharm (built-in) - mypy for CLI type checking
 
 ### Future: Type Checker Integration
 
@@ -720,7 +725,7 @@ def delete_user(id: int) -> None:
 - [PEP 604 – Allow writing union types as X | Y](https://peps.python.org/pep-0604/)
 - [typing — Support for type hints (Python docs)](https://docs.python.org/3/library/typing.html)
 - [Ruff ANN rules documentation](https://docs.astral.sh/ruff/rules/#flake8-annotations-ann)
-- - [docs/contributing/docstring-contracts/python.md](./docstring-contracts/python.md) - Python docstring contract
+- - - [docs/contributing/docstring-contracts/python.md](./docstring-contracts/python.md) - Python docstring contract
 
 ---
 

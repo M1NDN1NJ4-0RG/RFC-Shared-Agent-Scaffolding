@@ -1,8 +1,7 @@
 # TOML Contracts
 
-**Status:** Canonical source of truth for TOML formatting requirements
-**Last Updated:** 2026-01-08
-**Enforcement:** Enforced via `taplo` in `repo-lint check --ci`
+**Status:** Canonical source of truth for TOML formatting requirements **Last Updated:** 2026-01-08 **Enforcement:**
+Enforced via `taplo` in `repo-lint check --ci`
 
 ## Overview
 
@@ -22,21 +21,18 @@ auto-fixable.
 
 **Included files:**
 
-- `pyproject.toml` (Python project configuration)
-- `Cargo.toml` (Rust project manifests)
-- `.bootstrap.toml` (bootstrap configuration)
-- `rust/.cargo/config.toml` (Cargo configuration)
-- `taplo.toml` (Taplo configuration itself)
-- Any future `*.toml` configuration files
+- - `pyproject.toml` (Python project configuration) - `Cargo.toml` (Rust project manifests) - `.bootstrap.toml`
+  (bootstrap configuration) - `rust/.cargo/config.toml` (Cargo configuration) - `taplo.toml` (Taplo configuration
+  itself) - Any future `*.toml` configuration files
 
 ### Exclusions
 
 The following files/directories are **explicitly excluded** from TOML linting:
 
-1. 1. **Vendored/third-party lockfiles:** (none currently) - **Future:** If external TOML lockfiles are vendored, add
+1. 1. 1. **Vendored/third-party lockfiles:** (none currently) - **Future:** If external TOML lockfiles are vendored, add
    exclusions here
 
-2. **Temporary/scratch files:** Any `*.toml` files in `/tmp/` or build artifacts
+2. 2. **Temporary/scratch files:** Any `*.toml` files in `/tmp/` or build artifacts
 
 **Important:** Exclusions MUST be documented with a clear reason. Avoid broad exclusions.
 
@@ -54,9 +50,9 @@ This ruleset follows **TOML Best Practices** from authoritative sources:
 
 **Core Principles:**
 
-- - **Prefer machine-fixable rules** to reduce manual effort - **No vague rules:** Every rule must be deterministic and
-  checkable - **Compatibility first:** Rules must work with TOML v1.0.0 - **Readability:** TOML files should be easy to
-  read and edit by humans - **Consistency:** Use one style throughout the repository
+- - - **Prefer machine-fixable rules** to reduce manual effort - **No vague rules:** Every rule must be deterministic
+  and checkable - **Compatibility first:** Rules must work with TOML v1.0.0 - **Readability:** TOML files should be easy
+  to read and edit by humans - **Consistency:** Use one style throughout the repository
 
 ### Core Rules (MANDATORY)
 
@@ -210,7 +206,7 @@ dependencies = [
 
 **Formatting:**
 
-- - One item per line - Indent items by 2 spaces (or 4 spaces from enclosing table) - Trailing comma on last item
+- - - One item per line - Indent items by 2 spaces (or 4 spaces from enclosing table) - Trailing comma on last item
   (prevents diff noise)
 
 ```toml
@@ -356,10 +352,8 @@ very-long-array = [
 
 **Top-level table order:** Tables SHOULD follow a logical order:
 
-1. `[build-system]` (if present)
-2. `[package]` or `[project]` (package metadata)
-3. `[dependencies]` / `[project.dependencies]`
-4. `[tool.*]` tables (tool-specific configuration)
+1. 1. `[build-system]` (if present) 2. `[package]` or `[project]` (package metadata) 3. `[dependencies]` /
+   `[project.dependencies]` 4. `[tool.*]` tables (tool-specific configuration)
 
 **Rationale:** Puts the most important metadata first, makes files easier to navigate.
 
@@ -390,7 +384,8 @@ name = "repo_lint"
 
 ## Taplo Configuration
 
-The `.taplo.toml` configuration file (or `taplo.toml`) at the repository root defines these rules for `taplo fmt` and `taplo lint`.
+The `.taplo.toml` configuration file (or `taplo.toml`) at the repository root defines these rules for `taplo fmt` and
+`taplo lint`.
 
 **Key settings:**
 
@@ -409,8 +404,7 @@ compact_inline_tables = false
 
 **Rule enforcement:**
 
-- `taplo fmt` - Auto-formats TOML files according to rules
-- `taplo lint` - Checks TOML files for violations
+- - `taplo fmt` - Auto-formats TOML files according to rules - `taplo lint` - Checks TOML files for violations
 
 ---
 
@@ -497,12 +491,12 @@ line-length=120  # ❌ No spaces around =
 
 For existing TOML files that don't conform to these rules:
 
-1. **Auto-fix first:** Run `taplo fmt **/*.toml` to auto-format all files
-2. **Review changes:** Use `git diff` to review all changes before committing
-3. **Manual fixes:** Address any remaining issues `taplo lint` reports
-4. 4. **Commit:** Commit the formatted files
+1. 1. **Auto-fix first:** Run `taplo fmt **/*.toml` to auto-format all files 2. **Review changes:** Use `git diff` to
+   review all changes before committing 3. **Manual fixes:** Address any remaining issues `taplo lint` reports 4. 4.
+   **Commit:** Commit the formatted files
 
-**Important:** Always review auto-formatted changes before committing, especially for critical configuration files like `Cargo.toml` and `pyproject.toml`.
+**Important:** Always review auto-formatted changes before committing, especially for critical configuration files like
+`Cargo.toml` and `pyproject.toml`.
 
 ---
 
@@ -511,10 +505,10 @@ For existing TOML files that don't conform to these rules:
 - [TOML v1.0.0 Specification](https://toml.io/en/v1.0.0)
 - [Taplo Documentation](https://taplo.tamasfe.dev/)
 - [Cargo Manifest Format](https://doc.rust-lang.org/cargo/reference/manifest.html)
-- Repository Markdown Contracts: `docs/contributing/markdown-contracts.md` (similar structure)
+- - Repository Markdown Contracts: `docs/contributing/markdown-contracts.md` (similar structure)
 
 ---
 
 ## Change Log
 
-- - **2026-01-08:** Initial version (Phase 3.6.1 - Issue #278)
+- - - **2026-01-08:** Initial version (Phase 3.6.1 - Issue #278)

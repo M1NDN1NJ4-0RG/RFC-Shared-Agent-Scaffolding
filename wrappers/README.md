@@ -1,12 +1,13 @@
 # Language Wrappers
 
-This directory contains thin wrapper scripts in multiple languages that discover and invoke the Rust canonical tool (`safe-run`, `safe-check`, `safe-archive`).
+This directory contains thin wrapper scripts in multiple languages that discover and invoke the Rust canonical tool
+(`safe-run`, `safe-check`, `safe-archive`).
 
 ## Purpose
 
 The wrappers act as **invokers**, not independent implementations. They provide:
 
-1. 1. **Cross-language compatibility** - Use the canonical tool from any scripting language 2. **Automatic binary
+1. 1. 1. **Cross-language compatibility** - Use the canonical tool from any scripting language 2. **Automatic binary
    discovery** - Find the Rust binary via multiple fallback strategies 3. **Transparent argument passing** - Forward all
    arguments to the canonical tool 4. **Exit code forwarding** - Preserve the exact exit code from the canonical tool 5.
    **Actionable error messages** - Guide users when the Rust binary is missing
@@ -17,9 +18,8 @@ The wrappers act as **invokers**, not independent implementations. They provide:
 
 **Location:** `wrappers/bash/scripts/`
 
-- `safe-run.sh` - Execute commands with event logging
-- `safe-check.sh` - Check for existing artifacts
-- `safe-archive.sh` - Archive artifacts to timestamped directories
+- - `safe-run.sh` - Execute commands with event logging - `safe-check.sh` - Check for existing artifacts -
+  `safe-archive.sh` - Archive artifacts to timestamped directories
 
 **Requirements:** Bash 4.0+, jq (for conformance testing)
 
@@ -33,9 +33,8 @@ The wrappers act as **invokers**, not independent implementations. They provide:
 
 **Location:** `wrappers/perl/scripts/`
 
-- `safe_run.pl` - Execute commands with event logging
-- `safe_check.pl` - Check for existing artifacts
-- `safe_archive.pl` - Archive artifacts to timestamped directories
+- - `safe_run.pl` - Execute commands with event logging - `safe_check.pl` - Check for existing artifacts -
+  `safe_archive.pl` - Archive artifacts to timestamped directories
 
 **Requirements:** Perl 5.10+
 
@@ -49,9 +48,8 @@ perl ./wrappers/perl/scripts/safe_run.pl echo "Hello, World!"
 
 **Location:** `wrappers/python3/scripts/`
 
-- `safe_run.py` - Execute commands with event logging
-- `safe_check.py` - Check for existing artifacts
-- `safe_archive.py` - Archive artifacts to timestamped directories
+- - `safe_run.py` - Execute commands with event logging - `safe_check.py` - Check for existing artifacts -
+  `safe_archive.py` - Archive artifacts to timestamped directories
 
 **Requirements:** Python 3.8+
 
@@ -65,9 +63,8 @@ python3 ./wrappers/python3/scripts/safe_run.py echo "Hello, World!"
 
 **Location:** `wrappers/powershell/scripts/`
 
-- `SafeRun.ps1` - Execute commands with event logging
-- `SafeCheck.ps1` - Check for existing artifacts
-- `SafeArchive.ps1` - Archive artifacts to timestamped directories
+- - `SafeRun.ps1` - Execute commands with event logging - `SafeCheck.ps1` - Check for existing artifacts -
+  `SafeArchive.ps1` - Archive artifacts to timestamped directories
 
 **Requirements:** PowerShell 5.1+ (Windows), PowerShell Core 7+ (cross-platform)
 
@@ -81,17 +78,15 @@ pwsh ./wrappers/powershell/scripts/SafeRun.ps1 echo "Hello, World!"
 
 Wrappers use the following discovery strategy (in order of priority):
 
-1. **Environment variable:** `SAFE_RUN_BIN` (or `SAFE_CHECK_BIN`, `SAFE_ARCHIVE_BIN`)
-   - - Absolute path to the canonical binary - Highest priority - overrides all other methods
+1. 1. **Environment variable:** `SAFE_RUN_BIN` (or `SAFE_CHECK_BIN`, `SAFE_ARCHIVE_BIN`) - - Absolute path to the
+   canonical binary - Highest priority - overrides all other methods
 
-2. **Dev mode:** `rust/target/release/safe-run` (relative to repository root)
-   - - Used when running from within the repository during development
+2. 2. **Dev mode:** `rust/target/release/safe-run` (relative to repository root) - - Used when running from within the
+   repository during development
 
-3. **CI artifacts:** `dist/<os>/<arch>/safe-run`
-   - - Used in CI/CD pipelines where binaries are staged
+3. 3. **CI artifacts:** `dist/<os>/<arch>/safe-run` - - Used in CI/CD pipelines where binaries are staged
 
-4. **System PATH:** Search `$PATH` for `safe-run`
-   - - Falls back to system-installed binary
+4. 4. **System PATH:** Search `$PATH` for `safe-run` - - Falls back to system-installed binary
 
 If none of these locations contain the binary, the wrapper exits with an actionable error message explaining how to
 build or install the Rust canonical tool.
@@ -100,10 +95,9 @@ build or install the Rust canonical tool.
 
 Each language wrapper has its own test suite documented in its `README.md`:
 
-- **Bash:** `wrappers/bash/README.md` - Test documentation
-- **Perl:** `wrappers/perl/README.md` - Test documentation and examples
-- **Python 3:** `wrappers/python3/README.md` - Test documentation
-- **PowerShell:** `wrappers/powershell/README.md` - Test documentation
+- - **Bash:** `wrappers/bash/README.md` - Test documentation - **Perl:** `wrappers/perl/README.md` - Test documentation
+  and examples - **Python 3:** `wrappers/python3/README.md` - Test documentation - **PowerShell:**
+  `wrappers/powershell/README.md` - Test documentation
 
 ### Running Tests with Language-Native Runners
 
@@ -146,11 +140,12 @@ Contract](../docs/testing/test-runner-contract.md) for details on parity guarant
 
 ## Conformance Testing
 
-All wrappers must pass the same conformance test suite defined in `conformance/vectors.json`. This ensures behavioral parity across all language implementations.
+All wrappers must pass the same conformance test suite defined in `conformance/vectors.json`. This ensures behavioral
+parity across all language implementations.
 
 See:
 
-- - [Conformance Contract](../docs/usage/conformance-contract.md) - Contract specification - [Drift
+- - - [Conformance Contract](../docs/usage/conformance-contract.md) - Contract specification - [Drift
   Detection](../.github/workflows/drift-detection.yml) - Cross-language behavioral validation
 
 ## Architecture
@@ -167,15 +162,15 @@ wrappers/<language>/
 
 See:
 
-- - [Wrapper Discovery](../docs/architecture/wrapper-discovery.md) - Binary discovery algorithm - [Canonical
+- - - [Wrapper Discovery](../docs/architecture/wrapper-discovery.md) - Binary discovery algorithm - [Canonical
   Structure](../docs/architecture/canonical-structure.md) - Repository layout
 
 ## Contributing
 
 When adding or modifying wrappers:
 
-1. 1. Maintain the invoker pattern - delegate all logic to the Rust canonical tool 2. Preserve binary discovery order
-   and error messages 3. Add tests for any new functionality 4. Run conformance suite to verify behavioral parity
-5. Follow language-specific docstring contracts (see `docs/contributing/docstring-contracts/`)
+1. 1. 1. Maintain the invoker pattern - delegate all logic to the Rust canonical tool 2. Preserve binary discovery order
+   and error messages 3. Add tests for any new functionality 4. Run conformance suite to verify behavioral parity 5.
+   Follow language-specific docstring contracts (see `docs/contributing/docstring-contracts/`)
 
 See [Contributing Guide](../docs/contributing/contributing-guide.md) for full details.

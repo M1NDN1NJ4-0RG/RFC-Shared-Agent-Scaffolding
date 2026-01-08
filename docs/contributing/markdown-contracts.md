@@ -1,8 +1,7 @@
 # Markdown Contracts
 
-**Status:** Canonical source of truth for Markdown formatting requirements
-**Last Updated:** 2026-01-08
-**Enforcement:** Enforced via `markdownlint-cli2` in `repo-lint check --ci`
+**Status:** Canonical source of truth for Markdown formatting requirements **Last Updated:** 2026-01-08 **Enforcement:**
+Enforced via `markdownlint-cli2` in `repo-lint check --ci`
 
 ## Overview
 
@@ -22,25 +21,21 @@ auto-fixable where possible.
 
 **Included directories:**
 
-- `docs/**/*.md` (all documentation)
-- `*.md` (root-level files: README.md, CONTRIBUTING.md, etc.)
-- `wrappers/**/*.md` (wrapper documentation)
-- `conformance/**/*.md` (conformance test documentation)
-- `rust/**/*.md` (Rust project documentation)
-- `tools/**/*.md` (tooling documentation)
+- - `docs/**/*.md` (all documentation) - `*.md` (root-level files: README.md, CONTRIBUTING.md, etc.) -
+  `wrappers/**/*.md` (wrapper documentation) - `conformance/**/*.md` (conformance test documentation) - `rust/**/*.md`
+  (Rust project documentation) - `tools/**/*.md` (tooling documentation)
 
 ### Exclusions
 
 The following files/directories are **explicitly excluded** from Markdown linting:
 
-1. **CI failure reports:** `repo-lint-failure-reports/**/*.md`
-   - - **Reason:** Generated artifacts, not human-authored documentation - **Format:** Machine-generated summaries with
-     intentional violations for readability
+1. 1. **CI failure reports:** `repo-lint-failure-reports/**/*.md` - - **Reason:** Generated artifacts, not
+   human-authored documentation - **Format:** Machine-generated summaries with intentional violations for readability
 
-2. 2. **Vendored/third-party content:** (none currently) - **Future:** If external Markdown is vendored, add exclusions
-   here
+2. 2. 2. **Vendored/third-party content:** (none currently) - **Future:** If external Markdown is vendored, add
+   exclusions here
 
-3. **Temporary/scratch files:** Any `*.md` files in `/tmp/` or build artifacts
+3. 3. **Temporary/scratch files:** Any `*.md` files in `/tmp/` or build artifacts
 
 **Important:** Exclusions MUST be documented with a clear reason. Avoid broad exclusions.
 
@@ -59,8 +54,8 @@ This ruleset follows **Markdown Best Practices** from authoritative sources:
 
 **Core Principles:**
 
-- - **Prefer machine-fixable rules** to reduce manual effort - **No vague rules:** Every rule must be deterministic and
-  checkable - **Compatibility first:** Rules must work with common Markdown renderers (GitHub, GitLab, CommonMark) -
+- - - **Prefer machine-fixable rules** to reduce manual effort - **No vague rules:** Every rule must be deterministic
+  and checkable - **Compatibility first:** Rules must work with common Markdown renderers (GitHub, GitLab, CommonMark) -
   **Accessibility:** Support screen readers and assistive technologies - **Consistency:** Use one style throughout the
   repository
 
@@ -167,7 +162,8 @@ Text immediately after.
 **Best Practice:** Use unique headings when possible for better navigation and linking. When duplicates are necessary
 (e.g., "Overview" in multiple sections), ensure they're in different hierarchical contexts.
 
-**MD025/single-title/single-h1** - Each document SHOULD have exactly one H1 (`#`) title at the top (Markdown Guide: Document Structure)
+**MD025/single-title/single-h1** - Each document SHOULD have exactly one H1 (`#`) title at the top (Markdown Guide:
+Document Structure)
 
 **Rationale:** Improves document structure, SEO, and screen reader navigation.
 
@@ -199,7 +195,7 @@ Practice)
 
 **Policy:**
 
-- - **Maximum:** 120 characters (balanced between readability and practicality) - **Rationale:** - 80 chars
+- - - **Maximum:** 120 characters (balanced between readability and practicality) - **Rationale:** - 80 chars
   (markdownlint default) is too restrictive for technical documentation - 120 chars is widely accepted (matches Python's
   PEP 8 recommendation) - Accommodates code examples, long URLs, and technical terms - **Exceptions (automatically
   excluded):** - Code blocks (fenced or indented) - Tables - Headings (only when unavoidable) - URLs/links (breaking
@@ -508,17 +504,14 @@ desired formatting.
 
 **Allowed HTML tags (when necessary):**
 
-- `<details>`, `<summary>` - Collapsible sections (no Markdown equivalent)
-- `<kbd>` - Keyboard shortcuts (semantic meaning)
-- `<br>` - Explicit line breaks (prefer over trailing spaces for clarity)
-- `<sub>`, `<sup>` - Subscript/superscript (no Markdown equivalent)
-- `<dl>`, `<dt>`, `<dd>` - Definition lists (no Markdown equivalent)
+- - `<details>`, `<summary>` - Collapsible sections (no Markdown equivalent) - `<kbd>` - Keyboard shortcuts (semantic
+  meaning) - `<br>` - Explicit line breaks (prefer over trailing spaces for clarity) - `<sub>`, `<sup>` -
+  Subscript/superscript (no Markdown equivalent) - `<dl>`, `<dt>`, `<dd>` - Definition lists (no Markdown equivalent)
 
 **Prohibited HTML (security/maintenance):**
 
-- `<script>`, `<style>` - Security risk, not portable
-- `<iframe>`, `<embed>`, `<object>` - Security risk
-- - Complex HTML structures - Defeats the purpose of Markdown
+- - `<script>`, `<style>` - Security risk, not portable - `<iframe>`, `<embed>`, `<object>` - Security risk - - Complex
+  HTML structures - Defeats the purpose of Markdown
 
 **Configuration:**
 
@@ -699,9 +692,8 @@ The following `.markdownlint-cli2.jsonc` configuration implements this contract:
 
 ### Tools
 
-- **Primary tool:** `markdownlint-cli2` (Node.js package)
-- **Configuration:** `.markdownlint-cli2.jsonc` at repository root
-- **Integration:** `repo-lint check --ci` runs Markdown linting via a Markdown runner
+- - **Primary tool:** `markdownlint-cli2` (Node.js package) - **Configuration:** `.markdownlint-cli2.jsonc` at
+  repository root - **Integration:** `repo-lint check --ci` runs Markdown linting via a Markdown runner
 
 ### CI Integration
 
@@ -717,7 +709,7 @@ repo-lint fix
 
 ### Exit Codes
 
-- - **0** - All Markdown files pass - **1** - Violations found (CI failure) - **2** - Tool missing or configuration
+- - - **0** - All Markdown files pass - **1** - Violations found (CI failure) - **2** - Tool missing or configuration
   error (blocker)
 
 ---
@@ -728,19 +720,19 @@ repo-lint fix
 
 **Auto-fixable rules include:**
 
-- - MD009 (trailing spaces) - MD010 (hard tabs → spaces) - MD012 (multiple blanks → single blank) - MD018, MD019
+- - - MD009 (trailing spaces) - MD010 (hard tabs → spaces) - MD012 (multiple blanks → single blank) - MD018, MD019
   (heading spacing) - MD022 (blanks around headings) - MD030 (list marker spacing) - MD037 (spaces in emphasis) - MD047
   (single final newline)
 
 **Not auto-fixable (manual intervention required):**
 
-- - MD013 (line length - requires content rewording) - MD040 (code language - requires human to determine correct
+- - - MD013 (line length - requires content rewording) - MD040 (code language - requires human to determine correct
   language) - MD041 (first line heading - requires structural change)
 
 **Safe auto-fix policy:**
 
-- Auto-fix MAY be enabled in `repo-lint fix` for deterministic, low-risk rules
-- - High-risk fixes (structural changes, content rewording) MUST remain check-only initially
+- - Auto-fix MAY be enabled in `repo-lint fix` for deterministic, low-risk rules - - High-risk fixes (structural
+  changes, content rewording) MUST remain check-only initially
 
 ---
 
@@ -781,9 +773,8 @@ Content here.
 
 When migrating existing Markdown files to this contract:
 
-1. 1. **Run linting first** to identify all violations
-2. **Auto-fix safe issues** using `markdownlint-cli2 --fix`
-3. 3. **Manually fix remaining issues** (language tags, line length) 4. **Document intentional exceptions** in comments
+1. 1. 1. **Run linting first** to identify all violations 2. **Auto-fix safe issues** using `markdownlint-cli2 --fix` 3.
+   3. **Manually fix remaining issues** (language tags, line length) 4. **Document intentional exceptions** in comments
    if needed
 
 ---
@@ -799,5 +790,5 @@ When migrating existing Markdown files to this contract:
 
 ## Change Log
 
-- - **2026-01-08:** Initial creation (Issue #278, Phase 3.5.1) - Defined core ruleset - Set line length to 120 chars
+- - - **2026-01-08:** Initial creation (Issue #278, Phase 3.5.1) - Defined core ruleset - Set line length to 120 chars
   (extended from default 80) - Documented exclusions (failure reports) - Mapped rules to configuration

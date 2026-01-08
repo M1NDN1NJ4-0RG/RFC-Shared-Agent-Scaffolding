@@ -6,7 +6,7 @@ This directory contains **intentionally non-conforming** Rust code used for test
 
 ## Important Notes
 
-- - **These files violate repository docstring contracts intentionally** - **Do NOT manually fix these files** - they
+- - - **These files violate repository docstring contracts intentionally** - **Do NOT manually fix these files** - they
   are test fixtures - **These files are excluded from CI lint/docstring checks** - These files are used ONLY for testing
   unsafe mode transformations
 
@@ -14,8 +14,8 @@ This directory contains **intentionally non-conforming** Rust code used for test
 
 These fixtures are used by:
 
-- Unit tests for unsafe fix mode (`tools/repo_lint/tests/test_unsafe_fixes.py`)
-- - Manual testing of unsafe fixers (ONLY with explicit human authorization per PR)
+- - Unit tests for unsafe fix mode (`tools/repo_lint/tests/test_unsafe_fixes.py`) - - Manual testing of unsafe fixers
+  (ONLY with explicit human authorization per PR)
 
 ## Current Status
 
@@ -23,9 +23,10 @@ These fixtures are used by:
 
 When Rust unsafe fixers are added (if applicable), this directory will contain fixtures that demonstrate:
 
-- - Non-conforming doc comment formats that can be auto-fixed unsafely - Edge cases that unsafe fixers must handle
+- - - Non-conforming doc comment formats that can be auto-fixed unsafely - Edge cases that unsafe fixers must handle
   correctly
 
 ## Authorization
 
-Per `docs/contributing/ai-constraints.md`, AI agents are PROHIBITED from running unsafe fixes on these files without explicit human permission in a specific PR/issue thread.
+Per `docs/contributing/ai-constraints.md`, AI agents are PROHIBITED from running unsafe fixes on these files without
+explicit human permission in a specific PR/issue thread.

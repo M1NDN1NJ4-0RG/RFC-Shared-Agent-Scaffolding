@@ -49,9 +49,8 @@ All M2 (Conformance Infrastructure), M3 (Example Scaffold), and M4 (CI Hardening
 
 Requirements:
 
-- - Capture stdout and stderr **separately**
-- Include section markers: `=== STDOUT ===` and `=== STDERR ===`
-- - Preserve both streams in failure logs - Empty streams still get markers (empty section)
+- - - Capture stdout and stderr **separately** - Include section markers: `=== STDOUT ===` and `=== STDERR ===` - -
+  Preserve both streams in failure logs - Empty streams still get markers (empty section)
 
 ### M0-P1-I2: Failure Log Naming
 
@@ -61,10 +60,8 @@ Format: `20251226T020707Z-pid4821-FAIL.log`
 
 Requirements:
 
-- - ISO 8601 UTC timestamp (YYYYMMDDTHHMMSSZ) - Process ID for correlation - Status: FAIL, ABORTED, or ERROR (uppercase)
-- Extension: `.log`
-- Directory: `.agent/FAIL-LOGS/`
-- - No overwrites, deterministic sorting
+- - - ISO 8601 UTC timestamp (YYYYMMDDTHHMMSSZ) - Process ID for correlation - Status: FAIL, ABORTED, or ERROR
+  (uppercase) - Extension: `.log` - Directory: `.agent/FAIL-LOGS/` - - No overwrites, deterministic sorting
 
 ### M0-P1-I3: `safe-archive` No-Clobber
 
@@ -72,13 +69,12 @@ Requirements:
 
 Default (auto-suffix):
 
-- Append numeric suffix if file exists (`.2`, `.3`, etc.)
-- - Never overwrite existing files
+- - Append numeric suffix if file exists (`.2`, `.3`, etc.) - - Never overwrite existing files
 
 Opt-in strict mode:
 
-- Flag: `--no-clobber` or env var `SAFE_ARCHIVE_NO_CLOBBER=1`
-- - Exit with error if destination exists - No file created
+- - Flag: `--no-clobber` or env var `SAFE_ARCHIVE_NO_CLOBBER=1` - - Exit with error if destination exists - No file
+  created
 
 ### M0-P2-I1: Auth & Headers
 
@@ -88,14 +84,12 @@ Header format: `Authorization: Bearer <token>`
 
 Auth precedence (highest to lowest):
 
-1. Explicit CLI arguments (`--token`)
-2. Environment variables (`GITHUB_TOKEN`, `TOKEN`)
-3. 3. Configuration files
-4. `gh auth token` command
+1. 1. Explicit CLI arguments (`--token`) 2. Environment variables (`GITHUB_TOKEN`, `TOKEN`) 3. 3. Configuration files 4.
+   `gh auth token` command
 
 Security:
 
-- - Never log tokens - Exit code 2 if no auth available - Clear error message with resolution steps
+- - - Never log tokens - Exit code 2 if no auth available - Clear error message with resolution steps
 
 ### M0-P2-I2: Exit Code Taxonomy
 
@@ -119,29 +113,29 @@ Security:
 
 ### For Implementers
 
-- - All M0 decisions are final and **MUST** be followed - No implementation may deviate from these contracts - All tests
-  must validate M0 behaviors
+- - - All M0 decisions are final and **MUST** be followed - No implementation may deviate from these contracts - All
+  tests must validate M0 behaviors
 
 ### For Epic Tracker
 
-- - M0 checklist items can be marked as DECIDED - Focus shifts to M1 implementation work - Conformance testing (M2) can
-  begin once implementations align
+- - - M0 checklist items can be marked as DECIDED - Focus shifts to M1 implementation work - Conformance testing (M2)
+  can begin once implementations align
 
 ### Next Steps
 
-1. 1. Complete M1 implementation alignment 2. Create conformance test vectors (M2-P1-I1) 3. Enable CI enforcement
+1. 1. 1. Complete M1 implementation alignment 2. Create conformance test vectors (M2-P1-I1) 3. Enable CI enforcement
    (M4-P1-I1)
 
 ---
 
 ## References
 
-- **Full Decisions:** `M0-DECISIONS.md`
-- - **RFC Sections:** RFC v0.1.0 sections 7.1-7.5 - **Epic Tracker:** Issue #3
-- **Update Instructions:** `EPIC-3-UPDATE.md`
+- - **Full Decisions:** `M0-DECISIONS.md` - - **RFC Sections:** RFC v0.1.0 sections 7.1-7.5 - **Epic Tracker:** Issue #3
+  - **Update Instructions:** `EPIC-3-UPDATE.md`
 
 ---
 
-**Note:** This file serves as a quick reference for M0 decisions. For complete specifications, see `M0-DECISIONS.md` and RFC v0.1.0.
+**Note:** This file serves as a quick reference for M0 decisions. For complete specifications, see `M0-DECISIONS.md` and
+RFC v0.1.0.
 
 **Refs:** #3
