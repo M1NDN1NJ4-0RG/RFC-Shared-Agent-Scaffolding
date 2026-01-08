@@ -1,6 +1,7 @@
 # Contract Extraction: Complete Behavioral Requirements
 
-**Purpose:** This document extracts every explicit behavioral contract from the RFC and documentation, mapping each to implementation locations across all four wrappers.
+**Purpose:** This document extracts every explicit behavioral contract from the RFC and documentation, mapping each to
+implementation locations across all four wrappers.
 
 **Source Documents:**
 
@@ -41,9 +42,11 @@
 
 **Potential Drift Vectors:**
 
-- **P0: Path resolution relative to script vs working directory** - If wrapper is invoked from outside repo, repo root detection may fail
+- **P0: Path resolution relative to script vs working directory** - If wrapper is invoked from outside repo, repo root
+  detection may fail
 - **P0: SAFE_RUN_BIN validation** - Spec says "use without validation", wrappers should not check if file exists
-- **P1: Platform detection accuracy** - Architecture detection may differ between languages (x86_64 vs amd64, arm64 vs aarch64)
+- **P1: Platform detection accuracy** - Architecture detection may differ between languages (x86_64 vs amd64, arm64 vs
+  aarch64)
 - **P2: Binary extension on Windows** - PowerShell must handle `.exe`, others should handle both with/without
 
 ---

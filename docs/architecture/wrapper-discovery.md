@@ -2,7 +2,8 @@
 
 ## Overview
 
-Language-specific wrappers (Bash, Perl, Python3, PowerShell) act as **thin invokers** that discover and execute the Rust canonical tool binary. This document defines the deterministic discovery rules that all wrappers must follow.
+Language-specific wrappers (Bash, Perl, Python3, PowerShell) act as **thin invokers** that discover and execute the Rust
+canonical tool binary. This document defines the deterministic discovery rules that all wrappers must follow.
 
 ## Discovery Rules
 
