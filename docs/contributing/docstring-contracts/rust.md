@@ -1,6 +1,6 @@
 # Rust Docstring Contract
 
-**Language:** Rust (`.rs`)  
+**Language:** Rust (`.rs`)
 **Canonical style:** Rustdoc using `//!` for module docs, `///` for item docs
 
 ## Purpose
@@ -31,12 +31,14 @@ Every Rust module (file) must include module-level documentation with these sect
 ### Library vs Binary Documentation
 
 **For `lib.rs` (library crates):**
+
 - Focus on API documentation
 - Document public modules, structs, functions
 - Exit codes section is optional (libraries don't have exit codes)
 - Emphasize examples showing library usage
 
 **For `main.rs` (binary crates):**
+
 - Document command-line interface
 - **Must** include "# Exit Codes" section
 - Emphasize examples showing command-line usage
@@ -45,6 +47,7 @@ Every Rust module (file) must include module-level documentation with these sect
 ### Function/Item Documentation
 
 Functions, structs, and other items should use `///` comments with:
+
 - Summary line
 - `# Arguments` or `# Parameters` (if applicable)
 - `# Returns` (for functions)
@@ -306,25 +309,31 @@ pub fn find_binary(repo_root: &Path, binary_name: &str) -> Result<PathBuf, Strin
 ## Examples (Existing Files)
 
 ### Example 1: Binary Main Module
+
 **File:** `rust/src/main.rs`
 
 This file demonstrates:
+
 - Module-level `//!` documentation with `# Purpose`, `# Architecture`, `# Exit Behavior`
 - `# Contract References` linking to RFCs and docs
 - `# Examples` with bash code blocks
 - Main function with `///` documentation
 
 ### Example 2: Library Module
+
 **File:** `rust/src/cli.rs` (if exists) or submodules
 
 This demonstrates:
+
 - `//!` module overview
 - `///` for public structs and functions
 - `# Arguments` and `# Returns` sections
 - Examples with ````rust` code blocks
 
 ### Example 3: Function Documentation
+
 Throughout `rust/src/`:
+
 - Public functions with `///` comments
 - `# Panics` section when applicable
 - `# Errors` section for Result types
@@ -333,11 +342,13 @@ Throughout `rust/src/`:
 ## Validation
 
 The validator checks for:
+
 - Presence of module-level documentation (`//!`) in the first 20 lines
 - Presence of section headers: `# Purpose`, `# Examples`, `# Exit Behavior` or `# Exit Codes` (for main.rs)
 - At least one code example with ` ``` `
 
 The validator does NOT check:
+
 - Rustdoc formatting perfection
 - Function-level documentation completeness
 - Link validity
@@ -346,6 +357,7 @@ The validator does NOT check:
 ## Common Mistakes
 
 ❌ **Wrong:** Using `///` for module docs
+
 ```rust
 /// Module documentation
 /// This is wrong for module-level docs
@@ -354,6 +366,7 @@ fn main() {}
 ```
 
 ✅ **Correct:** Use `//!` for module docs
+
 ```rust
 //! Module documentation
 //! This is correct for module-level docs
@@ -362,6 +375,7 @@ fn main() {}
 ```
 
 ❌ **Wrong:** No exit codes for binaries
+
 ```rust
 //! # My Binary
 //!
@@ -370,6 +384,7 @@ fn main() {}
 ```
 
 ✅ **Correct:** Document exit codes (use "# Exit Codes" not "# Exit Behavior")
+
 ```rust
 //! # My Binary
 //!
@@ -383,6 +398,7 @@ fn main() {}
 ```
 
 ❌ **Wrong:** Missing examples
+
 ```rust
 //! # Module
 //!
@@ -391,6 +407,7 @@ fn main() {}
 ```
 
 ✅ **Correct:** Always include examples
+
 ```rust
 //! # Module
 //!
@@ -405,6 +422,7 @@ fn main() {}
 ```
 
 ❌ **Wrong:** No function documentation
+
 ```rust
 pub fn important_function(x: i32) -> i32 {
     x + 1
@@ -412,6 +430,7 @@ pub fn important_function(x: i32) -> i32 {
 ```
 
 ✅ **Correct:** Document public items
+
 ```rust
 /// Increments the input value by one.
 ///

@@ -9,7 +9,10 @@
     - bash_runner.py: Bash linting (ShellCheck, shfmt, docstrings)
     - powershell_runner.py: PowerShell linting (PSScriptAnalyzer, docstrings)
     - perl_runner.py: Perl linting (Perl::Critic, docstrings)
-    - yaml_runner.py: YAML linting (yamllint)
+    - yaml_runner.py: YAML linting (yamllint, actionlint, docstrings)
+    - toml_runner.py: TOML linting (Taplo)
+    - rust_runner.py: Rust linting (rustfmt, clippy, docstrings)
+    - markdown_runner.py: Markdown linting (markdownlint-cli2)
 
 :Environment Variables:
     None

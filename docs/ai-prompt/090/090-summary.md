@@ -3,6 +3,7 @@
 **Goal:** Refactor the repository layout to a clean, scalable structure with consistent naming, consolidated documentation, and updated references (docs links, scripts, workflows, tests) — **without breaking behavior** at any point.
 
 **Non negotiables:**
+
 - Use `git mv` for all renames/moves to preserve history.
 - After **every Phase**: all tests pass locally, and CI is green.
 - After **every Item**: verify references (Markdown links, script paths, workflow paths, config includes) are updated.
@@ -24,6 +25,7 @@
 ## Scope Summary (What’s Changing)
 
 ### High-level structural changes
+
 - Consolidate `documents/` into `docs/` (single documentation root).
 - Move root-level historical/progress Markdown files (EPIC/PR/M#) into `docs/history/`.
 - Rename `RFC-Shared-Agent-Scaffolding-Example/` to a clearer name (recommended: `wrappers/`), and separate **agent-methodology docs** out of the wrappers code tree into `docs/history/ai-agent-guidelines/` (or similarly named).
@@ -34,6 +36,7 @@
 - Add a documentation index and make `README.md` the canonical entry point with stable links.
 
 ### Key acceptance properties
+
 - Same behavior of `safe-run` and `safe-archive`.
 - Wrapper scripts still find and invoke the Rust binaries correctly.
 - Conformance tests still run and validate behavior.
@@ -57,6 +60,7 @@
 ### M0 — Preflight & Safety Nets (No structural changes yet)
 
 #### P0 — Baseline & Repo Snapshot
+
 - [x] **Item 0.1 — Create a baseline branch**
   - [x] Sub-Item 0.1.1: Create new branch `refactor/repo-structure-v1`.
   - [x] Sub-Item 0.1.2: Tag current state (optional) `pre-restructure-<date>`.
@@ -68,6 +72,7 @@
   - [x] **Verify:** Current CI status is known (green or known red with documented reason).
 
 #### P1 — Add Reference Validation Helpers (Optional but highly recommended)
+
 - [x] **Item 1.1 — Add “Link Integrity” check (optional)**
   - [x] Sub-Item 1.1.1: Add a CI job that runs a markdown link checker (or a lightweight script).
   - [x] Sub-Item 1.1.2: Allowlist known external links if needed.
@@ -81,6 +86,7 @@
   - [x] **Verify:** Script runs and reports expected baseline matches.
 
 **Milestone M0 Exit Criteria**
+
 - [x] CI still green
 - [x] Baseline captured
 - [x] Optional helper checks added (if implemented)
@@ -92,6 +98,7 @@
 > Objective: move/rename docs safely and update links, without touching code/wrapper paths.
 
 ### P1 — Create `docs/` taxonomy and migrate `documents/`
+
 - [x] **Item 1.1 — Create new docs structure**
   - [x] Sub-Item 1.1.1: Create:
     - [x] `docs/overview/`
@@ -113,6 +120,7 @@
   - [x] **Verify:** `rg "documents/"` returns **0** in repo after updates.
 
 ### P2 — Relocate root-level historical/progress Markdown into `docs/history/`
+
 - [x] **Item 2.1 — Move EPIC/PR/M# logs**
   - [x] Sub-Item 2.1.1: `git mv EPIC-*.md docs/history/`
   - [x] Sub-Item 2.1.2: `git mv PR*.md docs/history/`
@@ -129,6 +137,7 @@
   - [x] **Verify:** No duplicate names introduced; all links updated.
 
 ### P3 — Update documentation references
+
 - [x] **Item 3.1 — Update README and doc links**
   - [x] Sub-Item 3.1.1: Update root `README.md` links to new docs paths.
   - [x] Sub-Item 3.1.2: Update internal Markdown links across `docs/`:
@@ -141,6 +150,7 @@
   - [x] **Verify:** All docs index pages link properly to the main sections.
 
 **Milestone M1 Exit Criteria**
+
 - [x] CI green
 - [x] `documents/` removed
 - [x] Root no longer contains “log spam” docs
@@ -153,6 +163,7 @@
 > Objective: rename and reshape wrapper folder, keep wrappers working, update tests and CI paths.
 
 ### P1 — Rename `RFC-Shared-Agent-Scaffolding-Example/` → `wrappers/`
+
 - [x] **Item 1.1 — Move/rename folder**
   - [x] Sub-Item 1.1.1: `git mv RFC-Shared-Agent-Scaffolding-Example wrappers`
   - [x] Sub-Item 1.1.2: Ensure per-language subfolders remain intact (`bash/`, `perl/`, etc.)
@@ -167,6 +178,7 @@
   - [x] **Verify:** Grep/ripgrep shows no old references.
 
 ### P2 — Extract agent-methodology docs out of wrapper code tree
+
 - [x] **Item 2.1 — Move `.docs/` and `CLAUDE.md`**
   - [x] Sub-Item 2.1.1: `git mv wrappers/.docs docs/history/ai-agent-guidelines`
   - [x] Sub-Item 2.1.2: `git mv wrappers/CLAUDE.md docs/history/ai-agent-guidelines/claude.md`
@@ -174,6 +186,7 @@
   - [x] **Verify:** No `.docs` remains inside `wrappers/`.
 
 ### P3 — Fix CI workflows & test harness paths
+
 - [x] **Item 3.1 — Update GitHub Actions workflows**
   - [x] Sub-Item 3.1.1: Update any workflow steps that reference the old wrappers directory.
   - [x] Sub-Item 3.1.2: Ensure test invocation paths point at `wrappers/...`
@@ -185,6 +198,7 @@
   - [x] **Verify:** Conformance tests pass.
 
 **Milestone M2 Exit Criteria**
+
 - [x] CI green
 - [x] Wrapper scripts still locate and run the Rust binaries
 - [x] All tests (unit + conformance) pass
@@ -196,6 +210,7 @@
 > Objective: apply consistent naming conventions across remaining files/directories with controlled blast radius.
 
 ### P1 — Repo-wide kebab-case normalization (careful: CI + scripts)
+
 - [x] **Item 1.1 — Identify remaining non-conforming names**
   - [x] Sub-Item 1.1.1: Enumerate files with uppercase, spaces, underscores.
   - [x] Sub-Item 1.1.2: Classify by risk:
@@ -217,6 +232,7 @@
   - [x] **Verify:** No dangling references.
 
 ### P2 — Add/update “Contributing” and standards docs
+
 - [x] **Item 2.1 — Add `docs/contributing/contributing-guide.md`**
   - [x] Sub-Item 2.1.1: Document:
     - [x] naming conventions (kebab-case)
@@ -232,6 +248,7 @@
   - [x] **Verify:** Docstring validation still finds contracts and passes.
 
 **Milestone M3 Exit Criteria**
+
 - [x] CI green
 - [x] Naming consistent repo-wide
 - [x] Contributing docs clearly describe conventions
@@ -243,6 +260,7 @@
 > Objective: reduce duplicated docs by consolidating into single sources of truth.
 
 ### P1 — Consolidate overlapping docs
+
 - [x] **Item 1.1 — Future work + verification**
   - [x] Sub-Item 1.1.1: Merge verification content into `docs/contributing/future-work.md` (or `docs/overview/roadmap.md`)
   - [x] Sub-Item 1.1.2: Archive the old verification doc in `docs/history/`
@@ -258,6 +276,7 @@
   - [x] **Verify:** Conformance docs still reflect real behavior and test harness structure.
 
 **Milestone M4 Exit Criteria**
+
 - [x] CI green
 - [x] Canonical docs exist per topic; duplicates archived
 
@@ -268,6 +287,7 @@
 > Objective: prove that everything still works and that references are fully correct.
 
 ### P1 — Full repo integrity checks
+
 - [x] **Item 1.1 — Reference verification**
   - [x] Sub-Item 1.1.1: `rg` search for obsolete paths:
     - [x] `documents/`
@@ -290,6 +310,7 @@
   - [x] **Verify:** All linting checks passed via `python3 -m tools.repo_lint check --ci`.
 
 ### P2 — Documentation navigation verification
+
 - [x] **Item 2.1 — Docs index & README navigation**
   - [x] Sub-Item 2.1.1: Confirm README → docs index → main sections all valid.
   - [x] Sub-Item 2.1.2: Confirm “start here” is obvious for:
@@ -299,6 +320,7 @@
   - [x] **Verify:** A human can follow links without dead ends.
 
 **Milestone M5 Exit Criteria**
+
 - [x] CI green
 - [x] All integrity checks pass
 - [x] Docs navigation verified
@@ -308,26 +330,31 @@
 ## Reference Audit Checklist (Run after each Phase)
 
 ### A) Path references
+
 - [ ] `rg "documents/"` returns 0 (after M1)
 - [ ] `rg "RFC-Shared-Agent-Scaffolding-Example"` returns 0 (after M2)
 - [ ] `rg` for any old filenames you renamed returns 0
 
 ### B) Scripts
+
 - [ ] Any script with hard-coded relative paths updated
 - [ ] Any script invoked by CI still exists at referenced location
 - [ ] Wrapper binary discovery logic still works
 
 ### C) Workflows / CI
+
 - [ ] `.github/workflows/*` updated for moved paths
 - [ ] CI jobs still find the correct test directories
 - [ ] Linting / docstring / naming workflows still pass
 
 ### D) Documentation links
+
 - [ ] README links valid
 - [ ] `docs/README.md` index links valid
 - [ ] Cross-links inside docs valid
 
 ### E) Tests
+
 - [ ] Rust tests pass
 - [ ] Wrapper tests pass
 - [ ] Conformance tests pass

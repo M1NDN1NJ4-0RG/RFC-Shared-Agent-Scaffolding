@@ -61,6 +61,7 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
 ### CI/CD (1 new file)
 
 **`.github/workflows/rust-conformance.yml`** (3.4 KB)
+
 - **Test Job:** Matrix across ubuntu/macos/windows
   - Build Rust project
   - Run unit tests
@@ -75,11 +76,13 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
 ### Dependency Updates
 
 **`rust/Cargo.toml`**
+
 - Added `regex = "1.0"` for snapshot normalization
 
 ### Code Formatting
 
 **`rust/src/cli.rs`** and **`rust/src/main.rs`**
+
 - Applied `cargo fmt` (no functional changes)
 
 ---
@@ -166,29 +169,37 @@ test result: ok. 6 passed; 0 failed; 12 ignored; 0 measured; 0 filtered out
 ## Build & Quality Checks
 
 ### Cargo Build
+
 ```bash
 $ cargo build --release
    Finished `release` profile [optimized] target(s) in 10.40s
 ```
+
 ✅ **PASS**
 
 ### Cargo Test
+
 ```bash
 $ cargo test
    test result: ok. 6 passed; 0 failed; 12 ignored
 ```
+
 ✅ **PASS**
 
 ### Cargo Fmt
+
 ```bash
-$ cargo fmt --all -- --check
+cargo fmt --all -- --check
 ```
+
 ✅ **PASS** (all files formatted)
 
 ### Cargo Clippy
+
 ```bash
-$ cargo clippy --all-targets --all-features
+cargo clippy --all-targets --all-features
 ```
+
 ✅ **PASS** (warnings suppressed with `#[allow]` for dead code in ignored tests)
 
 ---
@@ -198,16 +209,19 @@ $ cargo clippy --all-targets --all-features
 ### Workflow: `rust-conformance.yml`
 
 **Triggers:**
+
 - Push to main, copilot/**, work/**
 - Pull requests to main
 - Changes to rust/, conformance/, workflow file
 
 **Jobs:**
+
 1. **test** - Build and test on ubuntu/macos/windows
 2. **lint** - Clippy with strict warnings
 3. **format** - rustfmt check
 
 **Expected Behavior:**
+
 - ✅ All jobs pass with current state (tests ignored)
 - 🔜 In PR3, conformance tests will be enabled and must pass
 
@@ -216,26 +230,31 @@ $ cargo clippy --all-targets --all-features
 ## Key Features
 
 ### 1. Test-First Approach
+
 - Tests written before implementation (TDD)
 - Clear expectations defined upfront
 - Implementation guided by failing tests
 
 ### 2. Vector-Driven Testing
+
 - All tests load from `conformance/vectors.json`
 - Single source of truth for expected behavior
 - Easy to add new test cases
 
 ### 3. Cross-Platform Support
+
 - Tests run on Linux, macOS, Windows
 - Snapshot normalization handles platform differences
 - Platform-specific tests marked with `#[cfg()]`
 
 ### 4. Snapshot Testing
+
 - Golden outputs stored in `snapshots/`
 - Normalization for PIDs, timestamps, line endings
 - Update mechanism for development iteration
 
 ### 5. Comprehensive Documentation
+
 - README in every directory
 - Inline code comments
 - Infrastructure guide
@@ -269,6 +288,7 @@ All criteria met:
 ## What's Next: PR 3 - Implement Core Contract (safe-run)
 
 **PR 3 will include:**
+
 1. Implement `safe-run` command in Rust
 2. Remove `#[ignore]` from safe-run tests
 3. Generate golden outputs in `snapshots/`
@@ -282,6 +302,7 @@ All criteria met:
 ## Files Changed Summary
 
 ### New Files (11)
+
 - `.github/workflows/rust-conformance.yml`
 - `rust/tests/README.md`
 - `rust/tests/conformance-infrastructure.md`
@@ -292,11 +313,13 @@ All criteria met:
 - `rust/tests/snapshots/README.md`
 
 ### Modified Files (3)
+
 - `rust/Cargo.toml` - Added `regex` dependency
 - `rust/src/cli.rs` - Formatted with `cargo fmt`
 - `rust/src/main.rs` - Formatted with `cargo fmt`
 
 ### Statistics
+
 - **Lines Added:** ~1,535
 - **Lines Removed:** ~11 (formatting)
 - **Net Change:** +1,524 lines

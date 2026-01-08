@@ -1,8 +1,8 @@
 # RFC: Sharded Agent Scaffolding & Journaling for Long-Running AI Coding Workflows (v0.1.0)
 
-**Status:** Implemented (iterated)  
-**Audience:** Humans collaborating with LLM-based coding agents (Claude Code, Codex, etc.)  
-**Primary Environment:** GitHub repositories with PR-based workflows, CI gating, and auto-merge  
+**Status:** Implemented (iterated)
+**Audience:** Humans collaborating with LLM-based coding agents (Claude Code, Codex, etc.)
+**Primary Environment:** GitHub repositories with PR-based workflows, CI gating, and auto-merge
 **Motivation:** Reliability, continuity, safety, and human-error resistance in long-running agent sessions
 
 ---
@@ -17,6 +17,7 @@ Version 8 adds an important lens: the system is not “bureaucratic rigor” for
 - **More capable agents** to unlock “higher gears” (e.g., CI-gated auto-merge) because safety proofs are explicit and persistent on disk.
 
 v8 also introduces:
+
 - an explicit **Token Budget / Runway Check** before starting large work items,
 - and a diagnostic loop for the **“npm ci --ignore-scripts” trap**.
 
@@ -24,7 +25,7 @@ v8 also introduces:
 
 ## 0.1. Canonical Implementation (v0.1.1 Update)
 
-**Status:** Active (as of 2024)  
+**Status:** Active (as of 2024)
 **Implementation:** Rust Canonical Tool
 
 As of v0.1.1, the contract behaviors defined in this RFC are **canonically implemented in Rust**. The Rust canonical tool (`rust/src/`) is the single source of truth for:
@@ -45,12 +46,14 @@ As of v0.1.1, the contract behaviors defined in this RFC are **canonically imple
 **Rationale:**
 
 Maintaining four independent implementations led to:
+
 - Drift risk across regex dialects, buffering, exit codes
 - N×maintenance burden for behavior changes
 - Complex cross-platform conformance testing
 - YAML/Bash/JavaScript escaping issues in CI
 
 The Rust canonical tool provides:
+
 - ✅ One implementation = one source of truth
 - ✅ Cross-platform consistency via Rust stdlib
 - ✅ Type safety and compile-time guarantees
@@ -109,6 +112,7 @@ This framework behaves like a minimal “operating system” for agents—supply
 ### 4.1 Codex Scars: Managing the Token Economy
 
 Constrained agents can:
+
 - cut off mid-task,
 - hallucinate file endings,
 - or drop existing code when context falls out.
@@ -133,6 +137,7 @@ Feature flags implemented as files (e.g., `.agent/auto-merge.enabled`) persist a
 Snapshot/patch patterns (e.g., patch files, version logs) reduce blast radius when an agent forgets which file it’s editing or truncates content.
 
 Hard safety defaults:
+
 - keep default branch untouchable,
 - prefer throwaway branches for changes,
 - record diffs and checkpoints.
@@ -140,6 +145,7 @@ Hard safety defaults:
 ### 4.4 Interchangeable Agents via Handoff Files
 
 A standardized serialized memory format (handoff files and journals) allows:
+
 - starting work with a cheaper/constrained agent,
 - pausing at a safe boundary,
 - resuming with a more capable agent without re-reading long chat history.
@@ -177,6 +183,7 @@ scripts/
 ## 6. Failure Pause Ritual (Normative)
 
 On any non-zero exit from build/test/verify commands, the agent MUST:
+
 1. Write a FAILURE PAUSE block into `CURRENT.md`.
 2. Persist stdout/stderr to `.agent/FAIL-LOGS/`.
 3. Stop unless explicitly instructed to continue.
@@ -190,6 +197,7 @@ Logging is fail-only.
 **Status:** Finalized (see `M0-DECISIONS.md` for authoritative M0 decision gates)
 
 Wrappers MUST be used for critical commands. They must:
+
 - run commands verbatim,
 - preserve exit codes,
 - produce artifacts on failure,
@@ -200,6 +208,7 @@ Wrappers MUST be used for critical commands. They must:
 **Decision:** Split stdout and stderr
 
 `safe-run` MUST:
+
 - Capture stdout and stderr separately
 - Include clear section markers in log files (`=== STDOUT ===`, `=== STDERR ===`)
 - Preserve both streams in their entirety in failure logs
@@ -212,13 +221,15 @@ Wrappers MUST be used for critical commands. They must:
 This section extends M0-P1-I1 with deterministic cross-stream ordering guarantees and human-friendly merged views.
 
 **Motivation:** While split stdout/stderr sections (M0-P1-I1) preserve per-stream ordering, they do not guarantee temporal interleaving across streams due to OS scheduling and buffering differences. This enhancement provides:
+
 1. A contractually guaranteed **observed-order event ledger** with global sequence numbers
 2. An optional **merged view** for human readability
 3. Cross-language conformance on event ordering semantics
 
 **Stream Terminology:**
+
 - **stdout stream**: Bytes emitted by the child process on stdout
-- **stderr stream**: Bytes emitted by the child process on stderr  
+- **stderr stream**: Bytes emitted by the child process on stderr
 - **meta stream**: Wrapper-generated informational lines (start/end markers, exit code, etc.)
 
 **Observed Order Definition:**
@@ -231,6 +242,7 @@ The order in which the wrapper receives bytes/lines/chunks from stdout/stderr pi
 All implementations MUST continue to emit the M0-compliant split sections with existing markers:
 
 1. A `STDOUT` section:
+
    ```
    === STDOUT ===
    ...stdout content...
@@ -238,6 +250,7 @@ All implementations MUST continue to emit the M0-compliant split sections with e
    ```
 
 2. A `STDERR` section:
+
    ```
    === STDERR ===
    ...stderr content...
@@ -262,16 +275,19 @@ All implementations MUST also emit an **Event Ledger** section:
 ```
 
 **Event Record Format:**
+
 ```
 [SEQ=<seq>][<stream>] <text>
 ```
 
 Where:
+
 - `<seq>`: Monotonically increasing integer starting at 1
 - `<stream>`: One of `STDOUT`, `STDERR`, `META`
 - `<text>`: The exact text payload for that event (single line, no trailing newline in the format)
 
 **Event Ledger Rules:**
+
 - `seq` MUST be strictly increasing by 1 across all events
 - `seq` MUST reflect the wrapper's observed order across ALL streams (stdout/stderr/meta)
 - Every line/chunk emitted into the split STDOUT/STDERR sections MUST correspond to one or more `STDOUT`/`STDERR` events in the ledger
@@ -282,12 +298,13 @@ Where:
 To ensure cross-language conformance, the following META event text MUST match exactly:
 
 1. **Start event** (MUST be seq=1 unless there are earlier meta events):
+
    ```
    safe-run start: cmd="<command>"
    ```
-   
+
    Where `<command>` is the full command being executed, encoded using a **standardized POSIX shell-style quoting scheme**:
-   
+
    - Implementations MUST produce the same `<command>` text for the same logical command line.
    - The command line is represented as a single string where arguments are joined by a single space character (`U+0020`).
    - Each argument is quoted using the same rules as POSIX shell single-quoting and Python's `shlex.quote()`:
@@ -296,7 +313,7 @@ To ensure cross-language conformance, the following META event text MUST match e
      - A single quote (`'`) within an argument MUST be encoded as `'\''` (close quote, escaped quote, open quote).
    - Bash implementations SHOULD use `printf '%q'` for each argument.
    - Python implementations SHOULD use `shlex.quote()` for each argument.
-   
+
    **Examples (normative):**
    - Command: `echo hi`
      - `<command>`: `echo hi`
@@ -306,9 +323,11 @@ To ensure cross-language conformance, the following META event text MUST match e
      - `<command>`: `python script.py --flag 'value with spaces'`
 
 2. **Exit event** (MUST be the final META event):
+
    ```
    safe-run exit: code=<exit_code>
    ```
+
    Where `<exit_code>` is the integer exit code.
 
 **C) Optional Merged View (NEW - Optional)**
@@ -330,17 +349,20 @@ When enabled, implementations MUST emit:
 ```
 
 **Merged View Format:**
+
 ```
 [#<seq>][<stream>] <text>
 ```
 
 **Notes:**
+
 - This merged view represents **observed-order**, not guaranteed emission-time interleaving
 - The merged view MUST be identical across languages given the same observed event ordering
 - Default behavior MUST include split sections + event ledger; merged view is optional
 - If an implementation supports output control (split-only / merged-only / both), it MUST be documented and tested
 
 **Non-Goals:**
+
 - We do NOT attempt to reconstruct the child process's true emission-time ordering across stdout/stderr
 - We do NOT require identical timestamps across platforms (timestamps are informational only if present)
 
@@ -353,6 +375,7 @@ Log files MUST follow this format: `{ISO8601_TIMESTAMP}-pid{PID}-{STATUS}.log`
 Example: `20251226T020707Z-pid4821-FAIL.log`
 
 Requirements:
+
 - Timestamp in ISO 8601 format with timezone (UTC recommended)
 - PID included for correlation
 - Status one of: `FAIL`, `ABORTED`, `ERROR`
@@ -364,10 +387,12 @@ Requirements:
 **Decision:** Hybrid approach
 
 **Default:** Auto-suffix behavior
+
 - If destination exists, append numeric suffix (e.g., `.2`, `.3`)
 - Continue incrementing until unique filename found
 
 **Opt-in:** Strict no-clobber (fail fast)
+
 - Flag: `--no-clobber` or `SAFE_ARCHIVE_NO_CLOBBER=1`
 - Exit with error if destination exists
 
@@ -376,6 +401,7 @@ Requirements:
 **Decision:** Precedence A with Bearer token format
 
 **Auth precedence (highest to lowest):**
+
 1. Explicit CLI arguments
 2. Environment variables (`GITHUB_TOKEN`, `TOKEN`)
 3. Configuration files
@@ -412,37 +438,44 @@ Wrapper failure fallback remains mandatory.
 Script files in this repository MUST use kebab-case naming (lowercase letters and digits separated by hyphens only). This rule applies **only to script surfaces** (executable entrypoints), not to language-specific source files.
 
 **Scope — Script Surfaces (kebab-case REQUIRED):**
+
 - Script surfaces in `wrappers/*`
 - Wrapper scripts in `wrappers/*`
 - Applies to executable/script file extensions: `.sh`, `.bash`, `.zsh`, `.pl`, `.py`, `.ps1`
 
 **Scope — Language Sources (language-specific conventions REQUIRED):**
+
 - Rust source files (`.rs`) MUST use **snake_case** per Rust ecosystem conventions
 - Other language sources follow their respective ecosystem conventions
 - These are **explicitly excluded** from kebab-case enforcement
 
 **Format (script surfaces only):**
+
 - Filename stem (excluding extension) MUST match: `^[a-z0-9]+(?:-[a-z0-9]+)*$`
 - ✅ Valid: `safe-run.sh`, `test-helpers.ps1`, `preflight-automerge-ruleset.pl`
 - ❌ Invalid: `safe_run.sh`, `SafeRun.ps1`, `testHelpers.py`
 - **Note:** As of Phase 5.5, Perl scripts use snake_case (e.g., `safe_run.pl`), not kebab-case. This document reflects historical conventions.
 
 **Format (Rust sources):**
+
 - Filename stem MUST use snake_case per Rust conventions
 - ✅ Valid: `safe_run.rs`, `mod.rs`, `cli.rs`
 - ❌ Invalid: `safe-run.rs`, `SafeRun.rs`
 
 **Rationale:**
+
 - **Script surfaces:** Consistent naming prevents path drift across language implementations, reduces cognitive load, simplifies CI automation, aligns with cross-OS/cross-language portability
 - **Rust sources:** Follow Rust ecosystem conventions (Cargo/module expectations, standard style guidelines)
 - **Goal:** Clarity and correctness, not aesthetic purity
 
 **Enforcement:**
+
 - CI workflow (`naming-kebab-case.yml`) MUST enforce kebab-case for script surfaces only
 - PRs with non-conforming script filenames MUST fail CI
 - Rust (`.rs`) files are explicitly excluded from kebab-case checks
 
 **Exceptions:**
+
 - Language-mandated files (e.g., `__init__.py`, `Cargo.toml`) are exempt
 - Files outside script surfaces are not subject to kebab-case requirement
 - All language source files follow their respective ecosystem conventions
@@ -463,6 +496,7 @@ Before starting a work item that involves editing a file or diff larger than a t
 ### 8.2 Practical heuristic
 
 If:
+
 - file is > 300 lines **and**
 - the agent’s remaining message budget is plausibly < ~4k tokens (or unknown),
 then:
@@ -484,6 +518,7 @@ Using `npm ci --ignore-scripts` can be a safe default, but it can also cause con
 ### 9.1 Rule
 
 If:
+
 - `npm ci --ignore-scripts` succeeds,
 - but builds/tests fail with missing modules, missing generated artifacts, or “module not found” errors,
 
@@ -506,6 +541,7 @@ This prevents circular “build failed” loops that constrained agents misinter
 ## 10. Metrics (Recap + Optional Expansion)
 
 Suggested metrics now explicitly include:
+
 - wrapper-invoked vs raw command ratio,
 - number of restarts that avoided recomputation due to archived logs,
 - time-to-resume after failure,
@@ -518,6 +554,7 @@ Suggested metrics now explicitly include:
 This framework is a “prosthetic frontal cortex” for agents.
 
 It provides:
+
 - executive function (chunking, stop conditions),
 - durable state (journals),
 - safety inhibition (fail closed),

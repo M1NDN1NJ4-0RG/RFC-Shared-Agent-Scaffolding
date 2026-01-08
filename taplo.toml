@@ -1,0 +1,57 @@
+# Taplo Configuration
+#
+# This file configures Taplo (TOML linter and formatter) for the
+# RFC-Shared-Agent-Scaffolding repository.
+#
+# Canonical Contract: docs/contributing/toml-contracts.md
+# Enforcement: repo-lint check --ci (via tools/repo_lint/runners/toml_runner.py)
+#
+# Last Updated: 2026-01-08
+
+# Include all TOML files by default
+include = ["**/*.toml"]
+
+# Exclude patterns
+exclude = [
+    # No exclusions currently
+    # Future: add vendored/generated TOML if needed
+]
+
+# Formatting rules (applied by `taplo fmt`)
+[formatting]
+# Indentation: 2 spaces (repo standard)
+indent_string = "  "
+indent_tables = true
+indent_entries = true
+
+# Arrays
+array_trailing_comma = true  # Trailing commas in multi-line arrays
+array_auto_expand = true     # Auto-expand arrays to multi-line when they exceed column width
+array_auto_collapse = true   # Auto-collapse short arrays to single line
+compact_arrays = false       # Don't compact arrays aggressively
+compact_inline_tables = false  # Don't compact inline tables
+
+# Inline tables
+inline_table_expand = true   # Expand inline tables if they exceed column width
+
+# Spacing
+allowed_blank_lines = 1      # Maximum 1 blank line between sections
+trailing_newline = true      # Ensure file ends with newline
+
+# Keys
+reorder_keys = false         # Don't auto-reorder keys (preserve manual ordering/grouping)
+
+# Line length
+column_width = 120           # 120 character line length (matches repo standard)
+
+# Alignment
+align_entries = false        # Don't align values (prevents diff noise)
+align_comments = false       # Don't align comments
+
+# CRLF normalization
+crlf = false                 # Use LF line endings (Unix standard)
+
+# Schema association (optional - for validation)
+# [[rule]]
+# include = ["Cargo.toml", "**/Cargo.toml"]
+# keys = ["name", "version", "edition"]  # Example: require these keys

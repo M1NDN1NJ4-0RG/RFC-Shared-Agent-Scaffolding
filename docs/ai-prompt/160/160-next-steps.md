@@ -1,6 +1,7 @@
 MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 160 AI Journal
+
 Status: Phase 2.8 COMPLETE (5/5 + 2 TODOs) ✅ - All Outstanding Items Resolved - Ready for Phase 2.6 or Phase 3
 Last Updated: 2026-01-05 22:40
 Related: Issue #160, PRs #176, #180, #225, #229
@@ -12,8 +13,9 @@ Related: Issue #160, PRs #176, #180, #225, #229
 **Status:** NOT STARTED
 
 Per the prioritization decision (Round 2, Decision 2), the sequence is:
+
 - ✅ Phase 2.5 (Windows Validation) - COMPLETE
-- ✅ Phase 2.9 (YAML-First & Integration) - COMPLETE  
+- ✅ Phase 2.9 (YAML-First & Integration) - COMPLETE
 - ✅ Phase 2.7 (Extended CLI Granularity) - COMPLETE
 - ✅ Phase 2.8 (Environment & PATH Management) - COMPLETE
 - ⏭️ **Phase 2.6 (Centralized Exception Rules) - NEXT** (or Phase 3 - Polish)
@@ -27,6 +29,7 @@ Per the prioritization decision (Round 2, Decision 2), the sequence is:
 ### 2026-01-05 22:40 - Phase 2.8 Outstanding TODOs Complete: yaml-docstrings + actionlint (Session 9)
 
 **Files Changed:**
+
 - `tools/repo_lint/runners/yaml_runner.py`: Added yaml-docstrings and actionlint support (123 lines added)
 - `conformance/repo-lint/repo-lint-docstring-rules.yaml`: Added docstring header
 - `conformance/repo-lint/repo-lint-file-patterns.yaml`: Added docstring header
@@ -50,7 +53,7 @@ Per the prioritization decision (Round 2, Decision 2), the sequence is:
    - GitHub Actions workflow linter (.github/workflows/*.yml)
    - Optional tool (doesn't fail if not installed)
    - Check-only tool (no auto-fix capability)
-   - Only processes .github/workflows/*.yml and *.yaml files
+   - Only processes .github/workflows/*.yml and*.yaml files
    - Integrated into check() and fix() methods with tool filtering
 
 3. **Module Docstring Updated** (yaml_runner.py lines 1-24):
@@ -69,6 +72,7 @@ Per the prioritization decision (Round 2, Decision 2), the sequence is:
    - All files now pass yaml-docstrings validation
 
 **Verification:**
+
 - ✅ Pre-commit gate: `repo-lint check --ci` → EXIT 0
 - ✅ All 16 runners passing (was 15, now includes yaml-docstrings)
 - ✅ yaml-docstrings validates all YAML files correctly
@@ -78,6 +82,7 @@ Per the prioritization decision (Round 2, Decision 2), the sequence is:
 - ✅ Python linting all passing (black, ruff, pylint, python-docstrings)
 
 **Commands Run:**
+
 ```bash
 # Bootstrap and verification
 ./scripts/bootstrap-repo-lint-toolchain.sh --all  # EXIT 0
@@ -92,6 +97,7 @@ repo-lint check --lang yaml --ci                   # EXIT 0 (yamllint + yaml-doc
 ```
 
 **Phase 2.8 Status:** ✅ COMPLETE (5/5 core + 2/2 TODOs = 7/7 items)
+
 - [x] repo-lint which command
 - [x] repo-lint env command
 - [x] repo-lint activate command
@@ -107,6 +113,7 @@ repo-lint check --lang yaml --ci                   # EXIT 0 (yamllint + yaml-doc
 ### 2026-01-05 22:17 - Code Review Round 5 Fixes (Session 8)
 
 **Files Changed:**
+
 - `tools/repo_lint/cli.py`: Fixed shell command construction and quoting
 - `tools/repo_lint/ui/reporter.py`: Optimized PathLib import placement
 - `docs/ai-prompt/160/160-next-steps.md`: Updated journal with session details
@@ -116,7 +123,7 @@ repo-lint check --lang yaml --ci                   # EXIT 0 (yamllint + yaml-doc
 1. **Fish Shell Quoting Fix** (cli.py line 1766-1778):
    - Changed from POSIX-style `'\\''` to Fish-native `''` for single quote escaping
    - Fish shell has different quoting rules than POSIX shells
-   - Updated docstring: changed `\ ` to "backslash" to avoid Python escape sequence warnings
+   - Updated docstring: changed `\` to "backslash" to avoid Python escape sequence warnings
    - Added r-string prefix to docstring for safety
 
 2. **Bash/Zsh Command Execution** (cli.py line 1778-1787):
@@ -143,6 +150,7 @@ repo-lint check --lang yaml --ci                   # EXIT 0 (yamllint + yaml-doc
    - Eliminates redundant imports
 
 **Verification:**
+
 - Bootstrap toolchain executed successfully
 - `repo-lint check --ci` → EXIT 0
 - All 15 runners passing
@@ -150,6 +158,7 @@ repo-lint check --lang yaml --ci                   # EXIT 0 (yamllint + yaml-doc
 - Python: black, ruff, pylint, python-docstrings all passing
 
 **Code Review Responses:**
+
 - Replied to comment 2662945423 (Fish quoting)
 - Replied to comment 2662945435 (PowerShell quoting)
 - Replied to comment 2662945448 (CMD quoting)
@@ -170,24 +179,28 @@ All code review comments from rounds 1-5 have been addressed. Ready for Phase 2.
 ### 2026-01-05 21:52 - CI Linting Fixes & Code Review Round 4 (Session 7)
 
 **Files Changed:**
+
 - `tools/repo_lint/cli.py`: Fixed Black formatting and removed trailing whitespace (Ruff W293)
   - Lines 157, 1767: Removed whitespace from blank lines
   - All Black style violations auto-formatted
 - `tools/repo_lint/env/venv_resolver.py`: Already formatted in previous session
 
 **Changes Made:**
+
 - Fixed all linting issues from CI failure report: `repo-lint-failure-reports/20730145226/python-lint-output.txt`
 - Black formatting violations: Auto-formatted all Python files
 - Ruff W293 violations: Removed trailing whitespace from blank lines
 - All issues were actually already fixed in commit 2072033 (previous session cleanup)
 
 **Verification:**
+
 - Bootstrap toolchain: Successfully completed
 - `repo-lint check --ci`: EXIT 0
 - All 15 runners passing (Python, Bash, PowerShell, Perl, YAML, Rust)
 - No violations remaining
 
 **Notes:**
+
 - The formatting fixes were already present from the previous commit (2072033)
 - Verified via `repo-lint fix --only python` and `repo-lint check --ci`
 - All code review comments from rounds 1-4 have been addressed
@@ -197,6 +210,7 @@ All code review comments from rounds 1-5 have been addressed. Ready for Phase 2.
 ### 2026-01-05 20:50 - Black Table Formatting Fix & Duplicate Filename Disambiguation (Session 6)
 
 **Files Changed:**
+
 - `tools/repo_lint/runners/python_runner.py`: Fixed Black output parsing (removed TODO, implemented fix)
 - `tools/repo_lint/ui/reporter.py`: Added duplicate filename disambiguation logic
 - `tools/repo_lint/runners/bash_runner.py`: Renamed validate_docstrings → bash-docstrings
@@ -211,46 +225,47 @@ All code review comments from rounds 1-5 have been addressed. Ready for Phase 2.
    - **Problem:** Black violations displayed as `. -` in File/Line columns
    - **Root Cause:** Single summary violation with file="." and line=None
    - **Solution:** Parse Black stdout to extract per-file violations
-     * Regex match "would reformat <filepath>" lines
-     * Convert absolute paths to repo-relative paths
-     * Create one Violation per file with proper filename
-     * Use line=1 as placeholder (Black doesn't provide line numbers)
-     * Fallback to summary violation if parsing fails
+     - Regex match "would reformat <filepath>" lines
+     - Convert absolute paths to repo-relative paths
+     - Create one Violation per file with proper filename
+     - Use line=1 as placeholder (Black doesn't provide line numbers)
+     - Fallback to summary violation if parsing fails
    - **Result:** Black now shows actual filenames instead of `. -`
 
 2. **Implemented Duplicate Filename Disambiguation (Task B):**
    - **Problem:** Multiple files with same basename (e.g., test.py) are indistinguishable
    - **Solution:** Smart display name selection in reporter
-     * Pre-scan violations to count basename occurrences
-     * Unique basenames: show just filename
-     * Duplicate basenames: show full relative path from repo root
-     * Maintains stable column alignment
+     - Pre-scan violations to count basename occurrences
+     - Unique basenames: show just filename
+     - Duplicate basenames: show full relative path from repo root
+     - Maintains stable column alignment
    - **Location:** `tools/repo_lint/ui/reporter.py` render_failures() method
    - **Result:** Duplicate basenames now disambiguated automatically
 
 3. **Language-Specific Docstring Validator Naming:**
    - **Changed:** All docstring validators now use language-specific names
-     * validate_docstrings → python-docstrings
-     * validate_docstrings → bash-docstrings
-     * validate_docstrings → perl-docstrings
-     * validate_docstrings → powershell-docstrings
-     * rust-docstrings (already correct, no change)
+     - validate_docstrings → python-docstrings
+     - validate_docstrings → bash-docstrings
+     - validate_docstrings → perl-docstrings
+     - validate_docstrings → powershell-docstrings
+     - rust-docstrings (already correct, no change)
    - **Rationale:** Matches Rust pattern, differentiates language-specific checks
    - **Verified:** All 15 runners show correct names in output
 
 4. **Added TODOs for Future YAML Enhancements:**
    - **TODO 1: yaml-docstrings Check**
-     * YAML files have docstring contracts in repo
-     * Should follow language-specific naming pattern
-     * Implementation should mirror other language runners
-     * Location: `tools/repo_lint/runners/yaml_runner.py` check() method
+     - YAML files have docstring contracts in repo
+     - Should follow language-specific naming pattern
+     - Implementation should mirror other language runners
+     - Location: `tools/repo_lint/runners/yaml_runner.py` check() method
    - **TODO 2: actionlint Support**
-     * GitHub Actions workflow linter (.github/workflows/*.yml)
-     * Check-only tool (no auto-fix capability)
-     * Reference: https://github.com/rhysd/actionlint
-     * Location: YAML runner check() and fix() methods
+     - GitHub Actions workflow linter (.github/workflows/*.yml)
+     - Check-only tool (no auto-fix capability)
+     - Reference: <https://github.com/rhysd/actionlint>
+     - Location: YAML runner check() and fix() methods
 
 **Verification:**
+
 - ✅ Pre-commit gate: EXIT 0
 - ✅ All 15 runners passing
 - ✅ Language-specific names: python-docstrings, bash-docstrings, perl-docstrings, powershell-docstrings, rust-docstrings
@@ -259,6 +274,7 @@ All code review comments from rounds 1-5 have been addressed. Ready for Phase 2.
 - ✅ Fixture restored with actual Black violations
 
 **Commands Run:**
+
 ```bash
 ./scripts/bootstrap-repo-lint-toolchain.sh --all  # Bootstrap
 repo-lint check --ci                              # Verification (exit 0)
@@ -266,6 +282,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ```
 
 **Known Issues/Notes:**
+
 - Black fixtures are excluded from normal checks (by design in pyproject.toml)
 - Fixture files contain intentional violations for testing purposes
 - Table formatting is now stable and deterministic
@@ -276,6 +293,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2026-01-05 19:00 - Phase 2.8 Complete: Environment & PATH Management (Session 5)
 
 **Files Changed:**
+
 - NEW: `tools/repo_lint/env/__init__.py` (25 lines)
 - NEW: `tools/repo_lint/env/venv_resolver.py` (250 lines)
 - NEW: `tools/repo_lint/tests/test_venv_resolver.py` (350 lines, 24 tests)
@@ -325,6 +343,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
    - Pre-commit gate: EXIT 0 ✅
 
 **Verification:**
+
 - `repo-lint check --ci` → Exit 0 ✅
 - 24/24 unit tests passing ✅
 - Manual testing of all commands ✅
@@ -338,6 +357,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2026-01-05 13:30 - Phase 2.7 Code Review Fixes (Session 4)
 
 **Files Changed:**
+
 - `tools/repo_lint/cli.py`: Fixed Ruff I001 import formatting violation
 - `HOW-TO-USE-THIS-TOOL.md`: Corrected --config flag documentation
 - `docs/ai-prompt/160/160-overview.md`: Updated phase priorities
@@ -366,10 +386,12 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
    - Aligned with Round 2 Decision 2 prioritization: 2.5 → 2.9 → 2.7 → 2.8 → 2.6 → 3
 
 **Verification:**
+
 - Pre-commit gate: `repo-lint check --ci` → Exit 0 ✅
 - All linters passing ✅
 
 **Impact:**
+
 - Resolves both code review comments from PR #225
 - Documentation now accurately reflects CLI capabilities
 - Import formatting complies with Python standards
@@ -379,6 +401,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2026-01-05 12:30 - Phase 2.7 Config Commands Complete (Session 3)
 
 **Files Changed:**
+
 - `tools/repo_lint/yaml_loader.py`: Added config directory management (87 lines added)
 - `tools/repo_lint/cli.py`: Added dump-config and validate-config commands (204 lines added)
 - `tools/repo_lint/tests/test_phase_2_7_features.py`: Added comprehensive test suite (177 lines added)
@@ -438,6 +461,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
    - Fixed redundant assertTrue in test_yaml_loader_set_config_directory
 
 **Verification:**
+
 - Pre-commit gate: `repo-lint check --ci` → Exit 0 ✅
 - Unit tests: 10/10 passing ✅
 - Manual testing:
@@ -447,6 +471,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - `repo-lint --help` → Shows new commands ✅
 
 **Impact:**
+
 - Phase 2.7 now 100% complete (8/8 items) ✅
 - External configuration contract fully implemented
 - Config debugging and validation workflows now supported
@@ -457,6 +482,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2026-01-01 04:24 - Phase 2.7 Verification & Critical Bug Fixes (Session 2)
 
 **Files Changed:**
+
 - `tools/repo_lint/ui/reporter.py`: Fixed 2 critical Rich markup bugs
 - `tools/repo_lint/tests/test_phase_2_7_features.py`: Fixed test assertions (Path vs string)
 - `docs/ai-prompt/160/160-overview.md`: Updated Phase 2.7 status to reflect reality
@@ -515,23 +541,26 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
      - Added test results and verification details
 
 **Verification:**
+
 - Pre-commit gate: `repo-lint check --ci` → Exit 1 (pre-existing violations, acceptable) ✅
 - Phase 2.7 tests: 25/25 passing (1 skipped - openpyxl) ✅
 - CLI end-to-end: `repo-lint check --lang python --summary-only --summary-format by-tool --ci` → Works perfectly ✅
 - All commands tested: check, fix, doctor, list-langs, list-tools, tool-help ✅
 
 **Known Issues:**
+
 - Pre-existing repo violations (26 total): Not from my changes, pre-existed before session
 - Config CLI commands not implemented (--config, --dump-config, --validate-config): Deferred as low priority
 
 **Impact:**
+
 - Phase 2.7 now 87.5% complete (7/8 items)
 - Two critical bugs that would block production use are now fixed
 - All Phase 2.7 user-facing features working correctly
 - Comprehensive test coverage ensures no regressions
 
 ---
-2. ✅ Phase 2.9: YAML-First Configuration - PR #207 merged, all configs migrated
+1. ✅ Phase 2.9: YAML-First Configuration - PR #207 merged, all configs migrated
 
 ---
 
@@ -540,6 +569,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2025-12-31 23:59 - Session End: Phase 2.7.1 Step 1 Complete with Code Review
 
 **Final Session Activities:**
+
 - ✅ Requested code review for Phase 2.7.1 Step 1 changes
 - ✅ Addressed all 4 code review comments:
   1. Added warning when both --lang and --only specified
@@ -551,21 +581,24 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - ✅ Updated journals documenting completion
 
 **Files Changed (Final):**
-- `tools/repo_lint/cli.py`: 
+
+- `tools/repo_lint/cli.py`:
   - Added `_resolve_language_filter()` helper (lines 66-86)
   - Updated both check and fix to use helper
   - Updated examples to promote --lang usage
   - Total changes: ~60 lines modified
-  
+
 - `docs/ai-prompt/160/160-next-steps.md`: Updated with session completion
 
 **Code Quality Improvements:**
+
 - Eliminated code duplication (DRY principle via helper function)
 - Added user-facing warning for conflicting options
 - Promoted best practices through updated examples
 - All linting checks pass (pylint, ruff, black, docstrings)
 
 **Phase 2.7.1 Step 1 Status:** ✅ COMPLETE and CODE-REVIEWED
+
 - All functionality working as designed
 - All code review feedback addressed
 - All tests passing
@@ -573,12 +606,14 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Ready to proceed to Step 2
 
 **Next Session Actions:**
+
 1. Implement Step 2: Add `--tool` option (repeatable tool filtering)
 2. Continue through Steps 3-6 of Phase 2.7.1
 
 **Commit History:**
+
 - Initial plan commit
-- Verification and planning commit  
+- Verification and planning commit
 - Phase 2.7.1 Step 1 implementation commit
 - Journal update commit
 - Code review feedback fixes commit (FINAL)
@@ -588,17 +623,19 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2025-12-31 23:55 - Phase 2.7.1 Step 1 Complete: Added --lang Option
 
 **Files Changed:**
+
 - `tools/repo_lint/cli.py`: Added `--lang` option to check and fix commands (30 lines modified)
   - Lines 185-187: Added `--lang` parameter to `check()` with choices including "all"
   - Lines 255-261: Added precedence logic (`--lang` overrides `--only`, "all" = no filter)
-  - Lines 292-294: Added `--lang` parameter to `fix()` 
+  - Lines 292-294: Added `--lang` parameter to `fix()`
   - Lines 395-401: Added same precedence logic to `fix()`
   - Lines 84-92, 94-102: Updated OPTION_GROUPS to show `--lang` in Filtering section
   - Marked `--only` as deprecated in help text for both commands
-  
+
 - `docs/ai-prompt/160/160-next-steps.md`: Updated NEXT section with Phase 2.7.1 progress
 
 **Changes Made:**
+
 - **Phase 2.7.1 Step 1: Add --lang option** ✅ COMPLETE
   - New `--lang` parameter accepts: python, bash, powershell, perl, yaml, rust, all
   - `--lang all` is equivalent to not specifying a language (runs all)
@@ -608,6 +645,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Rich-Click help properly organizes options in Filtering section
 
 **Verification:**
+
 - Manual testing: `repo-lint check --help` shows `--lang` in Filtering panel
 - Manual testing: `repo-lint check --ci --lang python` works correctly (exit 0)
 - Automated tests: `test_output_format.py` all 7 tests pass
@@ -615,6 +653,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - No breaking changes: existing `--only` usage continues to work
 
 **Rationale:**
+
 - Per Phase 2.7 requirements: need granular language filtering
 - Per Decision 5: implement full flag set with strong UX
 - Minimal change principle: only ~30 lines modified
@@ -622,6 +661,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Foundation for Step 2 (--tool option) and other Phase 2.7 features
 
 **Implementation Notes:**
+
 - Used Click's `type=click.Choice()` for validation
 - Precedence logic: `effective_lang = lang if lang and lang != "all" else only`
 - This ensures `--lang` always wins if specified
@@ -629,6 +669,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Reuses existing `only` parameter in argparse.Namespace for compatibility
 
 **Next Steps:**
+
 - Step 2: Add `--tool` option (repeatable tool filtering)
 - Request code review before continuing
 - Address any feedback
@@ -639,12 +680,13 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2025-12-31 23:50 - Session Start: Verified Phase 2.5 and 2.9 Complete, Planned Phase 2.7
 
 **Session Activities:**
+
 - ✅ Ran mandatory session start procedure per Session Compliance Requirements
   - Bootstrapper completed successfully (exit 0)
   - Activated venv and Perl environment
   - Verified `repo-lint --help` functional
   - Health check: `repo-lint check --ci` exits 1 (violations exist, acceptable at session start)
-  
+
 - ✅ Investigated current EPIC #160 state
   - Confirmed PR #207 (Phase 2.9) was merged to main
   - yaml_loader.py exists and is functional
@@ -661,20 +703,24 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Identified Phase 2.7.1 (lang/tool filtering) as highest priority item
 
 **Files Changed:**
+
 - `docs/ai-prompt/160/160-next-steps.md`: Updated NEXT section with accurate state
 
 **Current Repository State:**
+
 - Exit code 1 from `repo-lint check --ci` (51 violations)
 - These are pre-existing violations, not from my changes
 - Per Session Compliance Requirements, exit code 1 is acceptable at session start
 
 **Rationale:**
+
 - Per Session Compliance Requirements: must read session docs first
 - Per repository guidelines: verify state before making changes
 - Per Decision 2: must complete Phase 2.5 blockers before Phase 2.7
 - All blockers confirmed complete through direct verification (ran tests, checked files, reviewed workflows)
 
 **Next Session Actions:**
+
 - Implement Phase 2.7.1: Language and Tool Filtering
 - Add `--lang` and `--tool` CLI options
 - Update cli.py and cli_argparse.py with minimal changes
@@ -686,52 +732,54 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2025-12-31 19:05 - Phase 2.9 Core Implementation: YAML-First Configuration Complete
 
 **Files Changed:**
+
 - `conformance/repo-lint/repo-lint-file-patterns.yaml`: Created (110 lines)
   - Centralized file discovery patterns and exclusions
   - Migrated IN_SCOPE_PATTERNS and EXCLUDE_PATTERNS from validate_docstrings.py
   - Migrated EXCLUDED_PATHS from base.py
   - Includes languages section (minimal, required by validator)
   - Custom allowed_keys to support new top-level keys
-  
+
 - `tools/repo_lint/yaml_loader.py`: Created (276 lines)
   - Centralized YAML configuration loading with validation
   - Functions: load_yaml_config, load_linting_rules, load_naming_rules, load_docstring_rules, load_file_patterns
   - Helper functions: get_tool_versions, get_in_scope_patterns, get_exclusion_patterns, get_linting_exclusion_paths
   - LRU caching for performance (except base load_yaml_config which supports custom allowed_keys)
   - Backward compatibility layer with deprecation warnings
-  
+
 - `tools/repo_lint/install/version_pins.py`: Updated (89 lines, major refactor)
   - REMOVED hardcoded constants: PYTHON_TOOLS, BASH_TOOLS, POWERSHELL_TOOLS, PERL_TOOLS
-  - Added __getattr__ for backward compatibility with deprecation warnings
+  - Added **getattr** for backward compatibility with deprecation warnings
   - get_all_versions() now delegates to yaml_loader.get_tool_versions()
   - PIP_VERSION remains hardcoded (not a linting tool, appropriate)
   - Eliminates version duplication (YAML is single source of truth)
-  
+
 - `tools/repo_lint/runners/base.py`: Updated (lines 32-113)
   - REMOVED hardcoded constant: EXCLUDED_PATHS
-  - Added __getattr__ for backward compatibility with deprecation warnings
+  - Added **getattr** for backward compatibility with deprecation warnings
   - Added get_excluded_paths() function that loads from YAML
   - Updated get_git_pathspec_excludes() to use get_excluded_paths()
   - Updated docstrings to note Phase 2.9 YAML-first migration
-  
+
 - `scripts/validate_docstrings.py`: Updated (lines 153-295)
   - Added import warnings at top (fixed E402 ruff error)
   - REMOVED hardcoded constants: IN_SCOPE_PATTERNS, EXCLUDE_PATTERNS
-  - Added __getattr__ for backward compatibility with deprecation warnings
+  - Added **getattr** for backward compatibility with deprecation warnings
   - Added _get_in_scope_patterns() and _get_exclude_patterns() internal functions
   - Updated get_tracked_files() to load patterns from YAML
   - Updated docstrings to note Phase 2.9 migration
-  
+
 - `docs/ai-prompt/160/phase-2.9-audit.md`: Created earlier (audit document, 310 lines)
 
 **Changes Made:**
+
 - **Phase 2.9: Integration & YAML-First Contracts** ✅ CORE COMPLETE
   - Eliminated configuration duplication (version pins now in YAML only)
   - Centralized file patterns in YAML (no more hardcoded patterns)
   - Backward compatibility maintained via deprecation warnings
   - All loaders use caching for performance
   - Validation via config_validator ensures YAML correctness
-  
+
 - **Specific Achievements:**
   1. ✅ Single source of truth: conformance/repo-lint/*.yaml files
   2. ✅ Version pins: Python code loads from YAML, not hardcoded
@@ -739,7 +787,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   4. ✅ Exclusions: Python code loads from YAML, not hardcoded
   5. ✅ Deprecation warnings guide users to new APIs
   6. ✅ No breaking changes (backward compatibility maintained)
-  
+
 - **Code Quality:**
   - All files formatted with Black (exit code 0)
   - All files pass Ruff checks (exit code 0)
@@ -747,6 +795,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Deprecation warnings tested and working
 
 **Verification:**
+
 - Manual test of get_tool_versions(): ✅ 6 tools loaded (black, ruff, pylint, yamllint, shfmt, PSScriptAnalyzer)
 - Manual test of get_in_scope_patterns(): ✅ 10 patterns loaded
 - Manual test of get_exclusion_patterns(): ✅ 24 patterns loaded
@@ -756,6 +805,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Ruff linting: ✅ All files pass (2 errors auto-fixed)
 
 **Rationale:**
+
 - Per Phase 2.9 requirements: "Migrate ALL behavior that can reasonably be configured into YAML"
 - Per audit findings: Version duplication and hardcoded patterns were contract violations
 - Per human decision 3: "Aggressive YAML-first migration"
@@ -763,6 +813,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Single source of truth (YAML) eliminates drift and sync issues
 
 **Next Steps (MANDATORY):**
+
 - Run pre-commit validation: `repo-lint check --ci`
 - Add unit tests for YAML loaders
 - Integration tests to verify no regressions
@@ -773,25 +824,26 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2025-12-31 08:00 - Phase 2.5 Blocker #3 Complete: Updated HOW-TO-USE-THIS-TOOL.md
 
 **Files Changed:**
+
 - `HOW-TO-USE-THIS-TOOL.md`: Major documentation update (+250 lines)
-  
+
   **Table of Contents:**
   - Expanded with new subsections for PowerShell, Windows issues, output modes, and theme customization
-  
+
   **Shell Completion Section (lines 214-261):**
   - Added PowerShell 5.x completion instructions (Windows built-in PowerShell)
   - Added PowerShell 7+ completion instructions (cross-platform PowerShell)
   - Instructions cover: script generation, profile configuration, and reload steps
   - Separated by PowerShell version due to different profile locations
-  
+
   **Advanced Usage Section (lines 500-650, new subsections):**
-  
+
   1. **Output Modes: Interactive vs CI** (new subsection)
      - Interactive Mode features: Rich formatting, colors, tables, panels, icons, progress indicators
      - CI Mode features: plain text, no colors, no icons, stable output, greppable format
      - Example outputs for both modes
      - When to use CI mode: GitHub Actions, output redirection, scripting, Windows CMD issues
-  
+
   2. **Theme Customization** (new subsection, ~150 lines)
      - Explanation of YAML-based theme system
      - Default theme example with full YAML structure
@@ -800,10 +852,10 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
      - Theme precedence hierarchy (5 levels)
      - Available color names (standard, bright, special)
      - Available border styles (ascii, rounded, heavy, double)
-  
+
   **Troubleshooting Section (lines 420-485, new subsection):**
-  
-  3. **Windows-Specific Issues** (new subsection, ~65 lines)
+
+  1. **Windows-Specific Issues** (new subsection, ~65 lines)
      - Issue: Rich output not displaying in Command Prompt
        - Solutions: Use Windows Terminal, use PowerShell, force CI mode
      - Issue: PowerShell completion not working
@@ -816,15 +868,16 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
        - Solutions: Enable ANSI support, use PowerShell 7+, use Windows Terminal, force CI mode
 
 **Changes Made:**
+
 - **Phase 2.5 Blocker #3: Update HOW-TO-USE-THIS-TOOL.md** ✅ COMPLETE
-  
+
   **All Required Tasks Completed:**
   1. ✅ Windows PowerShell completion instructions (PowerShell 5.x)
   2. ✅ Windows PowerShell 7+ completion instructions (cross-platform)
   3. ✅ Theme customization guide (YAML theme system, colors, borders, precedence)
   4. ✅ Output mode examples (interactive vs CI, when to use each)
   5. ✅ Windows-specific troubleshooting (5 common issues with solutions)
-  
+
   **Documentation Quality:**
   - All new sections follow existing documentation style
   - Code examples with proper syntax highlighting markers
@@ -834,6 +887,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Updated Table of Contents with all new sections
 
 **Verification:**
+
 - Documentation file is valid Markdown
 - All code blocks are properly formatted
 - All internal links are correct (tested anchor formats)
@@ -841,6 +895,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - No orphaned sections or broken structure
 
 **Rationale:**
+
 - Per Phase 2.5 specification: "Update HOW-TO-USE-THIS-TOOL.md with Windows completion and theme customization"
 - Per human decision requirements for Blocker #3
 - Windows users now have complete guidance for:
@@ -853,12 +908,14 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Troubleshooting theme/color issues
 
 **Impact:**
+
 - **Phase 2.5 is now COMPLETE** - all 3 blockers resolved
 - Ready to proceed to Phase 2.9 per human-approved sequencing
 - Windows users have full parity with Unix/Linux/Mac users for documentation
 - Theme system is now fully documented and discoverable
 
 **Next Actions:**
+
 - Commit documentation updates
 - Mark Phase 2.5 as complete in tracking documents
 - Proceed to Phase 2.9: Integration & YAML-First Contracts
@@ -868,6 +925,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2025-12-31 07:45 - Phase 2.5 Blocker #2 Complete: Added Windows CI Validation
 
 **Files Changed:**
+
 - `.github/workflows/repo-lint-and-docstring-enforcement.yml`: Added Windows validation job (130 lines)
   - New job: `windows-rich-ui-validation` runs on `windows-latest`
   - Runs conditionally: when Python or shared tooling files change, or when force_all flag is set
@@ -886,29 +944,30 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Timeout: 20 minutes
 
 **Changes Made:**
+
 - **Phase 2.5 Blocker #2: Add Windows CI Validation** ✅ COMPLETE
   - Per human decision (Decision 1): "Hybrid approach - CI-first Windows validation"
   - Manual validation on physical Windows machine explicitly deferred
   - Windows GitHub Actions runners validate Rich UI behavior to extent testable in CI
-  
+
 - **Test Coverage:**
   1. **Rich Console Output (CI Mode):**
      - Runs `python -m tools.repo_lint check --ci --only python`
      - Accepts exit codes 0 (success), 1 (violations), or 2 (missing tools) as valid
      - Validates output is produced without crashing
      - CI mode ensures deterministic rendering (no colors, stable output)
-     
+
   2. **Rich Console Output (Interactive Mode):**
      - Runs `python -m tools.repo_lint check --only python` (no --ci flag)
      - Same exit code acceptance as CI mode
      - Validates Rich tables/panels render correctly in Windows Terminal
-     
+
   3. **Rich-Click Help Output:**
      - Tests `--help` for main command and all subcommands (check, fix, install)
      - Verifies help output contains expected commands
      - Ensures Rich-Click formatting works on Windows
      - Saves help output to artifacts for manual inspection if needed
-     
+
   4. **PowerShell Completion:**
      - Basic sanity check: sets `_REPO_LINT_COMPLETE` env var
      - Verifies completion generation doesn't crash
@@ -921,6 +980,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Conditional execution prevents unnecessary runs
 
 **Verification:**
+
 - YAML syntax validated with `yamllint` (no errors)
 - Workflow structure matches existing job patterns
 - Dependencies correctly specified in `needs` lists
@@ -928,6 +988,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Artifact paths and retention policies aligned with repository standards
 
 **Rationale:**
+
 - Per Phase 2.5 specification: "Windows validation (PowerShell, PowerShell 7+, Windows Terminal) is a RELEASE BLOCKER"
 - Per human decision: "Hybrid approach - CI-first Windows validation (manual deferred)"
 - CI validation covers:
@@ -938,11 +999,13 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - This unblocks Phase 2.5 progress with automated validation
 
 **Known Limitations:**
+
 - Full interactive shell completion testing requires physical Windows machine (deferred)
 - Windows Terminal specific features (e.g., color rendering) tested to extent possible in CI
 - PowerShell 7+ validation relies on CI runner's PowerShell version (likely pwsh 7.x)
 
 **Next Actions:**
+
 - Commit Windows CI validation changes
 - CI will run on next push to validate Windows compatibility
 - Proceed to Phase 2.5 Blocker #3: Update HOW-TO-USE-THIS-TOOL.md
@@ -952,6 +1015,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2025-12-31 07:30 - Phase 2.5 Blocker #1 Complete: Updated test_output_format.py for Rich UI
 
 **Files Changed:**
+
 - `tools/repo_lint/tests/test_output_format.py`: Updated all 7 tests (190 lines modified)
   - `test_no_violations_output()`: Now checks for "Summary" and "Exit Code: 0 (SUCCESS)" in Rich panel format
   - `test_violations_output_format()`: Now checks for table data (test.py, line numbers, messages) instead of "test.py:10: [ruff]" format
@@ -982,6 +1046,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - All `@patch("tools.repo_lint.cli.*)` changed to `@patch("tools.repo_lint.cli_argparse.*)`
 
 **Changes Made:**
+
 - **Phase 2.5 Blocker #1: Update test_output_format.py** ✅ COMPLETE
   - All 7 tests updated to verify Rich table/panel format instead of plain text
   - Tests now use CI mode for deterministic rendering (no terminal-specific escape codes)
@@ -990,13 +1055,13 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
     - Violations case: Rich tables with File/Line/Message columns, per-tool panels, Summary panel
     - Counts: "Total Violations: N" in Summary panel
   - Tests verify deterministic output (no timestamps, no random data)
-  
+
 - **Fixed test import issues across 4 test files**
   - Phase 2.4 renamed `cli.py` to `cli_argparse.py` (old implementation)
   - Phase 2.4 created new `cli.py` with Click/Rich-Click integration
   - Tests were importing from old `cli` module path, causing AttributeError and ModuleNotFoundError
   - Fixed all imports and patches to use `cli_argparse` module path
-  
+
 - **Fixed unsafe mode exit code expectations**
   - Phase 1 Item 2 changed unsafe violations from exit code 2 (MISSING_TOOLS) to 4 (UNSAFE_VIOLATION)
   - Tests were still expecting old exit code 2
@@ -1004,6 +1069,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - This aligns with the design: exit code 4 distinguishes policy violations from missing tools
 
 **Verification:**
+
 - Ran `python3 -m unittest tools.repo_lint.tests.test_output_format -v`: all 7 tests passed ✅
 - Ran `python3 -m unittest tools.repo_lint.tests.test_unsafe_fixes.TestUnsafeFixGuardRails -v`: all 4 tests passed ✅
 - Ran `python3 -m unittest discover -s tools/repo_lint/tests -p "test_*.py"`: 98/100 tests passed
@@ -1013,17 +1079,20 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - No regressions introduced by my changes
 
 **Rationale:**
+
 - Per Phase 2.5 specification: Rich UI migration changed output format from plain text to Rich tables/panels
 - Tests must verify new format to ensure stability and determinism
 - CI mode ensures deterministic rendering (no colors, no terminal-specific codes)
 - This unblocks Phase 2.5 progress and allows proceeding to Windows CI validation
 
 **Known Issues:**
+
 - 2 pre-existing test failures (unrelated to output format changes)
 - 2 pre-existing import errors (test files don't exist or have module-level issues)
 - These are documented as pre-existing in the journal (session 2025-12-31 00:37)
 
 **Next Actions:**
+
 - Commit all test updates
 - Proceed to Phase 2.5 Blocker #2: Add Windows CI validation
 
@@ -1034,6 +1103,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ### 2025-12-31 06:41 - Consolidated Issue #160 Documentation into Canonical Overview
 
 **Files Changed:**
+
 - `docs/ai-prompt/160/160-overview.md`: Major consolidation (300+ lines added)
   - Added Phase 2.5 section (9 sub-items: Rich UI "Glow Up")
   - Added Phase 2.6 section (6 sub-items: Centralized Exception Rules)
@@ -1043,11 +1113,11 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Updated Progress Tracker to reflect all phases (2.5-2.9)
   - Updated completion status: Phase 2.5 is CORE COMPLETE (6/9); 2.6-2.9 are NOT STARTED
   - Added latest session notes documenting consolidation work
-  
+
 - `docs/ai-prompt/160/160-next-steps.md`: Updated NEXT section
   - Changed focus to Phase 2.5 blockers (Windows validation, tests, docs)
   - Added reference to 160-human-decisions-2.md for Phase 2.6-2.9 prioritization
-  
+
 - `docs/ai-prompt/160/160-human-decisions-2.md`: Created (16KB, 350+ lines)
   - Decision 1: Phase 2.5 Windows Validation (Blocker vs Deferred)
   - Decision 2: Phase 2.6-2.9 Prioritization (Sequential vs Parallel vs Cherry-Pick)
@@ -1063,6 +1133,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Next steps section requiring human sign-off
 
 **Changes Made:**
+
 - **Task: Consolidate Issue 160 docs into single canonical overview** ✅ COMPLETE
   - Merged content from `160-phase-2-point-5-rich-glow-up.md` (Rich UI specs)
   - Merged content from `160-phase-2-point-6-pragmas-sucks.md` (Centralized exceptions specs)
@@ -1072,14 +1143,14 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Added severity markers (High/Medium/Low) to all items for prioritization clarity
   - Marked completion status accurately based on repository state (git log review)
   - Identified 3 Phase 2.5 blockers: test updates, Windows validation (BLOCKER), HOW-TO docs
-  
+
 - **Task: Update completion state** ✅ COMPLETE
   - Phase 1: 6/6 complete (from prior sessions)
   - Phase 2: 4/4 complete (from prior sessions including Click/Rich migration)
   - Phase 2.5: 6/9 complete (core implementation done; 3 items pending)
   - Phase 2.6-2.9: 0/20 items started (all awaiting human decision)
   - Phase 3: Deferred per prior human decision
-  
+
 - **Task: Identify human decisions required** ✅ COMPLETE
   - Created comprehensive decision document with 10 major decisions
   - Each decision includes: issue statement, current state, options, recommendation, required human input
@@ -1087,6 +1158,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Clear escalation: DO NOT proceed to Phase 2.6-2.9 until human sign-off
 
 **Verification:**
+
 - Reviewed all three source documents completely
 - Cross-referenced with git commit history (PR #180 for Phase 2.5 work)
 - Verified no content duplication between sections
@@ -1094,6 +1166,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Confirmed Progress Tracker checkbox states match repository reality
 
 **Rationale:**
+
 - Per task instructions: "Consolidate all content from these files into `160-overview.md` in the most logical/efficient locations"
 - Per task instructions: "Normalize wording so requirements are explicit (MUST/SHOULD/MAY), consistent, and testable"
 - Per task instructions: "If any new requirement conflicts with existing text, resolve it by updating the overview to the correct final intent"
@@ -1102,17 +1175,20 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Following escalation policy: surface major decisions requiring human input before proceeding
 
 **Conflicts Resolved:**
+
 - No direct conflicts found between documents
 - All three documents were additive (new phases, not modifications to existing phases)
 - Organized sequentially as Phase 2.5, 2.6, 2.7, 2.8, 2.9 for clarity
 
 **Known Issues:**
+
 - Windows validation for Phase 2.5 is marked as RELEASE BLOCKER but not yet performed
 - No Windows CI runners currently exist in repository
 - Large scope expansion (4 new phases) requires human prioritization
 - Some Phase 2.7 features may create CLI complexity (flagged in human decisions)
 
 **Next Actions:**
+
 - Commit all changes with reference to Issue #160
 - Update session journal overview (this file)
 - Await human decisions on priorities before any implementation work
@@ -1120,10 +1196,10 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 
 ---
 
-
 ### 2025-12-31 04:00 - Completed Phase 2.4: Click CLI migration with Rich formatting
 
 **Files Changed:**
+
 - `pyproject.toml`: Added Click>=8.0 and Rich>=10.0 as required dependencies (lines 11-13)
 - `tools/repo_lint/cli.py`: Complete rewrite to use Click framework (300+ lines)
   - Replaced argparse with Click decorators (@cli.command, @click.option)
@@ -1155,6 +1231,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Forensics and debugging guide for unsafe mode
 
 **Changes Made:**
+
 - **Phase 2.4: Improve CLI usability** ✅ COMPLETE
   - Migrated from argparse to Click framework (✅ requirement)
   - Added Rich formatting for beautiful help output (✅ requirement)
@@ -1164,7 +1241,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
     - Better UX than plain argparse
   - Enabled shell completion support (✅ requirement)
     - Bash: _REPO_LINT_COMPLETE=bash_source repo-lint
-    - Zsh: _REPO_LINT_COMPLETE=zsh_source repo-lint  
+    - Zsh: _REPO_LINT_COMPLETE=zsh_source repo-lint
     - Fish: _REPO_LINT_COMPLETE=fish_source repo-lint
   - Created HOW-TO-USE-THIS-TOOL.md (✅ requirement)
     - Installation guide
@@ -1175,6 +1252,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Backward compatible: both `repo-lint` and `python3 -m tools.repo_lint` work
 
 **Verification:**
+
 - `python3 -m tools.repo_lint --help` - Shows Rich-formatted help with table
 - `python3 -m tools.repo_lint check --help` - Shows command-specific help
 - `python3 -m tools.repo_lint check --only yaml` - Runs successfully
@@ -1184,6 +1262,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - HOW-TO doc includes all required sections
 
 **Rationale:**
+
 - Per human decision #4: "CLI usability: Adopt Click + Rich help menus + shell autocomplete (APPROVED)"
 - Click provides better UX, cleaner code, and built-in completion support
 - Rich makes help output beautiful and easier to read
@@ -1194,6 +1273,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 
 ---
 **Files Changed:**
+
 - `tools/repo_lint/config_validator.py`:
   - Added module-level constant `SEMANTIC_VERSION_PATTERN` for version regex (line 34)
   - Added module-level constant `DEFAULT_ALLOWED_KEYS` for default allowed keys (line 37)
@@ -1207,6 +1287,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Format: `MissingToolError("naming-rules-config", "message...")`
 
 **Changes Made:**
+
 - Addressed second round of code review feedback:
   1. Fixed MissingToolError constructor calls (API contract violation)
   2. Extracted magic values to constants for maintainability:
@@ -1217,12 +1298,14 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - All files pass Ruff checks
 
 **Verification:**
+
 - `.venv-lint/bin/black --check` - PASS (all files unchanged)
 - `.venv-lint/bin/ruff check` - PASS (all checks passed)
 - MissingToolError calls now match constructor signature
 - Constants improve code maintainability
 
 **Rationale:**
+
 - Code review identified API contract violations in MissingToolError usage
 - Moving magic values to constants improves maintainability
 - Following repository code quality standards
@@ -1230,7 +1313,9 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ---
 
 ### 2025-12-31 03:00 - Fixed linting issues in Phase 2.2 code
+
 **Files Changed:**
+
 - `tools/repo_lint/config_validator.py`: Formatted with Black (removed extra blank lines)
 - `tools/repo_lint/runners/naming_runner.py`: Formatted with Black and fixed Ruff issues
   - Removed unused import: `find_repo_root` (line 33)
@@ -1241,6 +1326,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - `conformance/repo-lint/repo-lint-linting-rules.yaml`: Removed trailing spaces (yamllint fix)
 
 **Changes Made:**
+
 - Ran Black formatter on new Python files (config_validator.py, naming_runner.py)
 - Ran Ruff linter and fixed all issues:
   - F401: Removed unused import `find_repo_root`
@@ -1250,12 +1336,14 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - All new files now pass linting checks (Black, Ruff, yamllint)
 
 **Verification:**
+
 - `python3 -m py_compile` on both new Python files - SUCCESS
 - `.venv-lint/bin/black --check` on both files - PASS (all would be left unchanged)
 - `.venv-lint/bin/ruff check` on both files - PASS (all checks passed)
 - `.venv-lint/bin/yamllint` on all three YAML files - PASS (no errors)
 
 **Rationale:**
+
 - Per repository instructions: "Pre-Commit Repo Lint Gate (MANDATORY for scripting changes)"
 - All scripting/tooling changes must pass linting before commit
 - Black, Ruff, and yamllint are the standard linters for this repository
@@ -1264,7 +1352,9 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ---
 
 ### 2025-12-31 02:50 - Completed Phase 2.2: Integrate naming/style enforcement
+
 **Files Changed:**
+
 - `conformance/repo-lint/repo-lint-naming-rules.yaml`: Created (162 lines)
   - Comprehensive naming rules for 7 languages (python, bash, powershell, perl, yaml, markdown, json)
   - Required YAML markers: `---` start, `...` end
@@ -1272,7 +1362,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Per-language rules under `languages:` mapping (Option A as per decision)
   - Includes patterns, descriptions, examples for each language
   - Global exclusions list for test fixtures and build artifacts
-  - Special handling for Python dunder files (__init__.py, __main__.py)
+  - Special handling for Python dunder files (**init**.py, **main**.py)
   - Special handling for markdown files with version suffixes (e.g., project-v1.0.0.md)
 
 - `conformance/repo-lint/repo-lint-docstring-rules.yaml`: Created (121 lines)
@@ -1324,6 +1414,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Naming checks integrated into normal check/fix workflow
 
 **Changes Made:**
+
 - **Phase 2.2: Integrate naming/style enforcement** ✅ COMPLETE
   - Created all three external YAML config files as per human decision requirements
   - All config files have required `---` and `...` markers
@@ -1338,6 +1429,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Tested: 3 naming violations found in current repo (edge cases with numbers/dots in filenames)
 
 **Verification:**
+
 - Validated all three YAML config files load successfully
 - Config validator successfully validates structure, markers, and fields
 - Config validator rejects missing markers with clear error messages
@@ -1348,10 +1440,11 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - NamingRunner.check_tools() returns [] (no external tools needed)
 - NamingRunner.check() runs successfully and finds violations
 - Found 3 naming violations in current repo (acceptable edge cases)
-- Special Python files (__init__.py, __main__.py) correctly handled
+- Special Python files (**init**.py, **main**.py) correctly handled
 - Markdown files with version suffixes correctly handled
 
 **Rationale:**
+
 - Per locked-in decision #2: "Add naming/style checks to repo_lint check output"
 - Explicit constraint: "NO automatic renaming of files (no auto-change behavior)"
 - Naming rules MUST be defined externally via YAML (per-language rules)
@@ -1363,10 +1456,13 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ---
 
 ### 2025-12-31 02:35 - Verified Phase 2.3: Pin external tool versions (ALREADY COMPLETE)
+
 **Files Changed:**
+
 - None - verification only
 
 **Changes Made:**
+
 - **Phase 2.3: Pin external tool versions** ✅ ALREADY COMPLETE (from prior work)
   - Verified that `install_python_tools()` already uses pinned versions from `version_pins.py`
   - Verified versions in `version_pins.py` match `pyproject.toml` exactly:
@@ -1378,6 +1474,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Single source of truth is `install/version_pins.py` with sync to pyproject.toml documented in docstring
 
 **Verification:**
+
 - Checked import statement: `from tools.repo_lint.install.version_pins import PYTHON_TOOLS` (line 39)
 - Checked installer loop: `for tool, version in PYTHON_TOOLS.items()` (line 164)
 - Checked version specification: `tool_spec = f"{tool}=={version}"` (line 165)
@@ -1385,6 +1482,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - This work was completed in a prior phase (likely Phase 0 or early work)
 
 **Rationale:**
+
 - Per locked-in decision #3: "Resolve the current mismatch between install/version_pins.py and requirements-dev.txt so there is one canonical source of truth for tool versions"
 - This is already done - version_pins.py is the source, and pyproject.toml is in sync
 - Installer uses pinned versions, ensuring deterministic linting behavior
@@ -1392,7 +1490,9 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ---
 
 ### 2025-12-31 02:30 - Completed Phase 2.1: Make repo_lint installable package
+
 **Files Changed:**
+
 - `pyproject.toml`: Added packaging configuration (lines 1-16)
   - Added `[build-system]` section with setuptools configuration
   - Added `[project.scripts]` with `repo-lint` entry point to `tools.repo_lint.cli:main`
@@ -1400,6 +1500,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - This prevents accidental inclusion of unwanted directories (rust, logs, wrappers, conformance)
 
 **Changes Made:**
+
 - **Phase 2.1: Make repo_lint installable package** ✅ COMPLETE
   - Added entry point configuration to pyproject.toml
   - Entry point: `repo-lint` command maps to `tools.repo_lint.cli:main`
@@ -1408,6 +1509,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Only `tools*` packages included in distribution (excludes rust, logs, wrappers, conformance)
 
 **Verification:**
+
 - Ran `pip install -e .` - SUCCESS (installed in editable mode)
 - Ran `which repo-lint` - `/home/runner/.local/bin/repo-lint` (entry point created)
 - Ran `repo-lint --help` - SUCCESS (shows help menu)
@@ -1416,6 +1518,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Entry point properly maps to the main() function in cli.py
 
 **Rationale:**
+
 - Per locked-in decision #1: "Provide a standard install + entrypoint so contributors can run `repo-lint ...` directly"
 - Maintains backward compatibility during transition period
 - Aligns with Future Work item FW-013
@@ -1424,7 +1527,9 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 ---
 
 ### 2025-12-31 01:25 - Final code review iterations complete
+
 **Files Changed:**
+
 - `tools/repo_lint/cli.py`: Final cleanup of error message format (lines 298-307)
   - Reverted to individual print statements per repository style
   - Removed unnecessary f-string prefixes
@@ -1435,6 +1540,7 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
   - Lines 55-57: Path traversal consistent with all 12 test files in repo
 
 **Changes Made:**
+
 - Addressed all code review feedback across 4 iterations
 - Final code review: 3 minor nits addressed
   1. Removed unused pylint disable directive
@@ -1444,14 +1550,16 @@ repo-lint check --only python --include-fixtures  # Test with fixtures
 - Code style matches existing conventions
 
 **Verification:**
+
 - Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes tools.repo_lint.tests.test_integration`: all 20 tests passed
 - All error messages display correctly with proper formatting
 - Code follows minimal change principle - only touched what was needed
 
 **Summary:**
 Phase 1 of Issue #160 is COMPLETE. All 6 critical fixes implemented and tested:
+
 1. ✅ Repository root detection fixed
-2. ✅ Exit codes clarified  
+2. ✅ Exit codes clarified
 3. ✅ Install failures handled gracefully
 4. ✅ Docstring validator detection improved
 5. ✅ Non-Python unsafe mode validated
@@ -1462,7 +1570,9 @@ All code review feedback addressed. Ready for merge.
 ---
 
 ### 2025-12-31 01:20 - Completed Phase 1 item 6: Add missing unit tests
+
 **Files Changed:**
+
 - `tools/repo_lint/tests/test_integration.py`: Created new integration test file (210 lines)
   - Added 6 integration tests exercising full CLI invocation
   - Tests cover: missing tools, policy errors, unsafe mode violations, install failures
@@ -1470,6 +1580,7 @@ All code review feedback addressed. Ready for merge.
   - Complements existing unit tests with end-to-end validation
 
 **Changes Made:**
+
 - **Item 6: Add missing unit tests for error conditions** ✅
   - Created new `test_integration.py` file with 6 comprehensive integration tests
   - `test_check_missing_tools_ci`: Full CLI → check --ci → exit code 2 (missing tools)
@@ -1482,6 +1593,7 @@ All code review feedback addressed. Ready for merge.
   - Per epic requirement: "Use subprocess calls or invoke main() directly" - tests invoke main()
 
 **Verification:**
+
 - Ran `python3 -m unittest tools.repo_lint.tests.test_integration -v`: all 6 tests passed
 - Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes tools.repo_lint.tests.test_integration -v`: all 20 tests passed (14 + 6)
 - Integration tests validate full end-to-end behavior from CLI to exit codes
@@ -1489,6 +1601,7 @@ All code review feedback addressed. Ready for merge.
 
 **Phase 1 Status:**
 All 6 Phase 1 items are now complete:
+
 1. ✅ Fix repository root detection (completed in previous session)
 2. ✅ Clarify exit codes for unsafe mode (completed in previous session)
 3. ✅ Handle partial install failures gracefully (completed earlier this session)
@@ -1499,8 +1612,10 @@ All 6 Phase 1 items are now complete:
 ---
 
 ### 2025-12-31 01:15 - Completed Phase 1 items 3, 4, 5
+
 **Files Changed:**
-- `tools/repo_lint/cli.py`: 
+
+- `tools/repo_lint/cli.py`:
   - Lines 288-306: Added guard for unsafe mode with non-Python languages
   - Lines 367-407: Restructured install failure handling to avoid printing irrelevant instructions
 - `tools/repo_lint/runners/python_runner.py`: Line 276-282: Improved docstring validation error message
@@ -1513,16 +1628,17 @@ All 6 Phase 1 items are now complete:
   - Lines 383-413: Added test for unsafe mode with non-Python language
 
 **Changes Made:**
+
 - **Item 3: Handle partial install failures gracefully** ✅
   - Restructured `cmd_install()` to only print manual install instructions if Python tools succeed
   - When Python tools fail, now shows helpful troubleshooting tips instead of confusing next steps
   - Error output now includes common issues: Python version, pip upgrade, network connectivity
-  
+
 - **Item 4: Ensure missing docstring validator is detected** ✅
   - Updated all 4 runner files (Python, Bash, Perl, PowerShell) to use clearer error message
   - Changed from "Docstring validator script not found" to "Docstring validation SKIPPED: validator script not found at {path}. This check was not executed."
   - Makes it crystal clear that the check was skipped, not that it failed
-  
+
 - **Item 5: Validate non-Python unsafe mode behavior** ✅
   - Added guard in `cmd_fix()` to check if `--unsafe` used with non-Python language
   - Returns `ExitCode.UNSAFE_VIOLATION` (4) with clear error message
@@ -1530,6 +1646,7 @@ All 6 Phase 1 items are now complete:
   - Added comprehensive unit test with environment patching to verify behavior
 
 **Verification:**
+
 - Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes -v`: all 14 tests passed
 - Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes.TestExitCodes.test_fix_unsafe_violation_non_python_language -v`: PASS
 - Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes.TestExitCodes.test_install_internal_error_on_failure -v`: PASS
@@ -1538,7 +1655,9 @@ All 6 Phase 1 items are now complete:
 ---
 
 ### 2025-12-31 01:02 - Completed exit code clarification for unsafe mode
+
 **Files Changed:**
+
 - `tools/repo_lint/common.py`: Added `ExitCode.UNSAFE_VIOLATION = 4` (line 46)
   - Added new exit code enum value for unsafe mode policy violations
   - Updated module docstring to document exit code 4 (lines 26-31)
@@ -1554,6 +1673,7 @@ All 6 Phase 1 items are now complete:
   - Updated test file docstrings to document new test coverage (lines 6, 12-19)
 
 **Changes Made:**
+
 - Completed Phase 1, Item 2: "Clarify exit codes for unsafe mode" (Severity: High)
 - Introduced new `ExitCode.UNSAFE_VIOLATION = 4` to distinguish policy violations from missing tools
 - Previously, `repo_lint fix --unsafe` returned exit code 2 (MISSING_TOOLS) which was misleading
@@ -1563,6 +1683,7 @@ All 6 Phase 1 items are now complete:
 - Minimal changes: only modified the exact lines specified in the epic, no drive-by refactors
 
 **Verification:**
+
 - Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes.TestExitCodes.test_fix_unsafe_violation_in_ci -v` - PASS
 - Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes.TestExitCodes.test_fix_unsafe_violation_without_confirmation -v` - PASS
 - Ran `python3 -m unittest tools.repo_lint.tests.test_exit_codes -v` - all 13 tests passed (11 existing + 2 new)
@@ -1572,7 +1693,9 @@ All 6 Phase 1 items are now complete:
 ---
 
 ### 2025-12-31 00:37 - Addressed code review feedback
+
 **Files Changed:**
+
 - `tools/repo_lint/install/install_helpers.py`: Fixed `get_repo_root()` inconsistent fallback (lines 42-60)
   - Changed to start from `Path.cwd()` instead of `Path(__file__)` for consistency
   - Now both `get_repo_root()` and `find_repo_root()` use the same pattern
@@ -1580,11 +1703,12 @@ All 6 Phase 1 items are now complete:
 - `tools/repo_lint/tests/test_install_helpers.py`: Added test coverage for `get_repo_root()` (new class TestRepoRootDetection)
   - Added 3 tests: finds .git when present, falls back when missing, walks up tree correctly
   - Uses tempfile to create real directories for accurate testing
-- `tools/repo_lint/tests/test_base_runner.py`: Created new test file for `find_repo_root()` 
+- `tools/repo_lint/tests/test_base_runner.py`: Created new test file for `find_repo_root()`
   - Added 4 tests: finds .git, falls back, walks up tree, consistency with get_repo_root
   - Validates both functions have identical behavior
 
 **Changes Made:**
+
 - Fixed inconsistent fallback behavior in `get_repo_root()` (Code Review Comment #2654357917)
   - Reviewer noted: function started from `__file__` but fell back to cwd, which could return unrelated directory
   - Solution: Changed to start from cwd (like `find_repo_root`), ensuring consistent behavior
@@ -1595,6 +1719,7 @@ All 6 Phase 1 items are now complete:
   - All tests use real temporary directories for accuracy
 
 **Verification:**
+
 - Ran `python3 -m unittest tools.repo_lint.tests.test_install_helpers.TestRepoRootDetection -v` - all 3 new tests passed
 - Ran `python3 -m unittest tools.repo_lint.tests.test_base_runner.TestFindRepoRoot -v` - all 4 new tests passed
 - Ran `python3 -m unittest tools.repo_lint.tests.test_install_helpers -v` - all 17 tests passed (14 existing + 3 new)
@@ -1604,7 +1729,9 @@ All 6 Phase 1 items are now complete:
 ---
 
 ### 2025-12-31 00:20 - Fixed repository root detection
+
 **Files Changed:**
+
 - `tools/repo_lint/install/install_helpers.py`: Modified `get_repo_root()` function (lines 42-61)
   - Added fallback to return current working directory if `.git` not found
   - Updated docstring to reflect new behavior
@@ -1615,6 +1742,7 @@ All 6 Phase 1 items are now complete:
   - Removed RuntimeError exception on missing .git
 
 **Changes Made:**
+
 - Fixed the repository root detection issue (Phase 1, Severity: High)
 - Both functions now gracefully handle missing `.git` directory instead of raising RuntimeError
 - `find_repo_root()` returns current working directory as fallback
@@ -1623,6 +1751,7 @@ All 6 Phase 1 items are now complete:
 - Minimal changes: only modified the two affected functions, no drive-by refactors
 
 **Verification:**
+
 - Ran `python3 -m tools.repo_lint check --ci` - exit code 0 (PASS)
 - Ran `python3 -m pytest tools/repo_lint/tests/test_install_helpers.py -v` - all 14 tests passed
 - Ran `python3 -m pytest tools/repo_lint/tests/ -k "runner" -v` - 58 passed, 1 pre-existing failure unrelated to my changes
@@ -1633,17 +1762,21 @@ All 6 Phase 1 items are now complete:
 ---
 
 ### 2025-12-31 00:16 - Session initialization
+
 **Files Changed:**
+
 - `docs/ai-prompt/160/160-overview.md`: Created with original issue text and progress tracker
 - `docs/ai-prompt/160/160-next-steps.md`: Created with initial plan
 
 **Changes Made:**
+
 - Initialized issue journal directory structure per `.github/copilot-instructions.md` requirements
 - Copied original GitHub issue text verbatim into overview file
 - Set up progress tracker with all phases and items from the epic
 - Prepared to work on Phase 1 critical fixes first
 
 **Verification:**
+
 - Journal files created successfully
 - Ready to begin work on the epic
 
@@ -1652,6 +1785,7 @@ All 6 Phase 1 items are now complete:
 ### 2025-12-31 04:19 - Phase 2.5: Rich Glow Up - CORE COMPLETE ✅
 
 **Files Changed:**
+
 - New: `tools/repo_lint/ui/{__init__,console,reporter,theme}.py` (4 files, ~1200 lines)
 - New: `conformance/repo-lint/repo-lint-ui-theme.yaml` (theme config)
 - New: `docs/ai-prompt/160/160-phase-2.5-summary.md` (detailed summary)
@@ -1662,6 +1796,7 @@ All 6 Phase 1 items are now complete:
 - Modified: `tools/repo_lint/cli_argparse.py` (passes ci_mode flag)
 
 **Changes Made:**
+
 - **Phase 2.5 CORE IMPLEMENTATION COMPLETE** ✅
   - Created complete UI module with Reporter, Console, Theme
   - Integrated Rich-Click for beautiful help output
@@ -1672,7 +1807,7 @@ All 6 Phase 1 items are now complete:
   - Help Content Contract implemented (7 sections per command)
   - Option grouping (Output, Filtering, Safety, Execution)
   - Theme precedence: flag > env > user config > default
-  
+
 - **Code Review Round 1 COMPLETE** ✅
   - Fixed 5 issues identified by code_review tool
   - runner_completed() cleaned up
@@ -1680,7 +1815,7 @@ All 6 Phase 1 items are now complete:
   - Version validation robustness improved
   - DEFAULT_THEME_PATH now uses repo root detection
   - Help output fixed (click.echo added)
-  
+
 - **Security Scan PASSED** ✅
   - CodeQL found 0 alerts
   - No security vulnerabilities introduced
@@ -1688,6 +1823,7 @@ All 6 Phase 1 items are now complete:
   - All user input properly handled
 
 **Verification:**
+
 - ✅ Manual testing: Interactive mode output verified (beautiful Rich tables/panels)
 - ✅ Manual testing: CI mode output verified (stable, no colors, greppable)
 - ✅ Manual testing: Help text verified (all commands show comprehensive help)
@@ -1698,11 +1834,13 @@ All 6 Phase 1 items are now complete:
 - ⚠️  Automated tests: 5/7 tests in test_output_format.py fail (EXPECTED - format changed)
 
 **Known Issues:**
+
 - Test failures are expected due to output format change from plain text to Rich tables
 - Tests need updating to verify table structure instead of plain text patterns
 - Exit code tests still pass (logic unchanged)
 
 **Remaining Work (Next Session):**
+
 - [ ] Update test_output_format.py to match Rich table format
 - [ ] Add Reporter-specific unit tests
 - [ ] Add theme validation tests
@@ -1713,6 +1851,7 @@ All 6 Phase 1 items are now complete:
   - [ ] Output mode examples
 
 **Rationale:**
+
 - Per Phase 2.5 specification requirements
 - Rich UI significantly improves user experience
 - CI mode maintains determinism and greppability
@@ -1725,13 +1864,15 @@ All 6 Phase 1 items are now complete:
 ### 2025-12-31 19:30 - Phase 2.9 Pre-Commit Validation Complete: All Checks Pass ✅
 
 **Files Changed:**
+
 - `tools/repo_lint/yaml_loader.py`: Fixed implicit string concatenation (line 264)
 - `tools/repo_lint/install/install_helpers.py`: Updated imports
-- `tools/repo_lint/install/version_pins.py`: Fixed docstring (Usage → Examples)  
+- `tools/repo_lint/install/version_pins.py`: Fixed docstring (Usage → Examples)
 - `tools/repo_lint/tests/test_install_helpers.py`: Updated test imports
 - `.venv-lint/`: Installed rich packages
 
 **Validation Results:**
+
 - Command: `repo-lint check --ci --only python`
 - Exit code: 0 (SUCCESS) ✅
 - Total violations: 0

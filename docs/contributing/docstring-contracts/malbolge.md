@@ -1,12 +1,13 @@
 # Malbolge Docstring Contract (EXPERIMENTAL)
 
-**Language:** Malbolge (`.mb`, `.malbolge`)  
-**Canonical style:** ASCII comments using `//` (if your implementation even supports them)  
+**Language:** Malbolge (`.mb`, `.malbolge`)
+**Canonical style:** ASCII comments using `//` (if your implementation even supports them)
 **Status:** EXPERIMENTAL - NOT ENFORCEABLE (and honestly, why would you?)
 
 ## ⚠️ WARNING ⚠️
 
 Reading, writing, or attempting to understand Malbolge code may cause:
+
 - Existential dread
 - Questioning of life choices
 - Sudden appreciation for assembly language
@@ -14,6 +15,7 @@ Reading, writing, or attempting to understand Malbolge code may cause:
 - Permanent brain reconfiguration
 
 **This contract is deliberately satirical.** Malbolge is designed to be nearly impossible to program in. If you're actually writing Malbolge code, you're either:
+
 1. A masochist
 2. Proving a point
 3. Lost and need directions back to sanity
@@ -198,23 +200,27 @@ When this contract is officially adopted (never), the validator should check:
 ## Common Mistakes
 
 ❌ **Wrong:** Trying to write Malbolge code directly
+
 ```
 Don't do this. Use a code generator. Or better yet, don't.
 ```
 
 ✅ **"Correct":** Generate via Lisp compiler targeting Malbolge (still wrong)
+
 ```
 Use tools like the Malbolge Hell Assembler (MHAsm)
 You'll still fail, but with style
 ```
 
 ❌ **Wrong:** Attempting to debug Malbolge
+
 ```
 Debugger: *explodes*
 You: *also explodes*
 ```
 
 ✅ **"Correct":** Accept that debugging is impossible
+
 ```
 // FIXME: Everything
 // TODO: Rewrite in literally any other language
@@ -222,12 +228,14 @@ You: *also explodes*
 ```
 
 ❌ **Wrong:** Modifying existing Malbolge code
+
 ```malbolge
 // Changed this instruction
 bP  // Now the entire program is broken forever
 ```
 
 ✅ **"Correct":** Start over from scratch (still won't work)
+
 ```malbolge
 // Rewrite complete
 // Status: Still broken
@@ -286,6 +294,7 @@ For educational purposes, here are real facts about Malbolge:
 **Do not actually add Malbolge code to this repository.**
 
 If you are considering adopting this contract:
+
 1. Please reconsider your life choices
 2. Consult a professional
 3. Use literally any other language
@@ -295,6 +304,7 @@ If you are considering adopting this contract:
 ## Philosophical Notes
 
 Why does this contract exist?
+
 - To appreciate Python, JavaScript, even PHP
 - To demonstrate that not all Turing-complete languages are created equal
 - To provide comic relief in a serious documentation system

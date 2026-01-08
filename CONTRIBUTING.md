@@ -19,24 +19,28 @@ Thank you for your interest in contributing! This repository implements the RFC-
 ### For Contributors
 
 🛠️ **[Bootstrapper Toolchain User Manual](./docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md)** - Session-start compliance and toolchain setup
+
 - Bootstrapping repo-lint and all development tools
 - Virtual environment setup
 - Platform-specific installation (macOS/Linux)
 - Troubleshooting and verification
 
 📝 **[Contributing Guide](./docs/contributing/contributing-guide.md)** - Complete guide to contributing
+
 - Workflow and PR process
 - Code style and conventions
 - Testing requirements
 - Review process
 
 📋 **[Docstring Contracts](./docs/contributing/docstring-contracts/README.md)** - Required documentation standards
+
 - Language-specific templates
 - Required sections and format
 - Examples and validation
 - **All scripts must follow their language contract**
 
 🤖 **[AI Agent Constraints](./docs/contributing/ai-constraints.md)** - Safety rules for AI agents
+
 - Prohibited dangerous commands (unsafe fixes, destructive operations)
 - Required escalation procedures
 - Human-only vs AI-allowed operations
@@ -45,6 +49,7 @@ Thank you for your interest in contributing! This repository implements the RFC-
 ### For Testing
 
 🧪 **[Testing Documentation](./docs/testing/)** - How to run and write tests
+
 - Rust canonical tool tests
 - Wrapper tests (Bash, Perl, Python, PowerShell)
 - Conformance testing
@@ -53,6 +58,7 @@ Thank you for your interest in contributing! This repository implements the RFC-
 ### For Architecture Understanding
 
 🏗️ **[Architecture Documentation](./docs/architecture/)** - System design and structure
+
 - Canonical directory structure
 - Rust canonical tool design
 - Wrapper discovery algorithm
@@ -124,6 +130,7 @@ Before submitting a PR:
 **Code Standards:**
 
 All code must adhere to language-specific standards:
+
 - **Python**: 120-character lines, Black formatting, Ruff + Pylint compliance
 - **Bash**: ShellCheck warnings addressed, shfmt formatting
 - **PowerShell**: PSScriptAnalyzer error-level compliance
@@ -151,11 +158,13 @@ python3 -m tools.repo_lint install
 ```
 
 **REQUIRED Before Every Commit:**
+
 1. Run `python3 -m tools.repo_lint check` (or `./scripts/run-linters.sh`)
 2. Run the full relevant test suite(s) for impacted code
 3. Ensure CI remains green (no "commit first, lint later")
 
 **Configuration files:**
+
 - Python tools (Black, Ruff, Pylint): `pyproject.toml`
 - YAML: `.yamllint`
 - Perl: `.perlcriticrc`
@@ -163,11 +172,13 @@ python3 -m tools.repo_lint install
 All Python tools are configured for 120-character line length and compatible rule sets.
 
 **CI behavior:**
+
 - Black formatting is **automatically applied** for same-repo PRs
 - For fork PRs, a patch artifact is provided if formatting is needed
 - All other linters must pass without errors
 
 **Tool installation:**
+
 - `python3 -m tools.repo_lint install` installs Python tools in a local virtual environment (`.venv-lint/`)
 - Manual installation instructions are provided for non-Python tools (shellcheck, shfmt, PSScriptAnalyzer, Perl::Critic)
 - CI installs all tools explicitly (no auto-install in CI mode)

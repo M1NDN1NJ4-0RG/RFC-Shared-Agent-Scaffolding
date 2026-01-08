@@ -1,7 +1,7 @@
 # C++ Docstring Contract (DRAFT)
 
-**Language:** C++ (`.cpp`, `.hpp`, `.cc`, `.hh`, `.cxx`, `.h`)  
-**Canonical style:** Doxygen-style comments using `/** ... */`, `///`, or `//!`  
+**Language:** C++ (`.cpp`, `.hpp`, `.cc`, `.hh`, `.cxx`, `.h`)
+**Canonical style:** Doxygen-style comments using `/** ... */`, `///`, or `//!`
 **Status:** DRAFT - Not yet enforced by validator
 
 ## Purpose
@@ -454,12 +454,14 @@ When this contract is officially adopted, the validator should check:
 ## Common Mistakes (Future)
 
 ❌ **Wrong:** Missing exception documentation
+
 ```cpp
 /** @brief Does something */
 void func() { throw std::runtime_error("fail"); }
 ```
 
 ✅ **Correct:** Document exceptions
+
 ```cpp
 /**
  * @brief Does something
@@ -496,6 +498,7 @@ doxygen Doxyfile
 **DRAFT** - This contract is not yet enforced. Feedback welcome before official adoption.
 
 To adopt this contract:
+
 1. Add C++ file patterns to validator
 2. Implement CppValidator class
 3. Add test coverage

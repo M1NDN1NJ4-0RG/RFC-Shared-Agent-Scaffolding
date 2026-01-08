@@ -1,15 +1,12 @@
 [workspace]
-resolver = "2"
-members = [
-    "crates/safe-run",
-    "crates/bootstrap-repo-cli",
-]
-default-members = ["crates/safe-run"]
+  resolver = "2"
+  members = [ "crates/safe-run", "crates/bootstrap-repo-cli" ]
+  default-members = [ "crates/safe-run" ]
 
-[workspace.package]
-version = "0.1.1"
-edition = "2021"
-rust-version = "1.70"
-authors = ["RFC-Shared-Agent-Scaffolding Contributors"]
-license = "Unlicense"
-repository = "https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding"
+  [workspace.package]
+    version = "0.1.1"
+    edition = "2021"
+    rust-version = "1.70"
+    authors = [ "RFC-Shared-Agent-Scaffolding Contributors" ]
+    license = "Unlicense"
+    repository = "https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding"

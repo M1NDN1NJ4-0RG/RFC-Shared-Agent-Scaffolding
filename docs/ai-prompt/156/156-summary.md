@@ -1,8 +1,8 @@
 # Migrate `repo_lint` to a Self-Contained Rust Binary
 
-**Assignee:** @GitHubCopilot  
-**Labels:** enhancement, rust, migration, tooling  
-**Milestone:** v0.2.0 Tooling Overhaul  
+**Assignee:** @GitHubCopilot
+**Labels:** enhancement, rust, migration, tooling
+**Milestone:** v0.2.0 Tooling Overhaul
 
 ## Description
 
@@ -17,6 +17,7 @@ Provide your response in a clear, step-by-step format in this issue's comments, 
 ## Milestones
 
 ### Milestone 1: Repository Analysis and Planning
+
 - [ ] Phase 1.1: Thoroughly read and analyze **every Markdown document (.md file)** in the repository
   - [ ] Item 1.1.1: Review files including, but not limited to, README.md, future-work.md, any docs/ folder contents, and all other .md files scattered throughout
   - [ ] Item 1.1.2: Read each one in full, understanding the content, topics, relationships, technical details, and any implicit or explicit references to tools, features, or future plans
@@ -49,6 +50,7 @@ Provide your response in a clear, step-by-step format in this issue's comments, 
   - [ ] Item 1.3.4: Additionally, check for any contract adherence elements in these future plans, including potential contradictions with existing contracts
 
 ### Milestone 2: Synthesis and Output Creation
+
 - [ ] Phase 2.1: Synthesize findings into migration plan
   - [ ] Item 2.1.1: Address all specified requirements (embedded AST/linting, YAML configs with schema validation and IDE support)
   - [ ] Item 2.1.2: Include additional considerations (e.g., performance, testing, distribution)
@@ -66,7 +68,9 @@ Provide your response in a clear, step-by-step format in this issue's comments, 
   - [ ] Item 2.2.3: Add a section near the bottom for "TODOs" and "Deferments"
 
 ## TODOs
+
 - [ ] Add any unresolved analysis points here
 
 ## Deferments
+
 - [ ] List any deferred tasks or future considerations here

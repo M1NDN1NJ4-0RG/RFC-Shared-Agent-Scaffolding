@@ -1,6 +1,6 @@
 # YAML Docstring Contract
 
-**Language:** YAML (`.yml`, `.yaml`)  
+**Language:** YAML (`.yml`, `.yaml`)
 **Canonical style:** Top-of-file comment header using `#` prefix
 
 ## Purpose
@@ -19,10 +19,12 @@ Every YAML file must include these sections (as comment headers):
 6. **Notes:** - Maintainer notes, constraints, sharp edges
 
 **For GitHub Actions Workflows specifically:**
+
 - **Permissions:** - REQUIRED for workflow YAMLs (list GitHub Actions permissions)
 - Use "Triggers:" for workflows (not "Usage:")
 
 **For other YAML config files:**
+
 - **Permissions:** - Optional
 - Use "Usage:" for config files (not "Triggers:")
 
@@ -85,17 +87,20 @@ on:
 
 ## Section Details
 
-### Workflow: / File:
+### Workflow: / File
+
 - For GitHub Actions: `Workflow: <Name>`
 - For other configs: `File: <filename.yml>` or descriptive name
 - Should match the `name:` field in the YAML body (for workflows)
 
-### Purpose:
+### Purpose
+
 - What problem this workflow/config solves
 - What it validates, builds, tests, or deploys
 - What it does NOT do (scope limitations)
 
 ### Triggers: (for GitHub Actions workflows ONLY)
+
 - Use "Triggers:" for workflows, "Usage:" for other YAML files
 - List trigger events clearly
 - Mention path filters if used
@@ -103,34 +108,40 @@ on:
 - Examples: `pull_request`, `push`, `workflow_dispatch`, `schedule`
 
 ### Usage: (for non-workflow YAML config files)
+
 - How and when the config file is loaded/used
 - What tool or system consumes it
 - When it takes effect
 
-### Dependencies:
+### Dependencies
+
 - List GitHub Actions used (with versions)
 - Required tools and their versions
 - Required files or artifacts
 - Environment requirements
 
-### Outputs:
+### Outputs
+
 - Status checks created
 - Artifacts uploaded
 - Files created or modified
 - PR comments or other side effects
 
 ### Permissions: (REQUIRED for GitHub Actions workflows)
+
 - List all GitHub token permissions required
 - Explain why each permission is needed
 - Use least-privilege principle
 - Example: `contents: read`, `pull-requests: write`
 
 ### Environment: (optional but recommended)
+
 - Matrix configuration (OS, versions, etc.)
 - Job-level environment variables
 - Runner specifications
 - Secrets or environment-specific settings
 - Example:
+
   ```yaml
   # Environment:
   # - Matrix: ubuntu-latest, macos-latest, windows-latest
@@ -138,7 +149,8 @@ on:
   # - Environment variables: NODE_ENV=test
   ```
 
-### Notes:
+### Notes
+
 - Constraints or invariants
 - Warnings about what not to change
 - Related workflows or dependencies
@@ -336,9 +348,11 @@ setting2: value2
 ## Examples (Existing Files)
 
 ### Example 1: Full Workflow
+
 **File:** `.github/workflows/conformance.yml`
 
 This file demonstrates:
+
 - Complete header with all required sections
 - Clear purpose statement with negation ("does NOT run...")
 - Detailed trigger conditions
@@ -347,18 +361,22 @@ This file demonstrates:
 - Notes with constraints
 
 ### Example 2: Drift Detection Workflow
+
 **File:** `.github/workflows/drift-detection.yml`
 
 This file demonstrates:
+
 - Purpose explaining what drift means
 - Platform notes (Linux runner)
 - Clear separation of concerns (vs. other workflows)
 - Notes about related workflows
 
 ### Example 3: Test Workflow
+
 **File:** `.github/workflows/test-bash.yml`
 
 This demonstrates:
+
 - Language-specific workflow documentation
 - Dependencies on language runtimes
 - Platform requirements
@@ -366,11 +384,13 @@ This demonstrates:
 ## Validation
 
 The validator checks for:
+
 - Presence of comment header in first 15 lines
 - Presence of section keywords: `Workflow:` or `File:`, `Purpose:`, `Triggers:` or `Usage:`, `Dependencies:` or `Inputs:`, `Outputs:` or `Side effects:`, `Notes:` or `Note:`
 - At least one trigger listed (for GitHub Actions workflows)
 
 The validator does NOT check:
+
 - YAML syntax validity (use `yamllint` for that)
 - GitHub Actions schema compliance
 - Content quality or accuracy
@@ -379,6 +399,7 @@ The validator does NOT check:
 ## Common Mistakes
 
 ❌ **Wrong:** No header documentation
+
 ```yaml
 name: My Workflow
 
@@ -387,6 +408,7 @@ on:
 ```
 
 ✅ **Correct:** Header comes first
+
 ```yaml
 # Workflow: My Workflow
 #
@@ -411,6 +433,7 @@ on:
 ```
 
 ❌ **Wrong:** Vague purpose
+
 ```yaml
 # Workflow: Tests
 #
@@ -418,6 +441,7 @@ on:
 ```
 
 ✅ **Correct:** Specific purpose with scope
+
 ```yaml
 # Workflow: Bash Unit Tests
 #
@@ -427,6 +451,7 @@ on:
 ```
 
 ❌ **Wrong:** Missing Dependencies section
+
 ```yaml
 # Workflow: Build
 #
@@ -437,6 +462,7 @@ on:
 ```
 
 ✅ **Correct:** Document dependencies
+
 ```yaml
 # Workflow: Build
 #
@@ -455,6 +481,7 @@ on:
 ```
 
 ❌ **Wrong:** No Notes section
+
 ```yaml
 # Workflow: Deploy
 #
@@ -463,6 +490,7 @@ on:
 ```
 
 ✅ **Correct:** Include Notes for maintainers
+
 ```yaml
 # Workflow: Deploy
 #
@@ -478,6 +506,7 @@ on:
 ## GitHub Actions Specifics
 
 ### Trigger Documentation
+
 Be explicit about trigger conditions:
 
 ```yaml
@@ -508,6 +537,7 @@ on:
 ```
 
 ### Permission Documentation
+
 Document permissions when not default:
 
 ```yaml

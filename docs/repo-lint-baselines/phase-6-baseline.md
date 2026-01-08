@@ -1,7 +1,7 @@
 # Phase 6 Baseline Report — Repository Lint and Docstring Violations
 
-**Date:** 2025-12-30  
-**Commit:** 303ea94  
+**Date:** 2025-12-30
+**Commit:** 303ea94
 **Command:** `python3 -m tools.repo_lint check --ci --verbose`
 
 ## Executive Summary
@@ -57,6 +57,7 @@
 **Severity:** High - blocking linter
 
 **Categories:**
+
 - Unused imports (`F401`)
 - Unused variables (`F841`)
 - Line too long (`E501`)
@@ -65,12 +66,14 @@
 - Import order issues
 
 **Impacted Areas:**
+
 - `tools/repo_lint/` - Core linting package
 - `scripts/` - Utility scripts
 - `wrappers/python3/` - Python wrappers
 - `conformance/` - Test fixtures
 
-**Required Fix:** 
+**Required Fix:**
+
 - Remove unused imports and variables
 - Fix line length violations (120 char limit per `pyproject.toml`)
 - Address other Ruff violations per policy (safe fixes only in `repo-lint fix`)
@@ -80,15 +83,18 @@
 **Severity:** Medium - additional quality checks
 
 **Categories:**
+
 - Code quality issues
 - Naming convention violations
 - Docstring issues
 - Complexity warnings
 
 **Impacted Areas:**
+
 - Similar to Ruff, but with stricter quality checks
 
 **Required Fix:**
+
 - Address Pylint-specific quality issues
 - Ensure docstrings are complete
 - Refactor complex functions if necessary
@@ -108,17 +114,20 @@ All Python code is correctly formatted with Black (line-length=120).
 **Severity:** Medium to High
 
 **Categories:**
+
 - Quoting issues
 - Undefined variables
 - Syntax issues
 - Best practice violations
 
 **Impacted Areas:**
+
 - `scripts/` - Shell helper scripts
 - `wrappers/bash/` - Bash wrapper scripts
 - Test fixtures
 
 **Required Fix:**
+
 - Add proper quoting around variables
 - Fix undefined variable references
 - Address best practice violations
@@ -128,13 +137,16 @@ All Python code is correctly formatted with Black (line-length=120).
 **Severity:** Low - formatting only
 
 **Categories:**
+
 - Indentation issues (2 spaces, -i 2)
 - Code formatting inconsistencies
 
 **Impacted Areas:**
+
 - One or more Bash scripts with formatting issues
 
 **Required Fix:**
+
 - Run `shfmt -i 2 -ci -w <file>` to auto-fix
 
 ### Docstring Validation (Bash) (0 violations)
@@ -158,11 +170,13 @@ No PSScriptAnalyzer violations detected (Error severity).
 **Severity:** High - documentation contract
 
 **Categories:**
+
 - Missing function documentation
 - Missing parameter documentation
 - Incomplete docstrings
 
 **Impacted Files:**
+
 - `conformance/repo-lint/vectors/fixtures/powershell/DocstringTest.ps1` (intentional test fixture)
 - `scripts/tests/fixtures/powershell/EdgeCases.ps1` (intentional test fixture)
 - `wrappers/powershell/scripts/PreflightAutomergeRuleset.ps1` (~8 functions)
@@ -171,6 +185,7 @@ No PSScriptAnalyzer violations detected (Error severity).
 - `wrappers/powershell/scripts/SafeRun.ps1` (~2 functions)
 
 **Required Fix:**
+
 - Add complete docstrings to all functions (public AND private)
 - Follow PowerShell docstring contract (`.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, etc.)
 - Test fixtures: mark with `# noqa: FUNCTION` pragma or document per contract
@@ -184,15 +199,18 @@ No PSScriptAnalyzer violations detected (Error severity).
 **Severity:** Medium - quality checks (severity 5)
 
 **Categories:**
+
 - `Subroutines::ProhibitSubroutinePrototypes` (1 violation)
 - `Subroutines::ProhibitExplicitReturnUndef` (8+ violations)
 
 **Impacted Files:**
+
 - `scripts/tests/fixtures/perl/edge_cases.pl`
 - `wrappers/perl/scripts/preflight_automerge_ruleset.pl`
 - `wrappers/perl/scripts/safe_run.pl`
 
 **Required Fix:**
+
 - Remove subroutine prototypes (use modern Perl signatures if needed)
 - Replace `return undef` with `return` (Perl best practice)
 
@@ -201,10 +219,12 @@ No PSScriptAnalyzer violations detected (Error severity).
 **Severity:** High - documentation contract
 
 **Categories:**
+
 - Missing POD documentation
 - Incomplete function documentation
 
 **Impacted Files:**
+
 - `conformance/repo-lint/vectors/fixtures/perl/docstring_test.pl` (~4 violations, intentional test fixture)
 - `scripts/docstring_validators/helpers/parse_perl_ppi.pl` (1 violation)
 - `scripts/tests/fixtures/perl/edge_cases.pl` (1 violation, test fixture)
@@ -212,6 +232,7 @@ No PSScriptAnalyzer violations detected (Error severity).
 - `wrappers/perl/scripts/preflight_automerge_ruleset.pl` (~7 violations)
 
 **Required Fix:**
+
 - Add POD documentation to all subroutines (public AND private)
 - Follow Perl docstring contract
 - Test fixtures: mark with `# noqa: FUNCTION` pragma or document per contract
@@ -225,15 +246,18 @@ No PSScriptAnalyzer violations detected (Error severity).
 **Severity:** Low - formatting/style warnings
 
 **Categories:**
+
 - `line-length` warnings (120 character limit)
 
 **Impacted Files:**
+
 - `.github/ISSUE_TEMPLATE/multi-phase-form.yml` (1 violation)
 - `.github/workflows/drift-detection.yml` (13 violations)
 - `.github/workflows/lint-and-format-checker.yml` (1 violation)
 - `.github/workflows/pr-body-guardrails.yml` (5 violations)
 
 **Required Fix:**
+
 - Refactor long lines to fit within 120 characters
 - Use YAML multiline strings where appropriate (`>`, `|`)
 - May require splitting complex expressions
@@ -263,18 +287,18 @@ Per the Phase 6 completion instructions, violations will be remediated in this o
 1. **Python** (Black ✅ / Ruff ❌ / Pylint ❌ / Docstrings ✅)
    - Fix Ruff violations (246)
    - Fix Pylint violations (20)
-   
+
 2. **Bash** (ShellCheck ❌ / shfmt ❌ / Docstrings ✅)
    - Fix ShellCheck violations (12)
    - Fix shfmt violations (1)
-   
+
 3. **PowerShell** (PSScriptAnalyzer ✅ / Docstrings ❌)
    - Fix docstring violations (60)
-   
+
 4. **Perl** (Perl::Critic ❌ / Docstrings ❌)
    - Fix Perl::Critic violations (9)
    - Fix docstring violations (20)
-   
+
 5. **YAML** (yamllint ❌)
    - Fix yamllint violations (20)
 
@@ -300,6 +324,7 @@ Per the Phase 6 completion instructions, violations will be remediated in this o
 See `/tmp/baseline-output.txt` for the complete unabridged output from `repo-lint check --ci`.
 
 **Command used:**
+
 ```bash
 python3 -m tools.repo_lint check --ci --verbose
 ```

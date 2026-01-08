@@ -124,6 +124,7 @@ The auto-fix policy (`autofix-policy.json`) defines which fix categories are all
 - **`REORDER_IMPORTS`**: Import sorting (not currently enabled)
 
 **Enforcement:** The `repo_lint` CLI consults this policy file and:
+
 1. Only runs fixes in the `allowed_categories` list
 2. Skips denied categories with a clear message
 3. Provides a deterministic summary of which categories ran
@@ -172,6 +173,7 @@ def test_python_docstring_001():
 ### For CI/CD
 
 Vectors should be tested whenever:
+
 - Linting or docstring validation code changes
 - Parser implementations are swapped (e.g., tree-sitter upgrade)
 - `autofix-policy.json` is updated

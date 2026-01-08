@@ -1,14 +1,15 @@
 # Docstring Contracts
 
-**Version:** 1.2  
-**Last Updated:** 2025-12-29  
+**Version:** 1.2
+**Last Updated:** 2025-12-29
 **Purpose:** Define clear, testable, and enforceable documentation standards for all scripts, configuration files, and code symbols in this repository.
 
-## Why Docstring Contracts?
+## Why Docstring Contracts
 
 This repository is built around **contracts**: clear, testable requirements that prevent drift across languages and reduce ambiguity for humans and AI coding agents.
 
 Docstring contracts ensure:
+
 - **Consistency**: All scripts share the same conceptual documentation structure
 - **Discoverability**: Users and agents can quickly understand what a script does, how to use it, and what to expect
 - **Cross-language alignment**: Multi-language implementations remain aligned on semantics
@@ -21,6 +22,7 @@ Docstring contracts ensure:
 ### Current Enforcement (Phase 5.5)
 
 The validator scans:
+
 1. **File/module-level documentation** - All script files (`.sh`, `.ps1`, `.py`, `.pl`, `.pm`, `.rs`, `.yml`, `.yaml`)
 2. **Symbol-level documentation** - All public/exported functions, classes, methods, and subs (Phase 5.5+)
 
@@ -35,6 +37,7 @@ The validator scans:
 ## Contract Version History
 
 ### Version 1.2 (2025-12-29) - Phase 5.5
+
 - **Added symbol-level documentation contracts** (symbol-level-contracts.md)
   - Defined requirements for functions, classes, methods across all languages
   - Established enforcement scope (public/exported symbols minimum)
@@ -44,6 +47,7 @@ The validator scans:
 - Aligned test runner naming across languages
 
 ### Version 1.1 (2025-12-28)
+
 - Added comprehensive exit-codes-contract.md shared reference
 - Enhanced validator with pragma support (`# noqa: EXITCODES`)
 - Added basic content validation for exit codes
@@ -57,6 +61,7 @@ The validator scans:
 - Made Permissions required for GitHub Actions workflows
 
 ### Version 1.0 (Initial)
+
 - Initial docstring contract system
 - Basic validation for presence of required sections
 - Language-specific contracts for Bash, PowerShell, Python, Perl, Rust, YAML
@@ -64,6 +69,7 @@ The validator scans:
 ## Language Contracts
 
 Each language has its own contract document that specifies:
+
 - **Required semantic sections** (what concepts must be documented)
 - **Language-specific formatting rules** (how to express those concepts idiomatically)
 - **Templates** (copy/paste starting points)
@@ -123,6 +129,7 @@ Every script's documentation must cover these concepts (using idiomatic section 
 Every function, class, method, and subroutine must be documented. See **[symbol-level-contracts.md](./symbol-level-contracts.md)** for detailed requirements per language.
 
 **Minimum requirements:**
+
 - Functions/methods: Purpose, parameters, return value
 - Classes/structs: Purpose, attributes/fields
 - Public APIs: Full documentation including examples
@@ -145,6 +152,7 @@ This table maps the required semantic concepts to their language-specific keywor
 | **Notes** | `NOTES:` | `.NOTES` | `Notes` section | `=head1 NOTES` | `//! # Contract References` or notes | `# Notes:` |
 
 **Key observations:**
+
 - Exit codes have different homes in different languages (dedicated section in most, embedded in description for PowerShell/YAML)
 - Usage is sometimes combined with examples (Rust, PowerShell)
 - Environment variables may be grouped with other inputs (Bash) or separate (most languages)
@@ -156,6 +164,7 @@ Refer to the [exit-codes-contract.md](./exit-codes-contract.md) for canonical ex
 YAML files don't have formal docstrings, but use **top-of-file comment headers** as their documentation contract.
 
 GitHub Actions workflows and other YAML configs must include:
+
 - **Workflow / File name**
 - **Purpose**
 - **Usage / Triggers**
@@ -184,15 +193,18 @@ This means **any new script added anywhere in the repository** will be validated
 ## Validator
 
 The validator (`scripts/validate_docstrings.py`) performs lightweight checks:
+
 - **Presence** of a docstring/comment block near the top of file
 - **Presence** of required semantic sections (regex-based)
 
 It does **not** validate:
+
 - Content quality or accuracy
 - Deep grammar or formatting
 - Runtime behavior
 
 **Actionable errors:** When validation fails, the validator prints:
+
 - File path
 - Which section(s) are missing
 - What was expected (short snippet)
@@ -209,11 +221,13 @@ It does **not** validate:
 ## CI Integration
 
 The workflow `.github/workflows/docstring-contract.yml` runs on:
+
 - Pull requests (affecting scripts, docs, contracts, or the validator)
 - Pushes to `main`
 - Manual dispatch
 
 **Exit behavior:**
+
 - Exit 0: All files conform
 - Exit non-zero: Violations detected (see logs for details)
 
@@ -224,6 +238,7 @@ To add a new language to the docstring contract system:
 ### 1. Create the Contract Document
 
 Create a new file `docs/contributing/docstring-contracts/<language>.md` with the following structure:
+
 - **Language name and file extensions**
 - **Purpose** - Why this language needs documentation standards
 - **Required Semantic Sections** - Map the 8 core concepts to language-specific keywords
@@ -299,6 +314,7 @@ The existing `.github/workflows/docstring-contract.yml` will automatically pick 
 ### 6. Document Validator Behavior
 
 Add a note to your language contract document showing:
+
 - What the validator checks for
 - Example validation error messages
 - How to run validation locally
@@ -319,6 +335,7 @@ environment variables, exit codes, examples, and notes.
 ### Language-Specific Prompts
 
 **For Bash scripts:**
+
 ```
 Create a Bash script with proper M0 contract docstring.
 Use the template from docs/contributing/docstring-contracts/bash.md.
@@ -327,6 +344,7 @@ OUTPUTS with exit codes, EXAMPLES, and NOTES sections.
 ```
 
 **For Python scripts:**
+
 ```
 Create a Python 3 script with module docstring following
 docs/contributing/docstring-contracts/python.md. Use triple quotes, include Purpose,
@@ -335,6 +353,7 @@ and Notes sections in reStructuredText style.
 ```
 
 **For PowerShell scripts:**
+
 ```
 Create a PowerShell script with comment-based help following
 docs/contributing/docstring-contracts/powershell.md. Include .SYNOPSIS, .DESCRIPTION,
@@ -343,6 +362,7 @@ in .DESCRIPTION.
 ```
 
 **For Perl scripts:**
+
 ```
 Create a Perl script with POD documentation following
 docs/contributing/docstring-contracts/perl.md. Include =head1 NAME, SYNOPSIS, DESCRIPTION,
@@ -351,6 +371,7 @@ End with =cut.
 ```
 
 **For Rust code:**
+
 ```
 Create a Rust module with rustdoc comments following
 docs/contributing/docstring-contracts/rust.md. Use //! for module docs with # Purpose,
@@ -359,6 +380,7 @@ docs/contributing/docstring-contracts/rust.md. Use //! for module docs with # Pu
 ```
 
 **For YAML workflows:**
+
 ```
 Create a GitHub Actions workflow with header documentation following
 docs/contributing/docstring-contracts/yaml.md. Include Workflow, Purpose, Triggers,
@@ -368,6 +390,7 @@ Dependencies, Outputs, and Notes sections as comments at the top.
 ### Validation Prompts
 
 After generating code:
+
 ```
 Verify this [language] script conforms to docs/contributing/docstring-contracts/[language].md.
 Check all required sections are present and properly formatted.
@@ -384,16 +407,19 @@ See docs/contributing/docstring-contracts/[language].md for the contract.
 ### Common AI Prompting Mistakes
 
 ❌ **Too vague:** "Add documentation to this script"
+
 - AI may use generic/incomplete documentation
 
 ✅ **Specific contract reference:** "Add Bash docstring following docs/contributing/docstring-contracts/bash.md with all required sections"
 
 ❌ **Missing exit codes:** "Document this function"
+
 - Exit codes often overlooked
 
 ✅ **Explicit exit codes:** "Document with exit codes: 0=success, 1=failure, 127=not found per exit-codes-contract.md"
 
 ❌ **No validation check:** Accepting AI output without verification
+
 - May be incomplete or non-conformant
 
 ✅ **Request validation:** "Generate script and verify it passes scripts/validate_docstrings.py"
@@ -401,6 +427,7 @@ See docs/contributing/docstring-contracts/[language].md for the contract.
 ### Example: Full Copilot Workflow
 
 1. **Generate with contract:**
+
    ```
    @workspace Create a Bash wrapper script for safe-run following
    docs/contributing/docstring-contracts/bash.md. Include binary discovery, all required
@@ -408,17 +435,20 @@ See docs/contributing/docstring-contracts/[language].md for the contract.
    ```
 
 2. **Validate:**
+
    ```
    @terminal Run python3 scripts/validate_docstrings.py on the new script
    ```
 
 3. **Fix violations:**
+
    ```
    @workspace The validator reports missing OUTPUTS section.
    Add OUTPUTS with exit codes 0, 1, 127 per docs/contributing/docstring-contracts/bash.md.
    ```
 
 4. **Verify examples:**
+
    ```
    @workspace Add 2 more examples to the EXAMPLES section showing
    environment variable overrides and error cases.

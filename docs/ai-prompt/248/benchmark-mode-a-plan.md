@@ -46,6 +46,7 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
 **Status of Previous Fix:** The exit code 19 issue related to actionlint detection has been resolved (tools can now be verified correctly). However, the fresh installation workflow (Mode A) remains blocked by the venv creation issue.
 
 **Required Fix:** The Rust bootstrapper needs to be updated to:
+
 1. Detect if `.venv` exists
 2. Create `.venv` if it doesn't exist (using `python3 -m venv .venv` or equivalent)
 3. Ensure pip operations run within the venv context even if venv was just created
@@ -70,6 +71,7 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
 ### Preparation Steps
 
 1. **Warm caches (CRITICAL)**
+
    ```bash
    # Run Bash bootstrapper once to populate all caches
    ./scripts/bootstrap-repo-lint-toolchain.sh
@@ -82,6 +84,7 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
    ```
 
 2. **Verify caches are warm**
+
    ```bash
    # Check pip cache
    ls ~/.cache/pip/
@@ -109,6 +112,7 @@ rm -rf .venv
 ### Benchmark Execution (Bash)
 
 **Command:**
+
 ```bash
 hyperfine \
     --warmup 1 \
@@ -121,6 +125,7 @@ hyperfine \
 ```
 
 **Parameters:**
+
 - `--warmup 1`: One warmup run (caches already warm from preparation)
 - `--runs 5`: Five measured runs (less than Mode B because installation is slower)
 - `--prepare 'rm -rf .venv'`: Remove venv before each run to ensure fresh install
@@ -131,6 +136,7 @@ hyperfine \
 ### Benchmark Execution (Rust)
 
 **Command (BLOCKED - for reference):**
+
 ```bash
 hyperfine \
     --warmup 1 \
@@ -159,6 +165,7 @@ hyperfine \
 ### Data to Capture
 
 For each bootstrapper, capture:
+
 - **Mean time** (average of 5 runs)
 - **Standard deviation** (measure of consistency)
 - **Min/Max times** (identify outliers)
@@ -181,6 +188,7 @@ For each bootstrapper, capture:
 **Estimated:** 3-8 minutes per run (varies by system and cache state)
 
 **Components:**
+
 - Venv creation: ~3-5 seconds
 - Python packages: ~30-60 seconds
 - System tools: ~1-3 minutes (varies by package manager)
@@ -193,11 +201,13 @@ For each bootstrapper, capture:
 **Estimated:** 1-4 minutes per run (parallel execution should be faster)
 
 **Potential Advantages:**
+
 - Parallel installation of independent tools
 - Better progress tracking
 - Optimized dependency resolution
 
 **Potential Disadvantages:**
+
 - Requires pre-existing venv (current blocker)
 - May have different caching behavior
 
@@ -210,6 +220,7 @@ For each bootstrapper, capture:
 **Problem:** Caches may be invalidated between runs
 
 **Mitigation:**
+
 1. Run all warmup steps before starting benchmarks
 2. Monitor cache directories during benchmark
 3. If cache invalidation detected, restart benchmark suite
@@ -219,6 +230,7 @@ For each bootstrapper, capture:
 **Problem:** Background processes may affect timing
 
 **Mitigation:**
+
 1. Close unnecessary applications before benchmarking
 2. Run benchmarks during low-activity periods
 3. Use `nice` or `ionice` to deprioritize other processes if needed
@@ -229,6 +241,7 @@ For each bootstrapper, capture:
 **Problem:** Even with warm caches, some operations may hit network
 
 **Mitigation:**
+
 1. Ensure all packages are fully cached before starting
 2. Run benchmarks on stable network connection
 3. If network errors occur, exclude that run and re-run
@@ -238,6 +251,7 @@ For each bootstrapper, capture:
 **Problem:** SSD vs HDD, file system type can affect results
 
 **Mitigation:**
+
 1. Document hardware specs in results
 2. Run benchmarks on same hardware for both bootstrappers
 3. Note file system type (ext4, apfs, ntfs, etc.) in results
@@ -337,6 +351,7 @@ Create/update: `docs/ai-prompt/235/235-dev-benchmark-mode-a-results.md`
 ### Multi-Platform Testing
 
 Run Mode A benchmarks on:
+
 - [ ] Linux x86_64 (Ubuntu, Debian, Fedora)
 - [ ] Linux ARM64 (Raspberry Pi, cloud ARM instances)
 - [ ] macOS x86_64 (Intel Macs)
@@ -345,6 +360,7 @@ Run Mode A benchmarks on:
 ### Multi-Profile Testing
 
 Run Mode A benchmarks for all profiles:
+
 - [ ] `--profile dev` (default)
 - [ ] `--profile ci` (minimal)
 - [ ] `--profile full` (everything)
@@ -352,6 +368,7 @@ Run Mode A benchmarks for all profiles:
 ### Cold vs Warm Comparison
 
 Run Mode A benchmarks with:
+
 - [ ] Cold caches (first install ever)
 - [ ] Warm caches (subsequent installs)
 - [ ] Compare the difference to understand cache impact

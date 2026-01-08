@@ -39,6 +39,7 @@ Check if `./dist/<os>/<arch>/<tool>` exists relative to the repository root.
 **Use case:** CI workflows with pre-built binaries
 
 Platform-specific paths:
+
 - Linux: `./dist/linux/x86_64/safe-run`
 - macOS (Intel): `./dist/macos/x86_64/safe-run`
 - macOS (ARM): `./dist/macos/aarch64/safe-run`
@@ -104,7 +105,7 @@ For more information, see:
 
 Wrappers MUST pass all arguments to the Rust binary **without modification or interpretation**.
 
-### ✅ Correct:
+### ✅ Correct
 
 ```bash
 # Bash wrapper
@@ -124,7 +125,7 @@ result = subprocess.run([binary_path] + sys.argv[1:])
 sys.exit(result.returncode)
 ```
 
-### ❌ Incorrect:
+### ❌ Incorrect
 
 ```bash
 # DO NOT parse or interpret arguments
@@ -137,7 +138,7 @@ fi
 
 Wrappers MUST preserve the exit code from the Rust binary.
 
-### ✅ Correct:
+### ✅ Correct
 
 ```bash
 # Bash

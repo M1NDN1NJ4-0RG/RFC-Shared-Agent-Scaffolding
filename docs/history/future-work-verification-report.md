@@ -1,7 +1,7 @@
 # future-work.md Verification Report
 
-**Date:** 2025-12-28  
-**Reporter:** GitHub Copilot Agent  
+**Date:** 2025-12-28
+**Reporter:** GitHub Copilot Agent
 **Source Document:** `docs/future-work.md` (Last Updated: 2025-12-27)
 
 ## Executive Summary
@@ -11,6 +11,7 @@ This report verifies the current implementation status of all items documented i
 **Note on Line Numbers:** This report includes specific line number references for verification purposes. These references are accurate as of commit `78df11a` (2025-12-28) but may become stale if code is refactored. When in doubt, use file search or grep to locate the referenced code sections.
 
 **Key Findings:**
+
 - **FW-001**: ✅ **IMPLEMENTED** - Signal handling exists but test remains incomplete
 - **FW-002**: ✅ **ACCURATE** - safe-check is scaffolding only
 - **FW-003**: ✅ **ACCURATE** - safe-archive is scaffolding only
@@ -38,6 +39,7 @@ From future-work.md:
 **File: `rust/src/safe_run.rs`**
 
 1. **Signal handler registration (lines 184-187):**
+
 ```rust
 flag::register(SIGTERM, Arc::clone(&sigterm_received))
     .map_err(|e| format!("Failed to register SIGTERM handler: {}", e))?;
@@ -45,7 +47,8 @@ flag::register(SIGINT, Arc::clone(&sigint_received))
     .map_err(|e| format!("Failed to register SIGINT handler: {}", e))?;
 ```
 
-2. **Signal handling loop (lines 256-300):**
+1. **Signal handling loop (lines 256-300):**
+
 ```rust
 let exit_status = loop {
     // Check if we received a signal - check SIGINT first (more specific)
@@ -96,7 +99,8 @@ let exit_status = loop {
     // ... continues polling for child exit
 ```
 
-3. **ABORTED log creation (line 279):**
+1. **ABORTED log creation (line 279):**
+
 ```rust
 let log_path = save_log(
     &log_dir,
@@ -108,7 +112,8 @@ let log_path = save_log(
 )?;
 ```
 
-4. **Correct exit codes (lines 295-299):**
+1. **Correct exit codes (lines 295-299):**
+
 ```rust
 let exit_code = if got_sigint {
     130 // 128 + SIGINT (2)
@@ -264,7 +269,8 @@ fn archive_command(&self, _command: &[String]) -> Result<i32, String> {
 **File: `rust/tests/conformance.rs`**
 
 Confirmed 4 ignored tests for safe-archive:
-- Line 561: `test_safe_archive_001_basic` 
+
+- Line 561: `test_safe_archive_001_basic`
 - Line 618: `test_safe_archive_002_compression_formats`
 - Line 687: `test_safe_archive_003_no_clobber_auto_suffix`
 - Line 751: `test_safe_archive_004_no_clobber_strict`
@@ -293,6 +299,7 @@ From future-work.md:
 **File: `rust/Cargo.toml`**
 
 No GitHub API client library present in dependencies. Current dependencies:
+
 ```toml
 [dependencies]
 clap = { version = "4.5", features = ["derive", "env"] }
@@ -310,6 +317,7 @@ No `octocrab`, `github-rs`, `wiremock`, or `mockito` crates present.
 **File: `rust/tests/conformance.rs`**
 
 Confirmed 3 ignored tests for preflight:
+
 - Line 838: `test_preflight_001_success`
 - Line 873: `test_preflight_002_auth_failure`
 - Line 907: `test_preflight_003_ruleset_not_found`

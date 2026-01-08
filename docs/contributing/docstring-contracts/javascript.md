@@ -1,7 +1,7 @@
 # JavaScript/Node.js Docstring Contract (DRAFT)
 
-**Language:** JavaScript/Node.js (`.js`, `.mjs`)  
-**Canonical style:** JSDoc comments using `/** ... */`  
+**Language:** JavaScript/Node.js (`.js`, `.mjs`)
+**Canonical style:** JSDoc comments using `/** ... */`
 **Status:** DRAFT - Not yet enforced by validator
 
 ## Purpose
@@ -299,6 +299,7 @@ npx eslint script.js --plugin jsdoc
 **DRAFT** - This contract is not yet enforced. Feedback welcome before official adoption.
 
 To adopt this contract:
+
 1. Add JavaScript file patterns to validator
 2. Implement JavaScriptValidator class
 3. Add test coverage

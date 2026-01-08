@@ -54,24 +54,29 @@ Each test vector contains:
 ## M0 Contract Coverage
 
 ### M0-P1-I1: safe-run Logging Semantics
+
 - Split stdout/stderr with `=== STDOUT ===` and `=== STDERR ===` markers
 - **Vectors:** `safe-run-002`, `safe-run-005`
 
 ### M0-P1-I2: Failure Log File Naming
+
 - Format: `{ISO8601}-pid{PID}-{STATUS}.log`
 - **Vectors:** `safe-run-002`, `safe-run-003`, `safe-run-005`
 
 ### M0-P1-I3: safe-archive No-Clobber Semantics
+
 - Default: auto-suffix on collision
 - Opt-in strict: fail on collision
 - **Vectors:** `safe-archive-003`, `safe-archive-004`
 
 ### M0-P2-I1: Auth Method & Header Semantics
+
 - `Authorization: Bearer <token>` header format
 - Auth precedence: CLI > env > config > gh auth
 - **Vectors:** `preflight-001`, `preflight-002`
 
 ### M0-P2-I2: Exit Code Taxonomy
+
 - Stable exit code ranges for error classes
 - **Vectors:** All vectors validate exit codes
 
@@ -91,6 +96,7 @@ Each test vector contains:
 ### For CI/CD
 
 Conformance tests **MUST** pass for all supported language bundles:
+
 - Bash
 - Python 3
 - Perl

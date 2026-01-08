@@ -1,11 +1,12 @@
 # Issue #278 - Phase 3 Implementation Plan
 
-**Created:** 2026-01-07  
+**Created:** 2026-01-07
 **Purpose:** Detailed implementation plan for Phase 3 remaining work
 
 ## Context
 
 Phase 3 has three MANDATORY large-scope items that involve:
+
 - Creating new internal `repo_lint` modules
 - Writing comprehensive test coverage (MANDATORY, NO SHORTCUTS per issue)
 - Migrating/consolidating existing functionality
@@ -18,10 +19,12 @@ Each item is substantial and requires focused implementation.
 ## Phase 3.3: PEP 526 Enforcement (Evaluate Need)
 
 ### Current Status
+
 - **Ruff ANN* rules enabled** for function annotations (Phase 3.2 complete)
 - **Question:** Does Ruff enforce PEP 526 for module-level and class attribute annotations?
 
 ### Investigation Needed
+
 1. Test if Ruff ANN* rules cover module-level variable annotations
 2. Test if Ruff ANN* rules cover class attribute annotations
 3. If gaps exist, evaluate:
@@ -30,11 +33,13 @@ Each item is substantial and requires focused implementation.
    - Option C: Use mypy for full static type checking
 
 ### Decision Criteria
+
 - If Ruff covers module-level + class attributes: NO custom checker needed (preferred)
 - If Ruff has gaps: Implement minimal custom checker for the gaps only
 - Avoid reinventing functionality that standard tools provide
 
 ### Estimated Scope
+
 - **If Ruff covers it:** 0 hours (already done in Phase 3.2)
 - **If custom checker needed:** ~4-6 hours (AST parsing + tests + integration)
 
@@ -43,9 +48,11 @@ Each item is substantial and requires focused implementation.
 ## Phase 3.4: Docstring Validation Consolidation (MANDATORY)
 
 ### Goal
+
 Move `scripts/validate_docstrings.py` functionality into `tools/repo_lint/docstrings/` as a first-class internal module.
 
 ### Current State
+
 - **Docstring validation:** External script at `scripts/validate_docstrings.py`
 - **Called by:** `tools/repo_lint/runners/python_runner.py` (subprocess)
 - **Modules:** `scripts/docstring_validators/*.py` (9 files)
@@ -54,9 +61,11 @@ Move `scripts/validate_docstrings.py` functionality into `tools/repo_lint/docstr
 ### Implementation Plan
 
 #### 3.4.1: Current State Analysis (MANDATORY)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [x] Locate `scripts/validate_docstrings.py` (DONE - already viewed)
 - [ ] Map all imports and dependencies
 - [ ] Document current entrypoints in `repo_lint`
@@ -66,9 +75,11 @@ Move `scripts/validate_docstrings.py` functionality into `tools/repo_lint/docstr
 **Deliverable:** Section in `278-summary.md` documenting current docstring validation architecture
 
 #### 3.4.2: Design Internal Module (MANDATORY)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [ ] Create `tools/repo_lint/docstrings/` package structure
 - [ ] Design internal API for `repo_lint` to call directly (no subprocess)
 - [ ] Ensure stable machine-readable results for CI
@@ -77,9 +88,11 @@ Move `scripts/validate_docstrings.py` functionality into `tools/repo_lint/docstr
 **Deliverable:** Architecture doc or design comments in `278-next-steps.md`
 
 #### 3.4.3: Migration Plan (NO BREAKAGE)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [ ] Refactor validator implementation into `tools/repo_lint/docstrings/`
 - [ ] Update `tools/repo_lint/runners/*_runner.py` to use internal module
 - [ ] Keep `scripts/validate_docstrings.py` as thin compatibility wrapper (optional)
@@ -88,9 +101,11 @@ Move `scripts/validate_docstrings.py` functionality into `tools/repo_lint/docstr
 **Deliverable:** Migrated code, backwards-compatible behavior
 
 #### 3.4.4: EXTREMELY COMPREHENSIVE Tests (MANDATORY, NO SHORTCUTS)
+
 **Status:** NOT STARTED
 
 **Requirements (per issue):**
+
 - [ ] Unit tests for:
   - [ ] Docstring parsing/discovery
   - [ ] Each rule with multiple failing + passing cases
@@ -112,9 +127,11 @@ Move `scripts/validate_docstrings.py` functionality into `tools/repo_lint/docstr
 ## Phase 3.5: Markdown Contracts + Linting Support (MANDATORY)
 
 ### Goal
+
 Add first-class Markdown linting support to `repo_lint` with canonical contract documentation.
 
 ### Current State
+
 - **Markdown linting:** NOT enforced
 - **Copilot sessions:** Start with Markdown formatting/linting available
 - **Decision (Locked):** Use **markdownlint-cli2** per issue
@@ -122,9 +139,11 @@ Add first-class Markdown linting support to `repo_lint` with canonical contract 
 ### Implementation Plan
 
 #### 3.5.1: Define Markdown Contract (MANDATORY)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [ ] Create `docs/contributing/markdown-contracts.md` (canonical)
 - [ ] Define contract scope (which files enforced, exclusions)
 - [ ] Define explicit ruleset (NO VAGUE RULES):
@@ -139,9 +158,11 @@ Add first-class Markdown linting support to `repo_lint` with canonical contract 
 **Deliverable:** `docs/contributing/markdown-contracts.md` merged
 
 #### 3.5.2: Choose Enforcement Mechanism (MANDATORY)
+
 **Status:** NOT STARTED (but decision locked: markdownlint-cli2)
 
 **Tasks:**
+
 - [ ] Install/configure `markdownlint-cli2` (Node dependency)
 - [ ] Create `.markdownlint-cli2.jsonc` config
 - [ ] Map contract rules to linter config explicitly
@@ -150,9 +171,11 @@ Add first-class Markdown linting support to `repo_lint` with canonical contract 
 **Deliverable:** markdownlint-cli2 config committed with mapping to contract
 
 #### 3.5.3: Integrate Markdown Checks into `repo_lint` (MANDATORY)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [ ] Add Markdown runner to `repo_lint` (or extend existing runner architecture)
 - [ ] Discover Markdown files (`*.md`) respecting exclusions
 - [ ] Run linter deterministically
@@ -163,9 +186,11 @@ Add first-class Markdown linting support to `repo_lint` with canonical contract 
 **Deliverable:** Markdown linting runs under `repo-lint check --ci`
 
 #### 3.5.4: Repo Baseline Cleanup (MANDATORY)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [ ] Run Markdown linting across repo
 - [ ] Fix all Markdown files to conform (or add documented exclusions)
 - [ ] Ensure `repo-lint check --ci` is green after cleanup
@@ -173,9 +198,11 @@ Add first-class Markdown linting support to `repo_lint` with canonical contract 
 **Deliverable:** Repo-wide Markdown conformance achieved
 
 #### 3.5.5: EXTREMELY COMPREHENSIVE Tests (MANDATORY, NO SHORTCUTS)
+
 **Status:** NOT STARTED
 
 **Requirements (per issue):**
+
 - [ ] Unit tests for:
   - [ ] Markdown file discovery + exclusion logic
   - [ ] Config loading and contract-to-config mapping
@@ -196,9 +223,11 @@ Add first-class Markdown linting support to `repo_lint` with canonical contract 
 ## Phase 3.6: TOML Contracts + Linting Support (MANDATORY)
 
 ### Goal
+
 Add first-class TOML linting support to `repo_lint` with canonical contract documentation.
 
 ### Current State
+
 - **TOML linting:** NOT enforced
 - **Copilot sessions:** Start with TOML linting available
 - **Decision (Locked):** Use **Taplo** per issue
@@ -206,9 +235,11 @@ Add first-class TOML linting support to `repo_lint` with canonical contract docu
 ### Implementation Plan
 
 #### 3.6.1: Define TOML Contract (MANDATORY)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [ ] Create `docs/contributing/toml-contracts.md` (canonical)
 - [ ] Define contract scope (which files enforced, exclusions)
 - [ ] Define explicit ruleset (NO VAGUE RULES):
@@ -223,9 +254,11 @@ Add first-class TOML linting support to `repo_lint` with canonical contract docu
 **Deliverable:** `docs/contributing/toml-contracts.md` merged
 
 #### 3.6.2: Choose Enforcement Mechanism (MANDATORY)
+
 **Status:** NOT STARTED (but decision locked: Taplo)
 
 **Tasks:**
+
 - [ ] Install/configure **Taplo** (`taplo fmt` / `taplo check`)
 - [ ] Create `taplo.toml` config
 - [ ] Map contract rules to tool config explicitly
@@ -234,9 +267,11 @@ Add first-class TOML linting support to `repo_lint` with canonical contract docu
 **Deliverable:** Taplo config committed with mapping to contract
 
 #### 3.6.3: Integrate TOML Checks into `repo_lint` (MANDATORY)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [ ] Add TOML runner to `repo_lint` (or extend existing architecture)
 - [ ] Discover TOML files (`*.toml`) respecting exclusions
 - [ ] Run Taplo deterministically
@@ -247,9 +282,11 @@ Add first-class TOML linting support to `repo_lint` with canonical contract docu
 **Deliverable:** TOML linting runs under `repo-lint check --ci`
 
 #### 3.6.4: Repo Baseline Cleanup (MANDATORY)
+
 **Status:** NOT STARTED
 
 **Tasks:**
+
 - [ ] Run TOML linting/formatting across repo
 - [ ] Fix all TOML files to conform (or add documented exclusions)
 - [ ] Ensure `repo-lint check --ci` is green after cleanup
@@ -257,9 +294,11 @@ Add first-class TOML linting support to `repo_lint` with canonical contract docu
 **Deliverable:** Repo-wide TOML conformance achieved
 
 #### 3.6.5: EXTREMELY COMPREHENSIVE Tests (MANDATORY, NO SHORTCUTS)
+
 **Status:** NOT STARTED
 
 **Requirements (per issue):**
+
 - [ ] Unit tests for:
   - [ ] TOML file discovery + exclusion logic
   - [ ] Config loading and contract-to-config mapping
@@ -312,20 +351,24 @@ Given the scope, the next session should:
 **Current branch:** `copilot/enforce-python-type-annotations`
 
 **What's done:**
+
 - Phase 0: Preflight (complete)
 - Phase 1: Current contracts + baseline (complete)
 - Phase 2: Policy documentation (complete)
 - Phase 3.2: Ruff ANN* rules enabled with per-file-ignores (complete)
 
 **What's next:**
+
 - Phase 3.3: Quick investigation (30 min)
 - Phase 3.4, 3.5, 3.6: Choose one and implement fully
 
 **Key files to review:**
+
 - `docs/ai-prompt/278/278-python-annotation-inventory.md` - Inventory
 - `docs/contributing/python-typing-policy.md` - Policy
 - `pyproject.toml` - Ruff ANN* configuration
 - `tools/repo_lint/runners/python_runner.py` - Current docstring validation entrypoint
 
 **Pre-commit gate reminder:**
+
 - If changing any `*.py`, `*.sh`, `*.pl`, `*.ps1`, `*.rs` in `tools/` or `scripts/`: run `repo-lint check --ci` until exit 0 before committing

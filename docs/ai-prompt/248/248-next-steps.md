@@ -24,11 +24,13 @@ None. Issue #248 is complete with full benchmark results.
 After fixing the Rust bootstrapper's actionlint detection issue, benchmarks were successfully re-run:
 
 **Results:**
+
 - Bash `repo-lint check --ci`: **43.883s ± 0.402s** (full linting suite)
 - Rust `bootstrap verify`: **1.362s ± 0.006s** (tool availability check)
 - **Speedup:** Rust is ~32x faster, but performs a different operation
 
 **Key Findings:**
+
 - Both systems now fully functional
 - Extremely consistent performance (Rust: σ=0.006s, Bash: σ=0.402s)
 - Parity achieved for verification workflows
@@ -39,11 +41,13 @@ After fixing the Rust bootstrapper's actionlint detection issue, benchmarks were
 **Problem:** The Rust bootstrapper's `verify` command was failing with exit code 19 because actionlint (installed via `go install` to `~/go/bin`) was not found in PATH.
 
 **Solution:** Updated `ActionlintInstaller::detect()` to check multiple locations:
+
 - PATH lookup (existing behavior)
 - `$HOME/go/bin/actionlint` (default go install location)
 - `$GOPATH/bin/actionlint` (custom GOPATH if set)
 
 Also fixed version parsing to handle:
+
 - Multi-line output (actionlint outputs 3 lines)
 - 'v' prefix in version strings (e.g., "v1.7.10")
 
@@ -58,16 +62,19 @@ This issue is complete with all phases implemented and benchmarks successfully e
 If resuming work on this issue in a new session:
 
 1. **Read compliance requirements first**
+
    ```bash
    cat docs/contributing/session-compliance-requirements.md
    ```
 
 2. **Run session-start.sh**
+
    ```bash
    ./scripts/session-start.sh
    ```
 
 3. **Activate environment**
+
    ```bash
    source .venv/bin/activate && \
    PERL_HOME="$HOME/perl5" && \
@@ -84,6 +91,7 @@ If resuming work on this issue in a new session:
    - Continue from appropriate phase
 
 5. **Check git status**
+
    ```bash
    git log --oneline -12  # See last 12 commits
    git status             # Check current state

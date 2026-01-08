@@ -1,7 +1,7 @@
 # AI Agent Constraints and Safety Rules
 
-**Status:** Canonical source of truth for AI agent behavior constraints  
-**Last Updated:** 2025-12-30  
+**Status:** Canonical source of truth for AI agent behavior constraints
+**Last Updated:** 2025-12-30
 **Applies To:** All AI agents, code assistants, and automated tools working in this repository
 
 ## Overview
@@ -72,9 +72,11 @@ If an AI agent believes a dangerous operation is necessary to complete a task:
 
 1. **STOP immediately** - do not proceed with the operation
 2. **Comment on the PR/issue** with the exact opening line:
+
    ```
    **BLOCKED — HUMAN ACTION REQUIRED**
    ```
+
 3. **Present minimal options** for how to proceed:
    - Explain why the dangerous operation seems necessary
    - List 2-3 alternative approaches (including manual steps)
@@ -83,6 +85,7 @@ If an AI agent believes a dangerous operation is necessary to complete a task:
 5. **Wait for explicit human approval** before proceeding
 
 **Example escalation:**
+
 ```
 **BLOCKED — HUMAN ACTION REQUIRED**
 

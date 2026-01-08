@@ -1,7 +1,7 @@
 # Phase 2.9: Integration & YAML-First Contracts - Audit Report
 
-**Date:** 2025-12-31  
-**Issue:** #160 Phase 2.9  
+**Date:** 2025-12-31
+**Issue:** #160 Phase 2.9
 **Auditor:** AI Agent (Copilot)
 
 ---
@@ -9,6 +9,7 @@
 ## Executive Summary
 
 This audit identifies:
+
 1. **Integration Status** of all helper scripts and tools
 2. **Hardcoded Configuration** that should be migrated to YAML
 3. **Contract Violations** that need remediation
@@ -33,6 +34,7 @@ This audit identifies:
 | `scripts/docstring_validators/*.py` | `validate_docstrings.py` | ✅ Integrated | Modular validators, imported by main script |
 
 **Evidence:**
+
 - `tools/repo_lint/runners/python_runner.py:273-290` - Calls `validate_docstrings.py --language python`
 - `tools/repo_lint/runners/bash_runner.py:217-234` - Calls `validate_docstrings.py --language bash`
 - `tools/repo_lint/runners/perl_runner.py:135-152` - Calls `validate_docstrings.py --language perl`
@@ -67,6 +69,7 @@ This audit identifies:
 **Current State:**
 
 1. **`tools/repo_lint/install/version_pins.py`** (Python code):
+
    ```python
    PYTHON_TOOLS = {
        "black": "24.10.0",
@@ -80,6 +83,7 @@ This audit identifies:
    ```
 
 2. **`conformance/repo-lint/repo-lint-linting-rules.yaml`** (YAML config):
+
    ```yaml
    languages:
      python:
@@ -93,6 +97,7 @@ This audit identifies:
    ```
 
 3. **`pyproject.toml`** (Package dependencies):
+
    ```toml
    [project.optional-dependencies]
    lint = [
@@ -106,6 +111,7 @@ This audit identifies:
 **Contract Violation:** Multiple sources of truth for same data.
 
 **Remediation (REQUIRED for Phase 2.9):**
+
 1. Make `repo-lint-linting-rules.yaml` the SINGLE source of truth
 2. Update `version_pins.py` to LOAD from YAML (not hardcode)
 3. Keep `pyproject.toml` for package installation, but sync from YAML programmatically or via docs/process
@@ -116,6 +122,7 @@ This audit identifies:
 **Current State:**
 
 **`scripts/validate_docstrings.py` (lines 185-270):**
+
 ```python
 IN_SCOPE_PATTERNS = [
     "**/*.sh",
@@ -142,6 +149,7 @@ EXCLUDE_PATTERNS = [
 ```
 
 **`tools/repo_lint/runners/base.py` (lines 42-44):**
+
 ```python
 EXCLUDED_PATHS = [
     "conformance/repo-lint/unsafe-fix-fixtures/",
@@ -151,6 +159,7 @@ EXCLUDED_PATHS = [
 **Contract Violation:** Configuration is hardcoded, not YAML-first.
 
 **Remediation (REQUIRED for Phase 2.9):**
+
 1. Create new YAML config: `conformance/repo-lint/repo-lint-file-patterns.yaml`
 2. Migrate `IN_SCOPE_PATTERNS` and `EXCLUDE_PATTERNS` to YAML
 3. Update `validate_docstrings.py` to load patterns from YAML
@@ -244,6 +253,7 @@ EXCLUDED_PATHS = [
 ### 5.1 Phase 2.9 Scope (Minimal Changes)
 
 **INCLUDE in Phase 2.9:**
+
 1. ✅ Eliminate version duplication (version_pins.py → YAML loader)
 2. ✅ Create file-patterns YAML and migrate patterns
 3. ✅ Add deprecation warnings
@@ -251,6 +261,7 @@ EXCLUDED_PATHS = [
 5. ✅ Add tests for YAML loading
 
 **DEFER to Later Phases:**
+
 1. ❌ Integration of `validate-structure.sh` (Phase 3 polish)
 2. ❌ Integration of `verify-repo-references.sh` (Phase 3 polish)
 3. ❌ Exception rules YAML (Phase 2.6 centralized exceptions)
@@ -268,6 +279,7 @@ EXCLUDED_PATHS = [
 ### 5.3 Success Criteria
 
 Phase 2.9 is complete when:
+
 - ✅ No configuration duplication between Python and YAML
 - ✅ All reasonable configuration is in YAML files
 - ✅ Backward compatibility maintained with deprecation warnings
@@ -307,4 +319,3 @@ Phase 2.9 is complete when:
 3. Run pre-commit validation: `repo-lint check --ci`
 4. Request code review
 5. Merge and proceed to Phase 2.7
-

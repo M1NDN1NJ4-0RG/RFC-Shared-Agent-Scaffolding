@@ -1,34 +1,41 @@
 MUST READ: `.github/copilot-instructions.md` FIRST!
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 231 Overview
+
 Last Updated: 2026-01-06
 Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## Original Issue
 
 # Title
+
 Add `actionlint` to `bootstrap-repo-lint-toolchain.sh` (GitHub Actions workflow linting)
 
 ## Summary
+
 We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and optional toolchains (shell/powershell/perl). We need to add **actionlint** to the bootstrapper so GitHub Actions workflow YAML is linted consistently in CI and in Copilot agent sessions.
 
 ## Background / Why
+
 - The repo bootstrapper is intended to be run at the start of every Copilot agent session and then verified via `repo-lint check --ci`.
 - GitHub Actions workflows are part of the repository surface area. Without actionlint in the toolchain, workflow YAML can drift into "looks fine" but fails at runtime.
 
 ## Goals
+
 - Install `actionlint` automatically as part of the bootstrap flow (with sensible OS-specific behavior).
 - Ensure the install is **idempotent** (safe to run repeatedly).
 - Update documentation so humans and agents know actionlint is included and how to verify it.
 - Ensure the verification gate (`repo-lint check --ci`) continues to be the final "everything works" check.
 
 ## Non-Goals
+
 - Do not redesign CI workflows here.
 - Do not add new repo-lint rules beyond wiring in actionlint availability (unless a minimal hook is already planned/exists).
 
 ---
 
 ## Phase 1 — Script changes (`scripts/bootstrap-repo-lint-toolchain.sh`)
+
 - [ ] Add an `install_actionlint` helper that:
   - [ ] No-ops if `actionlint` is already available on PATH
   - [ ] Installs on **macOS** using Homebrew when available (`brew install actionlint`)
@@ -45,6 +52,7 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
   - [ ] If actionlint is required and cannot be installed, fail with a clear message and a stable exit code (either reuse "Shell toolchain installation failed" semantics or introduce a new specific exit code if that's consistent with the doc contract).
 
 ## Phase 2 — Documentation updates (`bootstrapper-toolchain-user-manual.md`)
+
 - [ ] Update "What Gets Installed":
   - [ ] Add `actionlint` to the appropriate section (required vs optional) and describe it as "GitHub Actions workflow linter".
 - [ ] Update "Verifying Setup" section to include:
@@ -52,6 +60,7 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
 - [ ] If a new flag is introduced, update "Command-Line Options" and all examples accordingly.
 
 ## Phase 3 — Verification / Tests
+
 - [ ] Run the bootstrapper end-to-end on at least one Linux environment and one macOS environment (where feasible):
   - [ ] `./scripts/bootstrap-repo-lint-toolchain.sh`
   - [ ] `source .venv/bin/activate`
@@ -63,16 +72,19 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
 ---
 
 ## Acceptance Criteria
+
 - [ ] `./scripts/bootstrap-repo-lint-toolchain.sh` installs (or confirms) `actionlint` and the command is available on PATH by the end of the run.
 - [ ] `bootstrapper-toolchain-user-manual.md` accurately documents actionlint as installed and provides a verification command.
 - [ ] The bootstrapper remains idempotent.
 - [ ] `repo-lint check --ci` passes after bootstrap in a clean environment.
 
 ## Notes / Implementation Guidance
+
 - Prefer **version pinning** for reproducibility (either a pinned `@vX.Y.Z` for `go install`, or a pinned Homebrew formula version strategy if that's already a repo pattern).
 - Keep output consistent with current verbose/quiet conventions and existing tool install patterns.
 
 ## Progress Tracker
+
 - [x] Phase 1: Script changes
   - [x] Added install_actionlint function
   - [x] Integrated as required toolchain (Phase 2.3)
@@ -94,7 +106,9 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
   - [x] All PR review comments addressed
 
 ## Session Notes (newest first)
+
 ### 2026-01-06 00:40 - New Session: Fail-Fast Hardening Plan Implementation
+
 - Read session compliance requirements document
 - Ran bootstrapper successfully: `./scripts/bootstrap-repo-lint-toolchain.sh --all` (exit 0)
 - Activated environment and verified repo-lint functional
@@ -111,6 +125,7 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
 - **Remaining work:** Phases 2.3-6 cover extensive refactoring (PowerShell, Perl, shell tools, ripgrep enforcement, verification hardening, tests, documentation, analysis, Rust migration plan)
 
 ### 2026-01-06 00:16 - Journal Creation
+
 - Created issue journals for Issue 231
 - All implementation work already completed in previous sessions
 - 7 commits total in PR

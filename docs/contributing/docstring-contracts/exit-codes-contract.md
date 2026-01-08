@@ -5,6 +5,7 @@
 ## Why Exit Codes Matter
 
 Exit codes are a universal language for process success/failure communication. Consistent exit code semantics across all languages ensure:
+
 - Predictable behavior in CI/CD pipelines
 - Reliable error detection in automation
 - Clear communication between wrapper scripts and canonical tools
@@ -15,6 +16,7 @@ Exit codes are a universal language for process success/failure communication. C
 All scripts and tools in this repository **MUST** use these exit code conventions:
 
 ### Exit Code 0: Success
+
 ```
 Meaning: Operation completed successfully
 When to use: Command executed without errors, all validations passed
@@ -22,11 +24,13 @@ Example: Test suite passed, file processed successfully, binary executed and com
 ```
 
 **Rules:**
+
 - Exit 0 only when operation fully succeeded
 - Do not exit 0 if warnings were suppressed
 - Do not exit 0 if partial success occurred (use exit 1 instead)
 
 ### Exit Code 1: General Failure
+
 ```
 Meaning: Operation failed, generic error
 When to use: 
@@ -38,11 +42,13 @@ Example: Test failures, command returned non-zero, validation contract violation
 ```
 
 **Rules:**
+
 - Use exit 1 as the default failure code
 - Prefer more specific codes (2, 127) when applicable
 - Exit 1 for validation failures, assertion failures, unexpected errors
 
 ### Exit Code 2: Invalid Usage / Missing Arguments
+
 ```
 Meaning: Invalid arguments, missing required parameters, usage error
 When to use:
@@ -54,11 +60,13 @@ Example: Missing required --file argument, invalid --format value, conflicting f
 ```
 
 **Rules:**
+
 - Exit 2 for argument parsing/validation failures
 - Print usage/help message to stderr before exiting
 - Distinguish from runtime failures (exit 1)
 
 ### Exit Code 127: Command Not Found
+
 ```
 Meaning: Binary, tool, or command not found
 When to use:
@@ -69,12 +77,14 @@ Example: safe-run wrapper cannot find canonical tool, missing system dependency
 ```
 
 **Rules:**
+
 - Exit 127 specifically for "not found" scenarios
 - Matches POSIX shell convention for command not found
 - Print actionable error with installation instructions
 - Suggest environment variable overrides (e.g., BINARY_PATH)
 
 ### Exit Codes 3-125: Reserved for Future Use
+
 ```
 Meaning: Reserved for tool-specific error codes
 When to use: Only when documented in tool's docstring
@@ -82,11 +92,13 @@ Example: Custom error codes for specific failure modes
 ```
 
 **Rules:**
+
 - Document any custom codes in tool's docstring/contract
 - Avoid unless you need fine-grained error distinction
 - Prefer exit 1 for most failures
 
 ### Exit Code 126: Permission Denied / Not Executable
+
 ```
 Meaning: Command found but cannot execute (permission denied)
 When to use: Binary exists but lacks execute permission
@@ -94,11 +106,13 @@ Example: Found tool binary but it's not executable
 ```
 
 **Rules:**
+
 - Use when binary exists but cannot be executed
 - Distinguish from 127 (not found)
 - Suggest chmod +x or permission fix
 
 ### Exit Codes 128+: Signal-Related Exits
+
 ```
 Meaning: Process terminated by signal
 Convention: 128 + signal_number
@@ -107,6 +121,7 @@ When to use: Automatically set by shell when process killed by signal
 ```
 
 **Rules:**
+
 - Do not explicitly use 128+ codes in your code
 - These are set automatically by the operating system
 - Preserve child process exit codes in this range when wrapping commands
@@ -114,6 +129,7 @@ When to use: Automatically set by shell when process killed by signal
 ## Language-Specific Guidance
 
 ### Bash
+
 ```bash
 # Success
 exit 0
@@ -137,6 +153,7 @@ exit $?
 ```
 
 ### Python
+
 ```python
 import sys
 
@@ -162,6 +179,7 @@ sys.exit(result.returncode)
 ```
 
 ### Perl
+
 ```perl
 # Success
 exit 0;
@@ -185,6 +203,7 @@ exit $? >> 8;
 ```
 
 ### PowerShell
+
 ```powershell
 # Success
 exit 0
@@ -208,6 +227,7 @@ exit $LASTEXITCODE
 ```
 
 ### Rust
+
 ```rust
 use std::process;
 
@@ -237,17 +257,22 @@ process::exit(status.code().unwrap_or(1));
 Every script **MUST** document its exit codes in its docstring/documentation:
 
 ### Minimum Documentation
+
 At minimum, document:
+
 - Exit code 0 (success)
 - Exit code 1 (general failure)
 
 ### Recommended Documentation
+
 Additionally document:
+
 - Exit code 2 (if argument parsing can fail)
 - Exit code 127 (if binary discovery can fail)
 - Any custom exit codes (3-125)
 
 ### Example (Bash)
+
 ```bash
 # OUTPUTS:
 #   Exit Codes:
@@ -257,6 +282,7 @@ Additionally document:
 ```
 
 ### Example (Python)
+
 ```python
 """
 Exit Codes
@@ -282,6 +308,7 @@ Wrapper scripts that invoke canonical tools **MUST**:
 4. **Propagate all codes 0-255**: Do not transform or map exit codes from child process
 
 ### Example Pattern
+
 ```bash
 # Find binary
 binary=$(find_binary) || exit 127

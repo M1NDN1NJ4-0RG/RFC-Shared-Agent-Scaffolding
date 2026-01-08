@@ -1,7 +1,7 @@
 # Symbol-Level Documentation Contracts
 
-**Version:** 1.0  
-**Last Updated:** 2025-12-29  
+**Version:** 1.0
+**Last Updated:** 2025-12-29
 **Purpose:** Define documentation requirements for functions, classes, methods, and other code symbols across all supported languages.
 
 ## Overview
@@ -9,6 +9,7 @@
 This document extends the file/module-level docstring contracts to cover **symbol-level documentation** - the documentation of individual functions, classes, methods, and language equivalents.
 
 **Scope:** This contract applies to all symbols in:
+
 - Production code (all public/exported symbols)
 - Test code (all test functions/methods)
 - Wrapper scripts (all functions)
@@ -21,12 +22,15 @@ This document extends the file/module-level docstring contracts to cover **symbo
 ## Enforcement Scope
 
 ### Minimum Enforcement (Phase 5.5)
+
 Document all **public/exported symbols**:
+
 - Public functions/methods (exposed API)
 - Exported wrapper entrypoints
 - Test functions/methods
 
 ### Recommended Enforcement (Future)
+
 Document all symbols including private helpers for maximum clarity.
 
 ---
@@ -366,6 +370,7 @@ The expanded `scripts/validate_docstrings.py` will:
 Symbols can be exempted from documentation requirements using pragma comments:
 
 ### Python
+
 ```python
 def internal_helper():  # noqa: D102
     """This function is exempt from full docstring requirements."""
@@ -373,6 +378,7 @@ def internal_helper():  # noqa: D102
 ```
 
 ### Bash
+
 ```bash
 # docstring-ignore: FUNCTION
 _internal_helper() {
@@ -381,6 +387,7 @@ _internal_helper() {
 ```
 
 ### Perl
+
 ```perl
 # noqa: POD
 sub _internal_helper {
@@ -389,6 +396,7 @@ sub _internal_helper {
 ```
 
 ### PowerShell
+
 ```powershell
 # noqa: HELP
 function Internal-Helper {
@@ -397,6 +405,7 @@ function Internal-Helper {
 ```
 
 ### Rust
+
 ```rust
 #[doc(hidden)]
 pub fn internal_helper() {
@@ -418,6 +427,7 @@ pub fn internal_helper() {
 6. **Scripts and tools** - Fix utility functions
 
 After each language batch:
+
 - Run linters for that language
 - Run wrapper tests (after Rust binary built)
 - Run conformance tests

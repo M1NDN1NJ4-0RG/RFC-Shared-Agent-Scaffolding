@@ -20,4 +20,4 @@
 #   (Note: May need additional configuration for musl target)
 
 [target.aarch64-unknown-linux-musl]
-linker = "aarch64-linux-gnu-gcc"
+  linker = "aarch64-linux-gnu-gcc"

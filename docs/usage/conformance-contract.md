@@ -136,11 +136,13 @@ Example: `safe-run-20240115-103000-a3f9b2.log`
 ### Log Content
 
 Event ledger mode (default):
+
 - Log file contains split sections (`=== STDOUT ===`, `=== STDERR ===`)
 - Log file contains event ledger between `--- BEGIN EVENTS ---` and `--- END EVENTS ---` markers
 - Event format: `[SEQ=N][STREAM] text`
 
 Merged view mode:
+
 - Log file contains merged stdout/stderr output
 - Optional: Include metadata header/footer
 

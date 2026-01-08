@@ -1,6 +1,6 @@
 # Issue #160 Implementation Plan - Based on Human Decisions
 
-**Last Updated:** 2025-12-31 07:10 UTC  
+**Last Updated:** 2025-12-31 07:10 UTC
 **Source:** `160-human-decisions-2.md` (Locked In Decisions)
 
 ---
@@ -34,11 +34,13 @@
 **Decision:** Phase 2.9 MUST be implemented BEFORE Phase 2.6-2.8 work proceeds.
 
 **Requirements:**
+
 1. Audit existing helper scripts for integration needs
 2. Enforce YAML-first contracts for all new work
 3. Apply retroactive enforcement from audit findings
 
 **Specific Tasks:**
+
 - Identify any non-integrated helper scripts in the repository
 - Document integration requirements
 - Migrate configuration to YAML where possible
@@ -56,12 +58,14 @@
 **CLI Flags to Implement:**
 
 **Filtering Flags:**
+
 - `--lang <language>` (repeatable): Filter to specific language(s)
 - `--tool <tool>` (repeatable): Run specific tool(s) only
 - `--changed-only`: Only check files changed in git
 - `--diff <ref>`: Check files changed vs specific git ref
 
 **Output Flags:**
+
 - `--format <format>`: Output format (rich|plain|json|yaml|csv|xlsx)
 - `--summary`: Show summary after results
 - `--summary-only`: Show ONLY summary (no individual violations)
@@ -72,22 +76,26 @@
 - `--show-codes` / `--hide-codes`: Control error code display
 
 **Execution Flags:**
+
 - `--max-violations <n>`: Stop after N violations
 - `--fail-fast`: Stop on first error
 - `--dry-run`: Show what would be done (fix mode)
 
 **Info Flags:**
+
 - `--list-langs`: List supported languages
 - `--list-tools`: List available tools
 - `--tool-help <tool>`: Show help for specific tool
 - `--explain-tool <tool>`: Explain what a tool does
 
 **Help Organization:**
+
 - Use Rich-Click panels: Filtering / Output / Execution / Info
 - Excellent examples in help text
 - Clear error messages with deterministic exit codes
 
 **Output Format Requirements:**
+
 - Support: `rich`, `plain`, `json`, `yaml`, `csv`, `xlsx`
 - All formats derive from single normalized data model
 - XLSX support requires `openpyxl` dependency (packaging extra)
@@ -114,9 +122,11 @@
 **Decision:** Required. Implement all three in this order: `which` → `env` → `activate`
 
 **1. `repo-lint which <tool>`** (FIRST - Highest Value, Lowest Effort)
+
 - Show which version of a tool would be used
 - Diagnostic command for PATH troubleshooting
 - Examples:
+
   ```bash
   repo-lint which black
   # Output: /home/user/.venv-lint/bin/black (version 24.10.0)
@@ -126,12 +136,14 @@
   ```
 
 **2. `repo-lint env`** (SECOND)
+
 - Print environment variables for tools
 - Shows: tool paths, versions, configuration
 - Useful for debugging and CI setup
 - Cross-platform scripting (Bash, PowerShell, Fish)
 
 **3. `repo-lint activate`** (THIRD - Most Complex)
+
 - Activate repo-lint environment in current shell
 - Subshell handling (most complex)
 - Cross-platform support
@@ -171,6 +183,7 @@
 **Decision:** Deferred until all features are stable.
 
 **Tasks:**
+
 - Code style cleanup (flake8, pylint)
 - Docstring improvements
 - Documentation updates
@@ -184,6 +197,7 @@
 **Decision:** Standard coverage, tests required before review, Windows CI for relevant phases.
 
 **Requirements:**
+
 1. **Coverage:** Unit tests + targeted integration tests for major workflows
 2. **Timing:** Tests MUST be added and passing BEFORE code review
 3. **Windows CI:** Include for phases where Windows behavior is relevant
@@ -192,6 +206,7 @@
    - Phase 2.8: Environment commands, PATH management
 
 **Test Standards:**
+
 - Unit tests for all new functions/methods
 - Integration tests for end-to-end workflows
 - Cross-platform validation where applicable
@@ -202,20 +217,26 @@
 ## CONFIGURATION CONTRACTS (CROSS-CUTTING)
 
 ### YAML-First Migration
+
 **From Decision 3:**
+
 - Migrate ALL behavior that can reasonably be configured to YAML
 - Maintain multi-file structure (separate conformance YAML files by concern)
 - Preserve backward compatibility via transition period with deprecation warnings
 - Only allow CLI overrides that do NOT violate contracts
 
 ### Exception System Precedence
+
 **From Decision 4:**
+
 - YAML exceptions have strict precedence over pragmas
 - Warn on pragmas by default (configurable)
 - Migration tool prints suggestions (may write draft, won't silently overwrite)
 
 ### Output Format Contract
+
 **From Decision 6:**
+
 - All formats derive from single normalized data model
 - XLSX support required (handle as explicit packaging extra)
 - Ensure CI installs dependencies where needed

@@ -14,6 +14,7 @@ This directory contains **intentionally non-conforming** Bash scripts used for t
 ## Usage
 
 These fixtures are used by:
+
 - Unit tests for unsafe fix mode (`tools/repo_lint/tests/test_unsafe_fixes.py`)
 - Manual testing of unsafe fixers (ONLY with explicit human authorization per PR)
 
@@ -22,6 +23,7 @@ These fixtures are used by:
 **TODO:** Unsafe fixers for Bash are not yet implemented.
 
 When Bash unsafe fixers are added, this directory will contain fixtures that demonstrate:
+
 - Non-conforming docstring formats that can be auto-fixed unsafely
 - Edge cases that unsafe fixers must handle correctly
 

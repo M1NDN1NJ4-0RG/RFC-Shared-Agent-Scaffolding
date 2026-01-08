@@ -1,7 +1,7 @@
 # Test Runner Contract - Phase 5
 
-**Status:** Active - Phase 5 Implementation  
-**Last Updated:** 2025-12-29  
+**Status:** Active - Phase 5 Implementation
+**Last Updated:** 2025-12-29
 **Purpose:** Define strict behavioral equivalence for language-native test runners
 
 ## Overview
@@ -15,6 +15,7 @@ This document defines the contract that all language-native test runners (`run_t
 ## Current State: Bash `run-tests.sh` Behavior
 
 Each wrapper language currently has a Bash-based test runner:
+
 - `wrappers/python3/run-tests.sh`
 - `wrappers/perl/run-tests.sh`
 - `wrappers/bash/run-tests.sh`
@@ -25,39 +26,46 @@ Each wrapper language currently has a Bash-based test runner:
 #### 1. Environment Setup
 
 **Repository Root Detection:**
+
 - All runners compute repository root: `REPO_ROOT="$(cd "$ROOT/../.." && pwd)"`
 - Repo root is 2 levels up from wrapper directory
 
 **SAFE_RUN_BIN Environment Variable:**
+
 - All runners set: `export SAFE_RUN_BIN="${SAFE_RUN_BIN:-$REPO_ROOT/rust/target/release/safe-run}"`
 - Default location: `rust/target/release/safe-run` (relative to repo root)
 - User can override via environment variable before running tests
 - This variable is used by wrapper scripts to locate the Rust canonical binary
 
 **Working Directory:**
+
 - All runners change to wrapper directory: `cd "$ROOT"`
 - Tests run from wrapper directory context
 
 #### 2. Test Discovery and Execution
 
 **Python3 (`wrappers/python3/run-tests.sh`):**
+
 - Discovers: `tests/test_*.py` files (snake_case per Phase 4)
 - Execution: Uses Python `unittest` framework with custom importlib loader
 - Reason for custom loader: Explicit control over test discovery
 - Verbosity: `verbosity=2` (shows individual test names and results)
 
 **Perl (`wrappers/perl/run-tests.sh`):**
+
 - Discovers: `tests/*.t` files
 - Execution: Uses `prove -v -I tests/lib tests/*.t` (preferred) or falls back to `perl -I tests/lib <file>`
 - TAP harness: `prove` provides Test Anything Protocol output
 - Library path: `-I tests/lib` includes test helpers
 
 **Bash (`wrappers/bash/run-tests.sh`):**
+
 - Makes scripts executable: `chmod +x scripts/*.sh tests/*.sh tests/run-all.sh`
 - Delegates: `exec tests/run-all.sh`
 - Discovery (in run-all.sh): Runs all `test-*.sh` files in tests/ directory
 
 **PowerShell (`wrappers/powershell/RunTests.ps1`):**
+
 - Discovers: `tests/*Tests.ps1` files (PascalCase per Phase 4 naming)
 - Execution: Uses Pester v5+ framework
 - Verbosity: 'Detailed' (shows test names and results)
@@ -66,11 +74,13 @@ Each wrapper language currently has a Bash-based test runner:
 #### 3. Exit Codes
 
 **Standard exit codes (all runners):**
+
 - `0` - All tests passed
 - `1` - One or more tests failed
 - `2` - Prerequisites not met (optional, used by PowerShell for missing pwsh/Pester)
 
 **Exit code determination:**
+
 - Python: `sys.exit(1)` if `not result.wasSuccessful()`
 - Perl: `prove` exits 1 on failure; shell `for` loop continues but doesn't capture exit code properly
 - Bash: Inherits exit code from `tests/run-all.sh` via `exec`
@@ -79,36 +89,43 @@ Each wrapper language currently has a Bash-based test runner:
 #### 4. Output Conventions
 
 **Stdout/Stderr:**
+
 - Test framework output (unittest, prove, Pester) goes to stdout
 - Progress messages ("Running tests...", "Python: 3.11") go to stdout
 - Error messages for missing prerequisites go to stderr
 
 **Output verbosity:**
+
 - All runners use verbose/detailed mode to show individual test names
 - Helps with debugging in CI logs
 
 #### 5. Required Tools
 
 **Python3:**
+
 - Python 3.8+ required
 - unittest (standard library, no installation needed)
 
 **Perl:**
+
 - Perl 5.10+ required
 - prove (typically included with Perl, part of Test::Harness)
 - Fallback: Direct perl execution if prove not found
 
 **Bash:**
+
 - Bash 4.0+ (Linux), 3.2+ (macOS)
 - Standard Unix utilities (chmod, cd, pwd)
 
 **PowerShell:**
+
 - pwsh (PowerShell 7+) required
 - Pester module required (installation instructions provided if missing)
 
 #### 6. Platform Compatibility
 
 **All runners support:**
+
 - Linux (primary CI platform)
 - macOS (local development)
 - Windows (Git Bash, WSL for Bash runners; native PowerShell for RunTests.ps1)
@@ -159,10 +176,12 @@ All language-native test runners must:
 ### CLI Interface Parity
 
 **No command-line arguments required:**
+
 - All runners currently take no arguments
 - Future enhancement: Could add flags like `--verbose`, `--filter`, but not required for Phase 5
 
 **Environment variables:**
+
 - `SAFE_RUN_BIN` - Override binary path (all runners must respect this)
 
 ---
@@ -172,18 +191,21 @@ All language-native test runners must:
 **Phase 5 Decision:** Start with thin wrappers around existing Bash `run-tests.sh`
 
 **Rationale:**
+
 - Minimizes drift between Bash and native runners
 - Reduces implementation complexity
 - Maintains proven test discovery and execution logic
 - Easy to verify parity (both call same underlying script)
 
 **Implementation approach:**
+
 1. Language-native runner sets up environment (`SAFE_RUN_BIN`, working directory)
 2. Language-native runner invokes `run-tests.sh` via subprocess
 3. Language-native runner forwards exit code
 4. Language-native runner provides language-specific error handling (e.g., check for bash availability)
 
 **Future migration path (documented in future-work.md):**
+
 - Option to migrate to fully native implementations later
 - Pros: No bash dependency, language-specific test discovery optimizations
 - Cons: More code to maintain, risk of drift
@@ -194,16 +216,19 @@ All language-native test runners must:
 ## Naming Conventions (Per Phase 4 Standards)
 
 **File naming:**
+
 - Python: `run_tests.py` (snake_case per PEP 8)
 - PowerShell: `RunTests.ps1` (PascalCase, already exists)
 - Perl: `run_tests.pl` (snake_case, aligned with Phase 5.5 Perl naming standardization)
 
 **Rationale for Perl choice:**
+
 - Phase 5.5 standardized all Perl scripts to snake_case (e.g., `safe_run.pl`, `safe_check.pl`, `safe_archive.pl`)
 - Provides consistency with Python naming and test runner conventions
 - Using `run_tests.pl` aligns with the snake_case decision in Phase 5.1.3
 
 **Placement:**
+
 - All runners at wrapper top-level: `wrappers/<lang>/run_tests.py`, `wrappers/<lang>/RunTests.ps1`, `wrappers/<lang>/run_tests.pl`
 - Matches existing placement of `run-tests.sh` and `RunTests.ps1`
 
@@ -214,17 +239,20 @@ All language-native test runners must:
 **Phase 5 approach: Run both Bash and native runners**
 
 **Rationale:**
+
 - Validates parity during transition
 - Provides redundancy (if one runner breaks, other still works)
 - Builds confidence in native runners
 
 **CI workflow changes:**
+
 - Each wrapper test job runs BOTH:
   1. Existing Bash `run-tests.sh`
   2. New language-native runner
 - Both must pass for CI to pass
 
 **Example (Python):**
+
 ```yaml
 - name: Run Python tests (Bash runner)
   run: bash run-tests.sh
@@ -234,6 +262,7 @@ All language-native test runners must:
 ```
 
 **Future optimization (documented in future-work.md):**
+
 - Once native runners are stable, consider:
   - Running Bash runner only on scheduled/nightly builds
   - Running native runner on all PR/push builds
@@ -294,6 +323,7 @@ wrappers/
 ```
 
 **After Phase 5:**
+
 ```
 wrappers/
 ├── bash/

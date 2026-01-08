@@ -1,6 +1,6 @@
 # Issue #278 - Python Annotation Inventory
 
-**Created:** 2026-01-07  
+**Created:** 2026-01-07
 **Purpose:** Comprehensive inventory of Python files and current typing/linting state for Issue #278
 
 ## Executive Summary
@@ -169,6 +169,7 @@ Intentional violations for testing:
 From `pyproject.toml` (`[tool.black]`, `[tool.ruff]`, `[tool.pylint.master]`):
 
 **Black/Ruff excludes:**
+
 ```python
 exclude = [
     ".git",
@@ -184,6 +185,7 @@ exclude = [
 ```
 
 **Pylint ignore-paths:**
+
 ```python
 ignore-paths = [
     "tools/repo_lint/tests/fixtures/.*",
@@ -201,6 +203,7 @@ ignore-paths = [
 ### Linting Tools (from `conformance/repo-lint/repo-lint-linting-rules.yaml`)
 
 **Python linters:**
+
 1. **black** (v24.10.0) - Code formatter (fix-capable)
 2. **ruff** (v0.8.4) - Fast linter replacing flake8/isort (fix-capable)
 3. **pylint** (v3.3.2) - Comprehensive code analyzer (check-only)
@@ -210,6 +213,7 @@ ignore-paths = [
 ### Docstring Rules (from `conformance/repo-lint/repo-lint-docstring-rules.yaml`)
 
 **Python docstring requirements:**
+
 - Public functions must have docstrings
 - Docstrings must include Purpose section
 - Docstrings should document parameters and return values
@@ -222,6 +226,7 @@ ignore-paths = [
 ### Naming Conventions (from `docs/contributing/naming-and-style.md`)
 
 **Python symbol naming (PEP 8):**
+
 - Functions/variables: `snake_case`
 - Constants: `UPPER_SNAKE_CASE`
 - Classes: `PascalCase`
@@ -232,6 +237,7 @@ ignore-paths = [
 ### Current Ruff Configuration (from `pyproject.toml`)
 
 **Enabled rules:**
+
 ```python
 select = [
     "E",   # pycodestyle errors
@@ -244,6 +250,7 @@ select = [
 ```
 
 **Ignored rules (for Python 3.8+ compatibility):**
+
 ```python
 ignore = ["UP006", "UP007", "UP035"]
 # UP006: Use `list` instead of `List` - keep typing imports for 3.8
@@ -256,6 +263,7 @@ ignore = ["UP006", "UP007", "UP035"]
 ### Pylint Configuration (from `pyproject.toml`)
 
 **Disabled checks:**
+
 ```python
 disable = [
     "duplicate-code",
@@ -305,28 +313,33 @@ disable = [
 ## Gap Analysis: Current vs. Issue #278 Requirements
 
 ### PEP 526 Variable Annotations
-**Current state:** NOT enforced  
-**Issue #278 requirement:** Enforce module-level and class attribute annotations (MANDATORY baseline)  
+
+**Current state:** NOT enforced
+**Issue #278 requirement:** Enforce module-level and class attribute annotations (MANDATORY baseline)
 **Gap:** Need to add enforcement tooling
 
 ### Function Annotations
-**Current state:** NOT enforced  
-**Issue #278 requirement:** All functions MUST have parameter + return annotations (including `-> None`)  
+
+**Current state:** NOT enforced
+**Issue #278 requirement:** All functions MUST have parameter + return annotations (including `-> None`)
 **Gap:** Need to add enforcement tooling (likely via Ruff ANN* rules)
 
 ### Docstring `:rtype:` Enforcement
-**Current state:** NOT enforced  
-**Issue #278 requirement:** Functions returning non-None MUST include `:rtype:` in docstring  
+
+**Current state:** NOT enforced
+**Issue #278 requirement:** Functions returning non-None MUST include `:rtype:` in docstring
 **Gap:** Need to extend docstring validator
 
 ### Type Annotation Style (Optional vs. Union)
-**Current state:** Ruff already ignores UP007 (keeps `Optional[T]` allowed)  
-**Issue #278 requirement:** Prefer `Optional[T]`, allow `T | None` (Locked Decision #4)  
+
+**Current state:** Ruff already ignores UP007 (keeps `Optional[T]` allowed)
+**Issue #278 requirement:** Prefer `Optional[T]`, allow `T | None` (Locked Decision #4)
 **Status:** ✅ Already aligned! No changes needed.
 
 ### `*args`/`**kwargs` Typing
-**Current state:** NOT enforced  
-**Issue #278 requirement:** `*args: Any, **kwargs: Any` as default  
+
+**Current state:** NOT enforced
+**Issue #278 requirement:** `*args: Any, **kwargs: Any` as default
 **Gap:** Need to add enforcement (likely via Ruff ANN rules)
 
 ## Recommended Tooling Strategy (Preliminary)
@@ -353,6 +366,7 @@ Based on this inventory:
 ## Next Steps
 
 Per Issue #278 Phase 0:
+
 - [x] Phase 0.1: Snapshot repo + tooling (COMPLETE)
 - [x] Phase 0.2: Inventory all Python files (COMPLETE - this document)
 

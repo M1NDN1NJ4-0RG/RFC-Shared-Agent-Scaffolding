@@ -1,7 +1,7 @@
 # Ruby Docstring Contract (DRAFT)
 
-**Language:** Ruby (`.rb`)  
-**Canonical style:** RDoc or YARD documentation using `#` comments  
+**Language:** Ruby (`.rb`)
+**Canonical style:** RDoc or YARD documentation using `#` comments
 **Status:** DRAFT - Not yet enforced by validator
 
 ## Purpose
@@ -344,6 +344,7 @@ When this contract is officially adopted, the validator should check:
 ## Common Mistakes (Future)
 
 ❌ **Wrong:** Missing method documentation
+
 ```ruby
 def important_method(x)
   x + 1
@@ -351,6 +352,7 @@ end
 ```
 
 ✅ **Correct:** Document all public methods
+
 ```ruby
 # Increment value by one
 #
@@ -393,6 +395,7 @@ rdoc
 **DRAFT** - This contract is not yet enforced. Feedback welcome before official adoption.
 
 To adopt this contract:
+
 1. Add Ruby file patterns to validator
 2. Implement RubyValidator class
 3. Add test coverage

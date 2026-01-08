@@ -1,6 +1,7 @@
 # Issue #235 Summary
 
 ## Current Session
+
 **Date:** 2026-01-07
 **Objective:** Address parity report recommendations, implement parity tests, improve YAML validator, address all code review comments
 **Status:** ✅ COMPLETE - All objectives achieved, all review comments addressed
@@ -8,11 +9,12 @@
 ## What Changed This Session
 
 ### Parity Test Suite Implementation ✅
+
 1. **Created comprehensive parity tests:**
    - 11 behavioral tests comparing Bash vs Rust
    - Test file: `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs`
    - All tests passing (100% success rate)
-   
+
 2. **Test Coverage:**
    - Version/help flags
    - Doctor and verify commands
@@ -24,21 +26,23 @@
    - Exit code consistency
 
 ### Dry-Run Mode Fixes ✅
+
 3. **Problem Identified:**
    - Installers calling detect() after dry-run, failing when tools not installed
    - Affected: repo-lint and all Python tools
-   
-4. **Solution Implemented:**
+
+2. **Solution Implemented:**
    - Created `install_and_verify_python_tool()` helper function
    - Returns placeholder version (0.0.0) in dry-run mode
    - Skips detection when dry_run=true
-   
-5. **Files Fixed:**
+
+3. **Files Fixed:**
    - `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs`
    - `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs`
    - Updated: repo-lint, black, ruff, pylint, yamllint, pytest installers
 
 ### Parity Report Verification ✅
+
 6. **Confirmed all recommendations addressed:**
    - ✅ Bash wrapper docstrings - Already compliant
    - ✅ repo-lint installation - RepoLintInstaller registered
@@ -47,43 +51,47 @@
    - ✅ Parity tests - Implemented and passing
 
 ### Build & Quality Gates
+
 - Rust build: ✅ SUCCESS (exit 0)
 - Parity tests: ✅ 11/11 passing
 - Test time: ~42 seconds total
 - No breaking changes to existing functionality
 
 ### Known Behavioral Differences (By Design)
+
 - Rust adds `--version` flag (usability improvement)
 - Rust provides JSON output mode (new feature)
 - Rust has explicit `doctor`/`verify` subcommands (better UX)
 
 ### Code Review Fixes (All 6 Comments Addressed)
+
 7. **Unix-specific signal handling:**
    - Added `#[cfg(unix)]` guards to signal_hook usage
    - Ensures Windows compatibility
-   
-8. **Debug timing mode:**
+
+2. **Debug timing mode:**
    - Added TODO/FUTURE note (out of scope for Issue #235)
    - Deferred to future refactoring
-   
-9. **Introspection pattern:**
+
+3. **Introspection pattern:**
    - Enhanced TODO with CRITICAL priority
    - Documented need for explicit decorator pattern
-   
-10. **Clippy warnings:**
+
+4. **Clippy warnings:**
     - Replaced `flatten()` with `map_while(Result::ok)`
     - Clearer intent, better error handling
-    
-11. **YAML document separators:**
+
+5. **YAML document separators:**
     - Already handled correctly by improved validator
     - Includes first `---`, stops at subsequent ones
-    
-12. **Sudo password errors:**
+
+6. **Sudo password errors:**
     - Added helpful error messages for password-required cases
     - Added TODO for passwordless sudo detection
     - Better CI troubleshooting guidance
 
 ### Files Changed
+
 - `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs` - NEW (parity tests)
 - `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs` - Updated (dry-run helper)
 - `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs` - Updated (dry-run fix)
@@ -99,6 +107,7 @@
 ## Previous Session Summary
 
 ### Major Achievements (Prior Sessions)
+
 1. **Fixed Venv Creation Blocker** ✅
    - Added venv creation step to `bootstrap_main.rs`
    - Rust bootstrapper now creates `.venv` before pip operations
@@ -120,6 +129,7 @@
    - Proposed 5 hard enforcement gates
 
 ## Next Session Actions
+
 1. Run session-end verification (`./scripts/session-end.sh`)
 2. Test fresh installation with all pre-install detection changes
 3. Run Rust Mode A benchmark (now that all blockers are fixed)

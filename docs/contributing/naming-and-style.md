@@ -1,7 +1,7 @@
 # Naming and Style Conventions
 
-**Status:** Canonical source of truth for naming and casing standards (Phase 4.5 - Enforcement Active)  
-**Last Updated:** 2025-12-29  
+**Status:** Canonical source of truth for naming and casing standards (Phase 4.5 - Enforcement Active)
+**Last Updated:** 2025-12-29
 **Enforcement:** Full enforcement active (Phase 4.5)
 
 ## Overview
@@ -17,6 +17,7 @@ This document defines the naming and casing conventions for all code, scripts, a
 **Convention:** `kebab-case`
 
 Applies to:
+
 - Documentation files: `contributing-guide.md`, `naming-and-style.md`
 - Configuration files: `.perlcriticrc`, `.yamllint`
 - Data files: `vectors.json`
@@ -25,6 +26,7 @@ Applies to:
 **Pattern:** `^[a-z0-9]+(-[a-z0-9]+)*\.[a-z0-9]+$`
 
 Examples:
+
 - ✅ `contributing-guide.md`
 - ✅ `wrapper-discovery.md`
 - ✅ `safe-run-tests.ps1`
@@ -40,6 +42,7 @@ Examples:
 **Convention:** `snake_case.py`
 
 Applies to:
+
 - Python modules: `safe_run.py`, `test_helpers.py`
 - Python executables: `validate_docstrings.py`
 
@@ -50,6 +53,7 @@ Applies to:
 **Status:** Transitioned in Phase 4.3 (complete).
 
 Examples:
+
 - ✅ `safe_run.py`
 - ✅ `test_safe_check.py`
 - ✅ `preflight_automerge_ruleset.py`
@@ -61,6 +65,7 @@ Examples:
 **Convention:** `PascalCase.ps1` (Option A - Selected)
 
 Applies to:
+
 - PowerShell scripts: `SafeRun.ps1`, `TestHelpers.ps1`
 - PowerShell modules: `SafeArchive.ps1`
 
@@ -71,6 +76,7 @@ Applies to:
 **Status:** Transitioned in Phase 4.3 (complete).
 
 Examples:
+
 - ✅ `SafeRun.ps1`
 - ✅ `TestHelpers.ps1`
 - ✅ `PreflightAutomergeRuleset.ps1`
@@ -82,6 +88,7 @@ Examples:
 **Convention:** `kebab-case.sh`
 
 Applies to:
+
 - Bash scripts: `safe-run.sh`, `test-helpers.sh`
 - Shell utilities: `verify-repo-references.sh`
 
@@ -90,6 +97,7 @@ Applies to:
 **Rationale:** Common Unix/Linux convention for shell scripts.
 
 Examples:
+
 - ✅ `safe-run.sh`
 - ✅ `test-helpers.sh`
 - ✅ `preflight-automerge-ruleset.sh`
@@ -101,21 +109,24 @@ Examples:
 **Convention:** `snake_case.pl`
 
 Applies to:
+
 - Perl scripts: `safe_run.pl`, `test_helpers.pl`, `run_tests.pl`
 - Perl modules: Use standard Perl module naming (`TestUtil.pm` → `CamelCase.pm`)
 
-**Pattern (scripts):** `^[a-z0-9]+(_[a-z0-9]+)*\.pl$`  
+**Pattern (scripts):** `^[a-z0-9]+(_[a-z0-9]+)*\.pl$`
 **Pattern (modules):** `^[A-Z][a-zA-Z0-9]*\.pm$`
 
 **Rationale:** Snake_case provides consistency with Python naming and aligns with the test runner naming established in Phase 5. Perl modules continue to use CamelCase per standard Perl conventions.
 
 Examples (scripts):
+
 - ✅ `safe_run.pl`
 - ✅ `preflight_automerge_ruleset.pl`
 - ✅ `run_tests.pl`
 - ❌ `safe-run.pl` (kebab-case, legacy)
 
 Examples (modules):
+
 - ✅ `TestUtil.pm`
 - ✅ `SafeRun.pm`
 - ❌ `test-util.pm` (kebab-case for modules)
@@ -129,6 +140,7 @@ Examples (modules):
 **Functions and Variables:** `snake_case`
 
 Per PEP 8:
+
 - Functions: `find_repo_root()`, `detect_platform()`
 - Variables: `script_dir`, `repo_root`, `is_windows`
 - Constants: `UPPER_SNAKE_CASE` (e.g., `MAX_RETRIES`, `DEFAULT_TIMEOUT`)
@@ -137,6 +149,7 @@ Per PEP 8:
 **Enforcement:** Automated via `flake8`, `pylint`, and `black`.
 
 Examples:
+
 - ✅ `def find_safe_run_binary():`
 - ✅ `repo_root = Path(...)`
 - ✅ `MAX_SNIPPET_LINES = 100`
@@ -148,12 +161,14 @@ Examples:
 **Functions:** `PascalCase` (Verb-Noun format preferred)
 
 Per PowerShell community conventions:
+
 - Functions: `Find-RepoRoot`, `Detect-Platform`, `Write-Err`
 - Approved verbs: `Get-`, `Set-`, `Find-`, `Write-`, `Invoke-`
 
 **Variables:** Current practice allowed; eventual TODO to enforce
 
 Current state:
+
 - Mix of `$PascalCase` and `$camelCase` observed
 - **Phase 4 decision:** Allow current conventions, add warnings only
 - **Phase 4.5 decision:** Keep variable-case as warnings, track TODO for future enforcement
@@ -161,6 +176,7 @@ Current state:
 **Enforcement:** PSScriptAnalyzer for functions; variable naming deferred to future phase.
 
 Examples (functions):
+
 - ✅ `function Find-RepoRoot { }`
 - ✅ `function Detect-Platform { }`
 - ✅ `function Write-Err([string]$Msg) { }`
@@ -168,16 +184,18 @@ Examples (functions):
 - ❌ `function findRepoRoot { }` (camelCase)
 
 Examples (variables - current state):
+
 - ✅ `$RepoRoot` (allowed)
 - ✅ `$repoRoot` (allowed)
 - ⚠️ Variable naming will be standardized in future phase
 
 ### Bash
 
-**Constants and Environment Variables:** `UPPER_SNAKE_CASE`  
+**Constants and Environment Variables:** `UPPER_SNAKE_CASE`
 **Local Variables:** `lower_snake_case`
 
 Per common shell scripting conventions:
+
 - Constants/env/exported vars: `SCRIPT_DIR`, `REPO_ROOT`, `IS_WINDOWS`
 - Local variables: `binary_path`, `temp_dir`, `exit_code`
 - Functions: `snake_case` (e.g., `find_repo_root`, `detect_platform`)
@@ -185,6 +203,7 @@ Per common shell scripting conventions:
 **Enforcement:** ShellCheck for obvious violations; warn-first rollout.
 
 Examples:
+
 - ✅ `SCRIPT_DIR="$(pwd)"`
 - ✅ `REPO_ROOT="/path/to/repo"`
 - ✅ `local temp_file="/tmp/data"`
@@ -197,10 +216,12 @@ Examples:
 **Convention:** To be finalized in Phase 4.2/4.4
 
 Current observations:
+
 - Functions: Mix of `snake_case` and `camelCase`
 - Variables: Mix of `$snake_case` and `$camelCase`
 
 **Phase 4 plan:**
+
 - Document current state in Item 4.2
 - Choose canonical conventions in Item 4.4.4
 - Apply as warn-first, then enforce in Phase 4.5.6
@@ -219,6 +240,7 @@ Current observations:
 **Enforcement:** Automated via `rustfmt` and `clippy` in CI.
 
 Examples:
+
 - ✅ `fn find_binary() { }`
 - ✅ `struct SafeRunConfig { }`
 - ✅ `const MAX_RETRIES: u32 = 3;`
@@ -232,12 +254,14 @@ Examples:
 Goal: Establish standards and identify violations without breaking CI.
 
 **Approach:**
+
 1. Add new naming validation jobs to CI
 2. Set to **warn mode** or **no-new-violations mode**
 3. Generate violation reports for review
 4. Allow time for fixes before strict enforcement
 
 **Phase 4 Enforcement Level:**
+
 - Python: `flake8` and `pylint` warnings enabled
 - PowerShell: PSScriptAnalyzer warnings for functions; variable-case warnings only
 - Bash: ShellCheck warnings for obvious violations
@@ -248,12 +272,14 @@ Goal: Establish standards and identify violations without breaking CI.
 Goal: Convert warnings to hard pass/fail, one language at a time.
 
 **Rollout Order:**
+
 1. Python (Item 4.5.3)
 2. PowerShell (Item 4.5.4) - functions + filenames; variables remain warn-only
 3. Bash (Item 4.5.5)
 4. Perl (Item 4.5.6) - after conventions finalized
 
 **Success Criteria (per language):**
+
 - All naming violations fixed
 - CI passes with hard enforcement enabled
 - No new violations introduced
@@ -267,10 +293,12 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 **Workflow:** `.github/workflows/naming-enforcement.yml`
 
 **Scope:**
+
 - All tracked files in repository
 - Language-specific rules applied per file extension
 
 **Validation Rules:**
+
 - Python (`.py`): `snake_case` pattern
 - PowerShell (`.ps1`): `PascalCase` pattern
 - Bash (`.sh`, `.bash`, `.zsh`): `kebab-case` pattern
@@ -278,6 +306,7 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 - Perl modules (`.pm`): `PascalCase` pattern
 
 **Current Status (Phase 4.5):** ENFORCE mode
+
 - Violations fail CI
 - Blocks merge until violations are fixed
 - All language-specific naming is now enforced
@@ -287,6 +316,7 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 **Status:** Replaced by `naming-enforcement.yml` in Phase 4
 
 **Historical scope:**
+
 - Applied uniform kebab-case to all script files
 - Did not respect language-specific conventions
 - Removed in favor of language-aware validation
@@ -296,12 +326,14 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 **Workflow:** `.github/workflows/lint-and-format-checker.yml`
 
 **Current Enforcement:**
+
 - Python: `black`, `flake8`, `pylint`
 - Bash: `shellcheck`, `shfmt` (warn-only)
 - PowerShell: PSScriptAnalyzer (Error severity only)
 - Perl: Perl::Critic (warn-only, severity 5)
 
 **Phase 4 Changes:**
+
 - Add explicit naming checks to each linter
 - Align severity levels with warn-first strategy
 - Add unified naming validation job
@@ -313,6 +345,7 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 ### Item 4.3: File Renaming
 
 **Python:**
+
 - `safe-run.py` → `safe_run.py`
 - `safe-check.py` → `safe_check.py`
 - `safe-archive.py` → `safe_archive.py`
@@ -320,6 +353,7 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 - All test files: `test-*.py` → `test_*.py`
 
 **PowerShell:**
+
 - `safe-run.ps1` → `SafeRun.ps1`
 - `safe-check.ps1` → `SafeCheck.ps1`
 - `safe-archive.ps1` → `SafeArchive.ps1`
@@ -330,6 +364,7 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 **Bash:** No changes (already kebab-case compliant)
 
 **Perl:**
+
 - `run-tests.pl` → `run_tests.pl`
 - `safe-run.pl` → `safe_run.pl`
 - `safe-check.pl` → `safe_check.pl`
@@ -351,22 +386,25 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 ## Rationale
 
-### Why Language-Specific Conventions?
+### Why Language-Specific Conventions
 
 Different languages have different ecosystem norms:
+
 - **Python PEP 8** is universally accepted in the Python community
 - **PowerShell** community strongly prefers PascalCase for scripts and functions
 - **Bash/Shell** scripts traditionally use kebab-case
 - **Perl** scripts use kebab-case; modules use CamelCase
 
 Forcing a single convention across all languages would:
+
 - Violate ecosystem norms
 - Reduce code readability for language experts
 - Create friction with external tools and linters
 
-### Why Kebab-Case for Non-Script Files?
+### Why Kebab-Case for Non-Script Files
 
 Kebab-case for docs/config provides:
+
 - Consistency with existing repository structure
 - URL-friendly naming (important for web-based docs)
 - Clear visual distinction from code files
@@ -378,8 +416,9 @@ Kebab-case for docs/config provides:
 
 ### PowerShell Variable Naming
 
-**Current State:** Mixed conventions allowed  
+**Current State:** Mixed conventions allowed
 **TODO:** Add to Phase 4.5.4 or later phase:
+
 - Choose canonical convention (`$PascalCase` or `$camelCase`)
 - Add PSScriptAnalyzer rule
 - Run as warn-only initially
@@ -387,12 +426,13 @@ Kebab-case for docs/config provides:
 
 ### Perl Naming
 
-**Current State:** Conventions to be documented in Item 4.2  
+**Current State:** Conventions to be documented in Item 4.2
 **TODO:** Item 4.5.6 will finalize and enforce
 
 ### Test File Naming
 
 **Current Patterns:**
+
 - Python: `test_*.py` (pytest convention) or `test-*.py` (legacy)
 - PowerShell: `*Tests.ps1` or `*-tests.ps1` (legacy)
 - Bash: `test-*.sh` (common convention)

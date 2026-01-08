@@ -1,7 +1,7 @@
 # Phase 4 Inventory Summary
 
-**Date:** 2025-12-29  
-**Phase:** 4.2 - Inventory Current Casing Deviations  
+**Date:** 2025-12-29
+**Phase:** 4.2 - Inventory Current Casing Deviations
 **Status:** Complete
 
 ## Overview
@@ -53,6 +53,7 @@ All PowerShell files currently use kebab-case and need to be converted to Pascal
 ### Python: ✅ Compliant
 
 All Python functions use `snake_case` as required by PEP 8:
+
 - `find_repo_root()`
 - `detect_platform()`
 - `find_safe_run_binary()`
@@ -63,6 +64,7 @@ All Python functions use `snake_case` as required by PEP 8:
 ### PowerShell: ✅ Compliant
 
 All PowerShell functions use `PascalCase` or `Verb-Noun` format:
+
 - `Find-RepoRoot`
 - `Detect-Platform`
 - `Write-Err`
@@ -75,6 +77,7 @@ All PowerShell functions use `PascalCase` or `Verb-Noun` format:
 ### Bash: ✅ Compliant
 
 Bash variables follow conventions:
+
 - Constants/env vars: `UPPER_SNAKE_CASE` (e.g., `SCRIPT_DIR`, `REPO_ROOT`)
 - Local vars: `lower_snake_case` (e.g., `temp_file`, `exit_code`)
 - Functions: `snake_case` (e.g., `find_repo_root`, `detect_platform`)
@@ -84,6 +87,7 @@ Bash variables follow conventions:
 ### Perl: ⚠️ Conventions Documented
 
 Perl subroutines consistently use `snake_case`:
+
 - `find_repo_root`
 - `detect_platform`
 - `have_cmd`
@@ -97,17 +101,20 @@ Perl subroutines consistently use `snake_case`:
 ## Impact Assessment
 
 ### Low Risk
+
 - **Internal symbols:** Already compliant, no changes needed
 - **Perl files:** Already compliant, no changes needed
 - **Bash files:** Already compliant, no changes needed
 
 ### Medium Risk
+
 - **Python file renames:** 10 files, requires updates to imports and references
 - **PowerShell file renames:** 11 files, requires updates to script invocations
 
 ### Reference Update Scope
 
 After renaming, the following will need updates:
+
 1. **CI workflows** (`.github/workflows/`)
 2. **Documentation** (any code examples or file references)
 3. **Import statements** (Python files that import renamed modules)

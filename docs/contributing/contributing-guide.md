@@ -159,6 +159,7 @@ actionlint -shellcheck= .github/workflows/*.yml
 ```
 
 YAML linting rules (defined in `.yamllint`):
+
 - **Indentation**: 2 spaces (no tabs)
 - **Line length**: 120 characters max (warning level)
 - **Boolean values**: Use `true`/`false` (allow `on` for GitHub Actions)
@@ -236,6 +237,7 @@ wrappers/<language>/
 ### 3. Implement Wrapper Behavior
 
 Wrappers MUST:
+
 - Discover the Rust canonical tool binary (see [wrapper-discovery.md](../architecture/wrapper-discovery.md))
 - Pass through all arguments unchanged
 - Forward exit codes exactly
@@ -309,6 +311,7 @@ All scripts must include:
 #### Language-Specific Templates
 
 See templates in:
+
 - [docs/contributing/docstring-contracts/bash.md](./docstring-contracts/bash.md) - Bash/Shell scripts
 - [docs/contributing/docstring-contracts/python.md](./docstring-contracts/python.md) - Python scripts
 - [docs/contributing/docstring-contracts/perl.md](./docstring-contracts/perl.md) - Perl scripts
@@ -330,6 +333,7 @@ See templates in:
 ### Before Submitting
 
 1. **Run all checks locally**:
+
    ```bash
    # YAML linting
    make lint-yaml
@@ -370,6 +374,7 @@ Follow conventional commit format:
 Types: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`
 
 Examples:
+
 - `feat: Add safe-check subcommand`
 - `fix: Correct exit code forwarding in Bash wrapper`
 - `docs: Update contributing guide with naming conventions`

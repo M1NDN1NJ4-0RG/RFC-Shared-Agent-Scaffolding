@@ -1,7 +1,7 @@
 # M5: Final Verification & "No Regrets" Pass - Summary
 
-**Date:** 2025-12-28  
-**Branch:** `copilot/refactor-repository-structure-one-more-time`  
+**Date:** 2025-12-28
+**Branch:** `copilot/refactor-repository-structure-one-more-time`
 **Status:** ✅ COMPLETE
 
 ## Executive Summary
@@ -15,16 +15,18 @@ M5 completes the repository restructure epic by validating that all migrations (
 **Obsolete Path Search Results:**
 
 ```bash
-$ bash scripts/verify-repo-references.sh
+bash scripts/verify-repo-references.sh
 ```
 
 **Findings:**
+
 - ✅ **`documents/` references:** Only 9 matches remain, ALL in historical documentation (`docs/history/`) or the verification script itself
 - ✅ **`RFC-Shared-Agent-Scaffolding-Example/` references:** Only 51 matches remain, ALL in historical documentation (`docs/history/`) or the verification script itself
 - ✅ **Active code/config:** ZERO obsolete path references found outside of historical docs
 - ✅ **PowerShell test files:** Fixed 2 remaining references that were in comments
 
 **Fixed Files:**
+
 - `wrappers/powershell/tests/phase3-ctrlc-probe.ps1` - Updated path reference in docstring
 - `wrappers/powershell/tests/safe-check-tests.ps1` - Updated path reference in comment
 
@@ -35,17 +37,21 @@ $ bash scripts/verify-repo-references.sh
 **Test Results:**
 
 #### Rust Canonical Tool
+
 ```bash
-$ cd rust/ && cargo test --all
+cd rust/ && cargo test --all
 ```
+
 - ✅ **Unit tests:** 7 passed, 0 failed
 - ✅ **Integration tests (conformance):** 31 passed, 0 failed, 4 ignored
 - ✅ **Total:** 38/38 tests passing
 
 #### Bash Wrappers
+
 ```bash
-$ cd wrappers/bash && bash run-tests.sh
+cd wrappers/bash && bash run-tests.sh
 ```
+
 - ✅ **Preflight tests:** 5 passed
 - ✅ **safe-archive tests:** 4 passed
 - ✅ **safe-check tests:** 1 passed
@@ -53,28 +59,35 @@ $ cd wrappers/bash && bash run-tests.sh
 - ✅ **Total:** 23/23 tests passing
 
 #### Python3 Wrappers
+
 ```bash
-$ cd wrappers/python3 && bash run-tests.sh
+cd wrappers/python3 && bash run-tests.sh
 ```
+
 - ✅ **All tests:** 20 passed, 0 failed
 - ✅ Tests include: preflight, safe-archive, safe-check, safe-run
 
 #### Perl Wrappers
+
 ```bash
-$ cd wrappers/perl && bash run-tests.sh
+cd wrappers/perl && bash run-tests.sh
 ```
+
 - ✅ **All tests:** 46 passed, 0 failed
 - ✅ Files tested: 5 test files
 - ✅ Tests include: safe-run, safe-run-sigint, safe-archive, safe-check, preflight
 
 #### PowerShell Wrappers
+
 ```bash
-$ cd wrappers/powershell && pwsh -File run-tests.ps1
+cd wrappers/powershell && pwsh -File run-tests.ps1
 ```
+
 - ✅ **All tests:** 17 passed, 0 failed, 0 skipped
 - ✅ Tests include: preflight, safe-archive, safe-check, safe-run
 
 **Summary:**
+
 - ✅ **Total tests across all implementations:** 144 tests passing
 - ✅ **Zero test failures**
 - ✅ **Wrapper scripts correctly discover and invoke Rust binaries**
@@ -85,6 +98,7 @@ $ cd wrappers/powershell && pwsh -File run-tests.ps1
 **Workflow YAML Validation:**
 
 All 13 GitHub Actions workflow files validated:
+
 - ✅ `conformance.yml` - Valid YAML
 - ✅ `docstring-contract.yml` - Valid YAML
 - ✅ `drift-detection.yml` - Valid YAML
@@ -102,6 +116,7 @@ All 13 GitHub Actions workflow files validated:
 **Note:** yamllint reports some style warnings (line length, trailing spaces), but all files are syntactically valid and functional.
 
 **Path-Based Actions:**
+
 - ✅ All workflow paths updated during M2 (verified by successful local test runs)
 - ✅ `scripts/verify-repo-references.sh` validates obsolete paths
 - ✅ `scripts/validate-docstrings.py` validates documentation contracts
@@ -112,6 +127,7 @@ All 13 GitHub Actions workflow files validated:
 ### Item 2.1 — Docs Index & README Navigation ✅
 
 **README.md Links:**
+
 - ✅ `./docs/architecture/rust-canonical-tool.md` - exists
 - ✅ `./docs/architecture/wrapper-discovery.md` - exists
 - ✅ `./docs/usage/conformance-contract.md` - exists
@@ -124,10 +140,12 @@ All 13 GitHub Actions workflow files validated:
 - ✅ `./docs/contributing/contributing-guide.md` - exists
 
 **docs/README.md Links:**
+
 - ✅ All section links validated (overview, architecture, usage, testing, contributing, history)
 - ✅ Cross-references to root README and RFC validated
 
 **User Paths:**
+
 - ✅ **New Users:** README → "Usage Guide" → `docs/usage/`
 - ✅ **Contributors:** README → "Contributing Guide" → `docs/contributing/contributing-guide.md`
 - ✅ **Maintainers:** README → "Documentation Index" → `docs/README.md` → Architecture section
@@ -142,19 +160,22 @@ All 13 GitHub Actions workflow files validated:
 
 ## Changes Made in M5
 
-### Files Modified:
+### Files Modified
+
 1. `wrappers/powershell/tests/phase3-ctrlc-probe.ps1`
    - Updated path reference from `RFC-Shared-Agent-Scaffolding-Example/` to `wrappers/`
-   
+
 2. `wrappers/powershell/tests/safe-check-tests.ps1`
    - Updated path reference from `RFC-Shared-Agent-Scaffolding-Example/` to `wrappers/`
 
-### Files Created:
+### Files Created
+
 - `docs/history/m5-final-verification-summary.md` (this file)
 
 ## Conclusion
 
 M5 verification confirms:
+
 1. **Repository restructure is complete** (M0-M5)
 2. **No behavioral regressions** introduced
 3. **All references updated** (except appropriate historical documentation)

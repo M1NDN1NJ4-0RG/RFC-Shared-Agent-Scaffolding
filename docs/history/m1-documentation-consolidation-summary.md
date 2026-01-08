@@ -1,7 +1,7 @@
 # M1: Documentation Consolidation - Summary
 
-**Date:** 2025-12-28  
-**Milestone:** M1 - Documentation Consolidation  
+**Date:** 2025-12-28
+**Milestone:** M1 - Documentation Consolidation
 **Status:** ✅ COMPLETE
 
 ---
@@ -17,6 +17,7 @@ Successfully completed Milestone M1 of the repository restructure EPIC, consolid
 ### P1: Created `docs/` Taxonomy and Migrated `documents/`
 
 **Created new documentation structure:**
+
 ```
 docs/
 ├── README.md                    (new: documentation index)
@@ -31,17 +32,20 @@ docs/
 **Migrated 8 files from `documents/` to new structure:**
 
 **To `docs/architecture/`:**
+
 - `CANONICAL-STRUCTURE.md` → `canonical-structure.md`
 - `contract-extraction.md`
 - `risk-vector-enumeration.md`
 - `RUST-CANONICAL-TOOL-TODO.md` → `rust-canonical-tool-todo.md`
 
 **To `docs/testing/`:**
+
 - `conformance-tests.md`
 - `ci-validation-checklist.md`
 - `instrumentation-evidence.md`
 
 **To `docs/overview/`:**
+
 - `ChatSummary.md` → `chat-summary.md`
 - `final-summary.md`
 
@@ -52,6 +56,7 @@ docs/
 **Moved 21 historical tracking files to `docs/history/` with kebab-case naming:**
 
 **EPIC summaries (7 files):**
+
 - `EPIC-3-FINAL-SUMMARY.md` → `docs/history/epic-3-final-summary.md`
 - `EPIC-3-M0-SUMMARY.md` → `docs/history/epic-3-m0-summary.md`
 - `EPIC-3-UPDATE.md` → `docs/history/epic-3-update.md`
@@ -61,6 +66,7 @@ docs/
 - `EPIC-COMPLETION-SUMMARY.md` → `docs/history/epic-completion-summary.md`
 
 **Milestone tracking (6 files):**
+
 - `M0-DECISIONS.md` → `docs/history/m0-decisions.md`
 - `M1-P2-I1-STATUS.md` → `docs/history/m1-p2-i1-status.md`
 - `M1-P3-I1-DECISION.md` → `docs/history/m1-p3-i1-decision.md`
@@ -69,6 +75,7 @@ docs/
 - `M2-P2-I1-DRIFT-DETECTION.md` → `docs/history/m2-p2-i1-drift-detection.md`
 
 **PR summaries (5 files):**
+
 - `PR0-PREFLIGHT-COMPLETE.md` → `docs/history/pr0-preflight-complete.md`
 - `PR1-RUST-SCAFFOLDING-COMPLETE.md` → `docs/history/pr1-rust-scaffolding-complete.md`
 - `PR2-CONFORMANCE-HARNESS-COMPLETE.md` → `docs/history/pr2-conformance-harness-complete.md`
@@ -76,10 +83,12 @@ docs/
 - `PR-62-CI-FAILURE-PROMPT.md` → `docs/history/pr-62-ci-failure-prompt.md`
 
 **Phase tracking (2 files):**
+
 - `P0-P3.5-VERIFICATION-REPORT.md` → `docs/history/p0-p3.5-verification-report.md`
 - `P4-BASH-WRAPPER-CONVERSION-COMPLETE.md` → `docs/history/p4-bash-wrapper-conversion-complete.md`
 
 **Policy documents (3 files):**
+
 - `ALLOWED_DRIFT.md` → `docs/contributing/allowed-drift.md`
 - `KNOWN-ISSUES.md` → `docs/overview/known-issues.md`
 - `FUTURE-WORK-VERIFICATION-REPORT.md` → `docs/overview/future-work-verification-report.md`
@@ -87,6 +96,7 @@ docs/
 ### P3: Updated Documentation References
 
 **Updated files:**
+
 - `README.md` - Updated all documentation links to new paths, added link to `docs/README.md`
 - `docs/overview/final-summary.md` - Updated internal document references
 - `docs/testing/ci-validation-checklist.md` - Updated conformance test reference
@@ -94,6 +104,7 @@ docs/
 
 **Root directory is now clean:**
 Only canonical files remain at root:
+
 - `README.md` (entry point)
 - `LICENSE`
 - `rfc-shared-agent-scaffolding-v0.1.0.md` (contract specification)
@@ -106,6 +117,7 @@ Only canonical files remain at root:
 ### Reference Audit
 
 ✅ **`documents/` references:** Only 2 remaining, both historical and appropriate:
+
 - `docs/history/pr0-preflight-complete.md` (2 occurrences) - documenting what was created at that time
 
 ✅ **All documentation links validated**
@@ -133,6 +145,7 @@ Only canonical files remain at root:
 ## Next Steps (M2)
 
 After this PR is merged:
+
 1. Start new PR for M2 - Wrapper Directory Refactor
 2. Rename `RFC-Shared-Agent-Scaffolding-Example/` → `wrappers/`
 3. Extract agent-methodology docs (`.docs/`, `CLAUDE.md`)
@@ -144,12 +157,14 @@ After this PR is merged:
 ## Files in This Milestone
 
 **Total changes:** 34 files
+
 - 33 files renamed/moved
 - 1 file created (`docs/README.md`)
 - 1 directory removed (`documents/`)
 - 3 files modified (updated references)
 
 **All changes committed with:**
+
 - M0: Add reference validation helper script
 - M1 P1-P2: Migrate documents/ to docs/ and move historical files
 
@@ -157,13 +172,13 @@ After this PR is merged:
 
 ## Acceptance Criteria Met
 
-✅ `documents/` directory removed  
-✅ Root no longer contains "log spam" docs  
-✅ All Markdown links updated and validated  
-✅ `docs/` taxonomy created with clear categories  
-✅ Documentation index (`docs/README.md`) created  
-✅ All file names standardized to kebab-case  
-✅ Git history preserved for all moved files  
-✅ No functional/behavioral changes  
+✅ `documents/` directory removed
+✅ Root no longer contains "log spam" docs
+✅ All Markdown links updated and validated
+✅ `docs/` taxonomy created with clear categories
+✅ Documentation index (`docs/README.md`) created
+✅ All file names standardized to kebab-case
+✅ Git history preserved for all moved files
+✅ No functional/behavioral changes
 
 **M1 Status: COMPLETE** ✅

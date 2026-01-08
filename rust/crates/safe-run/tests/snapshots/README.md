@@ -9,6 +9,7 @@ Snapshot files capture the expected behavior of the canonical Rust tool. Tests c
 ## Format
 
 Snapshots are stored as `.txt` files with normalized content:
+
 - Line endings normalized to LF
 - PIDs replaced with `{PID}` placeholder
 - Timestamps replaced with `{TIMESTAMP}` placeholder
@@ -17,6 +18,7 @@ Snapshots are stored as `.txt` files with normalized content:
 ## Naming Convention
 
 Snapshot files are named after the test vector ID:
+
 - `safe-run-001.txt` - Expected output for vector safe-run-001
 - `safe-run-002-log.txt` - Expected log file content for vector safe-run-002
 - etc.
@@ -26,6 +28,7 @@ Snapshot files are named after the test vector ID:
 Snapshots will be generated once the implementation exists (PR3+).
 
 To update snapshots after implementation changes:
+
 1. Run tests to see actual output
 2. Review changes carefully
 3. If changes are intentional, update snapshots
@@ -38,6 +41,7 @@ To update snapshots after implementation changes:
 ## Platform Considerations
 
 Snapshots should be platform-agnostic where possible:
+
 - Use normalized paths
 - Use normalized line endings
 - Use placeholder values for dynamic content (PIDs, timestamps)

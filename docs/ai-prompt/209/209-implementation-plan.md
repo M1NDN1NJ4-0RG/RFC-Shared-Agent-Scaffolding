@@ -1,9 +1,9 @@
 # Repo-Lint Toolchain Bootstrapper - Detailed Implementation Plan
 
-**Issue:** #209  
-**Title:** [EPIC] Repo-Lint Toolchain Bootstrapper (Session-Start Compliance Gate)  
-**Priority:** P0 / Blocker  
-**Created:** 2025-12-31  
+**Issue:** #209
+**Title:** [EPIC] Repo-Lint Toolchain Bootstrapper (Session-Start Compliance Gate)
+**Priority:** P0 / Blocker
+**Created:** 2025-12-31
 **Status:** Planning Complete - Ready for Implementation
 
 ---
@@ -19,9 +19,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Phase 1: Core Bootstrapper Script Creation
 
 ### Item 1.1: Repository Root Discovery
+
 **Objective:** Implement repo root location logic that works from any subdirectory
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Create `scripts/bootstrap-repo-lint-toolchain.sh` with proper shebang (`#!/usr/bin/env bash`)
 - [ ] Add script header documentation (exit codes, purpose, usage)
 - [ ] Implement `find_repo_root()` function:
@@ -32,15 +34,18 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add debug logging: print repo root when found
 
 **Acceptance:**
+
 - Script can be run from any subdirectory within the repo
 - Fails gracefully with exit code 10 if not in a repo
 
 ---
 
 ### Item 1.2: Python Virtual Environment Setup
+
 **Objective:** Create or verify `.venv/` exists and is functional
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `ensure_venv()` function:
   - [ ] Check if `.venv/` exists at repo root
   - [ ] If missing, create with `python3 -m venv .venv`
@@ -54,6 +59,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add logging: print venv path and activation status
 
 **Acceptance:**
+
 - `.venv/` is created on first run
 - Subsequent runs reuse existing venv
 - Venv is properly activated for current shell session
@@ -61,9 +67,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 1.3: repo-lint Package Installation
+
 **Objective:** Install repo-lint package into venv in editable mode
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `install_repo_lint()` function:
   - [ ] Upgrade pip/setuptools/wheel: `python3 -m pip install --upgrade pip setuptools wheel`
   - [ ] Determine install target:
@@ -77,6 +85,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Handle installation failures with clear error messages
 
 **Acceptance:**
+
 - repo-lint package is installed in editable mode
 - `repo-lint --help` works after installation
 - Idempotent: re-installation updates package without errors
@@ -84,9 +93,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 1.4: repo-lint Verification
+
 **Objective:** Verify repo-lint is functional and on PATH
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `verify_repo_lint()` function:
   - [ ] Check `which repo-lint` finds the command
   - [ ] Run `repo-lint --help` and verify exit code 0
@@ -95,6 +106,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add logging: confirm repo-lint location and functionality
 
 **Acceptance:**
+
 - `repo-lint --help` succeeds
 - Clear error message if verification fails
 
@@ -103,9 +115,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Phase 2: Tool Installation and Verification
 
 ### Item 2.1: Core Utility Installation (rgrep)
+
 **Objective:** Install or verify rgrep availability
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `check_command()` helper function:
   - [ ] Use `command -v <cmd>` to check if command exists on PATH
   - [ ] Return 0 if found, 1 if not found
@@ -121,6 +135,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add logging: print installation method and result
 
 **Acceptance:**
+
 - `rg` is installed if possible
 - Fallback to `grep` with warning if rgrep unavailable
 - Fails if neither tool is available
@@ -128,9 +143,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 2.2: Python Toolchain Installation
+
 **Objective:** Install black, pylint, pytest, ruff, yamllint
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `install_python_tools()` function:
   - [ ] Use `repo-lint install` command if available (delegates to repo-lint's install logic)
   - [ ] Alternatively, read `pyproject.toml` for `[project.optional-dependencies.lint]` pinned versions
@@ -146,6 +163,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add logging: print each tool's version after successful install
 
 **Acceptance:**
+
 - All Python tools are installed in venv
 - Versions match pinned versions from `pyproject.toml`
 - Tools are functional and on PATH
@@ -153,9 +171,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 2.3: Shell Toolchain Installation
+
 **Objective:** Install shellcheck and shfmt
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `install_shellcheck()` function:
   - [ ] Check if `shellcheck` exists
   - [ ] If missing, try installation:
@@ -177,6 +197,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add logging: print installation method and version
 
 **Acceptance:**
+
 - shellcheck is installed and functional
 - shfmt is installed and functional
 - Clear instructions provided if manual installation needed
@@ -184,19 +205,23 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 2.4: PowerShell Toolchain Installation
+
 **Objective:** Install pwsh and PSScriptAnalyzer
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `install_pwsh()` function:
   - [ ] Check if `pwsh` exists
   - [ ] If missing, try installation:
     - [ ] Linux (apt, Debian/Ubuntu):
+
       ```bash
       # Download Microsoft repository GPG keys
       # Register Microsoft repository
       # sudo apt-get update
       # sudo apt-get install -y powershell
       ```
+
     - [ ] macOS (brew): `brew install --cask powershell`
   - [ ] If installation fails, print manual install instructions
   - [ ] Exit with code 2 if pwsh cannot be installed and CI mode is active
@@ -211,6 +236,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add logging: print installation method and version
 
 **Acceptance:**
+
 - pwsh is installed and functional
 - PSScriptAnalyzer module is installed
 - Clear instructions provided if manual installation needed
@@ -218,9 +244,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 2.5: Perl Toolchain Installation
+
 **Objective:** Install Perl::Critic and PPI
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `install_perl_tools()` function:
   - [ ] Check if `perl` exists (prerequisite)
   - [ ] Check if Perl::Critic is available: `perl -MPerl::Critic -e 'print "OK\n"'`
@@ -237,6 +265,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add logging: print installation method and verification status
 
 **Acceptance:**
+
 - Perl::Critic is installed and importable
 - PPI is installed and importable
 - Clear instructions provided if manual installation needed
@@ -246,9 +275,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Phase 3: Verification Gate and Error Handling
 
 ### Item 3.1: Final Verification Gate
+
 **Objective:** Run `repo-lint check --ci` to verify complete setup
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `run_verification_gate()` function:
   - [ ] Run `repo-lint check --ci`
   - [ ] Capture exit code and output
@@ -261,6 +292,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add logging: print verification gate output
 
 **Acceptance:**
+
 - `repo-lint check --ci` runs successfully
 - Missing tools are clearly listed if verification fails
 - Exit code matches `repo-lint check --ci` exit code
@@ -268,9 +300,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 3.2: Error Handling and Messages
+
 **Objective:** Provide clear, actionable error messages
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Implement `die()` helper function:
   - [ ] Accepts message and exit code
   - [ ] Prints error message to stderr in red (if terminal supports color)
@@ -294,6 +328,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add troubleshooting section in script header
 
 **Acceptance:**
+
 - All error messages are clear and actionable
 - Exit codes are documented and consistent
 - Warnings are distinct from errors
@@ -301,9 +336,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 3.3: Idempotency and State Management
+
 **Objective:** Ensure script can be run multiple times safely
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Add checks before each operation:
   - [ ] Skip venv creation if `.venv/` exists and is valid
   - [ ] Skip tool installation if tool already exists on PATH
@@ -316,6 +353,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
   - [ ] Verify tools are still functional after second run
 
 **Acceptance:**
+
 - Script runs successfully multiple times
 - Second run is faster (skips already-installed components)
 - `--force` flag forces full re-installation
@@ -325,9 +363,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Phase 4: Documentation
 
 ### Item 4.1: Inline Script Documentation
+
 **Objective:** Document script usage, exit codes, and behavior in script header
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Add comprehensive header comment block:
   - [ ] Script purpose and overview
   - [ ] Usage examples
@@ -342,6 +382,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Add inline comments for complex logic
 
 **Acceptance:**
+
 - Script header contains all essential information
 - Functions are clearly documented
 - Script is self-documenting
@@ -349,9 +390,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 4.2: External Documentation
+
 **Objective:** Create comprehensive external documentation
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Create `docs/tools/repo-lint/bootstrap-bash.md`:
   - [ ] Overview of Bash bootstrapper vs Rust bootstrapper
   - [ ] How to run the bootstrapper
@@ -374,6 +417,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
   - [ ] Note: This file documents the Bash `bootstrap-repo-lint-toolchain.sh` script
 
 **Acceptance:**
+
 - Documentation is comprehensive and easy to follow
 - Contributors can run bootstrapper without prior knowledge
 - Troubleshooting section covers common issues
@@ -381,9 +425,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 4.3: Copilot Session-Start Integration
+
 **Objective:** Document how Copilot should use the bootstrapper at session start
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Update `.github/copilot-instructions.md`:
   - [ ] Add to "SESSION START REQUIREMENTS (MANDATORY)" section
   - [ ] Specify exact command: `bash scripts/bootstrap-repo-lint-toolchain.sh`
@@ -397,6 +443,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] Document escalation path if bootstrapper fails
 
 **Acceptance:**
+
 - Copilot instructions explicitly require running bootstrapper at session start
 - Failure handling is clearly documented
 - Success verification is straightforward
@@ -406,9 +453,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Phase 5: Testing and Validation
 
 ### Item 5.1: Manual Testing
+
 **Objective:** Manually test bootstrapper in various scenarios
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Test from repo root directory
 - [ ] Test from subdirectory (e.g., `scripts/`, `tools/`)
 - [ ] Test on clean environment (no `.venv/`, no tools installed)
@@ -429,6 +478,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
   - [ ] `repo-lint check --ci` succeeds
 
 **Acceptance:**
+
 - All manual tests pass
 - Error cases are handled gracefully
 - Script works on target platforms
@@ -436,9 +486,11 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ---
 
 ### Item 5.2: Automated Testing (Optional, if feasible)
+
 **Objective:** Create lightweight automated tests for core logic
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Create `scripts/tests/test_bootstrap_helpers.sh`:
   - [ ] Test `find_repo_root()` logic
   - [ ] Test `check_command()` logic
@@ -451,6 +503,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 **Note:** Bash testing is complex; prioritize manual testing if automated testing is difficult.
 
 **Acceptance:**
+
 - Core helper functions have basic test coverage (if implemented)
 - Tests run in CI (if implemented)
 
@@ -459,29 +512,36 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Phase 6: CI Integration and Rollout
 
 ### Item 6.1: CI Workflow Updates
+
 **Objective:** Ensure CI can use the bootstrapper
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Review existing CI workflows (`.github/workflows/`)
 - [ ] Identify workflows that need repo-lint toolchain
 - [ ] Update workflows to run bootstrapper before linting:
+
   ```yaml
   - name: Bootstrap repo-lint toolchain
     run: bash scripts/bootstrap-repo-lint-toolchain.sh
   ```
+
 - [ ] Ensure CI has required system packages pre-installed (or bootstrapper installs them)
 - [ ] Test CI workflow changes on a separate branch
 
 **Acceptance:**
+
 - CI workflows successfully use bootstrapper
 - CI runs are reproducible and deterministic
 
 ---
 
 ### Item 6.2: Rollout Plan
+
 **Objective:** Plan staged rollout to avoid disruption
 
-#### Sub-items:
+#### Sub-items
+
 - [ ] Phase 1: Documentation-only rollout
   - [ ] Merge documentation first
   - [ ] Announce availability in team channels (if applicable)
@@ -496,6 +556,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
   - [ ] Or clarify that both implementations coexist and serve different use cases
 
 **Acceptance:**
+
 - Rollout is gradual and allows for feedback
 - Team is not disrupted by sudden changes
 - Issues are caught and fixed before mandatory usage
@@ -505,6 +566,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## TODOs & Deferrments
 
 ### Immediate TODOs (P0 - Blocker)
+
 - [ ] **Phase 1**: Create Bash bootstrapper script with core functionality
 - [ ] **Phase 2**: Implement tool installation logic for all required tools
 - [ ] **Phase 3**: Add verification gate and error handling
@@ -514,11 +576,13 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - [ ] **Phase 6.1**: CI integration (if applicable)
 
 ### Secondary TODOs (P1 - High)
+
 - [ ] **Phase 4.3**: Update Copilot session-start instructions
 - [ ] **Phase 5.2**: Automated testing (if feasible)
 - [ ] **Phase 6.2**: Rollout plan execution
 
 ### Deferrments (Future Work)
+
 - **macOS Support**: Defer Homebrew-specific installation logic unless there's immediate need
 - **Windows Support**: Bash script targets Unix-like systems; Windows support would require PowerShell version
 - **Advanced Features**: Defer `--cleanup`, `--force`, verbose modes unless requested
@@ -528,6 +592,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 - **Custom Tool Paths**: Defer support for installing tools in non-standard locations
 
 ### Out of Scope
+
 - **IDE Integration**: Bootstrapper is CLI-focused; IDE setup is separate concern
 - **Multi-Repo Support**: Bootstrapper is repo-specific; multi-repo tooling is separate epic
 - **Tool Configuration**: Bootstrapper installs tools but doesn't manage `.pylintrc`, `.yamllint`, etc.
@@ -539,12 +604,14 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Success Metrics
 
 ### Quantitative Metrics
+
 - [ ] Bootstrapper runs successfully on clean Linux environment (100% success rate)
 - [ ] Bootstrapper is idempotent (second run completes in < 10 seconds)
 - [ ] `repo-lint check --ci` succeeds after running bootstrapper
 - [ ] Zero "missing tools" escalations from Copilot after bootstrapper deployment
 
 ### Qualitative Metrics
+
 - [ ] Contributors report bootstrapper is easy to use
 - [ ] Error messages are clear and actionable
 - [ ] Documentation is comprehensive and easy to follow
@@ -555,9 +622,10 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Risk Assessment
 
 ### High Risks
+
 1. **Platform Variability**: Different Linux distributions may require different package managers or package names
    - **Mitigation**: Focus on Debian/Ubuntu (apt) as primary target; provide manual install instructions for other platforms
-   
+
 2. **Sudo Requirements**: Many tool installations require sudo, which may not be available in all environments
    - **Mitigation**: Detect missing sudo and fail gracefully with clear instructions; support user-level installations where possible
 
@@ -565,6 +633,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
    - **Mitigation**: Document network requirement; consider caching strategy for CI environments
 
 ### Medium Risks
+
 1. **Rust vs Bash Confusion**: Two implementations may cause confusion about which to use
    - **Mitigation**: Clear documentation explaining both options and when to use each
 
@@ -575,6 +644,7 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
    - **Mitigation**: Test bootstrapper in actual CI environment; pre-install required packages in CI setup
 
 ### Low Risks
+
 1. **Idempotency Failures**: Running bootstrapper multiple times may cause issues
    - **Mitigation**: Thorough testing of idempotency; add safety checks
 
@@ -586,29 +656,34 @@ This plan outlines the implementation of a Bash-based bootstrapper script that a
 ## Appendix: Reference Information
 
 ### Related Issues
+
 - Issue #209: This epic
 
 ### Related Documentation
+
 - `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: Bash bootstrapper documentation for `bootstrap-repo-lint-toolchain.sh`
 - `.github/copilot-instructions.md`: Copilot agent guidelines
 - `tools/repo_lint/README.md`: repo-lint tool documentation
 - `pyproject.toml`: Python dependencies and tool configuration
 
 ### Related Code
+
 - `rust/src/bootstrap.rs`: Rust bootstrapper implementation (reference for logic) [**REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`]
 - `rust/src/bootstrap_main.rs`: Rust bootstrapper entry point [**UPDATED in Issue #265** - now uses bootstrap_v2]
 - `tools/repo_lint/install/`: repo-lint installation helpers
 
 ### External Resources
-- Bash scripting best practices: https://google.github.io/styleguide/shellguide.html
-- ShellCheck: https://www.shellcheck.net/
-- Python venv: https://docs.python.org/3/library/venv.html
+
+- Bash scripting best practices: <https://google.github.io/styleguide/shellguide.html>
+- ShellCheck: <https://www.shellcheck.net/>
+- Python venv: <https://docs.python.org/3/library/venv.html>
 
 ---
 
 ## Plan Version History
 
 **v1.0 - 2025-12-31**
+
 - Initial detailed implementation plan created
 - Phased approach with 6 phases
 - Comprehensive sub-items with checkboxes

@@ -1,6 +1,6 @@
 # Bash Docstring Contract
 
-**Language:** Bash (`.sh`, `.bash`, `.zsh`)  
+**Language:** Bash (`.sh`, `.bash`, `.zsh`)
 **Canonical style:** Top-of-file comment block using `#` prefix
 
 ## Purpose
@@ -207,9 +207,11 @@ set -euo pipefail
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
+
 **File:** `wrappers/bash/scripts/safe-run.sh`
 
 This file demonstrates:
+
 - Full docstring with all required sections
 - BINARY DISCOVERY ORDER (wrapper-specific)
 - PLATFORM COMPATIBILITY section
@@ -217,18 +219,22 @@ This file demonstrates:
 - Multiple examples with environment overrides
 
 ### Example 2: Test Script
+
 **File:** `wrappers/bash/tests/test-safe-run.sh`
 
 This file demonstrates:
+
 - Minimal docstring for test scripts
 - Clear DESCRIPTION of test scope
 - Simple USAGE pattern
 - Exit code documentation
 
 ### Example 3: Utility Script
+
 **File:** `wrappers/bash/scripts/safe-check.sh`
 
 This file demonstrates:
+
 - DESCRIPTION that states what it does NOT do
 - INPUTS with both arguments and environment variables
 - OUTPUTS with multiple exit codes documented
@@ -236,11 +242,13 @@ This file demonstrates:
 ## Validation
 
 The validator checks for:
+
 - Presence of comment block starting within first 10 lines
 - Presence of section keywords: `DESCRIPTION:`, `USAGE:`, `INPUTS:`, `OUTPUTS:`, `EXAMPLES:`
 - At least one `#` example line under EXAMPLES section
 
 The validator does NOT check:
+
 - Content quality or accuracy
 - Indentation consistency
 - Grammar or spelling
@@ -248,34 +256,40 @@ The validator does NOT check:
 ## Common Mistakes
 
 ❌ **Wrong:** Missing colon after section name
+
 ```bash
 # DESCRIPTION
 #   This script does something
 ```
 
 ✅ **Correct:** Include colon
+
 ```bash
 # DESCRIPTION:
 #   This script does something
 ```
 
 ❌ **Wrong:** No shebang or wrong shebang
+
 ```bash
 #!/bin/bash
 ```
 
 ✅ **Correct:** Use `env` for portability
+
 ```bash
 #!/usr/bin/env bash
 ```
 
 ❌ **Wrong:** Missing Exit Codes in OUTPUTS
+
 ```bash
 # OUTPUTS:
 #   Creates log files
 ```
 
 ✅ **Correct:** Always document exit codes
+
 ```bash
 # OUTPUTS:
 #   Exit Codes:

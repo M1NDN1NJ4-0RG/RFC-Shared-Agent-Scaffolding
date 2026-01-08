@@ -1,11 +1,13 @@
 # [Epic] Strengthen and Harmonize Docstring Contracts Across All Languages
 
-**Issue:** TBD (GitHub issue number will be assigned)  
-**Status:** Complete  
+**Issue:** TBD (GitHub issue number will be assigned)
+**Status:** Complete
 **Last Updated:** 2025-12-28
 
 ## Why
+
 The current docstring contracts in `/docs/contributing/docstring-contracts/` are a powerful mechanism for enforcing consistency, discoverability, and AI-agent compliance (especially Copilot). However, there are inconsistencies in section naming, required vs. optional elements, template completeness, and validation depth. Harmonizing and tightening these contracts will:
+
 - Reduce friction when writing new scripts
 - Improve validator accuracy and usefulness
 - Make AI-generated code even more reliably compliant
@@ -14,6 +16,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 ## Phased Approach
 
 ### Phase 1: Cross-Cutting Foundations & Consistency
+
 - [x] Create tracking document `docs/contributing/docstring-contracts/EPIC-TRACKING.md`
 - [x] Update `docs/contributing/docstring-contracts/README.md`
   - [x] Add mapping table: Required Semantic Section → Language-Specific Keywords
@@ -28,6 +31,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 - [x] Create `docs/contributing/docstring-contracts/exit-codes-contract.md`
 
 ### Phase 2: Language-Specific Harmonization & Completion
+
 - [x] `bash.md`
   - [x] Review and verify template completeness
   - [x] Standardize section order to match README
@@ -63,6 +67,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
   - [x] Standardize header names consistency
 
 ### Phase 3: Optional Enhancements & Future-Proofing
+
 - [x] Add "Platform Compatibility" as an optional but encouraged section across all contracts
 - [x] Version the contract suite (e.g., introduce `CONTRACT_VERSION: 1.1` in README)
 - [x] Add unit tests for the validator script covering each language
@@ -70,6 +75,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 - [x] Optional: Add preliminary contracts for potential future languages (e.g., JavaScript/Node, Go)
 
 ## Acceptance Criteria
+
 - [x] Tracking document created and maintained
 - [x] Shared exit codes reference doc exists
 - [x] All language contract templates are complete and consistent
@@ -83,6 +89,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 - [x] Preliminary contract for future language (JavaScript) created
 
 ## Notes
+
 - This epic was completed across multiple commits
 - All phases (1, 2, and 3) are now complete
 - The docstring contract system is now at version 1.1
@@ -94,6 +101,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 **Date Completed:** 2025-12-28
 
 ### Key Deliverables
+
 1. **exit-codes-contract.md** - Comprehensive exit code reference for all languages
 2. **Enhanced Validator** - Pragma support, content checks, single-file mode
 3. **Semantic Mapping Table** - Maps required sections to language-specific keywords
@@ -107,6 +115,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 11. **JavaScript Contract (DRAFT)** - Preliminary contract for potential future use
 
 ### Impact
+
 - **52 files** validated across repository
 - **All validations passing**
 - **Consistent documentation** across 6 programming languages
@@ -115,6 +124,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 - **Future-proof** with planning doc and preliminary contracts
 
 ### References
+
 - Commits: 0511095, 5e5c878, 9f756e1, 7384cea, 62a4624, and final Phase 3 commit
 - Main epic issue: TBD
 - Related documentation: All files in docs/contributing/docstring-contracts/
@@ -124,6 +134,7 @@ The current docstring contracts in `/docs/contributing/docstring-contracts/` are
 - All changes should maintain backward compatibility where possible
 
 ## References
+
 - Original contracts: `docs/contributing/docstring-contracts/`
 - Validator: `scripts/validate_docstrings.py`
 - Repository instructions: `.github/copilot-instructions.md`

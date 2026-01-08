@@ -1,7 +1,7 @@
 # Python Typing Policy
 
-**Status:** Canonical source of truth for Python type annotation requirements (Issue #278)  
-**Last Updated:** 2026-01-07  
+**Status:** Canonical source of truth for Python type annotation requirements (Issue #278)
+**Last Updated:** 2026-01-07
 **Enforcement:** Planned (report-only mode initially, then enforcing)
 
 ## Overview
@@ -37,6 +37,7 @@ CONFIG_PATH = Path("config.yaml")
 **Special cases:**
 
 - **Constants:** Use `Final[T]` for immutable constants (Python 3.8+)
+
   ```python
   from typing import Final
   
@@ -45,6 +46,7 @@ CONFIG_PATH = Path("config.yaml")
   ```
 
 - **Optional module-level variables:**
+
   ```python
   from typing import Optional
   
@@ -75,6 +77,7 @@ class Config:
 **Special cases:**
 
 - **Class variables vs. instance variables:** Use `ClassVar[T]` for class-level variables
+
   ```python
   from typing import ClassVar
   
@@ -92,6 +95,7 @@ class Config:
 **Requirement:** Local variable annotations are OPTIONAL for now. They may be enforced later via `--strict-typing` mode or "new/changed code only" policy.
 
 **Recommended practice:** Annotate local variables when:
+
 - Type is not obvious from context
 - Variable is initialized to a generic value (e.g., empty list/dict)
 - Variable type changes or is reused with different types (anti-pattern, but if it exists)
@@ -238,6 +242,7 @@ def legacy_handler(data: Any) -> Any:  # typing: Any (TODO: tighten)
 **Tag format:** `# typing: Any (TODO: tighten)`
 
 **When to use `Any`:**
+
 - Working with truly dynamic data (JSON APIs with varying schemas)
 - Interfacing with untyped third-party libraries
 - Temporary solution during migration (must be tracked and resolved)
@@ -271,6 +276,7 @@ def process_unknown(data: object) -> None:
 ### All Functions MUST Be Annotated (MANDATORY)
 
 **Requirement:** Every function and method MUST have:
+
 1. Type annotations for every parameter (including keyword-only)
 2. Return type annotation (including explicit `-> None`)
 
@@ -595,6 +601,7 @@ class DynamicConfig(TypedDict, total=False):
 **Primary enforcement:** Ruff ANN* rules (flake8-annotations)
 
 **Enabled rules:**
+
 - `ANN001` - Missing type annotation for function argument
 - `ANN201` - Missing return type annotation for public function
 - `ANN202` - Missing return type annotation for private function
@@ -609,6 +616,7 @@ class DynamicConfig(TypedDict, total=False):
 ### IDE Support
 
 **Recommended:** Use IDEs with Python type checking support:
+
 - VS Code with Pylance
 - PyCharm (built-in)
 - mypy for CLI type checking
@@ -721,6 +729,6 @@ def delete_user(id: int) -> None:
 
 ---
 
-**Version:** 1.0.0  
-**Issue:** #278  
+**Version:** 1.0.0
+**Issue:** #278
 **Status:** Initial policy definition (enforcement pending)

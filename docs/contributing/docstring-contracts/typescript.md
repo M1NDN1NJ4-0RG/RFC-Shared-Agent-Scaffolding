@@ -1,7 +1,7 @@
 # TypeScript Docstring Contract (DRAFT)
 
-**Language:** TypeScript (`.ts`, `.tsx`)  
-**Canonical style:** TSDoc comments using `/** ... */`  
+**Language:** TypeScript (`.ts`, `.tsx`)
+**Canonical style:** TSDoc comments using `/** ... */`
 **Status:** DRAFT - Not yet enforced by validator
 
 ## Purpose
@@ -528,12 +528,14 @@ When this contract is officially adopted, the validator should check:
 ## Common Mistakes (Future)
 
 ❌ **Wrong:** Using `//` for documentation
+
 ```typescript
 // This won't be picked up by TSDoc
 function doSomething() { }
 ```
 
 ✅ **Correct:** Use `/**` for TSDoc
+
 ```typescript
 /**
  * Does something useful
@@ -574,6 +576,7 @@ npm install -D eslint-plugin-tsdoc
 **DRAFT** - This contract is not yet enforced. Feedback welcome before official adoption.
 
 To adopt this contract:
+
 1. Add TypeScript file patterns to validator
 2. Implement TypeScriptValidator class
 3. Add test coverage

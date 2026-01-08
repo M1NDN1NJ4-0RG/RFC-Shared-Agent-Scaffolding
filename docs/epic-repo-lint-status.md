@@ -1,9 +1,11 @@
 # [EPIC] Build `repo_lint` Python Package/CLI (Unified Multi-Language Lint + Docstring Validation)
 
 ## Goal
+
 Replace the ad-hoc “run everything” linter helper with a **proper Python package + CLI** that becomes the **single source of truth** for repo linting and docstring validation across all supported languages.
 
 This tool must be:
+
 - Deterministic and strict in CI
 - Helpful locally (optional bootstrap + `fix`)
 - Modular per-language (one runner per language)
@@ -11,6 +13,7 @@ This tool must be:
 - Config-driven with **Python tooling config consolidated into `pyproject.toml`**
 
 ## Non-Goals
+
 - Rewriting language linters (we orchestrate them)
 - Replacing the Rust canonical binary
 - Publishing to PyPI (explicitly out-of-scope for now)
@@ -20,11 +23,13 @@ This tool must be:
 ## Phase 0 — Decisions (Locked)
 
 ### Item 0.1 — Naming + Placement (Locked)
+
 - [x] **Sub-Item 0.1.1:** Python package name: `repo_lint` (snake_case)
 - [x] **Sub-Item 0.1.2:** CLI command name: `repo-lint` (kebab-case)
 - [x] **Sub-Item 0.1.3:** Package location: `tools/repo_lint/` (repo tooling, not PyPI)
 
 ### Item 0.2 — Execution Model (Locked)
+
 - [x] **Sub-Item 0.2.1:** Run in-place first (CI runs `python -m tools.repo_lint ...`)
 - [x] **Sub-Item 0.2.2:** Add TODOs in `docs/future-work.md` for:
   - Making `repo_lint` installable later (`pip install -e .`, console script, etc.)
@@ -32,6 +37,7 @@ This tool must be:
   - Any additional enhancements tracked under Item 0.9.7
 
 ### Item 0.3 — CLI Surface Area (Locked)
+
 - [x] **Sub-Item 0.3.1:** Minimum viable commands:
   - `repo-lint check`
   - `repo-lint fix`
@@ -43,6 +49,7 @@ This tool must be:
   - `--json`, `--report` — Deferred
 
 ### Item 0.4 — CI Black Auto-Patch Policy (Locked)
+
 - [x] **Sub-Item 0.4.1:** Keep Black auto-patch for now
 - [x] **Sub-Item 0.4.2:** Required safeguards:
   - Bot-loop guard (never reformat-commit endlessly): MUST use both (a) actor guard (skip when actor is bot) AND (b) commit-message marker guard (skip when commit message contains an autoformat marker)
@@ -51,24 +58,29 @@ This tool must be:
   - Pin all third-party actions by commit SHA
 
 ### Item 0.5 — Install / Bootstrap Policy (Locked)
+
 - [x] **Sub-Item 0.5.1:** CI: **never** auto-install tools (workflow installs explicitly)
 - [x] **Sub-Item 0.5.2:** Local: auto-install allowed; migrate toward repo-local installs over time
 
 ### Item 0.6 — Cleanup Policy (Locked)
+
 - [x] **Sub-Item 0.6.1:** Add `--cleanup`, but it may remove **only repo-local installs**
 - [x] **Sub-Item 0.6.2:** Never uninstall system packages (no `brew uninstall`, no `apt remove`)
 
 ### Item 0.7 — Version Pinning Policy (Locked)
+
 - [x] **Sub-Item 0.7.1:** Pin tool versions in CI at minimum
 - [x] **Sub-Item 0.7.2:** Pin tool versions locally too (prefer deterministic installs)
 
 ### Item 0.8 — Python Linter Strategy (Locked)
+
 - [x] **Sub-Item 0.8.1:** Replace Flake8 with **Ruff** (Option C)
 - [x] **Sub-Item 0.8.2:** Consolidate Python tool configs in **one location** whenever possible:
   - Prefer `pyproject.toml` for Ruff, Black, Pylint, etc.
 - [x] **Sub-Item 0.8.3:** Remove `.flake8` / Flake8 CI steps after migration is complete and verified
 
 ### Item 0.9 — Additional Implementation Decisions (Locked)
+
 - [x] **Sub-Item 0.9.1:** Ruff fix policy (Option A2):
   - `repo-lint check` is **non-mutating** and MUST run Ruff without fixes (e.g., `ruff check --no-fix`).
   - `repo-lint fix` may apply **safe** Ruff fixes only (e.g., `ruff check --fix` WITHOUT enabling unsafe fixes).
@@ -80,12 +92,15 @@ This tool must be:
 - [x] **Sub-Item 0.9.7:** Future enhancements / potential issues must be tracked in `docs/future-work.md`. If this grows unwieldy, create a dedicated `docs/ideas.md` and link to it from `docs/future-work.md`.
 
 **Phase 0 Success Criteria**
+
 - ✅ All policy decisions above are locked and treated as constraints (no “Copilot interpretation”).
 
 ---
 
 ## Phase 1 — Package Scaffolding + CLI Entry Point ✅ COMPLETE
+
 ### Item 1.1 — Create package structure (High)
+
 - [x] **Sub-Item 1.1.1:** Create `tools/repo_lint/` with:
   - `__init__.py`
   - `cli.py` (arg parsing + command dispatch)
@@ -98,6 +113,7 @@ This tool must be:
   - Ensure `python -m tools.repo_lint fix` and `python -m tools.repo_lint install` work equivalently
 
 ### Item 1.2 — Implement CLI contract (High)
+
 - [x] **Sub-Item 1.2.1:** Implement `repo-lint check`
 - [x] **Sub-Item 1.2.2:** Implement `repo-lint fix` (formatters + allowlisted safe lint auto-fixes + re-check; see Phase 0 Item 0.9.1 and Phase 6 Item 6.5)
 - [x] **Sub-Item 1.2.3:** Implement `repo-lint install` (local bootstrap only; CI must not use)
@@ -107,12 +123,15 @@ This tool must be:
   - Deferred: `--json`, `--report`
 
 **Phase 1 Success Criteria**
+
 - ✅ CLI runs in-place, produces stable output, returns correct exit codes.
 
 ---
 
 ## Phase 2 — Consolidate Python Tooling Config + Migrate Flake8 → Ruff ✅ COMPLETE
+
 ### Item 2.1 — Consolidate into `pyproject.toml` (High)
+
 - [x] **Sub-Item 2.1.1:** Move/confirm Black config in `pyproject.toml`
 - [x] **Sub-Item 2.1.2:** Move/confirm Pylint config in `pyproject.toml` (eliminate separate config files if feasible)
 - [x] **Sub-Item 2.1.3:** Add Ruff config in `pyproject.toml`:
@@ -121,6 +140,7 @@ This tool must be:
   - Ensure ignores/extends align with repo conventions
 
 ### Item 2.2 — Replace Flake8 in tooling + CI (High)
+
 - [x] **Sub-Item 2.2.1:** Update local lint command set:
   - Remove Flake8 invocation locally
   - Add `ruff check` (non-mutating in `check`; safe fixes allowed only in `fix`)
@@ -131,18 +151,22 @@ This tool must be:
 > Note: CI migration off Flake8 and removal of `.flake8` are tracked in **Phase 6 Item 6.3**.
 
 **Phase 2 Success Criteria**
+
 - ✅ Black/Pylint/Ruff all configured in `pyproject.toml`
 - ✅ Local tooling uses Ruff in place of Flake8
 
 ---
 
 ## Phase 3 — Implement Per-Language Runner Modules ✅ COMPLETE
+
 ### Item 3.1 — Define runner interface + shared result types (High)
+
 - [x] **Sub-Item 3.1.1:** Define `Runner` interface/protocol (check/fix/install_check)
 - [x] **Sub-Item 3.1.2:** Standardize `LintResult` + `Violation` structures (tool, file, line, message)
 - [x] **Sub-Item 3.1.3:** Standardize exit code behavior across all runners
 
 ### Item 3.2 — Python runner (High)
+
 - [x] **Sub-Item 3.2.1:** Implement Python runner:
   - Black check/fix
   - Ruff check
@@ -151,23 +175,27 @@ This tool must be:
 - [x] **Sub-Item 3.2.2:** Ensure “no skipping private symbols” remains enforced (docstring validator contract) ✅
 
 ### Item 3.3 — Bash runner (High)
+
 - [x] **Sub-Item 3.3.1:** Implement Bash runner:
   - ShellCheck
   - shfmt check/fix
   - Bash docstring validation
 
 ### Item 3.4 — PowerShell runner (High)
+
 - [x] **Sub-Item 3.4.1:** Implement PowerShell runner:
   - PSScriptAnalyzer (run via `pwsh -NoProfile -NonInteractive`)
   - PowerShell docstring validation
   - Best practice: for symbol discovery / doc enforcement, parse with PowerShell’s native AST (`Parser::ParseFile`) and emit JSON—**never** execute repo scripts during linting
 
 ### Item 3.5 — Perl runner (High)
+
 - [x] **Sub-Item 3.5.1:** Implement Perl runner:
   - Perl::Critic
   - Perl docstring validation
 
 ### Item 3.6 — YAML runner (Medium)
+
 - [x] **Sub-Item 3.6.1:** Implement YAML runner:
   - yamllint
 
@@ -214,6 +242,7 @@ This tool must be:
   - ✅ Tests verify parser outputs match expected symbols
 
 **Phase 3 Success Criteria**
+
 - ✅ Python runner complete and functional
 - ✅ Bash runner complete and functional
 - ✅ PowerShell runner complete and functional
@@ -227,6 +256,7 @@ This tool must be:
 ## Phase 4 — Install / Bootstrap + Repo-Local Tools ✅ COMPLETE
 
 ### Item 4.1 — CI-safe mode enforcement (High)
+
 - [x] **Sub-Item 4.1.1:** Ensure `repo-lint check --ci` refuses to install tools
   - ✅ Already implemented in `cli.py:114-121`
   - CI mode returns exit code 2 when tools are missing
@@ -235,6 +265,7 @@ This tool must be:
   - Clear instructions printed for manual installation
 
 ### Item 4.2 — Local install support (High)
+
 - [x] **Sub-Item 4.2.1:** Implement `repo-lint install` for supported installs:
   - ✅ Python tools auto-installed in `.venv-lint/` virtual environment
   - ✅ Manual instructions printed for: shellcheck, shfmt, PSScriptAnalyzer, Perl::Critic
@@ -247,6 +278,7 @@ This tool must be:
   - ✅ Non-Python tool versions documented (shfmt v3.12.0, PSScriptAnalyzer 1.23.0)
 
 ### Item 4.3 — Repo-local installation path + cleanup (Medium)
+
 - [x] **Sub-Item 4.3.1:** Introduce repo-local tool directories (as feasible):
   - ✅ `.venv-lint/` for Python tooling (fully implemented)
   - ✅ `.tools/`, `.psmodules/`, `.cpan-local/` placeholders added to `.gitignore`
@@ -260,6 +292,7 @@ This tool must be:
   - Implementation: `cleanup_repo_local()` in `install_helpers.py`
 
 **Phase 4 Success Criteria**
+
 - ✅ CI is deterministic, local is convenient, cleanup is safe.
 - ✅ Python tools installable with pinned versions in repo-local venv
 - ✅ Cleanup removes only repo-local installations
@@ -270,6 +303,7 @@ This tool must be:
 ## Phase 5 — Migration of Existing Bash Wrapper + Docs ✅ COMPLETE
 
 ### Item 5.1 — Keep a thin bash wrapper (High)
+
 - [x] **Sub-Item 5.1.1:** Keep/rename bash wrapper as kebab-case:
   - ✅ `scripts/run-linters.sh` kept (kebab-case compliant)
 - [x] **Sub-Item 5.1.2:** Convert it into a thin wrapper that calls:
@@ -282,6 +316,7 @@ This tool must be:
   - ✅ All references point to `python -m tools.repo_lint` as canonical
 
 ### Item 5.2 — Documentation updates (High)
+
 - [x] **Sub-Item 5.2.1:** Update `CONTRIBUTING.md` to make repo-lint the canonical entrypoint
   - ✅ Replaced old linting section with repo-lint commands
   - ✅ Added canonical tool documentation
@@ -300,6 +335,7 @@ This tool must be:
   - ✅ No "commit first, lint later" allowed
 
 **Phase 5 Success Criteria**
+
 - ✅ Contributors have exactly one obvious way to run checks: `python -m tools.repo_lint check`
 - ✅ Bash wrapper is a thin delegation layer (63 lines vs. 413 lines before)
 - ✅ Documentation is updated and consistent across all files
@@ -311,6 +347,7 @@ This tool must be:
 **Phase 6 Status:** ✅ **COMPLETE** (All Items 6.0-6.5 with all sub-items)
 
 **Completion Notes (2025-12-30):**
+
 - All Phase 6 implementation and verification work is complete
 - Umbrella workflow fully implemented and verified in CI: `.github/workflows/repo-lint-and-docstring-enforcement.yml`
 - All required jobs present and tested: Auto-Fix: Black, Detect Changed Files, Repo Lint (Python/Bash/PowerShell/Perl/YAML), Vector Tests, Consolidate and Archive Logs
@@ -324,6 +361,7 @@ This tool must be:
 **Caveat (hard requirement):** In CI, the **Auto-Fix** portion (Black auto-patch) MUST run **first** and MUST **finish** before *any* other lint or docstring enforcement runs.
 
 Rationale:
+
 - If auto-fix changes files, every subsequent lint/docstring result must reflect the **post-fix** state.
 - We must avoid running checks on a stale commit SHA after auto-commit/patch.
 
@@ -370,6 +408,7 @@ Rationale:
   - Handles non-fast-forward push errors by syncing and retrying
 
 ### Item 6.1 — Replace CI steps with repo-lint (High)
+
 - [x] **Sub-Item 6.1.1:** Update workflows to run:
   - `repo-lint check --ci` (or wrapper equivalent)
   - ✅ **Implemented** in `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 323, 365, 418, 460, 506)
@@ -379,6 +418,7 @@ Rationale:
   - Pinned versions: black==24.10.0, ruff==0.8.4, pylint==3.3.2, yamllint==1.35.1, shfmt v3.12.0, PSScriptAnalyzer 1.23.0
 
 ### Item 6.2 — Black auto-patch hardening (High)
+
 - [x] **Sub-Item 6.2.1:** Add bot-loop guard using BOTH:
   - Actor guard (skip when actor is a bot)
   - Commit-message marker guard (skip when commit message contains an autoformat marker)
@@ -397,6 +437,7 @@ Rationale:
   - ✅ **Implemented** - covered by Item 6.0.3 (lines 94-140, 181-193)
 
 ### Item 6.3 — Complete CI Migration Flake8 → Ruff + Remove `.flake8` (High)
+
 - [x] **Sub-Item 6.3.1:** Update CI workflows to use Ruff instead of Flake8
   - ✅ **Implemented** in `.github/workflows/lint-and-format-checker.yml` (lines 77-80) and umbrella workflow
   - Command: `ruff check --no-fix .` replaces flake8
@@ -410,15 +451,18 @@ Rationale:
 ### Item 6.4 — Consolidate Linting + Docstring Enforcement into One Umbrella Workflow (High)
 
 **Goal:** Replace the current fragmented lint/docstring workflows with a single umbrella workflow that:
+
 - Runs **only** the checks relevant to the files changed/added in the PR
 - Uses `repo_lint` as the final orchestration layer (no per-language workflow drift)
 - Keeps strict CI guarantees while reducing wasted CI time
 
 **Umbrella Workflow Naming (Locked by this Item)**
+
 - Workflow display name (Title Case): **Repo Lint and Docstring Enforcement**
 - Workflow file name (kebab-case): `.github/workflows/repo-lint-and-docstring-enforcement.yml`
 
 **Job / Check Naming (Title Case)**
+
 - **Auto-Fix: Black**
 - **Detect Changed Files**
 - **Repo Lint: Python**
@@ -478,7 +522,7 @@ Rationale:
     - `lint-and-format-checker.yml.disabled` (legacy: language-specific linting)
     - `yaml-lint.yml.disabled` (legacy: YAML linting)
   - **New weekly workflow:** `.github/workflows/repo-lint-weekly-full-scan.yml`
-    - Schedule: Monday 00:00 UTC (cron: '0 0 * * 1')
+    - Schedule: Monday 00:00 UTC (cron: '0 0 ** 1')
     - Runs: `python -m tools.repo_lint check --ci` (all languages, no --only flag)
     - Supports: `workflow_dispatch` for manual triggering
     - Purpose: Catch cross-language docstring drift periodically without slowing down PR workflow
@@ -508,12 +552,14 @@ Rationale:
 **Goal:** Add a `vectors.json`-style parity system for linting + docstring enforcement so behavior remains deterministic and consistent across language runners and parser implementations. Also define a deny-by-default allow/deny policy for all auto-fix actions.
 
 **Design Principles (Locked by this Item)**
+
 - Vectors MUST test **outputs**, not parser internals (implementation may change; expected results must not drift).
 - Vectors MUST use a **stable, normalized violation schema** (rule id, path, symbol, line, severity, message).
 - Auto-fix is **deny-by-default**. Only explicitly allowlisted fix categories may run under `repo-lint fix`.
 - `repo-lint check` remains **non-mutating** and MUST NOT apply fixes.
 
 **Actual Layout (Aligned with kebab-case naming standards)**
+
 - `conformance/repo-lint/vectors/docstrings/` (JSON vector files in kebab-case)
 - `conformance/repo-lint/vectors/fixtures/` (fixture source files per language, following language-specific naming)
 - Shared policy file (runtime-owned; referenced by vectors):
@@ -571,10 +617,12 @@ Rationale:
   - Expected outputs MUST be regenerated via dedicated command (reproducible and auditable)
 
 **Success Criteria**
+
 - ✅ Parser swaps (e.g., bashlex → Tree-sitter, PPI fallback tweaks, PowerShell AST changes) do not silently change expected outputs.
 - ✅ Auto-fix behavior is governed by explicit policy and is auditable.
 
-### Item 6.6 — Failure Artifacts and Repository Logging (High)  
+### Item 6.6 — Failure Artifacts and Repository Logging (High)
+
 - [x] **Sub-Item 6.6.1:** Enhance the umbrella workflow to create a summary artifact capturing a consolidated list of all linter and docstring failures when jobs fail, producing log files for each failed language job and a summary of violations.
   - ✅ **Implemented** in `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 570-795)
   - New job: "Consolidate Failures" (job id: `consolidate-failures`) waits for all lint jobs
@@ -590,10 +638,12 @@ Rationale:
   - Single artifact upload and single commit per workflow run
 
 **Phase 6 Success Criteria**
+
 - ✅ CI executes the same single entrypoint as local dev.
 - ✅ No drift between workflow YAML and repo tooling.
 
 **Phase 6 Final Status:**
+
 - ✅ **IMPLEMENTATION COMPLETE** (Items 6.0-6.6)
 - ⏳ **TRANSITION IN PROGRESS** (Items 6.4.7 and 6.4.9 await umbrella workflow CI execution)
 - ✅ **VERIFICATION COMPLETE** (Per `docs/epic-repo-lint-copilot-prompt.md`)
@@ -612,17 +662,20 @@ Rationale:
 Following canonical instructions in `docs/epic-repo-lint-copilot-prompt.md` (PR #131):
 
 ### ✅ A) Verified Umbrella Gating Behavior
+
 - Analyzed changed files: only documentation files modified in PR
 - **Confirmed**: Skip behavior is CORRECT for doc-only PRs
 - `shared_tooling` pattern (`docs/contributing/`) intentionally excludes other doc files
 - Detection logic works correctly for PRs, forks, and branches
 
 ### ✅ B) Fixed Status Semantics (commit bb33926)
+
 **Problem**: Language jobs showed "Succeeded" (green) even when violations existed
 
 **Root Cause**: `continue-on-error: true` masked failures
 
 **Fixed**:
+
 - Removed `continue-on-error: true` from all 5 language lint jobs
 - Jobs now properly **FAIL (red ❌)** when violations exist
 - Updated Consolidate Failures to use `job.result` instead of `step.outcome`
@@ -632,11 +685,13 @@ Following canonical instructions in `docs/epic-repo-lint-copilot-prompt.md` (PR 
 **Files Changed**: `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 313-655)
 
 ### ✅ B.1) Fixed Auto-Format Push Sync (this commit)
+
 **Problem**: Auto-format commit/push failed with non-fast-forward error when remote branch moved
 
 **Root Cause**: No sync with remote before pushing; no retry logic for race conditions
 
 **Fixed**:
+
 - Added 3-attempt retry loop for commit and push
 - Fetch and rebase on remote branch before each attempt
 - Re-run Black formatter after sync (new changes may need formatting)
@@ -646,7 +701,9 @@ Following canonical instructions in `docs/epic-repo-lint-copilot-prompt.md` (PR 
 **Files Changed**: `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 169-247)
 
 ### ✅ C) Added CI Validation Mode (commit bb33926)
+
 **Implemented**: `workflow_dispatch` input `force_all` (boolean, default: false)
+
 - Description: "Force all language jobs to run (ignores changed-file detection)"
 - All language jobs check `inputs.force_all == true` in conditions
 - Enables deterministic testing of all language jobs
@@ -654,31 +711,34 @@ Following canonical instructions in `docs/epic-repo-lint-copilot-prompt.md` (PR 
 **Files Changed**: `.github/workflows/repo-lint-and-docstring-enforcement.yml` (lines 36-45, 313-518)
 
 ### ✅ D) Created Violation Fixtures (commit 4c93d34)
+
 **Added intentionally-bad fixtures** (non-auto-fixable violations):
 
 - **Python**: `conformance/repo-lint/fixtures/violations/python/missing_docstring.py`
   - 5 missing docstring violations (verified)
   - Unused imports, line too long
-  
+
 - **Bash**: `conformance/repo-lint/fixtures/violations/bash/missing-docstring.sh`
   - Missing function docstrings
   - ShellCheck SC2034, SC2086
-  
+
 - **PowerShell**: `conformance/repo-lint/fixtures/violations/powershell/MissingDocstring.ps1`
   - Missing .SYNOPSIS and parameter docs
   - PSScriptAnalyzer warnings
-  
+
 - **Perl**: `conformance/repo-lint/fixtures/violations/perl/missing_docstring.pl`
   - Missing POD documentation
   - Perl::Critic violations
-  
+
 - **YAML**: `conformance/repo-lint/fixtures/violations/yaml/bad-formatting.yml`
   - yamllint violations (line-too-long, trailing-spaces, indentation)
 
 **Verification**: Python fixture triggers 5 violations when validated
 
 ### 🔜 E) End-to-End Validation (Pending)
+
 **Required tests** (to be performed when workflow runs in CI):
+
 1. Change only Python file → only Python job runs
 2. Change only Markdown → no language jobs run
 3. Use `force_all=true` → all language jobs run and fail on violations
@@ -690,16 +750,20 @@ Following canonical instructions in `docs/epic-repo-lint-copilot-prompt.md` (PR 
 ## Phase 6 Logging Enhancement (2025-12-30)
 
 ### Objective
+
 Implement comprehensive logging for the umbrella workflow per `docs/copilot-prompt-2-repo-lint-epic.md` requirements:
+
 - Capture logs on BOTH success AND failure (not just failure)
 - Use required path format: `/logs/umbrella-ci-logs-phase-6/YYYY-MM-DD-RUN_ID/`
 - Commit logs to repository for traceability (same-repo PRs only)
 - Upload logs as artifacts (always)
 
 ### Part 1: Docstring Validation Scoping ✅
+
 **Status:** Already implemented, no changes needed
 
 **Verification:**
+
 - Confirmed `scripts/validate_docstrings.py` has `--language` flag
 - Python runner calls: `validate_docstrings.py --language python`
 - Bash runner calls: `validate_docstrings.py --language bash`
@@ -709,44 +773,48 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 **Conclusion:** Route 2 (language selector) already implemented in Phase 3.
 
 ### Part 2: Umbrella Workflow Logging ✅
+
 **Status:** Implemented
 
 **Changes Made:**
+
 1. **Job renamed:** "Consolidate Failures" → "Consolidate and Archive Logs"
    - Reflects new purpose: archive ALL runs, not just failures
-   
+
 2. **Log path format updated:**
    - Old: `repo-lint-failure-reports/summary-TIMESTAMP.md`
    - New: `logs/umbrella-ci-logs-phase-6/YYYY-MM-DD-RUN_ID/summary.md`
    - Uses `${{ github.run_id }}` for unique run identifier
-   
+
 3. **Artifact collection expanded:**
    - Downloads Auto-Fix forensic artifacts (`black.diff`, `black.log`)
    - Copies ALL job outputs to log directory (success + failure)
    - Individual files: `python-lint-output.txt`, `bash-lint-output.txt`, etc.
-   
+
 4. **Artifact upload:** Now runs with `if: always()` (not just on failure)
    - Artifact name: `umbrella-ci-logs`
    - Path: `logs/umbrella-ci-logs-phase-6/`
    - Retention: 30 days
-   
+
 5. **Log commit:** Now runs with `if: always()` (not just on failure)
    - Commits all logs regardless of job outcome
    - Uses bot-loop guards (actor guard + commit message marker) to prevent infinite loops
    - Same-repo PRs only (forks get artifact only)
    - Commit message: `CI: Add umbrella workflow logs [auto-generated]`
-   
+
 6. **`.gitignore` updated:**
    - Removed: `repo-lint-failure-reports/`
    - Added exceptions: `!logs/**/*.log`, `!logs/**/*.txt`, and `!logs/**/*.diff`
    - Allows CI logs to be committed for traceability
 
 **Files Changed:**
+
 - `.github/workflows/repo-lint-and-docstring-enforcement.yml`
 - `.gitignore`
 - `docs/epic-repo-lint-status.md`
 
 **Success Criteria:**
+
 - ✅ Logs captured on both pass and fail
 - ✅ Required path format implemented
 - ✅ Artifact upload runs always
@@ -763,6 +831,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 ### Completion Evidence
 
 **Implementation Complete:**
+
 - ✅ Item 6.0: Auto-Fix Must Run First + Forensics (5 sub-items)
 - ✅ Item 6.1: Replace CI steps with repo-lint (2 sub-items)
 - ✅ Item 6.2: Black auto-patch hardening (5 sub-items)
@@ -771,6 +840,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 - ✅ Item 6.5: Lint/Docstring Vectors + Auto-Fix Policy (7 sub-items)
 
 **CI Verification Complete (Sub-Item 6.4.9):**
+
 - ✅ Analyzed 3 workflow runs (20602289789, 20602295080, 20602345797)
 - ✅ Confirmed full parity with legacy workflows
 - ✅ Verified all jobs functioning correctly:
@@ -783,12 +853,14 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 - ✅ Documentation: `docs/ai-prompt/110/ci-verification-results.md`
 
 **Migration Complete (Sub-Item 6.4.7 Option B):**
+
 - ✅ Umbrella workflow is canonical PR gate
 - ✅ Legacy workflows disabled (.disabled extension)
 - ✅ Weekly full scan workflow operational
 - ✅ Migration strategy documented and verified
 
 **Acceptance Criteria:**
+
 - ✅ Umbrella workflow is single source of truth for CI linting
 - ✅ Parity with legacy workflows confirmed
 - ✅ Logging system comprehensive and forensically reviewable
@@ -808,6 +880,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 **Status:** ✅ COMPLETE
 
 **Implemented:**
+
 - [x] Basic runner structure following naming conventions
 - [x] File detection (checks for `**/*.rs` files)
 - [x] Tool checking (cargo, rustfmt, clippy)
@@ -840,6 +913,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
   - ✅ Edge cases covered: no rust directory, missing tools, JSON parse errors
 
 **Notes:**
+
 - Rust runner fully functional and integrated into umbrella workflow
 - Enhanced clippy parsing provides actionable file/line information
 - Docstring validation uses existing `scripts/validate_docstrings.py` infrastructure
@@ -855,6 +929,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 **Phase 7 Status:** ✅ **COMPLETE**
 
 **Completion Notes (2025-12-30):**
+
 - All Phase 7 implementation complete
 - Comprehensive test suite added: 23 tests covering dispatch, exit codes, and output format
 - JSON output implemented for CI debugging with stable schema
@@ -862,6 +937,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 - All Phase 7 acceptance criteria met
 
 ### Item 7.1 — Unit tests for dispatch + reporting (High)
+
 - [x] **Sub-Item 7.1.1:** Test runner dispatch (which files trigger which runners)
   - ✅ Implemented in `tools/repo_lint/tests/test_cli_dispatch.py` (5 tests)
   - Tests cover --only flag filtering, has_files() gating, all-runners execution
@@ -873,6 +949,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
   - Tests verify output stability, no timestamps, deterministic formatting
 
 ### Item 7.2 — Optional JSON reports (Medium)
+
 - [x] **Sub-Item 7.2.1:** Implement `--json` output artifact mode for CI debugging
   - ✅ Added `report_results_json()` in reporting.py
   - ✅ Integrated --json flag in CLI (check and fix commands)
@@ -888,6 +965,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
   - ✅ continue-on-error only on artifact download steps (correct behavior)
 
 **Phase 7 Success Criteria**
+
 - ✅ Tool is test-covered, deterministic, and safe to evolve.
   - 23 comprehensive unit tests covering dispatch, exit codes, and output format
   - All tests passing
@@ -898,6 +976,7 @@ Implement comprehensive logging for the umbrella workflow per `docs/copilot-prom
 ---
 
 ## Acceptance Criteria (Definition of Done)
+
 - [x] The **Repo Lint and Docstring Enforcement** umbrella workflow is the canonical CI gating workflow and runs `repo-lint check --ci` (and/or `repo-lint changed`) as its enforcement engine
   - ✅ Umbrella workflow implemented in `.github/workflows/repo-lint-and-docstring-enforcement.yml`
   - ✅ Uses `python -m tools.repo_lint check --ci --only <language>` for all checks

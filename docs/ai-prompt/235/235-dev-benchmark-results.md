@@ -1,7 +1,7 @@
 # Dev Benchmark Results: Bash vs Rust Bootstrapper
 
-**Date:** 2026-01-07  
-**Issue:** M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding#248  
+**Date:** 2026-01-07
+**Issue:** M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding#248
 **Benchmark Tool:** hyperfine v1.20.0
 
 ---
@@ -11,6 +11,7 @@
 This benchmark compares the performance of the Bash bootstrapper (`scripts/bootstrap-repo-lint-toolchain.sh`) against the Rust bootstrapper (`rust/target/release/bootstrap-repo-cli`), focusing on **verification-only operations** which represent the most common developer workflow.
 
 **Key Findings:**
+
 - ✅ Bash verification gate (`repo-lint check --ci`): **~43.2 seconds** (mean)
 - ⚠️  Rust verification currently has implementation issues preventing benchmarking
 - 📊 Bash verification shows consistent performance with low variance (σ=0.737s)
@@ -20,6 +21,7 @@ This benchmark compares the performance of the Bash bootstrapper (`scripts/boots
 ## Test Environment
 
 ### Machine Specifications
+
 - **OS:** Linux 6.11.0-1018-azure (Ubuntu 24.04.1)
 - **CPU:** AMD EPYC 7763 64-Core Processor
 - **Cores:** 4 (available)
@@ -27,6 +29,7 @@ This benchmark compares the performance of the Bash bootstrapper (`scripts/boots
 - **Runner:** GitHub Actions hosted runner
 
 ### Software Versions
+
 - **Bash Bootstrapper:** `scripts/bootstrap-repo-lint-toolchain.sh` (latest from main)
 - **Rust Bootstrapper:** `bootstrap-repo-cli` (release build)
 - **Python:** 3.x (in virtual environment)
@@ -37,6 +40,7 @@ This benchmark compares the performance of the Bash bootstrapper (`scripts/boots
 ## Benchmark Methodology
 
 ### Mode A: End-to-End "Real Dev" (Warm)
+
 **Status:** ⏭️ Skipped
 
 **Reason:** The Rust bootstrapper currently has a limitation where it requires a pre-existing virtual environment for pip operations. When attempting fresh installation (after removing `.venv`), the Rust bootstrapper exits with code 19 during the Python toolchain installation phase.
@@ -46,15 +50,18 @@ This benchmark compares the performance of the Bash bootstrapper (`scripts/boots
 This will be addressed in a future update to Phase 1 parity implementation.
 
 ### Mode B: Verify-Only / Scan-Heavy ✅
+
 **Status:** Completed (Bash only)
 
 This mode benchmarks the **verification gate** behavior, which is the most frequently used operation during development (running linters/formatters/checks on existing code).
 
 **Commands Benchmarked:**
+
 1. **Bash:** `repo-lint check --ci` (with full environment activation)
 2. **Rust:** `bootstrap verify` (attempted, currently non-functional)
 
 **Benchmark Parameters:**
+
 - Warmup runs: 2
 - Measured runs: 10
 - Pre-condition: Environment already set up via Bash bootstrapper
@@ -76,6 +83,7 @@ This mode benchmarks the **verification gate** behavior, which is the most frequ
 | **System Time** | 5.647 s |
 
 #### Individual Run Times (seconds)
+
 ```
 Run  1: 42.586
 Run  2: 42.654
@@ -90,6 +98,7 @@ Run 10: 42.769
 ```
 
 #### Performance Characteristics
+
 - **Consistency:** Very consistent performance across runs (σ=0.737s, ~1.7% variance)
 - **Outliers:** One outlier at 44.75s (Run 3), likely due to system scheduling
 - **P90:** ~43.84s (9th fastest run)
@@ -108,6 +117,7 @@ Run 10: 42.769
 | **Max** | 1.375 s |
 
 #### Individual Run Times (seconds)
+
 ```
 Run  1: 1.354  ← min
 Run  2: 1.357
@@ -122,6 +132,7 @@ Run 10: 1.375  ← max
 ```
 
 #### Performance Characteristics
+
 - **Consistency:** Extremely consistent performance (σ=0.006s, ~0.44% variance)
 - **Outliers:** No outliers; very stable performance
 - **P90:** ~1.371s
@@ -139,7 +150,7 @@ Run 10: 1.375  ← max
 
 2. **Rust Bootstrapper is Now Functional:** After fixing the actionlint detection issue (exit code 19), the Rust bootstrapper's `verify` command successfully detects all tools and completes in ~1.4 seconds.
 
-3. **Performance Comparison:** 
+3. **Performance Comparison:**
    - Rust `bootstrap verify`: **1.362s ± 0.006s** (checks tool availability)
    - Bash `repo-lint check --ci`: **43.883s ± 0.402s** (runs full linting suite)
    - **Important Note:** These commands perform fundamentally different operations, so direct comparison is not meaningful.
@@ -192,6 +203,7 @@ Run 10: 1.375  ← max
 ## Appendix: Exact Commands Used
 
 ### Bash Verification Benchmark
+
 ```bash
 hyperfine \
     --warmup 2 \
@@ -210,6 +222,7 @@ hyperfine \
 ```
 
 ### Rust Verification Benchmark (Attempted)
+
 ```bash
 hyperfine \
     --warmup 2 \

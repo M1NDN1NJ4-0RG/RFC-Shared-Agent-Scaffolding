@@ -8,8 +8,8 @@
 
 # M0 DECISIONS (FINAL) ✅
 
-**Status:** ALL M0 DECISION GATES RESOLVED  
-**Date Finalized:** 2025-12-26  
+**Status:** ALL M0 DECISION GATES RESOLVED
+**Date Finalized:** 2025-12-26
 **Authority:** See `M0-DECISIONS.md` for complete specification
 
 All M0 (Milestone 0) decision gates have been finalized and documented in the RFC v0.1.0.
@@ -26,30 +26,40 @@ The contract is now frozen and implementation work can proceed.
 | **M0-P2-I2** | Exit code ranges: 0=success, 2=auth, 3=usage, 10-19=deps, etc. | ✅ DECIDED |
 
 ### M0-P1-I1: `safe-run` Logging Semantics
-**Decision:** Split stdout and stderr  
+
+**Decision:** Split stdout and stderr
+
 - Capture streams separately
 - Use `=== STDOUT ===` and `=== STDERR ===` markers
 - Preserve both streams in failure logs
 
 ### M0-P1-I2: Failure Log Naming
-**Decision:** Deterministic timestamp + PID + status  
+
+**Decision:** Deterministic timestamp + PID + status
+
 - Format: `20251226T020707Z-pid4821-FAIL.log`
 - Location: `.agent/FAIL-LOGS/`
 - No random suffixes, no overwrites
 
 ### M0-P1-I3: `safe-archive` No-Clobber
-**Decision:** Hybrid approach  
+
+**Decision:** Hybrid approach
+
 - Default: auto-append numeric suffix (`.2`, `.3`, etc.)
 - Opt-in strict: `--no-clobber` or `SAFE_ARCHIVE_NO_CLOBBER=1`
 
 ### M0-P2-I1: Auth & Headers
-**Decision:** Bearer token with precedence chain  
+
+**Decision:** Bearer token with precedence chain
+
 - Header: `Authorization: Bearer <token>`
 - Precedence: CLI args > env vars > config files > `gh auth`
 - Never log tokens; exit code 2 if no auth
 
 ### M0-P2-I2: Exit Code Taxonomy
-**Decision:** Stable ranges  
+
+**Decision:** Stable ranges
+
 - 0: Success
 - 2: Auth/permission
 - 3: Usage/validation
@@ -90,7 +100,8 @@ Replace the existing table with:
 
 Replace the checklist for M0-P1-I1 with:
 
-**Checklist / TODO**  
+**Checklist / TODO**
+
 - [x] DECISION GATE: Choose log format (Option A vs B) → **DECISION: Option B (Split)**
 - [x] Update RFC normative language to specify the chosen format → **DONE: RFC v0.1.0 section 7.1**
 - [ ] Update all implementations to match the chosen format
@@ -103,7 +114,8 @@ Replace the checklist for M0-P1-I1 with:
 
 Replace the checklist for M0-P1-I2 with:
 
-**Checklist / TODO**  
+**Checklist / TODO**
+
 - [x] DECISION GATE: Decide required fields → **DECISION: ISO8601 timestamp + PID + status**
 - [x] DECISION GATE: Decide extension and directory rules → **DECISION: `.log` in `.agent/FAIL-LOGS/`**
 - [x] Codify allowed/forbidden patterns → **DONE: No overwrites, deterministic sort order**
@@ -116,7 +128,8 @@ Replace the checklist for M0-P1-I2 with:
 
 Replace the checklist for M0-P1-I3 with:
 
-**Checklist / TODO**  
+**Checklist / TODO**
+
 - [x] DECISION GATE: Choose collision strategy → **DECISION: Hybrid (auto-suffix default)**
 - [x] DECISION GATE: Specify return code / warning behavior → **DECISION: Exit error for strict mode**
 - [x] Update RFC normative language → **DONE: RFC v0.1.0 section 7.3**
@@ -129,7 +142,8 @@ Replace the checklist for M0-P1-I3 with:
 
 Replace the checklist for M0-P2-I1 with:
 
-**Checklist / TODO**  
+**Checklist / TODO**
+
 - [x] DECISION GATE: Define auth precedence → **DECISION: CLI > env > config > gh auth**
 - [x] DECISION GATE: Define header format → **DECISION: `Authorization: Bearer <token>`**
 - [x] DECISION GATE: Define behavior when no auth available → **DECISION: Exit code 2**
@@ -142,7 +156,8 @@ Replace the checklist for M0-P2-I1 with:
 
 Replace the checklist for M0-P2-I2 with:
 
-**Checklist / TODO**  
+**Checklist / TODO**
+
 - [x] DECISION GATE: Choose exit code map → **DECISION: Stable ranges (see M0-DECISIONS.md)**
 - [x] Update RFC normative language → **DONE: RFC v0.1.0 section 7.5**
 - [ ] Implement exit code mapping consistently across bundles

@@ -33,7 +33,7 @@ Work tracking templates used during wrapper development:
 
 - `claude.md` - Original Claude AI agent guidelines for wrapper development
 
-## Why Archived?
+## Why Archived
 
 These files served their purpose during the wrapper implementation phase (Epic #33) and provided valuable structure for AI-assisted development. They have been archived to:
 

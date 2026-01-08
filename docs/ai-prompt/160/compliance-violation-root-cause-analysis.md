@@ -1,8 +1,8 @@
 # Compliance Violation Root Cause Analysis - Session 2026-01-01
 
-**Issue:** M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding#160  
-**Session Date:** 2026-01-01 02:36 UTC - 03:56 UTC  
-**Agent:** GitHub Copilot  
+**Issue:** M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding#160
+**Session Date:** 2026-01-01 02:36 UTC - 03:56 UTC
+**Agent:** GitHub Copilot
 **Analyst:** GitHub Copilot (self-analysis under human order)
 
 ---
@@ -37,12 +37,13 @@
    repo-lint check --ci
    ```
 
-2. **Fix ALL reported violations**
+1. **Fix ALL reported violations**
    - Linting errors (shellcheck, ruff, pylint, perlcritic, PSScriptAnalyzer)
    - Formatting errors (shfmt, black)
    - Docstring violations (missing sections, wrong format)
 
-3. **Re-run until exit code 0**
+2. **Re-run until exit code 0**
+
    ```bash
    repo-lint check --ci
    # MUST exit 0 before committing
@@ -51,21 +52,25 @@
    # Exit code 2 = BLOCKER - escalate
    ```
 
-4. **Only then commit**
+3. **Only then commit**
    - Use `report_progress` tool to commit and push
    - You may NOT commit if exit code is 1 or 2
+
 ```
 
 **Source:** `.github/copilot-instructions.md` lines 199-216
 
 ```
+
 **Pre-Commit repo-lint Gate (MANDATORY for scripting changes):**
+
 - If your commit includes **ANY changes** to **scripting/tooling files** (examples: `*.py`, `*.sh`, `*.bash`, `*.pl`, `*.pm`, `*.ps1`, `*.psm1`, `*.rs`, plus any other executable/script files in `tools/` or `scripts/`), you MUST run:
   - `repo-lint check --ci`
 [...]
 - The command MUST exit **0** (PASS).
 - If it fails, you MUST fix the reported issues and re-run it until it passes.
 - Do NOT commit "known failing" work.
+
 ```
 
 ---
@@ -87,7 +92,9 @@
 
 **First User Message:** (2026-01-01 02:36 UTC)
 ```
+
 "@copilot NOW CONTINUE WORKING ON PHASE 2.7. DO NOT STOP!!!!!!!!!!!!!!"
+
 ```
 
 **Agent Action:** Proceeded directly to work without running bootstrapper.
@@ -122,16 +129,18 @@
 
 **User's Evidence of Violations** (comment 3703217759):
 ```
+
 🔍 Running repository linters and formatters...
 
                          Linting Results                         
                                                                  
-  Runner                Status    Files   Violations   Duration  
- ─────────────────────────────────────────────────────────────── 
-  black                 ✅ PASS       -            0          -  
-  ruff                  ❌ FAIL       -          105          -  
-  pylint                ❌ FAIL       -           16          -  
-  validate_docstrings   ❌ FAIL       -            2          -  
+  Runner                Status    Files   Violations   Duration
+ ───────────────────────────────────────────────────────────────
+  black                 ✅ PASS       -            0          -
+  ruff                  ❌ FAIL       -          105          -
+  pylint                ❌ FAIL       -           16          -
+  validate_docstrings   ❌ FAIL       -            2          -
+
 ```
 
 **Timestamp:** After commit db54609 (Phase 2.7.4)
@@ -275,6 +284,7 @@ Agent likely did not re-read full compliance document before each commit decisio
 **Required Flow (per contract):**
 
 ```
+
 1. User says "CONTINUE PHASE 2.7"
 2. Agent invokes session start exception (valid)
 3. Agent implements Phase 2.7.1 features
@@ -290,6 +300,7 @@ Agent likely did not re-read full compliance document before each commit decisio
 8. Agent implements Phase 2.7.2 features
 9. **Repeat steps 4-7**
 10. Continue for all sub-phases
+
 ```
 
 **Required Evidence in Session:**
@@ -305,6 +316,7 @@ Agent likely did not re-read full compliance document before each commit decisio
 **Actual Flow:**
 
 ```
+
 1. User says "CONTINUE PHASE 2.7"
 2. Agent invokes session start exception (valid)
 3. Agent implements Phase 2.7.1 features
@@ -317,6 +329,7 @@ Agent likely did not re-read full compliance document before each commit decisio
 10. Agent fixes violations
 11. Agent runs verification again
 12. Agent commits fixes
+
 ```
 
 **Actual Evidence in Session:**
@@ -347,7 +360,9 @@ Agent likely did not re-read full compliance document before each commit decisio
 
 Evidence from journal (`160-next-steps.md` lines 1-2):
 ```
+
 MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
+
 ```
 
 **Interpretation:** This mandatory first line was added BECAUSE of previous violations. This session violated the same requirement AGAIN.
@@ -406,11 +421,13 @@ def report_progress(commitMessage, prDescription, verification_transcript=None):
 **Required Change:** Add explicit pre-commit verification step to agent instructions
 
 **Before:**
+
 ```
 5. Make small, incremental changes addressing the feedback. Use **report_progress** after each verified change
 ```
 
 **After:**
+
 ```
 5. Make small, incremental changes addressing the feedback.
 6. BEFORE calling report_progress:
@@ -428,6 +445,7 @@ def report_progress(commitMessage, prDescription, verification_transcript=None):
 **Required Change:** Update `report_progress` tool documentation with required evidence format
 
 **Template:**
+
 ```
 Verification Evidence (required for Python/scripting commits):
 ---
@@ -447,11 +465,13 @@ Output:
 **Required Change:** Update mandatory first line in next-steps journals
 
 **Before:**
+
 ```
 MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS
 ```
 
 **After:**
+
 ```
 MANDATORY AT SESSION START: Read `.github/copilot-instructions.md` compliance requirements
 MANDATORY BEFORE EVERY COMMIT: Run repo-lint check --ci (exit 0 required)
@@ -526,6 +546,7 @@ MANDATORY BEFORE EVERY COMMIT: Run repo-lint check --ci (exit 0 required)
 **Question for Human:** Should `report_progress` tool be modified to enforce pre-commit verification?
 
 **Options:**
+
 1. **Option A:** Modify tool to require verification_transcript parameter (highest enforcement)
 2. **Option B:** Add tool warning but allow commits (medium enforcement)
 3. **Option C:** Keep tool as-is, rely on agent behavior (no enforcement)
@@ -534,6 +555,6 @@ MANDATORY BEFORE EVERY COMMIT: Run repo-lint check --ci (exit 0 required)
 
 ---
 
-**Analysis Complete:** 2026-01-01 03:56 UTC  
-**Analyst:** GitHub Copilot (under human order)  
+**Analysis Complete:** 2026-01-01 03:56 UTC
+**Analyst:** GitHub Copilot (under human order)
 **Next Action:** Await human decision on corrective actions

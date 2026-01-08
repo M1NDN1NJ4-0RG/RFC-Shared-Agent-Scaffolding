@@ -7,11 +7,9 @@
 
 Checking Python functions (should be snake_case)...
 
-
 ## PowerShell Symbol Analysis
 
 Checking PowerShell functions (should be PascalCase Verb-Noun)...
-
 
 ## Bash Symbol Analysis
 
@@ -19,12 +17,12 @@ Checking Bash variables (constants should be UPPER_SNAKE_CASE, locals should be 
 
 *Note: This is a basic check for obvious violations. Manual review recommended.*
 
-
 ## Perl Symbol Analysis
 
 Checking Perl conventions (to be finalized)...
 
 Perl subroutines found:
+
 ```
 wrappers/perl/scripts/preflight_automerge_ruleset.pl:458:sub die_usage { print STDERR $_[0] . "\n"; exit 3; }
 wrappers/perl/scripts/preflight_automerge_ruleset.pl:459:sub warn_msg { print STDERR "WARN: $_[0]\n"; }

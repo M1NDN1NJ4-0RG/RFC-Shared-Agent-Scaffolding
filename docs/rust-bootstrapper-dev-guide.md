@@ -587,6 +587,7 @@ git push origin bootstrap-v0.2.0
 ### 4. CI Build
 
 GitHub Actions will automatically:
+
 - Build binaries for all platforms
 - Run tests
 - Create GitHub Release

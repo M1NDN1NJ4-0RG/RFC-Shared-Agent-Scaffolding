@@ -36,17 +36,20 @@ This implementation adds a GitHub Actions workflow and probe script to investiga
 ### Automatic Trigger
 
 The workflow runs automatically on:
+
 - Pull requests that modify PowerShell scripts or the workflow itself
 - Pushes to main branch with same path filters
 
 ## Expected Outcomes
 
 ### Success Case (Contract Compliance)
+
 - Exit code: 130 (SIGINT) or 143 (SIGTERM)
 - ABORTED log created in temp directory
 - Log filename format: `YYYYMMDDTHHMMSSZ-pidNNN-ABORTED.log`
 
 ### Issue Case (Contract Violation)
+
 - Exit code: 127 (wrapper error) or other unexpected code
 - No ABORTED log created
 - Indicates PowerShell exception handling may be interfering

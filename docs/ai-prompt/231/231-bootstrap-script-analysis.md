@@ -5,6 +5,7 @@
 The bootstrap script orchestrates installation of development toolchains (Python, Shell, PowerShell, Perl) plus required utilities (actionlint, ripgrep) to establish a reproducible development environment. After Phase 2 hardening, all critical external commands use deterministic exit codes via fail-fast wrappers, eliminating silent failures and partial-install states.
 
 **Key characteristics:**
+
 - **Deterministic failure:** All critical paths exit via `die()` with documented exit codes
 - **Idempotent:** Safe to re-run; detects existing installs and skips them
 - **Cross-platform:** macOS (Homebrew) and Linux (apt/snap) support
@@ -99,6 +100,7 @@ All exit codes are deterministic and documented:
 | 21 | Installation | ripgrep installation failed (REQUIRED) |
 
 **Exit code enforcement:**
+
 - All critical commands wrapped via `run_or_die(exit_code, message, command...)`
 - `set -euo pipefail` ensures pipeline failures propagate
 - Optional steps use `try_run()` to avoid terminating on non-critical failures
@@ -110,21 +112,25 @@ All exit codes are deterministic and documented:
 ### Core Helpers
 
 **`die(message, exit_code)`**
+
 - Prints `[bootstrap][ERROR] $message`
 - Exits with specified code
 - All failure paths terminate here
 
 **`run_or_die(exit_code, message, command...)`**
+
 - Executes command
 - On failure: calls `die(message, exit_code)`
 - Ensures external commands never escape with arbitrary codes
 
 **`try_run(command...)`**
+
 - Executes command
 - Captures exit code but does not terminate
 - Used for: optional detection, fallback attempts
 
 **`safe_version(command)`**
+
 - Executes version command
 - Returns output or empty string (never fails)
 - Protected from `pipefail` killing the script
@@ -132,11 +138,13 @@ All exit codes are deterministic and documented:
 ### `set -euo pipefail` Interaction
 
 **Benefits:**
+
 - Catches unhandled failures immediately
 - Prevents undefined variable usage
 - Propagates pipeline failures
 
 **Risks (now mitigated):**
+
 - Version parsing pipelines could terminate script → Fixed via `safe_version()`
 - Optional tool detection could be fatal → Fixed via `try_run()`
 - External command failures bypass custom codes → Fixed via `run_or_die()`
@@ -148,6 +156,7 @@ All exit codes are deterministic and documented:
 ### macOS (Homebrew)
 
 **Pattern:**
+
 ```bash
 if command -v brew >/dev/null 2>&1; then
     run_or_die EXIT_CODE "Homebrew install failed" brew install TOOL
@@ -161,6 +170,7 @@ fi
 ### Linux (apt)
 
 **Pattern:**
+
 ```bash
 run_or_die EXIT_CODE "apt update failed" sudo apt-get update
 run_or_die EXIT_CODE "install failed" sudo apt-get install -y PACKAGE
@@ -173,6 +183,7 @@ run_or_die EXIT_CODE "install failed" sudo apt-get install -y PACKAGE
 ### Linux (snap)
 
 **Pattern:**
+
 ```bash
 if command -v snap >/dev/null 2>&1; then
     run_or_die EXIT_CODE "snap install failed" sudo snap install TOOL --classic
@@ -184,6 +195,7 @@ fi
 ### go install
 
 **Pattern:**
+
 ```bash
 export PATH="$HOME/go/bin:$PATH"
 run_or_die 20 "go install failed" go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10
@@ -194,6 +206,7 @@ run_or_die 20 "go install failed" go install github.com/rhysd/actionlint/cmd/act
 ### Perl (cpanm)
 
 **Pattern:**
+
 ```bash
 failed_tools=()
 if ! cpanm --local-lib=~/perl5 Perl::Critic; then
@@ -211,14 +224,17 @@ fi
 ## Virtual Environment Activation (Strict)
 
 **Before Phase 2:**
+
 - Activation mismatch was warn-only
 - Risk: installs into wrong Python environment
 
 **After Phase 2:**
+
 - Activation mismatch is **fatal** (exit 11)
 - Verification: `command -v python3` must equal `$venv_path/bin/python3`
 
 **Rationale:**
+
 - Prevents silent corruption of system Python
 - Ensures reproducible installs
 - Catches PATH configuration errors early
@@ -241,6 +257,7 @@ fi
    - Exit 3+: Other errors (fatal)
 
 **Why accept exit 1:**
+
 - Tools are functional (bootstrap succeeded)
 - Violations are repo state issues, not toolchain issues
 - Distinguishes operational failures from lint findings
@@ -250,31 +267,37 @@ fi
 ## Remaining Edge Cases
 
 ### Network Failures
+
 - No retry logic
 - Transient network errors cause immediate failure
 - **Risk:** Flaky CI on package manager refreshes
 
 ### Permission Issues
+
 - Assumes user can `sudo` for apt/snap
 - No preflight permission check
 - **Risk:** Partial install if sudo fails mid-run
 
 ### Concurrent Runs
+
 - No locking mechanism
 - Multiple simultaneous bootstraps could conflict
 - **Risk:** Race conditions on .venv creation, package manager locks
 
 ### PATH Mutations
+
 - Exports `PATH` in current shell only
 - New shells require re-activation or re-bootstrap
 - **Impact:** Documented but can surprise users
 
 ### Homebrew Availability
+
 - macOS path requires Homebrew present
 - No automatic Homebrew installation
 - **Impact:** Clear error message directs user to install Homebrew
 
 ### Shell Assumptions
+
 - Requires Bash (uses `[[`, `${var}` syntax)
 - Not POSIX sh compatible
 - **Impact:** Documented in shebang (`#!/usr/bin/env bash`)
@@ -284,20 +307,24 @@ fi
 ## Security Considerations
 
 ### Command Injection (Mitigated)
+
 - **Before:** Variable expansion in `safe_version("$tool --version")`
 - **After:** Explicit hardcoded commands per tool
 - **Pattern:** Each tool has dedicated case branch with literal command
 
 ### Temp File Cleanup
+
 - PowerShell .deb file cleaned via `trap`
 - Ensures no leftover artifacts on failure
 
 ### Version Pinning
+
 - actionlint: v1.7.10 (pinned)
 - Other tools: latest from package manager
 - **Tradeoff:** Reproducibility vs staying current
 
 ### Download Verification
+
 - No checksum validation for direct downloads
 - Relies on package manager signatures (brew/apt)
 - **Risk:** Supply chain attacks on direct downloads
@@ -309,6 +336,7 @@ fi
 **Test suite:** `scripts/tests/test_bootstrap_repo_lint_toolchain.py`
 
 **Coverage:**
+
 - Exit code 10: Not in repository
 - Exit code 12: No pyproject.toml
 - Exit code 20: actionlint failure paths (verification test)
@@ -317,6 +345,7 @@ fi
 - Idempotency (re-run safety)
 
 **Testing gaps:**
+
 - No integration tests for actual package manager calls
 - No failure injection for network/permission errors
 - Relies on verification tests (check script content) rather than execution
@@ -326,16 +355,19 @@ fi
 ## Performance Characteristics
 
 **Sequential execution:**
+
 - All installs run serially
 - No parallelization of independent tools
 - **Typical runtime:** 2-5 minutes (varies by network/cache)
 
 **Bottlenecks:**
+
 - Package manager metadata refresh (apt update)
 - Python package downloads (pip install)
 - go install compilation (actionlint)
 
 **Optimization opportunities:**
+
 - Parallel tool downloads
 - Cached package metadata
 - Pre-compiled binaries vs go install
@@ -345,16 +377,19 @@ fi
 ## Maintenance Burden
 
 **High-touch areas:**
+
 - OS-specific install logic (macOS vs Linux divergence)
 - Package manager version differences
 - Dependency hell for Perl modules
 
 **Complexity drivers:**
+
 - String processing for version extraction
 - PATH manipulation across platforms
 - Error aggregation for Perl installs
 
 **Technical debt:**
+
 - Bash string manipulation is verbose and error-prone
 - No structured logging (grep-unfriendly for CI analysis)
 - Limited composability (functions tightly coupled to global state)
@@ -364,11 +399,13 @@ fi
 ## Migration Readiness
 
 **What works well (preserve):**
+
 - Clear phase separation
 - Deterministic exit codes
 - Idempotent design
 
 **What needs improvement:**
+
 - Structured logging for machine parsing
 - Parallel execution where safe
 - Better progress indication
@@ -376,6 +413,7 @@ fi
 - Self-contained binary (no bash dependency)
 
 **Migration risks:**
+
 - Behavior parity validation (must match existing contract)
 - CI integration (must work headless)
 - User migration path (fallback to bash during transition)

@@ -1,8 +1,8 @@
 # M1-P2-I1 Status: Python 3 Bundle Alignment to M0 Contract
 
-**Status:** ✅ COMPLETE  
-**Date:** 2025-12-26 (Updated)  
-**Epic:** Issue #3  
+**Status:** ✅ COMPLETE
+**Date:** 2025-12-26 (Updated)
+**Epic:** Issue #3
 **Refs:** #3
 
 ---
@@ -12,12 +12,14 @@
 M1-P2-I1 aims to align Python 3 implementation and tests with the finalized M0 contract decisions.
 
 **✅ COMPLETED:**
+
 - ✅ `safe_run.py` fully aligned with M0-P1-I1 (split stdout/stderr) and M0-P1-I2 (log naming)
 - ✅ All 5 safe_run tests pass
 - ✅ `preflight_automerge_ruleset.py` fully aligned with M0-P2-I1 (Bearer token auth)
 - ✅ All 7 preflight tests pass (including Bearer token validation test)
 
 **⚠️ OUT OF SCOPE (separate work item):**
+
 - `safe_archive.py` M0-P1-I3 implementation (auto-suffix no-clobber) - tracked separately
 
 ---
@@ -27,6 +29,7 @@ M1-P2-I1 aims to align Python 3 implementation and tests with the finalized M0 c
 ### 1. safe_run.py — M0-P1-I1 (Split stdout/stderr) ✅
 
 **Before:**
+
 ```python
 # Line 124
 proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -34,6 +37,7 @@ proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 ```
 
 **After:**
+
 ```python
 proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 # Split streams, read concurrently with threading
@@ -47,6 +51,7 @@ proc = subprocess.Popen(argv, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 ### 2. safe_run.py — M0-P1-I2 (Log naming) ✅
 
 **Before:**
+
 ```python
 # Line 190
 out_path = os.path.join(log_dir, f"{ts}-{slug}-{suffix}.txt")
@@ -54,12 +59,14 @@ out_path = os.path.join(log_dir, f"{ts}-{slug}-{suffix}.txt")
 ```
 
 **After:**
+
 ```python
 out_path = os.path.join(log_dir, f"{ts}-pid{pid}-{status}.log")
 # Format: 20251226T025959Z-pid1234-FAIL.log
 ```
 
 **Changes:**
+
 - Timestamp: ISO 8601 format (`YYYYMMDDTHHMMSSZ`) in UTC
 - Added PID for process correlation
 - Status: `FAIL`, `ABORTED`, `ERROR` (uppercase)
@@ -73,12 +80,14 @@ out_path = os.path.join(log_dir, f"{ts}-pid{pid}-{status}.log")
 ### 3. preflight_automerge_ruleset.py — M0-P2-I1 (Bearer token) ⚠️
 
 **Before:**
+
 ```python
 # Line 55
 req.add_header("Authorization", f"token {token}")
 ```
 
 **After:**
+
 ```python
 # Line 56
 req.add_header("Authorization", f"Bearer {token}")
@@ -132,14 +141,16 @@ OK
 
 The earlier assessment about test drift was **incorrect**. Upon running the actual tests (2025-12-26):
 
-### What We Found:
+### What We Found
+
 1. ✅ All preflight tests pass without modification
 2. ✅ Tests correctly mock `http_get()` with 2-tuple return
 3. ✅ Tests correctly expect `classify_auth()` to return `bool`
 4. ✅ Tests include M0-P2-I1 Bearer token validation
 5. ✅ No references to missing `get_env_token()` function
 
-### Root Cause of Confusion:
+### Root Cause of Confusion
+
 The status document from an earlier assessment was outdated or based on incorrect information. The actual test suite was already aligned with the implementation.
 
 ---
@@ -147,6 +158,7 @@ The status document from an earlier assessment was outdated or based on incorrec
 ## Validation Summary
 
 **Python 3 Bundle M0 Alignment:**
+
 - ✅ M0-P1-I1: `safe_run.py` captures split stdout/stderr with markers
 - ✅ M0-P1-I2: Log files use `{ISO8601}-pid{PID}-{STATUS}.log` format
 - ✅ M0-P2-I1: `preflight_automerge_ruleset.py` uses `Authorization: Bearer <token>`
@@ -154,6 +166,7 @@ The status document from an earlier assessment was outdated or based on incorrec
 - ✅ 12/13 Python 3 tests passing (safe_run, preflight, safe_check)
 
 **Out of Scope:**
+
 - ⚠️ `safe_archive.py` M0-P1-I3 (no-clobber) - 1 test failing
   - This is a separate work item, not part of M1-P2-I1
 

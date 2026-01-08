@@ -4,7 +4,7 @@
 
 This guide helps you migrate from the legacy Bash bootstrapper (`bootstrap-repo-lint-toolchain.sh`) to the new Rust-based bootstrapper (`bootstrap-repo-cli`).
 
-## Why Migrate?
+## Why Migrate
 
 The Rust bootstrapper provides several advantages over the Bash version:
 
@@ -27,11 +27,13 @@ The Rust bootstrapper provides several advantages over the Bash version:
    - macOS ARM64: `bootstrap-repo-cli-macos-arm64.tar.gz`
 
 2. Verify the checksum (optional but recommended):
+
    ```bash
    sha256sum -c bootstrap-repo-cli-<platform>.tar.gz.sha256
    ```
 
 3. Extract and install:
+
    ```bash
    tar xzf bootstrap-repo-cli-<platform>.tar.gz
    mkdir -p ~/.bootstrap/bin
@@ -40,6 +42,7 @@ The Rust bootstrapper provides several advantages over the Bash version:
    ```
 
 4. Add to PATH (if not already):
+
    ```bash
    echo 'export PATH="$HOME/.bootstrap/bin:$PATH"' >> ~/.bashrc
    source ~/.bashrc
@@ -65,6 +68,7 @@ The repository includes a wrapper script that automatically detects and uses the
 ```
 
 Set `BOOTSTRAP_BIN` to force a specific binary:
+
 ```bash
 export BOOTSTRAP_BIN="$HOME/.bootstrap/bin/bootstrap-repo-cli"
 ./scripts/bootstrap-repo-lint-toolchain.sh
@@ -101,6 +105,7 @@ The Rust bootstrapper achieves complete feature parity with the Bash version:
 ### repo-lint Installation and Verification
 
 Both bootstrappers:
+
 1. Install `repo-lint` via `pip install -e .` (editable mode from repository root)
 2. Verify `repo-lint --help` succeeds before completing
 3. Run automatic verification gate (`repo-lint check --ci`) after successful installation
@@ -113,6 +118,7 @@ Both bootstrappers:
 ### Profile Support
 
 The Rust version uses profiles instead of command-line flags:
+
 - **dev profile**: Equivalent to Bash default (all common tools)
 - **ci profile**: Minimal tools for CI environments
 - **full profile**: All available tools (equivalent to Bash `--all`)
@@ -122,6 +128,7 @@ Both approaches ensure the same tools are installed for equivalent use cases.
 ### Session Scripts
 
 Both bootstrappers work with session scripts:
+
 - `./scripts/session-start.sh`: Runs bootstrapper and activates environment
 - `./scripts/session-end.sh`: Validates all tools still work correctly
 
@@ -132,6 +139,7 @@ The session scripts automatically use the Rust bootstrapper if available, fallin
 ### Legacy Bash: Command-line Flags
 
 The Bash version uses command-line flags to select tools:
+
 ```bash
 ./scripts/bootstrap-repo-lint-toolchain.sh --python --shell --perl
 ```
@@ -217,6 +225,7 @@ Both versions use the same exit codes for compatibility:
 ### 1. Doctor Command
 
 Diagnose installation issues:
+
 ```bash
 bootstrap-repo-cli doctor
 
@@ -225,6 +234,7 @@ bootstrap-repo-cli doctor --strict
 ```
 
 Example output:
+
 ```
 ✓ Repository: Found valid git repository
 ✓ Package Manager: Homebrew detected
@@ -237,6 +247,7 @@ Example output:
 ### 2. Verify-Only Mode
 
 Check installations without re-installing:
+
 ```bash
 bootstrap-repo-cli verify
 ```
@@ -244,11 +255,13 @@ bootstrap-repo-cli verify
 ### 3. JSON Output
 
 For CI integration and automation:
+
 ```bash
 bootstrap-repo-cli install --json > bootstrap.log
 ```
 
 Example JSON output:
+
 ```json
 {
   "type": "BootstrapCompleted",
@@ -264,6 +277,7 @@ Example JSON output:
 ### 4. Parallel Execution
 
 Safe parallelization for faster bootstrapping:
+
 ```bash
 # Control concurrency (default: CI=2, interactive=4)
 bootstrap-repo-cli install --jobs 8
@@ -272,6 +286,7 @@ bootstrap-repo-cli install --jobs 8
 ### 5. Dry-Run Mode
 
 Preview what would be installed without making changes:
+
 ```bash
 bootstrap-repo-cli install --dry-run
 ```
@@ -279,6 +294,7 @@ bootstrap-repo-cli install --dry-run
 ### 6. Offline Mode
 
 Use cached artifacts only (fail if missing):
+
 ```bash
 bootstrap-repo-cli install --offline
 ```
@@ -325,6 +341,7 @@ Or use the wrapper for automatic fallback:
 ### Issue: "Binary not found"
 
 **Solution**: Ensure the binary is in your PATH or use the full path:
+
 ```bash
 ~/.bootstrap/bin/bootstrap-repo-cli install
 ```
@@ -334,6 +351,7 @@ Or use the wrapper for automatic fallback:
 The Rust version requires `.bootstrap.toml` in CI mode.
 
 **Solution**: Create a minimal config:
+
 ```toml
 [profile.ci]
 tools = ["ripgrep", "python-black", "python-ruff"]
@@ -342,6 +360,7 @@ tools = ["ripgrep", "python-black", "python-ruff"]
 ### Issue: "Permission denied"
 
 **Solution**: Make the binary executable:
+
 ```bash
 chmod +x ~/.bootstrap/bin/bootstrap-repo-cli
 ```
@@ -349,11 +368,13 @@ chmod +x ~/.bootstrap/bin/bootstrap-repo-cli
 ### Issue: "Slow execution"
 
 **Solution**: Increase parallelism:
+
 ```bash
 bootstrap-repo-cli install --jobs 8
 ```
 
 Or use offline mode if you already have cached artifacts:
+
 ```bash
 bootstrap-repo-cli install --offline
 ```
@@ -361,6 +382,7 @@ bootstrap-repo-cli install --offline
 ### Issue: "Tools not detected after install"
 
 **Solution**: Run the doctor command for diagnostics:
+
 ```bash
 bootstrap-repo-cli doctor
 ```
@@ -370,12 +392,14 @@ bootstrap-repo-cli doctor
 If you encounter issues with the Rust version, you can force the legacy Bash version:
 
 ### Method 1: Environment Variable
+
 ```bash
 export BOOTSTRAP_FORCE_LEGACY=1
 ./scripts/bootstrap-repo-lint-toolchain.sh
 ```
 
 ### Method 2: Direct Invocation
+
 ```bash
 ./scripts/.legacy/bootstrap-repo-lint-toolchain.sh
 ```
@@ -402,6 +426,7 @@ export BOOTSTRAP_FORCE_LEGACY=1
 ## Feedback
 
 We value your feedback! Please report issues or suggestions:
+
 - Open an issue on GitHub
 - Use the `doctor` command output to include diagnostic information
 - Mention whether you're using the pre-built binary or building from source
