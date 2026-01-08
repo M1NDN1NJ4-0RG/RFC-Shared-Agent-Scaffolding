@@ -554,7 +554,7 @@ def cmd_check(args: argparse.Namespace) -> int:
     # Maximum parallel workers for AUTO mode
     # Chosen based on: diminishing returns beyond 8 parallel runners,
     # memory constraints (each runner spawns subprocesses), and CI stability
-    MAX_AUTO_WORKERS = 8
+    MAX_AUTO_WORKERS = 8  # noqa: N806
 
     # Calculate safe AUTO maximum for default behavior
     cpu = os.cpu_count() or 1
