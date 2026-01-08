@@ -6,13 +6,7 @@ Last Updated: 2026-01-06 22:32 UTC
 Related: Issue #235, PRs #240
 
 ## NEXT
-- Address parity report recommendations (high priority):
-  - Fix bash wrapper docstrings (scripts/bootstrap-wrapper.sh)
-  - Clarify repo-lint package installation handling
-  - Add verification gate to install command or document requirement
-  - Define default profile to match Bash behavior
 - Run benchmarks and document performance results
-- Add parity tests comparing Bash vs Rust
 - Integrate Rust bootstrapper in CI alongside Bash
 - Future enhancements (post-v1):
   - Windows support
@@ -21,6 +15,134 @@ Related: Issue #235, PRs #240
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
+### 2026-01-07 23:33 UTC - Parity Tests + YAML Validator + Code Review Fixes (COMPLETE)
+**Files Changed:**
+- `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs`: NEW - Parity tests (11 tests, 100% passing)
+- `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs`: Added dry-run helper
+- `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs`: Fixed dry-run mode
+- `rust/crates/bootstrap-repo-cli/src/package_manager.rs`: Added sudo error handling
+- `rust/crates/safe-run/src/safe_run.rs`: Added cfg guards, clippy fixes
+- `.github/workflows/copilot-setup-steps.yml`: Added Side effects section
+- `scripts/docstring_validators/yaml_validator.py`: Dynamic header extraction
+- `tools/repo_lint/cli_argparse.py`: Added TODO for debug timing
+- `tools/repo_lint/runners/base.py`: Enhanced TODO for introspection
+- `docs/ai-prompt/235/235-next-steps.md`: Updated journals
+- `docs/ai-prompt/235/235-summary.md`: Updated session summary
+
+**Session Achievements:**
+1. **Parity Tests Implementation (COMPLETE):**
+   - Created comprehensive test suite: 11 tests, 100% passing (~42s)
+   - Test coverage: version/help, doctor/verify, dry-run, CI, JSON, profiles, args, root detection, exit codes
+   - Fixed dry-run mode in repo-lint + all Python tool installers
+   - Created `install_and_verify_python_tool()` helper for consistency
+
+2. **Parity Report Verification (ALL ADDRESSED):**
+   - ✅ Bash wrapper docstrings - Already compliant
+   - ✅ repo-lint installation - RepoLintInstaller registered
+   - ✅ Verification gate - Part of execute_plan
+   - ✅ Default profile - Set to "dev" in config
+   - ✅ Parity tests - Implemented and passing
+
+3. **YAML Validator Improvements (NEW REQUIREMENT):**
+   - Removed hardcoded 50-line limit
+   - Implemented dynamic header block extraction
+   - Handles YAML document separators correctly (includes first ---, stops at subsequent)
+   - All YAML files in repo now pass validation
+
+4. **Code Review Fixes (ALL 6 COMMENTS ADDRESSED):**
+   - Comment 1: Added `#[cfg(unix)]` guards to signal_hook usage (Windows compatibility)
+   - Comment 2: Added TODO for debug timing mode (out of scope, documented)
+   - Comment 3: Enhanced TODO for introspection pattern (out of scope, documented)
+   - Comment 4: Replaced `flatten()` with `map_while(Result::ok)` (clippy clean)
+   - Comment 5: YAML separator handling (already correct in improved validator)
+   - Comment 6: Added sudo password error messages + TODOs
+
+**Quality Gates:**
+- Rust build: ✅ SUCCESS (both safe-run and bootstrap-repo-cli)
+- Parity tests: ✅ 11/11 passing
+- repo-lint check --ci: ✅ EXIT 0 (all 17 runners pass)
+- Rustfmt: ✅ PASS
+- Clippy: ✅ PASS (all warnings resolved)
+- All linters: ✅ PASS
+
+**Technical Improvements:**
+- Windows compatibility via conditional compilation
+- Better error messages for CI troubleshooting
+- Cleaner code (clippy warnings resolved)
+- Smarter YAML validation (no arbitrary limits)
+
+**Next Steps:**
+- Run performance benchmarks (Bash vs Rust)
+- Document benchmark results
+- Integrate Rust bootstrapper in CI workflows
+
+---
+
+### 2026-01-07 23:33 UTC - Parity Tests Implementation + Dry-Run Fixes
+**Files Changed:**
+- `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs`: NEW - Comprehensive parity test suite (11 tests, all passing)
+- `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs`: Added `install_and_verify_python_tool()` helper, updated all installers
+- `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs`: Fixed dry-run mode handling
+- `docs/ai-prompt/235/235-next-steps.md`: Updated NEXT and DONE sections
+
+**Changes Made:**
+- Session Start Compliance:
+  - Read `.github/copilot-instructions.md` and `docs/contributing/session-compliance-requirements.md`
+  - Verified `repo-lint --help` exits 0
+  - Ran `repo-lint check --ci` (exit 1 with yaml-docstrings violations - acceptable at start)
+  - Read all issue #235 journals (overview, next-steps, summary)
+  - Read issue #265 overview (workspace restructuring context)
+- Created Comprehensive Parity Test Suite:
+  - 11 behavioral parity tests comparing Bash vs Rust bootstrapper
+  - Test coverage: version flag, help flag, doctor, verify, dry-run, CI mode, JSON output, profiles, invalid args, repo root detection, exit codes
+  - All tests passing (100% success rate)
+  - Identified expected behavioral differences (Rust adds --version support)
+- Fixed Dry-Run Mode Issues:
+  - Root cause: Installers calling detect() after dry-run pip_install, which fails when tools not actually installed
+  - Solution: Created `install_and_verify_python_tool()` helper that returns placeholder version in dry-run mode
+  - Applied fix to repo-lint installer and all 5 Python tool installers (black, ruff, pylint, yamllint, pytest)
+  - Dry-run now completes successfully without attempting actual installation or detection
+- Verified Parity Report Recommendations:
+  - ✅ Bash wrapper docstrings: Already compliant (validated with validate_docstrings.py)
+  - ✅ repo-lint installation: RepoLintInstaller exists and registered
+  - ✅ Verification gate: Already part of executor.execute_plan
+  - ✅ Default profile: Set to "dev" in config.rs
+  - ✅ Parity tests: Implemented and passing
+
+**Build & Test Results:**
+- Rust build: SUCCESS (warnings about unused code, non-blocking)
+- Parity tests: 11/11 passing
+  - test_parity_version_flag ✅
+  - test_parity_help_flag ✅
+  - test_parity_doctor_command_exists ✅
+  - test_parity_verify_command_exists ✅
+  - test_parity_install_dry_run ✅
+  - test_parity_ci_flag ✅
+  - test_parity_json_output ✅
+  - test_parity_profile_support ✅ (dev, ci, full)
+  - test_parity_invalid_arguments ✅
+  - test_parity_exit_code_success ✅
+  - test_parity_repo_root_detection ✅
+
+**Architecture Notes:**
+- Parity tests validate behavioral equivalence without requiring identical implementation
+- Dry-run mode now fully functional across all installers
+- Test paths adjusted for workspace structure (rust/crates/bootstrap-repo-cli)
+- Tests account for expected differences (Rust improvements over Bash)
+
+**Known Differences (By Design):**
+- Rust supports `--version` flag (Bash does not)
+- Rust provides JSON output mode (Bash does not)
+- Rust has `doctor` and `verify` subcommands (Bash has unified interface)
+- Rust has explicit profile selection (Bash uses flags)
+
+**Next Steps:**
+- Run performance benchmarks comparing Bash vs Rust
+- Document benchmark results
+- Integrate Rust bootstrapper in CI workflows alongside Bash
+
+---
 
 ### 2026-01-06 22:32 UTC - Comprehensive Parity Analysis Report
 **Files Changed:**

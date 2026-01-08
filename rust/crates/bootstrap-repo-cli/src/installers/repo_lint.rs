@@ -198,6 +198,16 @@ impl Installer for RepoLintInstaller {
     }
 
     async fn install(&self, ctx: &Context) -> BootstrapResult<InstallResult> {
+        // In dry-run mode, return early with a placeholder version
+        if ctx.dry_run {
+            pip_install_editable(ctx).await?;
+            return Ok(InstallResult {
+                version: Version::new(0, 0, 0), // Placeholder for dry-run
+                installed_new: true,
+                log_messages: vec!["[DRY-RUN] Would install repo-lint".to_string()],
+            });
+        }
+
         pip_install_editable(ctx).await?;
 
         let version = self.detect(ctx).await?.ok_or_else(|| {

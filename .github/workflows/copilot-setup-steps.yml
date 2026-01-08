@@ -58,6 +58,16 @@
 #   - All required tools verified and available in PATH
 #   - repo-lint verified via `repo-lint --help`
 #
+# Side effects:
+#   - Modifies runner PATH to include user-level Python scripts ($HOME/.local/bin)
+#   - Modifies runner PATH to include Go binaries ($HOME/go/bin) when Go tools are installed
+#   - Installs system packages via apt-get (ripgrep, jq, curl, perl, etc.)
+#   - Installs Python packages to user site-packages (~/.local)
+#   - Installs Go tools to $HOME/go/bin (shfmt, actionlint)
+#   - Installs PowerShell modules to CurrentUser scope
+#   - Installs Perl modules via cpanm when needed
+#   - Sets PSGallery as trusted for PowerShell module installation
+#
 # Notes:
 #   - Go is only set up when shfmt and/or actionlint are required
 #   - PATH updates via $GITHUB_PATH only apply to subsequent steps

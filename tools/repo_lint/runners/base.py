@@ -244,10 +244,11 @@ class Runner(ABC):
                methods to parallelize. The current pattern matches methods starting with
                '_run_' that aren't fix/format/helper/util methods.
         """
-        # FUTURE: Replace introspection with explicit declaration pattern (decorator or attribute)
-        # Current implementation relies on naming conventions which may not be reliable across
-        # all runners. Consider adding a @parallelizable decorator or _parallelizable_methods
-        # class attribute for explicit opt-in.
+        # TODO: CRITICAL - Replace introspection with explicit declaration pattern  # pylint: disable=fixme
+        # FUTURE: Add @parallelizable decorator or _parallelizable_methods class attribute
+        # Current implementation relies on naming conventions which is fragile and may not
+        # be reliable across all runners. This should be refactored to use explicit opt-in.
+        # (Copilot review comment - high priority for maintainability)
 
         # Get all methods that look like tool check methods
         # Pattern: _run_* methods that are likely tool-specific
