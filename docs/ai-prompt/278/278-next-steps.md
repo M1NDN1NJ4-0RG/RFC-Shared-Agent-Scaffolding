@@ -2,49 +2,58 @@
 
 ## NEXT
 
-**Code Review Comments Addressed - PR Ready for Final Review**
+**Phase 6 Complete - Continue with Remaining MANDATORY Phases**
 
-All 4 code review comments from PR #295 have been addressed and verified.
+### Completed in This Session (2026-01-08)
 
-### Completed in This Session
+**Phase 6.1-6.2: Documentation Updates (COMPLETE ✅)**
+- Updated `docs/contributing/contributing-guide.md` with Python Code Quality section
+- Verified all configurations match documented standards
+- All Python checks pass (exit 0)
+- Commit: d05a247
 
-**Code Review Fixes (2026-01-08)**
+### MANDATORY Work Remaining
 
-Addressed all comments from https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/pull/295#pullrequestreview-3639382623
+**IMPORTANT:** All phases are MANDATORY. The following phases must be completed before Issue #278 can be closed:
 
-1. ✅ **Comment 2672317233**: Added `:rtype: bool` to `is_tty()` function
-   - File: `tools/repo_lint/logging_utils.py`
-   - Added missing reST docstring return type field
+**Phase 3.4.4: Comprehensive Unit Tests for Docstring Validators (MANDATORY)**
+- [ ] Create unit tests for docstring parsing/discovery
+- [ ] Test each validation rule with failing and passing cases
+- [ ] Test error message formatting and determinism
+- [ ] Test exit code behavior
+- [ ] Integration tests through `repo-lint check --ci`
+- [ ] Golden fixtures (violations + passing examples)
+- [ ] Regression tests for bugs found during migration
 
-2. ✅ **Comment 2672317191**: Added `:rtype: logging.Logger` to `get_logger()` function
-   - File: `tools/repo_lint/logging_utils.py`
-   - Added missing reST docstring return type field
+**Phase 3.5.5: Comprehensive Tests for Markdown Runner (MANDATORY)**
+- Current: 15 basic tests exist
+- [ ] Expand test coverage to match other runners
+- [ ] Add golden fixtures with various Markdown violations
+- [ ] Test all markdownlint rules enforcement
+- [ ] Test auto-fix behavior comprehensively
+- [ ] Integration tests for CI artifact generation
 
-3. ✅ **Comment 2672317203**: Fixed incorrect line count (394 → 437)
-   - File: `docs/ai-prompt/278/278-summary.md` line 1050
-   - Corrected test file line count to actual value
+**Phase 4: Autofix Strategy (MANDATORY)**
+- [ ] Phase 4.1: Implement non-destructive autofix
+  - [ ] Add `-> None` where function has no return statements
+  - [ ] Add missing return annotations (trivially inferrable only)
+  - [ ] Add `:rtype:` for simple returns (optional)
+- [ ] Phase 4.2: Create bulk migration PR plan
+  - [ ] Apply mechanical changes repo-wide
+  - [ ] Keep commits small and reviewable
+  - [ ] Keep CI green after each commit
 
-4. ✅ **Comment 2672317222**: Fixed incorrect line count (394 → 437)
-   - File: `docs/ai-prompt/278/278-summary.md` line 1036
-   - Corrected test file line count to actual value
+**Phase 5: CI Enforcement Rollout (MANDATORY)**
+- [ ] Phase 5.1: Introduce checks in report-only mode
+  - [ ] CI runs but doesn't fail builds initially
+  - [ ] Produce actionable failure reports
+- [ ] Phase 5.2: Flip to enforcing mode
+  - [ ] Fail CI on new violations
+  - [ ] Remove temporary exemptions
 
-5. ✅ **Ruff import sorting issue**: Fixed in `cli_argparse.py`
-   - Auto-fixed with `ruff check --fix`
+### Immediate Next Steps
 
-**Verification:**
-- ✅ All Python checks pass: `repo-lint check --ci --only python` (exit 0)
-- ✅ All 25 unit tests pass (100%)
-- ✅ Replied to all 4 review comments
-
-**Commit:** 41f6a74
-
-### Next Session Actions
-
-PR #295 is now ready for final review and merge.
-
-After merge:
-- **Option A**: Continue with remaining optional phases (3.5.5, Phase 4, 5, 6)
-- **Option B**: Conclude issue #278 (all mandatory phases complete)
+Start with Phase 3.4.4 (comprehensive docstring validator tests) as it's foundational for ensuring quality of the migrated validation system.
 
 ---
 

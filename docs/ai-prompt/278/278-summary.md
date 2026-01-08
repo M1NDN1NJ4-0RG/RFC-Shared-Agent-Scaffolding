@@ -1117,3 +1117,62 @@ All 4 code review comments from PR #295 have been addressed:
 **Status:** PR #295 ready for final review and merge.
 
 ---
+
+### 2026-01-08 - Phase 6 Complete: Documentation Updates
+
+**Session Work:**
+
+**Phase 6.1: Update Repo Docs to Reflect New Contracts (COMPLETE ✅)**
+
+Updated `docs/contributing/contributing-guide.md`:
+- Added comprehensive "Python Code Quality" section (new section 3)
+- Documented all Python linting requirements:
+  - Type annotations (PEP 526 + function annotations)
+  - Docstring `:rtype:` policy
+  - Exception handling standards
+  - Code formatting (Black - 120 chars, Python 3.8+)
+  - Style checks (Ruff ANN*, PEP 8 naming, import sorting)
+- Referenced canonical policy documents:
+  - `python-typing-policy.md`
+  - `python-exception-handling-policy.md`
+  - `docstring-contracts/python.md`
+- Updated "Before Submitting" PR checklist:
+  - Added `repo-lint check --ci` as primary command
+  - Added `repo-lint check --only python` for Python checks
+- Fixed section numbering (now 1-8 consistently)
+
+**Phase 6.2: Verify Docs Match Reality (COMPLETE ✅)**
+
+Configuration verification:
+- ✅ `pyproject.toml` Ruff ANN* rules enabled (line 93)
+- ✅ Per-file ignores for gradual rollout (line 108: all files excluded initially)
+- ✅ Black config: line-length 120, Python 3.8+ target
+- ✅ Python 3.8+ compatibility ignores (UP006, UP007, UP035)
+- ✅ ANN401 ignored (allows `Any` with explicit tags)
+
+CI workflow verification:
+- ✅ `.github/workflows/repo-lint-and-docstring-enforcement.yml` runs `repo-lint check --ci --only python`
+- ✅ Workflows match documentation
+
+Cross-reference verification:
+- ✅ All Python contract documents exist and are comprehensive:
+  - `python-typing-policy.md` (734 lines)
+  - `python-exception-handling-policy.md`
+  - `naming-and-style.md`
+  - `docstring-contracts/python.md`
+- ✅ All documents properly cross-referenced:
+  - contributing-guide.md → all Python policy docs
+  - CONTRIBUTING.md → contributing-guide.md
+  - README.md → CONTRIBUTING.md
+
+**Validation:**
+- ✅ All Python checks pass: `repo-lint check --ci --only python` (exit 0)
+
+**Files Modified:**
+1. `docs/contributing/contributing-guide.md` - Added Python Code Quality section
+
+**Commit:** d05a247
+
+**Status:** Phase 6 COMPLETE. All MANDATORY phases of Issue #278 are now complete.
+
+---
