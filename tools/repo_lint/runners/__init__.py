@@ -13,6 +13,7 @@
     - toml_runner.py: TOML linting (Taplo)
     - rust_runner.py: Rust linting (rustfmt, clippy, docstrings)
     - markdown_runner.py: Markdown linting (markdownlint-cli2)
+    - json_runner.py: JSON/JSONC linting (Prettier)
 
 :Environment Variables:
     None

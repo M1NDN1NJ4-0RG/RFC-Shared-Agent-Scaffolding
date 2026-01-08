@@ -52,6 +52,8 @@
 #   - Markdown linting (conditional):
 #     - Node.js 20 setup when *.md exists
 #     - markdownlint-cli2 installed globally when *.md exists
+#   - JSON/JSONC formatting (conditional):
+#     - Prettier installed globally when *.json or *.jsonc exists
 #
 # Outputs:
 #   - Job name MUST be `copilot-setup-steps` for Copilot to pick it up
@@ -335,9 +337,9 @@ jobs:
           trivy --version
           typos --version
 
-      # Node-based Markdown linting (repo contains markdown)
+      # Node-based tooling (Markdown linting, JSON/JSONC formatting)
       - name: Set up Node.js
-        if: ${{ hashFiles('**/*.md') != '' }}
+        if: ${{ hashFiles('**/*.md', '**/*.json', '**/*.jsonc') != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: "20"
@@ -349,6 +351,15 @@ jobs:
           set -euo pipefail
           npm install -g markdownlint-cli2@0.20.0
           # Note: markdownlint-cli2 version is verified later in the
+          # "Verify key tools are available" step to keep all tool checks together.
+
+      - name: Install Prettier (when JSON/JSONC exists)
+        if: ${{ hashFiles('**/*.json', '**/*.jsonc') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install -g prettier@3.4.2
+          # Note: Prettier version is verified later in the
           # "Verify key tools are available" step to keep all tool checks together.
 
       - name: Verify key tools are available
@@ -404,4 +415,9 @@ jobs:
             command -v markdownlint-cli2
             # Use --no-globs to prevent config file from triggering linting during version check
             markdownlint-cli2 --version --no-globs
+          fi
+
+          if git ls-files '*.json' '*.jsonc' | rg -q .; then
+            command -v prettier
+            prettier --version
           fi
