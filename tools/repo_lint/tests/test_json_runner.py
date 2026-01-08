@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-# pylint: disable=wrong-import-position,protected-access  # Test file needs special setup
+# pylint: disable=wrong-import-position,protected-access,too-many-public-methods
 # ruff: noqa: SLF001
 """Unit tests for JSON/JSONC runner.
 
 :Purpose:
     Validates that the JSON/JSONC runner correctly integrates Prettier
-    for formatting and style enforcement.
+    for formatting and style enforcement, and validates JSON metadata fields.
 
 :Test Coverage:
     - File discovery (JSON and JSONC detection)
@@ -13,6 +13,7 @@
     - Check mode (format validation)
     - Fix mode (auto-formatting)
     - Result parsing and violation reporting
+    - JSON metadata validation ($schema, description, title fields)
 
 :Usage:
     Run tests from repository root::
@@ -43,6 +44,7 @@
 :Notes:
     - Tests use real file discovery logic (no mocking of filesystem)
     - Tests verify exact tool requirements and commands
+    - Tests include JSON metadata validation requirements
 """
 
 from __future__ import annotations
@@ -296,15 +298,18 @@ Code style issues found in 1 file."""
         with patch.object(self.runner, "_ensure_tools"):
             # Mock _should_run_tool to return True
             with patch.object(self.runner, "_should_run_tool", return_value=True):
-                # Mock _run_prettier
-                with patch.object(self.runner, "_run_prettier") as mock_run:
-                    mock_run.return_value = MagicMock(passed=True, violations=[])
+                # Mock _run_prettier and _validate_json_metadata
+                with patch.object(self.runner, "_run_prettier") as mock_prettier:
+                    with patch.object(self.runner, "_validate_json_metadata") as mock_metadata:
+                        mock_prettier.return_value = MagicMock(passed=True, violations=[])
+                        mock_metadata.return_value = MagicMock(passed=True, violations=[])
 
-                    results = self.runner.check()
+                        results = self.runner.check()
 
         # Verify _run_prettier was called (no explicit fix parameter = defaults to False)
-        mock_run.assert_called_once_with()
-        self.assertEqual(len(results), 1)
+        mock_prettier.assert_called_once_with()
+        mock_metadata.assert_called_once_with()
+        self.assertEqual(len(results), 2)  # prettier + metadata
 
     def test_fix_method_calls_run_prettier_with_fix(self):
         """Test that fix() method calls _run_prettier with fix=True.
@@ -324,7 +329,155 @@ Code style issues found in 1 file."""
 
         # Verify _run_prettier was called with fix=True
         mock_run.assert_called_once_with(fix=True)
-        self.assertEqual(len(results), 1)
+        self.assertEqual(len(results), 1)  # fix() only runs prettier, not metadata
+
+    def test_validate_json_metadata_with_schema(self):
+        """Test metadata validation passes when $schema field present.
+
+        :Purpose:
+            Verify validator accepts JSON with $schema field.
+        """
+        # Mock get_tracked_files to return a test file
+        test_content = '{"$schema": "https://example.com/schema.json", "value": 123}'
+
+        with patch("tools.repo_lint.runners.json_runner.get_tracked_files") as mock_files:
+            mock_files.return_value = ["test.json"]
+
+            # Mock file operations
+            m_open = unittest.mock.mock_open(read_data=test_content)
+            with patch("builtins.open", m_open):
+                # Mock Path.exists() to return True
+                with patch("pathlib.Path.exists", return_value=True):
+                    result = self.runner._validate_json_metadata()
+
+        # Verify no violations
+        self.assertTrue(result.passed)
+        self.assertEqual(len(result.violations), 0)
+
+    def test_validate_json_metadata_with_description(self):
+        """Test metadata validation passes when description field present.
+
+        :Purpose:
+            Verify validator accepts JSON with description field.
+        """
+        test_content = '{"description": "Test configuration", "value": 123}'
+
+        with patch("tools.repo_lint.runners.json_runner.get_tracked_files") as mock_files:
+            mock_files.return_value = ["test.json"]
+
+            m_open = unittest.mock.mock_open(read_data=test_content)
+            with patch("builtins.open", m_open):
+                with patch("pathlib.Path.exists", return_value=True):
+                    result = self.runner._validate_json_metadata()
+
+        self.assertTrue(result.passed)
+        self.assertEqual(len(result.violations), 0)
+
+    def test_validate_json_metadata_with_title(self):
+        """Test metadata validation passes when title field present.
+
+        :Purpose:
+            Verify validator accepts JSON with title field.
+        """
+        test_content = '{"title": "Test Configuration", "value": 123}'
+
+        with patch("tools.repo_lint.runners.json_runner.get_tracked_files") as mock_files:
+            mock_files.return_value = ["test.json"]
+
+            m_open = unittest.mock.mock_open(read_data=test_content)
+            with patch("builtins.open", m_open):
+                with patch("pathlib.Path.exists", return_value=True):
+                    result = self.runner._validate_json_metadata()
+
+        self.assertTrue(result.passed)
+        self.assertEqual(len(result.violations), 0)
+
+    def test_validate_json_metadata_missing_fields(self):
+        """Test metadata validation fails when no metadata fields present.
+
+        :Purpose:
+            Verify validator rejects JSON without $schema, description, or title.
+        """
+        test_content = '{"value": 123, "settings": {"enabled": true}}'
+
+        with patch("tools.repo_lint.runners.json_runner.get_tracked_files") as mock_files:
+            mock_files.return_value = ["test.json"]
+
+            m_open = unittest.mock.mock_open(read_data=test_content)
+            with patch("builtins.open", m_open):
+                with patch("pathlib.Path.exists", return_value=True):
+                    result = self.runner._validate_json_metadata()
+
+        # Verify violation detected
+        self.assertFalse(result.passed)
+        self.assertEqual(len(result.violations), 1)
+        self.assertEqual(result.violations[0].file, "test.json")
+        self.assertIn("Missing required metadata", result.violations[0].message)
+
+    def test_validate_json_metadata_invalid_json(self):
+        """Test metadata validation handles invalid JSON gracefully.
+
+        :Purpose:
+            Verify validator reports syntax errors without crashing.
+        """
+        test_content = '{"value": 123, invalid json}'
+
+        with patch("tools.repo_lint.runners.json_runner.get_tracked_files") as mock_files:
+            mock_files.return_value = ["test.json"]
+
+            m_open = unittest.mock.mock_open(read_data=test_content)
+            with patch("builtins.open", m_open):
+                with patch("pathlib.Path.exists", return_value=True):
+                    result = self.runner._validate_json_metadata()
+
+        # Verify syntax error detected
+        self.assertFalse(result.passed)
+        self.assertEqual(len(result.violations), 1)
+        self.assertIn("Invalid JSON syntax", result.violations[0].message)
+
+    def test_validate_json_metadata_not_object(self):
+        """Test metadata validation rejects non-object JSON.
+
+        :Purpose:
+            Verify validator requires root-level object.
+        """
+        test_content = "[1, 2, 3]"  # Array at root
+
+        with patch("tools.repo_lint.runners.json_runner.get_tracked_files") as mock_files:
+            mock_files.return_value = ["test.json"]
+
+            m_open = unittest.mock.mock_open(read_data=test_content)
+            with patch("builtins.open", m_open):
+                with patch("pathlib.Path.exists", return_value=True):
+                    result = self.runner._validate_json_metadata()
+
+        # Verify violation detected
+        self.assertFalse(result.passed)
+        self.assertEqual(len(result.violations), 1)
+        self.assertIn("must be an object at root level", result.violations[0].message)
+
+    def test_check_includes_metadata_validation(self):
+        """Test that check() runs both Prettier and metadata validation.
+
+        :Purpose:
+            Verify check orchestration includes metadata validator.
+        """
+        # Mock _ensure_tools
+        with patch.object(self.runner, "_ensure_tools"):
+            # Mock _should_run_tool
+            with patch.object(self.runner, "_should_run_tool", return_value=True):
+                # Mock both validators
+                with patch.object(self.runner, "_run_prettier") as mock_prettier:
+                    with patch.object(self.runner, "_validate_json_metadata") as mock_metadata:
+                        mock_prettier.return_value = MagicMock(passed=True, violations=[])
+                        mock_metadata.return_value = MagicMock(passed=True, violations=[])
+
+                        results = self.runner.check()
+
+        # Verify both validators were called
+        mock_prettier.assert_called_once()
+        mock_metadata.assert_called_once()
+        self.assertEqual(len(results), 2)  # prettier + metadata
 
 
 if __name__ == "__main__":

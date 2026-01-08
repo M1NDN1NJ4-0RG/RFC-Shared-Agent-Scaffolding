@@ -19,25 +19,47 @@ repository.
 
 ### Documentation Requirements
 
-**File-level documentation:** NOT possible in strict JSON (comments forbidden by spec)
+**File-level documentation:** NOT possible via comments in strict JSON (comments forbidden by RFC 8259 spec)
 
-**Alternative documentation approaches:**
+**MANDATORY Self-Documentation Fields:**
 
-1. **Schema files:** Use JSON Schema (`*.schema.json`) to document structure
-2. **README files:** Include `README.md` in same directory explaining JSON file purpose
-3. **Special metadata fields:** Use conventional fields for self-documentation:
-   - `"$schema"`: Link to JSON Schema definition
-   - `"description"`: Human-readable description of file purpose
-   - `"version"`: Version information
-   - `"name"`: Identifier for the configuration
+Since JSON cannot contain comments, ALL `.json` files MUST include metadata fields for self-documentation.
 
-**Example: Self-documenting JSON**
+**Required Fields (at minimum ONE of the following):**
+
+1. **`"$schema"`** (RECOMMENDED): URL to JSON Schema definition
+   - Provides machine-readable documentation
+   - Enables validation and IDE autocomplete
+   - Example: `"$schema": "https://json.schemastore.org/prettierrc.json"`
+
+2. **`"description"`** (REQUIRED if no `$schema`): Human-readable description of file purpose
+   - Brief summary of what the file configures/defines
+   - Example: `"description": "Prettier formatting configuration for repository"`
+
+**Optional But Recommended:**
+
+- `"name"`: Identifier for the configuration (useful for configs)
+- `"version"`: Version information for the configuration
+- `"title"`: Alternative to "description" (some schemas use "title" instead)
+
+**Minimum Requirement:** EVERY `.json` file MUST have EITHER `$schema` OR `description` at the root level.
+
+**Example: Self-documenting JSON with $schema**
 
 ```json
 {
-  "$schema": "https://example.com/schemas/config.schema.json",
-  "name": "production-config",
+  "$schema": "https://json.schemastore.org/prettierrc.json",
+  "printWidth": 120,
+  "tabWidth": 2
+}
+```
+
+**Example: Self-documenting JSON with description**
+
+```json
+{
   "description": "Production environment configuration for service XYZ",
+  "name": "production-config",
   "version": "1.0.0",
   "settings": {
     "timeout": 3000,
@@ -46,14 +68,20 @@ repository.
 }
 ```
 
-### Exclusion from Docstring Validation
+### Validation
 
-Standard `.json` files are **excluded** from docstring validation since they cannot contain comments.
+`.json` files ARE validated for required metadata fields by the JSON runner.
+
+**Enforcement:**
+- JSON runner checks for presence of `$schema` OR `description` field at root level
+- Files without either field will fail validation
+- Pragma exemptions available: Add `// noqa: JSON_METADATA` comment in nearby JSONC or README
 
 **Validation focus:**
-- Schema validation (if applicable)
+- Metadata field presence (via JSON runner custom validator)
+- Schema validation (if `$schema` provided)
 - Format validation (via Prettier)
-- Structural validation (via JSON linters)
+- Structural validation (valid JSON syntax)
 
 ---
 

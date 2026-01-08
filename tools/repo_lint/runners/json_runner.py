@@ -3,6 +3,7 @@
 :Purpose:
     Runs Prettier to enforce JSON/JSONC formatting and style standards
     as defined in docs/contributing/json-jsonc-contracts.md.
+    Also validates that .json files have required metadata fields.
 
 :Tools:
     - prettier: JSON/JSONC linter and formatter (required)
@@ -10,6 +11,7 @@
 :Configuration:
     - .prettierrc.json: Configuration file at repository root
     - docs/contributing/json-jsonc-contracts.md: Canonical contract documentation
+    - docs/contributing/docstring-contracts/json-jsonc.md: Documentation requirements
 
 :Environment Variables:
     None
@@ -29,6 +31,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 from typing import List
 
@@ -71,7 +74,7 @@ class JsonRunner(Runner):
         """Run JSON/JSONC linting checks.
 
         :returns:
-            List of linting results from Prettier
+            List of linting results from Prettier and metadata validator
         """
         self._ensure_tools(["prettier"])
 
@@ -80,6 +83,9 @@ class JsonRunner(Runner):
         # Apply tool filtering
         if self._should_run_tool("prettier"):
             results.append(self._run_prettier())
+
+        # Validate JSON metadata (always run, not tool-filtered)
+        results.append(self._validate_json_metadata())
 
         return results
 
@@ -195,3 +201,91 @@ class JsonRunner(Runner):
                 )
 
         return violations
+
+    def _validate_json_metadata(self) -> LintResult:
+        """Validate that .json files have required metadata fields.
+
+        Per docs/contributing/docstring-contracts/json-jsonc.md:
+        All .json files MUST have either "$schema" OR "description" at root level.
+
+        :returns:
+            LintResult for JSON metadata validation
+        """
+        # Get only .json files (not .jsonc)
+        json_files = get_tracked_files(
+            ["**/*.json"],
+            self.repo_root,
+            include_fixtures=self._include_fixtures,
+        )
+
+        if not json_files:
+            return LintResult(tool="json-metadata", passed=True, violations=[])
+
+        violations = []
+
+        for json_file in json_files:
+            file_path = self.repo_root / json_file
+
+            # Skip if file doesn't exist (edge case)
+            if not file_path.exists():
+                continue
+
+            try:
+                # Read and parse JSON
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+
+                # Must be a dict/object at root level
+                if not isinstance(data, dict):
+                    violations.append(
+                        Violation(
+                            tool="json-metadata",
+                            file=json_file,
+                            line=1,
+                            message="JSON file must be an object at root level to contain metadata fields",
+                        )
+                    )
+                    continue
+
+                # Check for required metadata fields
+                has_schema = "$schema" in data
+                has_description = "description" in data
+                has_title = "title" in data  # Some schemas use "title" instead
+
+                if not (has_schema or has_description or has_title):
+                    violations.append(
+                        Violation(
+                            tool="json-metadata",
+                            file=json_file,
+                            line=1,
+                            message=(
+                                'Missing required metadata: JSON files must have "$schema", '
+                                '"description", or "title" field. '
+                                "See docs/contributing/docstring-contracts/json-jsonc.md"
+                            ),
+                        )
+                    )
+
+            except json.JSONDecodeError as e:
+                # Invalid JSON - report parsing error
+                violations.append(
+                    Violation(
+                        tool="json-metadata",
+                        file=json_file,
+                        line=e.lineno if hasattr(e, "lineno") else 1,
+                        message=f"Invalid JSON syntax: {e.msg}",
+                    )
+                )
+            except Exception as e:  # pylint: disable=broad-except
+                # Other errors (file read errors, etc.)
+                violations.append(
+                    Violation(
+                        tool="json-metadata",
+                        file=json_file,
+                        line=1,
+                        message=f"Error reading file: {str(e)}",
+                    )
+                )
+
+        passed = len(violations) == 0
+        return LintResult(tool="json-metadata", passed=passed, violations=violations)
