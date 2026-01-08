@@ -479,23 +479,23 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         )
         result = self._write_and_process(content)
         lines = result.splitlines()
-        
+
         # Remove blank lines and heading for analysis
         list_lines = [l for l in lines if l.strip() and not l.startswith("#")]
-        
+
         # Should have exactly 3 top-level items
         top_level = [l for l in list_lines if l.startswith("- ")]
         self.assertEqual(len(top_level), 3, f"Expected 3 top-level items, got {len(top_level)}: {top_level}")
-        
+
         # First item should be the "Added symbol-level" item
         self.assertTrue(top_level[0].startswith("- **Added symbol-level"))
-        
+
         # Second item should be "Updated Perl"
         self.assertTrue("Updated Perl" in top_level[1])
-        
+
         # Third item should be "Aligned test runner"
         self.assertTrue("Aligned test runner" in top_level[2])
-        
+
         # Should have exactly 4 nested items (with 2-space indent)
         nested = [l for l in list_lines if l.startswith("  - ")]
         self.assertEqual(len(nested), 4, f"Expected 4 nested items, got {len(nested)}: {nested}")
