@@ -2,22 +2,24 @@
 
 ## NEXT
 
-**Copilot Code Review Comments: COMPLETE ✅**
+**Phase 3.4: COMPLETE ✅**
+- [x] Core migration (all 6 language runners use internal module)
+- [x] Copilot code review comments resolved (all 4)
+- [x] Vector test failures fixed
+- [x] All CI tests passing
 
-All review comments from PR #288 have been addressed:
-- [x] Extract duplicate ValidationError conversion logic (Rule of Three)
-- [x] Add shebang line to scripts/validate_docstrings.py
-- [x] Fix yaml_validator.py unreachable code and unused variable
-- [x] Remove unused imports
+**Current Status:**
+- Phase 3.4 is fully complete with all tests passing
+- Updated 278-overview.md checkboxes (marked Phase 0.2 exclusions as complete)
 
-**Remaining Work:**
-- [ ] Fix CI test failure (vector tests expect subprocess output format)
-  - Test in `tools/repo_lint/tests/test_vectors.py::test_python_docstring_vectors`
-  - Expected: 3 violations, Got: 0 violations
-  - Root cause: Test runs CLI script which now calls internal module
-  - Solution: Update test to handle new output format OR update CLI to preserve exact format
+**Next Phases (in order):**
+1. Phase 3.5: Markdown contracts + linting support (NEXT)
+2. Phase 3.6: TOML contracts + linting support
+3. Phase 3.7: Reduce overly-broad exception handling (NEW)
+4. Phase 3.8: Rich-powered logging (NEW)
+5. Phase 3.3: Implement PEP 526 checker (deferred until after 3.5-3.8)
 
-**Next Phase:** 3.5 - Markdown contracts + linting support
+**Note:** Phases 3.7 and 3.8 were added to the epic after initial planning.
 
 ## Resume Pointers
 
@@ -25,12 +27,17 @@ All review comments from PR #288 have been addressed:
 
 **Key Commands:**
 - `repo-lint check --ci` - All checks pass (exit 0)
-- `python3 -m pytest tools/repo_lint/tests/test_vectors.py -v` - Run vector tests
+- `python3 -m pytest tools/repo_lint/tests/test_vectors.py -v` - All vector tests pass
 
 **Recent Commits:**
 - 31c0e65: Addressed all Copilot code review comments
+- 5b59c95: Updated journals with code review completion
+- 6578172: Fixed vector test failures (restored os import)
 
 **Current State:**
-- Phase 3.4 core migration: COMPLETE
-- Code review comments: COMPLETE  
-- CI vector tests: FAILING (needs investigation)
+- ✅ Phase 3.4 complete (docstring validation consolidation)
+- ✅ All code review comments resolved
+- ✅ All tests passing (vector + unit + CI)
+- ✅ Documentation up-to-date
+
+**Ready for:** Phase 3.5 (Markdown contracts + linting)

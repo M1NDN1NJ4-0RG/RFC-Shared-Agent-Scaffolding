@@ -252,3 +252,31 @@
 **Note:** CI test failure in vector tests is a separate issue (test expects subprocess-style output format, needs test update).
 
 ---
+
+---
+
+### 2026-01-08 - Vector Test Failures Fixed
+
+**Vector test failures resolved:**
+- Root cause: Accidentally removed `os` import from `python_runner.py` which broke `_parse_lint_output` method
+- Fix: Restored `os` import (needed for `os.path.basename()` in parsing methods)
+- Only docstring validation doesn't need `os` (handled by shared helper in `common.py`)
+
+**Testing:**
+- ✅ All vector tests pass (3 passed, 3 skipped)
+- ✅ All python_runner tests pass (10/10)
+- ✅ repo-lint check --ci passes (exit 0)
+
+**Commit:** 6578172
+
+**Status Summary:**
+- Phase 3.4 core migration: ✅ COMPLETE
+- Copilot code review comments: ✅ COMPLETE (all 4 resolved)
+- Vector test failures: ✅ FIXED
+- CI: ✅ ALL PASSING
+
+**New phases discovered in 278-overview.md:**
+- Phase 3.7: Reduce overly-broad exception handling
+- Phase 3.8: Rich-powered logging
+
+---
