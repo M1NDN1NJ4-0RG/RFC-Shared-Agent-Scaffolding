@@ -29,6 +29,7 @@ import re
 from pathlib import Path
 from typing import List
 
+from . import common
 from .common import ValidationError, check_pragma_ignore, validate_exit_codes_content
 
 
@@ -207,63 +208,65 @@ class PythonValidator:
             )
 
         # Check for required sections (:param and :returns in reST/Sphinx style)
-        # Accept :param, :type, :returns, :rtype per PEP 287
-        has_param = bool(re.search(r":param\s+\w+:", docstring, re.MULTILINE))
-        has_returns = bool(re.search(r":(returns?|rtype):", docstring, re.MULTILINE))
+        # Skip content checks if requested (--no-content-checks flag)
+        if not common.SKIP_CONTENT_CHECKS:
+            # Accept :param, :type, :returns, :rtype per PEP 287
+            has_param = bool(re.search(r":param\s+\w+:", docstring, re.MULTILINE))
+            has_returns = bool(re.search(r":(returns?|rtype):", docstring, re.MULTILINE))
 
-        missing = []
+            missing = []
 
-        # Only require :param if function has parameters (excluding self/cls)
-        params = [arg.arg for arg in node.args.args if arg.arg not in ("self", "cls")]
-        # Include *args
-        if node.args.vararg is not None:
-            params.append(node.args.vararg.arg)
-        # Include keyword-only args
-        if getattr(node.args, "kwonlyargs", None):
-            params.extend(arg.arg for arg in node.args.kwonlyargs)
-        # Include **kwargs
-        if node.args.kwarg is not None:
-            params.append(node.args.kwarg.arg)
+            # Only require :param if function has parameters (excluding self/cls)
+            params = [arg.arg for arg in node.args.args if arg.arg not in ("self", "cls")]
+            # Include *args
+            if node.args.vararg is not None:
+                params.append(node.args.vararg.arg)
+            # Include keyword-only args
+            if getattr(node.args, "kwonlyargs", None):
+                params.extend(arg.arg for arg in node.args.kwonlyargs)
+            # Include **kwargs
+            if node.args.kwarg is not None:
+                params.append(node.args.kwarg.arg)
 
-        if params and not has_param:
-            missing.append(":param")
+            if params and not has_param:
+                missing.append(":param")
 
-        # Only require :returns if function has a return statement with a value
-        # Check only direct body, exclude nested function definitions completely
-        if not has_returns:
-            has_return_value = False
+            # Only require :returns if function has a return statement with a value
+            # Check only direct body, exclude nested function definitions completely
+            if not has_returns:
+                has_return_value = False
 
-            def has_return_in_node(node_to_check):
-                """Recursively check if node has return with value, excluding nested functions.
+                def has_return_in_node(node_to_check):
+                    """Recursively check if node has return with value, excluding nested functions.
 
-                :param node_to_check: AST node to check
-                :returns: True if node contains a return statement with a value, False otherwise
-                """
-                for child in ast.iter_child_nodes(node_to_check):
-                    # Skip nested function/class definitions entirely
-                    if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
-                        continue
-                    # Check if this node is a Return with a value
-                    if isinstance(child, ast.Return) and child.value is not None:
-                        return True
-                    # Recursively check children (but nested functions are already skipped)
-                    if has_return_in_node(child):
-                        return True
-                return False
+                    :param node_to_check: AST node to check
+                    :returns: True if node contains a return statement with a value, False otherwise
+                    """
+                    for child in ast.iter_child_nodes(node_to_check):
+                        # Skip nested function/class definitions entirely
+                        if isinstance(child, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                            continue
+                        # Check if this node is a Return with a value
+                        if isinstance(child, ast.Return) and child.value is not None:
+                            return True
+                        # Recursively check children (but nested functions are already skipped)
+                        if has_return_in_node(child):
+                            return True
+                    return False
 
-            has_return_value = has_return_in_node(node)
+                has_return_value = has_return_in_node(node)
 
-            if has_return_value:
-                missing.append(":returns")
+                if has_return_value:
+                    missing.append(":returns")
 
-        if missing:
-            return ValidationError(
-                str(file_path),
-                missing,
-                f"Function docstring must include {', '.join(missing)} field(s) per PEP 287 reST style",
-                symbol_name=f"def {node.name}()",
-                line_number=node.lineno,
-            )
+            if missing:
+                return ValidationError(
+                    str(file_path),
+                    missing,
+                    f"Function docstring must include {', '.join(missing)} field(s) per PEP 287 reST style",
+                    symbol_name=f"def {node.name}()",
+                    line_number=node.lineno,
+                )
 
         return None
 
