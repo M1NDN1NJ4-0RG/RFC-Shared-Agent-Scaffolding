@@ -1,11 +1,13 @@
 MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 235 AI Journal
+
 Status: Parity Analysis Complete
 Last Updated: 2026-01-06 22:32 UTC
 Related: Issue #235, PRs #240
 
 ## NEXT
+
 - Run benchmarks and document performance results
 - Integrate Rust bootstrapper in CI alongside Bash
 - Future enhancements (post-v1):
@@ -17,7 +19,9 @@ Related: Issue #235, PRs #240
 ## DONE (EXTREMELY DETAILED)
 
 ### 2026-01-07 23:33 UTC - Parity Tests + YAML Validator + Code Review Fixes (COMPLETE)
+
 **Files Changed:**
+
 - `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs`: NEW - Parity tests (11 tests, 100% passing)
 - `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs`: Added dry-run helper
 - `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs`: Fixed dry-run mode
@@ -31,6 +35,7 @@ Related: Issue #235, PRs #240
 - `docs/ai-prompt/235/235-summary.md`: Updated session summary
 
 **Session Achievements:**
+
 1. **Parity Tests Implementation (COMPLETE):**
    - Created comprehensive test suite: 11 tests, 100% passing (~42s)
    - Test coverage: version/help, doctor/verify, dry-run, CI, JSON, profiles, args, root detection, exit codes
@@ -59,6 +64,7 @@ Related: Issue #235, PRs #240
    - Comment 6: Added sudo password error messages + TODOs
 
 **Quality Gates:**
+
 - Rust build: ✅ SUCCESS (both safe-run and bootstrap-repo-cli)
 - Parity tests: ✅ 11/11 passing
 - repo-lint check --ci: ✅ EXIT 0 (all 17 runners pass)
@@ -67,12 +73,14 @@ Related: Issue #235, PRs #240
 - All linters: ✅ PASS
 
 **Technical Improvements:**
+
 - Windows compatibility via conditional compilation
 - Better error messages for CI troubleshooting
 - Cleaner code (clippy warnings resolved)
 - Smarter YAML validation (no arbitrary limits)
 
 **Next Steps:**
+
 - Run performance benchmarks (Bash vs Rust)
 - Document benchmark results
 - Integrate Rust bootstrapper in CI workflows
@@ -80,13 +88,16 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-07 23:33 UTC - Parity Tests Implementation + Dry-Run Fixes
+
 **Files Changed:**
+
 - `rust/crates/bootstrap-repo-cli/tests/parity_tests.rs`: NEW - Comprehensive parity test suite (11 tests, all passing)
 - `rust/crates/bootstrap-repo-cli/src/installers/python_tools.rs`: Added `install_and_verify_python_tool()` helper, updated all installers
 - `rust/crates/bootstrap-repo-cli/src/installers/repo_lint.rs`: Fixed dry-run mode handling
 - `docs/ai-prompt/235/235-next-steps.md`: Updated NEXT and DONE sections
 
 **Changes Made:**
+
 - Session Start Compliance:
   - Read `.github/copilot-instructions.md` and `docs/contributing/session-compliance-requirements.md`
   - Verified `repo-lint --help` exits 0
@@ -111,6 +122,7 @@ Related: Issue #235, PRs #240
   - ✅ Parity tests: Implemented and passing
 
 **Build & Test Results:**
+
 - Rust build: SUCCESS (warnings about unused code, non-blocking)
 - Parity tests: 11/11 passing
   - test_parity_version_flag ✅
@@ -126,18 +138,21 @@ Related: Issue #235, PRs #240
   - test_parity_repo_root_detection ✅
 
 **Architecture Notes:**
+
 - Parity tests validate behavioral equivalence without requiring identical implementation
 - Dry-run mode now fully functional across all installers
 - Test paths adjusted for workspace structure (rust/crates/bootstrap-repo-cli)
 - Tests account for expected differences (Rust improvements over Bash)
 
 **Known Differences (By Design):**
+
 - Rust supports `--version` flag (Bash does not)
 - Rust provides JSON output mode (Bash does not)
 - Rust has `doctor` and `verify` subcommands (Bash has unified interface)
 - Rust has explicit profile selection (Bash uses flags)
 
 **Next Steps:**
+
 - Run performance benchmarks comparing Bash vs Rust
 - Document benchmark results
 - Integrate Rust bootstrapper in CI workflows alongside Bash
@@ -145,11 +160,14 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 22:32 UTC - Comprehensive Parity Analysis Report
+
 **Files Changed:**
+
 - `docs/ai-prompt/235/235-bootstrapper-parity-report.md`: NEW - Complete parity analysis (29.9KB, 778 lines)
 - `docs/ai-prompt/235/235-next-steps.md`: Updated NEXT and DONE sections with session results
 
 **Changes Made:**
+
 - Executed mandatory session start procedure:
   - Read `docs/contributing/session-compliance-requirements.md` in full
   - Ran `./scripts/bootstrap-repo-lint-toolchain.sh --all` (exit 0, ~10 minutes)
@@ -178,6 +196,7 @@ Related: Issue #235, PRs #240
   10. Recommendations (immediate, short-term, medium-term actions)
 
 **Key Findings:**
+
 - ✅ Rust implementation MORE COMPLETE than docs claim:
   - Phases 3-9 marked incomplete in overview.md but have working code and passing tests
   - All 13 tools have installers (ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt, perlcritic, ppi, pwsh, psscriptanalyzer)
@@ -195,17 +214,20 @@ Related: Issue #235, PRs #240
   - Default profile behavior unclear (Bash: ALL toolchains by default)
 
 **Verification:**
+
 - Pre-commit gate: `repo-lint check --ci` → exit 0 (16/16 runners passed)
 - Report file created: 29,924 characters, comprehensive analysis
 - All quality gates passing
 
 **Architecture Notes:**
+
 - Report provides actionable recommendations in 3 priority tiers
 - Documents exact file locations for all implementations
 - Includes appendix with full component mapping
 - Identifies critical path to production: wrapper fixes → benchmarks → parity tests → CI integration → release
 
 **Next Steps:**
+
 - Trigger code review via GitHub Copilot (mandatory)
 - Update overview.md progress tracker to reflect actual completion status
 - Address high-priority recommendations from parity report
@@ -214,10 +236,13 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 22:06 UTC - Testing and Validation
+
 **Files Changed:**
+
 - `docs/ai-prompt/235/235-next-steps.md`: Updated NEXT and DONE sections
 
 **Changes Made:**
+
 - Verified session start script execution (exit 0)
 - Explored Rust project structure and test infrastructure
 - Ran full Rust test suite:
@@ -233,7 +258,7 @@ Related: Issue #235, PRs #240
 - Tested local binary:
   - `./target/release/bootstrap-repo-cli --version` → "bootstrap 0.1.1"
   - `./target/release/bootstrap-repo-cli --help` → Shows full CLI interface
-- Validated GitHub Release at https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases/tag/main
+- Validated GitHub Release at <https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases/tag/main>
 - Downloaded and verified release binary:
   - Downloaded `bootstrap-repo-cli-linux-x86_64.tar.gz` (1.1M)
   - Downloaded `bootstrap-repo-cli-linux-x86_64.tar.gz.sha256`
@@ -255,6 +280,7 @@ Related: Issue #235, PRs #240
   - Dry-run output shows correct plan structure
 
 **Verification:**
+
 - `./scripts/session-start.sh` → exit 0
 - `cargo test --lib` → 63 passed
 - `cargo test --tests` → 95 passed (1 bootstrap_main + 7 main + 48 bootstrap_tests + 31 conformance + 8 integration_tests)
@@ -266,12 +292,14 @@ Related: Issue #235, PRs #240
 - `bootstrap-repo-cli install --dry-run --profile dev` → execution plan displayed
 
 **Known Issues:**
+
 - 26 doctests fail (example code in documentation comments)
   - Not blocking functionality
   - Examples use `use bootstrap_v2::*` which doesn't resolve correctly in doc context
   - Recommendation: Fix in future session or mark as `no_run`
 
 **Next Steps:**
+
 - ✅ Ran code review via GitHub Copilot
 - ✅ Ran security scan via CodeQL (no code changes detected)
 - ✅ Executed session-end verification (exit 0)
@@ -280,7 +308,9 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 19:42 UTC - Phase 11: Benchmarking, CI Workflow, Documentation
+
 **Files Changed:**
+
 - `scripts/benchmark-bootstrap.sh`: NEW - Performance benchmarking script (commit 06d6af4, fixed fff2f7f)
 - `.github/workflows/build-rust-bootstrapper.yml`: NEW - Multi-platform build and release workflow (commit 06d6af4, fixed fff2f7f)
 - `docs/rust-bootstrapper-migration-guide.md`: NEW - Complete migration guide from Bash to Rust (commit 06d6af4, renamed fff2f7f)
@@ -291,6 +321,7 @@ Related: Issue #235, PRs #240
 **Changes Made:**
 
 **Performance Benchmarking Script:**
+
 - Created `scripts/benchmark-bootstrap.sh` with comprehensive benchmark harness
 - Measures Rust vs Bash execution times across multiple iterations
 - Supports `--iterations <N>` and `--profile <dev|ci|full>` flags
@@ -301,6 +332,7 @@ Related: Issue #235, PRs #240
 - Applied shfmt formatting for consistency
 
 **CI/CD Workflow:**
+
 - Created `.github/workflows/build-rust-bootstrapper.yml` for automated releases
 - Multi-platform builds: Linux x86_64 (musl), macOS x86_64, macOS ARM64
 - Static linking with musl for Linux (no glibc dependency)
@@ -312,6 +344,7 @@ Related: Issue #235, PRs #240
 - Complete YAML docstring with Workflow, Purpose, Triggers, Inputs, Outputs, Dependencies, Notes
 
 **Documentation:**
+
 - `rust-bootstrapper-migration-guide.md` (9106 chars):
   - Complete migration guide from Bash to Rust
   - Installation methods: pre-built binaries, build from source, wrapper script
@@ -346,6 +379,7 @@ Related: Issue #235, PRs #240
   - Dependencies and their roles
 
 **Compliance Fixes (commit fff2f7f):**
+
 - Renamed all markdown files to kebab-case per naming conventions
 - Fixed file references in migration guide
 - Added `Examples:` section to benchmark script (was `Example:`)
@@ -354,6 +388,7 @@ Related: Issue #235, PRs #240
 - Applied shfmt formatting to benchmark script
 
 **Verification:**
+
 - All 16 linters passing (exit 0)
 - repo-lint check --ci: SUCCESS
 - repo-lint fix: SUCCESS (all formatters applied)
@@ -362,6 +397,7 @@ Related: Issue #235, PRs #240
 - No violations reported
 
 **Architecture Notes:**
+
 - Benchmark script measures planning/detection overhead using dry-run mode
 - Real-world speedups depend on parallelization during actual installs
 - CI workflow produces static binaries with no runtime dependencies
@@ -369,6 +405,7 @@ Related: Issue #235, PRs #240
 - All files pass quality gates before commit
 
 **Phase 11 Completion Status:**
+
 - ✅ Performance benchmarking infrastructure complete
 - ✅ CI/CD workflow for multi-platform builds complete
 - ✅ Documentation suite complete (migration, user manual, dev guide)
@@ -378,7 +415,9 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 17:40 - Complete Missing Installers, Integration Tests, Bash Wrapper
+
 **Files Changed:**
+
 - `rust/src/bootstrap_v2/installers/perl_tools.rs`: NEW - Perl::Critic and PPI installers (commit e983aa8)
 - `rust/src/bootstrap_v2/installers/powershell_tools.rs`: NEW - pwsh and PSScriptAnalyzer installers (commit e983aa8)
 - `rust/src/bootstrap_v2/installers/mod.rs`: Updated registry to include 4 new installers (commit e983aa8)
@@ -388,6 +427,7 @@ Related: Issue #235, PRs #240
 - `docs/ai-prompt/235/235-next-steps.md`: Updated journal with session progress
 
 **Changes Made:**
+
 - Perl Tools Installers:
   - PerlCriticInstaller: Installs Perl::Critic via cpanm to ~/perl5, detects version via `perlcritic --version`
   - PPIInstaller: Installs PPI library via cpanm, detects via `perl -MPPI -e 'print $PPI::VERSION'`
@@ -418,6 +458,7 @@ Related: Issue #235, PRs #240
   - Executable permissions set
 
 **Verification:**
+
 - All 63 unit tests passing (lib tests)
 - All 8 integration tests passing
 - cargo build successful (0 errors, 0 warnings)
@@ -427,12 +468,14 @@ Related: Issue #235, PRs #240
 - Docstrings validation with `scripts/validate_docstrings.py` **not completed before commit** (bash-docstrings for `scripts/bootstrap-wrapper.sh` failed in CI)
 
 **Architecture Notes:**
+
 - Total 13 installers now registered: ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt, perlcritic, ppi, pwsh, psscriptanalyzer
 - Integration tests use tempfile for isolated test environments
 - Tests properly use safe_run:: module path for imports
 - Wrapper script is backwards-compatible transition mechanism
 
 **Known Issues/Follow-ups:**
+
 - Performance benchmarking not started (next phase)
 - Binary distribution/release setup not started (next phase)
 - Documentation updates pending
@@ -440,11 +483,14 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 14:30 - Bash Bootstrapper Progress UI Implementation + Documentation Update
+
 **Files Changed:**
+
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Added default-on progress UI (commit 95494a0)
 - `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`: Updated to match current behavior (commit 759cf11)
 
 **Changes Made:**
+
 - Progress UI Implementation (Bash script):
   - Added global variables for progress tracking (PROGRESS_ENABLED, PROGRESS_TTY, PROGRESS_TOTAL_STEPS, etc.)
   - Implemented is_tty() to detect TTY mode using [[ -t 1 ]]
@@ -470,6 +516,7 @@ Related: Issue #235, PRs #240
   - Clarified verbose mode behavior
 
 **Verification:**
+
 - Bootstrap script runs to completion with exit code 0
 - Progress UI displays correctly in CI mode
 - All 13 steps tracked with timing (0s to 43s per step)
@@ -479,12 +526,15 @@ Related: Issue #235, PRs #240
 - Shfmt formatting applied
 
 **Known Issues/Follow-ups:**
+
 - None - implementation complete per directive requirements
 
 ---
 
 ### 2026-01-06 13:00 - Address Review Comments: Optimize Regex, Fix command_exists, Add Profile to Verify
+
 **Files Changed:**
+
 - `rust/Cargo.toml`: Moved once_cell from dev-dependencies to dependencies (commit 6885a00)
 - `rust/src/bootstrap_v2/platform.rs`: Optimized regex with once_cell::Lazy, fixed command_exists (commit 6885a00)
 - `rust/src/bootstrap_v2/cli.rs`: Added --profile option to Verify command (commit 6885a00)
@@ -492,6 +542,7 @@ Related: Issue #235, PRs #240
 - `rust/src/bootstrap_v2/platform.rs`: Applied cargo fmt formatting (commit c33bcd8)
 
 **Changes Made:**
+
 - Review Comment 1 (Regex Compilation Overhead):
   - Changed parse_version_from_output() to use once_cell::Lazy
   - Regex now compiled once and cached across all calls
@@ -509,6 +560,7 @@ Related: Issue #235, PRs #240
   - Applied cargo fmt to fix all style violations
 
 **Verification:**
+
 - All 59 tests passing
 - Zero compilation errors
 - Zero clippy warnings
@@ -517,17 +569,21 @@ Related: Issue #235, PRs #240
 - Binary tested with --help for verify command (shows new --profile option)
 
 **Known Issues/Follow-ups:**
+
 - None - all review comments addressed
 
 ---
 
 ### 2026-01-06 12:00 - Fix Bootstrap Script to Install All Toolchains by Default
+
 **Files Changed:**
+
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Changed defaults, updated documentation, applied shfmt (commit f4aebf9)
 
 **Changes Made:**
+
 - Changed INSTALL_SHELL=true (was false)
-- Changed INSTALL_POWERSHELL=true (was false)  
+- Changed INSTALL_POWERSHELL=true (was false)
 - Changed INSTALL_PERL=true (was false)
 - Updated script header documentation to reflect all toolchains installed by default
 - Updated show_usage() to clarify --all is now default behavior
@@ -535,6 +591,7 @@ Related: Issue #235, PRs #240
 - Ensures shfmt and all tools installed, allowing verification gate to pass cleanly
 
 **Verification:**
+
 - Bootstrap script exits with code 0
 - shfmt installed and available
 - Verification gate passes: "Exit Code: 0 (SUCCESS)"
@@ -542,17 +599,21 @@ Related: Issue #235, PRs #240
 - repo-lint check --ci passes with proper environment setup
 
 **Known Issues/Follow-ups:**
+
 - None - bootstrap script compliance gate passing
 
 ---
 
 ### 2026-01-06 11:50 - Address Initial Review Comments
+
 **Files Changed:**
+
 - `rust/src/bootstrap_v2/executor.rs`: Removed unused _registry parameter (commit b214946)
 - `rust/src/bootstrap_v2/platform.rs`: Added documentation about limitations (commit b214946)
 - `rust/src/bootstrap_main.rs`: Removed unused progress reporter from handle_verify (commit b214946)
 
 **Changes Made:**
+
 - Removed unused `_registry` parameter from execute_plan() method
 - Added documentation to command_exists() about --version limitation
 - Added documentation to create_venv() about Unix-only platform support
@@ -560,6 +621,7 @@ Related: Issue #235, PRs #240
 - Applied cargo fmt formatting fixes
 
 **Verification:**
+
 - 59/59 tests passing
 - Zero compilation errors
 - Zero warnings
@@ -568,7 +630,9 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 11:45 - Phase 10 Complete: Main Binary Entry Point
+
 **Files Changed:**
+
 - `rust/src/bootstrap_main.rs`: REWRITTEN - Complete Phase 10 implementation
 - `rust/src/bootstrap_v2/progress.rs`: Added emit_event_plan_computed()
 - `rust/src/bootstrap_v2/doctor.rs`: Updated exit_code API (removed bool param), added exit_code_strict() and to_json()
@@ -577,6 +641,7 @@ Related: Issue #235, PRs #240
 - `rust/src/bootstrap_v2/checkpoint.rs`: Updated tests to pass profile="dev"
 
 **Changes Made:**
+
 - Phase 10 Main Binary:
   - Completely rewrote bootstrap_main.rs as async tokio entry point
   - Implemented handle_install() with full detect→install→verify flow
@@ -602,6 +667,7 @@ Related: Issue #235, PRs #240
   - Full Context::with_config() with all parameters
 
 **Verification:**
+
 - `cargo build --bin bootstrap-repo-cli` successful
 - All 59 tests passing (including new Phase 10 integration)
 - No clippy warnings
@@ -610,6 +676,7 @@ Related: Issue #235, PRs #240
 - Executor module tests updated and passing
 
 **Architecture Notes:**
+
 - Main binary is now fully async (tokio::main)
 - Three command handlers with proper error propagation
 - Progress reporter used consistently across all flows
@@ -619,6 +686,7 @@ Related: Issue #235, PRs #240
 - Plan computation includes profile parameter for tool selection
 
 **Known Issues / Follow-ups:**
+
 - Integration tests not yet added (need end-to-end flow tests)
 - Bash wrapper (Phase 10.1) not started
 - No binary releases or distribution setup yet
@@ -628,12 +696,15 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 11:25 - Phase 8 Complete: Platform Abstractions
+
 **Files Changed:**
+
 - `rust/src/bootstrap_v2/platform.rs`: NEW - Platform utilities for venv and shell integration
 - `rust/src/bootstrap_v2/mod.rs`: Added platform module
 - `docs/ai-prompt/235/235-next-steps.md`: Updated
 
 **Changes Made:**
+
 - Created platform.rs module with comprehensive venv management:
   - VenvInfo struct with path management (python, pip, bin paths)
   - VenvInfo::from_path() for loading existing venvs
@@ -649,6 +720,7 @@ Related: Issue #235, PRs #240
 - Proper error handling with BootstrapError::VenvActivation
 
 **Verification:**
+
 - `cargo build` successful
 - Platform module tests: 6/6 passing
 - parse_version_from_output() tested with multiple formats
@@ -658,7 +730,9 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 08:30 - Phases 4, 6, 7, 9 Complete: Execution Engine, Config, Checkpointing, Doctor
+
 **Files Changed:**
+
 - `rust/src/bootstrap_v2/executor.rs`: NEW - Execution engine with bounded parallelism
 - `rust/src/bootstrap_v2/config.rs`: UPDATED - Config::load() with TOML parsing
 - `rust/src/bootstrap_v2/checkpoint.rs`: NEW - Checkpointing for resume capability
@@ -672,6 +746,7 @@ Related: Issue #235, PRs #240
 - `docs/ai-prompt/235/235-next-steps.md`: UPDATED - Comprehensive session notes
 
 **Changes Made:**
+
 - Phase 4 Execution Engine:
   - Implemented Executor struct with job semaphore (CI=2, Interactive=min(4,cpus))
   - Added execute_phase() with parallel and sequential modes
@@ -703,6 +778,7 @@ Related: Issue #235, PRs #240
   - Disk space check marked as TODO/placeholder
 
 **Code Review:**
+
 - Triggered GitHub Copilot code review per session requirements
 - 5 review comments received and ALL addressed:
   1. ✅ executor: Changed unwrap() to expect() with descriptive message
@@ -713,6 +789,7 @@ Related: Issue #235, PRs #240
 - Re-tested after fixes: all 53 tests passing
 
 **Verification:**
+
 - `cargo build` successful (0 errors, 0 warnings)
 - All module tests passing:
   - executor: 2 tests
@@ -725,6 +802,7 @@ Related: Issue #235, PRs #240
 - Code review feedback fully addressed
 
 **Architecture Notes:**
+
 - Executor uses Arc<Context> for thread-safe sharing
 - Progress reporter optional (Option<Arc<ProgressReporter>>) for testing
 - Lock manager shared across executor via Arc
@@ -733,6 +811,7 @@ Related: Issue #235, PRs #240
 - Doctor checks are async for consistency but most are sync operations
 
 **Known Issues / Follow-ups:**
+
 - Phase 8 (platform helpers) scattered - version parsing uses semver crate, venv/PATH helpers needed
 - Phase 10 (main binary) not started - need bootstrap_main.rs entry point
 - Installers don't yet use Executor - need wiring in main
@@ -743,13 +822,16 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 07:05 - Code Review Fixes Applied
+
 **Files Changed:**
+
 - `rust/src/bootstrap_v2/progress.rs`: Added explicit `use chrono` import for clarity
 - `rust/src/bootstrap_v2/context.rs`: Documented placeholder pattern for Snap/None package managers
 - `rust/src/bootstrap_v2/lock.rs`: Clarified lock timeout vs backoff delay separation with renamed variables
 - `docs/ai-prompt/235/235-next-steps.md`: Updated journal with session progress
 
 **Changes Made:**
+
 - Addressed all 4 code review comments:
   1. Added explicit chrono import for consistency with Rust best practices
   2. Documented that HomebrewOps placeholder for Snap/None will fail gracefully in installers
@@ -759,6 +841,7 @@ Related: Issue #235, PRs #240
 - All changes verified with repo-lint check --ci (exit 0)
 
 **Verification:**
+
 - `cargo build` successful
 - `repo-lint check --ci` exits 0
 - All 16 linters pass
@@ -767,12 +850,15 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 06:45 - Phases 4-5 Complete: Retry Logic, Lock Manager, Progress UI
+
 **Files Changed:**
+
 - `rust/src/bootstrap_v2/retry.rs`: Implemented retry_with_backoff with error classification, exponential backoff, jitter, total time budget
 - `rust/src/bootstrap_v2/lock.rs`: Implemented LockManager with timeout/backoff, lock guards, CI/interactive wait times
 - `rust/src/bootstrap_v2/progress.rs`: Implemented full ProgressReporter with indicatif, TTY detection, TaskHandle, JSON events
 
 **Changes Made:**
+
 - Phase 4 Retry Logic:
   - Implemented classify_error() mapping errors to RetryClass (Transient/Permanent/Security/Unsafe)
   - Added retry_with_backoff() with exponential backoff, jitter, max total time
@@ -792,6 +878,7 @@ Related: Issue #235, PRs #240
   - Thread-safe task registry
 
 **Verification:**
+
 - `cargo build` successful
 - `repo-lint check --ci` exits 0
 - All 16 linters pass (rustfmt, clippy, rust-docstrings, etc.)
@@ -801,7 +888,9 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 06:15 - Phases 2-3 Complete: Installers and ExecutionPlan
+
 **Files Changed:**
+
 - `rust/src/bootstrap_v2/installers/actionlint.rs`: New installer for actionlint (system package)
 - `rust/src/bootstrap_v2/installers/shellcheck.rs`: New installer for shellcheck (system package)
 - `rust/src/bootstrap_v2/installers/shfmt.rs`: New installer for shfmt (system package)
@@ -813,6 +902,7 @@ Related: Issue #235, PRs #240
 - `rust/src/bootstrap_v2/config.rs`: Added get_required_tools() and resolve_tools()
 
 **Changes Made:**
+
 - Phase 2 Completion:
   - Added 5 new installers: actionlint, shellcheck, shfmt, yamllint, pytest
   - Total 9 installers now registered (ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt)
@@ -831,6 +921,7 @@ Related: Issue #235, PRs #240
   - Step tracking includes dependencies, concurrency_safe flag, required_locks
 
 **Verification:**
+
 - `cargo build` successful
 - `repo-lint check --ci` exits 0
 - Fixed clippy issue with is_some_and vs map_or
@@ -839,7 +930,9 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 05:30 - Code Review Fixes and Docstring Completion
+
 **Files Changed:**
+
 - All `rust/src/bootstrap_v2/*.rs` files: Removed `# noqa: SECTION` pragmas and temporary comments
 - `rust/src/bootstrap_v2/installers/mod.rs`: Added complete Purpose and Examples sections
 - `rust/src/bootstrap_v2/installers/ripgrep.rs`: Added Purpose and Examples documenting REQUIRED status
@@ -847,6 +940,7 @@ Related: Issue #235, PRs #240
 - `rust/src/bootstrap_v2/package_manager.rs`: Added Purpose and Examples for package manager abstraction
 
 **Changes Made:**
+
 - Triggered GitHub Copilot Code Review per session requirements
 - Addressed all 11 review comments about pragma removal
 - Removed `# noqa: SECTION` pragmas (not recognized by linter, not needed)
@@ -855,6 +949,7 @@ Related: Issue #235, PRs #240
 - All docstring contracts now fully satisfied
 
 **Verification:**
+
 - Code review completed successfully
 - `repo-lint check --ci` exits 0 (all 15 linters pass)
 - rust-docstrings validation passes with no violations
@@ -863,7 +958,9 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 05:00 - Phase 2.1-2.2 Package Managers and Installers
+
 **Files Changed:**
+
 - `rust/src/bootstrap_v2/mod.rs`: Added package_manager and installers modules
 - `rust/src/bootstrap_v2/package_manager.rs`: Implemented PackageManagerOps trait, HomebrewOps, and AptOps with proper non-interactive apt flags
 - `rust/src/bootstrap_v2/installers/mod.rs`: Created InstallerRegistry with dependency resolution
@@ -873,6 +970,7 @@ Related: Issue #235, PRs #240
 - `rust/src/bootstrap_v2/cli.rs`: Enhanced documentation with Purpose and Examples sections
 
 **Changes Made:**
+
 - Implemented PackageManagerOps trait per Phase 8.1 spec
 - HomebrewOps: Basic install/detect operations (note: version pinning issues noted in comments per spec)
 - AptOps: Non-interactive mode with DEBIAN_FRONTEND=noninteractive, sudo -n for CI, deterministic flags
@@ -884,12 +982,14 @@ Related: Issue #235, PRs #240
 - Tests added for dry-run mode in all installers
 
 **Verification:**
+
 - `cargo build` completed successfully
 - All new code compiles without errors
 - Tests pass for installer dry-run modes
 - Docstring violations present (11 files) - will fix in next commit
 
 **Known Issues:**
+
 - Docstring contract violations in bootstrap_v2 modules (missing Purpose/Examples)
 - Need to add # noqa pragmas or complete documentation
 - This is foundational code, comprehensive docs pending
@@ -897,7 +997,9 @@ Related: Issue #235, PRs #240
 ---
 
 ### 2026-01-06 04:30 - Phase 1.1-1.3 Core Infrastructure Complete
+
 **Files Changed:**
+
 - `rust/Cargo.toml`: Added all required dependencies (tokio, anyhow, thiserror, toml, indicatif, reqwest, futures, petgraph, async-trait, rand, atty, dirs, semver, num_cpus)
 - `rust/src/lib.rs`: Created library entry point exposing bootstrap_v2 module
 - `rust/src/bootstrap_v2/mod.rs`: Created module structure with all submodules
@@ -913,6 +1015,7 @@ Related: Issue #235, PRs #240
 - `rust/src/bootstrap_v2/installer.rs`: Defined Installer trait with async methods, InstallResult, and VerifyResult
 
 **Changes Made:**
+
 - Successfully implemented Phase 1.1 (Project Setup): All dependencies added, CLI structure complete with required subcommands and flags
 - Successfully implemented Phase 1.2 (Exit Code Constants): ExitCode enum with all 22 codes matching bash script contract
 - Successfully implemented Phase 1.3 (Error Type Hierarchy): BootstrapError with proper thiserror integration and exit code mapping
@@ -920,6 +1023,7 @@ Related: Issue #235, PRs #240
 - Build succeeded with only 1 harmless dead_code warning (locks field in LockManager)
 
 **Verification:**
+
 - `cargo build` completed successfully in 43.56s
 - All modules compile without errors
 - Tests added for exit_codes and errors modules

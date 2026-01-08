@@ -54,6 +54,7 @@ All prerequisite PRs completed successfully:
 Complete implementation of the M0 safe-run contract:
 
 **Core Features:**
+
 - Thread-based stdout/stderr capture with real-time console passthrough
 - Event ledger with atomic sequence counter for monotonic ordering
 - Log file generation only on failure (FAIL status)
@@ -64,6 +65,7 @@ Complete implementation of the M0 safe-run contract:
   - `SAFE_RUN_VIEW` - Enable merged view (value: "merged")
 
 **Architecture:**
+
 ```
 Command → Spawn process with piped stdout/stderr
         ↓
@@ -78,6 +80,7 @@ Exit ≠ 0: Create log file, print snippet (if enabled), exit with same code
 ```
 
 **Log File Format:**
+
 ```
 === STDOUT ===
 <stdout lines>
@@ -149,26 +152,32 @@ Exit ≠ 0: Create log file, print snippet (if enabled), exit with same code
 ## Quality Checks
 
 ### Cargo Build ✅
+
 ```bash
 $ cargo build --release
 Finished `release` profile [optimized] target(s)
 ```
 
 ### Cargo Test ✅
+
 ```bash
 $ cargo test
 test result: ok. 10 passed; 0 failed; 8 ignored
 ```
+
 (8 ignored = safe-archive + preflight tests, not in scope for PR3)
 
 ### Cargo Clippy ✅
+
 ```bash
 $ cargo clippy --all-targets --all-features -- -D warnings
 Finished `dev` profile [unoptimized + debuginfo] target(s)
 ```
+
 Zero warnings with strict mode.
 
 ### Cargo Fmt ✅
+
 ```bash
 $ cargo fmt --all -- --check
 (no output = all files formatted correctly)
@@ -179,6 +188,7 @@ $ cargo fmt --all -- --check
 ## Manual Testing Results
 
 ### Test 1: Success case (no artifacts)
+
 ```bash
 $ ./target/release/safe-run run echo "hello world"
 hello world
@@ -187,11 +197,13 @@ $ echo $?
 $ ls .agent 2>&1
 ls: cannot access '.agent': No such file or directory
 ```
+
 ✅ **PASS** - No artifacts created on success
 
 ---
 
 ### Test 2: Failure case (creates log)
+
 ```bash
 $ ./target/release/safe-run run sh -c "echo 'stdout text'; echo 'stderr text' >&2; exit 7"
 stdout text
@@ -202,6 +214,7 @@ $ echo $?
 ```
 
 **Log file content:**
+
 ```
 === STDOUT ===
 stdout text
@@ -216,11 +229,13 @@ stderr text
 [SEQ=4][META] safe-run exit: code=7
 --- END EVENTS ---
 ```
+
 ✅ **PASS** - Log created, exit code preserved, proper formatting
 
 ---
 
 ### Test 3: Snippet output
+
 ```bash
 $ SAFE_SNIPPET_LINES=2 ./target/release/safe-run run sh -c "echo L1; echo L2; echo L3; exit 9"
 L1
@@ -232,16 +247,19 @@ L3
 --- end tail ---
 safe-run: command failed (rc=9). log: .agent/FAIL-LOGS/20251226T215428Z-pid7525-FAIL.log
 ```
+
 ✅ **PASS** - Last 2 lines shown in snippet
 
 ---
 
 ### Test 4: Merged view
+
 ```bash
-$ SAFE_RUN_VIEW=merged ./target/release/safe-run run sh -c "echo A; echo B >&2; echo C; exit 1"
+SAFE_RUN_VIEW=merged ./target/release/safe-run run sh -c "echo A; echo B >&2; echo C; exit 1"
 ```
 
 **Log file (tail):**
+
 ```
 --- BEGIN MERGED (OBSERVED ORDER) ---
 [#1][META] safe-run start: cmd="sh -c 'echo A; echo B >&2; echo C; exit 1'"
@@ -251,11 +269,13 @@ $ SAFE_RUN_VIEW=merged ./target/release/safe-run run sh -c "echo A; echo B >&2; 
 [#5][META] safe-run exit: code=1
 --- END MERGED ---
 ```
+
 ✅ **PASS** - Merged view section present
 
 ---
 
 ### Test 5: Custom log directory
+
 ```bash
 $ SAFE_LOG_DIR=custom_logs ./target/release/safe-run run sh -c "exit 3"
 safe-run: command failed (rc=3). log: custom_logs/20251226T215440Z-pid7541-FAIL.log
@@ -264,6 +284,7 @@ ls: cannot access '.agent': No such file or directory
 $ ls custom_logs
 20251226T215440Z-pid7541-FAIL.log
 ```
+
 ✅ **PASS** - Custom directory used, default not created
 
 ---
@@ -273,6 +294,7 @@ $ ls custom_logs
 The `rust-conformance.yml` workflow will execute:
 
 **Test Job (Matrix: ubuntu, macos, windows)**
+
 1. Build Rust project
 2. Run unit tests (5 tests)
 3. Run conformance tests (10 pass, 8 ignored)
@@ -280,12 +302,15 @@ The `rust-conformance.yml` workflow will execute:
 5. Verify binary with `--version`
 
 **Lint Job (ubuntu)**
+
 1. Run clippy with `-D warnings`
 
 **Format Job (ubuntu)**
+
 1. Run rustfmt check
 
 **Expected Results:**
+
 - ✅ All jobs pass on ubuntu-latest
 - ✅ All jobs pass on macos-latest
 - ⚠️ Windows: Build/clippy/fmt pass, but fewer conformance tests (Unix-specific test harness)
@@ -297,20 +322,24 @@ The `rust-conformance.yml` workflow will execute:
 ### 1. Signal Handling (test 003) - Intentionally Deferred
 
 **What's Missing:**
+
 - Signal handlers for SIGTERM/SIGINT
 - ABORTED log file generation
 - Exit codes 130 (SIGINT) or 143 (SIGTERM)
 
 **Why Deferred:**
+
 - Adds complexity without blocking core functionality
 - Existing tests validate M0 contract compliance (4/5 = 80%)
 - Can be added in follow-up PR if needed
 
 **Impact:**
+
 - Test `safe-run-003` remains ignored
 - No ABORTED logs on signal interruption (will exit with signal-based exit code but no artifact)
 
 **Workaround:**
+
 - OS naturally handles signal exit codes
 - Wrapper scripts can implement signal forwarding if needed
 
@@ -319,19 +348,23 @@ The `rust-conformance.yml` workflow will execute:
 ### 2. Windows Test Harness - Platform-Specific
 
 **What's Missing:**
+
 - Windows-specific test helper scripts (.bat or .ps1)
 - `create_test_script()` only has `#[cfg(unix)]` implementation
 
 **Why Deferred:**
+
 - Core implementation is cross-platform
 - Only test harness uses Unix-specific scripting
 - Windows build/clippy/fmt will pass in CI
 
 **Impact:**
+
 - Windows conformance tests won't execute (will show as "0 passed" or "filtered out")
 - Windows binary builds and runs correctly (just not tested via conformance suite)
 
 **Future Work:**
+
 - Add `#[cfg(windows)]` version of `create_test_script()` using PowerShell or batch files
 
 ---
@@ -357,6 +390,7 @@ All requirements met:
 ## Migration to Next PR (PR4)
 
 **What's Next:**
+
 - Convert Bash wrapper from independent implementation to thin invoker
 - Use binary discovery rules from `docs/wrapper-discovery.md`
 - Pass through all args to Rust binary
@@ -364,6 +398,7 @@ All requirements met:
 - Ensure wrapper conformance tests pass (wrapper output = Rust output)
 
 **Preparation:**
+
 - Rust binary builds successfully: `rust/target/release/safe-run`
 - Binary responds to `--version`: `safe-run 0.1.0`
 - Binary accepts subcommands: `safe-run run <command>`
@@ -373,14 +408,17 @@ All requirements met:
 ## Files Changed Summary
 
 **New:**
+
 - `rust/src/safe_run.rs` (334 lines)
 
 **Modified:**
+
 - `rust/src/main.rs` (+1 line: module declaration)
 - `rust/src/cli.rs` (+2 lines: implementation call, arg parsing fix)
 - `rust/tests/conformance.rs` (-4 lines: removed #[ignore] from 4 tests)
 
 **Total:**
+
 - +337 insertions
 - -4 deletions
 - Net: +333 lines

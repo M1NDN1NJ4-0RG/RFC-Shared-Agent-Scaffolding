@@ -1,7 +1,7 @@
 # Epic #3 Progress Summary — M2, M3, M4 Complete
 
-**Date:** 2025-12-26  
-**Status:** Major milestones complete (M2, M3, M4)  
+**Date:** 2025-12-26
+**Status:** Major milestones complete (M2, M3, M4)
 **PR:** copilot/update-epic-tracker-milestones
 
 ---
@@ -11,15 +11,18 @@
 ### M2-P1-I1: Conformance Test Vectors ✅
 
 **Created:**
+
 - `conformance/README.md` — Comprehensive documentation for conformance testing
 - `conformance/vectors.json` — Canonical test vectors (v1.0)
 
 **Vector coverage:**
+
 - **safe_run:** 5 vectors (success, failure, SIGINT, custom log dir, snippet)
 - **safe_archive:** 4 vectors (success, compression, no-clobber default, no-clobber strict)
 - **preflight_automerge_ruleset:** 4 vectors (success, auth fail, ruleset not found, missing context)
 
 **M0 contract mapping:**
+
 - M0-P1-I1: safe-run logging semantics (split stdout/stderr)
 - M0-P1-I2: Log file naming format
 - M0-P1-I3: safe-archive no-clobber semantics
@@ -171,11 +174,13 @@
    - Runs on PR, push to main, and manual dispatch
 
 **Workflow triggers:**
+
 - Pull requests affecting relevant paths (scripts, conformance, workflows)
 - Pushes to main branch
 - Manual dispatch (`workflow_dispatch`)
 
 **Artifact collection:**
+
 - On test failure, uploads `.agent/FAIL-LOGS/` directory
 - Enables debugging of CI failures
 - Preserves failure context per M0-P1-I1, M0-P1-I2
@@ -185,10 +190,12 @@
 ## Files Created/Modified
 
 ### Conformance Infrastructure (M2-P1-I1)
+
 - `conformance/README.md`
 - `conformance/vectors.json`
 
 ### Example Scaffold (M3-P1-I1)
+
 - `RFC-Shared-Agent-Scaffolding-Example/.docs/agent/00_INDEX.md`
 - `RFC-Shared-Agent-Scaffolding-Example/.docs/agent/10_CORE_RULES.md`
 - `RFC-Shared-Agent-Scaffolding-Example/.docs/agent/20_GIT_WORKFLOW.md`
@@ -202,6 +209,7 @@
 - `RFC-Shared-Agent-Scaffolding-Example/.docs/journal/PR-LOG/README.md`
 
 ### CI Workflows (M4-P1-I1)
+
 - `.github/workflows/test-bash.yml`
 - `.github/workflows/test-python3.yml`
 - `.github/workflows/test-perl.yml`
@@ -215,18 +223,21 @@
 ## Impact
 
 ### For Implementers
+
 - Clear conformance vectors to implement against
 - Complete shard templates for agent instructions
 - CI enforcement ensures no regressions
 - Comprehensive documentation for all workflows
 
 ### For Users/Adopters
+
 - Full example scaffold with real templates (not just stubs)
 - Clear onboarding path via `CLAUDE.md` → `.docs/agent/00_INDEX.md`
 - Journal templates for tracking work
 - No missing file references
 
 ### For CI/CD
+
 - 5 GitHub Actions workflows provide comprehensive validation
 - Test all 4 language bundles automatically
 - Conformance infrastructure validated on every PR
@@ -237,15 +248,18 @@
 ## Alignment with Epic #3 Goals
 
 ### ✅ M2 — Conformance Infrastructure
+
 - **M2-P1-I1:** Conformance vectors created with comprehensive schema
 - **M2-P2-I1:** Optional (golden behavior assertions for drift detection)
 
 ### ✅ M3 — Example Scaffold Completeness
+
 - **M3-P1-I1:** Full templates shipped (Option A)
 - No missing file references
 - Self-consistent onboarding flow
 
 ### ✅ M4 — CI & Operational Hardening
+
 - **M4-P1-I1:** Multi-language CI workflows operational
 - All supported bundles tested
 - Conformance validation enforced
@@ -256,9 +270,11 @@
 ## Remaining Work
 
 ### M2-P2-I1: Golden Behavior Assertions (Optional)
+
 **Scope:** Automated drift detection between implementations.
 
 **What it would include:**
+
 - Define allowed platform differences (path separators, line endings, etc.)
 - Create parity tests comparing outputs across languages
 - Add CI gate that fails on unexpected divergence

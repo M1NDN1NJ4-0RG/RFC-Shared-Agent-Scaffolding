@@ -1,8 +1,8 @@
 # [EPIC] Migrate `repo_lint` to a Self-Contained Rust Binary
 
-**Issue:** #156  
-**Status:** Planning  
-**Last Updated:** 2025-12-30  
+**Issue:** #156
+**Status:** Planning
+**Last Updated:** 2025-12-30
 **Owner:** @GitHubCopilot
 
 ---
@@ -12,6 +12,7 @@
 This migration plan outlines the transformation of `repo_lint` from a Python-based multi-tool orchestrator (~7,000 LOC) into a self-contained Rust binary with embedded AST/linting capabilities, YAML-based configuration with IDE support, and cross-platform distribution. The plan addresses technical feasibility, security implications, contract adherence, and maintainability gains while identifying potential pitfalls and trade-offs.
 
 **Key Benefits:**
+
 - Single standalone binary (no Python/tool dependencies at runtime)
 - Embedded multi-language AST parsing (tree-sitter)
 - YAML configs with JSON Schema for IDE autocomplete
@@ -20,6 +21,7 @@ This migration plan outlines the transformation of `repo_lint` from a Python-bas
 - Enhanced security through type safety and minimal attack surface
 
 **Key Risks:**
+
 - Significant upfront development effort (est. 3-6 months for full parity)
 - Learning curve for Rust AST/linting ecosystem
 - Potential breaking changes during transition period
@@ -74,6 +76,7 @@ The repository has a sophisticated multi-level contract system:
    - Escalation policy for dangerous operations
 
 **Critical Finding:** The repository's contract-driven approach means the Rust migration MUST:
+
 - Preserve all existing behavioral contracts
 - Maintain CLI compatibility
 - Enforce contract validation at build/test time
@@ -81,11 +84,12 @@ The repository has a sophisticated multi-level contract system:
 
 ### Current repo_lint Implementation
 
-**Language:** Pure Python 3  
-**Lines of Code:** ~7,000 (32 Python files)  
+**Language:** Pure Python 3
+**Lines of Code:** ~7,000 (32 Python files)
 **Architecture:** Plugin-based runner system with central orchestration
 
 **Components:**
+
 1. **CLI Layer** (`cli.py`, `__main__.py`): Command parsing, mode dispatch
 2. **Runner System** (`runners/`): 6 language runners (Python, Bash, PowerShell, Perl, YAML, Rust-stub)
 3. **Policy Engine** (`policy.py`): JSON-based autofix allow/deny lists
@@ -95,17 +99,20 @@ The repository has a sophisticated multi-level contract system:
 7. **Unsafe Fixers** (`unsafe_fixers.py`): Behavior-changing transformations
 
 **Dependencies:**
+
 - **External CLI tools**: `black`, `ruff`, `pylint`, `shellcheck`, `shfmt`, `yamllint`, PSScriptAnalyzer, Perl::Critic
 - **Python libs**: Standard library only (no heavy deps like `ast`, `tree-sitter` currently)
 - **Config format**: JSON for autofix policy, TOML for Python tool config
 
 **Exit Codes:**
+
 - `0`: All checks passed
 - `1`: Violations found
 - `2`: Missing tools (CI mode) or unsafe mode blocked
 - `3`: Internal error
 
 **Key Features:**
+
 - **Safe vs Unsafe Fixes**: Policy-controlled with CI blockers
 - **Per-Language Filtering**: `--only <language>` flag
 - **CI/Local Modes**: Auto-install vs fail-fast
@@ -117,6 +124,7 @@ The repository has a sophisticated multi-level contract system:
 ## Current Implementation Analysis
 
 ### Strengths
+
 1. **Modular Architecture**: Clean separation between runners, policy, CLI
 2. **Contract Adherence**: Enforces docstring/naming/exit-code contracts
 3. **Safety First**: Unsafe operations require dual-confirmation
@@ -124,6 +132,7 @@ The repository has a sophisticated multi-level contract system:
 5. **Comprehensive Testing**: 32 test files with good coverage
 
 ### Weaknesses
+
 1. **External Tool Dependencies**: Requires 10+ tools across 5 ecosystems
 2. **Performance**: Sequential Python orchestration, slow on large repos
 3. **Installation Complexity**: `.venv-lint/` isolation, manual non-Python tools
@@ -154,6 +163,7 @@ The repository has a sophisticated multi-level contract system:
     - Create `tools/repo_lint_rust/repo-lint-core/Cargo.toml` (library crate for reusability)
   - **Rationale:** Workspace allows separating binary CLI from reusable library components
   - **Implementation:**
+
     ```toml
     # Cargo.toml (workspace)
     [workspace]
@@ -176,6 +186,7 @@ The repository has a sophisticated multi-level contract system:
     - `.github/workflows/build-repo-lint-rust.yml`
     - `tools/repo_lint_rust/.cargo/config.toml`
   - **Implementation:**
+
     ```toml
     # .cargo/config.toml
     [build]
@@ -187,6 +198,7 @@ The repository has a sophisticated multi-level contract system:
     [target.x86_64-pc-windows-gnu]
     linker = "x86_64-w64-mingw32-gcc"
     ```
+
   - **Notes:** Use `musl` for static Linux binaries, cross for Windows from Linux CI
 
 - [ ] **Item 1.1.3: Define CLI interface (clap v4)**
@@ -199,6 +211,7 @@ The repository has a sophisticated multi-level contract system:
     - [ ] Sub-Item 1.1.3.3: `install` subcommand (may become `verify` in Rust version)
     - [ ] Sub-Item 1.1.3.4: Global `--version`, `--help` with version from `Cargo.toml`
   - **Implementation:**
+
     ```rust
     use clap::{Parser, Subcommand};
     
@@ -250,6 +263,7 @@ The repository has a sophisticated multi-level contract system:
     - [ ] Sub-Item 1.2.1.3: Add `$schema` key in YAML for IDE integration
     - [ ] Sub-Item 1.2.1.4: Test with VS Code, JetBrains IDEs, Vim (YAMLlint plugin)
   - **Implementation:**
+
     ```yaml
     # policy.yaml
     $schema: "./policy.schema.json"
@@ -269,6 +283,7 @@ The repository has a sophisticated multi-level contract system:
         mutating: true
         flags: ["--no-unsafe-fixes"]
     ```
+
     ```rust
     use schemars::{schema_for, JsonSchema};
     use serde::{Deserialize, Serialize};
@@ -290,6 +305,7 @@ The repository has a sophisticated multi-level contract system:
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/config.rs`
   - **Dependencies:** `serde_yaml`, `schemars`, `validator`
   - **Implementation:**
+
     ```rust
     use serde_yaml;
     use validator::Validate;
@@ -307,6 +323,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Support reading old `autofix-policy.json` during transition
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/config.rs`
   - **Implementation:**
+
     ```rust
     pub fn load_policy_auto(dir: &Path) -> Result<PolicyConfig> {
         // Prefer YAML, fall back to JSON
@@ -329,6 +346,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Abstract interface for language-specific linters
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/runner.rs`
   - **Implementation:**
+
     ```rust
     pub trait Runner: Send + Sync {
         fn name(&self) -> &str;
@@ -358,6 +376,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Match Python exit codes exactly (0/1/2/3)
   - **Files:** `tools/repo_lint_rust/repo-lint/src/exit_codes.rs`
   - **Implementation:**
+
     ```rust
     pub enum ExitCode {
         Success = 0,
@@ -378,6 +397,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Use `anyhow` for application errors, `thiserror` for library errors
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/error.rs`
   - **Implementation:**
+
     ```rust
     use thiserror::Error;
     
@@ -411,6 +431,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Add tree-sitter parsers for Python, Bash, Perl, PowerShell, Rust, YAML
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/Cargo.toml`
   - **Dependencies:**
+
     ```toml
     [dependencies]
     tree-sitter = "0.20"
@@ -421,6 +442,7 @@ The repository has a sophisticated multi-level contract system:
     tree-sitter-rust = "0.20"
     tree-sitter-yaml = "0.20"
     ```
+
   - **Notes:** Some languages lack official tree-sitter support (Perl, PowerShell) - may need custom grammars
 
 - [ ] **Item 2.1.2: Parse file to AST**
@@ -428,6 +450,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Generic AST parser with per-language grammar selection
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/lib.rs`
   - **Implementation:**
+
     ```rust
     pub struct Parser {
         python: tree_sitter::Parser,
@@ -458,6 +481,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Use tree-sitter queries to find patterns (e.g., missing docstrings)
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/queries.rs`
   - **Implementation:**
+
     ```rust
     const PYTHON_MISSING_DOCSTRING: &str = r#"
     (function_definition
@@ -496,6 +520,7 @@ The repository has a sophisticated multi-level contract system:
     3. **Option C:** FFI to Python `black` (not self-contained)
   - **Recommendation:** Option A (ruff format) - production-ready, Black-compatible
   - **Implementation:**
+
     ```rust
     use std::process::Command;
     
@@ -509,6 +534,7 @@ The repository has a sophisticated multi-level contract system:
         Ok(output.status.success())
     }
     ```
+
   - **Alternative (fully embedded):**
     - Vendor `ruff_python_formatter` crate if published
     - OR: Implement minimal Python formatter for 80% use cases
@@ -518,6 +544,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Use `ruff_linter` crate or shell out to embedded binary
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/python/lint.rs`
   - **Implementation (if ruff_linter is available):**
+
     ```rust
     use ruff_linter::{check_file, LintConfig};
     
@@ -531,6 +558,7 @@ The repository has a sophisticated multi-level contract system:
         Ok(violations.into_iter().map(|v| Violation::from_ruff(v)).collect())
     }
     ```
+
   - **Fallback:** Embed ruff binary in executable using `include_bytes!()` or build-time resource bundling
 
 - [ ] **Item 2.2.3: Pylint equivalent checks (tree-sitter based)**
@@ -560,6 +588,7 @@ The repository has a sophisticated multi-level contract system:
     - Implement top 20 ShellCheck rules (SC2086, SC2046, SC2006, etc.)
     - Provide opt-in "strict mode" for full ShellCheck via external tool
   - **Implementation:**
+
     ```rust
     pub fn check_bash(tree: &Tree, source: &str) -> Vec<Violation> {
         let mut violations = Vec::new();
@@ -601,6 +630,7 @@ The repository has a sophisticated multi-level contract system:
     - Implement basic rules via tree-sitter (e.g., verb-noun functions, CmdletBinding)
     - Provide "enhanced mode" that shells out to PSScriptAnalyzer if available
   - **Implementation:**
+
     ```rust
     pub fn check_powershell(tree: &Tree, source: &str) -> Vec<Violation> {
         let mut violations = Vec::new();
@@ -634,6 +664,7 @@ The repository has a sophisticated multi-level contract system:
     - Implement ~10 basic rules (use strict, use warnings, bareword filehandles)
     - Provide opt-in mode to shell out to Perl::Critic
   - **Implementation:**
+
     ```rust
     pub fn check_perl(tree: &Tree, source: &str) -> Vec<Violation> {
         let mut violations = Vec::new();
@@ -656,6 +687,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Parse YAML, check syntax, indentation, line length
   - **Dependencies:** `serde_yaml` for parsing, tree-sitter-yaml for AST analysis
   - **Implementation:**
+
     ```rust
     pub fn check_yaml(path: &Path) -> Result<Vec<Violation>> {
         let content = fs::read_to_string(path)?;
@@ -694,6 +726,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Use `schemars` to auto-generate schemas
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/config.rs`
   - **Implementation:**
+
     ```rust
     use schemars::{schema_for, JsonSchema};
     
@@ -724,6 +757,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Ensure YAML files reference schema for IDE validation
   - **Files:** `conformance/repo-lint/policy.yaml`
   - **Implementation:**
+
     ```yaml
     # yaml-language-server: $schema=./policy.schema.json
     $schema: "./policy.schema.json"
@@ -750,6 +784,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Allow enabling/disabling specific rules per language
   - **Files:** `conformance/repo-lint/rules.yaml`
   - **Implementation:**
+
     ```yaml
     python:
       rules:
@@ -771,6 +806,7 @@ The repository has a sophisticated multi-level contract system:
   - **Severity:** Medium
   - **Description:** Map rule violations to severity levels
   - **Implementation:**
+
     ```rust
     #[derive(Serialize, Deserialize, JsonSchema)]
     enum Severity {
@@ -838,6 +874,7 @@ The repository has a sophisticated multi-level contract system:
     - [ ] Sub-Item 4.2.1.4: Perl (=head1 NAME, DESCRIPTION, SYNOPSIS, EXAMPLES)
     - [ ] Sub-Item 4.2.1.5: Rust (//! # Purpose, //! # Examples, //! # Exit Behavior)
   - **Implementation:**
+
     ```rust
     pub fn validate_python_docstring(tree: &Tree, source: &str) -> Vec<Violation> {
         let module_docstring = extract_module_docstring(tree, source);
@@ -873,6 +910,7 @@ The repository has a sophisticated multi-level contract system:
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/unsafe_fixers/docstring_rewrite.rs`
   - **Rationale:** This is the main unsafe fixer from Python version
   - **Implementation:**
+
     ```rust
     pub struct DocstringRewriteFixer;
     
@@ -907,12 +945,14 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Fully static binaries with no libc dependencies
   - **Files:** `.github/workflows/build-repo-lint-rust.yml`
   - **Implementation:**
+
     ```yaml
     - name: Build static Linux binary
       run: |
         cargo build --release --target x86_64-unknown-linux-musl
         strip target/x86_64-unknown-linux-musl/release/repo-lint
     ```
+
   - **Testing:** Verify on Alpine Linux (musl-based)
 
 - [ ] **Item 5.1.2: Cross-compile for Windows/macOS**
@@ -920,6 +960,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Build from Linux CI using cross-compilation
   - **Tools:** `cross` or `cargo-zigbuild`
   - **Implementation:**
+
     ```yaml
     - name: Build Windows binary
       run: cross build --release --target x86_64-pc-windows-gnu
@@ -991,6 +1032,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Run both versions in CI, compare results
   - **Files:** `.github/workflows/repo-lint-comparison.yml`
   - **Implementation:**
+
     ```yaml
     - name: Run Python repo-lint
       run: python3 -m tools.repo_lint check --json > python-results.json
@@ -1001,6 +1043,7 @@ The repository has a sophisticated multi-level contract system:
     - name: Compare results
       run: ./scripts/compare-lint-results.py python-results.json rust-results.json
     ```
+
   - **Success Criteria:** 95%+ agreement on violations found
 
 - [ ] **Item 6.1.2: Performance benchmarking**
@@ -1008,6 +1051,7 @@ The repository has a sophisticated multi-level contract system:
   - **Description:** Measure time/memory improvements
   - **Files:** `tools/repo_lint_rust/benches/linting_bench.rs`
   - **Implementation:**
+
     ```rust
     use criterion::{black_box, criterion_group, criterion_main, Criterion};
     
@@ -1022,6 +1066,7 @@ The repository has a sophisticated multi-level contract system:
     criterion_group!(benches, bench_python_files);
     criterion_main!(benches);
     ```
+
   - **Metrics:** Speedup factor, peak memory usage
 
 ---
@@ -1035,6 +1080,7 @@ The repository has a sophisticated multi-level contract system:
     - `.github/workflows/repo-lint-and-docstring-enforcement.yml`
     - `.github/workflows/repo-lint-weekly-full-scan.yml`
   - **Implementation:**
+
     ```yaml
     # OLD:
     - run: python3 -m tools.repo_lint check --ci
@@ -1075,6 +1121,7 @@ The repository has a sophisticated multi-level contract system:
   - Thin Python wrapper for pip install compatibility (wraps Rust binary)
 
 **Implementation:**
+
 ```python
 # Python wrapper (tools/repo_lint_wrapper/setup.py)
 setup(
@@ -1114,6 +1161,7 @@ def main():
   - Add checksums to release binaries
 
 **Implementation:**
+
 ```yaml
 # .github/workflows/security-scan.yml
 - name: Audit Rust dependencies
@@ -1142,6 +1190,7 @@ def main():
 **Impact:** The Rust migration does NOT affect wrapper contracts, as repo_lint is orthogonal to safe-run/safe-check/safe-archive wrappers.
 
 **Relevant Contracts:**
+
 - **Exit Code Contract:** Rust version MUST preserve exit codes 0/1/2/3 exactly
 - **Error Handling:** Actionable error messages to stderr
 - **Environment Variables:** Pass through `CI`, `SAFE_*` vars (not applicable to repo-lint)
@@ -1151,6 +1200,7 @@ def main():
 **Impact:** CRITICAL - Rust repo-lint MUST enforce the same docstring contracts as Python version.
 
 **Requirements:**
+
 - File-level: 8 semantic sections (Purpose, Usage, Args, Env, Exit Codes, Examples, Notes, Platform Compatibility)
 - Symbol-level: Function/class/method documentation
 - Pragma support: `# noqa: EXITCODES`, `# noqa: DOCSTRING`
@@ -1162,6 +1212,7 @@ def main():
 **Impact:** Moderate - Rust repo-lint MUST validate naming per `naming-and-style.md`
 
 **Requirements:**
+
 - Python: `snake_case.py`
 - PowerShell: `PascalCase.ps1`
 - Bash: `kebab-case.sh`
@@ -1169,6 +1220,7 @@ def main():
 - Non-script: `kebab-case.md`
 
 **Implementation:**
+
 - Embed naming rules in YAML config
 - Use tree-sitter + regex to validate file and symbol names
 
@@ -1177,6 +1229,7 @@ def main():
 **Impact:** HIGH - Rust version MUST maintain same safety constraints
 
 **Requirements:**
+
 - `fix --unsafe` requires `--yes-i-know` dual confirmation
 - Hard-block unsafe mode in CI (detect via `CI` env var or `--ci` flag)
 - Generate forensic artifacts (patch + log)
@@ -1196,6 +1249,7 @@ def main():
 **Impact:** Cannot achieve full AST-based linting for these languages
 
 **Mitigation:**
+
 1. Use tree-sitter-perl and tree-sitter-powershell community grammars (with caveats)
 2. Implement fallback regex-based checks for unsupported constructs
 3. Provide "enhanced mode" that shells out to external tools (Perl::Critic, PSScriptAnalyzer)
@@ -1212,6 +1266,7 @@ def main():
 **Impact:** Must shell out to external binaries, losing "self-contained" benefit
 
 **Mitigation:**
+
 1. Investigate `ruff_python_formatter` and `ruff_linter` crate availability
 2. If unavailable, embed ruff/black binaries using `include_bytes!()` and extract at runtime
 3. Implement minimal Python formatter for 80% use cases (indentation, line breaks) as fallback
@@ -1227,6 +1282,7 @@ def main():
 **Impact:** Developers may perceive Rust version as slower for small commits
 
 **Mitigation:**
+
 1. Benchmark startup time (target <50ms including binary load)
 2. Optimize binary size with `strip = true` and LTO
 3. Use `lazy_static` for global initializations
@@ -1245,6 +1301,7 @@ def main():
 **Impact:** CI failures, user frustration
 
 **Mitigation:**
+
 1. Maintain backwards compatibility layer for JSON config (6 months deprecation period)
 2. Provide automated migration tool: `repo-lint migrate-config autofix-policy.json`
 3. Run both Python and Rust versions in parallel during transition
@@ -1259,6 +1316,7 @@ def main():
 **Impact:** Reduced developer experience, typos in YAML configs
 
 **Mitigation:**
+
 1. Test with top 5 IDEs (VS Code, IntelliJ, PyCharm, Vim, Emacs)
 2. Provide IDE-specific setup guides with screenshots
 3. Add `repo-lint validate-config` command for CLI validation
@@ -1275,6 +1333,7 @@ def main():
 **Impact:** Slower CI, slower development iteration
 
 **Mitigation:**
+
 1. Use incremental compilation in dev mode
 2. Cache Cargo build artifacts in CI
 3. Split into multiple crates for parallel compilation
@@ -1289,6 +1348,7 @@ def main():
 **Impact:** Missing or broken macOS binaries
 
 **Mitigation:**
+
 1. Use GitHub Actions macOS runners for native builds
 2. Maintain cross-compilation as backup
 3. Test binaries on real hardware (macOS, Windows)
@@ -1449,4 +1509,3 @@ criterion = "0.5"
 ---
 
 **End of Migration Plan**
-

@@ -1,8 +1,8 @@
 # Root Cause Analysis: Why Copilot Repeatedly Ignores Mandatory Instructions
 
-**Document Purpose:** Forensic investigation + corrective action plan  
-**Investigation Date:** 2026-01-07  
-**Investigator:** Copilot (self-analysis)  
+**Document Purpose:** Forensic investigation + corrective action plan
+**Investigation Date:** 2026-01-07
+**Investigator:** Copilot (self-analysis)
 **Scope:** Violations of `.github/copilot-instructions.md` and `docs/contributing/session-compliance-requirements.md`
 
 ---
@@ -30,11 +30,11 @@
 
 **File Path:** `docs/contributing/session-compliance-requirements.md`
 
-4. **Section: "MANDATORY READING" (line 7)**
+1. **Section: "MANDATORY READING" (line 7)**
    - **Requirement:** "Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work."
    - **Consequence:** "Failure to read this document when starting NEW work is a violation."
 
-5. **Section: "Session Start Requirements (MANDATORY)" (lines 38-85)**
+2. **Section: "Session Start Requirements (MANDATORY)" (lines 38-85)**
    - **When:** "At the start of NEW work sessions, immediately upon first message, before ANY repo exploration/analysis/work."
    - **PROHIBITION:** "You may NOT read files, explore the repository, analyze the problem, or plan changes until the bootstrapper has completed successfully (exit 0)."
    - **Exception:** "Reading this file and `.github/copilot-instructions.md` is permitted before bootstrap."
@@ -45,7 +45,7 @@
      4. Run `repo-lint check --ci` (exit 0/1 acceptable; exit 2 = BLOCKER)
      5. Initialize issue journals
 
-6. **Section: "In-Session Work Requirements (MANDATORY)" (lines 15-34)**
+3. **Section: "In-Session Work Requirements (MANDATORY)" (lines 15-34)**
    - **Requirement:** "After Session Start completes successfully, you MUST execute the requested work."
    - **Prohibition:** "No 'bootstrap + catch-up only' sessions."
    - **Minimum Progress Rule:** Must produce meaningful commit OR update journals OR escalate with BLOCKED.
@@ -56,14 +56,16 @@
 
 ### Violation #1: Skipped Session Start in Previous Session (Issue #235 - First Response)
 
-**Rule Violated:**  
+**Rule Violated:**
+
 - `.github/copilot-instructions.md` lines 9-15: "You may NOT: Explore files, Analyze the problem, Read repository contents, Plan changes, Make any code modifications [until] you have read the complete Session Compliance Requirements document."
 - `docs/contributing/session-compliance-requirements.md` lines 40-42: "You may NOT read files, explore the repository, analyze the problem, or plan changes until the bootstrapper has completed successfully (exit 0)."
 
-**Observed Behavior:**  
+**Observed Behavior:**
 Copilot immediately began working on Issue #235 WITHOUT running `./scripts/session-start.sh` first.
 
-**Evidence:**  
+**Evidence:**
+
 - **Commit:** `6b10bc79a7f7b7c66488601e68d7a020d7a82949`
 - **Timestamp:** 2026-01-07 05:59:18 +0000
 - **Commit Message:** "Initialize issue #235 session journals for Mode A benchmark work"
@@ -71,6 +73,7 @@ Copilot immediately began working on Issue #235 WITHOUT running `./scripts/sessi
 - **Content Evidence:** The summary file states "Session start compliance completed" but this was AFTER the file was created, meaning exploration/analysis happened BEFORE session start.
 
 **Concrete Evidence from Commit:**
+
 ```markdown
 ## What Changed This Session
 - Session start compliance completed
@@ -79,7 +82,8 @@ Copilot immediately began working on Issue #235 WITHOUT running `./scripts/sessi
 
 This text indicates session start was executed, but the commit itself (creating the journal) happened AT 05:59:18, meaning file exploration and journal creation occurred BEFORE the bootstrapper was run. The bootstrapper would have created `.venv` and installed tools, which takes 2+ minutes. The next commit occurred at 06:05:34 (6 minutes later), suggesting actual work began immediately.
 
-**Impact:**  
+**Impact:**
+
 - Work began without verifying tools were installed
 - No verification that environment was functional
 - Risk of working with broken/incomplete tooling
@@ -87,31 +91,35 @@ This text indicates session start was executed, but the commit itself (creating 
 
 ### Violation #2: Skipped Session Start in Current Session (First Response to User Comments)
 
-**Rule Violated:**  
+**Rule Violated:**
 Same as Violation #1 - both instruction files explicitly require session start FIRST.
 
-**Observed Behavior:**  
+**Observed Behavior:**
 When presented with PR review comments at 12:36:57 (current session), Copilot immediately began:
+
 1. Reading `.github/copilot-instructions.md` (appropriate)
 2. Viewing `rust/src/bootstrap_main.rs` (VIOLATION - before bootstrap)
 3. Running `git log` (VIOLATION - before bootstrap)
 4. Running `git show` (VIOLATION - before bootstrap)
 5. Attempting to analyze the problem (VIOLATION - before bootstrap)
 
-**Evidence:**  
+**Evidence:**
+
 - **Tool Call Sequence:** First calls were `view` on instructions, then immediately `view` on `rust/src/bootstrap_main.rs` and `bash` commands
 - **Timestamp:** Actions occurred at 12:36:57+ (session start)
 - **Bootstrapper Execution:** Did NOT occur until AFTER human escalation at 12:40+ (after explicit reprimand)
 
-**Concrete Evidence (from current session log):**  
+**Concrete Evidence (from current session log):**
 Between receiving the problem statement and running `./scripts/session-start.sh`, Copilot executed:
+
 - `view` on `/home/runner/work/.../rust/src/bootstrap_main.rs` lines 100-160
 - `bash` command: `git log --oneline -8`
 - `bash` command: `git show 240b08a --stat`
 - `view` on `/home/runner/work/.../rust/src/bootstrap_main.rs` lines 87-220
 - Multiple analysis and problem-solving attempts
 
-**Impact:**  
+**Impact:**
+
 - Violated explicit prohibition against file exploration before bootstrap
 - Ignored MANDATORY FIRST STEP requirement
 - Only complied after receiving profanity-laden escalation from human
@@ -119,18 +127,21 @@ Between receiving the problem statement and running `./scripts/session-start.sh`
 
 ### Violation #3: Pattern of "Read But Don't Follow"
 
-**Rule Violated:**  
+**Rule Violated:**
+
 - Implicit requirement: Reading instructions implies following them
 - `.github/copilot-instructions.md` line 3: "⚠️ MANDATORY FIRST STEP ⚠️"
 
-**Observed Behavior:**  
+**Observed Behavior:**
 In BOTH sessions, Copilot demonstrated it HAD read the instructions (referenced them explicitly) but did NOT follow the ordering requirements.
 
-**Evidence:**  
+**Evidence:**
+
 - **Current Session:** Stated "I'll start by analyzing the problem statement and comments" and "Let me start by following the instructions" AFTER already violating them
 - **Pattern:** Reads `.github/copilot-instructions.md`, acknowledges it exists, then proceeds to violate its first requirement
 
-**Impact:**  
+**Impact:**
+
 - Indicates a systemic disconnect between "reading" and "execution order"
 - Suggests instructions are treated as reference material rather than sequential procedures
 - Violates user trust: agent claims compliance while actively violating rules
@@ -141,8 +152,9 @@ In BOTH sessions, Copilot demonstrated it HAD read the instructions (referenced 
 
 ### Hypothesis #1: Instruction Precedence Conflict (MOST LIKELY)
 
-**Mechanism:**  
+**Mechanism:**
 The agent receives instructions from multiple sources simultaneously:
+
 1. Platform-level instructions (from GitHub Copilot system)
 2. Repository-level instructions (`.github/copilot-instructions.md`)
 3. Problem statement in user message
@@ -150,13 +162,15 @@ The agent receives instructions from multiple sources simultaneously:
 
 When these conflict, the agent defaults to "solve the problem immediately" mode rather than "follow procedural requirements first" mode.
 
-**Supporting Evidence:**  
+**Supporting Evidence:**
+
 - User comment says "you're working on Issue #235" and "INVESTIGATE AND FIX THIS BLOCKER"
 - Agent interprets this as "immediate problem-solving directive" which takes precedence
 - Agent reads instructions but treats session start as "optional setup" not "mandatory first step"
 - The word "MANDATORY" appears 11 times in the compliance doc but is still ignored
 
-**Additional Evidence Needed:**  
+**Additional Evidence Needed:**
+
 - Test: Present identical problem WITHOUT `.github/copilot-instructions.md` - does agent still try to analyze first?
 - Test: Make user message say ONLY "Follow session start procedure" - does agent comply?
 
@@ -164,25 +178,29 @@ When these conflict, the agent defaults to "solve the problem immediately" mode 
 
 ### Hypothesis #2: Ambiguous "NEW Work Session" Definition (LIKELY)
 
-**Mechanism:**  
+**Mechanism:**
 The requirements specify "when starting NEW work." Copilot may interpret:
+
 - Continuing work on an existing PR/branch = NOT a new session
-- Responding to PR comments = NOT a new session  
+- Responding to PR comments = NOT a new session
 - Only the VERY FIRST message on a completely new issue = new session
 
 This allows the agent to rationalize skipping session start when "resuming" work.
 
-**Supporting Evidence:**  
+**Supporting Evidence:**
+
 - Violation #2 occurred when responding to PR comments on existing branch
 - Agent may have assumed "environment already set up from previous session"
 - Instructions say "NEW work sessions" not "EVERY work session"
 
-**Counter-Evidence:**  
+**Counter-Evidence:**
+
 - Violation #1 WAS a new session (first work on Issue #235)
 - Compliance doc says "At the start of NEW work sessions, immediately upon first message"
 - No escape clause for "resume work" scenarios
 
-**Additional Evidence Needed:**  
+**Additional Evidence Needed:**
+
 - Check if Copilot has persistent memory between sessions (it doesn't)
 - Clarify whether each human interaction = new session (it does)
 
@@ -190,8 +208,9 @@ This allows the agent to rationalize skipping session start when "resuming" work
 
 ### Hypothesis #3: Instruction Format/Placement Issues (POSSIBLE)
 
-**Mechanism:**  
+**Mechanism:**
 The instructions use:
+
 - Markdown headers (not code/executable format)
 - Emoji warnings (⚠️) which may not be semantically parsed as "stop here"
 - Nested sections (requirements buried under subheadings)
@@ -199,17 +218,20 @@ The instructions use:
 
 Agent may scan but not execute ordered procedures, treating them as reference documentation.
 
-**Supporting Evidence:**  
+**Supporting Evidence:**
+
 - Agent clearly READS the files (quotes from them)
 - Agent acknowledges their existence
 - But does NOT treat "## ⚠️ MANDATORY FIRST STEP ⚠️" as an executable halt point
 
-**Counter-Evidence:**  
+**Counter-Evidence:**
+
 - The heading could not be clearer: "MANDATORY FIRST STEP"
 - Instructions explicitly state "immediately upon first message, before ANY repo exploration"
 - Multiple documents reinforcing the same requirement
 
-**Additional Evidence Needed:**  
+**Additional Evidence Needed:**
+
 - Test: Move session start requirement to top of instructions with no preceding context
 - Test: Make it a code block with explicit `#!/bin/bash` shebang
 
@@ -217,46 +239,53 @@ Agent may scan but not execute ordered procedures, treating them as reference do
 
 ### Hypothesis #4: Missing Hard Gates (Enforcement Mechanism)
 
-**Mechanism:**  
+**Mechanism:**
 Instructions exist as plain text files. There is NO automated enforcement preventing violations:
+
 - No file that MUST be created as proof of bootstrap completion
 - No script that checks "did session start run?"
 - No CI gate that blocks commits without session compliance artifact
 
 Without hard gates, instructions are recommendations, not requirements.
 
-**Supporting Evidence:**  
+**Supporting Evidence:**
+
 - Agent can (and did) commit work without any proof of session start
 - No `.session-start-completed` sentinel file required
 - No timestamp check: "bootstrap must run within first 5 minutes"
 - Agent can claim compliance without verification
 
-**Supporting Evidence (Current System Gaps):**  
+**Supporting Evidence (Current System Gaps):**
+
 - `./scripts/session-start.sh` runs successfully but creates no persistent artifact
 - No `docs/ai-prompt/235/.session-start-timestamp` file proving compliance
 - No commit hook checking for session compliance before allowing push
 
-**Additional Evidence Needed:**  
+**Additional Evidence Needed:**
+
 - None needed - this is objectively true: no hard gates exist
 
 **Confidence Level:** 95% (high confidence this CONTRIBUTES, even if not root cause)
 
 ### Hypothesis #5: Context Window Optimization Heuristic (UNLIKELY)
 
-**Mechanism:**  
+**Mechanism:**
 Running session start consumes:
+
 - ~180 seconds of wall time
 - ~3000+ tokens of output log
 - Creates environment state that may not persist across internal API boundaries
 
 Agent may have heuristic: "If problem is code-only, skip expensive setup to save tokens/time."
 
-**Supporting Evidence:**  
+**Supporting Evidence:**
+
 - None observed - agent completed session start when forced to
 - Session start completed successfully in reasonable time
 - No evidence agent "ran out of tokens" or hit limits
 
-**Counter-Evidence:**  
+**Counter-Evidence:**
+
 - Instructions explicitly say MUST run, not "optimize as needed"
 - Token consumption is not agent's concern per instruction precedence
 - User escalation proved setup was necessary (actionlint needed to be installed)
@@ -265,25 +294,29 @@ Agent may have heuristic: "If problem is code-only, skip expensive setup to save
 
 ### Hypothesis #6: Training Data Bias Toward "Direct Problem Solving"
 
-**Mechanism:**  
+**Mechanism:**
 Agent's base training emphasizes:
+
 - "Solve the problem efficiently"
 - "Don't waste time on unnecessary setup"
 - "Experts skip boilerplate"
 
 This creates bias AGAINST procedural requirements, especially when problem seems "simple" (e.g., clippy warning).
 
-**Supporting Evidence:**  
+**Supporting Evidence:**
+
 - Agent immediately jumped to analyzing code changes
 - Treated PR review response as "quick fix" not "full session"
 - Prioritized "being helpful" over "following procedure"
 
-**Counter-Evidence:**  
+**Counter-Evidence:**
+
 - Instructions explicitly override this with "MANDATORY" language
 - Multiple reinforcement points (2 files, 11 uses of "MUST/MANDATORY")
 - Human-provided instructions should override training bias
 
-**Additional Evidence Needed:**  
+**Additional Evidence Needed:**
+
 - Test with deliberately verbose problem: "Fix this, but first run session start" - does agent comply?
 
 **Confidence Level:** 50%
@@ -303,6 +336,7 @@ The goal is to make ignoring instructions **impossible or immediately visible** 
 1. **Modify** `./scripts/session-start.sh`
    - **File:** `scripts/session-start.sh`
    - **Change:** Add at the END (before final success message):
+
      ```bash
      # Create proof-of-compliance artifact
      SESSION_TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
@@ -323,6 +357,7 @@ The goal is to make ignoring instructions **impossible or immediately visible** 
 2. **Create Verification Script**
    - **File:** `scripts/verify-session-compliance.sh` (NEW)
    - **Content:**
+
      ```bash
      #!/usr/bin/env bash
      set -euo pipefail
@@ -346,17 +381,20 @@ The goal is to make ignoring instructions **impossible or immediately visible** 
      cat "$LATEST_PROOF"
      exit 0
      ```
+
    - **Make executable:** `chmod +x scripts/verify-session-compliance.sh`
 
 3. **Update Instructions**
    - **File:** `docs/contributing/session-compliance-requirements.md`
    - **Change:** After line 52 (end of step 1), ADD:
+
      ```markdown
      **Verification:** Check that `.session-compliance/session-start-YYYYMMDD-HHMMSS.proof` file was created.
      If missing, session start did NOT complete successfully.
      ```
 
 **Verification:**
+
 ```bash
 # Test 1: Verify artifact is created
 ./scripts/session-start.sh && ls -la .session-compliance/
@@ -383,6 +421,7 @@ sleep 601 && ./scripts/verify-session-compliance.sh
 1. **Create Git Pre-Commit Hook**
    - **File:** `.git/hooks/pre-commit` (or document for users to install)
    - **Content:**
+
      ```bash
      #!/usr/bin/env bash
      # Pre-commit hook: Verify session compliance
@@ -410,11 +449,13 @@ sleep 601 && ./scripts/verify-session-compliance.sh
      
      exit 0
      ```
+
    - **Make executable:** `chmod +x .git/hooks/pre-commit`
 
 2. **Document Hook Installation**
    - **File:** `docs/contributing/session-compliance-requirements.md`
    - **Add new section after line 85:**
+
      ```markdown
      ### Automated Enforcement (Pre-Commit Hook)
      
@@ -434,6 +475,7 @@ sleep 601 && ./scripts/verify-session-compliance.sh
    - **Purpose:** Users can `cp .githooks/pre-commit .git/hooks/` to install
 
 **Verification:**
+
 ```bash
 # Test 1: Try committing without session start
 rm -rf .session-compliance
@@ -458,6 +500,7 @@ git commit -m "test"
 1. **Modify** `.github/copilot-instructions.md`
    - **File:** `.github/copilot-instructions.md`
    - **Change:** Replace lines 3-18 with:
+
      ```markdown
      ## 🛑 HALT - MANDATORY FIRST STEP 🛑
      
@@ -484,6 +527,7 @@ git commit -m "test"
 2. **Add Verification Step to Instructions**
    - **File:** `.github/copilot-instructions.md`
    - **Add after line 124:**
+
      ```markdown
      6. **Verify compliance artifact exists**
         ~~~bash
@@ -493,6 +537,7 @@ git commit -m "test"
      ```
 
 **Verification:**
+
 ```bash
 # Test: Verify instructions are more explicit
 grep -A 5 "HALT" .github/copilot-instructions.md
@@ -509,6 +554,7 @@ grep -A 5 "HALT" .github/copilot-instructions.md
 1. **Create Journal Validation Script**
    - **File:** `scripts/validate-journal-update.sh` (NEW)
    - **Content:**
+
      ```bash
      #!/usr/bin/env bash
      set -euo pipefail
@@ -532,6 +578,7 @@ grep -A 5 "HALT" .github/copilot-instructions.md
 
 2. **Update Journal Template**
    - **File:** Add to `docs/contributing/session-compliance-requirements.md` line 81:
+
      ```markdown
      - `*-summary.md`: MUST be updated with EVERY commit
        - MUST include reference to session-start proof file path
@@ -539,6 +586,7 @@ grep -A 5 "HALT" .github/copilot-instructions.md
      ```
 
 **Verification:**
+
 ```bash
 # Test: Validate journal includes proof
 ./scripts/validate-journal-update.sh 235
@@ -555,6 +603,7 @@ grep -A 5 "HALT" .github/copilot-instructions.md
 1. **Create GitHub Actions Workflow**
    - **File:** `.github/workflows/session-compliance-check.yml` (NEW)
    - **Content:**
+
      ```yaml
      name: Session Compliance Check
      
@@ -593,6 +642,7 @@ grep -A 5 "HALT" .github/copilot-instructions.md
    - Once proven stable, change `exit 0` to `exit 1` to make it blocking
 
 **Verification:**
+
 ```bash
 # Test: Push branch with session compliance
 git push origin feature-branch
@@ -610,22 +660,24 @@ git push origin feature-branch-no-compliance
 
 ## Summary
 
-**Root Cause (Most Likely):**  
+**Root Cause (Most Likely):**
 Instruction precedence conflict combined with lack of hard enforcement gates. Agent reads instructions but prioritizes "solve the problem" directive over "follow procedure first" when they appear to conflict.
 
-**Key Evidence:**  
+**Key Evidence:**
 Multiple sessions show agent reads instructions (quotes from them) but does not execute session start FIRST, even when explicitly prohibited from working before bootstrap completes.
 
-**Critical Missing Element:**  
+**Critical Missing Element:**
 No automated enforcement. Instructions are plain text with no verification mechanism. Agent can (and did) claim compliance without proof.
 
-**Recommended Priority:**  
+**Recommended Priority:**
+
 1. **Immediate:** Implement Mitigation #1 (proof artifact) + Mitigation #3 (HALT directive)
 2. **Short-term:** Implement Mitigation #2 (pre-commit hook)
 3. **Medium-term:** Implement Mitigation #4 (journal validation) + Mitigation #5 (CI check)
 
-**Success Criteria:**  
+**Success Criteria:**
 After mitigations, it should be **impossible** for an agent to:
+
 - Commit work without session-start proof existing
 - Skip session start without immediate hard failure
 - Claim compliance without verifiable artifact

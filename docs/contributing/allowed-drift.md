@@ -1,7 +1,7 @@
 # Allowed Behavioral Differences
 
-**Status:** Empty (strict parity enforced)  
-**Last Updated:** 2025-12-26  
+**Status:** Empty (strict parity enforced)
+**Last Updated:** 2025-12-26
 **Decision Authority:** See M2-P2-I1-DRIFT-DETECTION.md
 
 ---
@@ -85,8 +85,8 @@ When adding the first exception, use this format:
 
 ## Statistics
 
-**Total exceptions:** 0  
-**Last exception added:** N/A  
+**Total exceptions:** 0
+**Last exception added:** N/A
 **Drift failures this month:** 0 (new gate)
 
 ---

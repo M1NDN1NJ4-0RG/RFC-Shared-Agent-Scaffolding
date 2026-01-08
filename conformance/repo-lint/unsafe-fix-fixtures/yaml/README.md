@@ -14,6 +14,7 @@ This directory contains **intentionally non-conforming** YAML files used for tes
 ## Usage
 
 These fixtures are used by:
+
 - Unit tests for unsafe fix mode (`tools/repo_lint/tests/test_unsafe_fixes.py`)
 - Manual testing of unsafe fixers (ONLY with explicit human authorization per PR)
 
@@ -22,6 +23,7 @@ These fixtures are used by:
 **TODO:** Unsafe fixers for YAML are not yet implemented.
 
 When YAML unsafe fixers are added, this directory will contain fixtures that demonstrate:
+
 - Non-conforming YAML formatting that can be auto-fixed unsafely
 - Edge cases that unsafe fixers must handle correctly
 

@@ -111,10 +111,10 @@ These items are explicitly decided. Implementation may vary, but behavior must m
 
 ---
 
-
 ## Executive Summary
 
 This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (Bash) to a modular Rust binary that preserves deterministic behavior while adding:
+
 - Parallel execution (where safe)
 - Rich progress UI
 - Structured logging
@@ -130,6 +130,7 @@ This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (B
 ### 1.1 Project Setup
 
 **CLI Framework:**
+
 - Use `clap` (derive API) for argument parsing
 - Subcommands: `install`, `doctor`, `verify`
 - Flags: `--dry-run`, `--ci`, `--json`, `--verbose`
@@ -140,8 +141,8 @@ This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (B
 - Concurrency flag: `--jobs <N>` (default CI=2; Interactive=min(4,num_cpus)); env override `BOOTSTRAP_JOBS`.
 - Add flags: `--offline`, `--allow-downgrade`, `--strict` (doctor).
 
-
 **Example CLI:**
+
 ~~~bash
 bootstrap install [--profile dev|ci|full] [--jobs N] [--dry-run] [--offline] [--allow-downgrade] [--ci] [--json] [--verbose]
 bootstrap doctor [--strict] [--json]
@@ -176,7 +177,6 @@ impl ExitCode {
 ~~~
 
 **Locked requirement:** `ripgrep` is REQUIRED (hard fail with `RipgrepFailed = 21` if not present after install).
-
 
 ### 1.3 Error Type Hierarchy
 
@@ -463,31 +463,34 @@ pub fn build_dependency_graph(
 ### 4.1 Safe Parallelization Strategy
 
 **Parallel-safe operations:**
+
 - Detection phase (read-only checks)
 - Independent tool downloads (different artifacts)
 - Version parsing (no side effects)
 
 **Sequential-only operations:**
+
 - Virtual environment creation (filesystem race)
 - Package manager lock (apt/brew single-instance)
 - PATH mutations (shell environment ordering)
 - Installations with shared dependencies
 
 **Additional concurrency requirements (MUST):**
+
 - Use a **global concurrency limit** (e.g., `--jobs <N>`; default to a conservative value) to prevent saturating CI/network.
 - Introduce **resource locks** so steps can declare shared resources they require (examples: `apt_lock`, `brew_lock`, `cache_lock`, `venv_lock`).
   - Even “parallel-safe” steps must not run concurrently if they require the same lock.
 
-
 **Locked defaults:**
+
 - Default `--jobs`:
   - CI mode: **2**
   - Interactive: `min(4, num_cpus)`
 - Environment override: `BOOTSTRAP_JOBS=<N>`
 - HTTP per-host concurrency limit: **2** concurrent requests per host
 
-
 **Implementation:**
+
 ~~~rust
 pub async fn execute_phase(
     phase: &Phase,
@@ -618,12 +621,14 @@ where
 ~~~
 
 **Apply to:**
+
 - Package metadata refresh: YES (idempotent)
 - Artifact downloads: YES (idempotent)
 - apt/brew install: NO (lock conflicts, partial state)
 - Version detection: NO (fast, local)
 
 **Additional retry rules (MUST):**
+
 - Implement a classifier that maps failures to `RetryClass`.
   - Only `RetryClass::Transient` may be retried.
 - Respect HTTP `Retry-After` headers when present (429/503), bounded by the retry budget.
@@ -638,12 +643,14 @@ where
 ## Phase 5: Progress UI
 
 **Policy (LOCKED):**
+
 - v1 uses `indicatif` only (no ratatui/full-screen TUI).
 - CI/non-TTY output must be clean and parseable (no ANSI styling).
 
 ### 5.1 Multi-Task Progress Display
 
 **Library stack:**
+
 - `indicatif` for progress bars/spinners
 - Custom multi-line renderer for concurrent tasks
 
@@ -799,6 +806,7 @@ pub enum ProgressEvent {
 **Location:** `<repo>/.bootstrap.toml`
 
 **Policy (LOCKED):**
+
 - The binary supports defaults when `.bootstrap.toml` is absent.
 - **For this repo in CI:** `.bootstrap.toml` is **required**. If missing in CI mode, exit with `UsageError (1)` and a clear message.
 
@@ -886,6 +894,7 @@ impl Config {
 ## Phase 7: Dry-Run & Checkpointing
 
 **Policy (LOCKED):**
+
 - Checkpointing/resume is **OFF by default**.
 - Enable only via `--checkpoint` (write state) and `--resume` (resume from state).
 - State files live outside the repo by default (cache dirs), unless explicitly overridden.
@@ -998,12 +1007,11 @@ pub struct AptOps; // MUST: use non-interactive apt-get flags and deterministic 
 // Similar implementation for apt-get
 ~~~
 
-
 **Apt requirements (MUST):**
+
 - Use non-interactive mode (e.g., `DEBIAN_FRONTEND=noninteractive`) and deterministic flags.
 - In CI, use `sudo -n` (or equivalent) so privilege prompts fail fast instead of hanging.
 - Do not retry installs; only lock-wait/backoff is allowed for lock contention.
-
 
 ### 8.2 OS Detection
 
@@ -1054,6 +1062,7 @@ pub fn detect_package_manager(os: &OsType) -> PackageManager {
 ## Phase 9: Self-Diagnostics
 
 **Locked behavior:**
+
 - Default: WARN does not fail the command.
 - `doctor --strict` (and CI when configured) treats WARN as FAIL.
 
@@ -1176,21 +1185,25 @@ exec "$REPO_ROOT/scripts/.legacy/bootstrap-repo-lint-toolchain.sh" "$@"
 ### 10.2 Phased Rollout
 
 **Phase 1: Parallel development**
+
 - Develop Rust version with feature parity
 - Run both in CI for comparison
 - Fix behavioral differences
 
 **Phase 2: Opt-in**
+
 - Make Rust version available
 - Document how to use it
 - Gather feedback
 
 **Phase 3: Default**
+
 - Rust becomes default
 - Bash available as fallback
 - Monitor for issues
 
 **Phase 4: Deprecation**
+
 - Remove Bash fallback
 - Archive legacy script
 - Update all documentation
@@ -1239,8 +1252,8 @@ tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
 
 **Locked decision:** prefer `rustls` over OpenSSL to reduce cross-platform build pain.
 
-
 **Build for multiple targets:**
+
 ~~~bash
 # Linux (musl for static linking)
 cargo build --release --target x86_64-unknown-linux-musl
@@ -1320,7 +1333,6 @@ jobs:
    - Checksums are required for any direct-download installer.
    - Signature verification is optional when upstream provides it.
 
-
 ---
 
 ## Success Metrics
@@ -1348,6 +1360,7 @@ jobs:
 ### Risk: Behavioral Divergence
 
 **Mitigation:**
+
 - Comprehensive parity tests
 - Run both versions in CI
 - Document all intentional differences
@@ -1355,6 +1368,7 @@ jobs:
 ### Risk: Performance Regression
 
 **Mitigation:**
+
 - Benchmark every PR
 - Profile to find bottlenecks
 - Have "fast" CI profile for quick feedback
@@ -1362,6 +1376,7 @@ jobs:
 ### Risk: Platform-Specific Bugs
 
 **Mitigation:**
+
 - Test matrix: macOS x Linux x (Homebrew|apt|snap)
 - Virtualized test environments
 - User beta testing program
@@ -1369,6 +1384,7 @@ jobs:
 ### Risk: Maintenance Burden During Transition
 
 **Mitigation:**
+
 - Minimize changes to Bash during Rust development
 - Feature freeze Bash once Rust reaches parity
 - Time-boxed transition (6 months max)
@@ -1378,6 +1394,7 @@ jobs:
 ## Timeline Estimate
 
 **Optimistic (1 developer, full-time):**
+
 - Phase 1-2 (Core): 2 weeks
 - Phase 3-4 (Concurrency): 1 week
 - Phase 5 (UI): 1 week
@@ -1389,9 +1406,11 @@ jobs:
 **Total: ~10 weeks**
 
 **Realistic (1 developer, part-time):**
+
 - 20-24 weeks
 
 **Conservative (accounting for unknowns):**
+
 - 6 months to production-ready
 
 ---
@@ -1401,6 +1420,7 @@ jobs:
 ### Appendix A: Example Installers
 
 **RipgrepInstaller:**
+
 ~~~rust
 pub struct RipgrepInstaller;
 
@@ -1495,6 +1515,7 @@ impl Installer for RipgrepInstaller {
 ---
 
 ## Progress Tracker
+
 Last Updated: 2026-01-06
 
 - [x] Phase 1: Core Infrastructure
@@ -1528,12 +1549,14 @@ Last Updated: 2026-01-06
 Implemented foundational infrastructure for Rust migration (Issue #235). Completed Phase 1 (core infrastructure) and Phase 2.1-2.3 (installer foundation).
 
 **Commits:**
+
 - `3a0931d`: Initialize issue #235 journal and analyze repository state
 - `de0fc64`: Phase 1.1-1.3: Implement core infrastructure (exit codes, errors, context, CLI)
 - `43e9b4c`: Phase 2.1-2.2: Add package managers and concrete installer implementations
 - `4816e22`: Address code review: Remove pragmas and complete docstrings
 
 **Key Achievements:**
+
 - All 22 exit codes defined matching bash script contract
 - Complete error hierarchy with thiserror integration
 - Full CLI with clap (install/doctor/verify subcommands)

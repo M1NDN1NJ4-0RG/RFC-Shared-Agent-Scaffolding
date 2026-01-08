@@ -1,4 +1,5 @@
 # Issue 110 Overview
+
 Last Updated: 2025-12-30
 Related: Issue #110, PRs #132, #137
 
@@ -7,9 +8,11 @@ Related: Issue #110, PRs #132, #137
 # [EPIC] Build `repo_lint` Python Package/CLI (Unified Multi-Language Lint + Docstring Validation)
 
 ## Goal
+
 Replace the ad-hoc "run everything" linter helper with a **proper Python package + CLI** that becomes the **single source of truth** for repo linting and docstring validation across all supported languages.
 
 This tool must be:
+
 - Deterministic and strict in CI
 - Helpful locally (optional bootstrap + `fix`)
 - Modular per-language (one runner per language)
@@ -17,6 +20,7 @@ This tool must be:
 - Config-driven with **Python tooling config consolidated into `pyproject.toml`**
 
 ## Non-Goals
+
 - Rewriting language linters (we orchestrate them)
 - Replacing the Rust canonical binary
 - Publishing to PyPI (explicitly out-of-scope for now)
@@ -62,6 +66,7 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
 ## Progress Tracker
 
 ### Phase 6 Remaining Work
+
 - [x] **COMPLETE**: Sub-Item 6.4.7: Migrate old workflows to umbrella ✅
   - [x] Verify umbrella workflow parity with existing workflows
   - [x] Document transition plan and migration options
@@ -81,6 +86,7 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
   - [x] Confirmed Python vectors fully functional
 
 ### Phase 7 — Tests, Determinism, and Output Guarantees
+
 - [ ] Item 7.1: Unit tests for dispatch + reporting
 - [ ] Item 7.2: Optional JSON reports
 
@@ -89,6 +95,7 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
 ## Session Notes (newest first)
 
 ### 2025-12-30 17:35 - Implemented Option B migration (Sub-Item 6.4.7 COMPLETE)
+
 - **Human direction received**: Implement Option B for Sub-Item 6.4.7
 - **Created weekly scheduled workflow**:
   - File: `.github/workflows/repo-lint-weekly-full-scan.yml`
@@ -114,6 +121,7 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
 - **Status**: ✅ COMPLETE
 
 **Sub-Item 6.4.9: CI Verification and Parity Confirmation** — ✅ COMPLETE (2025-12-30)
+
 - Analyzed CI workflow runs 20602289789, 20602295080, 20602345797
 - Confirmed full parity with legacy workflows
 - Verified all jobs functioning correctly
@@ -125,6 +133,7 @@ All Phases 1 through 5 have been completed per `docs/epic-repo-lint-status.md`.
 All 2 items with all sub-items completed per `docs/epic-repo-lint-status.md`.
 
 **Summary:**
+
 - ✅ 23 comprehensive unit tests added (dispatch, exit codes, output format)
 - ✅ JSON output implemented with stable schema
 - ✅ CI enforcement verified (all lint jobs fail on violations)
@@ -136,8 +145,9 @@ All 2 items with all sub-items completed per `docs/epic-repo-lint-status.md`.
 **✅ ALL PHASES COMPLETE (Phases 0-7)**
 
 All requirements from the original issue have been implemented:
+
 - ✅ Phase 0: Decisions (Locked)
-- ✅ Phase 1: Package Scaffolding + CLI Entry Point  
+- ✅ Phase 1: Package Scaffolding + CLI Entry Point
 - ✅ Phase 2: Consolidate Python Tooling Config + Migrate Flake8 → Ruff
 - ✅ Phase 3: Implement Per-Language Runner Modules
 - ✅ Phase 4: Install / Bootstrap + Repo-Local Tools
@@ -160,6 +170,7 @@ All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is 
 ## Session Notes (newest first)
 
 ### 2025-12-30 17:50 - Phase 6 COMPLETE, Issue #110 ready for closure
+
 - **Sub-Item 6.4.9: CI verification** — ✅ COMPLETE
   - Analyzed 3 CI workflow runs from `logs/umbrella-ci-logs-phase-6/`
   - Created comprehensive verification document: `ci-verification-results.md`
@@ -181,9 +192,11 @@ All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is 
 - **Next**: Close Issue #110
 
 ### 2025-12-30 17:35 - Sub-Item 6.4.7: Migration complete (Option B)
+
 - **Human decision received**: Implement Option B for workflow migration
 
 ### 2025-12-30 17:15 - Completed vector system verification + workflow parity analysis
+
 - **Workflow parity analysis** (Sub-Items 6.4.7, 6.4.9):
   - Created `workflow-parity-analysis.md` with detailed comparison
   - Identified full parity for linting and auto-fix
@@ -203,6 +216,7 @@ All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is 
   - Verify vector system completeness
 
 ### 2025-12-30 16:54 - Initial session on PR #137
+
 - Created new PR #137 for Issue #110 continuation
 - Merged PR #138 changes (updated copilot-instructions.md)
 - Reorganized journal structure per new requirements:
@@ -214,6 +228,7 @@ All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is 
 ## Session Notes (newest first)
 
 ### 2025-12-30 21:19 - Phase 7-2 COMPLETE: CI Scope + Unsafe Fixture Coverage
+
 - **Merged main** — ✅ COMPLETE
   - Fetched and merged latest main (commit 0b4bc33)
   - Pulled in new requirement: `docs/ai-prompt/110/new-requirement-2-phase-7.md`
@@ -246,6 +261,7 @@ All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is 
 - **Status**: Phase 7-2 COMPLETE, all requirements satisfied
 
 ### 2025-12-30 20:30 - Phase 7 COMPLETE: All tests, JSON output, CI enforcement
+
 - **Phase 7 Item 7.1: Unit tests** — ✅ COMPLETE
   - Created 3 comprehensive test files (23 tests total)
   - `test_cli_dispatch.py`: 5 tests for runner dispatch logic
@@ -268,4 +284,3 @@ All Items 6.0 through 6.5 with all sub-items are complete. Umbrella workflow is 
   - All linting checks passing (Black, Ruff, Pylint)
 - **Epic status updated**: All Phases 0-7 marked complete
 - **Status**: Issue #110 complete and ready for closure
-

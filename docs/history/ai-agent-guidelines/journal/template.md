@@ -2,16 +2,16 @@
 
 **Copy this template for each completed PR and save to `.docs/journal/PR-LOG/` directory.**
 
-**Filename format:** `YYYY-MM-DD-PR-<number>-<slug>.md`  
+**Filename format:** `YYYY-MM-DD-PR-<number>-<slug>.md`
 **Example:** `2025-12-26-PR-42-add-logging-semantics.md`
 
 ---
 
 # PR #<number>: <Title>
 
-**Date:** YYYY-MM-DD  
-**Status:** Merged / Open / Closed  
-**Link:** https://github.com/owner/repo/pull/<number>  
+**Date:** YYYY-MM-DD
+**Status:** Merged / Open / Closed
+**Link:** <https://github.com/owner/repo/pull/><number>
 **Chunk ID:** `CHUNK-XXX-<description>`
 
 ---
@@ -32,6 +32,7 @@ Brief description of what was accomplished in this PR.
 - [ ] Change 3
 
 **Example:**
+
 - [x] Updated Bash safe-run.sh to capture stdout and stderr separately
 - [x] Added `=== STDOUT ===` and `=== STDERR ===` markers
 - [x] Updated tests to validate split streams
@@ -42,6 +43,7 @@ Brief description of what was accomplished in this PR.
 ## Verification
 
 **Commands run:**
+
 ```bash
 cd scripts/bash && ./run-tests.sh
 cd scripts/python3 && python3 -m unittest discover -v
@@ -55,10 +57,12 @@ cd scripts/python3 && python3 -m unittest discover -v
 ## Follow-up Items
 
 **Next steps or remaining work:**
+
 - [ ] Follow-up item 1 (if any)
 - [ ] Follow-up item 2 (if any)
 
 **Example:**
+
 - [ ] Align Perl implementation (tracked in next chunk)
 - [ ] Add conformance vectors for edge cases
 
@@ -67,10 +71,12 @@ cd scripts/python3 && python3 -m unittest discover -v
 ## Lessons Learned
 
 **What worked well:**
+
 - Clear M0 contract decisions made implementation straightforward
 - Tests caught edge cases early
 
 **What could improve:**
+
 - Need better documentation for test setup
 - Consider automating conformance vector validation
 
@@ -85,6 +91,7 @@ cd scripts/python3 && python3 -m unittest discover -v
 - **Related Issues:** #X, #Y
 
 **Example:**
+
 - Epic: #3
 - Milestone: M0
 - Phase: M0-P1
@@ -102,5 +109,5 @@ Any additional context or observations.
 
 ---
 
-**Archived by:** @username  
+**Archived by:** @username
 **Archive Date:** YYYY-MM-DD

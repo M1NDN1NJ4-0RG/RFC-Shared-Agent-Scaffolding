@@ -1,6 +1,6 @@
 # PowerShell Docstring Contract
 
-**Language:** PowerShell (`.ps1`)  
+**Language:** PowerShell (`.ps1`)
 **Canonical style:** Comment-based help using `<# ... #>` blocks
 
 ## Purpose
@@ -252,9 +252,11 @@ param(
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
+
 **File:** `wrappers/powershell/scripts/safe-run.ps1`
 
 This file demonstrates:
+
 - Full comment-based help with all required sections
 - Custom `.ENVIRONMENT` keyword
 - Binary discovery order documentation
@@ -262,18 +264,22 @@ This file demonstrates:
 - `.NOTES` with platform and version info
 
 ### Example 2: Test Script
+
 **File:** `wrappers/powershell/tests/safe-run-tests.ps1`
 
 This file demonstrates:
+
 - Minimal docstring for test scripts
 - Clear `.DESCRIPTION` of test scope
 - `.EXAMPLE` showing how to run tests
 - `.NOTES` with test framework info
 
 ### Example 3: Utility Script
+
 **File:** `wrappers/powershell/scripts/safe-check.ps1`
 
 This file demonstrates:
+
 - `.DESCRIPTION` that states what it does NOT do
 - `.PARAMETER` for each accepted parameter
 - `.ENVIRONMENT` with multiple variables
@@ -282,11 +288,13 @@ This file demonstrates:
 ## Validation
 
 The validator checks for:
+
 - Presence of `<# ... #>` help block starting within first 10 lines
 - Presence of section keywords: `.SYNOPSIS`, `.DESCRIPTION`, `.ENVIRONMENT`, `.EXAMPLE`, `.NOTES`
 - At least one `.EXAMPLE` block
 
 The validator does NOT check:
+
 - Content quality or accuracy
 - Parameter documentation completeness (though all parameters should be documented)
 - `.INPUTS`/`.OUTPUTS` presence (these are optional unless script uses pipeline)
@@ -295,6 +303,7 @@ The validator does NOT check:
 - Exit code completeness (but basic content checks apply if using validator --content-checks)
 
 **Validation Best Practices:**
+
 - Run validator locally before committing: `python3 scripts/validate_docstrings.py --file my-script.ps1`
 - Test help system integration: `Get-Help .\my-script.ps1 -Detailed`
 - If using pipeline parameters, add `.INPUTS` and `.OUTPUTS` sections
@@ -304,6 +313,7 @@ The validator does NOT check:
 ## Common Mistakes
 
 ❌ **Wrong:** Missing .ENVIRONMENT section
+
 ```powershell
 <#
 .SYNOPSIS
@@ -318,6 +328,7 @@ The validator does NOT check:
 ```
 
 ✅ **Correct:** Include .ENVIRONMENT even if no env vars used
+
 ```powershell
 <#
 .SYNOPSIS
@@ -338,12 +349,14 @@ The validator does NOT check:
 ```
 
 ❌ **Wrong:** No exit code documentation
+
 ```powershell
 .DESCRIPTION
   This script processes files
 ```
 
 ✅ **Correct:** Document exit codes
+
 ```powershell
 .DESCRIPTION
   This script processes files.
@@ -354,12 +367,14 @@ The validator does NOT check:
 ```
 
 ❌ **Wrong:** Missing PS> prompt in examples
+
 ```powershell
 .EXAMPLE
   .\script.ps1 arg
 ```
 
 ✅ **Correct:** Include PS> prompt
+
 ```powershell
 .EXAMPLE
   PS> .\script.ps1 arg

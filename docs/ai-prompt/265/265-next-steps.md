@@ -21,12 +21,14 @@
 **Branch:** TBD (will create after exploration)
 
 **Key Files:**
+
 - `rust/Cargo.toml` - Current single-package manifest
 - `rust/src/main.rs` - safe-run binary entrypoint
 - `rust/src/bootstrap_v2/` - Current bootstrapper implementation (presumed)
 - Proto bootstrapper files - TBD (need to locate)
 
 **Key Commands:**
+
 - `cd rust && cargo build --release` - Current build
 - `cd rust && cargo test` - Current test
 - `rg -n "rust/src/bootstrap\.rs|\bbootstrap\.rs\b"` - Search for proto artifacts

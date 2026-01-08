@@ -7,6 +7,7 @@
 **Session started:** Initialized issue journals for #278
 
 **Work completed:**
+
 - Read mandatory compliance documents (.github/copilot-instructions.md, docs/contributing/session-compliance-requirements.md)
 - Verified repo-lint tool is functional (exit code 0)
 - Ran health check: `repo-lint check --ci` (exit code 1 - acceptable, violations exist but tooling works)
@@ -15,10 +16,12 @@
   - `278-summary.md` (this file)
 
 **Current status:**
+
 - Session start requirements completed
 - Ready to begin Phase 0 work
 
 **Next actions:**
+
 - Continue Phase 1: Document exact current enforcement mechanisms
 - Create policy documents for Phase 2
 
@@ -27,6 +30,7 @@
 ### 2026-01-07 - Phase 0 Complete
 
 **Phase 0.1: Snapshot repo + tooling**
+
 - Ran `repo-lint check --ci` (health check passed with exit code 1 - violations exist but tooling works)
 - Captured Python toolchain versions:
   - Python 3.12.12, black 25.12.0, ruff 0.14.10, pylint 4.0.4
@@ -39,6 +43,7 @@
   - `conformance/repo-lint/repo-lint-docstring-rules.yaml`
 
 **Phase 0.2: Inventory all Python files**
+
 - Enumerated all 84 Python files in repository
 - Classified files:
   - 35 product/library files (tools/repo_lint/*, scripts/docstring_validators/*)
@@ -49,6 +54,7 @@
 - Created deliverable: `278-python-annotation-inventory.md`
 
 **Key findings:**
+
 - Ruff already configured to prefer `Optional[T]` over `T | None` (aligns with Locked Decision #4)
 - Pylint has docstring checks DISABLED
 - Current docstring validation via `scripts/validate_docstrings.py` (migration target for Phase 3.4)
@@ -59,6 +65,7 @@
 ### 2026-01-07 - Phase 1 Complete
 
 **Phase 1.1: Collect "contracts" that already exist**
+
 - Documented current enforcement mechanisms:
   - `repo-lint` Python runner at `tools/repo_lint/runners/python_runner.py`
   - Standalone docstring validator at `scripts/validate_docstrings.py` (subprocess call)
@@ -70,6 +77,7 @@
   - **NOT enforced:** Type annotations, `:rtype:` in docstrings
 
 **Phase 1.2: Current-violations baseline**
+
 - Ran Ruff ANN* rules (flake8-annotations) across repository
 - **Total annotation violations: 722 errors** across 84 Python files
 - Top violation categories:
@@ -85,6 +93,7 @@
 - **Unsafe fixes available:** 396 (Ruff can suggest fixes with `--unsafe-fixes`, but manual review required)
 
 **Key findings:**
+
 - Current codebase has ZERO type annotation enforcement
 - Ruff ANN* rules are ready to use (no custom tooling needed for function annotations!)
 - ~8.6 violations per file on average (722 / 84 files)
@@ -95,10 +104,11 @@
 ### 2026-01-07 - Phase 2 Complete
 
 **Phase 2.1, 2.2, 2.3: Policy specification (MANDATORY)**
+
 - Created comprehensive `docs/contributing/python-typing-policy.md`
 - Defined PEP 526 annotation scope:
   - **Module-level assignments:** MANDATORY baseline
-  - **Class attributes:** MANDATORY baseline  
+  - **Class attributes:** MANDATORY baseline
   - **Local variables:** OPTIONAL for now (may be enforced later)
 - Defined required annotation patterns:
   - Empty literals (`{}`, `[]`, `set()`) MUST be annotated
@@ -122,6 +132,7 @@
 - Provided complete examples and edge case handling
 
 **Key policy decisions locked in:**
+
 - Maximum compatibility approach (Python 3.8+)
 - Ruff ANN* rules as primary enforcement mechanism
 - Report-only rollout initially, then gradual enforcement
@@ -131,6 +142,7 @@
 ### 2026-01-07 - Phase 3.1, 3.2 In Progress
 
 **Phase 3.2: Enable Ruff ANN* rules**
+
 - Updated `pyproject.toml` to select ANN (flake8-annotations) rules
 - Configured per-file-ignores to exclude all files initially (measurement-first approach)
 - Ignored ANN401 (Any disallowed) - we allow `Any` with explicit tags
@@ -138,12 +150,14 @@
 - Verified configuration with `ruff check` and `repo-lint check --ci`
 
 **Next steps for Phase 3:**
+
 - **Phase 3.3 investigation complete:** Ruff ANN* does NOT detect missing module-level/class attribute annotations. Custom PEP 526 checker REQUIRED.
 - Plan docstring validation consolidation (Phase 3.4)
 - Plan Markdown linting integration (Phase 3.5)
 - Plan TOML linting integration (Phase 3.6)
 
 **Phase 3.3 findings:**
+
 - Tested Ruff with sample file containing:
   - Unannotated module-level variable → NOT detected by Ruff ANN*
   - Unannotated class attribute → NOT detected by Ruff ANN*
@@ -156,8 +170,9 @@
 ### 2026-01-07 - Code Review Fixes
 
 **Addressed Copilot Code Review comments:**
+
 - Fixed `tools/repo_lint/runners/base.py`: Replaced `getattr` with explicit `hasattr` check for `_should_run_tool` method detection
-- Fixed `tools/repo_lint/cli_argparse.py`: 
+- Fixed `tools/repo_lint/cli_argparse.py`:
   - Replaced string slicing with `removeprefix()` method for cleaner code
   - Defined `MAX_AUTO_WORKERS = 8` constant instead of magic number
 - Fixed `rust/crates/safe-run/src/safe_run.rs`:
@@ -170,6 +185,7 @@
 ### 2026-01-08 - Phase 3.4 Complete
 
 **Phase 3.4: Docstring Validation Consolidation**
+
 - Created internal `tools/repo_lint/docstrings/` package
 - Migrated all 6 language validators:
   - `python_validator.py` (AST-based validation)
@@ -195,6 +211,7 @@
 - Maintained full backward compatibility (CLI args, output, exit codes)
 
 **Benefits achieved:**
+
 - ✅ Eliminated all subprocess overhead (6 subprocess calls → 0)
 - ✅ Faster validation (direct Python calls)
 - ✅ Single source of truth for validation logic
@@ -202,11 +219,13 @@
 - ✅ Foundation ready for future `:rtype:` enforcement (Phase 2.3)
 
 **Testing:**
+
 - All tests pass: `repo-lint check --ci` exit 0
 - No regressions in any runners
 - CLI wrapper tested and functional
 
 **Commits:**
+
 - e4dddb0: Initial migration of Python runner + internal package
 - ab633d3: Completed all 6 language runners migration
 - 5bd54d5: Converted validate_docstrings.py to CLI wrapper
@@ -243,6 +262,7 @@
    - Imports now handled in shared helper function
 
 **Testing:**
+
 - All checks pass: `repo-lint check --ci` exit 0
 - No regressions detected
 - All 4 code review comments resolved
@@ -258,11 +278,13 @@
 ### 2026-01-08 - Vector Test Failures Fixed
 
 **Vector test failures resolved:**
+
 - Root cause: Accidentally removed `os` import from `python_runner.py` which broke `_parse_lint_output` method
 - Fix: Restored `os` import (needed for `os.path.basename()` in parsing methods)
 - Only docstring validation doesn't need `os` (handled by shared helper in `common.py`)
 
 **Testing:**
+
 - ✅ All vector tests pass (3 passed, 3 skipped)
 - ✅ All python_runner tests pass (10/10)
 - ✅ repo-lint check --ci passes (exit 0)
@@ -270,12 +292,14 @@
 **Commit:** 6578172
 
 **Status Summary:**
+
 - Phase 3.4 core migration: ✅ COMPLETE
 - Copilot code review comments: ✅ COMPLETE (all 4 resolved)
 - Vector test failures: ✅ FIXED
 - CI: ✅ ALL PASSING
 
 **New phases discovered in 278-overview.md:**
+
 - Phase 3.7: Reduce overly-broad exception handling
 - Phase 3.8: Rich-powered logging
 
@@ -286,6 +310,7 @@
 **Session Work:**
 
 **Phase 3.5.1: Markdown Contract Definition**
+
 - Installed markdownlint-cli2 (v0.20.0) globally via npm
 - Created comprehensive `docs/contributing/markdown-contracts.md` following Markdown Best Practices:
   - Documented all rules with rationale from authoritative sources:
@@ -300,12 +325,14 @@
   - Provided examples and edge case handling
 
 **Phase 3.5.2: Enforcement Configuration**
+
 - Created `.markdownlint-cli2.jsonc` configuration at repo root
 - Mapped all contract rules to linter configuration with detailed comments
 - Configured 40+ markdownlint rules with appropriate settings
 - Tested configuration: Found 7,480 violations across 189 Markdown files (baseline established)
 
 **Phase 3.5.3: Integration into repo-lint**
+
 - Created `tools/repo_lint/runners/markdown_runner.py`:
   - Implemented MarkdownRunner class following existing runner pattern
   - Markdown file discovery via get_tracked_files()
@@ -318,26 +345,30 @@
   - Updated cli.py --lang and --only choices to include "markdown"
   - Updated list-tools command to support markdown
 - Updated documentation:
-  - tools/repo_lint/runners/__init__.py docstring includes markdown_runner.py
+  - tools/repo_lint/runners/**init**.py docstring includes markdown_runner.py
 - Tested successfully:
   - `repo-lint check --only markdown` works
   - Found 3,790 violations (filtered baseline)
 
 **New Requirements Addressed:**
+
 1. ✅ Follow Markdown Best Practices for explicit rulesets
 2. ✅ Use 120 chars for maximum line length (normal cases)
 3. ✅ Code blocks inside Markdown exempt from line length limits
 
 **Status:**
+
 - Phase 3.5.1-3.5.3: ✅ COMPLETE
 - Phase 3.5.4 (Repo baseline cleanup): DEFERRED (3,790+ violations - too large for one session)
 - Phase 3.5.5 (Comprehensive tests): NOT STARTED
 
 **Commits:**
+
 - 6a8f637: Phase 3.5.1-3.5.2: Created Markdown contract and markdownlint-cli2 config
 - c040b9a: Phase 3.5.3: Integrated Markdown runner into repo-lint
 
 **Next Actions:**
+
 - Phase 3.5.4: Fix Markdown violations across repo (or add to per-file-ignores for gradual rollout)
 - Phase 3.5.5: Write comprehensive tests for Markdown runner
 - Then proceed to Phase 3.6 (TOML contracts + linting)
@@ -349,6 +380,7 @@
 **Session Work:**
 
 **Code Review Comment #2670754995: Output Parsing Bug (FIXED)**
+
 - **Issue:** The parsing logic used `line.split(":", 3)` expecting 4 parts, but the actual format "README.md:7:81 error MD013..." only produces 3 parts when split with limit 3.
 - **Fix:** Changed to `line.split(":", 2)` to get 3 parts (file, line, rest), then parse column and message from rest.
 - **Implementation:**
@@ -358,6 +390,7 @@
 - **Testing:** Added unit test `test_parse_markdownlint_output_single_violation` to verify correct parsing.
 
 **Code Review Comment #2670754989: Missing Test Coverage (FIXED)**
+
 - **Issue:** MarkdownRunner lacked test coverage while other language runners (YAMLRunner, PythonRunner, BashRunner) have comprehensive test files.
 - **Fix:** Created `tools/repo_lint/tests/test_markdown_runner.py` with 15 comprehensive unit tests:
   1. `test_has_files_detects_md` - Verifies .md file detection
@@ -378,12 +411,14 @@
 - **Result:** All 15 tests pass (100%)
 
 **Additional Fixes:**
+
 - Added newline when combining stdout+stderr to prevent line concatenation bug
   - Changed `stdout + stderr` to `stdout + "\n" + stderr`
   - Prevents violations from different streams being merged into one line
 - Auto-fixed trailing whitespace via `repo-lint fix --only python`
 
 **Testing Results:**
+
 ```bash
 python3 -m pytest tools/repo_lint/tests/test_markdown_runner.py -v
 # Result: 15 passed in 0.07s
@@ -393,14 +428,17 @@ repo-lint check --ci --only python
 ```
 
 **Status:**
+
 - Both code review comments: ✅ FULLY ADDRESSED
 - Parsing bug: ✅ FIXED
 - Test coverage: ✅ COMPREHENSIVE (15 tests, 100% pass)
 
 **Commits:**
+
 - 3ac82d4: Address code review comments: fix parsing bug and add comprehensive tests
 
 **Next Actions:**
+
 - All code review comments for PR #289 are now addressed
 - Ready for final review and merge
 - After merge: Continue with Phase 3.5.4 (Repo baseline cleanup) or Phase 3.6 (TOML contracts)

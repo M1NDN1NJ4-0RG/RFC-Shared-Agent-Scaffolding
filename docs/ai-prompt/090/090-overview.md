@@ -1,4 +1,5 @@
 # Issue 090 Overview
+
 Last Updated: 2025-12-31
 Related: Issue #90, PR (TBD)
 
@@ -9,6 +10,7 @@ Related: Issue #90, PR (TBD)
 **Goal:** Refactor the repository layout to a clean, scalable structure with consistent naming, consolidated documentation, and updated references (docs links, scripts, workflows, tests) — **without breaking behavior** at any point.
 
 **Non negotiables:**
+
 - Use `git mv` for all renames/moves to preserve history.
 - After **every Phase**: all tests pass locally, and CI is green.
 - After **every Item**: verify references (Markdown links, script paths, workflow paths, config includes) are updated.
@@ -58,6 +60,7 @@ Related: Issue #90, PR (TBD)
 ## Session Notes (newest first)
 
 ### 2025-12-31 00:50 - Session Complete - All Code Review Feedback Addressed
+
 - Addressed all code review feedback iteratively
 - Fixed duplicate checklist items
 - Updated M5 status consistency
@@ -69,6 +72,7 @@ Related: Issue #90, PR (TBD)
   - ✅ All tests pass (120+ tests across Rust and all wrappers)
 
 ### 2025-12-31 00:40 - M5 Final Verification Complete
+
 - Completed all M5 verification items
 - Reference verification: No obsolete paths in active codebase
 - Behavior verification: All tests pass (Bash: 23, Python: 20, Perl: 46, Rust: 31)
@@ -77,6 +81,7 @@ Related: Issue #90, PR (TBD)
 - **EPIC #90 Repository Restructure is COMPLETE**
 
 ### 2025-12-31 00:33 - Session initialization
+
 - Initialized issue journal directory
 - Created overview and next-steps files
 - Assessed current repository state

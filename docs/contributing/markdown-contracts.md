@@ -1,7 +1,7 @@
 # Markdown Contracts
 
-**Status:** Canonical source of truth for Markdown formatting requirements  
-**Last Updated:** 2026-01-08  
+**Status:** Canonical source of truth for Markdown formatting requirements
+**Last Updated:** 2026-01-08
 **Enforcement:** Enforced via `markdownlint-cli2` in `repo-lint check --ci`
 
 ## Overview
@@ -19,6 +19,7 @@ This document defines the mandatory Markdown formatting and style requirements f
 **Default:** All `*.md` files in the repository are subject to Markdown linting.
 
 **Included directories:**
+
 - `docs/**/*.md` (all documentation)
 - `*.md` (root-level files: README.md, CONTRIBUTING.md, etc.)
 - `wrappers/**/*.md` (wrapper documentation)
@@ -192,8 +193,9 @@ Text immediately after.
 **Best Practice Source:** Google Developer Style Guide recommends 80-120 characters for readability.
 
 **Policy:**
+
 - **Maximum:** 120 characters (balanced between readability and practicality)
-- **Rationale:** 
+- **Rationale:**
   - 80 chars (markdownlint default) is too restrictive for technical documentation
   - 120 chars is widely accepted (matches Python's PEP 8 recommendation)
   - Accommodates code examples, long URLs, and technical terms
@@ -231,9 +233,11 @@ echo "Hello"
 ```
 
 # ❌ Wrong - no language
+
 ```
 echo "Hello"
 ```
+
 ```
 
 **Allowed language identifiers:**
@@ -255,7 +259,9 @@ echo "test"
 ```
 
 # ❌ Wrong - indented (less flexible)
+
     echo "test"
+
 ```
 
 **MD048/code-fence-style** - Use backticks (```) for code fences, NOT tildes (`~~~`) (Consistency Best Practice)
@@ -269,9 +275,11 @@ code
 ```
 
 # ❌ Wrong - tildes (less common)
+
 ~~~bash
 code
 ~~~
+
 ```
 
 #### 4. Whitespace
@@ -716,6 +724,7 @@ repo-lint fix
 **Supported:** markdownlint-cli2 supports automatic fixing for many rules.
 
 **Auto-fixable rules include:**
+
 - MD009 (trailing spaces)
 - MD010 (hard tabs → spaces)
 - MD012 (multiple blanks → single blank)
@@ -726,11 +735,13 @@ repo-lint fix
 - MD047 (single final newline)
 
 **Not auto-fixable (manual intervention required):**
+
 - MD013 (line length - requires content rewording)
 - MD040 (code language - requires human to determine correct language)
 - MD041 (first line heading - requires structural change)
 
 **Safe auto-fix policy:**
+
 - Auto-fix MAY be enabled in `repo-lint fix` for deterministic, low-risk rules
 - High-risk fixes (structural changes, content rewording) MUST remain check-only initially
 

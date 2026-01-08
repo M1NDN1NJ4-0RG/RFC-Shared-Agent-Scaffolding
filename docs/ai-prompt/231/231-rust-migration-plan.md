@@ -3,6 +3,7 @@
 ## Executive Summary
 
 This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (Bash) to a modular Rust binary that preserves deterministic behavior while adding:
+
 - Parallel execution (where safe)
 - Rich progress UI
 - Structured logging
@@ -18,11 +19,13 @@ This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (B
 ### 1.1 Project Setup
 
 **CLI Framework:**
+
 - Use `clap` (derive API) for argument parsing
 - Subcommands: `install`, `doctor`, `verify`
 - Flags: `--dry-run`, `--ci`, `--json`, `--verbose`
 
 **Example CLI:**
+
 ```bash
 bootstrap install [--profile dev|ci|full] [--shell] [--powershell] [--perl]
 bootstrap doctor [--json]
@@ -339,17 +342,20 @@ pub fn build_dependency_graph(
 ### 4.1 Safe Parallelization Strategy
 
 **Parallel-safe operations:**
+
 - Detection phase (read-only checks)
 - Independent tool downloads (different artifacts)
 - Version parsing (no side effects)
 
 **Sequential-only operations:**
+
 - Virtual environment creation (filesystem race)
 - Package manager lock (apt/brew single-instance)
 - PATH mutations (shell environment ordering)
 - Installations with shared dependencies
 
 **Implementation:**
+
 ```rust
 pub async fn execute_phase(
     phase: &Phase,
@@ -443,6 +449,7 @@ where
 ```
 
 **Apply to:**
+
 - Package metadata refresh: YES (idempotent)
 - Artifact downloads: YES (idempotent)
 - apt/brew install: NO (lock conflicts, partial state)
@@ -455,6 +462,7 @@ where
 ### 5.1 Multi-Task Progress Display
 
 **Library stack:**
+
 - `indicatif` for progress bars/spinners
 - Custom multi-line renderer for concurrent tasks
 
@@ -942,21 +950,25 @@ fi
 ### 10.2 Phased Rollout
 
 **Phase 1: Parallel development**
+
 - Develop Rust version with feature parity
 - Run both in CI for comparison
 - Fix behavioral differences
 
 **Phase 2: Opt-in**
+
 - Make Rust version available
 - Document how to use it
 - Gather feedback
 
 **Phase 3: Default**
+
 - Rust becomes default
 - Bash available as fallback
 - Monitor for issues
 
 **Phase 4: Deprecation**
+
 - Remove Bash fallback
 - Archive legacy script
 - Update all documentation
@@ -1002,6 +1014,7 @@ openssl = { version = "0.10", features = ["vendored"] }
 ```
 
 **Build for multiple targets:**
+
 ```bash
 # Linux (musl for static linking)
 cargo build --release --target x86_64-unknown-linux-musl
@@ -1093,6 +1106,7 @@ jobs:
 ### Risk: Behavioral Divergence
 
 **Mitigation:**
+
 - Comprehensive parity tests
 - Run both versions in CI
 - Document all intentional differences
@@ -1100,6 +1114,7 @@ jobs:
 ### Risk: Performance Regression
 
 **Mitigation:**
+
 - Benchmark every PR
 - Profile to find bottlenecks
 - Have "fast" CI profile for quick feedback
@@ -1107,6 +1122,7 @@ jobs:
 ### Risk: Platform-Specific Bugs
 
 **Mitigation:**
+
 - Test matrix: macOS x Linux x (Homebrew|apt|snap)
 - Virtualized test environments
 - User beta testing program
@@ -1114,6 +1130,7 @@ jobs:
 ### Risk: Maintenance Burden During Transition
 
 **Mitigation:**
+
 - Minimize changes to Bash during Rust development
 - Feature freeze Bash once Rust reaches parity
 - Time-boxed transition (6 months max)
@@ -1123,6 +1140,7 @@ jobs:
 ## Timeline Estimate
 
 **Optimistic (1 developer, full-time):**
+
 - Phase 1-2 (Core): 2 weeks
 - Phase 3-4 (Concurrency): 1 week
 - Phase 5 (UI): 1 week
@@ -1134,9 +1152,11 @@ jobs:
 **Total: ~10 weeks**
 
 **Realistic (1 developer, part-time):**
+
 - 20-24 weeks
 
 **Conservative (accounting for unknowns):**
+
 - 6 months to production-ready
 
 ---
@@ -1146,6 +1166,7 @@ jobs:
 ### Appendix A: Example Installers
 
 **RipgrepInstaller:**
+
 ```rust
 pub struct RipgrepInstaller;
 

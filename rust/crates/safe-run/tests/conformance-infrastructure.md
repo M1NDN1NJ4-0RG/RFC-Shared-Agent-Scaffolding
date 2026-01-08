@@ -9,6 +9,7 @@ This document describes the conformance test infrastructure added in PR2 for val
 ### 1. Test Utilities (`rust/tests/common/`)
 
 #### `mod.rs` - Vector Loading and Type Definitions
+
 - **`ConformanceVectors`** - Root structure for `conformance/vectors.json`
 - **`load_vectors()`** - Loads and parses conformance vectors from JSON
 - **`get_safe_run_binary()`** - Locates the compiled safe-run binary
@@ -19,6 +20,7 @@ This document describes the conformance test infrastructure added in PR2 for val
   - `CommandSpec`, `ExpectedOutcome`, etc.
 
 #### `snapshots.rs` - Snapshot Testing Utilities
+
 - **`snapshots_dir()`** - Returns path to snapshots directory
 - **`load_snapshot()`** - Loads a golden output file
 - **`save_snapshot()`** - Saves a golden output file
@@ -32,17 +34,21 @@ This document describes the conformance test infrastructure added in PR2 for val
 ### 2. Conformance Tests (`rust/tests/conformance.rs`)
 
 #### Test Organization
+
 Tests are organized into three modules matching the vector categories:
+
 - **`safe_run_tests`** - 5 tests for safe-run command
 - **`safe_archive_tests`** - 4 tests for safe-archive command
 - **`preflight_tests`** - 3 tests for preflight-automerge-ruleset command
 
 #### Test Status
+
 All conformance tests are currently marked with `#[ignore]` because the implementation doesn't exist yet. Tests will be enabled in PR3 when implementation is added.
 
 #### Test Coverage
 
 **safe-run (5/5 vectors covered):**
+
 - `test_safe_run_001_success_no_artifacts` - Success case, no artifacts
 - `test_safe_run_002_failure_creates_log` - Failure creates split log
 - `test_safe_run_003_sigterm_aborted` - Signal handling (Unix only)
@@ -50,18 +56,21 @@ All conformance tests are currently marked with `#[ignore]` because the implemen
 - `test_safe_run_005_snippet_output` - Snippet lines to stderr
 
 **safe-archive (4/4 vectors covered):**
+
 - `test_safe_archive_001_basic` - Basic archiving
 - `test_safe_archive_002_compression_formats` - Multiple formats
 - `test_safe_archive_003_no_clobber_auto_suffix` - Auto-suffix on collision
 - `test_safe_archive_004_no_clobber_strict` - Strict mode fails on collision
 
 **preflight (3/4 vectors covered):**
+
 - `test_preflight_001_success` - Success with matching contexts
 - `test_preflight_002_auth_failure` - Auth failure exit code 2
 - `test_preflight_003_ruleset_not_found` - Ruleset not found exit code 3
 - Note: Vector `preflight-004` not yet implemented
 
 #### Meta-Tests
+
 - `test_all_vectors_have_tests` - Validates test coverage
 - `test_load_vectors` - Validates vector loading
 - `test_safe_run_vector_structure` - Validates vector schema
@@ -69,6 +78,7 @@ All conformance tests are currently marked with `#[ignore]` because the implemen
 ### 3. Test Data Directories
 
 #### `rust/tests/fixtures/`
+
 - **Purpose:** Input data and helper scripts for tests
 - **Current Status:** Empty, will be populated as needed
 - **Future Content:**
@@ -77,6 +87,7 @@ All conformance tests are currently marked with `#[ignore]` because the implemen
   - Mock configuration files
 
 #### `rust/tests/snapshots/`
+
 - **Purpose:** Golden outputs for snapshot comparison
 - **Current Status:** Empty, will be populated in PR3
 - **Future Content:**
@@ -108,6 +119,7 @@ cargo test --test conformance -- --nocapture
 ### Test Output
 
 **Current State (PR2):**
+
 ```
 running 18 tests
 test common::tests::test_load_vectors ... ok
@@ -125,6 +137,7 @@ test result: ok. 6 passed; 0 failed; 12 ignored
 
 **Expected State (PR3+):**
 Once implementation is added and `#[ignore]` attributes are removed:
+
 ```
 test result: ok. 18 passed; 0 failed; 0 ignored
 ```
@@ -134,6 +147,7 @@ test result: ok. 18 passed; 0 failed; 0 ignored
 ### Workflow: `rust-conformance.yml`
 
 **Triggers:**
+
 - Push to main, copilot/**, work/** branches
 - Pull requests to main
 - Changes to rust/, conformance/, or workflow file
@@ -157,6 +171,7 @@ test result: ok. 18 passed; 0 failed; 0 ignored
    - Command: `cargo fmt --all -- --check`
 
 **Caching:**
+
 - Cargo registry
 - Cargo git index
 - Cargo build artifacts
@@ -166,6 +181,7 @@ test result: ok. 18 passed; 0 failed; 0 ignored
 ### Adding a New Conformance Test
 
 1. **Add vector to `conformance/vectors.json`:**
+
    ```json
    {
      "id": "safe-run-006",
@@ -177,6 +193,7 @@ test result: ok. 18 passed; 0 failed; 0 ignored
    ```
 
 2. **Create test function:**
+
    ```rust
    #[test]
    #[ignore] // Remove when implementation exists
@@ -273,6 +290,7 @@ rust/
 ## Summary
 
 PR2 delivers a complete, test-first conformance infrastructure:
+
 - ✅ All 13 conformance tests written and documented
 - ✅ Test utilities for vector loading and snapshot comparison
 - ✅ CI workflow for automated testing across platforms

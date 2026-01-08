@@ -1,7 +1,7 @@
 # C Docstring Contract (DRAFT)
 
-**Language:** C (`.c`, `.h`)  
-**Canonical style:** Doxygen-style comments using `/** ... */` or `///`  
+**Language:** C (`.c`, `.h`)
+**Canonical style:** Doxygen-style comments using `/** ... */` or `///`
 **Status:** DRAFT - Not yet enforced by validator
 
 ## Purpose
@@ -315,24 +315,28 @@ When this contract is officially adopted, the validator should check:
 ## Common Mistakes (Future)
 
 ❌ **Wrong:** Using `/*` instead of `/**` for Doxygen
+
 ```c
 /* This won't be picked up by Doxygen */
 int main() { }
 ```
 
 ✅ **Correct:** Use `/**` for documentation
+
 ```c
 /** @brief Main function */
 int main() { }
 ```
 
 ❌ **Wrong:** Missing parameter documentation
+
 ```c
 /** @brief Does something */
 int func(int x, char *y);
 ```
 
 ✅ **Correct:** Document all parameters
+
 ```c
 /**
  * @brief Does something
@@ -372,6 +376,7 @@ doxygen
 **DRAFT** - This contract is not yet enforced. Feedback welcome before official adoption.
 
 To adopt this contract:
+
 1. Add C file patterns to validator
 2. Implement CValidator class
 3. Add test coverage

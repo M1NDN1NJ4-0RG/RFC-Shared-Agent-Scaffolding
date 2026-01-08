@@ -9,14 +9,17 @@
 ## Legacy Workflows to Migrate
 
 ### 1. `docstring-contract.yml`
+
 **Purpose:** Validates docstring contracts for ALL scripts/YAML files repository-wide
 
 **Triggers:**
+
 - Pull requests modifying any script/YAML/docs
 - Pushes to main
 - Manual dispatch
 
 **What it does:**
+
 - Runs `python3 scripts/validate_docstrings.py` (no language selector, validates ALL)
 - Single job: "Docstring Contract Validation"
 - Uses Python 3.8+
@@ -27,20 +30,24 @@
 ---
 
 ### 2. `lint-and-format-checker.yml`
+
 **Purpose:** Runs linting and formatting checks for all languages
 
 **Jobs:**
+
 - `lint-python`: Black + Ruff + Pylint
 - `lint-bash`: ShellCheck + shfmt
 - `lint-powershell`: PSScriptAnalyzer
 - `lint-perl`: Perl::Critic
 
 **Triggers:**
+
 - Push to main
 - Pull requests to main
 - Manual dispatch
 
 **Features:**
+
 - Auto-format with Black (same-repo PRs only)
 - Patch artifact for fork PRs
 - Parallel execution per language
@@ -51,9 +58,11 @@
 ---
 
 ### 3. `yaml-lint.yml`
+
 **Purpose:** YAML linting with yamllint
 
 **What it does:**
+
 - Runs yamllint on all YAML files
 - Single job
 
@@ -66,6 +75,7 @@
 ### File: `.github/workflows/repo-lint-and-docstring-enforcement.yml`
 
 **Jobs:**
+
 1. **Auto-Fix: Black** - Runs first, applies Black formatting
 2. **Detect Changed Files** - Determines which language buckets changed
 3. **Repo Lint: Python** - Runs `python -m tools.repo_lint check --ci --only python`
@@ -76,6 +86,7 @@
 8. **Consolidate and Archive Logs** - Collects all outputs
 
 **Conditional Execution:**
+
 - Language jobs run ONLY when:
   - Files for that language changed, OR
   - `shared_tooling` changed, OR
@@ -83,6 +94,7 @@
 
 **Shared Tooling Triggers:**
 Changes to:
+
 - `tools/repo_lint/`
 - `scripts/validate_docstrings.py`
 - `scripts/docstring_validators/`
@@ -117,15 +129,18 @@ Changes to:
 | **Fail behavior** | `continue-on-error: true` (warn only) | Hard fail | ⚠️ **DIFFERENT** |
 
 **Key Difference:**
+
 - **Legacy workflow** validates docstrings for ALL files on EVERY run (regardless of what changed)
 - **Umbrella workflow** validates docstrings only for languages with changes (more efficient, but different scope)
 
 **Impact:**
+
 - If a Python file changes, umbrella workflow validates Python docstrings only
 - Legacy workflow would validate Python + Bash + PowerShell + Perl + YAML docstrings (everything)
 - Umbrella approach is more efficient but could miss cross-language docstring drift
 
 **Mitigation:**
+
 - `shared_tooling` flag triggers ALL language jobs when `scripts/validate_docstrings.py` changes
 - `force_all=true` manual override runs all language jobs
 - For merge to main, all docstrings are eventually validated (just not on every PR if unrelated)
@@ -144,12 +159,15 @@ Changes to:
 ## Recommendations for Sub-Item 6.4.7 (Migration)
 
 ### Option A: Keep Both (Transitional)
+
 **Pros:**
+
 - Zero risk during transition
 - Legacy provides full-scope docstring validation
 - Umbrella provides efficient CI
 
 **Cons:**
+
 - Redundant CI runs
 - Confusing for contributors
 - Double maintenance burden
@@ -159,7 +177,9 @@ Changes to:
 ---
 
 ### Option B: Migrate Fully + Add Periodic Full Scan
+
 **Approach:**
+
 1. Disable legacy workflows (`docstring-contract.yml`, `lint-and-format-checker.yml`, `yaml-lint.yml`)
 2. Use umbrella workflow as canonical gate
 3. Add weekly scheduled full-scan job that runs `repo-lint check --ci` (all languages, no conditional)
@@ -167,12 +187,14 @@ Changes to:
    - Covers cross-language docstring drift without slowing PR workflow
 
 **Pros:**
+
 - Single source of truth (umbrella)
 - Efficient per-PR CI
 - Periodic full validation catches drift
 - Clean migration path
 
 **Cons:**
+
 - Docstring drift could go undetected between scheduled runs
 - Requires adding scheduled workflow
 
@@ -181,17 +203,21 @@ Changes to:
 ---
 
 ### Option C: Add `--all` Flag to Umbrella Workflow
+
 **Approach:**
+
 1. Add `validate_all_docstrings` input to umbrella workflow (boolean, default: false)
 2. When true, run full docstring validation (all languages) as separate job
 3. Make this required for merges to `main` branch only (not feature PRs)
 
 **Pros:**
+
 - Per-PR CI remains efficient (conditional)
 - Main branch gets full validation
 - No separate scheduled workflow needed
 
 **Cons:**
+
 - Adds complexity to umbrella workflow
 - Main branch merges slower
 

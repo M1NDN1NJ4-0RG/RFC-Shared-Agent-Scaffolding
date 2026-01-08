@@ -1,7 +1,7 @@
 # Epic #3 — M0 Milestone Complete ✅
 
-**Date:** 2025-12-26  
-**Status:** ALL M0 DECISION GATES FINALIZED  
+**Date:** 2025-12-26
+**Status:** ALL M0 DECISION GATES FINALIZED
 **Refs:** #3
 
 ---
@@ -43,20 +43,24 @@ All M2 (Conformance Infrastructure), M3 (Example Scaffold), and M4 (CI Hardening
 ## Key Decisions Detail
 
 ### M0-P1-I1: `safe-run` Logging Semantics
+
 **Decision:** Split stdout and stderr (Option B)
 
 Requirements:
+
 - Capture stdout and stderr **separately**
 - Include section markers: `=== STDOUT ===` and `=== STDERR ===`
 - Preserve both streams in failure logs
 - Empty streams still get markers (empty section)
 
 ### M0-P1-I2: Failure Log Naming
+
 **Decision:** Deterministic timestamp + PID + status
 
 Format: `20251226T020707Z-pid4821-FAIL.log`
 
 Requirements:
+
 - ISO 8601 UTC timestamp (YYYYMMDDTHHMMSSZ)
 - Process ID for correlation
 - Status: FAIL, ABORTED, or ERROR (uppercase)
@@ -65,34 +69,41 @@ Requirements:
 - No overwrites, deterministic sorting
 
 ### M0-P1-I3: `safe-archive` No-Clobber
+
 **Decision:** Hybrid approach
 
 Default (auto-suffix):
+
 - Append numeric suffix if file exists (`.2`, `.3`, etc.)
 - Never overwrite existing files
 
 Opt-in strict mode:
+
 - Flag: `--no-clobber` or env var `SAFE_ARCHIVE_NO_CLOBBER=1`
 - Exit with error if destination exists
 - No file created
 
 ### M0-P2-I1: Auth & Headers
+
 **Decision:** Bearer token with precedence chain
 
 Header format: `Authorization: Bearer <token>`
 
 Auth precedence (highest to lowest):
+
 1. Explicit CLI arguments (`--token`)
 2. Environment variables (`GITHUB_TOKEN`, `TOKEN`)
 3. Configuration files
 4. `gh auth token` command
 
 Security:
+
 - Never log tokens
 - Exit code 2 if no auth available
 - Clear error message with resolution steps
 
 ### M0-P2-I2: Exit Code Taxonomy
+
 **Decision:** Stable exit code ranges
 
 | Code | Meaning | Examples |
@@ -112,16 +123,19 @@ Security:
 ## What This Means
 
 ### For Implementers
+
 - All M0 decisions are final and **MUST** be followed
 - No implementation may deviate from these contracts
 - All tests must validate M0 behaviors
 
 ### For Epic Tracker
+
 - M0 checklist items can be marked as DECIDED
 - Focus shifts to M1 implementation work
 - Conformance testing (M2) can begin once implementations align
 
 ### Next Steps
+
 1. Complete M1 implementation alignment
 2. Create conformance test vectors (M2-P1-I1)
 3. Enable CI enforcement (M4-P1-I1)

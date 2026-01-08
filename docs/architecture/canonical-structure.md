@@ -9,6 +9,7 @@ To ensure consistency, maintainability, and prevent path drift across language i
 ## Canonical Structure
 
 All language bundles are located under:
+
 ```
 wrappers/<language>/
 ```
@@ -53,6 +54,7 @@ Each language uses its conventional file extension:
 ### Bash (Before → After)
 
 **Before:**
+
 ```
 scripts/bash/
   ├── scripts/bash/     # ❌ Extra nesting
@@ -62,6 +64,7 @@ scripts/bash/
 ```
 
 **After:**
+
 ```
 scripts/bash/
   ├── scripts/          # ✅ Flat
@@ -73,6 +76,7 @@ scripts/bash/
 ### PowerShell (Before → After)
 
 **Before:**
+
 ```
 scripts/powershell/
   ├── scripts/powershell/   # ❌ Extra nesting
@@ -82,6 +86,7 @@ scripts/powershell/
 ```
 
 **After:**
+
 ```
 scripts/powershell/
   ├── scripts/              # ✅ Flat
@@ -101,6 +106,7 @@ These languages already followed the canonical structure and required no changes
 The structure is validated automatically via CI using `scripts/validate-structure.sh`.
 
 To run locally:
+
 ```bash
 ./scripts/validate-structure.sh
 ```
@@ -108,6 +114,7 @@ To run locally:
 ### CI Enforcement
 
 The workflow `.github/workflows/structure-validation.yml` runs on every PR that modifies:
+
 - `wrappers/**`
 - `scripts/validate-structure.sh`
 - The workflow file itself
@@ -119,19 +126,24 @@ PRs **CANNOT** merge if the structure validation fails.
 Each language bundle **MUST** include:
 
 ### Scripts Directory (`scripts/`)
+
 All implementation files:
+
 - `safe-run.*` - Safe command execution wrapper
 - `safe-check.*` - Contract verification script
 - `safe-archive.*` - Failure log archiving utility
 - `preflight-automerge-ruleset.*` - GitHub ruleset preflight check
 
 ### Tests Directory (`tests/`)
+
 All test files and test utilities.
 
 ### Test Runner (`run-tests.*`)
+
 An executable script that runs the full test suite for that language.
 
 **Naming:**
+
 - Bash/Perl: `run-tests.sh`
 - Python 3: `run-tests.sh` or invoke via `python -m unittest discover`
 - PowerShell: `run-tests.ps1`
@@ -141,12 +153,14 @@ An executable script that runs the full test suite for that language.
 The following patterns are **NOT ALLOWED** and will cause CI to fail:
 
 ❌ **Nested language directories:**
+
 ```
 scripts/<language>/scripts/<language>/   # WRONG
 scripts/<language>/tests/<language>/     # WRONG
 ```
 
 ✅ **Correct:**
+
 ```
 scripts/<language>/scripts/              # RIGHT
 scripts/<language>/tests/                # RIGHT
@@ -164,12 +178,14 @@ scripts/<language>/tests/                # RIGHT
 ### Why We Flattened
 
 The old nested structure (`scripts/<language>/scripts/<language>/`) was:
+
 - Redundant and confusing
 - Inconsistent across languages (Bash/PowerShell nested, Perl/Python flat)
 - Harder to reference in tests and CI
 - A source of path drift
 
 The new flat structure ensures:
+
 - All languages are identical
 - Paths are simpler and more maintainable
 - Less room for error

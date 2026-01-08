@@ -25,6 +25,7 @@ The wrappers act as **invokers**, not independent implementations. They provide:
 **Requirements:** Bash 4.0+, jq (for conformance testing)
 
 **Usage:**
+
 ```bash
 ./wrappers/bash/scripts/safe-run.sh echo "Hello, World!"
 ```
@@ -40,6 +41,7 @@ The wrappers act as **invokers**, not independent implementations. They provide:
 **Requirements:** Perl 5.10+
 
 **Usage:**
+
 ```bash
 perl ./wrappers/perl/scripts/safe_run.pl echo "Hello, World!"
 ```
@@ -55,6 +57,7 @@ perl ./wrappers/perl/scripts/safe_run.pl echo "Hello, World!"
 **Requirements:** Python 3.8+
 
 **Usage:**
+
 ```bash
 python3 ./wrappers/python3/scripts/safe_run.py echo "Hello, World!"
 ```
@@ -70,6 +73,7 @@ python3 ./wrappers/python3/scripts/safe_run.py echo "Hello, World!"
 **Requirements:** PowerShell 5.1+ (Windows), PowerShell Core 7+ (cross-platform)
 
 **Usage:**
+
 ```powershell
 pwsh ./wrappers/powershell/scripts/SafeRun.ps1 echo "Hello, World!"
 ```
@@ -81,13 +85,13 @@ Wrappers use the following discovery strategy (in order of priority):
 1. **Environment variable:** `SAFE_RUN_BIN` (or `SAFE_CHECK_BIN`, `SAFE_ARCHIVE_BIN`)
    - Absolute path to the canonical binary
    - Highest priority - overrides all other methods
-   
+
 2. **Dev mode:** `rust/target/release/safe-run` (relative to repository root)
    - Used when running from within the repository during development
-   
+
 3. **CI artifacts:** `dist/<os>/<arch>/safe-run`
    - Used in CI/CD pipelines where binaries are staged
-   
+
 4. **System PATH:** Search `$PATH` for `safe-run`
    - Falls back to system-installed binary
 
@@ -145,6 +149,7 @@ cd wrappers/powershell && pwsh RunTests.ps1
 All wrappers must pass the same conformance test suite defined in `conformance/vectors.json`. This ensures behavioral parity across all language implementations.
 
 See:
+
 - [Conformance Contract](../docs/usage/conformance-contract.md) - Contract specification
 - [Drift Detection](../.github/workflows/drift-detection.yml) - Cross-language behavioral validation
 
@@ -161,6 +166,7 @@ wrappers/<language>/
 ```
 
 See:
+
 - [Wrapper Discovery](../docs/architecture/wrapper-discovery.md) - Binary discovery algorithm
 - [Canonical Structure](../docs/architecture/canonical-structure.md) - Repository layout
 

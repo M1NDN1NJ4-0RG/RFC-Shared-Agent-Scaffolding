@@ -1,7 +1,7 @@
 # M0 Decisions (Final) — Contract Clarity Foundation
 
-**Status:** DECIDED  
-**Date Finalized:** 2025-12-26  
+**Status:** DECIDED
+**Date Finalized:** 2025-12-26
 **Source:** Commit c60e5c3, RFC v0.1.0 sections 7.1-7.5
 
 This document records the **final, authoritative decisions** for all M0 (Milestone 0) decision gates.
@@ -18,6 +18,7 @@ All implementations MUST align with these decisions.
 ### Requirements
 
 `safe-run` MUST:
+
 - Capture stdout and stderr **separately**
 - Include clear section markers in log files:
   - `=== STDOUT ===`
@@ -61,6 +62,7 @@ is simpler, the additional plumbing cost is minimal and the diagnostic value is 
 ### Rationale
 
 Deterministic naming enables:
+
 - Predictable log discovery and sorting
 - Process correlation via PID
 - Chronological ordering via timestamp
@@ -76,6 +78,7 @@ Deterministic naming enables:
 ### Default Behavior: Auto-suffix
 
 When destination file exists:
+
 - Append numeric suffix (e.g., `.2`, `.3`, `.4`)
 - Continue incrementing until unique filename found
 - Never overwrite existing files
@@ -83,10 +86,12 @@ When destination file exists:
 ### Opt-in: Strict No-Clobber (Fail Fast)
 
 Enable via:
+
 - CLI flag: `--no-clobber`
 - Environment variable: `SAFE_ARCHIVE_NO_CLOBBER=1`
 
 When enabled:
+
 - Exit with error if destination exists
 - Do not create any file
 - Provide clear error message
@@ -94,6 +99,7 @@ When enabled:
 ### Rationale
 
 Hybrid approach balances safety and convenience:
+
 - Default auto-suffix prevents data loss while allowing automated workflows
 - Opt-in strict mode enables workflows that require explicit collision handling
 - Both modes guarantee no silent overwrites
@@ -126,6 +132,7 @@ Authorization: Bearer <token>
 ### Failure Behavior
 
 If no auth available:
+
 - Exit with code **2** (auth/permission error)
 - Provide clear error message indicating auth is required
 - Suggest resolution steps (set GITHUB_TOKEN, run `gh auth login`, etc.)
@@ -167,6 +174,7 @@ If no auth available:
 ### Rationale
 
 Deterministic exit codes enable:
+
 - Agent scripts to make informed decisions based on failure type
 - Automated retry logic (e.g., retry network errors, fail fast on auth errors)
 - Better error reporting and debugging
@@ -177,6 +185,7 @@ Deterministic exit codes enable:
 ## Implementation Status
 
 ### Completed
+
 - [x] M0-P1-I1: RFC updated (section 7.1)
 - [x] M0-P1-I2: RFC updated (section 7.2)
 - [x] M0-P1-I3: RFC updated (section 7.3)
@@ -184,6 +193,7 @@ Deterministic exit codes enable:
 - [x] M0-P2-I2: RFC updated (section 7.5)
 
 ### Remaining Work (M1+)
+
 - [ ] Align all language implementations to M0 contract
 - [ ] Update all tests to assert M0 behaviors
 - [ ] Create conformance test vectors

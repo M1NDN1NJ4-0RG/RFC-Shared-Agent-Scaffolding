@@ -13,6 +13,7 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
 **Goal:** Eliminate doc drift so contributors/users don't build the wrong mental model.
 
 **Verification Results:**
+
 - ✅ Bash wrapper (`safe-run.sh` line 26): `SAFE_SNIPPET_LINES Number of tail lines to show on stderr (default: 0)`
 - ✅ Python wrapper (`safe-run.py` line 36): `SAFE_SNIPPET_LINES : int, optional ... (default: 0)`
 - ✅ Perl wrapper (`safe-run.pl` line 100): `Default: 0 (disabled)`
@@ -25,6 +26,7 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
 - ✅ rfc-shared-agent-scaffolding-v0.1.0.md: No SAFE_SNIPPET_LINES mentions (confirmed via grep)
 
 **Changes Made:**
+
 1. Fixed incorrect comment in `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/tests/test-safe-run.sh` line 130
    - Before: `# Default is 10 lines, test with 2 lines to verify last 2 lines appear`
    - After: `# Default is 0 (disabled), test with 2 lines to verify last 2 lines appear`
@@ -38,21 +40,25 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
 **Verification Results:**
 
 **Bash wrapper (`safe-run.sh`):**
+
 - ✅ Line 117-122: Detects Windows and sets `IS_WINDOWS=1`
 - ✅ Line 154-161: Dev mode checks both `safe-run` and `safe-run.exe` when `IS_WINDOWS=1`
 - ✅ Line 166-178: CI artifact checks both `safe-run` and `safe-run.exe` when `IS_WINDOWS=1`
 
 **Python wrapper (`safe-run.py`):**
+
 - ✅ Line 260: Detects Windows with `platform.system() == "Windows"`
 - ✅ Line 264-271: Dev mode checks both `safe-run` and `safe-run.exe` when `is_windows`
 - ✅ Line 274-285: CI artifact checks both `safe-run` and `safe-run.exe` when `is_windows`
 
 **Perl wrapper (`safe-run.pl`):**
+
 - ✅ NEW: Added Windows detection with `$^O =~ /^(MSWin|cygwin|msys)/i`
 - ✅ NEW: Dev mode checks both `safe-run` and `safe-run.exe` when `$is_windows`
 - ✅ NEW: CI artifact checks both `safe-run` and `safe-run.exe` when `$is_windows`
 
 **Changes Made:**
+
 - Added `$is_windows` variable to Perl wrapper's `find_safe_run_binary` function
 - Added `.exe` extension checks for both dev and CI artifact discovery paths
 
@@ -63,10 +69,12 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
 **Goal:** Align wrappers with Unix conventions (127 = not found, 126 = not executable).
 
 **Perl wrapper changes:**
+
 - ✅ Added check: if binary exists but is not executable (`-e $binary && !-x $binary`), exit 126
 - ✅ Updated exec error handling: pattern match on "permission denied" to exit 126 vs 127
 
 **PowerShell wrapper changes:**
+
 - ✅ Updated exception handling: regex match on access/permission errors to exit 126
 - ✅ Clear error messages distinguish between access denied (126) and other failures (127)
 
@@ -79,13 +87,16 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
 **Status:** Deferred to future work.
 
 **Rationale:**
+
 - Requires Windows-specific testing infrastructure not available in current environment
 - Testing Ctrl-C behavior with PowerShell's `Start-Process` vs direct invocation needs native Windows
 - Current implementation uses direct invocation (`& $binary`) which should propagate signals
 - This is a polish item, not a critical issue
 
 **Recommendations:**
+
 1. Test manually on native Windows (not WSL/Git Bash):
+
    ```powershell
    $env:SAFE_RUN_BIN = "path\to\safe-run.exe"
    .\safe-run.ps1 -- sleep 60  # Press Ctrl-C during execution
@@ -119,6 +130,7 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
    - Messages guide users to use `safe-run run <command>` instead
 
 3. **Error messages:**
+
    ```
    ERROR: 'safe-run check' is not yet implemented.
    
@@ -128,6 +140,7 @@ This EPIC addresses post-audit cleanup tasks to improve cross-platform predictab
    ```
 
 **Verification:**
+
 ```bash
 $ ./rust/target/release/safe-run check echo test
 ERROR: 'safe-run check' is not yet implemented.
@@ -188,11 +201,13 @@ Added new section to `docs/rust-canonical-tool.md`:
 ## Testing
 
 **✅ Passing:**
+
 - Bash wrapper tests: 23/23 tests pass
 - Rust builds successfully with all changes
 - Manual verification of `check` and `archive` exit codes and help text
 
 **⚠️ Known Issues:**
+
 - Perl wrapper tests fail (pre-existing, requires Rust binary in specific location)
 - PowerShell Ctrl-C testing deferred (requires Windows environment)
 
@@ -203,6 +218,7 @@ If investigating PowerShell Ctrl-C behavior in the future:
 1. **Test Environment:** Native Windows 10/11 with PowerShell 5.1+ or PowerShell 7+
 
 2. **Test Procedure:**
+
    ```powershell
    # Build Rust binary
    cd rust
@@ -232,12 +248,14 @@ If investigating PowerShell Ctrl-C behavior in the future:
 ## Summary for Handoff
 
 **Work Completed:** 4 out of 5 phases (80% complete)
+
 - Phases 0, 1, 2, 4, 5: Fully implemented and tested
 - Phase 3: Deferred (requires Windows-specific testing)
 
 **Quality:** All changes are minimal, surgical, and backwards-compatible. No contract changes, only documentation clarifications and error handling improvements.
 
 **Next Steps:**
+
 - If PowerShell Ctrl-C testing is required, follow Phase 3 instructions above
 - Otherwise, this EPIC can be considered complete with documented limitation
 

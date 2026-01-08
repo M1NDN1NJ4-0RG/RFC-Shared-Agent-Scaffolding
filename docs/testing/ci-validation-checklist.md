@@ -13,6 +13,7 @@
 **Runner:** `ubuntu-latest`
 
 **What it tests:**
+
 - All 13 bash tests including 6 new conformance tests
 - Rust binary discovery from `dist/linux/x86_64/`
 - Repository root detection
@@ -32,6 +33,7 @@
 **Runner:** `windows-latest`
 
 **What it tests:**
+
 - PowerShell wrapper with fixes applied
 - Repo root detection from script location (NEW FIX)
 - PS 5.1 platform detection compatibility (NEW FIX)
@@ -41,12 +43,14 @@
 **Expected Result:** ✅ ALL TESTS SHOULD PASS
 
 **Critical Validations:**
+
 1. **Repo root detection:** Script should find repo from `$PSCommandPath`, not `Get-Location`
 2. **Platform detection:** Should work on both PS 5.1 and PS 7+
 3. **Exit code 127:** Binary not found should exit with 127, not 1
 4. **Binary discovery:** Should find `.exe` in dist/windows/x86_64/
 
 **What to watch for:**
+
 - Any test failures related to working directory assumptions
 - Exit code mismatches (1 vs 127)
 - Platform detection failures on PS 5.1
@@ -58,6 +62,7 @@
 **Runner:** `ubuntu-latest`
 
 **What it tests:**
+
 - Perl wrapper (no changes, but validation needed)
 - Existing perl tests
 
@@ -72,6 +77,7 @@
 **Runner:** `ubuntu-latest`
 
 **What it tests:**
+
 - Python3 wrapper (no changes, but validation needed)
 - Existing python3 tests
 
@@ -86,6 +92,7 @@
 **Runners:** `ubuntu-latest`, `macos-latest`, `windows-latest`
 
 **What it tests:**
+
 - Rust canonical tool conformance
 - Event ledger format
 - Exit code behavior
@@ -104,6 +111,7 @@
 For this PR to be considered complete and the repository ready for new language wrappers:
 
 ✅ **MUST PASS:**
+
 1. Test Bash Bundle (Linux) - 13/13 tests
 2. Test PowerShell Bundle (Windows) - All tests
 3. Test Perl Bundle (Linux) - All tests
@@ -129,6 +137,7 @@ For this PR to be considered complete and the repository ready for new language 
 **Unlikely** (already passed locally)
 
 **Debug steps:**
+
 1. Check which conformance test failed
 2. Review test output for error messages
 3. Verify Rust binary was built and staged correctly
@@ -141,21 +150,25 @@ For this PR to be considered complete and the repository ready for new language 
 **Debug steps:**
 
 **If repo root detection fails:**
+
 - Verify `$PSCommandPath` is available on Windows runner
 - Check fallback to `Get-Location` works if script path unavailable
 - Confirm tests are running with `pwsh -NoProfile -File`
 
 **If platform detection fails:**
+
 - Check PowerShell version on Windows runner (`$PSVersionTable.PSVersion`)
 - Verify PS 5.1 fallback logic (`$os = "windows"`)
 - Check if `[System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture` works
 
 **If exit code handling fails:**
+
 - Check if `Test-Path $binary` is working correctly
 - Verify `$LASTEXITCODE` is being captured correctly
 - Confirm try/catch is exiting with 127
 
 **If binary discovery fails:**
+
 - Verify `.exe` extension is being added on Windows
 - Check if `dist/windows/x86_64/safe-run.exe` was staged correctly
 - Confirm `Get-Command` is finding binary in PATH
@@ -165,6 +178,7 @@ For this PR to be considered complete and the repository ready for new language 
 **Unlikely** (no changes made)
 
 **Debug steps:**
+
 1. Check if failure is related to Rust binary staging
 2. Verify no unexpected regressions from document changes
 3. Compare test output to previous successful runs
@@ -194,26 +208,31 @@ For this PR to be considered complete and the repository ready for new language 
 Once CI passes, document results here:
 
 **Bash Tests (Linux):**
+
 - Status: ⏸️ Waiting
 - Tests passed: _/13
 - Link: [CI Run URL]
 
 **PowerShell Tests (Windows):**
+
 - Status: ⏸️ Waiting
-- Tests passed: _/_
+- Tests passed: */*
 - Link: [CI Run URL]
 
 **Perl Tests (Linux):**
+
 - Status: ⏸️ Waiting
-- Tests passed: _/_
+- Tests passed: */*
 - Link: [CI Run URL]
 
 **Python3 Tests (Linux):**
+
 - Status: ⏸️ Waiting
-- Tests passed: _/_
+- Tests passed: */*
 - Link: [CI Run URL]
 
 **Rust Conformance (All platforms):**
+
 - Status: ⏸️ Waiting
 - Linux: ⏸️
 - macOS: ⏸️
@@ -225,22 +244,26 @@ Once CI passes, document results here:
 ## Notes for Reviewers
 
 **What changed:**
+
 1. PowerShell wrapper: 3 critical fixes (101 lines)
 2. Bash test suite: 6 new conformance tests (125 lines)
 3. Documentation: 5 new documents (~48 KB)
 
 **What to review:**
+
 1. PowerShell fixes align with bash/perl/python3 behavior
 2. Conformance tests are comprehensive and fail-safe
 3. Documentation is complete and accurate
 4. CI validation proves fixes work on all platforms
 
 **What NOT to worry about:**
+
 - Bash/Perl/Python3 wrappers: No changes, already compliant
 - Rust canonical tool: No changes
 - Existing tests: All still passing
 
 **Approval criteria:**
+
 - ✅ All CI jobs pass
 - ✅ Evidence documents are complete
 - ✅ Code changes align with documented contracts

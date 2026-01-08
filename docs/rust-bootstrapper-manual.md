@@ -43,6 +43,7 @@ The Rust bootstrapper achieves complete parity with the Bash bootstrapper:
 ### Performance
 
 Typical performance improvements over Bash:
+
 - Detection phase: 40-60% faster (parallel execution)
 - Installation phase: 20-40% faster (better concurrency)
 - Overall: 30-50% faster on multi-core systems
@@ -84,6 +85,7 @@ source ~/.bashrc
 ### Build from Source
 
 Requirements:
+
 - Rust 1.70+
 - Cargo
 
@@ -105,21 +107,25 @@ bootstrap-repo-cli --help
 ### Basic Usage
 
 Install all tools for the CI profile:
+
 ```bash
 bootstrap-repo-cli install --profile ci
 ```
 
 Install all tools for development:
+
 ```bash
 bootstrap-repo-cli install --profile dev
 ```
 
 Check your environment:
+
 ```bash
 bootstrap-repo-cli doctor
 ```
 
 Verify installations:
+
 ```bash
 bootstrap-repo-cli verify
 ```
@@ -131,11 +137,13 @@ bootstrap-repo-cli verify
 Install and verify tools.
 
 **Usage:**
+
 ```bash
 bootstrap-repo-cli install [OPTIONS]
 ```
 
 **Options:**
+
 - `--profile <NAME>`: Profile to install (dev, ci, full)
 - `--dry-run`: Preview without installing
 - `--ci`: CI mode (plain output, no TTY)
@@ -148,6 +156,7 @@ bootstrap-repo-cli install [OPTIONS]
 - `--resume`: Resume from checkpoint
 
 **Examples:**
+
 ```bash
 # Basic install
 bootstrap-repo-cli install
@@ -166,6 +175,7 @@ bootstrap-repo-cli install --offline
 ```
 
 **Behavior:**
+
 - Always runs: detect → install → verify
 - Fail-fast: stops on first error
 - Idempotent: safe to run multiple times
@@ -176,15 +186,18 @@ bootstrap-repo-cli install --offline
 Diagnose environment and configuration.
 
 **Usage:**
+
 ```bash
 bootstrap-repo-cli doctor [OPTIONS]
 ```
 
 **Options:**
+
 - `--strict`: Treat warnings as failures
 - `--json`: JSON output
 
 **Examples:**
+
 ```bash
 # Basic diagnostics
 bootstrap-repo-cli doctor
@@ -197,6 +210,7 @@ bootstrap-repo-cli doctor --json
 ```
 
 **Checks:**
+
 - Repository: Valid git repository
 - Package Manager: Homebrew, apt, or snap detected
 - Python: Version and location
@@ -205,6 +219,7 @@ bootstrap-repo-cli doctor --json
 - Permissions: Write permissions for installation paths
 
 **Exit Codes:**
+
 - 0: All checks passed
 - 19: One or more checks failed
 - 19: Warnings present in strict mode
@@ -214,15 +229,18 @@ bootstrap-repo-cli doctor --json
 Verify installations without re-installing.
 
 **Usage:**
+
 ```bash
 bootstrap-repo-cli verify [OPTIONS]
 ```
 
 **Options:**
+
 - `--json`: JSON output
 - `--verbose`: Detailed output
 
 **Examples:**
+
 ```bash
 # Basic verification
 bootstrap-repo-cli verify
@@ -232,6 +250,7 @@ bootstrap-repo-cli verify --verbose
 ```
 
 **Behavior:**
+
 - Does not install or download anything
 - Checks each tool is present and functional
 - Reports version mismatches
@@ -244,6 +263,7 @@ bootstrap-repo-cli verify --verbose
 **Location:** Repository root
 
 **Format:**
+
 ```toml
 [profile.dev]
 tools = [
@@ -310,6 +330,7 @@ install_args = ["--upgrade"]
 ### Default Behavior
 
 If `.bootstrap.toml` is missing:
+
 - Interactive mode: uses default dev profile
 - CI mode: **requires config** (exits with error)
 
@@ -352,6 +373,7 @@ bootstrap-repo-cli install --jobs 1
 ```
 
 **Safety:**
+
 - Detection phase: always parallel-safe
 - Download phase: limited by HTTP concurrency (2 per host)
 - Install phase: respects package manager locks
@@ -386,6 +408,7 @@ bootstrap-repo-cli install --offline
 ```
 
 **Cache location:**
+
 - Linux: `~/.cache/bootstrap-repo-cli/`
 - macOS: `~/Library/Caches/bootstrap-repo-cli/`
 
@@ -400,6 +423,7 @@ bootstrap-repo-cli install --json > bootstrap.log
 ```
 
 **Event types:**
+
 - `PlanComputed`: Execution plan with phases and steps
 - `PhaseStarted`: Phase beginning
 - `TaskStarted`: Individual task start
@@ -417,6 +441,7 @@ bootstrap-repo-cli install --dry-run
 ```
 
 **Output:**
+
 - Shows execution plan
 - Lists all steps that would be executed
 - Does not install or download anything
@@ -427,6 +452,7 @@ bootstrap-repo-cli install --dry-run
 By default, downgrades are disallowed.
 
 **Allow downgrades:**
+
 ```bash
 bootstrap-repo-cli install --allow-downgrade
 ```
@@ -440,11 +466,13 @@ bootstrap-repo-cli install --allow-downgrade
 #### Issue: "Binary not found"
 
 **Symptom:**
+
 ```
 bash: bootstrap-repo-cli: command not found
 ```
 
 **Solution:**
+
 ```bash
 # Check PATH
 echo $PATH
@@ -459,6 +487,7 @@ export PATH="$HOME/.bootstrap/bin:$PATH"
 #### Issue: "Missing config in CI mode"
 
 **Symptom:**
+
 ```
 Error: .bootstrap.toml required in CI mode but not found
 Exit code: 1
@@ -466,6 +495,7 @@ Exit code: 1
 
 **Solution:**
 Create `.bootstrap.toml`:
+
 ```toml
 [profile.ci]
 tools = ["ripgrep", "python-black", "python-ruff"]
@@ -474,11 +504,13 @@ tools = ["ripgrep", "python-black", "python-ruff"]
 #### Issue: "Permission denied"
 
 **Symptom:**
+
 ```
 bash: ./bootstrap-repo-cli: Permission denied
 ```
 
 **Solution:**
+
 ```bash
 chmod +x ~/.bootstrap/bin/bootstrap-repo-cli
 ```
@@ -486,6 +518,7 @@ chmod +x ~/.bootstrap/bin/bootstrap-repo-cli
 #### Issue: "ripgrep failed (exit code 21)"
 
 **Symptom:**
+
 ```
 Error: ripgrep installation failed
 Exit code: 21
@@ -494,6 +527,7 @@ Exit code: 21
 **Explanation:** ripgrep is a **required** tool and cannot be skipped.
 
 **Solution:**
+
 ```bash
 # Check package manager
 bootstrap-repo-cli doctor
@@ -512,6 +546,7 @@ rg --version
 Installation takes longer than expected.
 
 **Solution:**
+
 ```bash
 # Increase parallelism
 bootstrap-repo-cli install --jobs 8
@@ -532,6 +567,7 @@ bootstrap-repo-cli doctor
 ```
 
 Example output:
+
 ```
 ✓ Repository: /path/to/repo (valid git repository)
 ✓ Package Manager: Homebrew 4.2.0
@@ -618,6 +654,7 @@ pub trait Installer: Send + Sync {
 ### Supported Tools
 
 **Python:**
+
 - black (formatter)
 - ruff (linter)
 - pylint (linter)
@@ -625,18 +662,22 @@ pub trait Installer: Send + Sync {
 - pytest (test framework)
 
 **Shell:**
+
 - shellcheck (linter)
 - shfmt (formatter)
 
 **PowerShell:**
+
 - pwsh (interpreter)
 - PSScriptAnalyzer (linter)
 
 **Perl:**
+
 - perlcritic (linter)
 - PPI (parser)
 
 **Other:**
+
 - actionlint (GitHub Actions linter)
 - ripgrep (search tool, REQUIRED)
 

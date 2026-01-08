@@ -1,7 +1,7 @@
 # repo_lint - Unified Multi-Language Linting Tool
 
-**Status:** Canonical linting and docstring validation tool for this repository  
-**Version:** Phase 7 (Unsafe Fix Mode implemented)  
+**Status:** Canonical linting and docstring validation tool for this repository
+**Version:** Phase 7 (Unsafe Fix Mode implemented)
 **Last Updated:** 2025-12-30
 
 ## Overview
@@ -54,12 +54,14 @@ python3 -m tools.repo_lint check [OPTIONS]
 ```
 
 **Options:**
+
 - `--ci`, `--no-install`: CI mode - fail if tools are missing (exit code 2)
 - `--verbose`, `-v`: Show verbose output including passed checks
 - `--only <language>`: Run checks for only the specified language (python, bash, powershell, perl, yaml, rust)
 - `--json`: Output results in JSON format for CI debugging
 
 **Exit Codes:**
+
 - `0`: All checks passed
 - `1`: Linting violations found
 - `2`: Required tools missing (CI mode)
@@ -93,17 +95,20 @@ python3 -m tools.repo_lint fix [OPTIONS]
 ```
 
 **Safe Fixes Include:**
+
 - Black (Python formatter)
 - shfmt (Bash formatter)
 - Ruff safe auto-fixes (Python linter)
 
 **Options:**
+
 - `--ci`, `--no-install`: CI mode - fail if tools are missing
 - `--verbose`, `-v`: Show verbose output
 - `--only <language>`: Run fixes for only the specified language
 - `--json`: Output results in JSON format
 
 **Exit Codes:**
+
 - `0`: All fixes applied successfully, no violations remain
 - `1`: Violations remain after fixes
 - `2`: Required tools missing (CI mode)
@@ -145,16 +150,19 @@ python3 -m tools.repo_lint fix --unsafe --yes-i-know [OPTIONS]
 5. **REVIEW REQUIRED**: Always review the generated patch and log files in `logs/unsafe-fixes/` before committing.
 
 **Unsafe Fixers:**
+
 - `unsafe_docstring_rewrite`: Converts Google-style docstrings to Sphinx format (may alter documentation semantics)
 - *(More fixers may be added in the future)*
 
 **Guard Rails:**
+
 - `--unsafe` without `--yes-i-know` → Exit code 2 with error message
 - Any unsafe flag in CI environment → Exit code 2 with error message
 - CI detection via `--ci` flag or `CI` environment variable
 
 **Forensics:**
 All unsafe fix operations generate mandatory forensic artifacts in `logs/unsafe-fixes/`:
+
 - `unsafe-fix-TIMESTAMP.patch` - Unified diff of all changes
 - `unsafe-fix-TIMESTAMP.log` - Detailed log of what changed, why, and when
 
@@ -179,6 +187,7 @@ python3 -m tools.repo_lint fix --unsafe --yes-i-know --ci
 ```
 
 **See Also:**
+
 - [AI Constraints Documentation](../../docs/contributing/ai-constraints.md) - AI agent safety rules
 - [Phase 7 Requirements](../../docs/ai-prompt/110/new-requirement-phase-7.md) - Unsafe mode specification
 
@@ -191,10 +200,12 @@ python3 -m tools.repo_lint install [OPTIONS]
 ```
 
 **Options:**
+
 - `--verbose`, `-v`: Show verbose output
 - `--cleanup`: Remove repo-local tool installations (safe, only removes `.venv-lint/`, `.tools/`, etc.)
 
 **Behavior:**
+
 - **Python tools**: Auto-installed in `.venv-lint/` virtual environment
 - **Other tools**: Manual installation instructions printed
 
@@ -251,6 +262,7 @@ Safe auto-fixes are controlled by `conformance/repo-lint/autofix-policy.json`:
 ### Python Tool Configuration
 
 All Python tools are configured in `pyproject.toml`:
+
 - Black: `[tool.black]`
 - Ruff: `[tool.ruff]`
 - Pylint: `[tool.pylint]`

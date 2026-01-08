@@ -1,4 +1,5 @@
 # Issue 098 Overview
+
 Last Updated: 2025-12-31
 Related: Issue #098, PRs #159
 
@@ -9,6 +10,7 @@ Related: Issue #098, PRs #159
 This issue tracks the remaining callouts, recommendations, and nits identified after the initial repo restructure. The work is intentionally phased to keep risk low and ensure CI remains green throughout.
 
 ## Progress Tracker
+
 - [x] Phase 0: Preflight & Guardrails
 - [x] Phase 1: Documentation Hygiene & Entry Points
 - [x] Phase 2: Wrappers Path Simplification
@@ -20,7 +22,9 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] Phase 6: Final Polish & Long-Term Maintenance
 
 ## Session Notes (newest first)
+
 ### 2025-12-31 00:20 - Phase 5.5.0.3 verification and Phase 6 completion
+
 - Verified all Perl filename references are correct (snake_case)
 - Added persona-based navigation to docs/README.md
 - Added repository structure map to root README.md
@@ -30,6 +34,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ---
 
 ## Global Rules (Apply to every Phase)
+
 - Use `git mv` for renames/moves to preserve history.
 - Install and use `rg` (ripgrep) for repo searches **instead of** `grep`/`rgrep`.
   - Treat `rg` as the default search tool in all instructions, scripts, and debugging steps.
@@ -60,11 +65,13 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ## Phase 0 — Preflight & Guardrails (Stabilize the ground you’re standing on)
 
 ### Item 0.1 — Create tracking + baseline
+
 - [x] **Sub‑Item 0.1.1:** Create branch `refactor/followups-post-restructure`
 - [x] **Sub‑Item 0.1.2:** Record current CI run links + status in the PR/issue description
 - [x] **Sub‑Item 0.1.3:** Tag baseline (optional): `post-restructure-baseline-YYYYMMDD`
 
 ### Item 0.2 — Add/confirm reference auditing helpers
+
 - [x] **Sub‑Item 0.2.1:** Ensure `scripts/verify-repo-references.sh` exists and runs locally
 - [x] **Sub‑Item 0.2.2:** Add “obsolete path tokens” list to the helper script (or a config file), including:
   - `documents/`
@@ -73,6 +80,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 0.2.3:** Add a CI job (or reuse existing) to run the reference checker on PRs
 
 **Phase 0 Success Criteria**
+
 - ✅ Reference helper exists and runs
 - ✅ Baseline CI known and documented
 - ✅ No structure changes yet
@@ -82,7 +90,9 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ## Phase 1 — Documentation Hygiene & Entry Points (Reduce confusion, improve discoverability)
 
 ### Item 1.1 — Fix `wrappers/README.md` mismatch (High)
+
 **Problem:** `wrappers/README.md` currently reads like AI-agent methodology instructions (sharding CLAUDE / `.docs/agent`) instead of documenting wrappers.
+
 - [x] **Sub‑Item 1.1.1:** Decide: **Move** vs **Rewrite**
   - Move the AI-agent content under `docs/history/ai-agent-guidelines/` (preferred)
   - Or rewrite `wrappers/README.md` to be wrappers-focused and relocate the old content
@@ -95,7 +105,9 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 1.1.4:** Update any links in docs pointing to wrappers README
 
 ### Item 1.2 — Standardize wrapper test docs naming (Medium)
+
 **Problem:** inconsistent naming (`readme-tests.md` vs `README.md` vs `testing.md`).
+
 - [x] **Sub‑Item 1.2.1:** Pick one convention:
   - Option A (recommended): `README.md` inside each wrapper language folder
   - Option B: `testing.md` across languages
@@ -104,7 +116,9 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 1.2.4:** Verify GitHub folder rendering is clean and consistent
 
 ### Item 1.3 — Add root-level contributor entry point (Medium)
+
 **Problem:** GitHub surfaces root `CONTRIBUTING.md` automatically; currently guidelines live under docs.
+
 - [x] **Sub‑Item 1.3.1:** Add `CONTRIBUTING.md` at repository root
 - [x] **Sub‑Item 1.3.2:** Make it an entry point that links to:
   - `docs/contributing/contributing-guide.md`
@@ -113,12 +127,15 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 1.3.3:** Ensure docs index and root README link to it
 
 ### Item 1.4 — Clarify `docs/history/` sprawl (Low/Medium)
+
 **Problem:** history is huge; readers may drown.
+
 - [x] **Sub‑Item 1.4.1:** Add `docs/history/README.md` as an index of major history clusters (epics, PRs, milestones)
 - [x] **Sub‑Item 1.4.2:** Update `docs/README.md` to link to history index instead of listing every file
 - [x] **Sub‑Item 1.4.3:** Optionally group history into subfolders (e.g., `docs/history/epics/`, `docs/history/prs/`, `docs/history/milestones/`) using `git mv`
 
 **Phase 1 Success Criteria**
+
 - ✅ Wrappers README accurately describes wrappers
 - ✅ Wrapper test docs are consistent and discoverable
 - ✅ CONTRIBUTING entry point exists at root
@@ -129,9 +146,11 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ## Phase 2 — Wrappers Path Simplification (Kill redundant nesting, keep behavior identical)
 
 ### Item 2.1 — Remove redundant `wrappers/scripts/<lang>/scripts/` nesting (High)
+
 **Problem:** current wrappers paths are overly nested and confusing.
+
 - [x] **Sub‑Item 2.1.1:** Define target layout (recommended):
-  - `wrappers/<lang>/`  
+  - `wrappers/<lang>/`
     - scripts at top-level **OR** in `scripts/`
     - tests in `tests/`
 - [x] **Sub‑Item 2.1.2:** Move language folders up one level:
@@ -147,16 +166,19 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 2.1.5:** Run wrapper test suites per language locally
 
 ### Item 2.2 — Ensure conformance tooling still finds wrappers (High)
+
 - [x] **Sub‑Item 2.2.1:** Update any wrapper discovery logic docs (`docs/architecture/wrapper-discovery.md` if present)
 - [x] **Sub‑Item 2.2.2:** Update conformance driver scripts to new locations
 - [x] **Sub‑Item 2.2.3:** Run full conformance against `conformance/vectors.json`
 
 ### Item 2.3 — Keep CI path expectations accurate (High)
+
 - [x] **Sub‑Item 2.3.1:** Update `.github/workflows/*` to point at new wrapper paths
 - [x] **Sub‑Item 2.3.2:** Update any repository structure validation scripts
 - [x] **Sub‑Item 2.3.3:** CI must pass: lint + tests + conformance
 
 **Phase 2 Success Criteria**
+
 - ✅ Wrapper paths are simplified
 - ✅ No behavior changes
 - ✅ CI and conformance remain green
@@ -166,7 +188,9 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ## Phase 3 — Clarify/Document Build Artifact Directory (`dist/`) (Low/Medium)
 
 ### Item 3.1 — Decide whether `dist/` is a committed directory (Medium)
+
 **Problem:** empty or unclear `dist/` can confuse contributors.
+
 - [x] **Sub‑Item 3.1.1:** Determine usage:
   - CI artifact staging only (recommended: do not commit artifacts)
   - Committed release bundles (not recommended for most repos)
@@ -179,6 +203,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - whether it should be committed
 
 **Phase 3 Success Criteria**
+
 - ✅ `dist/` has a clearly documented purpose (or is removed if truly unnecessary)
 - ✅ CI does not rely on committed build outputs
 
@@ -187,6 +212,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ## Phase 4 — Script & Code Casing Standardization (Dedicated Phase, High Risk / High Coordination)
 
 > This phase intentionally stands alone because it touches:
+>
 > - file names
 > - symbols inside scripts (functions/variables)
 > - docs + examples
@@ -194,6 +220,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 > - end-to-end tests and conformance
 
 ### Phase 4 Decisions (Locked)
+
 - **File naming policy**
   - Script files follow their respective language naming standards (not a single repo-wide filename rule).
   - Non-script files (docs, configs, general repo files) use **kebab-case** by default.
@@ -215,6 +242,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - Maintain a single canonical doc: `docs/contributing/naming-and-style.md`
 
 ### Item 4.1 — Define the standards (High)
+
 - [x] **Sub‑Item 4.1.1:** Create/confirm a single standards doc:
   - `docs/contributing/naming-and-style.md`
 - [x] **Sub‑Item 4.1.2:** Lock the rules (examples below; adjust to repo needs):
@@ -227,6 +255,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 4.1.3:** Decide how strict enforcement will be (lint vs “warn-only” vs “fail CI”)
 
 ### Item 4.2 — Inventory current casing deviations (High)
+
 - [x] **Sub‑Item 4.2.1:** Generate a report of file names that violate the chosen policy
 - [x] **Sub‑Item 4.2.2:** Generate a report of internal symbol deviations (where feasible)
   - Python: `ruff`/`flake8` naming plugins (if desired)
@@ -235,6 +264,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 4.2.3:** Attach the reports to the PR (or store in `docs/history/`)
 
 ### Item 4.3 — Rename files (High)
+
 - [x] **Sub‑Item 4.3.1:** Apply file renames via `git mv` in small batches per language
 - [x] **Sub‑Item 4.3.2:** After each batch:
   - update references in code/docs/workflows
@@ -242,6 +272,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 4.3.3:** Update any “structure validation” scripts with the new naming rules
 
 ### Item 4.4 — Update internal symbol casing (Medium/High)
+
 - [x] **Sub‑Item 4.4.1:** Python:
   - rename functions/vars to snake_case
   - update imports and call sites
@@ -258,10 +289,12 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - run Perl tests + critic if enforced
 
 ### Item 4.5 — Update documentation and examples (High)
+
 - [x] **Sub‑Item 4.5.1:** Update any code blocks in docs that reference renamed scripts/functions
 - [x] **Sub‑Item 4.5.2:** Update README and docs indexes if any paths changed
 
 ### Item 4.6 — Update CI enforcement policy (High)
+
 - [x] **Sub‑Item 4.6.1:** Modify GitHub Actions workflows to enforce the *new* policy (not the old one)
 - [x] **Sub‑Item 4.6.2:** Ensure the enforcement is consistent across languages:
   - use linters where available
@@ -270,12 +303,14 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub‑Item 4.6.4:** Set enforcement to warn/no-new-violations during Phase 4; defer strict pass/fail conversion to Phase 4.5.
 
 ### Item 4.7 — Full verification (High)
+
 - [x] **Sub‑Item 4.7.1:** Run full Rust test suite
 - [x] **Sub‑Item 4.7.2:** Run all wrapper tests (bash/perl/powershell/python3)
 - [x] **Sub‑Item 4.7.3:** Run conformance suite against vectors
 - [x] **Sub‑Item 4.7.4:** CI must pass on PR
 
 **Phase 4 Success Criteria**
+
 - ✅ All casing rules documented and enforced
 - ✅ All file names and internal symbols comply
 - ✅ All references updated (docs, scripts, workflows)
@@ -286,24 +321,29 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 > Goal: Convert Phase 4’s warning/rollout state into fully passing enforcement, one language at a time, without breaking CI.
 
 ### Item 4.5.3 — Python enforcement pass (High)
+
 - [x] **Sub‑Item 4.5.3.1:** Turn Python naming checks from warn/no-new to hard fail.
 - [x] **Sub‑Item 4.5.3.2:** Fix all remaining Python naming violations (files + symbols) until CI passes.
 
 ### Item 4.5.4 — PowerShell enforcement pass (High)
+
 - [x] **Sub‑Item 4.5.4.1:** Turn PowerShell naming checks from warn/no-new to hard fail (functions + filenames).
 - [x] **Sub‑Item 4.5.4.2:** Keep variable-case as warnings for now; track a follow-up to enforce later.
 - [x] **Sub‑Item 4.5.4.3:** Fix all remaining PowerShell naming violations until CI passes.
 
 ### Item 4.5.5 — Bash enforcement pass (High)
+
 - [x] **Sub‑Item 4.5.5.1:** Turn Bash naming checks from warn/no-new to hard fail for obvious violations.
 - [x] **Sub‑Item 4.5.5.2:** Fix any remaining obvious violations until CI passes.
 
 ### Item 4.5.6 — Perl enforcement pass (High)
+
 - [x] **Sub‑Item 4.5.6.1:** Choose and document Perl naming conventions in `docs/contributing/naming-and-style.md`.
 - [x] **Sub‑Item 4.5.6.2:** Implement CI checks as warn/no-new first, then convert to hard fail once clean.
 - [x] **Sub‑Item 4.5.6.3:** Fix Perl naming violations until CI passes.
 
 **Phase 4.5 Success Criteria**
+
 - ✅ Each language is converted from warn/rollout to passing enforcement without breaking CI
 - ✅ Python/PowerShell/Bash naming enforcement is fully passing
 - ✅ PowerShell variable-case remains warn-only with a tracked TODO
@@ -320,6 +360,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 > Goal: Each wrapper language directory gets a first-class, language-native test runner that is functionally equivalent to the existing Bash `run-tests.sh` used for wrappers. These are **in addition to** the current Bash `run-tests.sh` scripts.
 
 ### Phase 5 Decisions (Locked)
+
 - **Equivalence contract:** Strict parity with `run-tests.sh` (behavior, exit codes, stdout/stderr conventions, and CLI flags or a documented 1:1 mapping).
 - **Implementation approach:** Start with language-native runners as thin wrappers around the existing Bash `run-tests.sh` to minimize drift.
   - Add a TODO to optionally migrate to fully native implementations later if there is a strong reason.
@@ -331,6 +372,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - Add a TODO to optionally downgrade the duplicate Bash runner to scheduled/nightly if CI runtime becomes excessive.
 
 ### Item 5.1 — Define the contract for “equivalent” (High)
+
 - [x] **Sub-Item 5.1.1:** Document what `run-tests.sh` does today (inputs, outputs, exit codes, required tools, environment variables).
 - [x] **Sub-Item 5.1.2:** Define parity requirements for all runners:
   - same default behavior
@@ -347,12 +389,14 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub-Item 5.1.4:** Add a `future-work.md` entry: consider migrating thin wrappers to fully native test logic later (only if needed).
 
 ### Item 5.2 — Implement language-native runners (High)
+
 - [x] **Sub-Item 5.2.1:** Python wrapper: add `wrappers/python3/run_tests.py` as the functional equivalent of `wrappers/python3/run-tests.sh`.
 - [x] **Sub-Item 5.2.2:** PowerShell wrapper: add `wrappers/powershell/RunTests.ps1` as the functional equivalent of `wrappers/powershell/run-tests.sh`.
 - [x] **Sub-Item 5.2.3:** Perl wrapper: add `wrappers/perl/run_tests.pl` as the functional equivalent of `wrappers/perl/run-tests.sh` (snake_case Perl runner).
 - [x] **Sub-Item 5.2.4:** Ensure each runner can be executed directly from its wrapper directory and from repo root via documented commands.
 
 ### Item 5.3 — Lint, test, and CI integration (High)
+
 - [x] **Sub-Item 5.3.1:** Add/confirm lint rules for each new runner file type in CI (Python, PowerShell, Perl).
 - [x] **Sub-Item 5.3.2:** Update wrapper docs to include language-native runner usage examples.
 - [x] **Sub-Item 5.3.3:** Update CI workflows to run each language-native runner (in addition to existing Bash runner) where appropriate.
@@ -361,6 +405,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub-Item 5.3.5:** Add a `future-work.md` entry: if CI becomes too slow, move the duplicate Bash-runner execution to scheduled/nightly workflows while keeping language-native runners on PR CI.
 
 **Phase 5 Success Criteria**
+
 - ✅ Each wrapper directory contains a language-native runner (Python/PowerShell/Perl) that matches `run-tests.sh` behavior
 - ✅ All new runner files pass their respective lint workflows
 - ✅ Wrapper tests + conformance remain green in CI
@@ -497,6 +542,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - ✅ Completed: All fixes follow documented contracts
 
 **Phase 5.5 Success Criteria**
+
 - ✅ Docstring/symbol documentation requirements are explicitly documented for all supported languages
 - ✅ The validator enforces module/file docs **and** symbol-level docs (classes/functions/methods/etc.) across Python/Bash/Perl/PowerShell/Rust
 - ✅ The validator runs in CI and fails with actionable output
@@ -507,11 +553,13 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ## Phase 6 — Final Polish & Long-Term Maintenance (Nits that prevent future drift)
 
 ### Item 6.1 — Rename “scripts/” (dev utilities) if desired (Low/Optional)
+
 - [ ] **Sub‑Item 6.1.1:** Decide whether `scripts/` is ambiguous enough to justify churn; if yes, prefer renaming to `tools/` (unless the folder is truly CI-only, in which case consider `ci-scripts/`).
 - [ ] **Sub‑Item 6.1.2:** `git mv scripts tools` (if chosen)
 - [ ] **Sub‑Item 6.1.3:** Update workflows and docs accordingly
 
 ### Item 6.2 — Make docs index “start-here” clearer (Low)
+
 - [ ] **Sub‑Item 6.2.1:** Add a short “Start Here” section to `docs/README.md`
 - [ ] **Sub‑Item 6.2.2:** Ensure README links:
   - users → usage docs
@@ -519,6 +567,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - maintainers → architecture + testing
 
 ### Item 6.3 — Add “structure map” to root README (Low)
+
 - [ ] **Sub‑Item 6.3.1:** Add a short tree + explanation:
   - `rust/` canonical tool
   - `wrappers/` language wrappers
@@ -529,6 +578,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [ ] **Sub‑Item 6.3.2:** Add a `future-work.md` entry: consider adding a docs “Start Here” section organized by persona (User / Contributor / Maintainer) if navigation remains confusing.
 
 **Phase 6 Success Criteria**
+
 - ✅ Repo is self-explanatory to newcomers
 - ✅ Maintenance burden reduced
 - ✅ Less chance of future drift
@@ -536,6 +586,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 ---
 
 ## Reference Verification Checklist (Run after every Phase)
+
 - [x] `grep "documents/"` returns 0 (outside history docs) ✅
 - [x] `grep "RFC-Shared-Agent-Scaffolding-Example"` returns 0 (outside history/ai-prompt docs) ✅
 - [x] `grep` for any old file names you renamed returns 0 ✅
@@ -546,6 +597,7 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] Conformance tests: Not run (documentation-only changes)
 
 **Verification Notes:**
+
 - Phases 5.5-6 involved only documentation changes to README.md, docs/README.md, and AI journals
 - No code or workflow changes that would affect tests
 - All linting checks passed via `repo_lint check --ci`

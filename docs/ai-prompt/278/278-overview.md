@@ -14,15 +14,15 @@ This issue is intentionally phased to avoid a “big-bang” PR and to keep CI u
 
 These decisions are **locked in** for this issue and should be treated as requirements unless explicitly changed later.
 
-1. **PEP 526 scope (baseline):** enforce variable annotations for **module-level assignments** and **class attributes** as the mandatory baseline.  
+1. **PEP 526 scope (baseline):** enforce variable annotations for **module-level assignments** and **class attributes** as the mandatory baseline.
    Local-variable annotations are **optional** for now and may be enabled later behind `--strict-typing` and/or “new/changed code only”.
 
 2. **Function annotations:** enforce annotations for **every parameter** and **every return type** repo-wide, including explicit `-> None`.
 
-3. **Unknown types:** prefer **real types** where possible; when unknown, `Any` is allowed **with an explicit tightening tag**:  
+3. **Unknown types:** prefer **real types** where possible; when unknown, `Any` is allowed **with an explicit tightening tag**:
    `# typing: Any (TODO: tighten)`
 
-4. **Optional / union syntax (max compatibility):** allow PEP 604 `T | None`, but it is **allowed-not-preferred**.  
+4. **Optional / union syntax (max compatibility):** allow PEP 604 `T | None`, but it is **allowed-not-preferred**.
    Prefer `Optional[T]` for broad compatibility, and avoid churn: only update syntax when touching code for another reason.
 
 5. **`*args`/`**kwargs` policy:** use `*args: Any, **kwargs: Any` as the default (advanced `Unpack[...]` is optional later).
@@ -142,7 +142,7 @@ Write a concrete policy in a doc so the tooling can implement it deterministical
 
 ---
 
-## Phase 3 — Tooling design: can `repo_lint` enforce this?
+## Phase 3 — Tooling design: can `repo_lint` enforce this
 
 ### 3.1 Evaluate existing `repo_lint` Python runner
 
@@ -399,7 +399,6 @@ This includes:
   - [ ] failure report artifact contents (stable and ANSI-clean)
 - [ ] Regression tests:
   - [ ] add a regression test for every bug found in TOML integration so it cannot reoccur
-
 
 **Deliverable:** TOML linting in `repo_lint` is heavily tested and stable.
 

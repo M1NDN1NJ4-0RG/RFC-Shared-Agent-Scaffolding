@@ -1,4 +1,4 @@
-## 🎉 EPIC #33 COMPLETE! All Work Finished!
+## 🎉 EPIC #33 COMPLETE! All Work Finished
 
 **Last Updated:** 2025-12-27
 
@@ -9,6 +9,7 @@
 ## ✅ ALL MILESTONES COMPLETE (P0-P7)
 
 ### P0: Pre-flight Baseline Validation ✅
+
 - [x] Example directory structure normalized across all 4 languages
 - [x] Conformance pack exists (fixtures + goldens + harness)
 - [x] All four wrappers pass conformance tests on CI OS matrix
@@ -17,6 +18,7 @@
 - **Status:** ✅ COMPLETE (100 tests passing)
 
 ### P1: Docs & Rust Scaffolding ✅
+
 - [x] RFC updated with Rust canonical architecture
 - [x] Documentation created (3 files, 659 lines)
 - [x] Rust crate scaffolded with CLI
@@ -24,6 +26,7 @@
 - **Status:** ✅ COMPLETE
 
 ### P2: Conformance Harness + Fixtures ✅
+
 - [x] Test infrastructure complete (`common/mod.rs`, `snapshots.rs`)
 - [x] All 13 conformance tests written (5 safe-run, 4 safe-archive, 4 preflight)
 - [x] Snapshot testing framework in place
@@ -31,6 +34,7 @@
 - **Status:** ✅ COMPLETE
 
 ### P3: safe-run Implementation ✅
+
 - [x] Canonical Rust `safe-run` command implemented
 - [x] Event ledger with monotonic sequence tracking
 - [x] Log file generation only on failure
@@ -41,6 +45,7 @@
 - **Status:** ✅ COMPLETE (signal handling intentionally deferred)
 
 ### P4: Bash Wrapper Conversion ✅
+
 - [x] Converted from 227-line implementation to 113-line thin invoker
 - [x] Binary discovery cascade (5-step algorithm per docs/wrapper-discovery.md)
 - [x] Argument pass-through via `exec`
@@ -49,6 +54,7 @@
 - **Status:** ✅ COMPLETE
 
 ### P5: Perl Wrapper Conversion ✅
+
 - [x] Converted from 358-line implementation to 140-line thin invoker (61% reduction)
 - [x] Binary discovery logic implemented
 - [x] Argument pass-through via `exec()`
@@ -57,6 +63,7 @@
 - **Status:** ✅ COMPLETE
 
 ### P6: Python3 Wrapper Conversion ✅
+
 - [x] Converted from 350-line implementation to 130-line thin invoker (63% reduction)
 - [x] Binary discovery logic implemented
 - [x] Argument pass-through via `os.execvp()`
@@ -65,6 +72,7 @@
 - **Status:** ✅ COMPLETE
 
 ### P7: PowerShell Wrapper Conversion ✅
+
 - [x] Converted from 315-line implementation to 135-line thin invoker (57% reduction)
 - [x] Binary discovery logic implemented
 - [x] Argument pass-through via `& $binary`
@@ -91,14 +99,17 @@
 ## 🔧 Known Non-Blocking Issues
 
 ### 1. Signal Handling Test (safe-run-003) - DEFERRED
+
 **Status:** Intentionally deferred per PR3 completion document
 
 **What's Missing:**
+
 - Signal handlers for SIGTERM/SIGINT in Rust implementation
 - ABORTED log file generation on signal interruption
 - Exit codes 130 (SIGINT) or 143 (SIGTERM)
 
 **Impact:**
+
 - Test `safe-run-003` remains ignored in Rust conformance suite
 - Some wrapper tests fail signal tests
 - OS naturally handles signal exit codes (acceptable)
@@ -112,11 +123,13 @@
 **Status:** Tests need update, wrappers are correct
 
 **Failing Tests:**
+
 - Bash: `test_snippet_lines` - Expects "EVENTS" string in snippet
 - Python3: `test_snippet_lines_printed_to_stderr` - Expects "STDOUT tail" string
 - PowerShell: snippet test - Expects "SAFE-RUN:.*last.*lines" regex
 
 **Root Cause:**
+
 - Tests check for specific text not required by conformance spec
 - Conformance spec (safe-run-005) only requires last N lines of output
 - Rust implementation is correct per spec
@@ -186,14 +199,17 @@
 ## 🔧 Known Non-Blocking Issues
 
 ### 1. Signal Handling Test (safe-run-003) - DEFERRED
+
 **Status:** Intentionally deferred per PR3 completion document
 
 **What's Missing:**
+
 - Signal handlers for SIGTERM/SIGINT in Rust implementation
 - ABORTED log file generation on signal interruption
 - Exit codes 130 (SIGINT) or 143 (SIGTERM)
 
 **Impact:**
+
 - Test `safe-run-003` remains ignored
 - No ABORTED logs on signal interruption
 - OS naturally handles signal exit codes (acceptable)

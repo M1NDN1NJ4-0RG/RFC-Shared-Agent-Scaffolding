@@ -11,6 +11,7 @@
 Successfully converted `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh` from a 227-line independent implementation to a 113-line thin invoker that calls the Rust canonical binary.
 
 **Key Metrics:**
+
 - **Lines removed:** 212 (implementation logic, event ledger, log generation, signal handling)
 - **Lines added:** 98 (binary discovery, argument pass-through, error handling)
 - **Net reduction:** 114 lines (50% smaller)
@@ -21,6 +22,7 @@ Successfully converted `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/script
 ## Changes Made
 
 ### Before: Independent Implementation (227 lines)
+
 - Full implementation of safe-run contract
 - Event ledger with sequence tracking
 - Log file generation with split streams
@@ -30,6 +32,7 @@ Successfully converted `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/script
 - Complex FIFO-based stream capture
 
 ### After: Thin Invoker (113 lines)
+
 - Binary discovery cascade (5-step algorithm)
 - Argument pass-through (exec to Rust binary)
 - Exit code preservation
@@ -43,6 +46,7 @@ Successfully converted `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/script
 Follows `docs/wrapper-discovery.md` specification:
 
 ### 1. Environment Override: `SAFE_RUN_BIN`
+
 ```bash
 if [ -n "${SAFE_RUN_BIN:-}" ]; then
     echo "$SAFE_RUN_BIN"
@@ -51,6 +55,7 @@ fi
 ```
 
 ### 2. Dev Mode: `./rust/target/release/safe-run`
+
 ```bash
 if [ -n "$REPO_ROOT" ] && [ -x "$REPO_ROOT/rust/target/release/safe-run" ]; then
     echo "$REPO_ROOT/rust/target/release/safe-run"
@@ -59,6 +64,7 @@ fi
 ```
 
 ### 3. CI Artifact: `./dist/<os>/<arch>/safe-run`
+
 ```bash
 if [ -n "$REPO_ROOT" ] && [ "$PLATFORM" != "unknown/unknown" ]; then
     local ci_bin="$REPO_ROOT/dist/$PLATFORM/safe-run"
@@ -70,6 +76,7 @@ fi
 ```
 
 ### 4. PATH Lookup
+
 ```bash
 if command -v safe-run >/dev/null 2>&1; then
     command -v safe-run
@@ -78,6 +85,7 @@ fi
 ```
 
 ### 5. Fallback: Actionable Error (exit 127)
+
 ```bash
 cat >&2 <<'EOF'
 ERROR: Rust canonical tool not found.
@@ -103,6 +111,7 @@ exit 127
 ### Passing Tests (15/17 = 88%)
 
 **preflight-automerge-ruleset (5/5):**
+
 - ✅ ok returns 0
 - ✅ missing contexts returns 1
 - ✅ enforcement inactive returns 1
@@ -110,12 +119,14 @@ exit 127
 - ✅ auth error returns 2
 
 **safe-archive (4/4):**
+
 - ✅ default archives only one file
 - ✅ moves all logs (handles spaces in filenames)
 - ✅ no-clobber prevents overwrite
 - ✅ gzip compression works when gzip is available
 
 **safe-run (6/8):**
+
 - ✅ success produces no artifacts
 - ✅ failure captures stderr+stdout, preserves exit code
 - ❌ SAFE_SNIPPET_LINES prints tail snippet to stderr on failure (test over-specifies)
@@ -125,6 +136,7 @@ exit 127
 - ✅ merged view when SAFE_RUN_VIEW=merged
 
 **safe-check (0/1):**
+
 - ❌ exits 0 on healthy environment (test creates isolated environment)
 
 ---
@@ -140,6 +152,7 @@ exit 127
 **Status:** **Rust implementation is correct per spec**. Test is over-specified.
 
 **Evidence:**
+
 ```json
 // conformance/vectors.json - safe-run-005
 "expected": {
@@ -153,6 +166,7 @@ exit 127
 ```
 
 **Actual Rust output:**
+
 ```
 --- safe-run failure tail (2 lines) ---
 L2
@@ -175,6 +189,7 @@ L3
 **Status:** **Wrapper behavior is correct**. Test design assumes self-contained scripts, but wrapper model requires repository context.
 
 **Options:**
+
 1. Update safe-check.sh test to set `SAFE_RUN_BIN` environment variable
 2. Update safe-check.sh test to copy Rust binary to temp directory
 3. Convert safe-check.sh to thin wrapper (future work)
@@ -186,6 +201,7 @@ L3
 ### Manual Testing
 
 **Test 1: Success (no artifacts)**
+
 ```bash
 $ cd /home/runner/work/RFC-Shared-Agent-Scaffolding/RFC-Shared-Agent-Scaffolding
 $ RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh echo "test"
@@ -195,9 +211,11 @@ $ echo $?
 $ ls .agent 2>&1
 ls: cannot access '.agent': No such file or directory
 ```
+
 ✅ **PASS** - No artifacts created on success
 
 **Test 2: Failure (creates log, preserves exit code)**
+
 ```bash
 $ safe-run.sh sh -c "echo out; echo err >&2; exit 5"
 out
@@ -206,21 +224,26 @@ safe-run: command failed (rc=5). log: .agent/FAIL-LOGS/20251227T004320Z-pid4219-
 $ echo $?
 5
 ```
+
 ✅ **PASS** - Log created, exit code preserved
 
 **Test 3: Environment override**
+
 ```bash
 $ SAFE_RUN_BIN=./rust/target/release/safe-run safe-run.sh echo "override test"
 override test
 ```
+
 ✅ **PASS** - Environment override works
 
 **Test 4: Dev mode discovery**
+
 ```bash
 $ cd RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts
 $ ./safe-run.sh echo "dev mode"
 dev mode
 ```
+
 ✅ **PASS** - Discovers binary from repo root
 
 ---
@@ -245,6 +268,7 @@ All requirements met:
 ## What's Next: P5 - Convert Perl Wrapper
 
 **P5 will include:**
+
 - Convert `RFC-Shared-Agent-Scaffolding-Example/scripts/perl/scripts/safe-run.pl` to thin invoker
 - Follow same binary discovery rules
 - Ensure Perl wrapper conformance tests pass
@@ -254,12 +278,14 @@ All requirements met:
 ## Files Changed Summary
 
 **Modified:**
+
 - `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh`
   - 227 lines → 113 lines (50% reduction)
   - 212 lines removed (implementation logic)
   - 98 lines added (discovery + invocation)
 
 **Statistics:**
+
 - **Net change:** -114 lines
 - **Complexity reduction:** ~80% (removed event ledger, signal handling, stream capture, log generation)
 

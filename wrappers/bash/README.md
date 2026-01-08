@@ -27,6 +27,7 @@ The runner prints PASS/FAIL for each case and exits non-zero if anything fails.
 ## What gets tested
 
 ### safe-run.sh
+
 - Success: no artifacts created
 - Failure: stdout+stderr captured, exit code preserved
 - `SAFE_SNIPPET_LINES` tail snippet printing
@@ -34,12 +35,14 @@ The runner prints PASS/FAIL for each case and exits non-zero if anything fails.
 - SIGINT (Ctrl+C): creates `*ABORTED-fail.txt` and preserves forensic output
 
 ### safe-archive.sh
+
 - `--all` moves logs and handles filenames with spaces
 - No-clobber behavior (duplicate archive name causes failure and preserves originals)
 - Gzip compression when available
 - `--file` archives one file
 
 ### preflight_automerge_ruleset.sh
+
 - Happy path (success)
 - Missing required contexts
 - Enforcement not active
@@ -47,5 +50,5 @@ The runner prints PASS/FAIL for each case and exits non-zero if anything fails.
 - Auth error classification (exit 2)
 
 ### safe-check.sh
-- Sanity check end-to-end in a temp workspace
 
+- Sanity check end-to-end in a temp workspace

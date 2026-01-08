@@ -1,7 +1,7 @@
 # M2-P2-I1: Golden Behavior Assertions — Implementation Guide
 
-**Status:** Implemented via CI drift detection gate  
-**Date:** 2025-12-26  
+**Status:** Implemented via CI drift detection gate
+**Date:** 2025-12-26
 **Decision Authority:** @m1ndn1nj4
 
 ---
@@ -34,6 +34,7 @@ M2-P2-I1 is implemented through a **mandatory CI drift detection gate** that enf
 **Default:** Strict parity — all implementations must produce identical behavior.
 
 **Exception policy:**
+
 - Exceptions are **forbidden by default**
 - Exceptions require:
   1. Real drift surfaced by CI gate
@@ -52,18 +53,21 @@ M2-P2-I1 is implemented through a **mandatory CI drift detection gate** that enf
 **Workflow:** `.github/workflows/drift-detection.yml`
 
 **What it does:**
+
 1. Runs conformance vectors on all language bundles
 2. Captures outputs (exit codes, stdout, stderr, artifacts)
 3. Compares outputs across implementations
 4. Fails if outputs diverge beyond allowed tolerances
 
 **When it runs:**
+
 - Every PR affecting implementations (`scripts/*/`)
 - Every PR affecting conformance vectors (`conformance/`)
 - Push to main branch
 - Manual dispatch
 
 **Failure behavior:**
+
 - Exits non-zero on drift
 - Reports which implementations diverged
 - Shows diff between outputs
@@ -90,6 +94,7 @@ M2-P2-I1 is implemented through a **mandatory CI drift detection gate** that enf
 5. **Commit:** Include justification in commit message
 
 **Example acceptable difference (hypothetical):**
+
 - Exit signal codes (SIGTERM = 143 on Linux, 130 on macOS)
 - Justification: Platform signal handling differs, not a behavioral bug
 - Scope: Only for SIGTERM handling in safe-run ABORTED logs
@@ -99,12 +104,14 @@ M2-P2-I1 is implemented through a **mandatory CI drift detection gate** that enf
 ## Drift Detection Strategy
 
 ### Phase 1: Basic Output Comparison (Current)
+
 - Compare exit codes across implementations
 - Compare presence/absence of artifacts
 - Compare log file patterns
 - Fail on any unexpected divergence
 
 ### Phase 2: Semantic Comparison (Future, if needed)
+
 - Normalize timestamps (keep format, ignore value)
 - Normalize PIDs (keep pattern, ignore value)
 - Normalize paths (handle platform separators)
@@ -127,6 +134,7 @@ M2-P2-I1 is implemented through a **mandatory CI drift detection gate** that enf
 ## Metrics
 
 **Track over time:**
+
 - Number of drift failures per month
 - Number of allowed exceptions
 - Ratio of bugs vs acceptable differences
@@ -138,6 +146,7 @@ M2-P2-I1 is implemented through a **mandatory CI drift detection gate** that enf
 ## Example Workflow Output
 
 **When implementations match (success):**
+
 ```
 ✅ Bash:       safe-run-001 → exit 0, no artifacts
 ✅ Python 3:   safe-run-001 → exit 0, no artifacts
@@ -148,6 +157,7 @@ M2-P2-I1 is implemented through a **mandatory CI drift detection gate** that enf
 ```
 
 **When drift detected (failure):**
+
 ```
 ❌ DRIFT DETECTED: safe-run-002
 
@@ -168,16 +178,19 @@ FAIL: Behavioral divergence detected. Fix Perl implementation or justify excepti
 ## Responsibilities
 
 ### Implementers
+
 - Ensure implementations match M0 contract exactly
 - Run drift detection locally before submitting PR
 - Fix divergence or justify exception
 
 ### Maintainers
+
 - Review drift failures
 - Approve/reject exception requests
 - Keep allowed differences minimal
 
 ### CI
+
 - Enforce strict parity by default
 - Block merges on drift
 - Provide actionable failure messages
@@ -205,6 +218,6 @@ M2-P2-I1 is successful when:
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** 2025-12-26  
+**Version:** 1.0
+**Last Updated:** 2025-12-26
 **Refs:** #3, M2-P2-I1

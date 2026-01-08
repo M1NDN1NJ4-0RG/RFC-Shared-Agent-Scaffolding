@@ -29,4 +29,3 @@ pwsh -NoProfile -File ./run-tests.ps1
   - tail-snippet behavior
   - large-output behavior (smoke)
   - archive no-clobber + gzip
-

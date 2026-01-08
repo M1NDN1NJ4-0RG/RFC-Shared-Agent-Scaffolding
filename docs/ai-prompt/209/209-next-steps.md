@@ -1,11 +1,13 @@
 MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL REQUIREMENTS in `docs/contributing/session-compliance-requirements.md` BEFORE doing ANYTHING else. Non-negotiable.
 <!-- DO NOT EDIT OR REMOVE THE LINE ABOVE -->
 # Issue 209 AI Journal
+
 Status: In Progress
 Last Updated: 2025-12-31
 Related: Issue #209
 
 ## NEXT
+
 - Update session start/end requirements documentation per new requirement
 - Create canonical session compliance document
 - Ensure all future Copilot sessions follow established bootstrapper workflow
@@ -13,19 +15,24 @@ Related: Issue #209
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
 ### 2025-12-31 23:01 - Updated journals per new requirement document
+
 **Files Changed:**
+
 - `docs/ai-prompt/209/209-issue-overview.md`: Updated progress tracker to reflect all phases complete
 - `docs/ai-prompt/209/209-next-steps.md`: This journal entry
 
 **Changes Made:**
 Per new requirement document (`docs/ai-prompt/209/new-new-requirements.md`):
+
 1. Read canonical instructions (`.github/copilot-instructions.md`) ✅
 2. Updated issue journals to reflect actual completion state ✅
 3. Preparing to draft session start/end requirements document
 
 **Current State:**
 All work on Issue #209 (repo-lint bootstrapper) is COMPLETE:
+
 - ✅ Bash script: `scripts/bootstrap-repo-lint-toolchain.sh` (42,290 bytes)
 - ✅ Test suite: `scripts/tests/test_bootstrap_repo_lint_toolchain.py` (20 tests, all passing)
 - ✅ CI workflow: `.github/workflows/test-bootstrapper.yml`
@@ -33,6 +40,7 @@ All work on Issue #209 (repo-lint bootstrapper) is COMPLETE:
 - ✅ All compliance checks passing (shellcheck, shfmt, black, ruff, pylint, yamllint, docstrings)
 
 **Verification:**
+
 - Bootstrapper runs successfully with all toolchains (--all flag)
 - Tests pass in CI
 - All linters green
@@ -43,7 +51,9 @@ Create canonical session start/end requirements document
 ---
 
 ### 2025-12-31 21:28 - Implement Phase 2.4, 2.5 & Phase 3: PowerShell, Perl toolchains + verification gate
+
 **Files Changed:**
+
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Added PowerShell, Perl installation functions and verification gate
 - `docs/ai-prompt/209/209-next-steps.md`: Updated journal
 
@@ -90,6 +100,7 @@ Completed Phase 2 and Phase 3 per requirements with MANDATORY full compliance:
 ✅ Python linting: black ✅ ruff ✅ pylint 10.00/10 ✅
 
 **Testing:**
+
 - All functions have comprehensive Bash docstrings
 - Non-interactive Perl installation tested (PERL_MM_USE_DEFAULT=1)
 - PowerShell installation handles Microsoft repository setup
@@ -101,7 +112,9 @@ Documentation (Phase 4) and testing updates (Phase 5)
 ---
 
 ### 2025-12-31 21:12 - Fix Python linting: remove trailing whitespace in test file
+
 **Files Changed:**
+
 - `scripts/tests/test_bootstrap_repo_lint_toolchain.py`: Fixed trailing whitespace
 
 **Changes Made:**
@@ -117,7 +130,9 @@ Addresses mandatory Python lint check requirement from comment #3702924005.
 ---
 
 ### 2025-12-31 21:18 - Implement Phase 2.1 & 2.3: rgrep + shell toolchain installations
+
 **Files Changed:**
+
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Added rgrep and shell toolchain installation functions
 - `docs/ai-prompt/209/209-next-steps.md`: Updated journal
 
@@ -147,12 +162,14 @@ Implemented Phase 2.1 (rgrep) and Phase 2.3 (shell toolchain) per comment #37029
    - Added exit code 16: Shell toolchain installation failed
 
 **Compliance Verification (MANDATORY):**
+
 - ✅ shellcheck: 0 warnings (fixed SC2034 warnings with suppressions)
 - ✅ shfmt: formatting applied (trailing whitespace removed)
 - ✅ validate_docstrings: All docstrings conform to contract
 - ✅ No Python files changed (no Python linting required)
 
 **Testing:**
+
 ```bash
 # Compliance checks passed
 shellcheck scripts/bootstrap-repo-lint-toolchain.sh  # ✓
@@ -161,19 +178,24 @@ python3 scripts/validate_docstrings.py --file scripts/bootstrap-repo-lint-toolch
 ```
 
 **Known Issues/Limitations:**
+
 - shfmt installation via apt may fail on some systems (fallback to snap implemented)
 - ripgrep installation requires sudo access (graceful fallback to grep with warning)
 
 ---
 
 ## DONE (EXTREMELY DETAILED)
+
 ### 2025-12-31 21:04 - Add command-line arguments, banners, and verbose output (Phase 2 architectural enhancement)
+
 **Files Changed:**
+
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Major architectural enhancement
 - `docs/ai-prompt/209/209-next-steps.md`: Updated journal
 
 **Changes Made:**
 Implemented architectural enhancements per comment #3702895198:
+
 - Added command-line argument parsing with selective toolchain installation
 - Added verbose/quiet flag support (verbose-only during implementation)
 - Added progress banners for better user experience
@@ -195,7 +217,7 @@ Implemented architectural enhancements per comment #3702895198:
    - `show_banner()`: Display prominent banners for section headers
    - `show_usage()`: Display comprehensive help message
    - `parse_arguments()`: Parse and validate command-line arguments
-   
+
 3. **Global Flags**:
    - `VERBOSE_MODE`: true (default, required during implementation)
    - `QUIET_MODE`: false (reserved for future use)
@@ -208,7 +230,7 @@ Implemented architectural enhancements per comment #3702895198:
    - Shows configuration summary
    - Displays section banners (PHASE 1, PHASE 2, completion)
    - Shows explicit PATH activation instructions at end
-   
+
 5. **Full stdout/stderr Visibility**:
    - Removed `--quiet` from all pip install commands
    - Users now see complete installation output
@@ -223,6 +245,7 @@ Implemented architectural enhancements per comment #3702895198:
 
 **Caveat Addressed:**
 Per comment #3702895198 requirement:
+
 - `--quiet/-q` flags exist but are DISABLED with warning
 - Only verbose mode actually works during implementation
 - Warning message explains troubleshooting requirement
@@ -234,7 +257,7 @@ Per comment #3702895198 requirement:
    - Python + rgrep: Always installed (required)
    - Shell, PowerShell, Perl: Optional via flags
    - Allows users to install only what they need
-   
+
 2. **Verbose-Only During Implementation**:
    - All pip commands show full output
    - Helps identify dependency conflicts or installation issues
@@ -246,6 +269,7 @@ Per comment #3702895198 requirement:
    - Clarifies PATH activation is per-session
 
 **Testing:**
+
 ```bash
 # Help works
 bash scripts/bootstrap-repo-lint-toolchain.sh --help
@@ -266,6 +290,7 @@ bash scripts/bootstrap-repo-lint-toolchain.sh --quiet
 ```
 
 **Verification:**
+
 - Script formatted with shfmt ✓
 - All banners display correctly ✓
 - Configuration summary shows correct flags ✓
@@ -274,6 +299,7 @@ bash scripts/bootstrap-repo-lint-toolchain.sh --quiet
 - Help message comprehensive ✓
 
 **Next Steps:**
+
 - Implement rgrep installation (Phase 2.1)
 - Implement shell toolchain installation (Phase 2.3)
 - Implement PowerShell toolchain installation (Phase 2.4)
@@ -283,12 +309,15 @@ bash scripts/bootstrap-repo-lint-toolchain.sh --quiet
 ---
 
 ### 2025-12-31 20:48 - Implement Phase 2.2: Python toolchain installation
+
 **Files Changed:**
+
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Added install_python_tools function and Phase 2.2 implementation
 - `docs/ai-prompt/209/209-next-steps.md`: Updated journal
 
 **Changes Made:**
 Implemented Phase 2.2 (Python Toolchain Installation) per comment #3702876746:
+
 - Added `install_python_tools()` function
 - Installs all required Python tools: black, ruff, pylint, yamllint, **pytest**
 - **NEW REQUIREMENT**: pytest MUST be installed as part of Python toolchain (confirmed working)
@@ -313,18 +342,20 @@ Implemented Phase 2.2 (Python Toolchain Installation) per comment #3702876746:
    - Updated "Next steps" message
 
 **Python Tools Installed:**
+
 - ✅ black (25.12.0) - Code formatter
 - ✅ ruff (0.14.10) - Fast Python linter
-- ✅ pylint (4.0.4) - Python linter  
+- ✅ pylint (4.0.4) - Python linter
 - ✅ yamllint (1.37.1) - YAML linter
 - ✅ **pytest (9.0.2)** - Testing framework (**NEW REQUIREMENT**)
 
 **Design Decisions:**
+
 1. **Direct pip installation instead of `repo-lint install`**:
    - `repo-lint install` creates separate `.venv-lint` directory
    - We need tools in main `.venv` for bootstrap script's environment
    - Direct installation ensures tools are on PATH immediately
-   
+
 2. **Individual tool verification**:
    - Each tool checked with `command -v` after install
    - Version logged for troubleshooting
@@ -335,6 +366,7 @@ Implemented Phase 2.2 (Python Toolchain Installation) per comment #3702876746:
    - Allows scripts to detect Python toolchain issues specifically
 
 **Testing:**
+
 ```bash
 # Clean test
 rm -rf .venv .venv-lint
@@ -354,6 +386,7 @@ yamllint --version # yamllint 1.37.1 ✓
 ```
 
 **Verification:**
+
 ```bash
 # Script runs successfully
 bash scripts/bootstrap-repo-lint-toolchain.sh
@@ -370,12 +403,14 @@ pytest --version
 ```
 
 **Compliance:**
+
 - Script formatted with shfmt (no violations)
 - All functions have comprehensive Bash docstrings
 - Exit codes documented
 - Idempotent (safe to run multiple times)
 
 **Follow-ups:**
+
 - Phase 3: Verification gate (`repo-lint check --ci`)
 - Shell toolchain (shellcheck, shfmt) - may add later
 - Reply to comment #3702876746 confirming pytest installation
@@ -383,12 +418,15 @@ pytest --version
 ---
 
 ### 2025-12-31 20:26 - Add comprehensive unit tests for bootstrap script
+
 **Files Changed:**
+
 - `scripts/tests/test_bootstrap_repo_lint_toolchain.py`: Created comprehensive test suite (505 lines)
 - `docs/ai-prompt/209/209-next-steps.md`: Updated journal
 
 **Changes Made:**
 Addressed mandatory testing requirement from code review comment #2655857850:
+
 - Created comprehensive unit tests per repository policy (`.github/copilot-instructions.md` lines 199-204)
 - All new scripting/tooling files MUST have tests before committing
 
@@ -409,6 +447,7 @@ Created 9 comprehensive tests covering:
    - `test_find_repo_root_exits_10_when_not_in_repo`: Tests failure case
 
 **Test Framework:**
+
 - Uses Python unittest + pytest (standard for this repository)
 - Follows existing patterns from `test_validate_docstrings.py`
 - Tests are isolated with temporary directories
@@ -416,6 +455,7 @@ Created 9 comprehensive tests covering:
 - Comprehensive Python docstrings per repository standards
 
 **Test Execution:**
+
 ```bash
 # All tests pass
 pytest scripts/tests/test_bootstrap_repo_lint_toolchain.py -v
@@ -426,6 +466,7 @@ python3 scripts/tests/test_bootstrap_repo_lint_toolchain.py
 ```
 
 **Test Methodology:**
+
 - **Integration testing**: Tests full script execution with various setups
 - **Isolated function testing**: Extracts and tests individual functions (find_repo_root)
 - **Temporary environments**: Each test creates isolated temp directories
@@ -434,6 +475,7 @@ python3 scripts/tests/test_bootstrap_repo_lint_toolchain.py
 
 **Coverage Details:**
 Tests validate all Phase 1 requirements:
+
 - ✅ Repository root discovery logic (find_repo_root)
 - ✅ Virtual environment creation (.venv/)
 - ✅ Virtual environment idempotency
@@ -443,12 +485,14 @@ Tests validate all Phase 1 requirements:
 - ✅ Detecting all repo markers (.git, pyproject.toml, README.md)
 
 **Not Covered (Phase 2+ functionality)**:
+
 - repo-lint installation (requires actual repo-lint package)
 - Tool installation (shellcheck, shfmt, etc.) - future phases
 - Verification gate (`repo-lint check --ci`) - future phases
 - Exit codes 13, 14 (require full installation)
 
 **Verification:**
+
 ```bash
 # Test discovery
 pytest --collect-only scripts/tests/test_bootstrap_repo_lint_toolchain.py
@@ -464,6 +508,7 @@ ls -la scripts/tests/test_bootstrap_repo_lint_toolchain.py
 ```
 
 **Design Decisions:**
+
 1. Used integration testing approach (full script execution) rather than sourcing functions
    - Avoids issue where sourcing script runs main() automatically
    - More realistic - tests actual usage patterns
@@ -479,6 +524,7 @@ ls -la scripts/tests/test_bootstrap_repo_lint_toolchain.py
    - subprocess.run for script execution
 
 **Commands Run:**
+
 ```bash
 # Install pytest (required test framework)
 pip install pytest
@@ -491,34 +537,41 @@ echo $?  # 0
 ```
 
 **Follow-ups:**
+
 - Reply to comment #2655857850 confirming test coverage
 - Tests are ready for CI integration
 
 ---
 
 ### 2025-12-31 20:14 - Fix shfmt formatting compliance
+
 **Files Changed:**
+
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Applied shfmt formatting (378 lines changed)
 - `docs/ai-prompt/209/209-next-steps.md`: Updated journal
 
 **Changes Made:**
 Fixed bash lint failure reported in `repo-lint-failure-reports/20626392540/bash-lint-output.txt` (comment #3621392628):
+
 - shfmt formatter identified formatting inconsistencies
 - Applied automatic formatting with `repo-lint fix --only bash`
 - Changes are purely cosmetic (indentation and whitespace)
 
 **Specific Formatting Changes:**
 shfmt made the following standardizations:
+
 1. **Function body indentation**: Changed from 4 spaces to tab-based indentation
 2. **Continuation line formatting**: Reformatted multi-line conditionals for consistency
 3. **Whitespace normalization**: Standardized blank lines and spacing
 
 **Examples of changes:**
+
 - Function bodies now use tabs instead of spaces for indentation
 - Multi-line `if` statements reformatted for readability
 - Consistent spacing around operators
 
 **Verification:**
+
 ```bash
 # Before fix:
 repo-lint check --only bash
@@ -534,17 +587,20 @@ rm -rf .venv && bash scripts/bootstrap-repo-lint-toolchain.sh
 ```
 
 **Compliance Evidence:**
+
 - ✅ shellcheck: 0 warnings (unchanged)
 - ✅ shfmt: 0 violations (FIXED - was 1 violation)
 - ✅ validate_docstrings: 0 violations (unchanged)
 - ✅ repo-lint check --only bash: exit 0
 
 **Testing:**
+
 - Removed .venv and ran bootstrap script
 - Verified all functionality works identically
 - No behavioral changes, only formatting
 
 **Commands Run:**
+
 ```bash
 go install mvdan.cc/sh/v3/cmd/shfmt@latest
 source .venv/bin/activate
@@ -554,23 +610,28 @@ rm -rf .venv && bash scripts/bootstrap-repo-lint-toolchain.sh  # Tested function
 ```
 
 **Follow-ups:**
+
 - Reply to comment #3621392628 confirming fix
 
 ---
 
 ### 2025-12-31 20:02 - Phase 1 implementation complete
+
 **Files Changed:**
+
 - `scripts/bootstrap-repo-lint-toolchain.sh`: Created new Bash script (13,781 bytes)
 - `docs/ai-prompt/209/209-next-steps.md`: Updated journal
 
 **Changes Made:**
 Implemented Phase 1 of the implementation plan (Issue #209, comment #3702826930):
+
 - **Item 1.1: Repository Root Discovery** ✅
 - **Item 1.2: Python Virtual Environment Setup** ✅
 - **Item 1.3: repo-lint Package Installation** ✅
 - **Item 1.4: repo-lint Verification** ✅
 
 **Script Features:**
+
 1. **Comprehensive Bash docstrings** following `docs/contributing/docstring-contracts/bash.md`:
    - Top-level script docstring with all required sections (DESCRIPTION, USAGE, INPUTS, OUTPUTS, EXAMPLES, NOTES, PLATFORM COMPATIBILITY)
    - Function-level docstrings for all 9 functions (log, warn, die, find_repo_root, ensure_venv, activate_venv, determine_install_target, install_repo_lint, verify_repo_lint, main)
@@ -614,6 +675,7 @@ Implemented Phase 1 of the implementation plan (Issue #209, comment #3702826930)
    - 14: repo-lint exists but --help failed
 
 **Testing Performed:**
+
 ```bash
 # Test 1: Fresh install
 rm -rf .venv
@@ -640,12 +702,14 @@ repo-lint check --only bash
 ```
 
 **Compliance Evidence:**
+
 - ✅ Shellcheck: 0 warnings
 - ✅ Shfmt: Formatted correctly
 - ✅ Docstring validator: All required sections present
 - ✅ repo-lint: Exit code 0
 
 **Design Decisions:**
+
 1. Install target logic simplified to only check for pyproject.toml at repo root (not tools/repo_lint/) since the package is defined at root level
 2. Used `command -v` instead of `which` for better portability
 3. Added explicit venv activation verification
@@ -653,12 +717,14 @@ repo-lint check --only bash
 5. All functions documented inline per Bash docstring contract
 
 **Known Limitations (Phase 1):**
+
 - Does NOT install system tools (shellcheck, shfmt, etc.) - deferred to Phase 2
 - Does NOT run `repo-lint install` - deferred to Phase 2
 - Does NOT run `repo-lint check --ci` verification gate - deferred to Phase 3
 - No command-line flags (--force, --skip-verify) - deferred to Phase 3
 
 **Verification:**
+
 ```bash
 # File exists and is executable
 ls -la scripts/bootstrap-repo-lint-toolchain.sh
@@ -674,6 +740,7 @@ repo-lint check --only bash
 ```
 
 **Follow-ups:**
+
 - Phase 2: Tool installation (rgrep, Python toolchain, Shell, PowerShell, Perl)
 - Phase 3: Verification gate and error handling
 - Phase 4: Documentation
@@ -682,7 +749,9 @@ repo-lint check --only bash
 ---
 
 ### 2025-12-31 19:54 - Corrected terminology from repo-cli to repo-lint
+
 **Files Changed:**
+
 - `docs/ai-prompt/209/209-summary.md`: Updated all `repo-cli` references to `repo-lint`
 - `docs/ai-prompt/209/209-issue-overview.md`: Updated all `repo-cli` references to `repo-lint`
 - `docs/ai-prompt/209/209-implementation-plan.md`: Updated all `repo-cli` references to `repo-lint`
@@ -690,11 +759,13 @@ repo-lint check --only bash
 
 **Changes Made:**
 Addressed comment #3702811579 from @m1ndn1nj4 clarifying that:
+
 - The tool is `repo-lint` (not `repo-cli`)
 - All references to `repo-cli` in planning docs needed to be updated to `repo-lint`
 - The bootstrapper sets up the environment so `repo-lint` tool is fully usable with all arguments
 
 **Specific Updates:**
+
 1. **209-summary.md:**
    - Line 10: Changed "`repo-cli` (repo-lint)" → "`repo-lint`"
    - Line 18: Changed "`repo-cli`/repo-lint Python package" → "`repo-lint` Python package"
@@ -719,23 +790,27 @@ Addressed comment #3702811579 from @m1ndn1nj4 clarifying that:
 
 **Rationale:**
 The canonical tool name in this repository is `repo-lint` as defined in `pyproject.toml`:
+
 ```toml
 [project.scripts]
 repo-lint = "tools.repo_lint.cli:main"
 ```
 
 The only remaining references to "repo-cli" were in the old documentation file:
+
 - `docs/repo-cli-bootstrapper.md` - old file documenting the Rust `bootstrap-repo-cli` tool (now removed)
 - References to that file in the plan (now updated to point to `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`)
 
 The canonical bootstrapper documentation is now at `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` which documents the Bash `bootstrap-repo-lint-toolchain.sh` script.
 
 **Verification:**
+
 - Searched all three planning files for remaining `repo-cli` references
 - Only legitimate references remain (to existing file/tool names)
 - All functional/requirement references now correctly use `repo-lint`
 
 **Commands Run:**
+
 ```bash
 sed -i 's/repo-cli/repo-lint/g' docs/ai-prompt/209/209-issue-overview.md
 sed -i "s/\`repo-lint\`\/repo-lint/\`repo-lint\`/g" docs/ai-prompt/209/209-issue-overview.md
@@ -744,13 +819,16 @@ git diff --stat  # confirm changes
 ```
 
 **Follow-ups:**
+
 - Ready to proceed with implementation using correct `repo-lint` terminology
 - Will reply to comment #3702811579 confirming correction
 
 ---
 
 ### 2025-12-31 19:47 - Planning phase complete - all deliverables created
+
 **Files Changed:**
+
 - `docs/ai-prompt/209/209-next-steps.md`: Created and updated AI journal
 - `docs/ai-prompt/209/209-summary.md`: Created issue summary document
 - `docs/ai-prompt/209/209-implementation-plan.md`: Created detailed implementation plan
@@ -761,14 +839,14 @@ Created comprehensive planning documentation as requested in the agent instructi
 1. **209-next-steps.md** (AI Journal):
    - Established NEXT/DONE tracking structure per repository guidelines
    - Set up for per-commit updates throughout implementation
-   
+
 2. **209-summary.md** (Issue Summary):
    - Documented problem statement: Copilot agents failing repo-lint compliance due to tooling drift
    - Listed key deliverables: Bash script, documentation, optional tests
    - Enumerated all required tools (rgrep, Python toolchain, shell toolchain, PowerShell, Perl)
    - Defined exit code requirements and acceptance criteria
    - Noted that Rust implementation exists but Bash script is what's requested
-   
+
 3. **209-implementation-plan.md** (Detailed Plan):
    - **6 Phases** with detailed items and sub-items:
      - Phase 1: Core bootstrapper script (repo root discovery, venv setup, repo-lint install/verify)
@@ -788,6 +866,7 @@ Created comprehensive planning documentation as requested in the agent instructi
    - **Appendix**: Related issues, docs, code, external resources
 
 **Key Insights from Planning:**
+
 - Discovered existing Rust implementation at `rust/src/bootstrap.rs` [**REMOVED in Issue #265** - replaced by `rust/src/bootstrap_v2/`] with comprehensive docs
 - Issue specifically requests Bash script at `scripts/bootstrap-repo-lint-toolchain.sh`
 - Both implementations can coexist; Bash may serve as lighter-weight alternative
@@ -795,6 +874,7 @@ Created comprehensive planning documentation as requested in the agent instructi
 - Exit codes must be stable and documented (0=success, 1=generic fail, 2=missing tools, 10+=specific failures)
 
 **Verification:**
+
 - All three required files created in correct location: `docs/ai-prompt/209/`
 - 209-next-steps.md follows required format from .github/copilot-instructions.md
 - 209-summary.md provides comprehensive overview of issue
@@ -805,26 +885,32 @@ Created comprehensive planning documentation as requested in the agent instructi
 None (planning only, no code changes)
 
 **Known Issues/Risks:**
+
 - Platform variability (different Linux distros) → mitigated by focusing on Debian/Ubuntu
 - Sudo requirements → will detect and fail gracefully with clear instructions
 - Network dependency for installations → will document requirement
 
 **Follow-ups:**
+
 - Await human approval of plan before proceeding to implementation
 - If plan approved, start with Phase 1 (core bootstrapper script)
 
 ---
 
 ### 2025-12-31 19:47 - Initial journal setup
+
 **Files Changed:**
+
 - `docs/ai-prompt/209/209-next-steps.md`: Created AI journal file for issue #209
 
 **Changes Made:**
+
 - Created the mandatory AI journal file per repository guidelines
 - Set up NEXT/DONE structure for tracking work on the repo-lint toolchain bootstrapper epic
 - Initial status set to "In Progress"
 
 **Verification:**
+
 - File exists at correct path
 - Follows required format from .github/copilot-instructions.md
 

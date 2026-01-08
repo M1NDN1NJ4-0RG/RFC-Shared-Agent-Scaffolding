@@ -1,6 +1,6 @@
 # Python Docstring Contract
 
-**Language:** Python 3 (`.py`)  
+**Language:** Python 3 (`.py`)
 **Canonical style:** Module docstring using `"""..."""` with reStructuredText (reST) field format per **PEP 287**
 
 ## Purpose
@@ -326,9 +326,11 @@ if __name__ == "__main__":
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
+
 **File:** `wrappers/python3/scripts/safe_run.py`
 
 This file demonstrates:
+
 - Full module docstring with all required sections
 - Binary Discovery Order section
 - Multiple environment variables documented
@@ -337,18 +339,22 @@ This file demonstrates:
 - "See Also" references
 
 ### Example 2: Test Script
+
 **File:** `wrappers/python3/tests/test-safe_run.py`
 
 This file demonstrates:
+
 - Minimal docstring for test modules
 - Purpose section focused on testing scope
 - Examples of running tests
 - Notes about test dependencies
 
 ### Example 3: Utility Script
+
 **File:** `wrappers/python3/scripts/safe_check.py`
 
 This file demonstrates:
+
 - Description that states what it does NOT do
 - Usage section with multiple invocation patterns
 - Environment Variables with type annotations
@@ -357,11 +363,13 @@ This file demonstrates:
 ## Validation
 
 The validator checks for:
+
 - Presence of module docstring (triple-quoted string after shebang/comments)
 - Presence of reST field sections: `:Purpose:`, `:Environment Variables:`, `:Examples:`, `:Exit Codes:`
 - At least one code example with `::` or indented block
 
 The validator does NOT check:
+
 - Docstring formatting perfection
 - Function/class docstrings (see symbol-level-contracts.md)
 - Type annotation accuracy
@@ -370,12 +378,14 @@ The validator does NOT check:
 ## Common Mistakes
 
 ❌ **Wrong:** No blank line after summary
+
 ```python
 """One-line summary.
 Detailed description starts immediately.
 ```
 
 ✅ **Correct:** Blank line separates summary from body
+
 ```python
 """One-line summary.
 
@@ -383,16 +393,19 @@ Detailed description starts after blank line.
 ```
 
 ❌ **Wrong:** Single quotes for docstring
+
 ```python
 '''Module docstring'''
 ```
 
 ✅ **Correct:** Use double quotes
+
 ```python
 """Module docstring"""
 ```
 
 ❌ **Wrong:** Using underline format instead of reST fields
+
 ```python
 """Script does something.
 
@@ -409,6 +422,7 @@ Code example here::
 ```
 
 ✅ **Correct:** Use reST field format (PEP 287)
+
 ```python
 """Script does something.
 
@@ -423,6 +437,7 @@ Code example here::
 ```
 
 ❌ **Wrong:** Missing Exit Codes section
+
 ```python
 """Script summary.
 
@@ -435,6 +450,7 @@ Code example here::
 ```
 
 ✅ **Correct:** Always document exit codes
+
 ```python
 """Script summary.
 

@@ -1,6 +1,6 @@
 # Auto-Merge Preflight Checklist
 
-**Status:** Mandatory before enabling auto-merge on any PR.  
+**Status:** Mandatory before enabling auto-merge on any PR.
 **Load:** Before enabling auto-merge on a PR.
 
 ---
@@ -8,6 +8,7 @@
 ## Purpose
 
 The preflight validates that:
+
 1. Required CI checks are configured in the repository ruleset
 2. The PR will not be merged prematurely (before CI completes)
 3. Auto-merge is safe for this repository and branch
@@ -51,18 +52,22 @@ pwsh ./scripts/powershell/preflight_automerge_ruleset.ps1 \
 ## Required Inputs
 
 ### `--repo` (required)
+
 Format: `owner/repository`
 Example: `M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding`
 
 ### `--ruleset-name` (required)
+
 The exact name of the repository ruleset to validate.
 Example: `Main - PR Only + Green CI`
 
 ### `--want` (required)
+
 JSON array of required status check contexts.
 Example: `'["lint", "test", "build"]'`
 
 **How to determine required checks:**
+
 1. Review `.github/workflows/*.yml` files
 2. List all workflow job names that must pass before merge
 3. Include them in the `--want` array
@@ -87,12 +92,14 @@ See M0-P2-I2 exit code taxonomy for full reference.
 Preflight requires a GitHub token with `repo` scope.
 
 **Auth precedence:**
+
 1. `--token` CLI argument (highest priority)
 2. `GITHUB_TOKEN` environment variable
 3. `TOKEN` environment variable
 4. `gh auth token` command output (if `gh` CLI available)
 
 **Validation:**
+
 - Token is never logged or printed
 - Auth failure returns exit code 2
 - Clear error message indicates which auth method to use
@@ -117,6 +124,7 @@ Before enabling auto-merge, verify:
 ## What Preflight Validates
 
 ### ✅ Checks Performed
+
 1. **Ruleset exists:** Ruleset with specified name is configured
 2. **Ruleset is active:** Enforcement is `active` (not `disabled` or `evaluate`)
 3. **Required status checks rule:** Ruleset contains `required_status_checks` rule
@@ -124,6 +132,7 @@ Before enabling auto-merge, verify:
 5. **Auth works:** GitHub API responds with valid data (not 401/403)
 
 ### ❌ NOT Checked
+
 - Whether CI workflows are actually running
 - Whether checks will pass
 - Whether PR is ready to merge
@@ -136,15 +145,18 @@ Before enabling auto-merge, verify:
 ## Common Failures
 
 ### "Ruleset not found"
-**Cause:** Ruleset name doesn't match exactly (case-sensitive).  
+
+**Cause:** Ruleset name doesn't match exactly (case-sensitive).
 **Fix:** Check exact ruleset name in GitHub repo settings > Rules > Rulesets.
 
 ### "Missing required context: test"
-**Cause:** `--want` includes `"test"` but ruleset doesn't require it.  
+
+**Cause:** `--want` includes `"test"` but ruleset doesn't require it.
 **Fix:** Either add `test` to ruleset or remove from `--want` array.
 
 ### "Auth failure: Bad credentials"
-**Cause:** Invalid or missing GitHub token.  
+
+**Cause:** Invalid or missing GitHub token.
 **Fix:** Set valid `GITHUB_TOKEN` environment variable or use `gh auth login`.
 
 ---
@@ -152,16 +164,18 @@ Before enabling auto-merge, verify:
 ## After Preflight Success
 
 **You may now:**
+
 1. Enable auto-merge on the PR: `gh pr merge --auto --squash <PR-number>`
 2. Wait for CI (using `21_AUTO_MERGE_WAITING.md` constants)
 3. Monitor for merge completion
 
 **Do not:**
+
 - Skip preflight and enable auto-merge blindly
 - Assume CI will block merges (it won't without ruleset validation)
 
 ---
 
-**Version:** 1.0  
-**Last Updated:** 2025-12-26  
+**Version:** 1.0
+**Last Updated:** 2025-12-26
 **Refs:** RFC v0.1.0 section 5.3, M0-P2-I1, M0-P2-I2

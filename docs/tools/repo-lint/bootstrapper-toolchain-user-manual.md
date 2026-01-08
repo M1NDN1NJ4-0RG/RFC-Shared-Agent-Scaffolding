@@ -11,11 +11,13 @@ The `bootstrap-repo-lint-toolchain.sh` script automates the setup of all develop
 ### For Copilot Agents (MANDATORY)
 
 **Run at session start:**
+
 ```bash
 ./scripts/bootstrap-repo-lint-toolchain.sh
 ```
 
 You'll see live progress tracking:
+
 ```
 [bootstrap] [1/13] Parsing arguments...
 [bootstrap] ✓ [1/13] Parsing arguments (0s)
@@ -25,11 +27,13 @@ You'll see live progress tracking:
 ```
 
 **After bootstrap completes, activate the environment:**
+
 ```bash
 source .venv/bin/activate
 ```
 
 **Now you can use repo-lint:**
+
 ```bash
 repo-lint --help
 repo-lint check --ci
@@ -52,6 +56,7 @@ repo-lint check --ci
 The progress UI is **enabled by default** in all environments and automatically adapts:
 
 **Interactive Terminal (TTY):**
+
 - In-place updating progress bar
 - Shows: `[step/total] Step name...`
 - Success: `✓ [step/total] Step name (duration)`
@@ -60,6 +65,7 @@ The progress UI is **enabled by default** in all environments and automatically 
 - Clean visual feedback with checkmarks and timing
 
 **CI / Non-TTY:**
+
 - Clean, line-oriented output
 - No ANSI escape codes
 - No carriage returns
@@ -152,6 +158,7 @@ Total steps may vary based on configuration (steps 10-12 are conditional on flag
 ### Virtual Environment Location
 
 The script creates a Python virtual environment at:
+
 ```
 <repo-root>/.venv/
 ```
@@ -167,6 +174,7 @@ source .venv/bin/activate
 ```
 
 This ensures:
+
 - `repo-lint` is on PATH
 - All Python tools are accessible
 - The correct Python interpreter is used
@@ -218,6 +226,7 @@ shfmt --version
 ## Idempotency
 
 The script is **idempotent** - safe to run multiple times:
+
 - Existing virtual environment is reused
 - Already-installed packages are skipped
 - Verification ensures everything is functional
@@ -227,6 +236,7 @@ The script is **idempotent** - safe to run multiple times:
 ### "repo-lint: command not found" after bootstrap
 
 **Solution:** Activate the virtual environment:
+
 ```bash
 source .venv/bin/activate
 ```
@@ -234,6 +244,7 @@ source .venv/bin/activate
 ### Python tools not found
 
 **Solution:** Ensure virtual environment is activated:
+
 ```bash
 which python3  # Should show: <repo-root>/.venv/bin/python3
 ```
@@ -241,6 +252,7 @@ which python3  # Should show: <repo-root>/.venv/bin/python3
 ### Permission denied errors
 
 **Solution:** Ensure script is executable:
+
 ```bash
 chmod +x scripts/bootstrap-repo-lint-toolchain.sh
 ```
@@ -248,6 +260,7 @@ chmod +x scripts/bootstrap-repo-lint-toolchain.sh
 ### apt-get/brew installation failures
 
 **Solution:** The script will attempt installation but gracefully degrade:
+
 - `rgrep` → falls back to `grep`
 - Optional toolchains → clear error messages with manual install instructions
 
@@ -256,6 +269,7 @@ chmod +x scripts/bootstrap-repo-lint-toolchain.sh
 **BEFORE EVERY COMMIT**, Copilot agents **MUST**:
 
 1. **Run linting on shell scripts:**
+
    ```bash
    shellcheck <file>
    shfmt -d <file>
@@ -263,6 +277,7 @@ chmod +x scripts/bootstrap-repo-lint-toolchain.sh
    ```
 
 2. **Run linting on Python files:**
+
    ```bash
    black --check <file>
    ruff check <file>
@@ -311,11 +326,13 @@ This includes fixing violations in files created earlier in the PR.
 ### Design Decisions
 
 **Why direct pip install instead of `repo-lint install`?**
+
 - `repo-lint install` creates a separate `.venv-lint/` environment
 - Direct installation into main `.venv/` ensures all tools are immediately available
 - Simplifies PATH management for users and Copilot agents
 
 **Why non-interactive Perl installation?**
+
 - `Perl::Critic` installation can prompt for user input
 - Uses `PERL_MM_USE_DEFAULT=1` and `--notest --force` to avoid blocking
 - Enables automated/CI usage

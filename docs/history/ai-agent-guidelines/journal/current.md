@@ -1,7 +1,7 @@
 # Current Work State
 
-**Status:** Active  
-**Last Updated:** 2025-12-26  
+**Status:** Active
+**Last Updated:** 2025-12-26
 **Active Chunk ID:** `CHUNK-000-BOOTSTRAP`
 
 ---
@@ -11,6 +11,7 @@
 **Objective:** Initialize project with basic scaffolding and documentation.
 
 **Checklist:**
+
 - [x] Create `.docs/agent/` shard directory
 - [x] Create `.docs/journal/` journal directory
 - [x] Create agent shard templates
@@ -34,6 +35,7 @@
 ## Recent Activity Log
 
 ### 2025-12-26
+
 - Created full `.docs/agent/` shard structure
 - Created `.docs/journal/` structure with templates
 - Added routing index (`00_INDEX.md`)

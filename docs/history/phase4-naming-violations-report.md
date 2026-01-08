@@ -45,4 +45,3 @@
 ## Next Steps
 
 File renames will be applied in Phase 4.3 using `git mv` to preserve history.
-

@@ -11,6 +11,7 @@
 **Applies to:** Bash, Perl, Python3, PowerShell (after fix)
 
 **Test Procedure:**
+
 1. Copy wrapper script to temporary directory outside repo
 2. Set `SAFE_RUN_BIN` to valid Rust binary
 3. Change working directory to temp directory (outside repo)
@@ -18,11 +19,13 @@
 5. Verify command succeeds
 
 **Expected Result:**
+
 - Exit code: 0
 - Wrapper uses `SAFE_RUN_BIN` regardless of working directory
 - Command output appears correctly
 
 **Why This Matters:**
+
 - Wrappers should not depend on being invoked from within repo working directory
 - Script location should be irrelevant when `SAFE_RUN_BIN` is set
 - This enables testing scenarios where wrapper is copied to temp locations
@@ -86,14 +89,17 @@ Describe "Repository root detection" {
 **Applies to:** All wrappers
 
 **Test Procedure:**
+
 1. For each exit code in [0, 1, 7, 42, 127, 255]:
 2. Run command that exits with that code
 3. Verify wrapper exits with same code
 
 **Expected Result:**
+
 - Wrapper exit code matches child process exit code exactly
 
 **Why This Matters:**
+
 - CI depends on exit codes for build/test success/failure
 - Exit code 127 has special meaning (command not found)
 - Exit codes >128 indicate signal termination
@@ -144,10 +150,12 @@ Describe "Exit code propagation" {
 **Applies to:** All wrappers
 
 **Test Procedure:**
+
 1. Run `echo "" "after"`
 2. Verify output contains "after" on second line (empty first line)
 
 **Expected Result:**
+
 - Output: blank line + "after"
 - Empty string argument preserved
 
@@ -168,10 +176,12 @@ test_empty_argument() {
 **Contract:** ARG-PASS-001
 
 **Test Procedure:**
+
 1. Run `echo "hello world"`
 2. Verify output is exactly "hello world" (not split into two args)
 
 **Expected Result:**
+
 - Output: "hello world" as single line
 
 **Implementation:**
@@ -190,10 +200,12 @@ test_spaces_in_argument() {
 **Contract:** ARG-PASS-001
 
 **Test Procedure:**
+
 1. Run `echo "test;echo hacked"`
 2. Verify output is literal "test;echo hacked" (not executed)
 
 **Expected Result:**
+
 - Output: "test;echo hacked"
 - No "hacked" on separate line
 
@@ -220,11 +232,13 @@ test_metacharacters_not_interpreted() {
 **Applies to:** All wrappers
 
 **Test Procedure:**
+
 1. Set `SAFE_LOG_DIR=/tmp/custom_logs`
 2. Run failing command
 3. Verify log created in custom directory, not default
 
 **Expected Result:**
+
 - Log file exists in `/tmp/custom_logs/`
 - No log file in `.agent/FAIL-LOGS/`
 
@@ -260,11 +274,13 @@ test_safe_log_dir_inheritance() {
 **Contract:** SNIPPET-001
 
 **Test Procedure:**
+
 1. Set `SAFE_SNIPPET_LINES=3`
 2. Run failing command with 10 lines of output
 3. Verify last 3 lines appear in stderr
 
 **Expected Result:**
+
 - Stderr contains last 3 lines of output
 - Exit code matches child process
 
@@ -306,12 +322,14 @@ test_safe_snippet_lines_inheritance() {
 **Contract:** BIN-DISC-001, ERROR-HAND-001
 
 **Test Procedure:**
+
 1. Unset `SAFE_RUN_BIN`
 2. Remove wrapper from repo (or move to temp dir outside repo)
 3. Invoke wrapper
 4. Verify exit code 127 and error message
 
 **Expected Result:**
+
 - Exit code: 127
 - Stderr contains "Rust canonical tool not found"
 - Stderr lists searched locations
@@ -354,11 +372,13 @@ test_binary_not_found_error() {
 **Applies to:** All wrappers
 
 **Test Procedure:**
+
 1. On each CI platform (Linux, macOS, Windows):
 2. Extract platform string from each wrapper's detection logic
 3. Verify all wrappers produce same platform string
 
 **Expected Result:**
+
 - Linux: `linux/x86_64` or `linux/aarch64`
 - macOS: `macos/x86_64` or `macos/aarch64`
 - Windows: `windows/x86_64`
@@ -406,6 +426,7 @@ This test should be run in CI matrix and requires wrapper debug output or inspec
 | platform-det-001 | 📝 Add | 📝 Add | 📝 Add | 📝 Add | To be added |
 
 **Legend:**
+
 - ✅ Passing (instrumented evidence)
 - 🔧 Fixed in this PR
 - ⏸️ Needs Windows CI validation

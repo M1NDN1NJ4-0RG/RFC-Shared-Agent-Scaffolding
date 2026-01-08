@@ -5,6 +5,7 @@ This directory contains **test fixtures** - input data and helper scripts used b
 ## Purpose
 
 Fixtures provide controlled, repeatable test inputs:
+
 - Helper scripts that produce specific outputs
 - Sample input files for archive tests
 - Mock configuration files
@@ -13,6 +14,7 @@ Fixtures provide controlled, repeatable test inputs:
 ## Organization
 
 Fixtures can be organized by test category:
+
 ```
 fixtures/
 ├── safe-run/          # Fixtures for safe-run tests
@@ -28,6 +30,7 @@ fixtures/
 ## Helper Scripts
 
 Helper scripts should be:
+
 - **Portable** - work on all target platforms (or have platform-specific versions)
 - **Simple** - single responsibility, minimal dependencies
 - **Documented** - clear header comments explaining purpose and usage

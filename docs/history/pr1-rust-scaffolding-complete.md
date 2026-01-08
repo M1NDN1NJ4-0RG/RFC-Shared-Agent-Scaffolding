@@ -239,7 +239,7 @@ PR2 will add:
 - **Epic:** [#33 - Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)
 - **Branch:** `copilot/implement-rust-canonical-tool-again`
 - **Pre-flight PR:** [PR #37 - Pre-flight Baseline Validation](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/pull/37)
-- **Documentation:** 
+- **Documentation:**
   - [Rust Canonical Tool](./docs/rust-canonical-tool.md)
   - [Wrapper Discovery](./docs/wrapper-discovery.md)
   - [Conformance Contract](./docs/conformance-contract.md)

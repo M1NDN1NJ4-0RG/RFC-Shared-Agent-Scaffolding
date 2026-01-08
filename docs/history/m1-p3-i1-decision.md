@@ -1,8 +1,8 @@
 # M1-P3-I1: Python 2 Support Policy Decision
 
-**Status:** ✅ DECIDED - Drop Python 2 Support  
-**Date Finalized:** 2025-12-26  
-**Decision:** Option A (Drop Python 2 bundle)  
+**Status:** ✅ DECIDED - Drop Python 2 Support
+**Date Finalized:** 2025-12-26
+**Decision:** Option A (Drop Python 2 bundle)
 **Authority:** @m1ndn1nj4 (PR #9 comment)
 
 ---
@@ -17,7 +17,7 @@ The Python 2 bundle located at `RFC-Shared-Agent-Scaffolding-Example/scripts/pyt
 
 ## Rationale
 
-### Why Drop Python 2?
+### Why Drop Python 2
 
 1. **End of Life:** Python 2 reached official end-of-life on January 1, 2020 (over 5 years ago)
 2. **Maintenance Burden:** Supporting Python 2 increases maintenance complexity and CI overhead
@@ -28,8 +28,9 @@ The Python 2 bundle located at `RFC-Shared-Agent-Scaffolding-Example/scripts/pyt
 ### Testing Challenges
 
 The Python 2 bundle had persistent test failures:
+
 - Import/packaging mismatches
-- Module structure incompatibilities  
+- Module structure incompatibilities
 - No straightforward path to CI integration without significant additional work
 
 ---
@@ -88,15 +89,18 @@ If users require Python 2 support for legacy environments, they have two options
 ## Impact on Other Milestones
 
 ### M1 (Implementation Consistency)
+
 - [x] M1-P3-I1: Decision made ✅
 - Simplifies CI matrix (one less language to validate)
 - Removes blocker for M4-P1-I1 (Multi-Language CI Enforcement)
 
 ### M2 (Conformance Infrastructure)
+
 - Conformance test vectors (M2-P1-I1) will target 4 languages instead of 5
 - Golden behavior assertions (M2-P2-I1) have reduced scope
 
 ### M4 (CI & Operational Hardening)
+
 - CI matrix simplified (no Python 2 runner needed)
 - Faster CI execution with fewer jobs
 

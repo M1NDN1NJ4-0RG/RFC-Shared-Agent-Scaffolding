@@ -1,6 +1,6 @@
 # Perl Docstring Contract
 
-**Language:** Perl (`.pl`, `.pm`, `.t`)  
+**Language:** Perl (`.pl`, `.pm`, `.t`)
 **Canonical style:** POD (Plain Old Documentation) using `=head1`, `=head2`, `=over`, `=item`
 
 ## Purpose
@@ -512,9 +512,11 @@ use v5.10;
 ## Examples (Existing Files)
 
 ### Example 1: Wrapper Script
+
 **File:** `wrappers/perl/scripts/safe_run.pl`
 
 This file demonstrates:
+
 - Full POD with all required sections
 - BINARY DISCOVERY section with `=over`/`=item`/`=back`
 - Multiple ENVIRONMENT VARIABLES subsections
@@ -522,18 +524,22 @@ This file demonstrates:
 - Proper use of `B<bold>`, `I<italic>`, `C<code>`
 
 ### Example 2: Test Module
+
 **File:** `wrappers/perl/tests/lib/TestUtil.pm`
 
 This file demonstrates:
+
 - Module-level POD (for `.pm` files)
 - SYNOPSIS with function usage
 - FUNCTIONS section documenting each exported function
 - NOTES section for module constraints
 
 ### Example 3: Utility Script
+
 **File:** `wrappers/perl/scripts/safe_check.pl`
 
 This file demonstrates:
+
 - DESCRIPTION that states what it does NOT do
 - OPTIONS section for command-line flags
 - EXIT CODES with multiple failure modes
@@ -542,11 +548,13 @@ This file demonstrates:
 ## Validation
 
 The validator checks for:
+
 - Presence of POD block (between `=head1 NAME` and `=cut`)
 - Presence of section headers: `=head1 NAME`, `=head1 SYNOPSIS`, `=head1 DESCRIPTION`, `=head1 ENVIRONMENT VARIABLES`, `=head1 EXIT CODES`, `=head1 EXAMPLES`
 - At least one example under EXAMPLES section
 
 The validator does NOT check:
+
 - POD syntax perfection
 - Formatting consistency
 - Link validity
@@ -555,6 +563,7 @@ The validator does NOT check:
 ## Common Mistakes
 
 ❌ **Wrong:** Missing `=cut` at end of POD
+
 ```perl
 =head1 NAME
 
@@ -564,6 +573,7 @@ use strict;
 ```
 
 ✅ **Correct:** Always end POD with `=cut`
+
 ```perl
 =head1 NAME
 
@@ -575,6 +585,7 @@ use strict;
 ```
 
 ❌ **Wrong:** No EXIT CODES section
+
 ```perl
 =head1 DESCRIPTION
 
@@ -586,6 +597,7 @@ Does something useful.
 ```
 
 ✅ **Correct:** Always document exit codes
+
 ```perl
 =head1 DESCRIPTION
 
@@ -611,6 +623,7 @@ Failure
 ```
 
 ❌ **Wrong:** Using `<` and `>` directly
+
 ```perl
 =head1 SYNOPSIS
 
@@ -618,6 +631,7 @@ Failure
 ```
 
 ✅ **Correct:** Escape angle brackets in non-code context (or use as-is in code examples - POD is forgiving for indented code)
+
 ```perl
 =head1 SYNOPSIS
 

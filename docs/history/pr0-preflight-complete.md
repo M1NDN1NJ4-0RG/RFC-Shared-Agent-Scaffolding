@@ -19,11 +19,13 @@ Pre-flight baseline validation has been completed successfully. All four languag
 ### A) ✅ Normalize Example Directory Structure (COMPLETE)
 
 **Problem Resolved:**
+
 - Bash had nested structure: `scripts/bash/scripts/bash/` → flattened to `scripts/bash/scripts/`
 - PowerShell had nested structure: `scripts/powershell/scripts/powershell/` → flattened to `scripts/powershell/scripts/`
 - Perl and Python3 already had correct structure (no changes needed)
 
 **Changes Made:**
+
 - **Bash:**
   - Moved scripts from `scripts/bash/scripts/bash/` → `scripts/bash/scripts/`
   - Moved tests from `tests/bash/` → `tests/`
@@ -47,6 +49,7 @@ Pre-flight baseline validation has been completed successfully. All four languag
   - ✅ Validation passes for all 4 languages
 
 **Test Results:**
+
 ```
 ✅ Bash:       ALL TESTS PASSED (4 test suites)
 ✅ Perl:       Result: PASS (46 tests)
@@ -56,6 +59,7 @@ Pre-flight baseline validation has been completed successfully. All four languag
 ```
 
 **Acceptance Criteria:**
+
 - [x] Example directory structure is identical across all four languages
 - [x] All test suites still pass locally and in CI
 - [x] No workflow references the old paths anymore
@@ -69,6 +73,7 @@ Pre-flight baseline validation has been completed successfully. All four languag
 **Status:** Pre-existing conformance infrastructure is in place.
 
 **Evidence:**
+
 - `conformance/vectors.json` exists (v1.0, M0 contract v0.1.0)
 - Contains test vectors for:
   - `safe_run` (5 vectors)
@@ -85,6 +90,7 @@ Pre-flight baseline validation has been completed successfully. All four languag
 **Status:** Test vectors and expected behaviors are defined in `conformance/vectors.json`.
 
 **Coverage:**
+
 - Exit code behavior ✓
 - STDOUT/STDERR behavior ✓
 - Artifact creation ✓
@@ -96,6 +102,7 @@ Pre-flight baseline validation has been completed successfully. All four languag
 - Snippet output ✓
 
 **Edge cases covered:**
+
 - Empty output ✓
 - Mixed stdout+stderr ✓
 - Non-zero exit codes ✓
@@ -121,6 +128,7 @@ Pre-flight baseline validation has been completed successfully. All four languag
 | PowerShell  | 17     | ✅ PASS | Pester 5+        | All behaviors + merged view       |
 
 **Test Quality Validation:**
+
 - ✅ Tests are hermetic (clean temp directories per test)
 - ✅ No environment leakage between tests
 - ✅ Signal handling tested (SIGTERM/SIGINT)
@@ -136,14 +144,16 @@ Pre-flight baseline validation has been completed successfully. All four languag
 **Status:** CI enforcement is active and operational.
 
 **Workflows:**
+
 1. `.github/workflows/structure-validation.yml` - Enforces canonical structure
 2. `.github/workflows/test-bash.yml` - Bash test suite
-3. `.github/workflows/test-perl.yml` - Perl test suite  
+3. `.github/workflows/test-perl.yml` - Perl test suite
 4. `.github/workflows/test-python3.yml` - Python3 test suite (matrix: 3.8, 3.11, 3.12)
 5. `.github/workflows/test-powershell.yml` - PowerShell test suite
 6. `.github/workflows/conformance.yml` - Multi-language conformance validation
 
 **All workflows:**
+
 - ✅ Run on PR and push to main
 - ✅ Validate structure/tests for changed paths
 - ✅ Upload artifacts on failure
@@ -170,6 +180,7 @@ All requirements met:
 With Pre-flight validation complete, the repository is now ready for Rust implementation work.
 
 **PR 1 will include:**
+
 - Update RFC + add docs describing the new canonical architecture
 - Add `rust/` crate skeleton with CLI + `--version`
 - No wrapper behavior changes yet
@@ -180,12 +191,14 @@ With Pre-flight validation complete, the repository is now ready for Rust implem
 
 ## Files Changed
 
-### Commits:
+### Commits
+
 1. `0b79485` - Flatten Bash directory structure to canonical layout
-2. `82d8ec2` - Flatten PowerShell directory structure to canonical layout  
+2. `82d8ec2` - Flatten PowerShell directory structure to canonical layout
 3. `9a5460a` - Add structure validation script, CI workflow, and documentation
 
-### Summary:
+### Summary
+
 - 25 files changed (moves, edits, new files)
 - 0 functional behavior changes
 - 0 test coverage reduction

@@ -1,7 +1,7 @@
 # C# Docstring Contract (DRAFT)
 
-**Language:** C# (`.cs`)  
-**Canonical style:** XML documentation comments using `///`  
+**Language:** C# (`.cs`)
+**Canonical style:** XML documentation comments using `///`
 **Status:** DRAFT - Not yet enforced by validator
 
 ## Purpose
@@ -383,11 +383,13 @@ When this contract is officially adopted, the validator should check:
 ## Common Mistakes (Future)
 
 ❌ **Wrong:** Missing XML documentation
+
 ```csharp
 public void DoSomething() { }
 ```
 
 ✅ **Correct:** XML documentation required
+
 ```csharp
 /// <summary>
 /// Does something useful
@@ -424,6 +426,7 @@ docfx build docfx.json
 **DRAFT** - This contract is not yet enforced. Feedback welcome before official adoption.
 
 To adopt this contract:
+
 1. Add C# file patterns to validator
 2. Implement CSharpValidator class
 3. Add test coverage

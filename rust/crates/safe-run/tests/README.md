@@ -19,21 +19,25 @@ tests/
 ## Running Tests
 
 ### All tests (excluding ignored)
+
 ```bash
 cargo test
 ```
 
 ### All tests including ignored (will fail until implementation)
+
 ```bash
 cargo test -- --include-ignored
 ```
 
 ### Specific test file
+
 ```bash
 cargo test --test conformance
 ```
 
 ### Specific test
+
 ```bash
 cargo test --test conformance test_safe_run_001
 ```
@@ -47,19 +51,22 @@ Tests are currently **ignored** because the implementation does not exist yet (P
 ## Test Coverage
 
 ### safe-run (5 vectors)
+
 - `test_safe_run_001_success_no_artifacts` - Vector safe-run-001
-- `test_safe_run_002_failure_creates_log` - Vector safe-run-002  
+- `test_safe_run_002_failure_creates_log` - Vector safe-run-002
 - `test_safe_run_003_sigterm_aborted` - Vector safe-run-003 (Unix only)
 - `test_safe_run_004_custom_log_dir` - Vector safe-run-004
 - `test_safe_run_005_snippet_output` - Vector safe-run-005
 
 ### safe-archive (4 vectors)
+
 - `test_safe_archive_001_basic` - Vector safe-archive-001
 - `test_safe_archive_002_compression_formats` - Vector safe-archive-002
 - `test_safe_archive_003_no_clobber_auto_suffix` - Vector safe-archive-003
 - `test_safe_archive_004_no_clobber_strict` - Vector safe-archive-004
 
 ### preflight-automerge-ruleset (4 vectors)
+
 - `test_preflight_001_success` - Vector preflight-001
 - `test_preflight_002_auth_failure` - Vector preflight-002
 - `test_preflight_003_ruleset_not_found` - Vector preflight-003
@@ -91,6 +98,7 @@ When adding a new conformance test:
 6. Validate all expected outcomes from the vector
 
 Example:
+
 ```rust
 #[test]
 #[ignore] // Remove when implementation exists
@@ -121,6 +129,7 @@ fn test_my_new_vector() {
 ## CI Integration
 
 These tests will run in CI once:
+
 1. Implementation exists (PR3+)
 2. `#[ignore]` attributes are removed
 3. CI workflow is configured to run `cargo test`
