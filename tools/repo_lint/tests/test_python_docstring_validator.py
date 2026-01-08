@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# pylint: disable=wrong-import-position  # Test file needs special setup
+# ruff: noqa: E501
+# pylint: disable=wrong-import-position,line-too-long  # Test file needs special setup
 """Unit tests for Python docstring validator.
 
 :Purpose:
@@ -35,7 +36,7 @@
 
     Run specific test::
 
-        python3 -m pytest tools/repo_lint/tests/test_python_docstring_validator.py::TestModuleDocstring::test_missing_module_docstring -v  # pylint: disable=line-too-long  # noqa: E501
+        python3 -m pytest tools/repo_lint/tests/test_python_docstring_validator.py::TestModuleDocstring::test_missing_module_docstring -v
 """
 
 from __future__ import annotations
