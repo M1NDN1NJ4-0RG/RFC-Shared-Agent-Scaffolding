@@ -2,7 +2,8 @@
 
 **Last Updated:** 2025-12-30
 
-This document tracks **explicitly-marked future work** found in the repository. All items are sourced from in-repo TODO comments, deferred work notes, ignored tests, or documented future enhancement sections.
+This document tracks **explicitly-marked future work** found in the repository. All items are sourced from in-repo TODO
+comments, deferred work notes, ignored tests, or documented future enhancement sections.
 
 **Rules:**
 
@@ -251,7 +252,8 @@ Currently, there's no automated verification that every conformance vector in `c
 
 **Why it exists:**
 
-The conformance infrastructure is functional but has room for quality-of-life improvements that would enhance developer experience and test reliability.
+The conformance infrastructure is functional but has room for quality-of-life improvements that would enhance developer
+experience and test reliability.
 
 **Source:**
 
@@ -283,7 +285,8 @@ The conformance infrastructure is functional but has room for quality-of-life im
 
 **Why it exists:**
 
-The Rust canonical tool works correctly but has opportunities for optimization and feature expansion beyond the current contract requirements.
+The Rust canonical tool works correctly but has opportunities for optimization and feature expansion beyond the current
+contract requirements.
 
 **Source:**
 
@@ -315,7 +318,9 @@ The Rust canonical tool works correctly but has opportunities for optimization a
 
 **Why it exists:**
 
-PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Windows platforms. Testing requires native Windows environment (not WSL/Git Bash). This was Phase 3 of EPIC 59 but was deferred due to lack of Windows testing infrastructure.
+PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Windows platforms. Testing requires native
+Windows environment (not WSL/Git Bash). This was Phase 3 of EPIC 59 but was deferred due to lack of Windows testing
+infrastructure.
 
 **Source:**
 
@@ -370,7 +375,8 @@ The Python wrapper notes Windows native support as a future improvement: on Wind
 
 **Why it exists:**
 
-There is an explicit placeholder indicating the need for a canonical epic/idea tracker, but no single authoritative location is currently defined.
+There is an explicit placeholder indicating the need for a canonical epic/idea tracker, but no single authoritative
+location is currently defined.
 
 **Source:**
 
@@ -394,7 +400,8 @@ There is an explicit placeholder indicating the need for a canonical epic/idea t
 
 Phase 5 implements language-native test runners (`run_tests.py`, `run_tests.pl`) as **thin wrappers** around the existing Bash `run-tests.sh` scripts. This approach minimizes drift and implementation complexity, but means the runners still depend on Bash being available.
 
-A future enhancement would migrate to **fully native implementations** where each runner directly invokes its language's test framework without calling the Bash script.
+A future enhancement would migrate to **fully native implementations** where each runner directly invokes its language's
+test framework without calling the Bash script.
 
 **Current Implementation (Phase 5):**
 
@@ -649,7 +656,8 @@ Phase 4 implements basic repo-local tool installation (`.venv-lint/` for Python 
 
 **Description:**
 
-Code review identified security hardening opportunities in GitHub Actions workflow tool installation steps. Currently, workflows download and install tools without checksum verification or signature validation.
+Code review identified security hardening opportunities in GitHub Actions workflow tool installation steps. Currently,
+workflows download and install tools without checksum verification or signature validation.
 
 **Affected Workflows:**
 
@@ -716,7 +724,8 @@ Code review identified security hardening opportunities in GitHub Actions workfl
 
 **Description:**
 
-We want CI failures (and their forensic context) to be **reviewable from the repository** without requiring humans/agents to scrape GitHub Actions UI logs.
+We want CI failures (and their forensic context) to be **reviewable from the repository** without requiring
+humans/agents to scrape GitHub Actions UI logs.
 
 **Goals:**
 
@@ -733,8 +742,8 @@ We want CI failures (and their forensic context) to be **reviewable from the rep
 - Automatically prune logs older than **90 days**.
 - If this becomes too noisy or large, reduce retention (e.g., 30 days).
 
-**Debug-mode switch (repo-controlled):**
-GitHub’s UI “Enable debug logging” toggle cannot be enabled programmatically by workflows, so implement debug mode via one of:
+**Debug-mode switch (repo-controlled):** GitHub’s UI “Enable debug logging” toggle cannot be enabled programmatically by
+workflows, so implement debug mode via one of:
 
 - **Workflow dispatch input** (preferred): `debug_logging: true|false`
 - **Separate debug workflow**: e.g., `Umbrella CI (Debug)` / `Repo Lint (Debug)`
