@@ -64,6 +64,7 @@ from tools.repo_lint.runners.perl_runner import PerlRunner
 from tools.repo_lint.runners.powershell_runner import PowerShellRunner
 from tools.repo_lint.runners.python_runner import PythonRunner
 from tools.repo_lint.runners.rust_runner import RustRunner
+from tools.repo_lint.runners.toml_runner import TomlRunner
 from tools.repo_lint.runners.yaml_runner import YAMLRunner
 
 
@@ -202,6 +203,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         ("powershell", "PowerShell", PowerShellRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("perl", "Perl", PerlRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("yaml", "YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("toml", "TOML", TomlRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("rust", "Rust", RustRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("markdown", "Markdown", MarkdownRunner(ci_mode=args.ci, verbose=args.verbose)),
     ]
