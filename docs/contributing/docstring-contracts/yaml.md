@@ -5,34 +5,32 @@
 
 ## Purpose
 
-YAML configuration files in this repository use a **top-of-file comment header** to document their purpose, usage, and behavior. This applies to GitHub Actions workflows, issue templates, and other YAML configurations.
+YAML configuration files in this repository use a **top-of-file comment header** to document their purpose, usage, and
+behavior. This applies to GitHub Actions workflows, issue templates, and other YAML configurations.
 
 ## Required Semantic Sections
 
 Every YAML file must include these sections (as comment headers):
 
-1. **Workflow:** or **File:** - Name of the workflow or configuration file
-2. **Purpose:** - What it does and what it does NOT do
-3. **Triggers:** (for workflows) or **Usage:** (for config files) - How/when it runs
-4. **Dependencies:** or **Inputs:** - What it expects (tools, actions, files, versions)
-5. **Outputs:** or **Side effects:** - What it produces (artifacts, status checks, files)
-6. **Notes:** - Maintainer notes, constraints, sharp edges
+1. 1. **Workflow:** or **File:** - Name of the workflow or configuration file 2. **Purpose:** - What it does and what it
+   does NOT do 3. **Triggers:** (for workflows) or **Usage:** (for config files) - How/when it runs 4. **Dependencies:**
+   or **Inputs:** - What it expects (tools, actions, files, versions) 5. **Outputs:** or **Side effects:** - What it
+   produces (artifacts, status checks, files) 6. **Notes:** - Maintainer notes, constraints, sharp edges
 
 **For GitHub Actions Workflows specifically:**
 
-- **Permissions:** - REQUIRED for workflow YAMLs (list GitHub Actions permissions)
-- Use "Triggers:" for workflows (not "Usage:")
+- - **Permissions:** - REQUIRED for workflow YAMLs (list GitHub Actions permissions) - Use "Triggers:" for workflows
+  (not "Usage:")
 
 **For other YAML config files:**
 
-- **Permissions:** - Optional
-- Use "Usage:" for config files (not "Triggers:")
+- - **Permissions:** - Optional - Use "Usage:" for config files (not "Triggers:")
 
 ### Optional Sections
 
-- **Environment:** - Environment configuration (matrix, jobs, runners, environment variables)
-- **Platform:** - Platform requirements (e.g., "Runner: ubuntu-latest") - **Recommended**
-- **References:** - Links to related docs or issues
+- - **Environment:** - Environment configuration (matrix, jobs, runners, environment variables) - **Platform:** -
+  Platform requirements (e.g., "Runner: ubuntu-latest") - **Recommended** - **References:** - Links to related docs or
+  issues
 
 ## Formatting Rules
 
@@ -78,12 +76,12 @@ on:
 
 ### Key Rules
 
-1. **Header first**: Comment header must be in the first 15 lines of file
+1. 1. **Header first**: Comment header must be in the first 15 lines of file
 2. **Section headers**: Capitalized word followed by colon (e.g., `Purpose:`)
 3. **Indentation**: Use `#` for continuation lines, two spaces for sub-items with `-`
 4. **Blank line separator**: One blank comment line (`#`) between sections is optional but recommended
-5. **Explicit scope**: Always state what the file does NOT do if it might be ambiguous
-6. **Consistent keywords**: Use the canonical section names (Workflow, Purpose, Triggers, Dependencies, Outputs, Notes)
+5. 5. **Explicit scope**: Always state what the file does NOT do if it might be ambiguous 6. **Consistent keywords**:
+   Use the canonical section names (Workflow, Purpose, Triggers, Dependencies, Outputs, Notes)
 
 ## Section Details
 
@@ -95,52 +93,37 @@ on:
 
 ### Purpose
 
-- What problem this workflow/config solves
-- What it validates, builds, tests, or deploys
-- What it does NOT do (scope limitations)
+- - What problem this workflow/config solves - What it validates, builds, tests, or deploys - What it does NOT do (scope
+  limitations)
 
 ### Triggers: (for GitHub Actions workflows ONLY)
 
-- Use "Triggers:" for workflows, "Usage:" for other YAML files
-- List trigger events clearly
-- Mention path filters if used
-- Note if manual dispatch is enabled
+- - Use "Triggers:" for workflows, "Usage:" for other YAML files - List trigger events clearly - Mention path filters if
+  used - Note if manual dispatch is enabled
 - Examples: `pull_request`, `push`, `workflow_dispatch`, `schedule`
 
 ### Usage: (for non-workflow YAML config files)
 
-- How and when the config file is loaded/used
-- What tool or system consumes it
-- When it takes effect
+- - How and when the config file is loaded/used - What tool or system consumes it - When it takes effect
 
 ### Dependencies
 
-- List GitHub Actions used (with versions)
-- Required tools and their versions
-- Required files or artifacts
-- Environment requirements
+- - List GitHub Actions used (with versions) - Required tools and their versions - Required files or artifacts -
+  Environment requirements
 
 ### Outputs
 
-- Status checks created
-- Artifacts uploaded
-- Files created or modified
-- PR comments or other side effects
+- - Status checks created - Artifacts uploaded - Files created or modified - PR comments or other side effects
 
 ### Permissions: (REQUIRED for GitHub Actions workflows)
 
-- List all GitHub token permissions required
-- Explain why each permission is needed
-- Use least-privilege principle
+- - List all GitHub token permissions required - Explain why each permission is needed - Use least-privilege principle
 - Example: `contents: read`, `pull-requests: write`
 
 ### Environment: (optional but recommended)
 
-- Matrix configuration (OS, versions, etc.)
-- Job-level environment variables
-- Runner specifications
-- Secrets or environment-specific settings
-- Example:
+- - Matrix configuration (OS, versions, etc.) - Job-level environment variables - Runner specifications - Secrets or
+  environment-specific settings - Example:
 
   ```yaml
   # Environment:
@@ -151,10 +134,8 @@ on:
 
 ### Notes
 
-- Constraints or invariants
-- Warnings about what not to change
-- Related workflows or dependencies
-- Exit code meanings (if applicable)
+- - Constraints or invariants - Warnings about what not to change - Related workflows or dependencies - Exit code
+  meanings (if applicable)
 
 ## Templates
 
@@ -353,12 +334,9 @@ setting2: value2
 
 This file demonstrates:
 
-- Complete header with all required sections
-- Clear purpose statement with negation ("does NOT run...")
-- Detailed trigger conditions
-- Dependencies listing actions and file requirements
-- Outputs including status checks
-- Notes with constraints
+- - Complete header with all required sections - Clear purpose statement with negation ("does NOT run...") - Detailed
+  trigger conditions - Dependencies listing actions and file requirements - Outputs including status checks - Notes with
+  constraints
 
 ### Example 2: Drift Detection Workflow
 
@@ -366,10 +344,8 @@ This file demonstrates:
 
 This file demonstrates:
 
-- Purpose explaining what drift means
-- Platform notes (Linux runner)
-- Clear separation of concerns (vs. other workflows)
-- Notes about related workflows
+- - Purpose explaining what drift means - Platform notes (Linux runner) - Clear separation of concerns (vs. other
+  workflows) - Notes about related workflows
 
 ### Example 3: Test Workflow
 
@@ -377,24 +353,20 @@ This file demonstrates:
 
 This demonstrates:
 
-- Language-specific workflow documentation
-- Dependencies on language runtimes
-- Platform requirements
+- - Language-specific workflow documentation - Dependencies on language runtimes - Platform requirements
 
 ## Validation
 
 The validator checks for:
 
-- Presence of comment header in first 15 lines
+- - Presence of comment header in first 15 lines
 - Presence of section keywords: `Workflow:` or `File:`, `Purpose:`, `Triggers:` or `Usage:`, `Dependencies:` or `Inputs:`, `Outputs:` or `Side effects:`, `Notes:` or `Note:`
-- At least one trigger listed (for GitHub Actions workflows)
+- - At least one trigger listed (for GitHub Actions workflows)
 
 The validator does NOT check:
 
 - YAML syntax validity (use `yamllint` for that)
-- GitHub Actions schema compliance
-- Content quality or accuracy
-- Grammar or spelling
+- - GitHub Actions schema compliance - Content quality or accuracy - Grammar or spelling
 
 ## Common Mistakes
 
@@ -558,8 +530,8 @@ permissions:
 
 ## References
 
-- [README.md](./README.md) - Overview of docstring contracts
-- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
+- - [README.md](./README.md) - Overview of docstring contracts - [exit-codes-contract.md](./exit-codes-contract.md) -
+  Canonical exit code meanings
 - [GitHub Actions Syntax](https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions)
 - [YAML Specification](https://yaml.org/spec/)
-- [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract
+- - [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract

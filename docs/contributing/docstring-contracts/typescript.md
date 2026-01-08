@@ -6,31 +6,27 @@
 
 ## Purpose
 
-This is a **preliminary contract** for TypeScript files that may be added to this repository in the future. It follows TSDoc (TypeScript documentation) conventions while aligning with the semantic requirements of other language contracts.
+This is a **preliminary contract** for TypeScript files that may be added to this repository in the future. It follows
+TSDoc (TypeScript documentation) conventions while aligning with the semantic requirements of other language contracts.
 
-**Note:** This contract is not yet enforced. Use it as guidance if adding TypeScript files, but expect refinement before official adoption.
+**Note:** This contract is not yet enforced. Use it as guidance if adding TypeScript files, but expect refinement before
+official adoption.
 
 ## Required Semantic Sections
 
 Every TypeScript file should include these sections in TSDoc comments:
 
-1. **@packageDocumentation** - Module/file description (for file-level)
-2. **Summary paragraph** - Brief description
-3. **@remarks** - Detailed description, what it does and does NOT do
-4. **@param** - Document each function parameter (if applicable)
-5. **@returns** - Return value documentation
-6. **@throws** - Document errors/exceptions that may be thrown
-7. **@example** - Minimum 1 concrete usage example
-8. **@see** - References to related docs
+1. 1. **@packageDocumentation** - Module/file description (for file-level) 2. **Summary paragraph** - Brief description
+   3. **@remarks** - Detailed description, what it does and does NOT do 4. **@param** - Document each function parameter
+   (if applicable) 5. **@returns** - Return value documentation 6. **@throws** - Document errors/exceptions that may be
+   thrown 7. **@example** - Minimum 1 concrete usage example 8. **@see** - References to related docs
 
 ### Optional Sections
 
-- **@platform** - Platform compatibility (Node.js/browser, version) - **Recommended** (use @remarks)
-- **@public**, **@private**, **@internal** - Visibility markers
-- **@deprecated** - Deprecation warnings
-- **@typeParam** - Generic type parameter documentation
-- **@defaultValue** - Default value for parameters
-- **@beta**, **@alpha** - API stability markers
+- - **@platform** - Platform compatibility (Node.js/browser, version) - **Recommended** (use @remarks) - **@public**,
+  **@private**, **@internal** - Visibility markers - **@deprecated** - Deprecation warnings - **@typeParam** - Generic
+  type parameter documentation - **@defaultValue** - Default value for parameters - **@beta**, **@alpha** - API
+  stability markers
 
 ## Formatting Rules
 
@@ -318,14 +314,13 @@ class Container<T extends object> {
 ### Key Rules
 
 1. **`/**` for TSDoc**: Always use `/**` for documentation (not `//` or `/*`)
-2. **Summary first**: First paragraph is always the summary
+2. 2. **Summary first**: First paragraph is always the summary
 3. **@remarks for details**: Use `@remarks` for detailed description
-4. **@param for all parameters**: Document every parameter with type
-5. **@returns for non-void**: Always document return values
-6. **@throws for errors**: Document all errors that may be thrown
-7. **@typeParam for generics**: Document all generic type parameters
+4. 4. **@param for all parameters**: Document every parameter with type 5. **@returns for non-void**: Always document
+   return values 6. **@throws for errors**: Document all errors that may be thrown 7. **@typeParam for generics**:
+   Document all generic type parameters
 8. **@example with code blocks**: Use fenced code blocks (```)
-9. **Exit codes in @remarks**: Document exit codes in file-level @remarks
+9. 9. **Exit codes in @remarks**: Document exit codes in file-level @remarks
 
 ## Templates
 
@@ -516,10 +511,10 @@ When this contract is officially adopted, the validator should check:
 
 - Presence of `/**` TSDoc comments
 - `@packageDocumentation` for file-level docs
-- Summary paragraph for all public members
+- - Summary paragraph for all public members
 - `@remarks` with detailed description
 - `@example` with code blocks
-- Exit codes documented in @remarks
+- - Exit codes documented in @remarks
 - `@param` for all parameters
 - `@returns` for all non-void functions
 - `@throws` for errors
@@ -568,8 +563,8 @@ npm install -D eslint-plugin-tsdoc
 - [TSDoc Tags](https://tsdoc.org/pages/tags/alpha/)
 - [TypeDoc Documentation](https://typedoc.org/)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
-- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
-- [README.md](./README.md) - Overview of docstring contracts
+- - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings - [README.md](./README.md) -
+  Overview of docstring contracts
 
 ## Status
 
@@ -577,8 +572,5 @@ npm install -D eslint-plugin-tsdoc
 
 To adopt this contract:
 
-1. Add TypeScript file patterns to validator
-2. Implement TypeScriptValidator class
-3. Add test coverage
-4. Update README.md with TypeScript entry
-5. Mark as official (remove DRAFT status)
+1. 1. Add TypeScript file patterns to validator 2. Implement TypeScriptValidator class 3. Add test coverage 4. Update
+   README.md with TypeScript entry 5. Mark as official (remove DRAFT status)

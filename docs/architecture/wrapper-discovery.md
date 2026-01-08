@@ -2,7 +2,8 @@
 
 ## Overview
 
-Language-specific wrappers (Bash, Perl, Python3, PowerShell) act as **thin invokers** that discover and execute the Rust canonical tool binary. This document defines the deterministic discovery rules that all wrappers must follow.
+Language-specific wrappers (Bash, Perl, Python3, PowerShell) act as **thin invokers** that discover and execute the Rust
+canonical tool binary. This document defines the deterministic discovery rules that all wrappers must follow.
 
 ## Discovery Rules
 
@@ -75,8 +76,7 @@ cargo install --path ./rust
 
 If no binary is found, the wrapper MUST:
 
-1. Print an actionable error message to stderr
-2. Exit with code 127 (command not found convention)
+1. 1. Print an actionable error message to stderr 2. Exit with code 127 (command not found convention)
 
 **Example error message:**
 
@@ -170,24 +170,21 @@ fi
 
 **Requirements:**
 
-1. Legacy mode MUST be opt-in (env var required)
-2. Default behavior MUST be Rust binary
-3. Legacy mode SHOULD print a deprecation warning
-4. Legacy mode should be removed after transition period
+1. 1. Legacy mode MUST be opt-in (env var required) 2. Default behavior MUST be Rust binary 3. Legacy mode SHOULD print
+   a deprecation warning 4. Legacy mode should be removed after transition period
 
 ## Platform-Specific Considerations
 
 ### Bash/Perl/Python (Unix-like)
 
 - Use `exec` to replace the shell process when possible
-- Preserve signal handling
-- No shebangs in the Rust binary (wrappers handle that)
+- - Preserve signal handling - No shebangs in the Rust binary (wrappers handle that)
 
 ### PowerShell (Windows)
 
 - Handle `.exe` extension automatically
 - Preserve exit codes correctly (use `$LASTEXITCODE` or `$proc.ExitCode`)
-- Support both PowerShell 5.1 (Windows) and PowerShell 7+ (cross-platform)
+- - Support both PowerShell 5.1 (Windows) and PowerShell 7+ (cross-platform)
 
 ## Testing Discovery Logic
 
@@ -213,13 +210,11 @@ unset SAFE_RUN_BIN
 
 During the transition from independent implementations to Rust canonical:
 
-1. **Phase 1:** Wrappers detect Rust binary, fall back to legacy if missing
-2. **Phase 2:** CI builds Rust binary, wrappers use it by default
-3. **Phase 3:** Remove legacy implementations, require Rust binary
-4. **Phase 4:** Wrappers become pure invokers (no fallback code)
+1. 1. **Phase 1:** Wrappers detect Rust binary, fall back to legacy if missing 2. **Phase 2:** CI builds Rust binary,
+   wrappers use it by default 3. **Phase 3:** Remove legacy implementations, require Rust binary 4. **Phase 4:**
+   Wrappers become pure invokers (no fallback code)
 
 ## References
 
-- [Rust Canonical Tool](./rust-canonical-tool.md)
-- [Conformance Contract](../usage/conformance-contract.md)
+- - [Rust Canonical Tool](./rust-canonical-tool.md) - [Conformance Contract](../usage/conformance-contract.md)
 - [EPIC #33: Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)

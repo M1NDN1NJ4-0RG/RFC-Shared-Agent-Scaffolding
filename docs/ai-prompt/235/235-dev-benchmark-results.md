@@ -13,8 +13,8 @@ This benchmark compares the performance of the Bash bootstrapper (`scripts/boots
 **Key Findings:**
 
 - ✅ Bash verification gate (`repo-lint check --ci`): **~43.2 seconds** (mean)
-- ⚠️  Rust verification currently has implementation issues preventing benchmarking
-- 📊 Bash verification shows consistent performance with low variance (σ=0.737s)
+- - ⚠️  Rust verification currently has implementation issues preventing benchmarking - 📊 Bash verification shows
+  consistent performance with low variance (σ=0.737s)
 
 ---
 
@@ -22,18 +22,14 @@ This benchmark compares the performance of the Bash bootstrapper (`scripts/boots
 
 ### Machine Specifications
 
-- **OS:** Linux 6.11.0-1018-azure (Ubuntu 24.04.1)
-- **CPU:** AMD EPYC 7763 64-Core Processor
-- **Cores:** 4 (available)
-- **Architecture:** x86_64
-- **Runner:** GitHub Actions hosted runner
+- - **OS:** Linux 6.11.0-1018-azure (Ubuntu 24.04.1) - **CPU:** AMD EPYC 7763 64-Core Processor - **Cores:** 4
+  (available) - **Architecture:** x86_64 - **Runner:** GitHub Actions hosted runner
 
 ### Software Versions
 
 - **Bash Bootstrapper:** `scripts/bootstrap-repo-lint-toolchain.sh` (latest from main)
 - **Rust Bootstrapper:** `bootstrap-repo-cli` (release build)
-- **Python:** 3.x (in virtual environment)
-- **repo-lint:** Latest from editable install
+- - **Python:** 3.x (in virtual environment) - **repo-lint:** Latest from editable install
 
 ---
 
@@ -53,7 +49,8 @@ This will be addressed in a future update to Phase 1 parity implementation.
 
 **Status:** Completed (Bash only)
 
-This mode benchmarks the **verification gate** behavior, which is the most frequently used operation during development (running linters/formatters/checks on existing code).
+This mode benchmarks the **verification gate** behavior, which is the most frequently used operation during development
+(running linters/formatters/checks on existing code).
 
 **Commands Benchmarked:**
 
@@ -62,9 +59,7 @@ This mode benchmarks the **verification gate** behavior, which is the most frequ
 
 **Benchmark Parameters:**
 
-- Warmup runs: 2
-- Measured runs: 10
-- Pre-condition: Environment already set up via Bash bootstrapper
+- - Warmup runs: 2 - Measured runs: 10 - Pre-condition: Environment already set up via Bash bootstrapper
 
 ---
 
@@ -99,10 +94,8 @@ Run 10: 42.769
 
 #### Performance Characteristics
 
-- **Consistency:** Very consistent performance across runs (σ=0.737s, ~1.7% variance)
-- **Outliers:** One outlier at 44.75s (Run 3), likely due to system scheduling
-- **P90:** ~43.84s (9th fastest run)
-- **P50 (Median):** 42.81s
+- - **Consistency:** Very consistent performance across runs (σ=0.737s, ~1.7% variance) - **Outliers:** One outlier at
+  44.75s (Run 3), likely due to system scheduling - **P90:** ~43.84s (9th fastest run) - **P50 (Median):** 42.81s
 
 ### Rust Verification: `bootstrap verify`
 
@@ -133,10 +126,8 @@ Run 10: 1.375  ← max
 
 #### Performance Characteristics
 
-- **Consistency:** Extremely consistent performance (σ=0.006s, ~0.44% variance)
-- **Outliers:** No outliers; very stable performance
-- **P90:** ~1.371s
-- **P50 (Median):** ~1.358s
+- - **Consistency:** Extremely consistent performance (σ=0.006s, ~0.44% variance) - **Outliers:** No outliers; very
+  stable performance - **P90:** ~1.371s - **P50 (Median):** ~1.358s
 
 **Fix Applied:** The actionlint detection issue (exit code 19) was resolved by updating `ActionlintInstaller::detect()` to check multiple locations including `$HOME/go/bin/actionlint` where `go install` places binaries.
 
@@ -150,10 +141,11 @@ Run 10: 1.375  ← max
 
 2. **Rust Bootstrapper is Now Functional:** After fixing the actionlint detection issue (exit code 19), the Rust bootstrapper's `verify` command successfully detects all tools and completes in ~1.4 seconds.
 
-3. **Performance Comparison:**
+3. 3. **Performance Comparison:**
    - Rust `bootstrap verify`: **1.362s ± 0.006s** (checks tool availability)
    - Bash `repo-lint check --ci`: **43.883s ± 0.402s** (runs full linting suite)
-   - **Important Note:** These commands perform fundamentally different operations, so direct comparison is not meaningful.
+   - - **Important Note:** These commands perform fundamentally different operations, so direct comparison is not
+     meaningful.
 
 4. **Speedup Factor:** The Rust `verify` command is approximately **32x faster** than the Bash verification, but this is because `bootstrap verify` only checks if tools exist and are accessible, while `repo-lint check --ci` actually runs all linters/formatters/checks on the codebase.
 
@@ -172,31 +164,28 @@ Run 10: 1.375  ← max
 
 ### Completed Actions
 
-1. ✅ **Fixed Rust Bootstrapper Core Issues**
-   - Debugged and resolved exit code 19 errors in verify workflow
-   - Updated ActionlintInstaller to check Go bin directories ($HOME/go/bin, $GOPATH/bin)
-   - Fixed version parsing to handle multi-line output and 'v' prefix
-   - Verified that the verification gate logic properly handles the Python environment
+1. 1. ✅ **Fixed Rust Bootstrapper Core Issues** - Debugged and resolved exit code 19 errors in verify workflow - Updated
+   ActionlintInstaller to check Go bin directories ($HOME/go/bin, $GOPATH/bin) - Fixed version parsing to handle
+   multi-line output and 'v' prefix - Verified that the verification gate logic properly handles the Python environment
 
-2. ✅ **Re-ran Benchmarks After Fixes**
-   - Successfully benchmarked Rust verification performance
-   - Compared Rust verify against the Bash baseline
-   - Measured both systems with consistent methodology (hyperfine, 10 runs, 2 warmup)
+2. 2. ✅ **Re-ran Benchmarks After Fixes** - Successfully benchmarked Rust verification performance - Compared Rust
+   verify against the Bash baseline - Measured both systems with consistent methodology (hyperfine, 10 runs, 2 warmup)
 
-3. ✅ **Documented Results**
-   - Updated benchmark results document with complete data from both systems
-   - Clarified that the commands perform different operations
-   - Established clear performance baselines for future reference
+3. 3. ✅ **Documented Results** - Updated benchmark results document with complete data from both systems - Clarified
+   that the commands perform different operations - Established clear performance baselines for future reference
 
 ### Future Enhancements
 
-1. **Consider Rust linting integration:** Implement a Rust command that runs the actual linting suite (not just verification) for true apples-to-apples performance comparison
+1. 1. **Consider Rust linting integration:** Implement a Rust command that runs the actual linting suite (not just
+   verification) for true apples-to-apples performance comparison
 
-2. **Test on multiple platforms:** Run benchmarks on Linux ARM64, macOS x86_64, and macOS ARM64 to understand platform-specific performance characteristics
+2. 2. **Test on multiple platforms:** Run benchmarks on Linux ARM64, macOS x86_64, and macOS ARM64 to understand
+   platform-specific performance characteristics
 
-3. **Benchmark end-to-end installation:** Once Rust supports fresh installation without pre-existing venv, benchmark Mode A (full installation from scratch)
+3. 3. **Benchmark end-to-end installation:** Once Rust supports fresh installation without pre-existing venv, benchmark
+   Mode A (full installation from scratch)
 
-4. **Memory profiling:** Measure memory usage and CPU utilization during both verification workflows
+4. 4. **Memory profiling:** Measure memory usage and CPU utilization during both verification workflows
 
 ---
 
@@ -236,20 +225,22 @@ hyperfine \
 
 ## Conclusion
 
-This benchmark successfully established performance baselines for both the Bash and Rust bootstrappers' verification workflows. After resolving the actionlint detection issue (exit code 19), both systems are now functional with the following results:
+This benchmark successfully established performance baselines for both the Bash and Rust bootstrappers' verification
+workflows. After resolving the actionlint detection issue (exit code 19), both systems are now functional with the
+following results:
 
 1. ✅ **Bash baseline:** 43.883s ± 0.402s for `repo-lint check --ci` (full linting suite)
 2. ✅ **Rust verification:** 1.362s ± 0.006s for `bootstrap verify` (tool availability check)
-3. ✅ **Parity achieved:** Rust bootstrapper now successfully detects all tools including actionlint
-4. ✅ **Performance documented:** Both systems show consistent, stable performance
+3. 3. ✅ **Parity achieved:** Rust bootstrapper now successfully detects all tools including actionlint 4. ✅
+   **Performance documented:** Both systems show consistent, stable performance
 
 ### Key Takeaways
 
-- **Rust verify is ~32x faster than Bash**, but they perform different operations:
+- - **Rust verify is ~32x faster than Bash**, but they perform different operations:
   - Rust `verify`: Checks if tools exist and are accessible (~1.4s)
   - Bash `repo-lint check --ci`: Runs all linters/formatters/checks (~43.9s)
-- **Both approaches are valid:** Rust for quick environment validation, Bash for comprehensive code quality checks
-- **Actionlint fix successful:** Updating detection logic to check Go bin directories resolved all verification failures
+- - **Both approaches are valid:** Rust for quick environment validation, Bash for comprehensive code quality checks -
+  **Actionlint fix successful:** Updating detection logic to check Go bin directories resolved all verification failures
 - **Test methodology is reusable:** Benchmarks can be re-run using `./scripts/benchmarks/benchmark-bootstrappers.sh`
 
 **Status:** ✅ Benchmark complete with both Bash and Rust results successfully captured.

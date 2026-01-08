@@ -10,17 +10,15 @@
 
 This audit identifies:
 
-1. **Integration Status** of all helper scripts and tools
-2. **Hardcoded Configuration** that should be migrated to YAML
-3. **Contract Violations** that need remediation
-4. **Recommendations** for Phase 2.9 implementation
+1. 1. **Integration Status** of all helper scripts and tools 2. **Hardcoded Configuration** that should be migrated to
+   YAML 3. **Contract Violations** that need remediation 4. **Recommendations** for Phase 2.9 implementation
 
 ### Key Findings
 
 - ✅ **High Integration:** Most helper scripts are already integrated with `repo_lint`
-- ⚠️ **Configuration Duplication:** Version pins exist in 3 places (Python, YAML, pyproject.toml)
-- ⚠️ **Hardcoded Patterns:** File patterns and exclusions are hardcoded in Python
-- ✅ **YAML-First Progress:** 4 conformance YAML files already exist
+- - ⚠️ **Configuration Duplication:** Version pins exist in 3 places (Python, YAML, pyproject.toml) - ⚠️ **Hardcoded
+  Patterns:** File patterns and exclusions are hardcoded in Python - ✅ **YAML-First Progress:** 4 conformance YAML files
+  already exist
 
 ---
 
@@ -115,7 +113,7 @@ This audit identifies:
 1. Make `repo-lint-linting-rules.yaml` the SINGLE source of truth
 2. Update `version_pins.py` to LOAD from YAML (not hardcode)
 3. Keep `pyproject.toml` for package installation, but sync from YAML programmatically or via docs/process
-4. Add validation to ensure versions stay in sync
+4. 4. Add validation to ensure versions stay in sync
 
 ### 2.2 File Patterns and Exclusions (❌ HIGH PRIORITY - Hardcoded in Python)
 
@@ -164,7 +162,7 @@ EXCLUDED_PATHS = [
 2. Migrate `IN_SCOPE_PATTERNS` and `EXCLUDE_PATTERNS` to YAML
 3. Update `validate_docstrings.py` to load patterns from YAML
 4. Update `base.py` to load excluded paths from YAML
-5. Ensure backward compatibility with deprecation warnings
+5. 5. Ensure backward compatibility with deprecation warnings
 
 ---
 
@@ -194,57 +192,47 @@ EXCLUDED_PATHS = [
 
 ### 4.1 MANDATORY Changes
 
-1. **Eliminate Version Duplication (HIGH PRIORITY)**
+1. 1. **Eliminate Version Duplication (HIGH PRIORITY)**
    - [ ] Update `tools/repo_lint/install/version_pins.py` to load from `repo-lint-linting-rules.yaml`
-   - [ ] Add validation to ensure versions are consistent
-   - [ ] Update installer to use YAML as source
+   - - [ ] Add validation to ensure versions are consistent - [ ] Update installer to use YAML as source
    - [ ] Document sync process for `pyproject.toml`
 
-2. **Create File Patterns YAML (HIGH PRIORITY)**
+2. 2. **Create File Patterns YAML (HIGH PRIORITY)**
    - [ ] Create `conformance/repo-lint/repo-lint-file-patterns.yaml`
-   - [ ] Define schema for in-scope patterns and exclusions
+   - - [ ] Define schema for in-scope patterns and exclusions
    - [ ] Migrate hardcoded patterns from `validate_docstrings.py`
    - [ ] Migrate hardcoded exclusions from `base.py`
-   - [ ] Update all consumers to load from YAML
+   - - [ ] Update all consumers to load from YAML
 
-3. **Backward Compatibility (REQUIRED)**
-   - [ ] Add deprecation warnings for direct Python constant usage
-   - [ ] Support transition period (load from YAML if present, fall back to Python)
-   - [ ] Document migration timeline
+3. 3. **Backward Compatibility (REQUIRED)** - [ ] Add deprecation warnings for direct Python constant usage - [ ]
+   Support transition period (load from YAML if present, fall back to Python) - [ ] Document migration timeline
 
-4. **CLI Override Validation (REQUIRED)**
-   - [ ] Audit existing CLI flags for contract violations
+4. 4. **CLI Override Validation (REQUIRED)** - [ ] Audit existing CLI flags for contract violations
    - [ ] Ensure `--only`, `--ci`, `--theme` etc don't bypass YAML contracts
-   - [ ] Add validation layer
+   - - [ ] Add validation layer
 
 ### 4.2 Documentation Requirements
 
-1. **Integration Contract Document**
+1. 1. **Integration Contract Document**
    - [ ] Create `docs/contributing/integration-contracts.md`
-   - [ ] Define rules for YAML-first configuration
-   - [ ] Specify when new YAML files should be created
-   - [ ] Document precedence rules (YAML > CLI > defaults)
+   - - [ ] Define rules for YAML-first configuration - [ ] Specify when new YAML files should be created - [ ] Document
+     precedence rules (YAML > CLI > defaults)
 
-2. **YAML Schema Documentation**
-   - [ ] Document all YAML file schemas
-   - [ ] Provide validation examples
-   - [ ] List required vs optional fields
+2. 2. **YAML Schema Documentation** - [ ] Document all YAML file schemas - [ ] Provide validation examples - [ ] List
+   required vs optional fields
 
 ### 4.3 Testing Requirements
 
-1. **YAML Loading Tests**
+1. 1. **YAML Loading Tests**
    - [ ] Test version loading from `repo-lint-linting-rules.yaml`
    - [ ] Test pattern loading from `repo-lint-file-patterns.yaml`
-   - [ ] Test validation failures for invalid YAML
+   - - [ ] Test validation failures for invalid YAML
 
-2. **Contract Enforcement Tests**
-   - [ ] Test CLI overrides respect contracts
-   - [ ] Test deprecation warnings trigger correctly
-   - [ ] Test backward compatibility fallbacks
+2. 2. **Contract Enforcement Tests** - [ ] Test CLI overrides respect contracts - [ ] Test deprecation warnings trigger
+   correctly - [ ] Test backward compatibility fallbacks
 
-3. **Integration Tests**
-   - [ ] Test end-to-end workflows with YAML configs
-   - [ ] Verify no regressions in existing functionality
+3. 3. **Integration Tests** - [ ] Test end-to-end workflows with YAML configs - [ ] Verify no regressions in existing
+   functionality
 
 ---
 
@@ -254,17 +242,14 @@ EXCLUDED_PATHS = [
 
 **INCLUDE in Phase 2.9:**
 
-1. ✅ Eliminate version duplication (version_pins.py → YAML loader)
-2. ✅ Create file-patterns YAML and migrate patterns
-3. ✅ Add deprecation warnings
-4. ✅ Document integration contracts
-5. ✅ Add tests for YAML loading
+1. 1. ✅ Eliminate version duplication (version_pins.py → YAML loader) 2. ✅ Create file-patterns YAML and migrate
+   patterns 3. ✅ Add deprecation warnings 4. ✅ Document integration contracts 5. ✅ Add tests for YAML loading
 
 **DEFER to Later Phases:**
 
 1. ❌ Integration of `validate-structure.sh` (Phase 3 polish)
 2. ❌ Integration of `verify-repo-references.sh` (Phase 3 polish)
-3. ❌ Exception rules YAML (Phase 2.6 centralized exceptions)
+3. 3. ❌ Exception rules YAML (Phase 2.6 centralized exceptions)
 
 ### 5.2 Implementation Order
 
@@ -272,19 +257,15 @@ EXCLUDED_PATHS = [
 2. **Step 2:** Update `version_pins.py` to load from YAML
 3. **Step 3:** Update `validate_docstrings.py` to load patterns from YAML
 4. **Step 4:** Update `base.py` to load exclusions from YAML
-5. **Step 5:** Add deprecation warnings
-6. **Step 6:** Add tests
-7. **Step 7:** Document contracts
+5. 5. **Step 5:** Add deprecation warnings 6. **Step 6:** Add tests 7. **Step 7:** Document contracts
 
 ### 5.3 Success Criteria
 
 Phase 2.9 is complete when:
 
-- ✅ No configuration duplication between Python and YAML
-- ✅ All reasonable configuration is in YAML files
-- ✅ Backward compatibility maintained with deprecation warnings
-- ✅ Tests pass and validate YAML-first behavior
-- ✅ Documentation clearly specifies contracts
+- - ✅ No configuration duplication between Python and YAML - ✅ All reasonable configuration is in YAML files - ✅
+  Backward compatibility maintained with deprecation warnings - ✅ Tests pass and validate YAML-first behavior - ✅
+  Documentation clearly specifies contracts
 
 ---
 
@@ -302,20 +283,18 @@ Phase 2.9 is complete when:
 ## 7. Open Questions for Human Decision
 
 1. **Standalone Scripts:** Should `validate-structure.sh` and `verify-repo-references.sh` be integrated in Phase 2.9, or defer to Phase 3?
-   - **Recommendation:** DEFER to Phase 3 (not linting tools)
+   - - **Recommendation:** DEFER to Phase 3 (not linting tools)
 
 2. **Version Sync:** Should `pyproject.toml` versions be automatically synced from YAML, or manually maintained?
-   - **Recommendation:** Manual sync with documented process (avoid over-automation)
+   - - **Recommendation:** Manual sync with documented process (avoid over-automation)
 
-3. **Transition Period:** How long should deprecation warnings remain before hard-breaking Python constants?
-   - **Recommendation:** 2-3 releases minimum
+3. 3. **Transition Period:** How long should deprecation warnings remain before hard-breaking Python constants? -
+   **Recommendation:** 2-3 releases minimum
 
 ---
 
 ## 8. Next Steps
 
-1. Human review and approval of audit findings
-2. Implement Step 1-7 from section 5.2
+1. 1. Human review and approval of audit findings 2. Implement Step 1-7 from section 5.2
 3. Run pre-commit validation: `repo-lint check --ci`
-4. Request code review
-5. Merge and proceed to Phase 2.7
+4. 4. Request code review 5. Merge and proceed to Phase 2.7

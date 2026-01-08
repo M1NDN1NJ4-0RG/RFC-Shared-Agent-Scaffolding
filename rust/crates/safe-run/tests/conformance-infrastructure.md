@@ -13,7 +13,7 @@ This document describes the conformance test infrastructure added in PR2 for val
 - **`ConformanceVectors`** - Root structure for `conformance/vectors.json`
 - **`load_vectors()`** - Loads and parses conformance vectors from JSON
 - **`get_safe_run_binary()`** - Locates the compiled safe-run binary
-- Type definitions for all vector types:
+- - Type definitions for all vector types:
   - `SafeRunVector` - safe-run test cases
   - `SafeArchiveVector` - safe-archive test cases
   - `PreflightVector` - preflight-automerge-ruleset test cases
@@ -26,10 +26,8 @@ This document describes the conformance test infrastructure added in PR2 for val
 - **`save_snapshot()`** - Saves a golden output file
 - **`matches_snapshot()`** - Compares actual vs expected output
 - **`normalize_output()`** - Normalizes platform-specific differences:
-  - Line endings (CRLF → LF)
-  - Process IDs (pid12345 → pid{PID})
-  - Timestamps (20241226T205701Z → {TIMESTAMP})
-  - Trailing whitespace
+  - - Line endings (CRLF → LF) - Process IDs (pid12345 → pid{PID}) - Timestamps (20241226T205701Z → {TIMESTAMP}) -
+    Trailing whitespace
 
 ### 2. Conformance Tests (`rust/tests/conformance.rs`)
 
@@ -79,21 +77,14 @@ All conformance tests are currently marked with `#[ignore]` because the implemen
 
 #### `rust/tests/fixtures/`
 
-- **Purpose:** Input data and helper scripts for tests
-- **Current Status:** Empty, will be populated as needed
-- **Future Content:**
-  - Helper scripts (simple_success.sh, print_and_exit.sh, etc.)
-  - Sample files for archive tests
-  - Mock configuration files
+- - **Purpose:** Input data and helper scripts for tests - **Current Status:** Empty, will be populated as needed -
+  **Future Content:** - Helper scripts (simple_success.sh, print_and_exit.sh, etc.) - Sample files for archive tests -
+  Mock configuration files
 
 #### `rust/tests/snapshots/`
 
-- **Purpose:** Golden outputs for snapshot comparison
-- **Current Status:** Empty, will be populated in PR3
-- **Future Content:**
-  - Expected log file outputs
-  - Expected stdout/stderr content
-  - Platform-normalized outputs
+- - **Purpose:** Golden outputs for snapshot comparison - **Current Status:** Empty, will be populated in PR3 - **Future
+  Content:** - Expected log file outputs - Expected stdout/stderr content - Platform-normalized outputs
 
 ## Test Execution
 
@@ -148,33 +139,25 @@ test result: ok. 18 passed; 0 failed; 0 ignored
 
 **Triggers:**
 
-- Push to main, copilot/**, work/** branches
-- Pull requests to main
-- Changes to rust/, conformance/, or workflow file
+- - Push to main, copilot/**, work/** branches - Pull requests to main - Changes to rust/, conformance/, or workflow
+  file
 
 **Jobs:**
 
-1. **test** (matrix: ubuntu, macos, windows)
-   - Build Rust project
+1. 1. **test** (matrix: ubuntu, macos, windows) - Build Rust project
    - Run unit tests (`cargo test --lib`)
    - Run conformance tests (`cargo test --test conformance`)
-   - Build release binary
-   - Verify binary exists and runs
-   - Upload artifacts on failure
+   - - Build release binary - Verify binary exists and runs - Upload artifacts on failure
 
-2. **lint** (ubuntu)
-   - Run Clippy with strict warnings
+2. 2. **lint** (ubuntu) - Run Clippy with strict warnings
    - Command: `cargo clippy --all-targets --all-features -- -D warnings`
 
-3. **format** (ubuntu)
-   - Check code formatting
+3. 3. **format** (ubuntu) - Check code formatting
    - Command: `cargo fmt --all -- --check`
 
 **Caching:**
 
-- Cargo registry
-- Cargo git index
-- Cargo build artifacts
+- - Cargo registry - Cargo git index - Cargo build artifacts
 
 ## Test Writing Guidelines
 
@@ -192,7 +175,7 @@ test result: ok. 18 passed; 0 failed; 0 ignored
    }
    ```
 
-2. **Create test function:**
+2. 2. **Create test function:**
 
    ```rust
    #[test]
@@ -216,8 +199,8 @@ test result: ok. 18 passed; 0 failed; 0 ignored
 - **Use `assert_cmd::Command`** - For executing binaries
 - **Chain assertions** - Use `assert = assert.code(...).stdout(...)`
 - **Platform-specific tests** - Use `#[cfg(unix)]` or `#[cfg(windows)]`
-- **Normalize outputs** - Use snapshot utilities for cross-platform tests
-- **Document expected behavior** - Add comments for complex test logic
+- - **Normalize outputs** - Use snapshot utilities for cross-platform tests - **Document expected behavior** - Add
+  comments for complex test logic
 
 ## Platform Considerations
 
@@ -226,14 +209,12 @@ test result: ok. 18 passed; 0 failed; 0 ignored
 - **Signals:** `test_safe_run_003_sigterm_aborted` is Unix-only (`#[cfg(unix)]`)
 - **Scripts:** Use `.sh` on Unix, `.ps1` or `.bat` on Windows
 - **Paths:** Use `PathBuf` and `Path::join()` for cross-platform paths
-- **Line endings:** Normalize with snapshot utilities
+- - **Line endings:** Normalize with snapshot utilities
 
 ### Allowed Differences (per contract)
 
-- Line endings (CRLF vs LF)
-- Path separators (/ vs \)
-- Process IDs (different values, same pattern)
-- Timestamps (different values, same format)
+- - Line endings (CRLF vs LF) - Path separators (/ vs \) - Process IDs (different values, same pattern) - Timestamps
+  (different values, same format)
 
 ## Next Steps
 
@@ -243,7 +224,7 @@ test result: ok. 18 passed; 0 failed; 0 ignored
 2. Implement `safe-run` command in `rust/src/`
 3. Add helper scripts to `fixtures/` as needed
 4. Generate golden outputs in `snapshots/`
-5. Verify all safe-run tests pass on all platforms
+5. 5. Verify all safe-run tests pass on all platforms
 
 ### PR4+ - Implement Remaining Commands
 
@@ -251,15 +232,12 @@ test result: ok. 18 passed; 0 failed; 0 ignored
 2. Remove `#[ignore]` from safe-archive tests
 3. Implement `preflight-automerge-ruleset` command
 4. Remove `#[ignore]` from preflight tests
-5. Verify all tests pass
+5. 5. Verify all tests pass
 
 ### Future Enhancements
 
-- Add snapshot update mode (environment variable)
-- Add test coverage reporting
-- Add benchmark tests for performance validation
-- Add fuzzing for edge cases
-- Add integration tests with wrapper scripts
+- - Add snapshot update mode (environment variable) - Add test coverage reporting - Add benchmark tests for performance
+  validation - Add fuzzing for edge cases - Add integration tests with wrapper scripts
 
 ## Files Added in PR2
 
@@ -291,10 +269,8 @@ rust/
 
 PR2 delivers a complete, test-first conformance infrastructure:
 
-- ✅ All 13 conformance tests written and documented
-- ✅ Test utilities for vector loading and snapshot comparison
-- ✅ CI workflow for automated testing across platforms
-- ✅ Tests marked as ignored (will fail until implementation exists)
-- ✅ Clear path forward for PR3 (implementation)
+- - ✅ All 13 conformance tests written and documented - ✅ Test utilities for vector loading and snapshot comparison - ✅
+  CI workflow for automated testing across platforms - ✅ Tests marked as ignored (will fail until implementation exists)
+  - ✅ Clear path forward for PR3 (implementation)
 
 **No implementation work done** - per EPIC requirements, implementation comes in PR3.

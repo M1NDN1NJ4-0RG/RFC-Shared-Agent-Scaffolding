@@ -13,38 +13,30 @@ This migration plan outlines the transformation of `repo_lint` from a Python-bas
 
 **Key Benefits:**
 
-- Single standalone binary (no Python/tool dependencies at runtime)
-- Embedded multi-language AST parsing (tree-sitter)
-- YAML configs with JSON Schema for IDE autocomplete
-- ~10-100x performance improvement for large codebases
-- Cross-platform static binaries (Linux, macOS, Windows)
-- Enhanced security through type safety and minimal attack surface
+- - Single standalone binary (no Python/tool dependencies at runtime) - Embedded multi-language AST parsing
+  (tree-sitter) - YAML configs with JSON Schema for IDE autocomplete - ~10-100x performance improvement for large
+  codebases - Cross-platform static binaries (Linux, macOS, Windows) - Enhanced security through type safety and minimal
+  attack surface
 
 **Key Risks:**
 
-- Significant upfront development effort (est. 3-6 months for full parity)
-- Learning curve for Rust AST/linting ecosystem
-- Potential breaking changes during transition period
-- Contract adherence complexity increases with embedded tooling
+- - Significant upfront development effort (est. 3-6 months for full parity) - Learning curve for Rust AST/linting
+  ecosystem - Potential breaking changes during transition period - Contract adherence complexity increases with
+  embedded tooling
 
 ---
 
 ## Table of Contents
 
-- [Repository Analysis Findings](#repository-analysis-findings)
-- [Current Implementation Analysis](#current-implementation-analysis)
-- [Migration Milestones](#migration-milestones)
-  - [Milestone 1: Foundation and Architecture](#milestone-1-foundation-and-architecture)
-  - [Milestone 2: Embedded Linting Core](#milestone-2-embedded-linting-core)
-  - [Milestone 3: YAML Configuration System](#milestone-3-yaml-configuration-system)
-  - [Milestone 4: Feature Parity](#milestone-4-feature-parity)
-  - [Milestone 5: Distribution and Documentation](#milestone-5-distribution-and-documentation)
-  - [Milestone 6: Migration and Deprecation](#milestone-6-migration-and-deprecation)
-- [Future Work Integration](#future-work-integration)
-- [Contract Adherence Analysis](#contract-adherence-analysis)
-- [Risk Assessment and Mitigation](#risk-assessment-and-mitigation)
-- [TODOs](#todos)
-- [Deferments](#deferments)
+- - [Repository Analysis Findings](#repository-analysis-findings) - [Current Implementation
+  Analysis](#current-implementation-analysis) - [Migration Milestones](#migration-milestones) - [Milestone 1: Foundation
+  and Architecture](#milestone-1-foundation-and-architecture) - [Milestone 2: Embedded Linting
+  Core](#milestone-2-embedded-linting-core) - [Milestone 3: YAML Configuration
+  System](#milestone-3-yaml-configuration-system) - [Milestone 4: Feature Parity](#milestone-4-feature-parity) -
+  [Milestone 5: Distribution and Documentation](#milestone-5-distribution-and-documentation) - [Milestone 6: Migration
+  and Deprecation](#milestone-6-migration-and-deprecation) - [Future Work Integration](#future-work-integration) -
+  [Contract Adherence Analysis](#contract-adherence-analysis) - [Risk Assessment and
+  Mitigation](#risk-assessment-and-mitigation) - [TODOs](#todos) - [Deferments](#deferments)
 
 ---
 
@@ -56,37 +48,31 @@ This migration plan outlines the transformation of `repo_lint` from a Python-bas
 The repository has a sophisticated multi-level contract system:
 
 1. **Behavioral Contracts** (10 identified in `contract-extraction.md`):
-   - Binary discovery, repo root detection, argument pass-through
-   - Exit code forwarding, error handling, output modes
-   - All wrappers must maintain identical behavior
+   - - Binary discovery, repo root detection, argument pass-through - Exit code forwarding, error handling, output modes
+     - All wrappers must maintain identical behavior
 
-2. **Docstring Contracts** (8 languages, v1.2):
-   - File-level and symbol-level documentation requirements
+2. 2. **Docstring Contracts** (8 languages, v1.2): - File-level and symbol-level documentation requirements
    - Enforced by CI via `scripts/validate_docstrings.py`
-   - Required sections: Purpose, Usage, Arguments, Environment, Exit Codes, Examples, Notes
+   - - Required sections: Purpose, Usage, Arguments, Environment, Exit Codes, Examples, Notes
 
-3. **Naming Conventions** (Phase 4.5 enforcement):
-   - Language-specific: Python (snake_case), PowerShell (PascalCase), Bash (kebab-case), Perl (snake_case)
-   - Non-script files: kebab-case
+3. 3. **Naming Conventions** (Phase 4.5 enforcement): - Language-specific: Python (snake_case), PowerShell (PascalCase),
+   Bash (kebab-case), Perl (snake_case) - Non-script files: kebab-case
    - Enforced by `.github/workflows/naming-enforcement.yml`
 
 4. **AI Agent Constraints** (`ai-constraints.md`):
-   - Unsafe operations prohibited without human approval
+   - - Unsafe operations prohibited without human approval
    - `repo-lint fix --unsafe` is human-only command
-   - Escalation policy for dangerous operations
+   - - Escalation policy for dangerous operations
 
 **Critical Finding:** The repository's contract-driven approach means the Rust migration MUST:
 
-- Preserve all existing behavioral contracts
-- Maintain CLI compatibility
-- Enforce contract validation at build/test time
-- Provide migration path for configuration files
+- - Preserve all existing behavioral contracts - Maintain CLI compatibility - Enforce contract validation at build/test
+  time - Provide migration path for configuration files
 
 ### Current repo_lint Implementation
 
-**Language:** Pure Python 3
-**Lines of Code:** ~7,000 (32 Python files)
-**Architecture:** Plugin-based runner system with central orchestration
+**Language:** Pure Python 3 **Lines of Code:** ~7,000 (32 Python files) **Architecture:** Plugin-based runner system
+with central orchestration
 
 **Components:**
 
@@ -102,7 +88,7 @@ The repository has a sophisticated multi-level contract system:
 
 - **External CLI tools**: `black`, `ruff`, `pylint`, `shellcheck`, `shfmt`, `yamllint`, PSScriptAnalyzer, Perl::Critic
 - **Python libs**: Standard library only (no heavy deps like `ast`, `tree-sitter` currently)
-- **Config format**: JSON for autofix policy, TOML for Python tool config
+- - **Config format**: JSON for autofix policy, TOML for Python tool config
 
 **Exit Codes:**
 
@@ -113,11 +99,10 @@ The repository has a sophisticated multi-level contract system:
 
 **Key Features:**
 
-- **Safe vs Unsafe Fixes**: Policy-controlled with CI blockers
+- - **Safe vs Unsafe Fixes**: Policy-controlled with CI blockers
 - **Per-Language Filtering**: `--only <language>` flag
-- **CI/Local Modes**: Auto-install vs fail-fast
-- **JSON Output**: Machine-readable results
-- **Forensic Logging**: Unsafe fixes generate patches and logs
+- - **CI/Local Modes**: Auto-install vs fail-fast - **JSON Output**: Machine-readable results - **Forensic Logging**:
+  Unsafe fixes generate patches and logs
 
 ---
 
@@ -125,20 +110,17 @@ The repository has a sophisticated multi-level contract system:
 
 ### Strengths
 
-1. **Modular Architecture**: Clean separation between runners, policy, CLI
-2. **Contract Adherence**: Enforces docstring/naming/exit-code contracts
-3. **Safety First**: Unsafe operations require dual-confirmation
-4. **CI Integration**: Well-integrated with GitHub Actions
-5. **Comprehensive Testing**: 32 test files with good coverage
+1. 1. **Modular Architecture**: Clean separation between runners, policy, CLI 2. **Contract Adherence**: Enforces
+   docstring/naming/exit-code contracts 3. **Safety First**: Unsafe operations require dual-confirmation 4. **CI
+   Integration**: Well-integrated with GitHub Actions 5. **Comprehensive Testing**: 32 test files with good coverage
 
 ### Weaknesses
 
-1. **External Tool Dependencies**: Requires 10+ tools across 5 ecosystems
-2. **Performance**: Sequential Python orchestration, slow on large repos
+1. 1. **External Tool Dependencies**: Requires 10+ tools across 5 ecosystems 2. **Performance**: Sequential Python
+   orchestration, slow on large repos
 3. **Installation Complexity**: `.venv-lint/` isolation, manual non-Python tools
-4. **No True AST Analysis**: Delegates to external tools, can't implement custom rules
-5. **JSON Config**: No IDE support (autocomplete, validation)
-6. **Distribution**: Requires Python 3.8+ and pip install
+4. 4. **No True AST Analysis**: Delegates to external tools, can't implement custom rules 5. **JSON Config**: No IDE
+   support (autocomplete, validation) 6. **Distribution**: Requires Python 3.8+ and pip install
 
 ---
 
@@ -154,15 +136,13 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 1.1: Project Scaffolding
 
-- [ ] **Item 1.1.1: Create Rust workspace structure**
-  - **Severity:** High
+- - [ ] **Item 1.1.1: Create Rust workspace structure** - **Severity:** High
   - **Description:** Initialize Cargo workspace under `tools/repo_lint_rust/`
-  - **Files:**
+  - - **Files:**
     - Create `tools/repo_lint_rust/Cargo.toml` (workspace manifest)
     - Create `tools/repo_lint_rust/repo-lint/Cargo.toml` (binary crate)
     - Create `tools/repo_lint_rust/repo-lint-core/Cargo.toml` (library crate for reusability)
-  - **Rationale:** Workspace allows separating binary CLI from reusable library components
-  - **Implementation:**
+  - - **Rationale:** Workspace allows separating binary CLI from reusable library components - **Implementation:**
 
     ```toml
     # Cargo.toml (workspace)
@@ -170,22 +150,15 @@ The repository has a sophisticated multi-level contract system:
     members = ["repo-lint", "repo-lint-core", "repo-lint-parsers"]
     resolver = "2"
 
-    [workspace.dependencies]
-    # Shared versions across crates
-    serde = { version = "1.0", features = ["derive"] }
-    serde_json = "1.0"
-    serde_yaml = "0.9"
-    clap = { version = "4.5", features = ["derive", "cargo"] }
-    anyhow = "1.0"
+[workspace.dependencies] # Shared versions across crates serde = { version = "1.0", features = ["derive"] } serde_json =
+"1.0" serde_yaml = "0.9" clap = { version = "4.5", features = ["derive", "cargo"] } anyhow = "1.0"
     ```
 
-- [ ] **Item 1.1.2: Set up cross-compilation targets**
-  - **Severity:** High
-  - **Description:** Configure build for Linux x86_64, macOS (Intel/ARM), Windows x86_64
-  - **Files:**
+- - [ ] **Item 1.1.2: Set up cross-compilation targets** - **Severity:** High - **Description:** Configure build for
+  Linux x86_64, macOS (Intel/ARM), Windows x86_64 - **Files:**
     - `.github/workflows/build-repo-lint-rust.yml`
     - `tools/repo_lint_rust/.cargo/config.toml`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```toml
     # .cargo/config.toml
@@ -201,64 +174,38 @@ The repository has a sophisticated multi-level contract system:
 
   - **Notes:** Use `musl` for static Linux binaries, cross for Windows from Linux CI
 
-- [ ] **Item 1.1.3: Define CLI interface (clap v4)**
-  - **Severity:** High
-  - **Description:** Implement CLI arg parsing with full compatibility to Python version
+- - [ ] **Item 1.1.3: Define CLI interface (clap v4)** - **Severity:** High - **Description:** Implement CLI arg parsing
+  with full compatibility to Python version
   - **Files:** `tools/repo_lint_rust/repo-lint/src/cli.rs`
-  - **Sub-Items:**
+  - - **Sub-Items:**
     - [ ] Sub-Item 1.1.3.1: `check` subcommand with `--ci`, `--verbose`, `--only`, `--json`
     - [ ] Sub-Item 1.1.3.2: `fix` subcommand with unsafe guards (`--unsafe` + `--yes-i-know`)
     - [ ] Sub-Item 1.1.3.3: `install` subcommand (may become `verify` in Rust version)
     - [ ] Sub-Item 1.1.3.4: Global `--version`, `--help` with version from `Cargo.toml`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
     use clap::{Parser, Subcommand};
 
-    #[derive(Parser)]
-    #[command(name = "repo-lint", version, about = "Unified multi-language linting")]
-    struct Cli {
-        #[command(subcommand)]
-        command: Commands,
-    }
+#[derive(Parser)] #[command(name = "repo-lint", version, about = "Unified multi-language linting")] struct Cli {
+#[command(subcommand)] command: Commands, }
 
-    #[derive(Subcommand)]
-    enum Commands {
-        Check {
-            #[arg(long)]
-            ci: bool,
-            #[arg(long, short)]
-            verbose: bool,
-            #[arg(long)]
-            only: Option<String>,
-            #[arg(long)]
-            json: bool,
-        },
-        Fix {
-            #[arg(long)]
-            ci: bool,
-            #[arg(long)]
-            unsafe_mode: bool,
-            #[arg(long = "yes-i-know")]
-            confirm_unsafe: bool,
-            // ... other flags
-        },
-    }
+#[derive(Subcommand)] enum Commands { Check { #[arg(long)] ci: bool, #[arg(long, short)] verbose: bool, #[arg(long)]
+only: Option<String>, #[arg(long)] json: bool, }, Fix { #[arg(long)] ci: bool, #[arg(long)] unsafe_mode: bool,
+#[arg(long = "yes-i-know")] confirm_unsafe: bool, // ... other flags }, }
     ```
 
 ---
 
 #### Phase 1.2: Configuration Migration
 
-- [ ] **Item 1.2.1: Design YAML schema for linting rules**
-  - **Severity:** High
+- - [ ] **Item 1.2.1: Design YAML schema for linting rules** - **Severity:** High
   - **Description:** Convert `autofix-policy.json` to YAML with full schema
-  - **Files:**
+  - - **Files:**
     - `conformance/repo-lint/policy.yaml` (new YAML config)
     - `conformance/repo-lint/policy.schema.json` (JSON Schema for IDEs)
-  - **Rationale:** YAML is more human-readable, schema enables IDE autocomplete/validation
-  - **Sub-Items:**
-    - [ ] Sub-Item 1.2.1.1: Define YAML structure (categories, tools, safe/unsafe flags)
+  - - **Rationale:** YAML is more human-readable, schema enables IDE autocomplete/validation - **Sub-Items:** - [ ]
+    Sub-Item 1.2.1.1: Define YAML structure (categories, tools, safe/unsafe flags)
     - [ ] Sub-Item 1.2.1.2: Generate JSON Schema using `schemars` crate
     - [ ] Sub-Item 1.2.1.3: Add `$schema` key in YAML for IDE integration
     - [ ] Sub-Item 1.2.1.4: Test with VS Code, JetBrains IDEs, Vim (YAMLlint plugin)
@@ -270,12 +217,8 @@ The repository has a sophisticated multi-level contract system:
     version: "2.0"
     policy: deny_by_default
 
-    allowed_categories:
-      - category: FORMAT.BLACK
-        tool: embedded  # No external black needed
-        safe: true
-        mutating: true
-        description: "Python code formatter (Rust implementation)"
+allowed_categories: - category: FORMAT.BLACK tool: embedded  # No external black needed safe: true mutating: true
+description: "Python code formatter (Rust implementation)"
 
       - category: LINT.RUFF.SAFE
         tool: embedded
@@ -288,94 +231,66 @@ The repository has a sophisticated multi-level contract system:
     use schemars::{schema_for, JsonSchema};
     use serde::{Deserialize, Serialize};
 
-    #[derive(Serialize, Deserialize, JsonSchema)]
-    struct PolicyConfig {
-        version: String,
-        policy: PolicyMode,
-        allowed_categories: Vec<Category>,
-    }
+#[derive(Serialize, Deserialize, JsonSchema)] struct PolicyConfig { version: String, policy: PolicyMode,
+allowed_categories: Vec<Category>, }
 
     // Generate schema.json:
     let schema = schema_for!(PolicyConfig);
     ```
 
-- [ ] **Item 1.2.2: Implement YAML config loader with validation**
-  - **Severity:** High
-  - **Description:** Parse YAML, validate against schema, fail fast on errors
+- - [ ] **Item 1.2.2: Implement YAML config loader with validation** - **Severity:** High - **Description:** Parse YAML,
+  validate against schema, fail fast on errors
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/config.rs`
   - **Dependencies:** `serde_yaml`, `schemars`, `validator`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
     use serde_yaml;
     use validator::Validate;
 
-    pub fn load_policy(path: &Path) -> Result<PolicyConfig> {
-        let content = fs::read_to_string(path)?;
-        let config: PolicyConfig = serde_yaml::from_str(&content)?;
-        config.validate()?;  // Schema validation
-        Ok(config)
-    }
+pub fn load_policy(path: &Path) -> Result<PolicyConfig> { let content = fs::read_to_string(path)?; let config:
+PolicyConfig = serde_yaml::from_str(&content)?; config.validate()?;  // Schema validation Ok(config) }
     ```
 
-- [ ] **Item 1.2.3: Backwards compatibility layer for JSON config**
-  - **Severity:** Medium
+- - [ ] **Item 1.2.3: Backwards compatibility layer for JSON config** - **Severity:** Medium
   - **Description:** Support reading old `autofix-policy.json` during transition
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/config.rs`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
-    pub fn load_policy_auto(dir: &Path) -> Result<PolicyConfig> {
-        // Prefer YAML, fall back to JSON
-        if dir.join("policy.yaml").exists() {
-            load_policy_yaml(&dir.join("policy.yaml"))
-        } else if dir.join("autofix-policy.json").exists() {
-            load_policy_json(&dir.join("autofix-policy.json"))
-        } else {
-            Err(anyhow!("No policy config found"))
-        }
-    }
+pub fn load_policy_auto(dir: &Path) -> Result<PolicyConfig> { // Prefer YAML, fall back to JSON if
+dir.join("policy.yaml").exists() { load_policy_yaml(&dir.join("policy.yaml")) } else if
+dir.join("autofix-policy.json").exists() { load_policy_json(&dir.join("autofix-policy.json")) } else { Err(anyhow!("No
+policy config found")) } }
     ```
 
 ---
 
 #### Phase 1.3: Core Abstractions
 
-- [ ] **Item 1.3.1: Define Runner trait**
-  - **Severity:** High
-  - **Description:** Abstract interface for language-specific linters
+- - [ ] **Item 1.3.1: Define Runner trait** - **Severity:** High - **Description:** Abstract interface for
+  language-specific linters
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/runner.rs`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
-    pub trait Runner: Send + Sync {
-        fn name(&self) -> &str;
-        fn file_extensions(&self) -> &[&str];
-        fn check(&self, files: &[PathBuf], config: &Config) -> Result<CheckResult>;
-        fn fix(&self, files: &[PathBuf], config: &Config, unsafe_mode: bool) -> Result<FixResult>;
-        fn can_fix_unsafe(&self) -> bool { false }
-    }
+pub trait Runner: Send + Sync { fn name(&self) -> &str; fn file_extensions(&self) -> &[&str]; fn check(&self, files:
+&[PathBuf], config: &Config) -> Result<CheckResult>; fn fix(&self, files: &[PathBuf], config: &Config, unsafe_mode:
+bool) -> Result<FixResult>; fn can_fix_unsafe(&self) -> bool { false } }
 
     pub struct CheckResult {
         pub violations: Vec<Violation>,
         pub passed: bool,
     }
 
-    pub struct Violation {
-        pub file: PathBuf,
-        pub line: usize,
-        pub column: usize,
-        pub severity: Severity,
-        pub message: String,
-        pub rule: String,
-    }
+pub struct Violation { pub file: PathBuf, pub line: usize, pub column: usize, pub severity: Severity, pub message:
+String, pub rule: String, }
     ```
 
-- [ ] **Item 1.3.2: Implement exit code system**
-  - **Severity:** High
-  - **Description:** Match Python exit codes exactly (0/1/2/3)
+- - [ ] **Item 1.3.2: Implement exit code system** - **Severity:** High - **Description:** Match Python exit codes
+  exactly (0/1/2/3)
   - **Files:** `tools/repo_lint_rust/repo-lint/src/exit_codes.rs`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
     pub enum ExitCode {
@@ -392,11 +307,10 @@ The repository has a sophisticated multi-level contract system:
     }
     ```
 
-- [ ] **Item 1.3.3: Error handling strategy**
-  - **Severity:** High
+- - [ ] **Item 1.3.3: Error handling strategy** - **Severity:** High
   - **Description:** Use `anyhow` for application errors, `thiserror` for library errors
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/error.rs`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
     use thiserror::Error;
@@ -426,11 +340,10 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 2.1: Tree-sitter Integration
 
-- [ ] **Item 2.1.1: Set up tree-sitter dependencies**
-  - **Severity:** High
-  - **Description:** Add tree-sitter parsers for Python, Bash, Perl, PowerShell, Rust, YAML
+- - [ ] **Item 2.1.1: Set up tree-sitter dependencies** - **Severity:** High - **Description:** Add tree-sitter parsers
+  for Python, Bash, Perl, PowerShell, Rust, YAML
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/Cargo.toml`
-  - **Dependencies:**
+  - - **Dependencies:**
 
     ```toml
     [dependencies]
@@ -443,13 +356,12 @@ The repository has a sophisticated multi-level contract system:
     tree-sitter-yaml = "0.20"
     ```
 
-  - **Notes:** Some languages lack official tree-sitter support (Perl, PowerShell) - may need custom grammars
+  - - **Notes:** Some languages lack official tree-sitter support (Perl, PowerShell) - may need custom grammars
 
-- [ ] **Item 2.1.2: Parse file to AST**
-  - **Severity:** High
-  - **Description:** Generic AST parser with per-language grammar selection
+- - [ ] **Item 2.1.2: Parse file to AST** - **Severity:** High - **Description:** Generic AST parser with per-language
+  grammar selection
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/lib.rs`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
     pub struct Parser {
@@ -458,104 +370,71 @@ The repository has a sophisticated multi-level contract system:
         // ... per language
     }
 
-    impl Parser {
-        pub fn parse_file(&mut self, path: &Path) -> Result<tree_sitter::Tree> {
-            let ext = path.extension().unwrap().to_str().unwrap();
-            let parser = match ext {
-                "py" => &mut self.python,
+impl Parser { pub fn parse_file(&mut self, path: &Path) -> Result<tree_sitter::Tree> { let ext =
+path.extension().unwrap().to_str().unwrap(); let parser = match ext { "py" => &mut self.python,
 
  "sh" | "bash" => &mut self.bash,
                 // ...
                 _ => return Err(anyhow!("Unsupported file type: {}", ext)),
             };
 
-            let content = fs::read_to_string(path)?;
-            let tree = parser.parse(&content, None)
- .ok_or_else( |  | anyhow!("Parse failed"))?;
-            Ok(tree)
-        }
-    }
+let content = fs::read_to_string(path)?; let tree = parser.parse(&content, None) .ok_or_else( |  | anyhow!("Parse
+failed"))?; Ok(tree) } }
     ```
 
-- [ ] **Item 2.1.3: AST query system for linting rules**
-  - **Severity:** Medium
-  - **Description:** Use tree-sitter queries to find patterns (e.g., missing docstrings)
+- - [ ] **Item 2.1.3: AST query system for linting rules** - **Severity:** Medium - **Description:** Use tree-sitter
+  queries to find patterns (e.g., missing docstrings)
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/queries.rs`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
-    const PYTHON_MISSING_DOCSTRING: &str = r#"
-    (function_definition
-      name: (identifier) @func.name
-      (!  (expression_statement (string)) )
-    ) @func.missing_doc
-    "#;
+const PYTHON_MISSING_DOCSTRING: &str = r#" (function_definition name: (identifier) @func.name (!  (expression_statement
+(string)) ) ) @func.missing_doc "#;
 
-    pub fn find_missing_docstrings(tree: &Tree, source: &str) -> Vec<Violation> {
-        let query = Query::new(tree_sitter_python::language(), PYTHON_MISSING_DOCSTRING).unwrap();
-        let mut cursor = QueryCursor::new();
-        let matches = cursor.matches(&query, tree.root_node(), source.as_bytes());
+pub fn find_missing_docstrings(tree: &Tree, source: &str) -> Vec<Violation> { let query =
+Query::new(tree_sitter_python::language(), PYTHON_MISSING_DOCSTRING).unwrap(); let mut cursor = QueryCursor::new(); let
+matches = cursor.matches(&query, tree.root_node(), source.as_bytes());
 
- matches.map( | m | {
-            let node = m.captures[0].node;
-            Violation {
-                line: node.start_position().row + 1,
-                message: "Missing docstring".into(),
-                // ...
-            }
-        }).collect()
-    }
+matches.map( | m | { let node = m.captures[0].node; Violation { line: node.start_position().row + 1, message: "Missing
+docstring".into(), // ... } }).collect() }
     ```
 
 ---
 
 #### Phase 2.2: Python Linting (Black + Ruff + Pylint Equivalent)
 
-- [ ] **Item 2.2.1: Implement Black formatter equivalent**
-  - **Severity:** High
+- - [ ] **Item 2.2.1: Implement Black formatter equivalent** - **Severity:** High
   - **Description:** Embed Python formatting logic (or use `ruff format`)
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/python/format.rs`
-  - **Options:**
+  - - **Options:**
     1. **Option A:** Use `ruff format` (Rust-based, Black-compatible, actively maintained)
     2. **Option B:** Implement custom formatter using tree-sitter AST
     3. **Option C:** FFI to Python `black` (not self-contained)
-  - **Recommendation:** Option A (ruff format) - production-ready, Black-compatible
-  - **Implementation:**
+  - - **Recommendation:** Option A (ruff format) - production-ready, Black-compatible - **Implementation:**
 
     ```rust
     use std::process::Command;
 
-    pub fn format_python(file: &Path) -> Result<bool> {
-        // If ruff is embedded as library (future):
-        // use ruff::format;
-        // For now, shell out to ruff binary embedded in resources
-        let output = Command::new("ruff")
-            .args(["format", file.to_str().unwrap()])
-            .output()?;
-        Ok(output.status.success())
-    }
+pub fn format_python(file: &Path) -> Result<bool> { // If ruff is embedded as library (future): // use ruff::format; //
+For now, shell out to ruff binary embedded in resources let output = Command::new("ruff") .args(["format",
+file.to_str().unwrap()]) .output()?; Ok(output.status.success()) }
     ```
 
-  - **Alternative (fully embedded):**
+  - - **Alternative (fully embedded):**
     - Vendor `ruff_python_formatter` crate if published
     - OR: Implement minimal Python formatter for 80% use cases
 
-- [ ] **Item 2.2.2: Embed Ruff linter**
-  - **Severity:** High
+- - [ ] **Item 2.2.2: Embed Ruff linter** - **Severity:** High
   - **Description:** Use `ruff_linter` crate or shell out to embedded binary
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/python/lint.rs`
-  - **Implementation (if ruff_linter is available):**
+  - - **Implementation (if ruff_linter is available):**
 
     ```rust
     use ruff_linter::{check_file, LintConfig};
 
-    pub fn lint_python(file: &Path, config: &Config) -> Result<Vec<Violation>> {
-        let ruff_config = LintConfig {
-            select: config.python_rules.clone(),
-            ignore: config.python_ignore.clone(),
-            // ...
-        };
-        let violations = check_file(file, &ruff_config)?;
+pub fn lint_python(file: &Path, config: &Config) -> Result<Vec<Violation>> { let ruff_config = LintConfig { select:
+config.python_rules.clone(), ignore: config.python_ignore.clone(), // ... }; let violations = check_file(file,
+&ruff_config)?;
 
  Ok(violations.into_iter().map( | v | Violation::from_ruff(v)).collect())
     }
@@ -563,40 +442,31 @@ The repository has a sophisticated multi-level contract system:
 
 - **Fallback:** Embed ruff binary in executable using `include_bytes!()` or build-time resource bundling
 
-- [ ] **Item 2.2.3: Pylint equivalent checks (tree-sitter based)**
-  - **Severity:** Medium
-  - **Description:** Implement subset of Pylint rules as tree-sitter queries
+- - [ ] **Item 2.2.3: Pylint equivalent checks (tree-sitter based)** - **Severity:** Medium - **Description:** Implement
+  subset of Pylint rules as tree-sitter queries
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/python/pylint_rules.rs`
-  - **Sub-Items:**
-    - [ ] Sub-Item 2.2.3.1: Missing docstrings (functions, classes, modules)
-    - [ ] Sub-Item 2.2.3.2: Unused imports
-    - [ ] Sub-Item 2.2.3.3: Undefined variables
-    - [ ] Sub-Item 2.2.3.4: Line length violations (>120 chars)
-  - **Notes:** Start with high-value rules, expand incrementally
+  - - **Sub-Items:** - [ ] Sub-Item 2.2.3.1: Missing docstrings (functions, classes, modules) - [ ] Sub-Item 2.2.3.2:
+    Unused imports - [ ] Sub-Item 2.2.3.3: Undefined variables - [ ] Sub-Item 2.2.3.4: Line length violations (>120
+    chars) - **Notes:** Start with high-value rules, expand incrementally
 
 ---
 
 #### Phase 2.3: Bash Linting (ShellCheck + shfmt Equivalent)
 
-- [ ] **Item 2.3.1: Embed ShellCheck rules**
-  - **Severity:** High
-  - **Description:** Reimplement ShellCheck's most critical rules
+- - [ ] **Item 2.3.1: Embed ShellCheck rules** - **Severity:** High - **Description:** Reimplement ShellCheck's most
+  critical rules
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/bash/shellcheck.rs`
-  - **Challenges:**
-    - ShellCheck has ~400 rules; full parity is impractical
-    - Bash parsing is notoriously complex (quoting, expansion, heredocs)
-  - **Approach:**
-    - Use tree-sitter-bash for AST
-    - Implement top 20 ShellCheck rules (SC2086, SC2046, SC2006, etc.)
-    - Provide opt-in "strict mode" for full ShellCheck via external tool
-  - **Implementation:**
+  - - **Challenges:** - ShellCheck has ~400 rules; full parity is impractical - Bash parsing is notoriously complex
+    (quoting, expansion, heredocs) - **Approach:** - Use tree-sitter-bash for AST - Implement top 20 ShellCheck rules
+    (SC2086, SC2046, SC2006, etc.) - Provide opt-in "strict mode" for full ShellCheck via external tool -
+    **Implementation:**
 
     ```rust
     pub fn check_bash(tree: &Tree, source: &str) -> Vec<Violation> {
         let mut violations = Vec::new();
 
-        // SC2086: Double quote to prevent globbing and word splitting
-        violations.extend(check_unquoted_expansion(tree, source));
+// SC2086: Double quote to prevent globbing and word splitting violations.extend(check_unquoted_expansion(tree,
+source));
 
         // SC2006: Use $(...) instead of legacy `...`
         violations.extend(check_legacy_backticks(tree, source));
@@ -606,14 +476,11 @@ The repository has a sophisticated multi-level contract system:
     }
     ```
 
-- [ ] **Item 2.3.2: Embed shfmt formatter**
-  - **Severity:** Medium
-  - **Description:** Implement Bash formatting logic
+- - [ ] **Item 2.3.2: Embed shfmt formatter** - **Severity:** Medium - **Description:** Implement Bash formatting logic
   - **Options:**
     1. **Option A:** Shell out to embedded `shfmt` binary
-    2. **Option B:** Implement minimal formatter using tree-sitter
-  - **Recommendation:** Option A (shfmt is mature, written in Go, can cross-compile)
-  - **Implementation:**
+2. **Option B:** Implement minimal formatter using tree-sitter - **Recommendation:** Option A (shfmt is mature, written
+in Go, can cross-compile) - **Implementation:**
     - Embed shfmt binary at build time using `build.rs`
     - Extract to temp dir and execute
     - OR: Use Go FFI (complex, not recommended)
@@ -622,16 +489,10 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 2.4: PowerShell Linting
 
-- [ ] **Item 2.4.1: PSScriptAnalyzer equivalent**
-  - **Severity:** High
-  - **Description:** Implement PowerShell linting rules
-  - **Challenges:**
-    - PSScriptAnalyzer is .NET-based, cannot easily embed
-    - tree-sitter-powershell grammar may be incomplete
-  - **Approach:**
-    - Implement basic rules via tree-sitter (e.g., verb-noun functions, CmdletBinding)
-    - Provide "enhanced mode" that shells out to PSScriptAnalyzer if available
-  - **Implementation:**
+- - [ ] **Item 2.4.1: PSScriptAnalyzer equivalent** - **Severity:** High - **Description:** Implement PowerShell linting
+  rules - **Challenges:** - PSScriptAnalyzer is .NET-based, cannot easily embed - tree-sitter-powershell grammar may be
+  incomplete - **Approach:** - Implement basic rules via tree-sitter (e.g., verb-noun functions, CmdletBinding) -
+  Provide "enhanced mode" that shells out to PSScriptAnalyzer if available - **Implementation:**
 
     ```rust
     pub fn check_powershell(tree: &Tree, source: &str) -> Vec<Violation> {
@@ -647,34 +508,24 @@ The repository has a sophisticated multi-level contract system:
     }
     ```
 
-- [ ] **Item 2.4.2: PowerShell formatter**
-  - **Severity:** Low
-  - **Description:** Basic formatting (indentation, brace style)
-  - **Notes:** PowerShell formatting is less critical than Python/Bash
+- - [ ] **Item 2.4.2: PowerShell formatter** - **Severity:** Low - **Description:** Basic formatting (indentation, brace
+  style) - **Notes:** PowerShell formatting is less critical than Python/Bash
 
 ---
 
 #### Phase 2.5: Perl Linting
 
-- [ ] **Item 2.5.1: Perl::Critic equivalent rules**
-  - **Severity:** Medium
-  - **Description:** Implement severity 5 Perl::Critic rules
-  - **Challenges:**
-    - Perl is notoriously hard to parse (context-sensitive, TIMTOWTDI)
-    - tree-sitter-perl grammar is experimental
-  - **Approach:**
-    - Implement ~10 basic rules (use strict, use warnings, bareword filehandles)
-    - Provide opt-in mode to shell out to Perl::Critic
-  - **Implementation:**
+- - [ ] **Item 2.5.1: Perl::Critic equivalent rules** - **Severity:** Medium - **Description:** Implement severity 5
+  Perl::Critic rules - **Challenges:** - Perl is notoriously hard to parse (context-sensitive, TIMTOWTDI) -
+  tree-sitter-perl grammar is experimental - **Approach:** - Implement ~10 basic rules (use strict, use warnings,
+  bareword filehandles) - Provide opt-in mode to shell out to Perl::Critic - **Implementation:**
 
     ```rust
     pub fn check_perl(tree: &Tree, source: &str) -> Vec<Violation> {
         let mut violations = Vec::new();
 
-        // Rule: Require "use strict;" and "use warnings;"
-        if !source.contains("use strict") {
-            violations.push(Violation { message: "Missing 'use strict;'", ... });
-        }
+// Rule: Require "use strict;" and "use warnings;" if !source.contains("use strict") { violations.push(Violation {
+message: "Missing 'use strict;'", ... }); }
 
         violations
     }
@@ -684,33 +535,30 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 2.6: YAML & Rust Linting
 
-- [ ] **Item 2.6.1: yamllint embedded**
-  - **Severity:** Low
-  - **Description:** Parse YAML, check syntax, indentation, line length
+- - [ ] **Item 2.6.1: yamllint embedded** - **Severity:** Low - **Description:** Parse YAML, check syntax, indentation,
+  line length
   - **Dependencies:** `serde_yaml` for parsing, tree-sitter-yaml for AST analysis
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
-    pub fn check_yaml(path: &Path) -> Result<Vec<Violation>> {
-        let content = fs::read_to_string(path)?;
-        let _doc: serde_yaml::Value = serde_yaml::from_str(&content)?;
+pub fn check_yaml(path: &Path) -> Result<Vec<Violation>> { let content = fs::read_to_string(path)?; let _doc:
+serde_yaml::Value = serde_yaml::from_str(&content)?;
 
         // Check line length
         let violations = content.lines()
             .enumerate()
 
- .filter( | (*, line) | line.len() > 120)
- .map( | (i,*) | Violation { line: i + 1, message: "Line too long", ... })
-            .collect();
+.filter( | (*, line) | line.len() > 120) .map( | (i,*) | Violation { line: i + 1, message: "Line too long", ... })
+.collect();
 
         Ok(violations)
     }
     ```
 
-- [ ] **Item 2.6.2: Rust linting (clippy equivalent)**
-  - **Severity:** Low (Rust linting is already handled by rustfmt/clippy in the build)
+- - [ ] **Item 2.6.2: Rust linting (clippy equivalent)** - **Severity:** Low (Rust linting is already handled by
+  rustfmt/clippy in the build)
   - **Description:** Provide opt-in mode to run `cargo clippy` on Rust files
-  - **Notes:** Defer to external clippy; embedding is impractical
+  - - **Notes:** Defer to external clippy; embedding is impractical
 
 ---
 
@@ -724,20 +572,16 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 3.1: Schema Generation
 
-- [ ] **Item 3.1.1: Generate JSON Schema from Rust structs**
-  - **Severity:** High
+- - [ ] **Item 3.1.1: Generate JSON Schema from Rust structs** - **Severity:** High
   - **Description:** Use `schemars` to auto-generate schemas
   - **Files:** `tools/repo_lint_rust/repo-lint-core/src/config.rs`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
     use schemars::{schema_for, JsonSchema};
 
-    #[derive(Serialize, Deserialize, JsonSchema)]
-    struct PolicyConfig {
-        /// Schema version (semver)
-        #[schemars(regex = r"^\d+\.\d+$")]
-        version: String,
+#[derive(Serialize, Deserialize, JsonSchema)] struct PolicyConfig { /// Schema version (semver) #[schemars(regex =
+r"^\d+\.\d+$")] version: String,
 
         /// Policy mode: "allow_by_default" or "deny_by_default"
         #[schemars(default = "deny_by_default")]
@@ -747,56 +591,37 @@ The repository has a sophisticated multi-level contract system:
         allowed_categories: Vec<Category>,
     }
 
-    // Generate schema:
-    fn generate_schema() {
-        let schema = schema_for!(PolicyConfig);
-        let json = serde_json::to_string_pretty(&schema).unwrap();
-        fs::write("conformance/repo-lint/policy.schema.json", json).unwrap();
-    }
+// Generate schema: fn generate_schema() { let schema = schema_for!(PolicyConfig); let json =
+serde_json::to_string_pretty(&schema).unwrap(); fs::write("conformance/repo-lint/policy.schema.json", json).unwrap(); }
     ```
 
-- [ ] **Item 3.1.2: Add $schema references in YAML configs**
-  - **Severity:** High
-  - **Description:** Ensure YAML files reference schema for IDE validation
+- - [ ] **Item 3.1.2: Add $schema references in YAML configs** - **Severity:** High - **Description:** Ensure YAML files
+  reference schema for IDE validation
   - **Files:** `conformance/repo-lint/policy.yaml`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```yaml
-    # yaml-language-server: $schema=./policy.schema.json
-    $schema: "./policy.schema.json"
-    version: "2.0"
-    policy: deny_by_default
-    # ...
+# yaml-language-server: $schema=./policy.schema.json $schema: "./policy.schema.json" version: "2.0" policy:
+deny_by_default # ...
     ```
 
-- [ ] **Item 3.1.3: Test IDE integration**
-  - **Severity:** Medium
-  - **Description:** Verify autocomplete/validation in VS Code, JetBrains, Vim
-  - **Sub-Items:**
-    - [ ] Sub-Item 3.1.3.1: VS Code (YAML extension with schema support)
-    - [ ] Sub-Item 3.1.3.2: JetBrains IDEs (IntelliJ, PyCharm, RustRover)
-    - [ ] Sub-Item 3.1.3.3: Vim (with ALE or coc-yaml)
+- - [ ] **Item 3.1.3: Test IDE integration** - **Severity:** Medium - **Description:** Verify autocomplete/validation in
+  VS Code, JetBrains, Vim - **Sub-Items:** - [ ] Sub-Item 3.1.3.1: VS Code (YAML extension with schema support) - [ ]
+  Sub-Item 3.1.3.2: JetBrains IDEs (IntelliJ, PyCharm, RustRover) - [ ] Sub-Item 3.1.3.3: Vim (with ALE or coc-yaml)
   - **Documentation:** Add screenshots to `tools/repo_lint_rust/docs/ide-setup.md`
 
 ---
 
 #### Phase 3.2: Linting Rule Configuration
 
-- [ ] **Item 3.2.1: Per-language rule selection in YAML**
-  - **Severity:** High
-  - **Description:** Allow enabling/disabling specific rules per language
+- - [ ] **Item 3.2.1: Per-language rule selection in YAML** - **Severity:** High - **Description:** Allow
+  enabling/disabling specific rules per language
   - **Files:** `conformance/repo-lint/rules.yaml`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```yaml
-    python:
-      rules:
-        - id: "E501"  # Line too long
-          enabled: true
-          max_line_length: 120
-        - id: "F401"  # Unused import
-          enabled: true
-          severity: error
+python: rules: - id: "E501"  # Line too long enabled: true max_line_length: 120 - id: "F401"  # Unused import enabled:
+true severity: error
 
     bash:
       rules:
@@ -805,18 +630,12 @@ The repository has a sophisticated multi-level contract system:
           severity: warning
     ```
 
-- [ ] **Item 3.2.2: Severity levels (error/warning/info)**
-  - **Severity:** Medium
-  - **Description:** Map rule violations to severity levels
-  - **Implementation:**
+- - [ ] **Item 3.2.2: Severity levels (error/warning/info)** - **Severity:** Medium - **Description:** Map rule
+  violations to severity levels - **Implementation:**
 
     ```rust
-    #[derive(Serialize, Deserialize, JsonSchema)]
-    enum Severity {
-        Error,   // Exit code 1
-        Warning, // Report but don't fail
-        Info,    // Log only
-    }
+#[derive(Serialize, Deserialize, JsonSchema)] enum Severity { Error,   // Exit code 1 Warning, // Report but don't fail
+Info,    // Log only }
     ```
 
 ---
@@ -832,75 +651,57 @@ The repository has a sophisticated multi-level contract system:
 #### Phase 4.1: CLI Commands
 
 - [ ] **Item 4.1.1: `check` command (read-only linting)**
-  - **Severity:** High
+  - - **Severity:** High
   - **Description:** Full parity with `python3 -m tools.repo_lint check`
-  - **Sub-Items:**
+  - - **Sub-Items:**
     - [ ] Sub-Item 4.1.1.1: `--ci` mode (fail on missing tools, no auto-install)
     - [ ] Sub-Item 4.1.1.2: `--verbose` (show passed checks)
     - [ ] Sub-Item 4.1.1.3: `--only <language>` (filter by language)
     - [ ] Sub-Item 4.1.1.4: `--json` (machine-readable output)
 
 - [ ] **Item 4.1.2: `fix` command (safe auto-fixes)**
-  - **Severity:** High
-  - **Description:** Apply formatters + safe lint fixes
-  - **Sub-Items:**
-    - [ ] Sub-Item 4.1.2.1: Safe fixes only (no behavior changes)
-    - [ ] Sub-Item 4.1.2.2: Policy validation (deny-by-default)
-    - [ ] Sub-Item 4.1.2.3: Exit code 1 if violations remain after fixes
+  - - **Severity:** High - **Description:** Apply formatters + safe lint fixes - **Sub-Items:** - [ ] Sub-Item 4.1.2.1:
+    Safe fixes only (no behavior changes) - [ ] Sub-Item 4.1.2.2: Policy validation (deny-by-default) - [ ] Sub-Item
+    4.1.2.3: Exit code 1 if violations remain after fixes
 
 - [ ] **Item 4.1.3: `fix --unsafe` command (dangerous fixes)**
-  - **Severity:** High
-  - **Description:** Unsafe fixes with forensic logging
-  - **Sub-Items:**
+  - - **Severity:** High - **Description:** Unsafe fixes with forensic logging - **Sub-Items:**
     - [ ] Sub-Item 4.1.3.1: Require `--yes-i-know` dual confirmation
     - [ ] Sub-Item 4.1.3.2: Hard-block in CI (detect via `--ci` or `CI` env var)
     - [ ] Sub-Item 4.1.3.3: Generate patch file (`logs/unsafe-fixes/unsafe-fix-TIMESTAMP.patch`)
     - [ ] Sub-Item 4.1.3.4: Generate log file (`logs/unsafe-fixes/unsafe-fix-TIMESTAMP.log`)
 
 - [ ] **Item 4.1.4: `install` command (tool verification)**
-  - **Severity:** Low
-  - **Description:** In Rust version, this becomes "verify embedded tools"
+  - - **Severity:** Low - **Description:** In Rust version, this becomes "verify embedded tools"
   - **Notes:** Since tools are embedded, `install` is a no-op or checks binary integrity
 
 ---
 
 #### Phase 4.2: Docstring Validation
 
-- [ ] **Item 4.2.1: File-level docstring validation**
-  - **Severity:** High
-  - **Description:** Validate required sections per language contract
+- - [ ] **Item 4.2.1: File-level docstring validation** - **Severity:** High - **Description:** Validate required
+  sections per language contract
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/docstrings/`
-  - **Sub-Items:**
-    - [ ] Sub-Item 4.2.1.1: Python (Purpose, Usage, Exit Codes, Examples)
-    - [ ] Sub-Item 4.2.1.2: Bash (DESCRIPTION, USAGE, EXAMPLES, EXIT CODES)
-    - [ ] Sub-Item 4.2.1.3: PowerShell (.SYNOPSIS, .DESCRIPTION, .EXAMPLE, Exit Codes)
-    - [ ] Sub-Item 4.2.1.4: Perl (=head1 NAME, DESCRIPTION, SYNOPSIS, EXAMPLES)
-    - [ ] Sub-Item 4.2.1.5: Rust (//! # Purpose, //! # Examples, //! # Exit Behavior)
-  - **Implementation:**
+  - - **Sub-Items:** - [ ] Sub-Item 4.2.1.1: Python (Purpose, Usage, Exit Codes, Examples) - [ ] Sub-Item 4.2.1.2: Bash
+    (DESCRIPTION, USAGE, EXAMPLES, EXIT CODES) - [ ] Sub-Item 4.2.1.3: PowerShell (.SYNOPSIS, .DESCRIPTION, .EXAMPLE,
+    Exit Codes) - [ ] Sub-Item 4.2.1.4: Perl (=head1 NAME, DESCRIPTION, SYNOPSIS, EXAMPLES) - [ ] Sub-Item 4.2.1.5: Rust
+    (//! # Purpose, //! # Examples, //! # Exit Behavior) - **Implementation:**
 
     ```rust
-    pub fn validate_python_docstring(tree: &Tree, source: &str) -> Vec<Violation> {
-        let module_docstring = extract_module_docstring(tree, source);
-        let required = vec!["Purpose", "Usage", "Exit Codes", "Examples"];
+pub fn validate_python_docstring(tree: &Tree, source: &str) -> Vec<Violation> { let module_docstring =
+extract_module_docstring(tree, source); let required = vec!["Purpose", "Usage", "Exit Codes", "Examples"];
 
         required.iter()
 
- .filter( | section | !module_docstring.contains(section))
- .map( | section | Violation {
-                message: format!("Missing required docstring section: {}", section),
-                // ...
-            })
-            .collect()
-    }
+.filter( | section | !module_docstring.contains(section)) .map( | section | Violation { message: format!("Missing
+required docstring section: {}", section), // ... }) .collect() }
     ```
 
-- [ ] **Item 4.2.2: Symbol-level docstring validation**
-  - **Severity:** Medium
-  - **Description:** Check function/class/method docstrings
+- - [ ] **Item 4.2.2: Symbol-level docstring validation** - **Severity:** Medium - **Description:** Check
+  function/class/method docstrings
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/docstrings/symbols.rs`
-  - **Sub-Items:**
-    - [ ] Sub-Item 4.2.2.1: Python (functions, classes, methods)
-    - [ ] Sub-Item 4.2.2.2: Rust (pub fn, pub struct)
+  - - **Sub-Items:** - [ ] Sub-Item 4.2.2.1: Python (functions, classes, methods) - [ ] Sub-Item 4.2.2.2: Rust (pub fn,
+    pub struct)
     - [ ] Sub-Item 4.2.2.3: Bash (functions starting with `#:`)
     - [ ] Sub-Item 4.2.2.4: PowerShell (functions with `.SYNOPSIS`)
 
@@ -908,12 +709,10 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 4.3: Unsafe Fixers
 
-- [ ] **Item 4.3.1: Docstring rewrite unsafe fixer**
-  - **Severity:** Medium
-  - **Description:** Convert Google-style to Sphinx-style (or vice versa)
+- - [ ] **Item 4.3.1: Docstring rewrite unsafe fixer** - **Severity:** Medium - **Description:** Convert Google-style to
+  Sphinx-style (or vice versa)
   - **Files:** `tools/repo_lint_rust/repo-lint-parsers/src/unsafe_fixers/docstring_rewrite.rs`
-  - **Rationale:** This is the main unsafe fixer from Python version
-  - **Implementation:**
+  - - **Rationale:** This is the main unsafe fixer from Python version - **Implementation:**
 
     ```rust
     pub struct DocstringRewriteFixer;
@@ -926,11 +725,8 @@ The repository has a sophisticated multi-level contract system:
  file.extension().map( | e | e == "py").unwrap_or(false)
         }
 
-        fn fix(&self, file: &Path, config: &Config) -> Result<FixResult> {
-            // Parse AST, find docstrings, rewrite format
-            // Generate patch + forensics
-        }
-    }
+fn fix(&self, file: &Path, config: &Config) -> Result<FixResult> { // Parse AST, find docstrings, rewrite format //
+Generate patch + forensics } }
     ```
 
 ---
@@ -945,11 +741,10 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 5.1: Binary Packaging
 
-- [ ] **Item 5.1.1: Static binary builds (musl for Linux)**
-  - **Severity:** High
-  - **Description:** Fully static binaries with no libc dependencies
+- - [ ] **Item 5.1.1: Static binary builds (musl for Linux)** - **Severity:** High - **Description:** Fully static
+  binaries with no libc dependencies
   - **Files:** `.github/workflows/build-repo-lint-rust.yml`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```yaml
     - name: Build static Linux binary
@@ -959,13 +754,12 @@ The repository has a sophisticated multi-level contract system:
         strip target/x86_64-unknown-linux-musl/release/repo-lint
     ```
 
-- **Testing:** Verify on Alpine Linux (musl-based)
+- - **Testing:** Verify on Alpine Linux (musl-based)
 
-- [ ] **Item 5.1.2: Cross-compile for Windows/macOS**
-  - **Severity:** High
-  - **Description:** Build from Linux CI using cross-compilation
+- - [ ] **Item 5.1.2: Cross-compile for Windows/macOS** - **Severity:** High - **Description:** Build from Linux CI
+  using cross-compilation
   - **Tools:** `cross` or `cargo-zigbuild`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```yaml
     - name: Build Windows binary
@@ -978,12 +772,10 @@ The repository has a sophisticated multi-level contract system:
         cross build --release --target aarch64-apple-darwin
     ```
 
-- [ ] **Item 5.1.3: Artifact upload and GitHub Releases**
-  - **Severity:** Medium
-  - **Description:** Upload binaries to GitHub Releases with checksums
+- - [ ] **Item 5.1.3: Artifact upload and GitHub Releases** - **Severity:** Medium - **Description:** Upload binaries to
+  GitHub Releases with checksums
   - **Files:** `.github/workflows/release-repo-lint-rust.yml`
-  - **Implementation:**
-    - Generate SHA256 checksums for all binaries
+  - - **Implementation:** - Generate SHA256 checksums for all binaries
     - Create release with tag `repo-lint-v1.0.0`
     - Attach binaries: `repo-lint-linux-x86_64`, `repo-lint-macos-x86_64`, `repo-lint-macos-aarch64`, `repo-lint-windows-x86_64.exe`
 
@@ -991,36 +783,25 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 5.2: Documentation
 
-- [ ] **Item 5.2.1: Update README.md**
-  - **Severity:** High
-  - **Description:** Replace Python instructions with Rust binary usage
+- - [ ] **Item 5.2.1: Update README.md** - **Severity:** High - **Description:** Replace Python instructions with Rust
+  binary usage
   - **Files:** `tools/repo_lint/README.md` (keep for migration), `tools/repo_lint_rust/README.md` (new)
-  - **Content:**
-    - Installation: Download binary, add to PATH
+  - - **Content:** - Installation: Download binary, add to PATH
     - Quick start: `repo-lint check`, `repo-lint fix`
     - Configuration: YAML schema reference
     - Migration guide: Python → Rust transition
 
-- [ ] **Item 5.2.2: Configuration documentation**
-  - **Severity:** Medium
-  - **Description:** Document YAML config structure and schema
+- - [ ] **Item 5.2.2: Configuration documentation** - **Severity:** Medium - **Description:** Document YAML config
+  structure and schema
   - **Files:** `tools/repo_lint_rust/docs/configuration.md`
-  - **Content:**
-    - Schema reference
-    - Per-language rule configuration
-    - IDE setup for autocomplete/validation
-    - Examples
+  - - **Content:** - Schema reference - Per-language rule configuration - IDE setup for autocomplete/validation -
+    Examples
 
-- [ ] **Item 5.2.3: Migration guide for users**
-  - **Severity:** High
-  - **Description:** Step-by-step migration from Python to Rust version
+- - [ ] **Item 5.2.3: Migration guide for users** - **Severity:** High - **Description:** Step-by-step migration from
+  Python to Rust version
   - **Files:** `docs/migration/python-to-rust-repo-lint.md`
-  - **Content:**
-    - Why migrate (performance, no dependencies)
-    - Breaking changes (if any)
-    - Config file migration (JSON → YAML)
-    - CI workflow updates
-    - Rollback procedure
+  - - **Content:** - Why migrate (performance, no dependencies) - Breaking changes (if any) - Config file migration
+    (JSON → YAML) - CI workflow updates - Rollback procedure
 
 ---
 
@@ -1034,11 +815,10 @@ The repository has a sophisticated multi-level contract system:
 
 #### Phase 6.1: Parallel Testing
 
-- [ ] **Item 6.1.1: Add Rust repo-lint to CI alongside Python**
-  - **Severity:** High
-  - **Description:** Run both versions in CI, compare results
+- - [ ] **Item 6.1.1: Add Rust repo-lint to CI alongside Python** - **Severity:** High - **Description:** Run both
+  versions in CI, compare results
   - **Files:** `.github/workflows/repo-lint-comparison.yml`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```yaml
     - name: Run Python repo-lint
@@ -1051,13 +831,12 @@ The repository has a sophisticated multi-level contract system:
       run: ./scripts/compare-lint-results.py python-results.json rust-results.json
     ```
 
-  - **Success Criteria:** 95%+ agreement on violations found
+  - - **Success Criteria:** 95%+ agreement on violations found
 
-- [ ] **Item 6.1.2: Performance benchmarking**
-  - **Severity:** Medium
-  - **Description:** Measure time/memory improvements
+- - [ ] **Item 6.1.2: Performance benchmarking** - **Severity:** Medium - **Description:** Measure time/memory
+  improvements
   - **Files:** `tools/repo_lint_rust/benches/linting_bench.rs`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```rust
     use criterion::{black_box, criterion_group, criterion_main, Criterion};
@@ -1075,19 +854,17 @@ The repository has a sophisticated multi-level contract system:
     criterion_main!(benches);
     ```
 
-- **Metrics:** Speedup factor, peak memory usage
+- - **Metrics:** Speedup factor, peak memory usage
 
 ---
 
 #### Phase 6.2: Cutover
 
-- [ ] **Item 6.2.1: Update CI workflows to use Rust binary**
-  - **Severity:** High
-  - **Description:** Replace Python repo-lint with Rust version
-  - **Files:**
+- - [ ] **Item 6.2.1: Update CI workflows to use Rust binary** - **Severity:** High - **Description:** Replace Python
+  repo-lint with Rust version - **Files:**
     - `.github/workflows/repo-lint-and-docstring-enforcement.yml`
     - `.github/workflows/repo-lint-weekly-full-scan.yml`
-  - **Implementation:**
+  - - **Implementation:**
 
     ```yaml
     # OLD:
@@ -1097,19 +874,16 @@ The repository has a sophisticated multi-level contract system:
     - run: ./dist/repo-lint check --ci
     ```
 
-- [ ] **Item 6.2.2: Update contributing docs**
-  - **Severity:** Medium
-  - **Description:** Update all references to repo-lint
-  - **Files:**
+- - [ ] **Item 6.2.2: Update contributing docs** - **Severity:** Medium - **Description:** Update all references to
+  repo-lint - **Files:**
     - `CONTRIBUTING.md`
     - `docs/contributing/contributing-guide.md`
     - `.github/copilot-instructions.md`
 
-- [ ] **Item 6.2.3: Archive Python repo-lint**
-  - **Severity:** Low
+- - [ ] **Item 6.2.3: Archive Python repo-lint** - **Severity:** Low
   - **Description:** Move to `tools/repo_lint_legacy/` for reference
   - **Files:** `git mv tools/repo_lint tools/repo_lint_legacy`
-  - **Add README:** Explain deprecation, point to Rust version
+  - - **Add README:** Explain deprecation, point to Rust version
 
 ---
 
@@ -1121,12 +895,10 @@ The repository has a sophisticated multi-level contract system:
 
 **Status:** Partially addressed by Rust migration
 
-- **Rust Approach:** Binary distribution via GitHub Releases (no pip install needed)
-- **Advantages:** No Python dependency, simpler installation
-- **Trade-off:** Lose ecosystem integration (pip, poetry, pipx)
-- **Recommendation:** Provide both:
-  - Rust binary as primary distribution
-  - Thin Python wrapper for pip install compatibility (wraps Rust binary)
+- - **Rust Approach:** Binary distribution via GitHub Releases (no pip install needed) - **Advantages:** No Python
+  dependency, simpler installation - **Trade-off:** Lose ecosystem integration (pip, poetry, pipx) - **Recommendation:**
+  Provide both: - Rust binary as primary distribution - Thin Python wrapper for pip install compatibility (wraps Rust
+  binary)
 
 **Implementation:**
 
@@ -1152,8 +924,8 @@ def main():
 **Status:** Obsoleted by Rust migration
 
 - **Rust Advantage:** Self-contained binary eliminates need for `.venv-lint/`, `.psmodules/`, etc.
-- **Remaining Use Case:** IDE extensions still need PSScriptAnalyzer, Perl::Critic for live feedback
-- **Recommendation:** Document IDE setup separately, don't bundle in repo-lint binary
+- - **Remaining Use Case:** IDE extensions still need PSScriptAnalyzer, Perl::Critic for live feedback -
+  **Recommendation:** Document IDE setup separately, don't bundle in repo-lint binary
 
 ---
 
@@ -1161,12 +933,9 @@ def main():
 
 **Status:** Greatly improved by Rust migration
 
-- **Rust Advantage:** No runtime tool downloads, all parsers embedded
-- **Remaining Risk:** Build-time dependencies (cargo crates)
-- **Mitigation:**
-  - Pin all cargo dependencies with exact versions + checksums (Cargo.lock)
-  - Use cargo-audit to check for vulnerable dependencies
-  - Add checksums to release binaries
+- - **Rust Advantage:** No runtime tool downloads, all parsers embedded - **Remaining Risk:** Build-time dependencies
+  (cargo crates) - **Mitigation:** - Pin all cargo dependencies with exact versions + checksums (Cargo.lock) - Use
+  cargo-audit to check for vulnerable dependencies - Add checksums to release binaries
 
 **Implementation:**
 
@@ -1185,9 +954,8 @@ def main():
 
 **Status:** Out of scope for repo-lint Rust migration
 
-- This is a CI/CD infrastructure concern, not specific to repo-lint implementation
-- Applies equally to Python and Rust versions
-- Defer to separate epic for CI improvements
+- - This is a CI/CD infrastructure concern, not specific to repo-lint implementation - Applies equally to Python and
+  Rust versions - Defer to separate epic for CI improvements
 
 ---
 
@@ -1195,12 +963,13 @@ def main():
 
 ### Behavioral Contracts (from `contract-extraction.md`)
 
-**Impact:** The Rust migration does NOT affect wrapper contracts, as repo_lint is orthogonal to safe-run/safe-check/safe-archive wrappers.
+**Impact:** The Rust migration does NOT affect wrapper contracts, as repo_lint is orthogonal to
+safe-run/safe-check/safe-archive wrappers.
 
 **Relevant Contracts:**
 
-- **Exit Code Contract:** Rust version MUST preserve exit codes 0/1/2/3 exactly
-- **Error Handling:** Actionable error messages to stderr
+- - **Exit Code Contract:** Rust version MUST preserve exit codes 0/1/2/3 exactly - **Error Handling:** Actionable error
+  messages to stderr
 - **Environment Variables:** Pass through `CI`, `SAFE_*` vars (not applicable to repo-lint)
 
 ### Docstring Contracts (v1.2)
@@ -1209,8 +978,8 @@ def main():
 
 **Requirements:**
 
-- File-level: 8 semantic sections (Purpose, Usage, Args, Env, Exit Codes, Examples, Notes, Platform Compatibility)
-- Symbol-level: Function/class/method documentation
+- - File-level: 8 semantic sections (Purpose, Usage, Args, Env, Exit Codes, Examples, Notes, Platform Compatibility) -
+  Symbol-level: Function/class/method documentation
 - Pragma support: `# noqa: EXITCODES`, `# noqa: DOCSTRING`
 
 **Implementation:** See Milestone 4, Phase 4.2
@@ -1229,8 +998,7 @@ def main():
 
 **Implementation:**
 
-- Embed naming rules in YAML config
-- Use tree-sitter + regex to validate file and symbol names
+- - Embed naming rules in YAML config - Use tree-sitter + regex to validate file and symbol names
 
 ### AI Agent Constraints
 
@@ -1240,7 +1008,7 @@ def main():
 
 - `fix --unsafe` requires `--yes-i-know` dual confirmation
 - Hard-block unsafe mode in CI (detect via `CI` env var or `--ci` flag)
-- Generate forensic artifacts (patch + log)
+- - Generate forensic artifacts (patch + log)
 
 **Implementation:** See Milestone 4, Phase 4.1.3
 
@@ -1258,10 +1026,9 @@ def main():
 
 **Mitigation:**
 
-1. Use tree-sitter-perl and tree-sitter-powershell community grammars (with caveats)
-2. Implement fallback regex-based checks for unsupported constructs
-3. Provide "enhanced mode" that shells out to external tools (Perl::Critic, PSScriptAnalyzer)
-4. Contribute to tree-sitter grammar projects to improve coverage
+1. 1. Use tree-sitter-perl and tree-sitter-powershell community grammars (with caveats) 2. Implement fallback
+   regex-based checks for unsupported constructs 3. Provide "enhanced mode" that shells out to external tools
+   (Perl::Critic, PSScriptAnalyzer) 4. Contribute to tree-sitter grammar projects to improve coverage
 
 **Contingency:** If grammars prove unusable, keep Python repo-lint for Perl/PowerShell, migrate Python/Bash/YAML only
 
@@ -1277,7 +1044,7 @@ def main():
 
 1. Investigate `ruff_python_formatter` and `ruff_linter` crate availability
 2. If unavailable, embed ruff/black binaries using `include_bytes!()` and extract at runtime
-3. Implement minimal Python formatter for 80% use cases (indentation, line breaks) as fallback
+3. 3. Implement minimal Python formatter for 80% use cases (indentation, line breaks) as fallback
 
 **Contingency:** Accept shelling out to embedded binaries as acceptable trade-off
 
@@ -1291,10 +1058,10 @@ def main():
 
 **Mitigation:**
 
-1. Benchmark startup time (target <50ms including binary load)
+1. 1. Benchmark startup time (target <50ms including binary load)
 2. Optimize binary size with `strip = true` and LTO
 3. Use `lazy_static` for global initializations
-4. Provide "fast mode" that skips non-critical checks
+4. 4. Provide "fast mode" that skips non-critical checks
 
 **Testing:** Benchmark on repo with 1, 10, 100, 1000 files
 
@@ -1310,10 +1077,10 @@ def main():
 
 **Mitigation:**
 
-1. Maintain backwards compatibility layer for JSON config (6 months deprecation period)
+1. 1. Maintain backwards compatibility layer for JSON config (6 months deprecation period)
 2. Provide automated migration tool: `repo-lint migrate-config autofix-policy.json`
-3. Run both Python and Rust versions in parallel during transition
-4. Clear communication in release notes and migration guide
+3. 3. Run both Python and Rust versions in parallel during transition 4. Clear communication in release notes and
+   migration guide
 
 ---
 
@@ -1325,10 +1092,10 @@ def main():
 
 **Mitigation:**
 
-1. Test with top 5 IDEs (VS Code, IntelliJ, PyCharm, Vim, Emacs)
-2. Provide IDE-specific setup guides with screenshots
+1. 1. Test with top 5 IDEs (VS Code, IntelliJ, PyCharm, Vim, Emacs) 2. Provide IDE-specific setup guides with
+   screenshots
 3. Add `repo-lint validate-config` command for CLI validation
-4. Generate detailed error messages for schema violations
+4. 4. Generate detailed error messages for schema violations
 
 ---
 
@@ -1342,9 +1109,8 @@ def main():
 
 **Mitigation:**
 
-1. Use incremental compilation in dev mode
-2. Cache Cargo build artifacts in CI
-3. Split into multiple crates for parallel compilation
+1. 1. Use incremental compilation in dev mode 2. Cache Cargo build artifacts in CI 3. Split into multiple crates for
+   parallel compilation
 4. Use `cargo-chef` for Docker layer caching
 
 ---
@@ -1357,10 +1123,8 @@ def main():
 
 **Mitigation:**
 
-1. Use GitHub Actions macOS runners for native builds
-2. Maintain cross-compilation as backup
-3. Test binaries on real hardware (macOS, Windows)
-4. Provide universal binary for macOS (x86_64 + aarch64)
+1. 1. Use GitHub Actions macOS runners for native builds 2. Maintain cross-compilation as backup 3. Test binaries on
+   real hardware (macOS, Windows) 4. Provide universal binary for macOS (x86_64 + aarch64)
 
 ---
 
@@ -1368,40 +1132,28 @@ def main():
 
 ### Unresolved Analysis Points
 
-- [ ] **TODO-001:** Verify tree-sitter-perl and tree-sitter-powershell grammar stability
-  - **Action:** Create test suite with 100+ real-world files, measure parse success rate
-  - **Owner:** TBD
-  - **Deadline:** Before Phase 2.3/2.4 start
+- - [ ] **TODO-001:** Verify tree-sitter-perl and tree-sitter-powershell grammar stability - **Action:** Create test
+  suite with 100+ real-world files, measure parse success rate - **Owner:** TBD - **Deadline:** Before Phase 2.3/2.4
+  start
 
-- [ ] **TODO-002:** Investigate ruff_linter and ruff_python_formatter crate availability
-  - **Action:** Check crates.io, contact Astral team, evaluate FFI options
-  - **Owner:** TBD
-  - **Deadline:** Before Phase 2.2 start
+- - [ ] **TODO-002:** Investigate ruff_linter and ruff_python_formatter crate availability - **Action:** Check
+  crates.io, contact Astral team, evaluate FFI options - **Owner:** TBD - **Deadline:** Before Phase 2.2 start
 
-- [ ] **TODO-003:** Define exact backwards compatibility policy for JSON config
-  - **Action:** Decide deprecation timeline (3 months? 6 months? 1 year?)
-  - **Owner:** @m1ndn1nj4
-  - **Deadline:** Before Milestone 3 start
+- - [ ] **TODO-003:** Define exact backwards compatibility policy for JSON config - **Action:** Decide deprecation
+  timeline (3 months? 6 months? 1 year?) - **Owner:** @m1ndn1nj4 - **Deadline:** Before Milestone 3 start
 
-- [ ] **TODO-004:** Evaluate whether to embed tools (shfmt, shellcheck) as binaries or rewrite
-  - **Action:** Prototype both approaches, measure binary size impact
-  - **Owner:** TBD
-  - **Deadline:** Before Phase 2.3 start
+- - [ ] **TODO-004:** Evaluate whether to embed tools (shfmt, shellcheck) as binaries or rewrite - **Action:** Prototype
+  both approaches, measure binary size impact - **Owner:** TBD - **Deadline:** Before Phase 2.3 start
 
-- [ ] **TODO-005:** Decide on docstring rewrite fixer scope (Google → Sphinx only, or bidirectional?)
-  - **Action:** Analyze repository docstring styles, survey user preferences
-  - **Owner:** TBD
-  - **Deadline:** Before Phase 4.3 start
+- - [ ] **TODO-005:** Decide on docstring rewrite fixer scope (Google → Sphinx only, or bidirectional?) - **Action:**
+  Analyze repository docstring styles, survey user preferences - **Owner:** TBD - **Deadline:** Before Phase 4.3 start
 
-- [ ] **TODO-006:** Contract contradiction analysis incomplete
-  - **Action:** Cross-reference all 10 behavioral contracts with repo-lint requirements
-  - **Owner:** TBD
-  - **Deadline:** Before Milestone 1 completion
+- - [ ] **TODO-006:** Contract contradiction analysis incomplete - **Action:** Cross-reference all 10 behavioral
+  contracts with repo-lint requirements - **Owner:** TBD - **Deadline:** Before Milestone 1 completion
 
-- [ ] **TODO-007:** Security review of embedded parsers (tree-sitter, AST traversal)
-  - **Action:** Identify potential DoS vectors (large files, recursive AST nodes), add fuzzing
-  - **Owner:** TBD
-  - **Deadline:** Before Milestone 2 completion
+- - [ ] **TODO-007:** Security review of embedded parsers (tree-sitter, AST traversal) - **Action:** Identify potential
+  DoS vectors (large files, recursive AST nodes), add fuzzing - **Owner:** TBD - **Deadline:** Before Milestone 2
+  completion
 
 ---
 
@@ -1409,38 +1161,31 @@ def main():
 
 ### Tasks Deferred to Future Epics
 
-- [ ] **DEFER-001:** Full ShellCheck parity (all 400+ rules)
-  - **Reason:** Impractical, 80/20 rule applies (top 20 rules cover most issues)
-  - **Deferred To:** Future enhancement after initial release
-  - **Condition:** If user demand justifies effort
+- - [ ] **DEFER-001:** Full ShellCheck parity (all 400+ rules) - **Reason:** Impractical, 80/20 rule applies (top 20
+  rules cover most issues) - **Deferred To:** Future enhancement after initial release - **Condition:** If user demand
+  justifies effort
 
-- [ ] **DEFER-002:** Perl::Critic full parity
-  - **Reason:** Perl usage is minimal in this repo, low ROI
-  - **Deferred To:** Conditional - implement only if Perl usage increases
+- - [ ] **DEFER-002:** Perl::Critic full parity - **Reason:** Perl usage is minimal in this repo, low ROI - **Deferred
+  To:** Conditional - implement only if Perl usage increases
 
-- [ ] **DEFER-003:** PowerShell formatter implementation
-  - **Reason:** PSScriptAnalyzer doesn't provide auto-formatting, low priority
-  - **Deferred To:** v2.0 or later
+- - [ ] **DEFER-003:** PowerShell formatter implementation - **Reason:** PSScriptAnalyzer doesn't provide
+  auto-formatting, low priority - **Deferred To:** v2.0 or later
 
-- [ ] **DEFER-004:** Custom linting rule DSL (user-defined rules in YAML)
-  - **Reason:** Scope creep, v1.0 should focus on existing rules
-  - **Deferred To:** v2.0 - requires plugin architecture
+- - [ ] **DEFER-004:** Custom linting rule DSL (user-defined rules in YAML) - **Reason:** Scope creep, v1.0 should focus
+  on existing rules - **Deferred To:** v2.0 - requires plugin architecture
 
-- [ ] **DEFER-005:** Language Server Protocol (LSP) integration
-  - **Reason:** IDE extensions are separate concern, not core to repo-lint
+- - [ ] **DEFER-005:** Language Server Protocol (LSP) integration - **Reason:** IDE extensions are separate concern, not
+  core to repo-lint
   - **Deferred To:** Separate epic for `repo-lint-lsp` server
 
-- [ ] **DEFER-006:** Windows .exe discovery in Python wrapper (FW-009)
-  - **Reason:** Unrelated to repo-lint migration (applies to safe-run wrappers)
-  - **Deferred To:** EPIC 59 follow-up
+- - [ ] **DEFER-006:** Windows .exe discovery in Python wrapper (FW-009) - **Reason:** Unrelated to repo-lint migration
+  (applies to safe-run wrappers) - **Deferred To:** EPIC 59 follow-up
 
-- [ ] **DEFER-007:** Canonical epic tracker (FW-010)
-  - **Reason:** Governance concern, not technical implementation
-  - **Deferred To:** Repository-wide decision
+- - [ ] **DEFER-007:** Canonical epic tracker (FW-010) - **Reason:** Governance concern, not technical implementation -
+  **Deferred To:** Repository-wide decision
 
-- [ ] **DEFER-008:** CI runtime optimization with scheduled Bash runners (FW-012)
-  - **Reason:** CI infrastructure concern, applies to all workflows
-  - **Deferred To:** Separate CI optimization epic
+- - [ ] **DEFER-008:** CI runtime optimization with scheduled Bash runners (FW-012) - **Reason:** CI infrastructure
+  concern, applies to all workflows - **Deferred To:** Separate CI optimization epic
 
 ---
 

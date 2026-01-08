@@ -1,14 +1,16 @@
 # Naming and Style Conventions
 
-**Status:** Canonical source of truth for naming and casing standards (Phase 4.5 - Enforcement Active)
-**Last Updated:** 2025-12-29
-**Enforcement:** Full enforcement active (Phase 4.5)
+**Status:** Canonical source of truth for naming and casing standards (Phase 4.5 - Enforcement Active) **Last Updated:**
+2025-12-29 **Enforcement:** Full enforcement active (Phase 4.5)
 
 ## Overview
 
-This document defines the naming and casing conventions for all code, scripts, and files in the RFC-Shared-Agent-Scaffolding repository. These standards ensure consistency across multiple languages while respecting language-specific ecosystem conventions.
+This document defines the naming and casing conventions for all code, scripts, and files in the
+RFC-Shared-Agent-Scaffolding repository. These standards ensure consistency across multiple languages while respecting
+language-specific ecosystem conventions.
 
-**Key Principle:** Script files follow their respective language naming standards. Non-script files (docs, configs, general repo files) use kebab-case by default.
+**Key Principle:** Script files follow their respective language naming standards. Non-script files (docs, configs,
+general repo files) use kebab-case by default.
 
 ---
 
@@ -116,7 +118,8 @@ Applies to:
 **Pattern (scripts):** `^[a-z0-9]+(_[a-z0-9]+)*\.pl$`
 **Pattern (modules):** `^[A-Z][a-zA-Z0-9]*\.pm$`
 
-**Rationale:** Snake_case provides consistency with Python naming and aligns with the test runner naming established in Phase 5. Perl modules continue to use CamelCase per standard Perl conventions.
+**Rationale:** Snake_case provides consistency with Python naming and aligns with the test runner naming established in
+Phase 5. Perl modules continue to use CamelCase per standard Perl conventions.
 
 Examples (scripts):
 
@@ -170,8 +173,8 @@ Per PowerShell community conventions:
 Current state:
 
 - Mix of `$PascalCase` and `$camelCase` observed
-- **Phase 4 decision:** Allow current conventions, add warnings only
-- **Phase 4.5 decision:** Keep variable-case as warnings, track TODO for future enforcement
+- - **Phase 4 decision:** Allow current conventions, add warnings only - **Phase 4.5 decision:** Keep variable-case as
+  warnings, track TODO for future enforcement
 
 **Enforcement:** PSScriptAnalyzer for functions; variable naming deferred to future phase.
 
@@ -187,7 +190,7 @@ Examples (variables - current state):
 
 - ✅ `$RepoRoot` (allowed)
 - ✅ `$repoRoot` (allowed)
-- ⚠️ Variable naming will be standardized in future phase
+- - ⚠️ Variable naming will be standardized in future phase
 
 ### Bash
 
@@ -222,9 +225,8 @@ Current observations:
 
 **Phase 4 plan:**
 
-- Document current state in Item 4.2
-- Choose canonical conventions in Item 4.4.4
-- Apply as warn-first, then enforce in Phase 4.5.6
+- - Document current state in Item 4.2 - Choose canonical conventions in Item 4.4.4 - Apply as warn-first, then enforce
+  in Phase 4.5.6
 
 ---
 
@@ -255,17 +257,14 @@ Goal: Establish standards and identify violations without breaking CI.
 
 **Approach:**
 
-1. Add new naming validation jobs to CI
-2. Set to **warn mode** or **no-new-violations mode**
-3. Generate violation reports for review
-4. Allow time for fixes before strict enforcement
+1. 1. Add new naming validation jobs to CI 2. Set to **warn mode** or **no-new-violations mode** 3. Generate violation
+   reports for review 4. Allow time for fixes before strict enforcement
 
 **Phase 4 Enforcement Level:**
 
 - Python: `flake8` and `pylint` warnings enabled
-- PowerShell: PSScriptAnalyzer warnings for functions; variable-case warnings only
-- Bash: ShellCheck warnings for obvious violations
-- Perl: Perl::Critic warnings (conventions TBD)
+- - PowerShell: PSScriptAnalyzer warnings for functions; variable-case warnings only - Bash: ShellCheck warnings for
+  obvious violations - Perl: Perl::Critic warnings (conventions TBD)
 
 ### Phase 4.5: Full Enforcement Conversion
 
@@ -273,16 +272,12 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 **Rollout Order:**
 
-1. Python (Item 4.5.3)
-2. PowerShell (Item 4.5.4) - functions + filenames; variables remain warn-only
-3. Bash (Item 4.5.5)
-4. Perl (Item 4.5.6) - after conventions finalized
+1. 1. Python (Item 4.5.3) 2. PowerShell (Item 4.5.4) - functions + filenames; variables remain warn-only 3. Bash (Item
+   4.5.5) 4. Perl (Item 4.5.6) - after conventions finalized
 
 **Success Criteria (per language):**
 
-- All naming violations fixed
-- CI passes with hard enforcement enabled
-- No new violations introduced
+- - All naming violations fixed - CI passes with hard enforcement enabled - No new violations introduced
 
 ---
 
@@ -294,8 +289,7 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 **Scope:**
 
-- All tracked files in repository
-- Language-specific rules applied per file extension
+- - All tracked files in repository - Language-specific rules applied per file extension
 
 **Validation Rules:**
 
@@ -307,9 +301,7 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 **Current Status (Phase 4.5):** ENFORCE mode
 
-- Violations fail CI
-- Blocks merge until violations are fixed
-- All language-specific naming is now enforced
+- - Violations fail CI - Blocks merge until violations are fixed - All language-specific naming is now enforced
 
 ### Legacy Kebab-Case Enforcement (Pre-Phase 4)
 
@@ -317,9 +309,8 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 **Historical scope:**
 
-- Applied uniform kebab-case to all script files
-- Did not respect language-specific conventions
-- Removed in favor of language-aware validation
+- - Applied uniform kebab-case to all script files - Did not respect language-specific conventions - Removed in favor of
+  language-aware validation
 
 ### Language-Specific Linters
 
@@ -329,14 +320,12 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 - Python: `black`, `flake8`, `pylint`
 - Bash: `shellcheck`, `shfmt` (warn-only)
-- PowerShell: PSScriptAnalyzer (Error severity only)
-- Perl: Perl::Critic (warn-only, severity 5)
+- - PowerShell: PSScriptAnalyzer (Error severity only) - Perl: Perl::Critic (warn-only, severity 5)
 
 **Phase 4 Changes:**
 
-- Add explicit naming checks to each linter
-- Align severity levels with warn-first strategy
-- Add unified naming validation job
+- - Add explicit naming checks to each linter - Align severity levels with warn-first strategy - Add unified naming
+  validation job
 
 ---
 
@@ -370,7 +359,7 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 - `safe-check.pl` → `safe_check.pl`
 - `safe-archive.pl` → `safe_archive.pl`
 - `preflight-automerge-ruleset.pl` → `preflight_automerge_ruleset.pl`
-- Status: **Complete** (Phase 5.5 Item 5.5.0)
+- - Status: **Complete** (Phase 5.5 Item 5.5.0)
 
 ### Item 4.4: Symbol Renaming
 
@@ -390,25 +379,21 @@ Goal: Convert warnings to hard pass/fail, one language at a time.
 
 Different languages have different ecosystem norms:
 
-- **Python PEP 8** is universally accepted in the Python community
-- **PowerShell** community strongly prefers PascalCase for scripts and functions
-- **Bash/Shell** scripts traditionally use kebab-case
-- **Perl** scripts use kebab-case; modules use CamelCase
+- - **Python PEP 8** is universally accepted in the Python community - **PowerShell** community strongly prefers
+  PascalCase for scripts and functions - **Bash/Shell** scripts traditionally use kebab-case - **Perl** scripts use
+  kebab-case; modules use CamelCase
 
 Forcing a single convention across all languages would:
 
-- Violate ecosystem norms
-- Reduce code readability for language experts
-- Create friction with external tools and linters
+- - Violate ecosystem norms - Reduce code readability for language experts - Create friction with external tools and
+  linters
 
 ### Why Kebab-Case for Non-Script Files
 
 Kebab-case for docs/config provides:
 
-- Consistency with existing repository structure
-- URL-friendly naming (important for web-based docs)
-- Clear visual distinction from code files
-- Compatibility with most filesystem conventions
+- - Consistency with existing repository structure - URL-friendly naming (important for web-based docs) - Clear visual
+  distinction from code files - Compatibility with most filesystem conventions
 
 ---
 
@@ -420,9 +405,7 @@ Kebab-case for docs/config provides:
 **TODO:** Add to Phase 4.5.4 or later phase:
 
 - Choose canonical convention (`$PascalCase` or `$camelCase`)
-- Add PSScriptAnalyzer rule
-- Run as warn-only initially
-- Convert to enforcement once clean
+- - Add PSScriptAnalyzer rule - Run as warn-only initially - Convert to enforcement once clean
 
 ### Perl Naming
 
@@ -454,7 +437,5 @@ Kebab-case for docs/config provides:
 
 ## Document History
 
-- **2025-12-29:** Created as part of Phase 4, Item 4.1.1
-  - Locked naming conventions per Phase 4 decisions
-  - Defined warn-first enforcement strategy
-  - Documented migration plan for file and symbol renaming
+- - **2025-12-29:** Created as part of Phase 4, Item 4.1.1 - Locked naming conventions per Phase 4 decisions - Defined
+  warn-first enforcement strategy - Documented migration plan for file and symbol renaming

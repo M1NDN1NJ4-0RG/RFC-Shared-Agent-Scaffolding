@@ -8,43 +8,36 @@
 
 Reading, writing, or attempting to understand Malbolge code may cause:
 
-- Existential dread
-- Questioning of life choices
-- Sudden appreciation for assembly language
-- Involuntary laughter at the absurdity
-- Permanent brain reconfiguration
+- - Existential dread - Questioning of life choices - Sudden appreciation for assembly language - Involuntary laughter
+  at the absurdity - Permanent brain reconfiguration
 
-**This contract is deliberately satirical.** Malbolge is designed to be nearly impossible to program in. If you're actually writing Malbolge code, you're either:
+**This contract is deliberately satirical.** Malbolge is designed to be nearly impossible to program in. If you're
+actually writing Malbolge code, you're either:
 
-1. A masochist
-2. Proving a point
-3. Lost and need directions back to sanity
+1. 1. A masochist 2. Proving a point 3. Lost and need directions back to sanity
 
 ## Purpose
 
-This is an **experimental and satirical contract** for Malbolge programs that absolutely should not be added to this repository. It follows the structure of other language contracts while acknowledging the fundamental impossibility of the task.
+This is an **experimental and satirical contract** for Malbolge programs that absolutely should not be added to this
+repository. It follows the structure of other language contracts while acknowledging the fundamental impossibility of
+the task.
 
-**Note:** This contract cannot be enforced. Even if it could be, the validator would probably gain sentience and resign in protest.
+**Note:** This contract cannot be enforced. Even if it could be, the validator would probably gain sentience and resign
+in protest.
 
 ## Required Semantic Sections
 
 Every Malbolge program should theoretically include these sections (good luck):
 
-1. **Program description** - What this eldritch horror supposedly does
-2. **Detailed behavior** - What it does NOT do (spoiler: everything)
-3. **Input specification** - If it even accepts input without crashing reality
-4. **Output specification** - The screams of the damned, encoded
-5. **Exit codes** - Assuming it ever exits
-6. **Examples** - "Working" is a strong word
-7. **Maintainer notes** - A cry for help
+1. 1. **Program description** - What this eldritch horror supposedly does 2. **Detailed behavior** - What it does NOT do
+   (spoiler: everything) 3. **Input specification** - If it even accepts input without crashing reality 4. **Output
+   specification** - The screams of the damned, encoded 5. **Exit codes** - Assuming it ever exits 6. **Examples** -
+   "Working" is a strong word 7. **Maintainer notes** - A cry for help
 
 ### Optional Sections
 
-- **Platform** - The fires of computational hell - **Recommended**
-- **Author** - Someone who needs an intervention
-- **Last Modified** - The moment hope died
-- **TODO** - Everything. Literally everything.
-- **Warnings** - All of them
+- - **Platform** - The fires of computational hell - **Recommended** - **Author** - Someone who needs an intervention -
+  **Last Modified** - The moment hope died - **TODO** - Everything. Literally everything. - **Warnings** - All of them
 
 ## Formatting Rules
 
@@ -101,13 +94,11 @@ Every Malbolge program should theoretically include these sections (good luck):
 
 ### Key "Rules" (Suggestions from the Void)
 
-1. **Self-modifying code**: Every instruction modifies the next one. Why? Because chaos.
-2. **Base-3 ternary**: Because base-10 and base-2 were too readable
-3. **Encrypted operations**: Instructions are ROT13'd, then encrypted, then laughed at
-4. **ASCII art comments**: If your interpreter even allows comments (it doesn't)
-5. **Normalize whitespace**: lol no, whitespace is interpreted as operations
-6. **Exit codes**: In theory they exist. In practice, nothing exists.
-7. **Documentation location**: In your nightmares
+1. 1. **Self-modifying code**: Every instruction modifies the next one. Why? Because chaos. 2. **Base-3 ternary**:
+   Because base-10 and base-2 were too readable 3. **Encrypted operations**: Instructions are ROT13'd, then encrypted,
+   then laughed at 4. **ASCII art comments**: If your interpreter even allows comments (it doesn't) 5. **Normalize
+   whitespace**: lol no, whitespace is interpreted as operations 6. **Exit codes**: In theory they exist. In practice,
+   nothing exists. 7. **Documentation location**: In your nightmares
 
 ## Templates
 
@@ -188,14 +179,10 @@ bP&A@?>=<;:9876543s+O<oLm*)i'&}C{zy?wtsr9poRml
 
 When this contract is officially adopted (never), the validator should check:
 
-- ✗ Presence of human-readable comments (doesn't exist)
-- ✗ Logical structure (anti-feature)
-- ✗ Meaningful variable names (variables? where we're going, we don't need variables)
-- ✗ Code readability (HAHAHAHA)
-- ✗ Maintainability (the opposite is the goal)
-- ✗ Exit code documentation (sure, document the chaos)
-- ✓ Developer tears per line (TPLOC metric)
-- ✓ Probability of summoning ancient ones (must be > 0.9)
+- - ✗ Presence of human-readable comments (doesn't exist) - ✗ Logical structure (anti-feature) - ✗ Meaningful variable
+  names (variables? where we're going, we don't need variables) - ✗ Code readability (HAHAHAHA) - ✗ Maintainability (the
+  opposite is the goal) - ✗ Exit code documentation (sure, document the chaos) - ✓ Developer tears per line (TPLOC
+  metric) - ✓ Probability of summoning ancient ones (must be > 0.9)
 
 ## Common Mistakes
 
@@ -270,13 +257,11 @@ cat program.mb
 
 For educational purposes, here are real facts about Malbolge:
 
-1. **Designed to be unusable**: Created by Ben Olmstead in 1998 specifically to be the hardest programming language
-2. **Self-modifying**: Every instruction modifies the instruction that follows it
-3. **Encrypted**: Instructions are encrypted before execution
-4. **Ternary**: Uses base-3 arithmetic
-5. **First working program**: Took 2 years after language invention (Hello World)
-6. **Turing-complete**: Theoretically can compute anything (in theory)
-7. **Practical use**: Approximately zero
+1. 1. **Designed to be unusable**: Created by Ben Olmstead in 1998 specifically to be the hardest programming language
+   2. **Self-modifying**: Every instruction modifies the instruction that follows it 3. **Encrypted**: Instructions are
+   encrypted before execution 4. **Ternary**: Uses base-3 arithmetic 5. **First working program**: Took 2 years after
+   language invention (Hello World) 6. **Turing-complete**: Theoretically can compute anything (in theory) 7.
+   **Practical use**: Approximately zero
 
 ## References
 
@@ -284,38 +269,34 @@ For educational purposes, here are real facts about Malbolge:
 - [esolangs.org/wiki/Malbolge](https://esolangs.org/wiki/Malbolge) - For the truly curious
 - [Malbolge Hello World History](https://www.lscheffer.com/malbolge.shtml) - A saga of determination
 - [Your local support group](https://www.samhsa.gov/) - You'll need it
-- [exit-codes-contract.md](./exit-codes-contract.md) - Applies in theory
-- [README.md](./README.md) - Return to sanity
+- - [exit-codes-contract.md](./exit-codes-contract.md) - Applies in theory - [README.md](./README.md) - Return to sanity
 
 ## Status
 
-**EXPERIMENTAL - NOT ENFORCEABLE** - This contract exists purely for entertainment and to remind us that things could always be worse.
+**EXPERIMENTAL - NOT ENFORCEABLE** - This contract exists purely for entertainment and to remind us that things could
+always be worse.
 
 **Do not actually add Malbolge code to this repository.**
 
 If you are considering adopting this contract:
 
-1. Please reconsider your life choices
-2. Consult a professional
-3. Use literally any other language
-4. We care about you
-5. This is an intervention
+1. 1. Please reconsider your life choices 2. Consult a professional 3. Use literally any other language 4. We care about
+   you 5. This is an intervention
 
 ## Philosophical Notes
 
 Why does this contract exist?
 
-- To appreciate Python, JavaScript, even PHP
-- To demonstrate that not all Turing-complete languages are created equal
-- To provide comic relief in a serious documentation system
-- To prove we can document the undocumentable
-- Because someone asked for it (we're looking at you, @m1ndn1nj4)
+- - To appreciate Python, JavaScript, even PHP - To demonstrate that not all Turing-complete languages are created equal
+  - To provide comic relief in a serious documentation system - To prove we can document the undocumentable - Because
+  someone asked for it (we're looking at you, @m1ndn1nj4)
 
 ## Final Warning
 
 **IF YOU'RE ACTUALLY WRITING MALBOLGE CODE:**
 
-We can't stop you, but we can judge you. This contract is here to acknowledge your brave/foolish journey into computational masochism. May your code somehow work, and may your sanity survive the attempt.
+We can't stop you, but we can judge you. This contract is here to acknowledge your brave/foolish journey into
+computational masochism. May your code somehow work, and may your sanity survive the attempt.
 
 Remember: With great power comes great responsibility. With Malbolge comes only suffering.
 

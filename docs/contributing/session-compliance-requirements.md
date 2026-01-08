@@ -1,10 +1,13 @@
 # Session Start/End Compliance Requirements (Canonical)
 
-**Document Purpose:** This document defines the mandatory compliance requirements for Copilot agents working in this repository. It replaces any ambiguous or conflicting wording about session start, session end, and pre-commit requirements found elsewhere.
+**Document Purpose:** This document defines the mandatory compliance requirements for Copilot agents working in this
+repository. It replaces any ambiguous or conflicting wording about session start, session end, and pre-commit
+requirements found elsewhere.
 
 **Authority:** This document supersedes any conflicting guidance. When in doubt, follow this document.
 
-**MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work. Failure to read this document when starting NEW work is a violation.
+**MANDATORY READING:** Every Copilot agent MUST read this entire document IMMEDIATELY when starting NEW work. Failure to
+read this document when starting NEW work is a violation.
 
 **Exception (allowed before anything else):** Reading `docs/contributing/session-compliance-requirements.md` and `.github/copilot-instructions.md` is permitted before doing any work.
 
@@ -35,21 +38,19 @@ After completing Session Start, you MUST execute the requested work.
 
 ### Non-negotiable behavior
 
-- **No “catch-up only” sessions.** Reading docs and then stopping to summarize “what we should do next” is a violation unless you are blocked or near context limits.
-- **Implementation over narration.** Do the work.
-- **Minimum progress rule:** In every session, you MUST do at least one of:
-  - Produce a meaningful commit (preferred), OR
-  - Update the issue journals with file-path-level resume instructions, OR
+- - **No “catch-up only” sessions.** Reading docs and then stopping to summarize “what we should do next” is a violation
+  unless you are blocked or near context limits. - **Implementation over narration.** Do the work. - **Minimum progress
+  rule:** In every session, you MUST do at least one of: - Produce a meaningful commit (preferred), OR - Update the
+  issue journals with file-path-level resume instructions, OR
   - Escalate with `**BLOCKED — HUMAN ACTION REQUIRED**` including exact error output.
 
 ### Near context limit escape hatch (ONLY IF NECESSARY)
 
 If you are getting close to token/window/context limits:
 
-1. Stop starting new work.
-2. Commit whatever is already correct and complete.
+1. 1. Stop starting new work. 2. Commit whatever is already correct and complete.
 3. Update journals (`*-summary.md`, `*-overview.md`, `*-next-steps.md`) with extremely detailed resume steps.
-4. Push the branch.
+4. 4. Push the branch.
 
 ---
 
@@ -59,13 +60,13 @@ If you are getting close to token/window/context limits:
 
 ### Ordered Checklist
 
-1. **Read the compliance docs (MANDATORY)**
+1. 1. **Read the compliance docs (MANDATORY)**
 
    You MUST read BOTH:
    - `.github/copilot-instructions.md`
    - `docs/contributing/session-compliance-requirements.md`
 
-2. **Verify required tools work (MANDATORY)**
+2. 2. **Verify required tools work (MANDATORY)**
 
    ```bash
    repo-lint --help
@@ -73,7 +74,7 @@ If you are getting close to token/window/context limits:
 
    MUST exit **0**.
 
-3. **Health check (MANDATORY)**
+3. 3. **Health check (MANDATORY)**
 
    ```bash
    repo-lint check --ci
@@ -87,7 +88,7 @@ If you are getting close to token/window/context limits:
    - **2** (missing tools)
    - any other non-zero
 
-4. **Initialize issue journals (always required)**
+4. 4. **Initialize issue journals (always required)**
 
    - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-overview.md`
    - `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-next-steps.md`
@@ -98,7 +99,7 @@ If you are getting close to token/window/context limits:
    - `*-next-steps.md`: extremely detailed resume steps + prompt
    - `*-summary.md`: MUST be updated with EVERY commit
 
-5. **Required search tool (MANDATORY)**
+5. 5. **Required search tool (MANDATORY)**
 
    - **Use `rg` (ripgrep) as the canonical search tool.**
    - **Do NOT use `grep`** unless a human explicitly instructs otherwise.
@@ -115,21 +116,20 @@ If you are getting close to token/window/context limits:
 
 ### Pre-Commit Gate Requirements Ordered Checklist (for scripting/tooling commits)
 
-1. Run:
+1. 1. Run:
 
    ```bash
    repo-lint check --ci
    ```
 
-2. Fix violations and re-run until exit code **0**.
+2. 2. Fix violations and re-run until exit code **0**.
 3. Update `docs/ai-prompt/{ISSUE_NUMBER}/{ISSUE_NUMBER}-summary.md` BEFORE committing (MANDATORY).
-4. Commit.
+4. 4. Commit.
 
 Exit codes for `repo-lint check --ci`:
 
-- **0** = OK to commit
-- **1** = violations exist → NOT OK to commit
-- **2** = missing tools → BLOCKER (attempt repair; if still failing, escalate)
+- - **0** = OK to commit - **1** = violations exist → NOT OK to commit - **2** = missing tools → BLOCKER (attempt
+  repair; if still failing, escalate)
 
 ---
 
@@ -141,37 +141,30 @@ Exit codes for `repo-lint check --ci`:
 
 ### Session End Requirements Ordered Checklist
 
-1. **Pre-commit gate (only if this session includes scripting/tooling changes)**
+1. 1. **Pre-commit gate (only if this session includes scripting/tooling changes)**
    - Run `repo-lint check --ci` and fix until it exits **0**.
 
-2. **Commit ALL meaningful work**
-   - Commit ALL meaningful work.
+2. 2. **Commit ALL meaningful work** - Commit ALL meaningful work.
    - Keep issue journals current (`*-summary.md` must be updated with EVERY commit).
 
-3. **If possible: approve any pending workflows and wait for the repo-lint umbrella workflow**
-   - If the platform/UI allows approving pending workflows for the branch/PR, approve them.
-   - Wait for the repo-lint umbrella workflow to finish.
-   - If the umbrella workflow auto-fixes issues, pull/apply those updates as required.
+3. 3. **If possible: approve any pending workflows and wait for the repo-lint umbrella workflow** - If the platform/UI
+   allows approving pending workflows for the branch/PR, approve them. - Wait for the repo-lint umbrella workflow to
+   finish. - If the umbrella workflow auto-fixes issues, pull/apply those updates as required.
 
-4. **Initiate Copilot Code Review (MANDATORY)**
-   - Trigger Copilot Code Review on the PR’s latest changes.
+4. 4. **Initiate Copilot Code Review (MANDATORY)** - Trigger Copilot Code Review on the PR’s latest changes.
 
-5. **Address ALL Copilot Code Review comments (MANDATORY)**
-   - Treat **every** Copilot Code Review comment as a **required action**.
-   - You may skip a comment **ONLY** if implementing it would:
-     - Break existing, passing tests or CI checks (verified), OR
-     - Violate an explicit technical constraint stated in the issue/PR description.
-   - If you defer an item for **future usage**, you MUST:
+5. 5. **Address ALL Copilot Code Review comments (MANDATORY)** - Treat **every** Copilot Code Review comment as a
+   **required action**. - You may skip a comment **ONLY** if implementing it would: - Break existing, passing tests or
+   CI checks (verified), OR - Violate an explicit technical constraint stated in the issue/PR description. - If you
+   defer an item for **future usage**, you MUST:
      - Leave a nearby, durable `TODO` / `FUTURE:` note in the relevant file explaining **what** and **why**.
      - Only comment out code when necessary to keep builds/tests passing (e.g., Rust compile/build).
 
-6. **Verify PR status checks**
-   - Ensure required checks are passing for the PR’s HEAD commit.
-   - If checks have not triggered, wait up to 5 minutes; if still no CI run, escalate using BLOCKED format.
+6. 6. **Verify PR status checks** - Ensure required checks are passing for the PR’s HEAD commit. - If checks have not
+   triggered, wait up to 5 minutes; if still no CI run, escalate using BLOCKED format.
 
-7. **Repository state must be clean and resumable (MANDATORY)**
-   - No uncommitted changes (unless explicitly instructed by human).
-   - Journals updated to resume instantly next session.
+7. 7. **Repository state must be clean and resumable (MANDATORY)** - No uncommitted changes (unless explicitly
+   instructed by human). - Journals updated to resume instantly next session.
    - If tooling is broken unexpectedly: attempt repair with `./scripts/session-end.sh` (repair-only exception). If still broken, escalate.
 
 If any required step fails, escalate using:
@@ -194,6 +187,6 @@ Include: failing step, exact command, exit code, and error output; mention `@m1n
 - PowerShell: `pwsh`, `PSScriptAnalyzer` (when PowerShell exists/changed)
 - Perl: `perlcritic`, `PPI` (when Perl exists/changed)
 - GitHub Actions: `actionlint` (when workflows exist/changed)
-- Rust: toolchain + helper tools (as configured in workflow)
+- - Rust: toolchain + helper tools (as configured in workflow)
 
 ---

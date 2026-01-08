@@ -1,8 +1,7 @@
 # repo_lint - Unified Multi-Language Linting Tool
 
-**Status:** Canonical linting and docstring validation tool for this repository
-**Version:** Phase 7 (Unsafe Fix Mode implemented)
-**Last Updated:** 2025-12-30
+**Status:** Canonical linting and docstring validation tool for this repository **Version:** Phase 7 (Unsafe Fix Mode
+implemented) **Last Updated:** 2025-12-30
 
 ## Overview
 
@@ -10,12 +9,9 @@
 
 ## Supported Languages
 
-- **Python**: Black, Ruff, Pylint, docstring validation
-- **Bash**: ShellCheck, shfmt, docstring validation
-- **PowerShell**: PSScriptAnalyzer, docstring validation
-- **Perl**: Perl::Critic, PPI, docstring validation
-- **YAML**: yamllint
-- **Rust**: (stub, future implementation)
+- - **Python**: Black, Ruff, Pylint, docstring validation - **Bash**: ShellCheck, shfmt, docstring validation -
+  **PowerShell**: PSScriptAnalyzer, docstring validation - **Perl**: Perl::Critic, PPI, docstring validation - **YAML**:
+  yamllint - **Rust**: (stub, future implementation)
 
 ## Quick Start
 
@@ -96,9 +92,7 @@ python3 -m tools.repo_lint fix [OPTIONS]
 
 **Safe Fixes Include:**
 
-- Black (Python formatter)
-- shfmt (Bash formatter)
-- Ruff safe auto-fixes (Python linter)
+- - Black (Python formatter) - shfmt (Bash formatter) - Ruff safe auto-fixes (Python linter)
 
 **Options:**
 
@@ -139,11 +133,13 @@ python3 -m tools.repo_lint fix --unsafe --yes-i-know [OPTIONS]
 
 **⚠️ CRITICAL WARNINGS:**
 
-1. **HUMAN-ONLY COMMAND**: AI agents are **PROHIBITED** from running this command without explicit human permission. See [AI Constraints](../../docs/contributing/ai-constraints.md).
+1. 1. **HUMAN-ONLY COMMAND**: AI agents are **PROHIBITED** from running this command without explicit human permission.
+   See [AI Constraints](../../docs/contributing/ai-constraints.md).
 
-2. **BEHAVIOR CHANGES**: Unsafe fixes can change code semantics, refactor structure, or modify documentation in ways that alter meaning.
+2. 2. **BEHAVIOR CHANGES**: Unsafe fixes can change code semantics, refactor structure, or modify documentation in ways
+   that alter meaning.
 
-3. **FORBIDDEN IN CI**: This mode is **hard-blocked** in CI environments. Exit code 2 if attempted.
+3. 3. **FORBIDDEN IN CI**: This mode is **hard-blocked** in CI environments. Exit code 2 if attempted.
 
 4. **REQUIRES DUAL FLAGS**: `--unsafe` alone will fail. You MUST also provide `--yes-i-know` to confirm.
 
@@ -152,12 +148,12 @@ python3 -m tools.repo_lint fix --unsafe --yes-i-know [OPTIONS]
 **Unsafe Fixers:**
 
 - `unsafe_docstring_rewrite`: Converts Google-style docstrings to Sphinx format (may alter documentation semantics)
-- *(More fixers may be added in the future)*
+- - *(More fixers may be added in the future)*
 
 **Guard Rails:**
 
 - `--unsafe` without `--yes-i-know` → Exit code 2 with error message
-- Any unsafe flag in CI environment → Exit code 2 with error message
+- - Any unsafe flag in CI environment → Exit code 2 with error message
 - CI detection via `--ci` flag or `CI` environment variable
 
 **Forensics:**
@@ -188,8 +184,8 @@ python3 -m tools.repo_lint fix --unsafe --yes-i-know --ci
 
 **See Also:**
 
-- [AI Constraints Documentation](../../docs/contributing/ai-constraints.md) - AI agent safety rules
-- [Phase 7 Requirements](../../docs/ai-prompt/110/new-requirement-phase-7.md) - Unsafe mode specification
+- - [AI Constraints Documentation](../../docs/contributing/ai-constraints.md) - AI agent safety rules - [Phase 7
+  Requirements](../../docs/ai-prompt/110/new-requirement-phase-7.md) - Unsafe mode specification
 
 ### `install` - Install/Bootstrap Tools
 
@@ -207,7 +203,7 @@ python3 -m tools.repo_lint install [OPTIONS]
 **Behavior:**
 
 - **Python tools**: Auto-installed in `.venv-lint/` virtual environment
-- **Other tools**: Manual installation instructions printed
+- - **Other tools**: Manual installation instructions printed
 
 **Examples:**
 
@@ -302,7 +298,7 @@ python3 -m pytest tools/repo_lint/tests/ --cov=tools.repo_lint
 2. Implement `Runner` protocol (check/fix/install_check methods)
 3. Add to `cli.py` runner list
 4. Add test fixtures in `conformance/repo-lint/`
-5. Update this README
+5. 5. Update this README
 
 ### Adding an Unsafe Fixer
 
@@ -310,11 +306,11 @@ python3 -m pytest tools/repo_lint/tests/ --cov=tools.repo_lint
 
 1. Create fixer class in `tools/repo_lint/unsafe_fixers.py`
 2. Implement `can_fix()` and `fix()` methods
-3. Document why the fixer is unsafe
+3. 3. Document why the fixer is unsafe
 4. Add to `UNSAFE_FIXERS` registry
 5. Create test fixtures in `conformance/repo-lint/unsafe-fix-fixtures/`
 6. Add tests in `tools/repo_lint/tests/test_unsafe_fixes.py`
-7. Update this README and AI constraints doc
+7. 7. Update this README and AI constraints doc
 
 ## Troubleshooting
 
@@ -345,7 +341,7 @@ Unsafe mode is hard-blocked in CI. This is a safety feature. Run unsafe fixes lo
 
 ## See Also
 
-- [Contributing Guide](../../CONTRIBUTING.md) - General contribution guidelines
-- [AI Constraints](../../docs/contributing/ai-constraints.md) - AI agent safety rules
-- [Docstring Contracts](../../docs/contributing/docstring-contracts/) - Per-language docstring requirements
-- [Epic Status](../../docs/epic-repo-lint-status.md) - Implementation status and roadmap
+- - [Contributing Guide](../../CONTRIBUTING.md) - General contribution guidelines - [AI
+  Constraints](../../docs/contributing/ai-constraints.md) - AI agent safety rules - [Docstring
+  Contracts](../../docs/contributing/docstring-contracts/) - Per-language docstring requirements - [Epic
+  Status](../../docs/epic-repo-lint-status.md) - Implementation status and roadmap

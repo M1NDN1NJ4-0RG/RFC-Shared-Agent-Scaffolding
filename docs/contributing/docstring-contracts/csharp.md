@@ -6,29 +6,26 @@
 
 ## Purpose
 
-This is a **preliminary contract** for C# source files that may be added to this repository in the future. It follows C# XML documentation conventions while aligning with the semantic requirements of other language contracts.
+This is a **preliminary contract** for C# source files that may be added to this repository in the future. It follows C#
+XML documentation conventions while aligning with the semantic requirements of other language contracts.
 
-**Note:** This contract is not yet enforced. Use it as guidance if adding C# files, but expect refinement before official adoption.
+**Note:** This contract is not yet enforced. Use it as guidance if adding C# files, but expect refinement before
+official adoption.
 
 ## Required Semantic Sections
 
 Every C# source file should include these sections in XML documentation comments:
 
-1. **\<summary\>** - Brief description of class/method/file
-2. **\<remarks\>** - Detailed description, what it does and does NOT do
-3. **\<param\>** - Document each method parameter (if applicable)
-4. **\<returns\>** - Return value documentation
-5. **\<exception\>** - Document exceptions that may be thrown
-6. **\<example\>** - Minimum 1 concrete usage example with \<code\> blocks
-7. **\<seealso\>** - References to related classes/methods
+1. 1. **\<summary\>** - Brief description of class/method/file 2. **\<remarks\>** - Detailed description, what it does
+   and does NOT do 3. **\<param\>** - Document each method parameter (if applicable) 4. **\<returns\>** - Return value
+   documentation 5. **\<exception\>** - Document exceptions that may be thrown 6. **\<example\>** - Minimum 1 concrete
+   usage example with \<code\> blocks 7. **\<seealso\>** - References to related classes/methods
 
 ### Optional Sections
 
-- **\<platform\>** - Platform compatibility (.NET version, OS requirements) - **Recommended** (use \<remarks\>)
-- **\<value\>** - For properties
-- **\<typeparam\>** - For generic type parameters
-- **\<permission\>** - Required permissions
-- **\<include\>** - External documentation files
+- - **\<platform\>** - Platform compatibility (.NET version, OS requirements) - **Recommended** (use \<remarks\>) -
+  **\<value\>** - For properties - **\<typeparam\>** - For generic type parameters - **\<permission\>** - Required
+  permissions - **\<include\>** - External documentation files
 
 ## Formatting Rules
 
@@ -194,12 +191,10 @@ public class Container<T> where T : class
 
 1. **/// for XML docs**: Always use `///` for documentation comments
 2. **\<summary\> first**: Every public member needs `<summary>`
-3. **\<param\> for all parameters**: Document every method parameter
-4. **\<exception\> for all throws**: Document all exceptions
-5. **\<typeparam\> for generics**: Document all generic type parameters
-6. **\<returns\> for non-void**: Always document return values
-7. **\<code\> in \<example\>**: Use proper XML structure for examples
-8. **Exit codes in \<remarks\>**: Document exit codes using \<list\>
+3. 3. **\<param\> for all parameters**: Document every method parameter 4. **\<exception\> for all throws**: Document
+   all exceptions 5. **\<typeparam\> for generics**: Document all generic type parameters 6. **\<returns\> for
+   non-void**: Always document return values 7. **\<code\> in \<example\>**: Use proper XML structure for examples 8.
+   **Exit codes in \<remarks\>**: Document exit codes using \<list\>
 
 ## Templates
 
@@ -418,8 +413,8 @@ docfx build docfx.json
 - [C# XML Documentation Comments](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
 - [Recommended XML Tags](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/recommended-tags)
 - [.NET API Documentation Guidelines](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/xmldoc/)
-- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
-- [README.md](./README.md) - Overview of docstring contracts
+- - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings - [README.md](./README.md) -
+  Overview of docstring contracts
 
 ## Status
 
@@ -427,8 +422,5 @@ docfx build docfx.json
 
 To adopt this contract:
 
-1. Add C# file patterns to validator
-2. Implement CSharpValidator class
-3. Add test coverage
-4. Update README.md with C# entry
-5. Mark as official (remove DRAFT status)
+1. 1. Add C# file patterns to validator 2. Implement CSharpValidator class 3. Add test coverage 4. Update README.md with
+   C# entry 5. Mark as official (remove DRAFT status)

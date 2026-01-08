@@ -2,13 +2,13 @@
 
 **Last Updated:** 2025-12-30
 
-This document tracks **explicitly-marked future work** found in the repository. All items are sourced from in-repo TODO comments, deferred work notes, ignored tests, or documented future enhancement sections.
+This document tracks **explicitly-marked future work** found in the repository. All items are sourced from in-repo TODO
+comments, deferred work notes, ignored tests, or documented future enhancement sections.
 
 **Rules:**
 
-- ✅ Only includes work explicitly marked in code/docs as TODO, deferred, or future work
-- ❌ Does NOT include speculative ideas or undocumented improvements
-- 🔄 Update this doc when adding new TODOs or completing deferred work
+- - ✅ Only includes work explicitly marked in code/docs as TODO, deferred, or future work - ❌ Does NOT include
+  speculative ideas or undocumented improvements - 🔄 Update this doc when adding new TODOs or completing deferred work
 
 ---
 
@@ -39,9 +39,8 @@ This document tracks **explicitly-marked future work** found in the repository. 
 
 ### FW-001: Signal handling for safe-run
 
-**Severity:** Low (implementation complete, test incomplete)
-**Area:** Rust CLI
-**Status:** ✅ IMPLEMENTED (conformance test incomplete)
+**Severity:** Low (implementation complete, test incomplete) **Area:** Rust CLI **Status:** ✅ IMPLEMENTED (conformance
+test incomplete)
 
 **Implementation Status:**
 
@@ -49,18 +48,15 @@ Signal handling for SIGTERM and SIGINT is **fully implemented** in `rust/src/saf
 
 - Signal handlers registered for both SIGTERM and SIGINT using `signal_hook::flag::register()`
 - ABORTED log file created on signal interruption with full event ledger via `save_log()` function
-- Correct exit codes: 130 for SIGINT, 143 for SIGTERM
-- Child process properly terminated and output captured on signal
-- Merged view mode supported in ABORTED logs
+- - Correct exit codes: 130 for SIGINT, 143 for SIGTERM - Child process properly terminated and output captured on
+  signal - Merged view mode supported in ABORTED logs
 
 **Test Status:**
 
 The conformance test `test_safe_run_003_sigterm_aborted` (marked `#[ignore]` in `rust/tests/conformance.rs`) is a placeholder that only validates the vector structure, not actual signal behavior. The test requires implementation of:
 
-- Spawning safe-run with a long-running child command in a subprocess
-- Sending SIGTERM or SIGINT to the safe-run process
-- Verifying ABORTED log file creation and content
-- Validating correct exit code (130 or 143)
+- - Spawning safe-run with a long-running child command in a subprocess - Sending SIGTERM or SIGINT to the safe-run
+  process - Verifying ABORTED log file creation and content - Validating correct exit code (130 or 143)
 
 **Source:**
 
@@ -70,9 +66,9 @@ The conformance test `test_safe_run_003_sigterm_aborted` (marked `#[ignore]` in 
 
 **Remaining Work:**
 
-- Implement complete signal handling test with actual signal delivery
+- - Implement complete signal handling test with actual signal delivery
 - Remove `#[ignore]` attribute from `test_safe_run_003_sigterm_aborted`
-- Validate behavior on Unix platforms (signal handling is Unix-specific)
+- - Validate behavior on Unix platforms (signal handling is Unix-specific)
 
 ---
 
@@ -90,28 +86,21 @@ The `safe-run check` subcommand verifies command availability, repository state,
 
 ✅ **Phase 1 Complete** (Command existence check):
 
-- Command existence check via PATH lookup
-- Exit code 0 when command is found
-- Exit code 2 when command is missing
-- Scaffolding error messages removed
-- Unit tests added for PATH lookup behavior
-- Supports absolute and relative paths
-- Cross-platform support (Unix and Windows)
+- - Command existence check via PATH lookup - Exit code 0 when command is found - Exit code 2 when command is missing -
+  Scaffolding error messages removed - Unit tests added for PATH lookup behavior - Supports absolute and relative paths
+  - Cross-platform support (Unix and Windows)
 
 ✅ **Phase 2 Complete** (Repository and dependency validation):
 
-- Executable permission verification (Unix)
-- Repository state validation
-- Exit code 3 for non-executable files (Unix)
-- Exit code 4 for repository state failures
-- Meaningful error messages for all failure scenarios
-- Unit tests for Phase 2 functionality
+- - Executable permission verification (Unix) - Repository state validation - Exit code 3 for non-executable files
+  (Unix) - Exit code 4 for repository state failures - Meaningful error messages for all failure scenarios - Unit tests
+  for Phase 2 functionality
 
 ✅ **Phase 3 Complete** (Integration and conformance):
 
 - Conformance vectors added to `conformance/vectors.json` (7 vectors)
-- Full conformance tests implemented
-- All tests passing (27 total: 8 Phase 1 + 3 Phase 2 + 6 conformance + 10 pre-existing)
+- - Full conformance tests implemented - All tests passing (27 total: 8 Phase 1 + 3 Phase 2 + 6 conformance + 10
+  pre-existing)
 
 **Source:**
 
@@ -136,40 +125,32 @@ The `safe-run archive` subcommand is now fully implemented with all requested fe
 
 **Implemented Features:**
 
-1. **Multiple compression formats:**
-   - tar.gz (gzip compression) - Fast, good compression
-   - tar.bz2 (bzip2 compression) - Slower, better compression
-   - zip - Cross-platform compatibility
+1. 1. **Multiple compression formats:** - tar.gz (gzip compression) - Fast, good compression - tar.bz2 (bzip2
+   compression) - Slower, better compression - zip - Cross-platform compatibility
 
-2. **No-clobber semantics:**
-   - Default mode: Auto-suffix (output.1.tar.gz, output.2.tar.gz, etc.)
+2. 2. **No-clobber semantics:** - Default mode: Auto-suffix (output.1.tar.gz, output.2.tar.gz, etc.)
    - Strict mode: `--no-clobber` flag fails with exit code 40 if destination exists
 
-3. **Exit codes:**
-   - 0: Archive created successfully
-   - 2: Invalid arguments or source not found
-   - 40: No-clobber collision in strict mode
-   - 50: Archive creation failed (I/O error)
+3. 3. **Exit codes:** - 0: Archive created successfully - 2: Invalid arguments or source not found - 40: No-clobber
+   collision in strict mode - 50: Archive creation failed (I/O error)
 
 **Implementation Details:**
 
 - Module: `rust/src/safe_archive.rs`
-- Dependencies added: tar, flate2, bzip2, zip
+- - Dependencies added: tar, flate2, bzip2, zip
 - CLI integration: `rust/src/cli.rs` with --no-clobber flag support
-- All 4 conformance tests passing
+- - All 4 conformance tests passing
 
 **Documentation:**
 
 - User guide: `docs/usage/safe-archive.md`
-- Examples, use cases, and technical details included
-- Contract references documented
+- - Examples, use cases, and technical details included - Contract references documented
 
 **Testing:**
 
-- ✅ test_safe_archive_001_basic - Basic archive creation
-- ✅ test_safe_archive_002_compression_formats - Multiple formats (tar.gz, tar.bz2, zip)
-- ✅ test_safe_archive_003_no_clobber_auto_suffix - Auto-suffix collision handling
-- ✅ test_safe_archive_004_no_clobber_strict - Strict mode collision detection
+- - ✅ test_safe_archive_001_basic - Basic archive creation - ✅ test_safe_archive_002_compression_formats - Multiple
+  formats (tar.gz, tar.bz2, zip) - ✅ test_safe_archive_003_no_clobber_auto_suffix - Auto-suffix collision handling - ✅
+  test_safe_archive_004_no_clobber_strict - Strict mode collision detection
 
 **Source:**
 
@@ -212,10 +193,9 @@ The preflight automerge ruleset checker validates GitHub repository configuratio
 - Add GitHub API client library (e.g., `octocrab` or `github-rs`)
 - Implement API mocking infrastructure for tests (e.g., `wiremock` or `mockito`)
 - Define the `preflight-004` vector behavior (and add to `conformance/vectors.json` if missing)
-- Implement ruleset validation logic
-- Add authentication handling with appropriate error codes
+- - Implement ruleset validation logic - Add authentication handling with appropriate error codes
 - Remove `#[ignore]` from all preflight tests
-- Document preflight usage and required permissions
+- - Document preflight usage and required permissions
 
 ---
 
@@ -235,11 +215,9 @@ Currently, there's no automated verification that every conformance vector in `c
 
 **Suggested next steps:**
 
-- Implement reflection-based or build-time check for vector coverage
-- Use macro or build script to verify 1:1 mapping
-- Fail the build/test if vectors exist without corresponding tests
-- Consider using test generation macros to auto-create test stubs
-- Document the pattern for adding new vector tests
+- - Implement reflection-based or build-time check for vector coverage - Use macro or build script to verify 1:1 mapping
+  - Fail the build/test if vectors exist without corresponding tests - Consider using test generation macros to
+  auto-create test stubs - Document the pattern for adding new vector tests
 
 ---
 
@@ -251,7 +229,8 @@ Currently, there's no automated verification that every conformance vector in `c
 
 **Why it exists:**
 
-The conformance infrastructure is functional but has room for quality-of-life improvements that would enhance developer experience and test reliability.
+The conformance infrastructure is functional but has room for quality-of-life improvements that would enhance developer
+experience and test reliability.
 
 **Source:**
 
@@ -259,19 +238,17 @@ The conformance infrastructure is functional but has room for quality-of-life im
 
 **Proposed enhancements:**
 
-- Add snapshot update mode (environment variable to regenerate snapshots)
-- Add test coverage reporting for conformance tests
-- Add benchmark tests for performance validation
-- Add fuzzing for edge cases (malformed input, extreme values)
-- Add integration tests with wrapper scripts (end-to-end validation)
+- - Add snapshot update mode (environment variable to regenerate snapshots) - Add test coverage reporting for
+  conformance tests - Add benchmark tests for performance validation - Add fuzzing for edge cases (malformed input,
+  extreme values) - Add integration tests with wrapper scripts (end-to-end validation)
 
 **Suggested next steps:**
 
-- Prioritize snapshot update mode (highest developer value)
+- - Prioritize snapshot update mode (highest developer value)
 - Add `SNAPSHOT_UPDATE=1` environment variable support
 - Integrate coverage tools (e.g., `cargo-tarpaulin`)
 - Evaluate fuzzing frameworks (e.g., `cargo-fuzz`)
-- Create cross-language integration test suite
+- - Create cross-language integration test suite
 
 ---
 
@@ -283,7 +260,8 @@ The conformance infrastructure is functional but has room for quality-of-life im
 
 **Why it exists:**
 
-The Rust canonical tool works correctly but has opportunities for optimization and feature expansion beyond the current contract requirements.
+The Rust canonical tool works correctly but has opportunities for optimization and feature expansion beyond the current
+contract requirements.
 
 **Source:**
 
@@ -291,19 +269,16 @@ The Rust canonical tool works correctly but has opportunities for optimization a
 
 **Proposed enhancements:**
 
-- **Performance:** Optimize buffering and I/O for high-throughput logs
+- - **Performance:** Optimize buffering and I/O for high-throughput logs
 - **Binary size:** Strip debug symbols, optimize for size with `strip = true`
-- **Additional commands:** Extend beyond safe-run/safe-check/safe-archive
-- **Plugin architecture:** Allow custom event handlers for extensibility
-- **Telemetry:** Optional structured logging for debugging (e.g., tracing crate)
+- - **Additional commands:** Extend beyond safe-run/safe-check/safe-archive - **Plugin architecture:** Allow custom
+  event handlers for extensibility - **Telemetry:** Optional structured logging for debugging (e.g., tracing crate)
 
 **Suggested next steps:**
 
-- Profile memory usage with large output volumes
-- Implement streaming-to-file mode to reduce peak memory (see EPIC 59 Phase 5)
-- Evaluate binary size optimizations (LTO, opt-level, panic=abort)
-- Design plugin/hook system for custom event processing
-- Add opt-in telemetry with structured logging
+- - Profile memory usage with large output volumes - Implement streaming-to-file mode to reduce peak memory (see EPIC 59
+  Phase 5) - Evaluate binary size optimizations (LTO, opt-level, panic=abort) - Design plugin/hook system for custom
+  event processing - Add opt-in telemetry with structured logging
 
 ---
 
@@ -315,7 +290,9 @@ The Rust canonical tool works correctly but has opportunities for optimization a
 
 **Why it exists:**
 
-PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Windows platforms. Testing requires native Windows environment (not WSL/Git Bash). This was Phase 3 of EPIC 59 but was deferred due to lack of Windows testing infrastructure.
+PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Windows platforms. Testing requires native
+Windows environment (not WSL/Git Bash). This was Phase 3 of EPIC 59 but was deferred due to lack of Windows testing
+infrastructure.
 
 **Source:**
 
@@ -324,19 +301,18 @@ PowerShell Ctrl-C behavior needs validation to ensure contract alignment on Wind
 
 **Why deferred:**
 
-- Requires Windows-specific testing infrastructure not available in current CI
+- - Requires Windows-specific testing infrastructure not available in current CI
 - Testing Ctrl-C with PowerShell's `Start-Process` vs direct invocation needs native Windows
 - Current implementation uses direct invocation (`& $binary`) which should propagate signals
-- This is a polish item, not a critical issue
+- - This is a polish item, not a critical issue
 
 **Suggested next steps:**
 
-- Set up Windows testing environment (native Windows 10/11, not WSL)
+- - Set up Windows testing environment (native Windows 10/11, not WSL)
 - Test both direct invocation and `Start-Process` approaches
-- Verify ABORTED log creation on Ctrl-C interruption
-- Verify exit codes (130 or 143) match Unix behavior
+- - Verify ABORTED log creation on Ctrl-C interruption - Verify exit codes (130 or 143) match Unix behavior
 - If limitation found, document in `safe-run.ps1` and `docs/architecture/rust-canonical-tool.md`
-- If behavior is acceptable, document validation results
+- - If behavior is acceptable, document validation results
 
 ---
 
@@ -358,7 +334,7 @@ The Python wrapper notes Windows native support as a future improvement: on Wind
 
 - Detect Windows (`os.name == "nt"` or `platform.system() == "Windows"`)
 - Probe `safe-run.exe` in the same cascade as `safe-run`
-- Add a small wrapper-level test (or integration test under conformance infra) that exercises discovery behavior
+- - Add a small wrapper-level test (or integration test under conformance infra) that exercises discovery behavior
 
 ---
 
@@ -370,7 +346,8 @@ The Python wrapper notes Windows native support as a future improvement: on Wind
 
 **Why it exists:**
 
-There is an explicit placeholder indicating the need for a canonical epic/idea tracker, but no single authoritative location is currently defined.
+There is an explicit placeholder indicating the need for a canonical epic/idea tracker, but no single authoritative
+location is currently defined.
 
 **Source:**
 
@@ -380,7 +357,7 @@ There is an explicit placeholder indicating the need for a canonical epic/idea t
 
 - Define the canonical location (e.g., `docs/future-work.md` or `docs/EPICS.md`)
 - Link it from `.github/copilot-instructions.md`
-- Optionally add a GitHub Issue template/category that points back to the canonical doc
+- - Optionally add a GitHub Issue template/category that points back to the canonical doc
 
 ---
 
@@ -394,7 +371,8 @@ There is an explicit placeholder indicating the need for a canonical epic/idea t
 
 Phase 5 implements language-native test runners (`run_tests.py`, `run_tests.pl`) as **thin wrappers** around the existing Bash `run-tests.sh` scripts. This approach minimizes drift and implementation complexity, but means the runners still depend on Bash being available.
 
-A future enhancement would migrate to **fully native implementations** where each runner directly invokes its language's test framework without calling the Bash script.
+A future enhancement would migrate to **fully native implementations** where each runner directly invokes its language's
+test framework without calling the Bash script.
 
 **Current Implementation (Phase 5):**
 
@@ -410,15 +388,13 @@ A future enhancement would migrate to **fully native implementations** where eac
 
 **Pros of migration:**
 
-- No Bash dependency (Windows native support without Git Bash/WSL)
-- Language-specific test discovery optimizations
-- Better error messages in native language
+- - No Bash dependency (Windows native support without Git Bash/WSL) - Language-specific test discovery optimizations -
+  Better error messages in native language
 
 **Cons of migration:**
 
-- More code to maintain (3 implementations instead of 1)
-- Risk of behavioral drift between languages
-- Additional testing burden to ensure parity
+- - More code to maintain (3 implementations instead of 1) - Risk of behavioral drift between languages - Additional
+  testing burden to ensure parity
 
 **Source:**
 
@@ -426,10 +402,9 @@ A future enhancement would migrate to **fully native implementations** where eac
 
 **Suggested next steps:**
 
-- Only migrate if there's a strong reason (e.g., Windows users complaining about Bash dependency)
-- Migrate one language at a time (start with Python as proof of concept)
-- Run both thin wrapper and native implementation in CI during transition
-- Document parity testing strategy
+- - Only migrate if there's a strong reason (e.g., Windows users complaining about Bash dependency) - Migrate one
+  language at a time (start with Python as proof of concept) - Run both thin wrapper and native implementation in CI
+  during transition - Document parity testing strategy
 
 ---
 
@@ -445,8 +420,8 @@ Phase 5 configures CI to run BOTH the Bash `run-tests.sh` and language-native ru
 
 If CI runtime becomes excessive (e.g., PR checks take >10 minutes), we could optimize by:
 
-- Running language-native runners on all PR/push builds (fast feedback)
-- Running Bash runners only on scheduled/nightly builds (coverage safety net)
+- - Running language-native runners on all PR/push builds (fast feedback) - Running Bash runners only on
+  scheduled/nightly builds (coverage safety net)
 
 **Current CI Strategy (Phase 5):**
 
@@ -476,9 +451,8 @@ If CI runtime becomes excessive (e.g., PR checks take >10 minutes), we could opt
 
 **When to implement:**
 
-- Monitor CI runtime after Phase 5 merges
-- Threshold: If total CI runtime exceeds 10 minutes consistently
-- Coordinate with team before changing (affects merge requirements)
+- - Monitor CI runtime after Phase 5 merges - Threshold: If total CI runtime exceeds 10 minutes consistently -
+  Coordinate with team before changing (affects merge requirements)
 
 **Source:**
 
@@ -486,10 +460,8 @@ If CI runtime becomes excessive (e.g., PR checks take >10 minutes), we could opt
 
 **Suggested next steps:**
 
-- Measure baseline CI runtime after Phase 5
-- Set up scheduled/nightly workflow template
-- Document which runners are required for PR merge vs. optional
-- Consider adding "full test suite" manual trigger for pre-merge validation
+- - Measure baseline CI runtime after Phase 5 - Set up scheduled/nightly workflow template - Document which runners are
+  required for PR merge vs. optional - Consider adding "full test suite" manual trigger for pre-merge validation
 
 ---
 
@@ -541,18 +513,16 @@ rg -n \
 
 **Item is complete when:**
 
-1. Implementation is finished and tested
+1. 1. Implementation is finished and tested
 2. All related `#[ignore]` attributes are removed from tests
-3. All related TODO comments are removed from code
-4. Documentation is updated to reflect new functionality
-5. This tracker is updated to remove or mark the item as complete
+3. 3. All related TODO comments are removed from code 4. Documentation is updated to reflect new functionality 5. This
+   tracker is updated to remove or mark the item as complete
 
 **When completing items:**
 
-- Remove the item from this document (or move to a "Completed" section if tracking history is desired)
-- Update all source files to remove TODO/deferred markers
-- Ensure conformance tests pass
-- Update relevant documentation (README, docs/, RFC, etc.)
+- - Remove the item from this document (or move to a "Completed" section if tracking history is desired) - Update all
+  source files to remove TODO/deferred markers - Ensure conformance tests pass - Update relevant documentation (README,
+  docs/, RFC, etc.)
 
 ---
 
@@ -571,7 +541,7 @@ Currently, `repo_lint` is run in-place using `python3 -m tools.repo_lint`. Futur
 1. Add `setup.py` or update `pyproject.toml` with package metadata
 2. Define console script entry point: `repo-lint` → `tools.repo_lint.cli:main`
 3. Support `pip install -e .` for local development
-4. Document installation in CONTRIBUTING.md
+4. 4. Document installation in CONTRIBUTING.md
 5. Integrate naming enforcement into `repo_lint` so `python3 -m tools.repo_lint check --ci` also validates repo naming contracts (per `docs/contributing/naming-and-style.md`) and reports violations deterministically.
 
 **Current Workaround:**
@@ -586,8 +556,7 @@ python3 -m tools.repo_lint install
 
 **Source:**
 
-- Decision Item 0.2.2 in EPIC issue (Phase 0 - Execution Model)
-- Added during Phase 1 implementation
+- - Decision Item 0.2.2 in EPIC issue (Phase 0 - Execution Model) - Added during Phase 1 implementation
 
 ---
 
@@ -604,40 +573,37 @@ Phase 4 implements basic repo-local tool installation (`.venv-lint/` for Python 
 **Proposed Enhancements:**
 
 1. **PowerShell module isolation (`.psmodules/`):**
-   - Install PSScriptAnalyzer to repo-local directory
+   - - Install PSScriptAnalyzer to repo-local directory
    - Use `Import-Module -Path .psmodules/...` instead of system-wide install
-   - Requires PowerShell module path manipulation
+   - - Requires PowerShell module path manipulation
 
 2. **Perl CPAN local install (`.cpan-local/`):**
    - Use `local::lib` to install Perl::Critic locally
    - Set PERL5LIB to include `.cpan-local/lib/perl5`
-   - Avoids system-wide CPAN installs
+   - - Avoids system-wide CPAN installs
 
 3. **Bash tool binaries (`.tools/`):**
-   - Download pre-built shellcheck binaries
-   - Build shfmt from source or download releases
+   - - Download pre-built shellcheck binaries - Build shfmt from source or download releases
    - Add `.tools/bin` to PATH during linting
 
-4. **Version lock files:**
+4. 4. **Version lock files:**
    - Create `.tool-versions` or similar lock file
-   - Pin exact versions of all tools (including non-Python)
+   - - Pin exact versions of all tools (including non-Python)
    - Auto-verify and update on `repo-lint install`
 
-5. **Cleanup improvements:**
-   - Track what was installed where
+5. 5. **Cleanup improvements:** - Track what was installed where
    - Add `repo-lint install --verify` to check tool integrity
    - Add `repo-lint install --upgrade` to update tools
 
 **Current Implementation (Phase 4):**
 
 - Python tools: Installed in `.venv-lint/` with pinned versions
-- Other tools: Manual installation with printed instructions
+- - Other tools: Manual installation with printed instructions
 - Cleanup: `--cleanup` removes `.venv-lint/`, `.tools/`, `.psmodules/`, `.cpan-local/`
 
 **Source:**
 
-- Decision Item 0.2.2 in EPIC issue (Phase 0 - Execution Model)
-- Implemented during Phase 4
+- - Decision Item 0.2.2 in EPIC issue (Phase 0 - Execution Model) - Implemented during Phase 4
 
 ---
 
@@ -649,7 +615,8 @@ Phase 4 implements basic repo-local tool installation (`.venv-lint/` for Python 
 
 **Description:**
 
-Code review identified security hardening opportunities in GitHub Actions workflow tool installation steps. Currently, workflows download and install tools without checksum verification or signature validation.
+Code review identified security hardening opportunities in GitHub Actions workflow tool installation steps. Currently,
+workflows download and install tools without checksum verification or signature validation.
 
 **Affected Workflows:**
 
@@ -658,10 +625,8 @@ Code review identified security hardening opportunities in GitHub Actions workfl
 
 **Proposed Security Hardening:**
 
-1. **shfmt binary download (lines 79-82 in weekly workflow, ~449-453 in umbrella):**
-   - Add SHA256 checksum verification after download
-   - Verify checksum matches known-good value before installation
-   - Example:
+1. 1. **shfmt binary download (lines 79-82 in weekly workflow, ~449-453 in umbrella):** - Add SHA256 checksum
+   verification after download - Verify checksum matches known-good value before installation - Example:
 
      ```bash
      wget -qO /tmp/shfmt https://github.com/mvdan/sh/releases/download/v3.12.0/shfmt_v3.12.0_linux_amd64
@@ -671,10 +636,8 @@ Code review identified security hardening opportunities in GitHub Actions workfl
      sudo mv /tmp/shfmt /usr/local/bin/shfmt
      ```
 
-1. **PowerShell repository setup (lines 85-88 in weekly workflow):**
-   - Add GPG key verification for Microsoft APT repository
-   - Verify package signatures before installation
-   - Example:
+1. 1. **PowerShell repository setup (lines 85-88 in weekly workflow):** - Add GPG key verification for Microsoft APT
+   repository - Verify package signatures before installation - Example:
 
      ```bash
 
@@ -682,31 +645,27 @@ Code review identified security hardening opportunities in GitHub Actions workfl
      sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
      ```
 
-1. **PSScriptAnalyzer installation (line 95 in weekly workflow):**
+1. 1. **PSScriptAnalyzer installation (line 95 in weekly workflow):**
    - Consider adding `-SkipPublisherCheck` only when necessary
-   - Verify module publisher/signature when possible
-   - Document why signature checks are skipped if needed
+   - - Verify module publisher/signature when possible - Document why signature checks are skipped if needed
 
 **Current Implementation:**
 
-- All workflows download tools over HTTPS (transport-level security)
-- All third-party actions pinned by commit SHA (per Phase 0 Item 0.4.2)
-- No checksum or signature verification for downloaded binaries
+- - All workflows download tools over HTTPS (transport-level security) - All third-party actions pinned by commit SHA
+  (per Phase 0 Item 0.4.2) - No checksum or signature verification for downloaded binaries
 
 **Impact:**
 
-- Low immediate risk (HTTPS + pinned versions provide basic protection)
-- Hardening would provide defense-in-depth
+- - Low immediate risk (HTTPS + pinned versions provide basic protection) - Hardening would provide defense-in-depth
 
 **Source:**
 
-- Code review feedback on PR #137 (2025-12-30)
-- Applies to both weekly full scan workflow and umbrella workflow
+- - Code review feedback on PR #137 (2025-12-30) - Applies to both weekly full scan workflow and umbrella workflow
 
 **Related:**
 
-- Phase 0 Item 0.4.2: Pin third-party actions by commit SHA (COMPLETE)
-- Phase 0 Item 0.7.1: Pin tool versions in CI (COMPLETE)
+- - Phase 0 Item 0.4.2: Pin third-party actions by commit SHA (COMPLETE) - Phase 0 Item 0.7.1: Pin tool versions in CI
+  (COMPLETE)
 
 ---
 
@@ -718,13 +677,14 @@ Code review identified security hardening opportunities in GitHub Actions workfl
 
 **Description:**
 
-We want CI failures (and their forensic context) to be **reviewable from the repository** without requiring humans/agents to scrape GitHub Actions UI logs.
+We want CI failures (and their forensic context) to be **reviewable from the repository** without requiring
+humans/agents to scrape GitHub Actions UI logs.
 
 **Goals:**
 
-1. **Commit log artifacts to the repo** using a consistent directory structure.
-2. **Retain failure logs** for up to **90 days** (tunable downward if noise/cost warrants).
-3. Provide a **debug-mode switch** so a human can re-run a workflow with deeper logging when needed.
+1. 1. **Commit log artifacts to the repo** using a consistent directory structure. 2. **Retain failure logs** for up to
+   **90 days** (tunable downward if noise/cost warrants). 3. Provide a **debug-mode switch** so a human can re-run a
+   workflow with deeper logging when needed.
 
 **Proposed repo log layout (example):**
 
@@ -732,11 +692,11 @@ We want CI failures (and their forensic context) to be **reviewable from the rep
 
 **Retention / pruning policy (starting point):**
 
-- Automatically prune logs older than **90 days**.
-- If this becomes too noisy or large, reduce retention (e.g., 30 days).
+- - Automatically prune logs older than **90 days**. - If this becomes too noisy or large, reduce retention (e.g., 30
+  days).
 
-**Debug-mode switch (repo-controlled):**
-GitHub’s UI “Enable debug logging” toggle cannot be enabled programmatically by workflows, so implement debug mode via one of:
+**Debug-mode switch (repo-controlled):** GitHub’s UI “Enable debug logging” toggle cannot be enabled programmatically by
+workflows, so implement debug mode via one of:
 
 - **Workflow dispatch input** (preferred): `debug_logging: true | false`
 - **Separate debug workflow**: e.g., `Umbrella CI (Debug)` / `Repo Lint (Debug)`
@@ -745,23 +705,23 @@ When debug mode is enabled, increase verbosity consistently (examples):
 
 - Set `ACTIONS_STEP_DEBUG=true` / `ACTIONS_RUNNER_DEBUG=true` when available (manual rerun input can set these)
 - Add verbose flags to tools (`--verbose`, `--debug`, `set -x`, etc.)
-- Ensure debug runs write the expanded logs into the repo log path above
+- - Ensure debug runs write the expanded logs into the repo log path above
 
 **Auto-rerun-on-failure (optional but desirable):**
 
 - Add orchestration using `workflow_run` (or equivalent) so that when the normal workflow fails, it triggers a debug run against the **same SHA**.
-- Ensure the debug run is the one that writes the *most useful* log output into the repo log directory.
+- - Ensure the debug run is the one that writes the *most useful* log output into the repo log directory.
 
 **Why this matters:**
 
 - Humans can quickly review failures via `logs/ci/...`.
-- AI coding agents can be directed at repo-stored log artifacts without API calls.
-- Failure evidence persists across time and is easy to link from PR reviews.
+- - AI coding agents can be directed at repo-stored log artifacts without API calls. - Failure evidence persists across
+  time and is easy to link from PR reviews.
 
 **Notes:**
 
-- If adopting this repo-log strategy broadly, ensure it does **not** create a bot-commit loop (guardrails needed).
-- Prefer storing logs on failure; if logs are stored on success too, consider much shorter retention.
+- - If adopting this repo-log strategy broadly, ensure it does **not** create a bot-commit loop (guardrails needed). -
+  Prefer storing logs on failure; if logs are stored on success too, consider much shorter retention.
 
 ---
 

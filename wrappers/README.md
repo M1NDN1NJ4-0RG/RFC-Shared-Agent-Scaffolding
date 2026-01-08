@@ -6,11 +6,10 @@ This directory contains thin wrapper scripts in multiple languages that discover
 
 The wrappers act as **invokers**, not independent implementations. They provide:
 
-1. **Cross-language compatibility** - Use the canonical tool from any scripting language
-2. **Automatic binary discovery** - Find the Rust binary via multiple fallback strategies
-3. **Transparent argument passing** - Forward all arguments to the canonical tool
-4. **Exit code forwarding** - Preserve the exact exit code from the canonical tool
-5. **Actionable error messages** - Guide users when the Rust binary is missing
+1. 1. **Cross-language compatibility** - Use the canonical tool from any scripting language 2. **Automatic binary
+   discovery** - Find the Rust binary via multiple fallback strategies 3. **Transparent argument passing** - Forward all
+   arguments to the canonical tool 4. **Exit code forwarding** - Preserve the exact exit code from the canonical tool 5.
+   **Actionable error messages** - Guide users when the Rust binary is missing
 
 ## Available Wrappers
 
@@ -83,19 +82,19 @@ pwsh ./wrappers/powershell/scripts/SafeRun.ps1 echo "Hello, World!"
 Wrappers use the following discovery strategy (in order of priority):
 
 1. **Environment variable:** `SAFE_RUN_BIN` (or `SAFE_CHECK_BIN`, `SAFE_ARCHIVE_BIN`)
-   - Absolute path to the canonical binary
-   - Highest priority - overrides all other methods
+   - - Absolute path to the canonical binary - Highest priority - overrides all other methods
 
 2. **Dev mode:** `rust/target/release/safe-run` (relative to repository root)
-   - Used when running from within the repository during development
+   - - Used when running from within the repository during development
 
 3. **CI artifacts:** `dist/<os>/<arch>/safe-run`
-   - Used in CI/CD pipelines where binaries are staged
+   - - Used in CI/CD pipelines where binaries are staged
 
 4. **System PATH:** Search `$PATH` for `safe-run`
-   - Falls back to system-installed binary
+   - - Falls back to system-installed binary
 
-If none of these locations contain the binary, the wrapper exits with an actionable error message explaining how to build or install the Rust canonical tool.
+If none of these locations contain the binary, the wrapper exits with an actionable error message explaining how to
+build or install the Rust canonical tool.
 
 ## Running Wrapper Tests
 
@@ -142,7 +141,8 @@ cd wrappers/python3 && bash run-tests.sh
 cd wrappers/powershell && pwsh RunTests.ps1
 ```
 
-**Note:** Both runners are functionally equivalent and produce the same results. See [Test Runner Contract](../docs/testing/test-runner-contract.md) for details on parity guarantees.
+**Note:** Both runners are functionally equivalent and produce the same results. See [Test Runner
+Contract](../docs/testing/test-runner-contract.md) for details on parity guarantees.
 
 ## Conformance Testing
 
@@ -150,8 +150,8 @@ All wrappers must pass the same conformance test suite defined in `conformance/v
 
 See:
 
-- [Conformance Contract](../docs/usage/conformance-contract.md) - Contract specification
-- [Drift Detection](../.github/workflows/drift-detection.yml) - Cross-language behavioral validation
+- - [Conformance Contract](../docs/usage/conformance-contract.md) - Contract specification - [Drift
+  Detection](../.github/workflows/drift-detection.yml) - Cross-language behavioral validation
 
 ## Architecture
 
@@ -167,17 +167,15 @@ wrappers/<language>/
 
 See:
 
-- [Wrapper Discovery](../docs/architecture/wrapper-discovery.md) - Binary discovery algorithm
-- [Canonical Structure](../docs/architecture/canonical-structure.md) - Repository layout
+- - [Wrapper Discovery](../docs/architecture/wrapper-discovery.md) - Binary discovery algorithm - [Canonical
+  Structure](../docs/architecture/canonical-structure.md) - Repository layout
 
 ## Contributing
 
 When adding or modifying wrappers:
 
-1. Maintain the invoker pattern - delegate all logic to the Rust canonical tool
-2. Preserve binary discovery order and error messages
-3. Add tests for any new functionality
-4. Run conformance suite to verify behavioral parity
+1. 1. Maintain the invoker pattern - delegate all logic to the Rust canonical tool 2. Preserve binary discovery order
+   and error messages 3. Add tests for any new functionality 4. Run conformance suite to verify behavioral parity
 5. Follow language-specific docstring contracts (see `docs/contributing/docstring-contracts/`)
 
 See [Contributing Guide](../docs/contributing/contributing-guide.md) for full details.

@@ -8,7 +8,9 @@
 
 ## Overview
 
-This directory contains canonical test vectors that define the expected behavior of all scripts in the RFC Shared Agent Scaffolding system. All language bundles (Bash, Python 3, Perl, PowerShell) **MUST** pass these conformance tests to ensure behavioral parity.
+This directory contains canonical test vectors that define the expected behavior of all scripts in the RFC Shared Agent
+Scaffolding system. All language bundles (Bash, Python 3, Perl, PowerShell) **MUST** pass these conformance tests to
+ensure behavioral parity.
 
 ---
 
@@ -65,20 +67,18 @@ Each test vector contains:
 
 ### M0-P1-I3: safe-archive No-Clobber Semantics
 
-- Default: auto-suffix on collision
-- Opt-in strict: fail on collision
+- - Default: auto-suffix on collision - Opt-in strict: fail on collision
 - **Vectors:** `safe-archive-003`, `safe-archive-004`
 
 ### M0-P2-I1: Auth Method & Header Semantics
 
 - `Authorization: Bearer <token>` header format
-- Auth precedence: CLI > env > config > gh auth
+- - Auth precedence: CLI > env > config > gh auth
 - **Vectors:** `preflight-001`, `preflight-002`
 
 ### M0-P2-I2: Exit Code Taxonomy
 
-- Stable exit code ranges for error classes
-- **Vectors:** All vectors validate exit codes
+- - Stable exit code ranges for error classes - **Vectors:** All vectors validate exit codes
 
 ---
 
@@ -88,19 +88,15 @@ Each test vector contains:
 
 1. Load `vectors.json` in your test framework
 2. For each vector in the relevant category (`safe_run`, `safe_archive`, etc.):
-   - Set up the test environment (temp directory, env vars)
-   - Execute the command with specified inputs
+   - - Set up the test environment (temp directory, env vars) - Execute the command with specified inputs
    - Assert all `expected` conditions
-3. Report pass/fail per vector ID
+3. 3. Report pass/fail per vector ID
 
 ### For CI/CD
 
 Conformance tests **MUST** pass for all supported language bundles:
 
-- Bash
-- Python 3
-- Perl
-- PowerShell
+- - Bash - Python 3 - Perl - PowerShell
 
 A failing conformance test indicates implementation drift and blocks merge.
 
@@ -114,8 +110,7 @@ When adding a new vector:
 2. Link to relevant M0 spec items in `m0_spec` field
 3. Provide clear `name` describing what is tested
 4. Define complete `expected` outcomes
-5. Test the vector against at least one reference implementation
-6. Update this README with M0 coverage information
+5. 5. Test the vector against at least one reference implementation 6. Update this README with M0 coverage information
 
 ---
 
@@ -124,10 +119,9 @@ When adding a new vector:
 Certain platform-specific differences are **permitted**:
 
 - **Path separators:** `/` vs `\` (normalize in tests)
-- **Line endings:** LF vs CRLF (normalize in tests)
-- **Process IDs:** Different PID values (test pattern, not exact value)
-- **Timestamps:** Different execution times (test format, not exact value)
-- **Absolute paths:** Different base paths (normalize or use relative paths)
+- - **Line endings:** LF vs CRLF (normalize in tests) - **Process IDs:** Different PID values (test pattern, not exact
+  value) - **Timestamps:** Different execution times (test format, not exact value) - **Absolute paths:** Different base
+  paths (normalize or use relative paths)
 
 All **functional behavior** must be identical.
 
@@ -135,10 +129,9 @@ All **functional behavior** must be identical.
 
 ## Version History
 
-- **v1.0** (2025-12-26): Initial conformance vectors for M2-P1-I1
-  - safe_run: 5 vectors (success, failure, SIGINT, custom log dir, snippet)
-  - preflight_automerge_ruleset: 4 vectors (success, auth fail, ruleset not found, missing context)
-  - safe_archive: 4 vectors (success, compression, no-clobber default, no-clobber strict)
+- - **v1.0** (2025-12-26): Initial conformance vectors for M2-P1-I1 - safe_run: 5 vectors (success, failure, SIGINT,
+  custom log dir, snippet) - preflight_automerge_ruleset: 4 vectors (success, auth fail, ruleset not found, missing
+  context) - safe_archive: 4 vectors (success, compression, no-clobber default, no-clobber strict)
 
 ---
 

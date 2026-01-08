@@ -6,30 +6,26 @@
 
 ## Purpose
 
-This is a **preliminary contract** for JavaScript/Node.js scripts that may be added to this repository in the future. It follows JSDoc conventions while aligning with the semantic requirements of other language contracts.
+This is a **preliminary contract** for JavaScript/Node.js scripts that may be added to this repository in the future. It
+follows JSDoc conventions while aligning with the semantic requirements of other language contracts.
 
-**Note:** This contract is not yet enforced. Use it as guidance if adding JavaScript files, but expect refinement before official adoption.
+**Note:** This contract is not yet enforced. Use it as guidance if adding JavaScript files, but expect refinement before
+official adoption.
 
 ## Required Semantic Sections
 
 Every JavaScript script/module should include these sections in JSDoc comments:
 
-1. **@file** - File description and one-line summary
-2. **@description** - What the module/script does and does NOT do
-3. **@module** or **@namespace** - Module name
-4. **@param** - Document each parameter (if applicable)
-5. **@returns** - Return value documentation
-6. **@throws** - Documented error conditions
-7. **@example** - Minimum 1 concrete usage example
-8. **@see** - References to related docs
+1. 1. **@file** - File description and one-line summary 2. **@description** - What the module/script does and does NOT
+   do 3. **@module** or **@namespace** - Module name 4. **@param** - Document each parameter (if applicable) 5.
+   **@returns** - Return value documentation 6. **@throws** - Documented error conditions 7. **@example** - Minimum 1
+   concrete usage example 8. **@see** - References to related docs
 
 ### Optional Sections
 
-- **@platform** - Platform compatibility (Node.js version, browser support) - **Recommended**
-- **@author** - Author information
-- **@version** - Version information
-- **@license** - License information
-- **@todo** - Known limitations or future work
+- - **@platform** - Platform compatibility (Node.js version, browser support) - **Recommended** - **@author** - Author
+  information - **@version** - Version information - **@license** - License information - **@todo** - Known limitations
+  or future work
 
 ## Formatting Rules
 
@@ -106,12 +102,10 @@ module.exports = { main };
 
 1. **Shebang for scripts**: Use `#!/usr/bin/env node` for executable scripts
 2. **File-level JSDoc**: Start with `/**` (not `/*`)
-3. **@file and @description**: Required at top of file
+3. 3. **@file and @description**: Required at top of file
 4. **@param types**: Use JSDoc type syntax: `{string}`, `{number}`, `{Array<string>}`
-5. **@returns**: Always document return value for functions
-6. **@throws**: Document exceptions that can be thrown
-7. **@example**: Include runnable code examples
-8. **Exit codes**: Document in @description or separate section
+5. 5. **@returns**: Always document return value for functions 6. **@throws**: Document exceptions that can be thrown 7.
+   **@example**: Include runnable code examples 8. **Exit codes**: Document in @description or separate section
 
 ## Exit Code Documentation
 
@@ -291,8 +285,8 @@ npx eslint script.js --plugin jsdoc
 - [JSDoc Official Documentation](https://jsdoc.app/)
 - [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
 - [TypeScript JSDoc Support](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html)
-- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
-- [README.md](./README.md) - Overview of docstring contracts
+- - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings - [README.md](./README.md) -
+  Overview of docstring contracts
 
 ## Status
 
@@ -300,8 +294,5 @@ npx eslint script.js --plugin jsdoc
 
 To adopt this contract:
 
-1. Add JavaScript file patterns to validator
-2. Implement JavaScriptValidator class
-3. Add test coverage
-4. Update README.md with JavaScript entry
-5. Mark as official (remove DRAFT status)
+1. 1. Add JavaScript file patterns to validator 2. Implement JavaScriptValidator class 3. Add test coverage 4. Update
+   README.md with JavaScript entry 5. Mark as official (remove DRAFT status)

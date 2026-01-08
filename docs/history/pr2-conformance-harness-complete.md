@@ -19,59 +19,43 @@ PR2 successfully implements a comprehensive, test-first conformance infrastructu
 ### Test Infrastructure (7 new files)
 
 1. **`rust/tests/README.md`** (4.3 KB)
-   - Test execution guide
-   - Test coverage documentation
-   - Test writing guidelines
-   - Platform considerations
+   - - Test execution guide - Test coverage documentation - Test writing guidelines - Platform considerations
 
 2. **`rust/tests/conformance-infrastructure.md`** (9.1 KB)
-   - Comprehensive infrastructure documentation
-   - Component descriptions
-   - CI integration details
-   - Future roadmap
+   - - Comprehensive infrastructure documentation - Component descriptions - CI integration details - Future roadmap
 
 3. **`rust/tests/common/mod.rs`** (5.8 KB)
    - `ConformanceVectors` and related types
    - `load_vectors()` - Loads conformance/vectors.json
    - `get_safe_run_binary()` - Locates binary
-   - Vector type definitions for all test categories
+   - - Vector type definitions for all test categories
 
 4. **`rust/tests/common/snapshots.rs`** (3.7 KB)
    - `load_snapshot()` / `save_snapshot()` - Golden output management
    - `matches_snapshot()` - Output comparison
    - `normalize_output()` - Platform normalization
-   - Handles PIDs, timestamps, line endings
+   - - Handles PIDs, timestamps, line endings
 
 5. **`rust/tests/conformance.rs`** (18.3 KB)
-   - 13 conformance tests (5 safe-run, 4 safe-archive, 3 preflight, 1 meta)
+   - - 13 conformance tests (5 safe-run, 4 safe-archive, 3 preflight, 1 meta)
    - All tests marked `#[ignore]` (enabled in PR3)
    - Uses `assert_cmd` for binary execution
    - Uses `tempfile` for isolated test environments
 
 6. **`rust/tests/fixtures/README.md`** (1.6 KB)
-   - Documentation for test fixtures
-   - Helper script guidelines
-   - Directory structure
+   - - Documentation for test fixtures - Helper script guidelines - Directory structure
 
 7. **`rust/tests/snapshots/README.md`** (1.5 KB)
-   - Documentation for golden outputs
-   - Snapshot generation guide
-   - Normalization rules
+   - - Documentation for golden outputs - Snapshot generation guide - Normalization rules
 
 ### CI/CD (1 new file)
 
 **`.github/workflows/rust-conformance.yml`** (3.4 KB)
 
-- **Test Job:** Matrix across ubuntu/macos/windows
-  - Build Rust project
-  - Run unit tests
-  - Run conformance tests
-  - Build release binary
-  - Verify binary
-  - Upload artifacts on failure
+- - **Test Job:** Matrix across ubuntu/macos/windows - Build Rust project - Run unit tests - Run conformance tests -
+  Build release binary - Verify binary - Upload artifacts on failure
 - **Lint Job:** Clippy with strict warnings (`-D warnings`)
-- **Format Job:** rustfmt check
-- **Caching:** Registry, git index, build artifacts
+- - **Format Job:** rustfmt check - **Caching:** Registry, git index, build artifacts
 
 ### Dependency Updates
 
@@ -210,20 +194,16 @@ cargo clippy --all-targets --all-features
 
 **Triggers:**
 
-- Push to main, copilot/**, work/**
-- Pull requests to main
-- Changes to rust/, conformance/, workflow file
+- - Push to main, copilot/**, work/** - Pull requests to main - Changes to rust/, conformance/, workflow file
 
 **Jobs:**
 
-1. **test** - Build and test on ubuntu/macos/windows
-2. **lint** - Clippy with strict warnings
-3. **format** - rustfmt check
+1. 1. **test** - Build and test on ubuntu/macos/windows 2. **lint** - Clippy with strict warnings 3. **format** -
+   rustfmt check
 
 **Expected Behavior:**
 
-- ✅ All jobs pass with current state (tests ignored)
-- 🔜 In PR3, conformance tests will be enabled and must pass
+- - ✅ All jobs pass with current state (tests ignored) - 🔜 In PR3, conformance tests will be enabled and must pass
 
 ---
 
@@ -231,43 +211,34 @@ cargo clippy --all-targets --all-features
 
 ### 1. Test-First Approach
 
-- Tests written before implementation (TDD)
-- Clear expectations defined upfront
-- Implementation guided by failing tests
+- - Tests written before implementation (TDD) - Clear expectations defined upfront - Implementation guided by failing
+  tests
 
 ### 2. Vector-Driven Testing
 
 - All tests load from `conformance/vectors.json`
-- Single source of truth for expected behavior
-- Easy to add new test cases
+- - Single source of truth for expected behavior - Easy to add new test cases
 
 ### 3. Cross-Platform Support
 
-- Tests run on Linux, macOS, Windows
-- Snapshot normalization handles platform differences
+- - Tests run on Linux, macOS, Windows - Snapshot normalization handles platform differences
 - Platform-specific tests marked with `#[cfg()]`
 
 ### 4. Snapshot Testing
 
 - Golden outputs stored in `snapshots/`
-- Normalization for PIDs, timestamps, line endings
-- Update mechanism for development iteration
+- - Normalization for PIDs, timestamps, line endings - Update mechanism for development iteration
 
 ### 5. Comprehensive Documentation
 
-- README in every directory
-- Inline code comments
-- Infrastructure guide
-- Test writing guidelines
+- - README in every directory - Inline code comments - Infrastructure guide - Test writing guidelines
 
 ---
 
 ## Non-Goals (Explicitly Out of Scope)
 
-- ❌ No actual command implementation (comes in PR3)
-- ❌ No golden outputs yet (generated in PR3)
-- ❌ No helper scripts yet (added as needed in PR3+)
-- ❌ No wrapper modifications (comes in PR4+)
+- - ❌ No actual command implementation (comes in PR3) - ❌ No golden outputs yet (generated in PR3) - ❌ No helper scripts
+  yet (added as needed in PR3+) - ❌ No wrapper modifications (comes in PR4+)
 
 ---
 
@@ -276,12 +247,9 @@ cargo clippy --all-targets --all-features
 All criteria met:
 
 - [x] Test infrastructure exists (`common/mod.rs`, `common/snapshots.rs`)
-- [x] All 13 conformance tests written
-- [x] Tests marked as ignored (awaiting implementation)
-- [x] Snapshot testing framework in place
-- [x] CI workflow configured and passing
-- [x] Documentation comprehensive
-- [x] No implementation work done (per EPIC requirements)
+- - [x] All 13 conformance tests written - [x] Tests marked as ignored (awaiting implementation) - [x] Snapshot testing
+  framework in place - [x] CI workflow configured and passing - [x] Documentation comprehensive - [x] No implementation
+  work done (per EPIC requirements)
 
 ---
 
@@ -293,7 +261,7 @@ All criteria met:
 2. Remove `#[ignore]` from safe-run tests
 3. Generate golden outputs in `snapshots/`
 4. Add helper scripts in `fixtures/` as needed
-5. Verify all safe-run tests pass on all platforms
+5. 5. Verify all safe-run tests pass on all platforms
 
 **Hard stop enforced:** No implementation work was done in this PR, per EPIC requirements.
 
@@ -320,9 +288,7 @@ All criteria met:
 
 ### Statistics
 
-- **Lines Added:** ~1,535
-- **Lines Removed:** ~11 (formatting)
-- **Net Change:** +1,524 lines
+- - **Lines Added:** ~1,535 - **Lines Removed:** ~11 (formatting) - **Net Change:** +1,524 lines
 
 ---
 
@@ -330,14 +296,12 @@ All criteria met:
 
 - **Epic:** [#33 - Rust Canonical Tool](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33)
 - **Branch:** `copilot/implement-rust-canonical-tool-another-one`
-- **Pre-flight PR:** [PR0 - Pre-flight Baseline Validation](PR0-PREFLIGHT-COMPLETE.md)
-- **Scaffolding PR:** [PR1 - Docs & Rust Scaffolding](PR1-RUST-SCAFFOLDING-COMPLETE.md)
+- - **Pre-flight PR:** [PR0 - Pre-flight Baseline Validation](PR0-PREFLIGHT-COMPLETE.md) - **Scaffolding PR:** [PR1 -
+  Docs & Rust Scaffolding](PR1-RUST-SCAFFOLDING-COMPLETE.md)
 - **Conformance Vectors:** `conformance/vectors.json`
-- **Documentation:**
-  - [Test README](rust/tests/README.md)
-  - [Conformance Infrastructure](rust/tests/conformance-infrastructure.md)
-  - [Fixtures](rust/tests/fixtures/README.md)
-  - [Snapshots](rust/tests/snapshots/README.md)
+- - **Documentation:** - [Test README](rust/tests/README.md) - [Conformance
+  Infrastructure](rust/tests/conformance-infrastructure.md) - [Fixtures](rust/tests/fixtures/README.md) -
+  [Snapshots](rust/tests/snapshots/README.md)
 
 ---
 

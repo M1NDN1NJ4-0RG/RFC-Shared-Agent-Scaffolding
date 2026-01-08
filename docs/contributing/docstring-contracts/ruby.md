@@ -6,30 +6,26 @@
 
 ## Purpose
 
-This is a **preliminary contract** for Ruby scripts that may be added to this repository in the future. It follows YARD (preferred) and RDoc conventions while aligning with the semantic requirements of other language contracts.
+This is a **preliminary contract** for Ruby scripts that may be added to this repository in the future. It follows YARD
+(preferred) and RDoc conventions while aligning with the semantic requirements of other language contracts.
 
-**Note:** This contract is not yet enforced. Use it as guidance if adding Ruby files, but expect refinement before official adoption.
+**Note:** This contract is not yet enforced. Use it as guidance if adding Ruby files, but expect refinement before
+official adoption.
 
 ## Required Semantic Sections
 
 Every Ruby script should include these sections in documentation comments:
 
-1. **@!attribute** or file-level comment - Script/module description and one-line summary
-2. **@description** or description paragraph - What it does and does NOT do
-3. **@param** - Document each method parameter (if applicable)
-4. **@return** - Return value documentation
-5. **@raise** or **@raise [ExceptionType]** - Document exceptions that may be raised
-6. **@example** - Minimum 1 concrete usage example
-7. **@see** - References to related docs
+1. 1. **@!attribute** or file-level comment - Script/module description and one-line summary 2. **@description** or
+   description paragraph - What it does and does NOT do 3. **@param** - Document each method parameter (if applicable)
+   4. **@return** - Return value documentation 5. **@raise** or **@raise [ExceptionType]** - Document exceptions that
+   may be raised 6. **@example** - Minimum 1 concrete usage example 7. **@see** - References to related docs
 
 ### Optional Sections
 
-- **@note** - Important notes, constraints, sharp edges
-- **@deprecated** - Deprecation warnings
-- **@since** - Version information
-- **@version** - Version information
-- **@author** - Author information
-- **@platform** - Platform compatibility (Ruby version, OS) - **Recommended** (use @note)
+- - **@note** - Important notes, constraints, sharp edges - **@deprecated** - Deprecation warnings - **@since** -
+  Version information - **@version** - Version information - **@author** - Author information - **@platform** - Platform
+  compatibility (Ruby version, OS) - **Recommended** (use @note)
 
 ## Formatting Rules
 
@@ -178,10 +174,9 @@ end
 2. **frozen_string_literal**: Include `# frozen_string_literal: true` after shebang
 3. **YARD tags**: Use `@param`, `@return`, `@raise`, `@example`, etc.
 4. **Type annotations**: Use `[Type]` notation for types in YARD
-5. **@return for all methods**: Always document return values
-6. **@raise for exceptions**: Document all exceptions that may be raised
-7. **Exit codes**: Document in file-level comments
-8. **@example blocks**: Provide runnable code examples
+5. 5. **@return for all methods**: Always document return values 6. **@raise for exceptions**: Document all exceptions
+   that may be raised 7. **Exit codes**: Document in file-level comments 8. **@example blocks**: Provide runnable code
+   examples
 
 ## Templates
 
@@ -332,10 +327,10 @@ exit main(ARGV) if __FILE__ == $PROGRAM_NAME
 
 When this contract is officially adopted, the validator should check:
 
-- Presence of file-level documentation
+- - Presence of file-level documentation
 - Shebang `#!/usr/bin/env ruby`
 - `frozen_string_literal: true`
-- Exit codes documented in file comments
+- - Exit codes documented in file comments
 - `@param` for all method parameters
 - `@return` for all methods
 - `@raise` for methods that raise exceptions
@@ -387,8 +382,8 @@ rdoc
 - [YARD Tags](https://rubydoc.info/gems/yard/file/docs/Tags.md)
 - [RDoc Markup](https://ruby.github.io/rdoc/RDoc/Markup.html)
 - [Ruby Style Guide](https://rubystyle.guide/)
-- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
-- [README.md](./README.md) - Overview of docstring contracts
+- - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings - [README.md](./README.md) -
+  Overview of docstring contracts
 
 ## Status
 
@@ -396,8 +391,5 @@ rdoc
 
 To adopt this contract:
 
-1. Add Ruby file patterns to validator
-2. Implement RubyValidator class
-3. Add test coverage
-4. Update README.md with Ruby entry
-5. Mark as official (remove DRAFT status)
+1. 1. Add Ruby file patterns to validator 2. Implement RubyValidator class 3. Add test coverage 4. Update README.md with
+   Ruby entry 5. Mark as official (remove DRAFT status)

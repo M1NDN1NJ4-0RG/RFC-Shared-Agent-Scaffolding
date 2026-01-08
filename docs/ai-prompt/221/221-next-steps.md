@@ -8,27 +8,19 @@ Related: Issue #221, PR #222
 
 ## NEXT
 
-- **ALL WORK COMPLETE** - Ready for final review
-- **All acceptance criteria met**:
-  - ✅ Fixtures excluded in --ci mode and normal mode
-  - ✅ --include-fixtures is ONLY way to scan fixtures
-  - ✅ Ruff info_message displays without failing build
-  - ✅ All unit tests pass (10/10 Python runner tests)
-  - ✅ All linters pass (15/15 runners in CI check)
-  - ✅ Integration tests: 9/11 passing (2 require tools - expected)
-  - ✅ Comprehensive documentation complete
+- - **ALL WORK COMPLETE** - Ready for final review - **All acceptance criteria met**: - ✅ Fixtures excluded in --ci mode
+  and normal mode - ✅ --include-fixtures is ONLY way to scan fixtures - ✅ Ruff info_message displays without failing
+  build - ✅ All unit tests pass (10/10 Python runner tests) - ✅ All linters pass (15/15 runners in CI check) - ✅
+  Integration tests: 9/11 passing (2 require tools - expected) - ✅ Comprehensive documentation complete
 
 ## ACCEPTANCE CRITERIA FOR DONE
 
 ALL MET ✅:
 
 1. ✅ Fixtures exist at `tools/repo_lint/tests/fixtures/**` for all 6 languages (21 files)
-2. ✅ Fixtures excluded by default in both normal and --ci modes
-3. ✅ --include-fixtures flag enables vector mode
-4. ✅ Integration tests validate exclusion/inclusion behavior
-5. ✅ All existing tests pass
-6. ✅ All CI linters pass (no fixture violations appear)
-7. ✅ Comprehensive documentation in HOW-TO-USE-THIS-TOOL.md
+2. 2. ✅ Fixtures excluded by default in both normal and --ci modes 3. ✅ --include-fixtures flag enables vector mode 4. ✅
+   Integration tests validate exclusion/inclusion behavior 5. ✅ All existing tests pass 6. ✅ All CI linters pass (no
+   fixture violations appear) 7. ✅ Comprehensive documentation in HOW-TO-USE-THIS-TOOL.md
 
 <>><------- NEXT STEPS DELIMITER BETWEEN COMPLETED STEPS -------><<>
 
@@ -48,8 +40,7 @@ ALL MET ✅:
 
 1. Read failure report `repo-lint-failure-reports/20639754907/python-lint-output.txt`
 2. Showed 27 ruff violations in fixture files: `all_docstring_violations.py`, `black_violations.py`, `naming-violations.py`, `pylint_violations.py`, `ruff_violations.py`
-3. Tested locally - no violations found, all passed
-4. Investigated difference between local and CI execution
+3. 3. Tested locally - no violations found, all passed 4. Investigated difference between local and CI execution
 5. Discovered that Black and Ruff run directly on `.` without passing exclusion parameters
 6. Checked `pyproject.toml` configuration
 7. FOUND: Exclusion lists only had old conformance paths, NOT the new `tools/repo_lint/tests/fixtures/` directory created in this PR
@@ -58,19 +49,19 @@ ALL MET ✅:
 
 Updated `pyproject.toml` three sections:
 
-1. **[tool.black] exclude** (lines 49-60):
+1. 1. **[tool.black] exclude** (lines 49-60):
    - Added `tools/repo_lint/tests/fixtures`
    - Changed `conformance/repo-lint/fixtures/violations` → `conformance/repo-lint/fixtures` (broader)
    - Changed `conformance/repo-lint/vectors/fixtures` → `conformance/repo-lint/vectors` (broader)
    - Added `conformance/repo-lint/unsafe-fix-fixtures`
 
-2. **[tool.ruff] exclude** (lines 69-78):
+2. 2. **[tool.ruff] exclude** (lines 69-78):
    - Added `tools/repo_lint/tests/fixtures`
    - Changed `conformance/repo-lint/fixtures/violations` → `conformance/repo-lint/fixtures` (broader)
    - Changed `conformance/repo-lint/vectors/fixtures` → `conformance/repo-lint/vectors` (broader)
    - Added `conformance/repo-lint/unsafe-fix-fixtures`
 
-3. **[tool.pylint.master] ignore-paths** (lines 96-102):
+3. 3. **[tool.pylint.master] ignore-paths** (lines 96-102):
    - Added `tools/repo_lint/tests/fixtures/.*`
    - Changed `conformance/repo-lint/fixtures/violations/.*` → `conformance/repo-lint/fixtures/.*` (broader)
    - Changed `conformance/repo-lint/vectors/fixtures/.*` → `conformance/repo-lint/vectors/.*` (broader)
@@ -104,15 +95,12 @@ Exit Code: 0 (SUCCESS)
 
 **Known Issues Fixed:**
 
-- Fixtures no longer appear in CI Python linting output
-- All 27 ruff violations from fixtures are now properly excluded
-- Black won't try to auto-format fixtures
-- Pylint won't scan fixtures
+- - Fixtures no longer appear in CI Python linting output - All 27 ruff violations from fixtures are now properly
+  excluded - Black won't try to auto-format fixtures - Pylint won't scan fixtures
 
 **Follow-up Actions:**
 
-- None - this is the definitive fix
-- CI will pass on next run
+- - None - this is the definitive fix - CI will pass on next run
 
 ---
 
@@ -121,8 +109,8 @@ Exit Code: 0 (SUCCESS)
 **Context:**
 
 - Received instruction to read `repo-lint-failure-reports/20637798155/summary.md` and `repo-lint-failure-reports/20638414426/python-lint-output.txt`
-- Report showed fixture violations + production code violations
-- CRITICAL FINDING: Report was from EARLIER run (before commit bea4345). Current state already has fixtures excluded correctly!
+- - Report showed fixture violations + production code violations - CRITICAL FINDING: Report was from EARLIER run
+  (before commit bea4345). Current state already has fixtures excluded correctly!
 
 **Bootstrap Completed:**
 
@@ -135,40 +123,40 @@ Exit Code: 0 (SUCCESS)
 
 **Issues Found and Fixed:**
 
-1. **Ruff info_message pass/fail logic (CRITICAL BUG)**:
+1. 1. **Ruff info_message pass/fail logic (CRITICAL BUG)**:
    - **File**: `tools/repo_lint/runners/python_runner.py`
-   - **Lines**: 314-318 (_run_ruff_check), 334-338 (_run_ruff_fix)
+   - - **Lines**: 314-318 (_run_ruff_check), 334-338 (_run_ruff_fix)
    - **Problem**: Both methods set `passed=False` when `returncode != 0`, even if violations list was empty (only info_message present)
-   - **Root cause**: Logic based on subprocess returncode instead of actual violation count
+   - - **Root cause**: Logic based on subprocess returncode instead of actual violation count
    - **Fix**: Changed to `passed = len(violations) == 0` - info_message doesn't affect pass/fail status
-   - **Impact**: Builds no longer fail when ruff only has --unsafe-fixes hints without actual violations
+   - - **Impact**: Builds no longer fail when ruff only has --unsafe-fixes hints without actual violations
 
-2. **Pylint R1724 (unnecessary elif)**:
+2. 2. **Pylint R1724 (unnecessary elif)**:
    - **File**: `tools/repo_lint/runners/python_runner.py`
-   - **Line**: 282
+   - - **Line**: 282
    - **Problem**: `elif` after `continue` is unnecessary
    - **Fix**: Changed `elif` to `if`
 
-3. **Test unused variable W0612**:
+3. 3. **Test unused variable W0612**:
    - **File**: `tools/repo_lint/tests/test_python_runner.py`
-   - **Line**: 288
+   - - **Line**: 288
    - **Problem**: Variable `info_message` unpacked but never used
    - **Fix**: Changed to `_` (Python convention for intentionally unused values)
 
-4. **Test expectations updated for new behavior**:
+4. 4. **Test expectations updated for new behavior**:
    - **File**: `tools/repo_lint/tests/test_python_runner.py`
-   - **Tests updated** (5 total):
+   - - **Tests updated** (5 total):
      a. `test_check_handles_unsafe_fixes_warning` (lines 165-172):
-        - OLD: Expected passed=False with unsafe-fixes as violation
-        - NEW: Expects passed=False (has E501), len(violations)=1, info_message present
+- OLD: Expected passed=False with unsafe-fixes as violation - NEW: Expects passed=False (has E501), len(violations)=1,
+info_message present
 
      b. `test_fix_handles_unsafe_fixes_warning` (lines 189-196):
-        - OLD: Expected passed=False with unsafe-fixes as violation
-        - NEW: Expects passed=False (has E501), len(violations)=1, info_message present
+- OLD: Expected passed=False with unsafe-fixes as violation - NEW: Expects passed=False (has E501), len(violations)=1,
+info_message present
 
      c. `test_fix_command_sequences_black_and_ruff` (lines 199-227):
-        - OLD: No policy provided, has_files not mocked
-        - NEW: Added policy allowing FORMAT.BLACK and LINT.RUFF.SAFE, mocked has_files()
+- OLD: No policy provided, has_files not mocked - NEW: Added policy allowing FORMAT.BLACK and LINT.RUFF.SAFE, mocked
+has_files()
         - Policy format: `{"allowed_categories": [{"category": "..."}, ...]}`
 
      d. `test_parse_empty_output` (line 249):
@@ -179,10 +167,9 @@ Exit Code: 0 (SUCCESS)
         - OLD: `violations, info_message = ...` (info_message unused)
         - NEW: `violations, _ = ...` (uses underscore)
 
-5. **Black formatting applied**:
+5. 5. **Black formatting applied**:
    - Ran `python3 -m tools.repo_lint fix --only python`
-   - Fixed minor formatting issues in test files
-   - All Python files now Black-compliant
+   - - Fixed minor formatting issues in test files - All Python files now Black-compliant
 
 **Verification Commands Run:**
 
@@ -216,7 +203,7 @@ repo-lint check --ci
 - Normal mode: `repo-lint check` excludes `tools/repo_lint/tests/fixtures/**` ✅
 - CI mode: `repo-lint check --ci` excludes `tools/repo_lint/tests/fixtures/**` ✅
 - Vector mode: `repo-lint check --include-fixtures` INCLUDES fixtures ✅
-- **NO fixture violations appear in any default run** ✅
+- - **NO fixture violations appear in any default run** ✅
 
 **Files Scanned (confirmed via testing)**:
 
@@ -238,9 +225,8 @@ repo-lint check --ci
 
 **Test Results:**
 
-- Python runner unit tests: 10/10 passing ✅
-- Integration tests: 9/11 passing (2 require black/ruff/pylint installed - expected behavior)
-- All CI linters: 15/15 passing ✅
+- - Python runner unit tests: 10/10 passing ✅ - Integration tests: 9/11 passing (2 require black/ruff/pylint installed -
+  expected behavior) - All CI linters: 15/15 passing ✅
 
 **Files Modified This Session:**
 
@@ -273,9 +259,8 @@ repo-lint check --ci  # Should show 15/15 runners passing, 0 violations
 
 **Rationale for Changes:**
 
-- Ruff's info_message was incorrectly causing builds to fail
-- The info_message feature is working as designed: displays hints without affecting pass/fail
-- Fixtures are correctly excluded in all normal/CI runs
+- - Ruff's info_message was incorrectly causing builds to fail - The info_message feature is working as designed:
+  displays hints without affecting pass/fail - Fixtures are correctly excluded in all normal/CI runs
 - Only `--include-fixtures` enables vector mode (conformance testing)
 
 <>><------- PREVIOUS SESSIONS DELIMITER -------><<>
@@ -284,18 +269,18 @@ repo-lint check --ci  # Should show 15/15 runners passing, 0 violations
 
 **Files Changed:**
 
-- **Python fixtures renamed (kebab → snake_case):**
+- - **Python fixtures renamed (kebab → snake_case):**
   - `black-violations.py` → `black_violations.py`
   - `pylint-violations.py` → `pylint_violations.py`
   - `ruff-violations.py` → `ruff_violations.py`
   - `all-docstring-violations.py` → `all_docstring_violations.py`
-- **Perl fixtures renamed (kebab → snake_case):**
+- - **Perl fixtures renamed (kebab → snake_case):**
   - `perlcritic-violations.pl` → `perlcritic_violations.pl`
   - `all-docstring-violations.pl` → `all_docstring_violations.pl`
-- **PowerShell fixtures renamed (kebab → PascalCase):**
+- - **PowerShell fixtures renamed (kebab → PascalCase):**
   - `psscriptanalyzer-violations.ps1` → `PsScriptAnalyzerViolations.ps1`
   - `all-docstring-violations.ps1` → `AllDocstringViolations.ps1`
-- **Bash fixtures:** Already correct kebab-case, no changes needed
+- - **Bash fixtures:** Already correct kebab-case, no changes needed
 
 **New naming violation test files created:**
 
@@ -307,7 +292,7 @@ repo-lint check --ci  # Should show 15/15 runners passing, 0 violations
 **Workflow updated:**
 
 - `.github/workflows/naming-enforcement.yml`: Now excludes only specific naming-violations test files
-- Changed from broad directory exclusions to targeted file exclusions
+- - Changed from broad directory exclusions to targeted file exclusions
 - Excludes: `naming-violations.py`, `naming-violations.pl`, `naming-violations.ps1`, `naming_violations.sh`
 
 **Test file updated:**
@@ -316,17 +301,15 @@ repo-lint check --ci  # Should show 15/15 runners passing, 0 violations
 
 **Rationale:**
 
-- User requested fixture files follow repository naming conventions for their language
-- Only files specifically testing naming violations should violate naming rules
-- This ensures naming enforcement applies to all production fixture files
-- Naming violation test files are explicitly excluded by exact filename match
+- - User requested fixture files follow repository naming conventions for their language - Only files specifically
+  testing naming violations should violate naming rules - This ensures naming enforcement applies to all production
+  fixture files - Naming violation test files are explicitly excluded by exact filename match
 
 **Verification:**
 
-- 17 fixture files now follow correct naming conventions
-- 4 new naming-violations test files created with intentional violations
-- Naming enforcement will pass for all non-naming-violation fixtures
-- Integration tests updated to reference correct filenames
+- - 17 fixture files now follow correct naming conventions - 4 new naming-violations test files created with intentional
+  violations - Naming enforcement will pass for all non-naming-violation fixtures - Integration tests updated to
+  reference correct filenames
 
 **Commands Run:**
 
@@ -342,18 +325,16 @@ git mv tests/fixtures/python/black-violations.py tests/fixtures/python/black_vio
 
 **CI Impact:**
 
-- Naming enforcement will now pass (all fixtures follow conventions except naming-violations files)
-- Black auto-fix exclusions still in place from previous commit
-- Fixtures remain immutable, now also follow naming conventions
+- - Naming enforcement will now pass (all fixtures follow conventions except naming-violations files) - Black auto-fix
+  exclusions still in place from previous commit - Fixtures remain immutable, now also follow naming conventions
 
 **Known Issues:**
 
-- Diff artifacts (*.RESET.diff files) still reference old filenames - acceptable as historical record
+- - Diff artifacts (*.RESET.diff files) still reference old filenames - acceptable as historical record
 
 **Follow-ups:**
 
-- Wait for CI to verify naming enforcement passes
-- Integration tests may need git config updates for temp repos
+- - Wait for CI to verify naming enforcement passes - Integration tests may need git config updates for temp repos
 
 ---
 
@@ -365,8 +346,8 @@ git mv tests/fixtures/python/black-violations.py tests/fixtures/python/black_vio
 
 **Changes Made:**
 
-- Added exclusion logic in the Python validation script to skip fixture/vector directories
-- Excluded paths (same as Black auto-fix exclusions):
+- - Added exclusion logic in the Python validation script to skip fixture/vector directories - Excluded paths (same as
+  Black auto-fix exclusions):
   - `tests/fixtures/`
   - `conformance/repo-lint/fixtures/`
   - `conformance/repo-lint/vectors/`
@@ -376,15 +357,14 @@ git mv tests/fixtures/python/black-violations.py tests/fixtures/python/black_vio
 
 **Rationale:**
 
-- Naming enforcement workflow was flagging fixture files for violating naming conventions
+- - Naming enforcement workflow was flagging fixture files for violating naming conventions
 - Fixture files intentionally use kebab-case (e.g., `black-violations.py`, `all-docstring-violations.py`) instead of snake_case/PascalCase
-- These files are test artifacts with intentional violations, not production code
-- Must be excluded from ALL enforcement workflows to maintain test integrity
+- - These files are test artifacts with intentional violations, not production code - Must be excluded from ALL
+  enforcement workflows to maintain test integrity
 
 **Verification:**
 
-- All 8 reported violations are now in excluded paths
-- Next CI run should pass naming enforcement
+- - All 8 reported violations are now in excluded paths - Next CI run should pass naming enforcement
 
 **Commands Run:**
 
@@ -395,16 +375,16 @@ git mv tests/fixtures/python/black-violations.py tests/fixtures/python/black_vio
 
 **CI Impact:**
 
-- Naming enforcement will now pass
-- Fixtures remain immutable across all workflows (Black auto-fix + naming enforcement)
+- - Naming enforcement will now pass - Fixtures remain immutable across all workflows (Black auto-fix + naming
+  enforcement)
 
 **Known Issues:**
 
-- None
+- - None
 
 **Follow-ups:**
 
-- Wait for CI to verify all workflows pass with fixture exclusions
+- - Wait for CI to verify all workflows pass with fixture exclusions
 
 ---
 
@@ -416,7 +396,7 @@ git mv tests/fixtures/python/black-violations.py tests/fixtures/python/black_vio
 - `tests/fixtures/python/black-violations.py`: Reset to Phase 1 original (7629f4a)
 - `tests/fixtures/python/pylint-violations.py`: Reset to Phase 1 original (7629f4a)
 - `tests/fixtures/python/ruff-violations.py`: Reset to Phase 1 original (7629f4a)
-- **Diff artifacts created:**
+- - **Diff artifacts created:**
   - `fixtures-reset.diff`: Combined diff showing all resets (401 lines)
   - `tests/fixtures/python/all-docstring-violations.py.RESET.diff` (139 lines)
   - `tests/fixtures/python/black-violations.py.RESET.diff` (72 lines)
@@ -425,28 +405,28 @@ git mv tests/fixtures/python/black-violations.py tests/fixtures/python/black_vio
 
 **Analysis Performed:**
 
-1. **Identified all auto-format commits:**
+1. 1. **Identified all auto-format commits:**
    - `3c966bb` (Auto-format: Apply Black formatting) - modified 4 Python fixture files
    - `122b3fc` (Auto-format: Apply Black formatting) - modified 2 Python fixture files
-   - Both occurred BEFORE the exclusion fix in commit 2358d8b
+   - - Both occurred BEFORE the exclusion fix in commit 2358d8b
 
-2. **Verified protected paths:**
+2. 2. **Verified protected paths:**
    - Only `tests/fixtures/` contains files created in this PR
    - Other protected paths (`conformance/repo-lint/fixtures/`, `conformance/repo-lint/vectors/`) existed before this PR
    - All 17 files in `tests/fixtures/` were created in Phase 1 commit `7629f4a`
 
-3. **Reset strategy:**
+3. 3. **Reset strategy:**
    - All 4 Python fixture files reset to commit `7629f4a` (Phase 1 creation)
-   - Other fixture files (bash, perl, powershell, yaml, rust) were NOT touched by auto-format, so no reset needed
+   - - Other fixture files (bash, perl, powershell, yaml, rust) were NOT touched by auto-format, so no reset needed
 
 **Violations Restored:**
 
-- **Unused imports** (os, sys, json, List, Dict, subprocess, random) - F401 violations
+- - **Unused imports** (os, sys, json, List, Dict, subprocess, random) - F401 violations
 - **E402** (import not at top of file) - `import random` after function definition
 - **F-string without placeholders** - `f"string"` instead of regular string
-- **Blank lines** - Multiple consecutive blank lines for E303/W391 violations
+- - **Blank lines** - Multiple consecutive blank lines for E303/W391 violations
 - **Trailing commas** - `.format("world", )` with trailing comma
-- **Long lines** - Strings exceeding line length limits
+- - **Long lines** - Strings exceeding line length limits
 - **Testing constants** - `if flag == True:` instead of `if flag:`
 
 **Verification Commands Used:**
@@ -469,10 +449,8 @@ git diff HEAD -- <file> > <file>.RESET.diff
 
 **Impact:**
 
-- ALL intentional violations restored to original state
-- Diff files provide audit trail of what was reset
-- Ready for CI to run with corrected Black exclusion regex
-- Next CI run will PROVE that fixtures remain immutable
+- - ALL intentional violations restored to original state - Diff files provide audit trail of what was reset - Ready for
+  CI to run with corrected Black exclusion regex - Next CI run will PROVE that fixtures remain immutable
 
 ---
 
@@ -489,36 +467,33 @@ git diff HEAD -- <file> > <file>.RESET.diff
 - Commit `122b3fc` (Auto-format by github-actions[bot]) modified fixture files DESPITE exclusions in commit `fd2d570`
 - Root cause: Black's `--exclude` flag uses Python REGEX patterns, NOT shell glob patterns
 - Previous implementation used multiple `--exclude='tests/fixtures/'` flags, which Black didn't process correctly
-- Black still formatted fixture files, removing blank lines and reformatting code
+- - Black still formatted fixture files, removing blank lines and reformatting code
 
 **Changes Made:**
 
-1. **Fixed Black exclusion syntax**:
+1. 1. **Fixed Black exclusion syntax**:
    - Changed from: Multiple `--exclude` flags in array (WRONG - doesn't work with Black)
    - Changed to: Single `--exclude` with combined regex pattern using | (OR operator)
    - New pattern: `'(tests/fixtures/|conformance/repo-lint/fixtures/|conformance/repo-lint/vectors/|conformance/repo-lint/unsafe-fix-fixtures/|scripts/tests/fixtures/)'`
-   - This is the CORRECT syntax for Black's regex-based exclusion
+   - - This is the CORRECT syntax for Black's regex-based exclusion
 
-2. **Reverted fixture files**:
+2. 2. **Reverted fixture files**:
    - Used `git checkout 122b3fc~1 -- tests/fixtures/python/pylint-violations.py tests/fixtures/python/ruff-violations.py`
-   - Restored original intentional violations (blank lines, formatting issues)
+   - - Restored original intentional violations (blank lines, formatting issues)
    - Verified with `git diff 122b3fc~1` (empty diff = successful revert)
 
-3. **Added detailed comments**:
-   - Documented that Black uses Python regex, NOT glob patterns
-   - Explained the | (OR) operator for combining multiple exclusions
-   - Made it clear these are CRITICAL SAFETY exclusions
+3. 3. **Added detailed comments**: - Documented that Black uses Python regex, NOT glob patterns - Explained the | (OR)
+   operator for combining multiple exclusions - Made it clear these are CRITICAL SAFETY exclusions
 
 **Verification:**
 
-- Checked for other auto-fix tools in workflows (ruff --fix, shfmt -w, prettier --write): NONE found
-- Only Black auto-fix exists, now properly configured
+- - Checked for other auto-fix tools in workflows (ruff --fix, shfmt -w, prettier --write): NONE found - Only Black
+  auto-fix exists, now properly configured
 
 **Impact:**
 
-- Fixtures are NOW truly immutable in CI
-- Previous auto-format damage has been undone
-- Next CI run will respect exclusions correctly
+- - Fixtures are NOW truly immutable in CI - Previous auto-format damage has been undone - Next CI run will respect
+  exclusions correctly
 
 ---
 
@@ -531,28 +506,26 @@ git diff HEAD -- <file> > <file>.RESET.diff
 **Changes Made:**
 
 - Added explicit `--exclude` patterns to Black formatter in auto-fix-black job
-- Excluded paths:
+- - Excluded paths:
   - `tests/fixtures/` (new canonical fixtures from Issue #221)
   - `conformance/repo-lint/fixtures/`
   - `conformance/repo-lint/vectors/`
   - `conformance/repo-lint/unsafe-fix-fixtures/`
   - `scripts/tests/fixtures/`
-- Exclusions are HARDCODED in the workflow itself, not dependent on repo-lint config
-- Added comment: "CRITICAL SAFETY: Exclude fixture and vector directories from auto-fix"
-- Echo excluded patterns in workflow output for transparency
+- - Exclusions are HARDCODED in the workflow itself, not dependent on repo-lint config - Added comment: "CRITICAL
+  SAFETY: Exclude fixture and vector directories from auto-fix" - Echo excluded patterns in workflow output for
+  transparency
 
 **Purpose:**
 
-- Fixtures and vectors contain INTENTIONAL violations for testing
-- CI must NEVER "helpfully" rewrite them
-- This ensures immutability of test fixtures regardless of repo-lint changes
-- Explicit hardcoded safety guard per Issue #221 requirement
+- - Fixtures and vectors contain INTENTIONAL violations for testing - CI must NEVER "helpfully" rewrite them - This
+  ensures immutability of test fixtures regardless of repo-lint changes - Explicit hardcoded safety guard per Issue #221
+  requirement
 
 **Verification:**
 
 - Reviewed all workflows - only `auto-fix-black` job performs auto-fixes
-- Weekly scan runs in check-only mode (no fixes applied)
-- No other auto-fix steps found in CI
+- - Weekly scan runs in check-only mode (no fixes applied) - No other auto-fix steps found in CI
 
 ---
 
@@ -573,17 +546,14 @@ git diff HEAD -- <file> > <file>.RESET.diff
 
 **Test Design:**
 
-- Uses pytest fixtures to create temporary copies of fixture files
-- Initializes git repos in temp directories (required for repo-lint)
-- Tests both normal and vector modes
-- Verifies file/line field population
-- Tests all 6 languages (Python, Bash, Perl, PowerShell, YAML, Rust)
+- - Uses pytest fixtures to create temporary copies of fixture files - Initializes git repos in temp directories
+  (required for repo-lint) - Tests both normal and vector modes - Verifies file/line field population - Tests all 6
+  languages (Python, Bash, Perl, PowerShell, YAML, Rust)
 
 **Status:**
 
-- Tests created and structured according to Phase 3 requirements
-- Tests need debugging (git config issues in temp repos)
-- Ready for next session to fix and verify
+- - Tests created and structured according to Phase 3 requirements - Tests need debugging (git config issues in temp
+  repos) - Ready for next session to fix and verify
 
 ---
 
@@ -592,26 +562,22 @@ git diff HEAD -- <file> > <file>.RESET.diff
 **Testing Performed:**
 
 - Tested `repo-lint check --include-fixtures --only <lang>` for all 6 languages
-- Python: ✅ Detected violations in black-violations.py, pylint-violations.py, all-docstring-violations.py
-- Bash: ✅ Detected 11 docstring violations in fixture files
-- Perl: ✅ Detected 12 perlcritic violations + 20 docstring violations
-- PowerShell: ✅ Detected 20 docstring violations
-- YAML: ✅ Detected 20 yamllint violations
-- Rust: ✅ Detected 18 rust-docstrings violations
+- - Python: ✅ Detected violations in black-violations.py, pylint-violations.py, all-docstring-violations.py - Bash: ✅
+  Detected 11 docstring violations in fixture files - Perl: ✅ Detected 12 perlcritic violations + 20 docstring
+  violations - PowerShell: ✅ Detected 20 docstring violations - YAML: ✅ Detected 20 yamllint violations - Rust: ✅
+  Detected 18 rust-docstrings violations
 
 **Normal Mode Verification:**
 
 - Ran `repo-lint check --ci` (without --include-fixtures)
-- Result: 14/15 runners passed, only 1 violation (ruff auto-fixable)
-- All fixture files properly excluded from normal scans
-- All docstring validators pass in normal mode (fixtures excluded)
+- - Result: 14/15 runners passed, only 1 violation (ruff auto-fixable) - All fixture files properly excluded from normal
+  scans - All docstring validators pass in normal mode (fixtures excluded)
 
 **Conclusion:**
 
-- Phase 2 is COMPLETE
+- - Phase 2 is COMPLETE
 - Vector mode (`--include-fixtures`) works correctly for all languages
-- Normal mode correctly excludes all fixtures
-- Infrastructure is ready for Phase 3 (integration tests)
+- - Normal mode correctly excludes all fixtures - Infrastructure is ready for Phase 3 (integration tests)
 
 ---
 
@@ -632,17 +598,18 @@ git diff HEAD -- <file> > <file>.RESET.diff
 **Changes Made:**
 
 - Added `--include-fixtures` flag to validate_docstrings.py script
-- Modified exclusion logic in validate_docstrings.py to respect the flag (skip fixture exclusions when flag is set)
-- Updated all 5 language runners (Python, Bash, Perl, PowerShell, Rust) to pass --include-fixtures flag when calling docstring validator
+- - Modified exclusion logic in validate_docstrings.py to respect the flag (skip fixture exclusions when flag is set) -
+  Updated all 5 language runners (Python, Bash, Perl, PowerShell, Rust) to pass --include-fixtures flag when calling
+  docstring validator
 - Each runner checks `self._include_fixtures` and appends the flag to the command if True
 
 **Verification:**
 
 - Normal mode: `repo-lint check --ci` - passes, all docstring validators pass (fixtures excluded)
 - Vector mode: `repo-lint check --include-fixtures --only python` - correctly detects violations in fixture files
-  - validate_docstrings now reports 20 violations from fixture files
-  - pylint reports violations from black-violations.py and pylint-violations.py
-- Docstring validators now fully support vector mode across all languages
+  - - validate_docstrings now reports 20 violations from fixture files - pylint reports violations from
+    black-violations.py and pylint-violations.py - Docstring validators now fully support vector mode across all
+    languages
 
 ---
 
@@ -680,14 +647,14 @@ git diff HEAD -- <file> > <file>.RESET.diff
 - Added `--include-fixtures` CLI flag to both check and fix commands (both argparse and Click interfaces)
 - Created vector mode infrastructure: when `--include-fixtures` is set, test fixtures under `tests/fixtures/` are included in scans
 - Updated all runner modules to respect the `_include_fixtures` flag
-- Added TODO comment in validate_docstrings.py to refactor hardcoded exclusions
+- - Added TODO comment in validate_docstrings.py to refactor hardcoded exclusions
 
 **Verification:**
 
 - Ran `repo-lint check --ci` - passes (fixtures excluded by default)
 - Tested `--include-fixtures` flag - recognized by CLI (no longer "unknown option")
-- Fixtures are properly excluded from normal runs
-- Known issue: docstring validators still need to be updated to respect the flag (next task)
+- - Fixtures are properly excluded from normal runs - Known issue: docstring validators still need to be updated to
+  respect the flag (next task)
 
 ---
 
@@ -716,17 +683,15 @@ git diff HEAD -- <file> > <file>.RESET.diff
 **Changes Made:**
 
 - Created `tests/fixtures/` directory structure with subdirectories for each language (python, bash, powershell, perl, yaml, rust)
-- For each language, created tool-specific violation files covering all linting tools used by repo-lint
-- Created comprehensive all-docstring-violations files for each language covering module, function, class, method, and parameter documentation violations
-- Included YAML docstring violations as per new requirement
-- Included actionlint violations for YAML as per new requirement
-- Each fixture file contains many distinct violations triggering multiple rules/codes
+- - For each language, created tool-specific violation files covering all linting tools used by repo-lint - Created
+  comprehensive all-docstring-violations files for each language covering module, function, class, method, and parameter
+  documentation violations - Included YAML docstring violations as per new requirement - Included actionlint violations
+  for YAML as per new requirement - Each fixture file contains many distinct violations triggering multiple rules/codes
 
 **Verification:**
 
-- Created 17 fixture files total
-- Each file contains intentional violations for testing purposes
-- Files are ready to be excluded from normal linting runs in Phase 2
+- - Created 17 fixture files total - Each file contains intentional violations for testing purposes - Files are ready to
+  be excluded from normal linting runs in Phase 2
 
 ---
 

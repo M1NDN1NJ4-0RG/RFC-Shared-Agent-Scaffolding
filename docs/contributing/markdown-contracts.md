@@ -6,9 +6,11 @@
 
 ## Overview
 
-This document defines the mandatory Markdown formatting and style requirements for the RFC-Shared-Agent-Scaffolding repository. These standards ensure consistency, readability, and maintainability across all Markdown documentation.
+This document defines the mandatory Markdown formatting and style requirements for the RFC-Shared-Agent-Scaffolding
+repository. These standards ensure consistency, readability, and maintainability across all Markdown documentation.
 
-**Key Principle:** All Markdown files must follow a consistent, deterministic style that is machine-checkable and auto-fixable where possible.
+**Key Principle:** All Markdown files must follow a consistent, deterministic style that is machine-checkable and
+auto-fixable where possible.
 
 ---
 
@@ -32,11 +34,11 @@ This document defines the mandatory Markdown formatting and style requirements f
 The following files/directories are **explicitly excluded** from Markdown linting:
 
 1. **CI failure reports:** `repo-lint-failure-reports/**/*.md`
-   - **Reason:** Generated artifacts, not human-authored documentation
-   - **Format:** Machine-generated summaries with intentional violations for readability
+   - - **Reason:** Generated artifacts, not human-authored documentation - **Format:** Machine-generated summaries with
+     intentional violations for readability
 
-2. **Vendored/third-party content:** (none currently)
-   - **Future:** If external Markdown is vendored, add exclusions here
+2. 2. **Vendored/third-party content:** (none currently) - **Future:** If external Markdown is vendored, add exclusions
+   here
 
 3. **Temporary/scratch files:** Any `*.md` files in `/tmp/` or build artifacts
 
@@ -57,17 +59,17 @@ This ruleset follows **Markdown Best Practices** from authoritative sources:
 
 **Core Principles:**
 
-- **Prefer machine-fixable rules** to reduce manual effort
-- **No vague rules:** Every rule must be deterministic and checkable
-- **Compatibility first:** Rules must work with common Markdown renderers (GitHub, GitLab, CommonMark)
-- **Accessibility:** Support screen readers and assistive technologies
-- **Consistency:** Use one style throughout the repository
+- - **Prefer machine-fixable rules** to reduce manual effort - **No vague rules:** Every rule must be deterministic and
+  checkable - **Compatibility first:** Rules must work with common Markdown renderers (GitHub, GitLab, CommonMark) -
+  **Accessibility:** Support screen readers and assistive technologies - **Consistency:** Use one style throughout the
+  repository
 
 ### Core Rules (MANDATORY)
 
 #### 1. Heading Structure
 
-**Best Practice Rationale:** Proper heading hierarchy improves document structure, SEO, accessibility (screen readers), and navigation.
+**Best Practice Rationale:** Proper heading hierarchy improves document structure, SEO, accessibility (screen readers),
+and navigation.
 
 **MD001/heading-increment** - Headings MUST increment by one level at a time (Markdown Guide: Heading Best Practices)
 
@@ -132,7 +134,8 @@ Section
 #  ❌ Wrong  # (multiple spaces)
 ```
 
-**MD022/blanks-around-headings** - Headings MUST be surrounded by blank lines (Markdown Guide: Compatibility Best Practice)
+**MD022/blanks-around-headings** - Headings MUST be surrounded by blank lines (Markdown Guide: Compatibility Best
+Practice)
 
 **Rationale:** Ensures consistent rendering across different Markdown processors.
 
@@ -161,7 +164,8 @@ Text immediately after.
 
 **MD024/no-duplicate-heading** - Avoid duplicate headings (RELAXED: allowed in different sections)
 
-**Best Practice:** Use unique headings when possible for better navigation and linking. When duplicates are necessary (e.g., "Overview" in multiple sections), ensure they're in different hierarchical contexts.
+**Best Practice:** Use unique headings when possible for better navigation and linking. When duplicates are necessary
+(e.g., "Overview" in multiple sections), ensure they're in different hierarchical contexts.
 
 **MD025/single-title/single-h1** - Each document SHOULD have exactly one H1 (`#`) title at the top (Markdown Guide: Document Structure)
 
@@ -180,7 +184,8 @@ Text immediately after.
 ## What is this?
 ```
 
-**MD041/first-line-heading/first-line-h1** - Files SHOULD start with a top-level heading (H1) (Document Structure Best Practice)
+**MD041/first-line-heading/first-line-h1** - Files SHOULD start with a top-level heading (H1) (Document Structure Best
+Practice)
 
 **Rationale:** Provides immediate context and improves document navigation.
 
@@ -194,16 +199,11 @@ Text immediately after.
 
 **Policy:**
 
-- **Maximum:** 120 characters (balanced between readability and practicality)
-- **Rationale:**
-  - 80 chars (markdownlint default) is too restrictive for technical documentation
-  - 120 chars is widely accepted (matches Python's PEP 8 recommendation)
-  - Accommodates code examples, long URLs, and technical terms
-- **Exceptions (automatically excluded):**
-  - Code blocks (fenced or indented)
-  - Tables
-  - Headings (only when unavoidable)
-  - URLs/links (breaking would break functionality)
+- - **Maximum:** 120 characters (balanced between readability and practicality) - **Rationale:** - 80 chars
+  (markdownlint default) is too restrictive for technical documentation - 120 chars is widely accepted (matches Python's
+  PEP 8 recommendation) - Accommodates code examples, long URLs, and technical terms - **Exceptions (automatically
+  excluded):** - Code blocks (fenced or indented) - Tables - Headings (only when unavoidable) - URLs/links (breaking
+  would break functionality)
 
 **Configuration:**
 
@@ -220,7 +220,8 @@ Text immediately after.
 
 #### 3. Code Blocks
 
-**Best Practice Rationale:** Proper code block formatting enables syntax highlighting, improves readability, and ensures consistent rendering.
+**Best Practice Rationale:** Proper code block formatting enables syntax highlighting, improves readability, and ensures
+consistent rendering.
 
 **MD040/fenced-code-language** - Code blocks MUST specify a language (Markdown Guide: Code Block Best Practices)
 
@@ -320,7 +321,8 @@ Another paragraph
 
 #### 5. Lists
 
-**Best Practice Rationale:** Consistent list formatting improves readability and ensures proper rendering across Markdown processors.
+**Best Practice Rationale:** Consistent list formatting improves readability and ensures proper rendering across
+Markdown processors.
 
 **MD004/ul-style** - Unordered lists MUST use `-` (dash) consistently (Markdown Guide: List Best Practices)
 
@@ -359,7 +361,8 @@ Another paragraph
 
 **MD029/ol-prefix** - Ordered lists SHOULD use sequential numbers (Markdown Guide: Ordered List Best Practice)
 
-**Rationale:** Makes source readable and matches rendered output. Some tools auto-number, but explicit numbering is clearer.
+**Rationale:** Makes source readable and matches rendered output. Some tools auto-number, but explicit numbering is
+clearer.
 
 ```markdown
 # ✅ Correct - sequential
@@ -500,7 +503,8 @@ Visit https://example.com for more info.
 
 **MD033/no-inline-html** - Inline HTML is **allowed but minimized** (Markdown Guide: Keep it Simple)
 
-**Best Practice:** Prefer pure Markdown for portability and simplicity. Use HTML only when Markdown cannot express the desired formatting.
+**Best Practice:** Prefer pure Markdown for portability and simplicity. Use HTML only when Markdown cannot express the
+desired formatting.
 
 **Allowed HTML tags (when necessary):**
 
@@ -514,7 +518,7 @@ Visit https://example.com for more info.
 
 - `<script>`, `<style>` - Security risk, not portable
 - `<iframe>`, `<embed>`, `<object>` - Security risk
-- Complex HTML structures - Defeats the purpose of Markdown
+- - Complex HTML structures - Defeats the purpose of Markdown
 
 **Configuration:**
 
@@ -713,9 +717,8 @@ repo-lint fix
 
 ### Exit Codes
 
-- **0** - All Markdown files pass
-- **1** - Violations found (CI failure)
-- **2** - Tool missing or configuration error (blocker)
+- - **0** - All Markdown files pass - **1** - Violations found (CI failure) - **2** - Tool missing or configuration
+  error (blocker)
 
 ---
 
@@ -725,25 +728,19 @@ repo-lint fix
 
 **Auto-fixable rules include:**
 
-- MD009 (trailing spaces)
-- MD010 (hard tabs → spaces)
-- MD012 (multiple blanks → single blank)
-- MD018, MD019 (heading spacing)
-- MD022 (blanks around headings)
-- MD030 (list marker spacing)
-- MD037 (spaces in emphasis)
-- MD047 (single final newline)
+- - MD009 (trailing spaces) - MD010 (hard tabs → spaces) - MD012 (multiple blanks → single blank) - MD018, MD019
+  (heading spacing) - MD022 (blanks around headings) - MD030 (list marker spacing) - MD037 (spaces in emphasis) - MD047
+  (single final newline)
 
 **Not auto-fixable (manual intervention required):**
 
-- MD013 (line length - requires content rewording)
-- MD040 (code language - requires human to determine correct language)
-- MD041 (first line heading - requires structural change)
+- - MD013 (line length - requires content rewording) - MD040 (code language - requires human to determine correct
+  language) - MD041 (first line heading - requires structural change)
 
 **Safe auto-fix policy:**
 
 - Auto-fix MAY be enabled in `repo-lint fix` for deterministic, low-risk rules
-- High-risk fixes (structural changes, content rewording) MUST remain check-only initially
+- - High-risk fixes (structural changes, content rewording) MUST remain check-only initially
 
 ---
 
@@ -784,10 +781,10 @@ Content here.
 
 When migrating existing Markdown files to this contract:
 
-1. **Run linting first** to identify all violations
+1. 1. **Run linting first** to identify all violations
 2. **Auto-fix safe issues** using `markdownlint-cli2 --fix`
-3. **Manually fix remaining issues** (language tags, line length)
-4. **Document intentional exceptions** in comments if needed
+3. 3. **Manually fix remaining issues** (language tags, line length) 4. **Document intentional exceptions** in comments
+   if needed
 
 ---
 
@@ -802,8 +799,5 @@ When migrating existing Markdown files to this contract:
 
 ## Change Log
 
-- **2026-01-08:** Initial creation (Issue #278, Phase 3.5.1)
-  - Defined core ruleset
-  - Set line length to 120 chars (extended from default 80)
-  - Documented exclusions (failure reports)
-  - Mapped rules to configuration
+- - **2026-01-08:** Initial creation (Issue #278, Phase 3.5.1) - Defined core ruleset - Set line length to 120 chars
+  (extended from default 80) - Documented exclusions (failure reports) - Mapped rules to configuration

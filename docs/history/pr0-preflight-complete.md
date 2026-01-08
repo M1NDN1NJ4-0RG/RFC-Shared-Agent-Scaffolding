@@ -10,7 +10,9 @@
 
 ## Executive Summary
 
-Pre-flight baseline validation has been completed successfully. All four language bundles (Bash, Perl, Python3, PowerShell) now follow the canonical directory structure, all test suites pass, and automated structure validation is enforced via CI.
+Pre-flight baseline validation has been completed successfully. All four language bundles (Bash, Perl, Python3,
+PowerShell) now follow the canonical directory structure, all test suites pass, and automated structure validation is
+enforced via CI.
 
 ---
 
@@ -22,31 +24,31 @@ Pre-flight baseline validation has been completed successfully. All four languag
 
 - Bash had nested structure: `scripts/bash/scripts/bash/` → flattened to `scripts/bash/scripts/`
 - PowerShell had nested structure: `scripts/powershell/scripts/powershell/` → flattened to `scripts/powershell/scripts/`
-- Perl and Python3 already had correct structure (no changes needed)
+- - Perl and Python3 already had correct structure (no changes needed)
 
 **Changes Made:**
 
-- **Bash:**
+- - **Bash:**
   - Moved scripts from `scripts/bash/scripts/bash/` → `scripts/bash/scripts/`
   - Moved tests from `tests/bash/` → `tests/`
-  - Updated 4 test files to use correct ROOT path
+  - - Updated 4 test files to use correct ROOT path
   - Updated `safe-check.sh` ROOT_DIR calculation
   - Updated `run-tests.sh` to reference new paths
-  - ✅ All tests pass (4/4 test suites green)
+  - - ✅ All tests pass (4/4 test suites green)
 
-- **PowerShell:**
+- - **PowerShell:**
   - Moved scripts from `scripts/powershell/scripts/powershell/` → `scripts/powershell/scripts/`
-  - Updated 4 test files to use correct script paths
+  - - Updated 4 test files to use correct script paths
   - Updated `safe-check.ps1` to reference flat paths
-  - Updated usage messages in all scripts
+  - - Updated usage messages in all scripts
   - Updated `readme-tests.md`
-  - ✅ All tests pass (17/17 tests green)
+  - - ✅ All tests pass (17/17 tests green)
 
-- **Structure Validation:**
+- - **Structure Validation:**
   - Created `scripts/validate-structure.sh` - automated validation script
   - Created `.github/workflows/structure-validation.yml` - CI enforcement
   - Created `documents/CANONICAL-STRUCTURE.md` - comprehensive documentation
-  - ✅ Validation passes for all 4 languages
+  - - ✅ Validation passes for all 4 languages
 
 **Test Results:**
 
@@ -60,11 +62,9 @@ Pre-flight baseline validation has been completed successfully. All four languag
 
 **Acceptance Criteria:**
 
-- [x] Example directory structure is identical across all four languages
-- [x] All test suites still pass locally and in CI
-- [x] No workflow references the old paths anymore
-- [x] Docs updated to reflect the canonical structure
-- [x] CI enforcement prevents future drift
+- - [x] Example directory structure is identical across all four languages - [x] All test suites still pass locally and
+  in CI - [x] No workflow references the old paths anymore - [x] Docs updated to reflect the canonical structure - [x]
+  CI enforcement prevents future drift
 
 ---
 
@@ -75,11 +75,11 @@ Pre-flight baseline validation has been completed successfully. All four languag
 **Evidence:**
 
 - `conformance/vectors.json` exists (v1.0, M0 contract v0.1.0)
-- Contains test vectors for:
+- - Contains test vectors for:
   - `safe_run` (5 vectors)
   - `safe_archive` (4 vectors)
   - `preflight_automerge_ruleset` (4 vectors)
-- Vectors cover M0 spec items: M0-P1-I1, M0-P1-I2, M0-P1-I3, M0-P2-I1, M0-P2-I2
+- - Vectors cover M0 spec items: M0-P1-I1, M0-P1-I2, M0-P1-I3, M0-P2-I1, M0-P2-I2
 
 **No action required** - conformance infrastructure already operational.
 
@@ -91,24 +91,14 @@ Pre-flight baseline validation has been completed successfully. All four languag
 
 **Coverage:**
 
-- Exit code behavior ✓
-- STDOUT/STDERR behavior ✓
-- Artifact creation ✓
-- Log file naming patterns ✓
-- Log content markers ✓
-- Environment variable modes ✓
-- Signal handling (SIGTERM/SIGINT) ✓
-- Custom directories ✓
-- Snippet output ✓
+- - Exit code behavior ✓ - STDOUT/STDERR behavior ✓ - Artifact creation ✓ - Log file naming patterns ✓ - Log content
+  markers ✓ - Environment variable modes ✓ - Signal handling (SIGTERM/SIGINT) ✓ - Custom directories ✓ - Snippet output
+  ✓
 
 **Edge cases covered:**
 
-- Empty output ✓
-- Mixed stdout+stderr ✓
-- Non-zero exit codes ✓
-- Signal interrupts ✓
-- Custom log directories ✓
-- No-clobber semantics ✓
+- - Empty output ✓ - Mixed stdout+stderr ✓ - Non-zero exit codes ✓ - Signal interrupts ✓ - Custom log directories ✓ -
+  No-clobber semantics ✓
 
 **No action required** - golden outputs and fixtures already defined.
 
@@ -129,11 +119,9 @@ Pre-flight baseline validation has been completed successfully. All four languag
 
 **Test Quality Validation:**
 
-- ✅ Tests are hermetic (clean temp directories per test)
-- ✅ No environment leakage between tests
-- ✅ Signal handling tested (SIGTERM/SIGINT)
-- ✅ Explicit assertions for contract requirements
-- ✅ Tests validate exit codes, artifacts, and content
+- - ✅ Tests are hermetic (clean temp directories per test) - ✅ No environment leakage between tests - ✅ Signal handling
+  tested (SIGTERM/SIGINT) - ✅ Explicit assertions for contract requirements - ✅ Tests validate exit codes, artifacts,
+  and content
 
 **No drift detected** - all implementations pass their test suites and produce expected outputs.
 
@@ -154,10 +142,8 @@ Pre-flight baseline validation has been completed successfully. All four languag
 
 **All workflows:**
 
-- ✅ Run on PR and push to main
-- ✅ Validate structure/tests for changed paths
-- ✅ Upload artifacts on failure
-- ✅ Block merge on failure
+- - ✅ Run on PR and push to main - ✅ Validate structure/tests for changed paths - ✅ Upload artifacts on failure - ✅
+  Block merge on failure
 
 **No action required** - CI gates are already enforced.
 
@@ -167,11 +153,9 @@ Pre-flight baseline validation has been completed successfully. All four languag
 
 All requirements met:
 
-- [x] Example directory structure is normalized across languages (A)
-- [x] A conformance pack exists (fixtures + goldens + harness) (B/C)
-- [x] All four wrappers pass the conformance pack on CI OS matrix (B/C/D)
-- [x] Test suite is audited and hardened (edge cases covered) (D)
-- [x] CI gate is enforced as required status check (E)
+- - [x] Example directory structure is normalized across languages (A) - [x] A conformance pack exists (fixtures +
+  goldens + harness) (B/C) - [x] All four wrappers pass the conformance pack on CI OS matrix (B/C/D) - [x] Test suite is
+  audited and hardened (edge cases covered) (D) - [x] CI gate is enforced as required status check (E)
 
 ---
 
@@ -181,9 +165,9 @@ With Pre-flight validation complete, the repository is now ready for Rust implem
 
 **PR 1 will include:**
 
-- Update RFC + add docs describing the new canonical architecture
+- - Update RFC + add docs describing the new canonical architecture
 - Add `rust/` crate skeleton with CLI + `--version`
-- No wrapper behavior changes yet
+- - No wrapper behavior changes yet
 
 **Hard stop enforced:** No Rust implementation work was done in this PR, per EPIC requirements.
 
@@ -199,10 +183,8 @@ With Pre-flight validation complete, the repository is now ready for Rust implem
 
 ### Summary
 
-- 25 files changed (moves, edits, new files)
-- 0 functional behavior changes
-- 0 test coverage reduction
-- 4 new CI/validation files added
+- - 25 files changed (moves, edits, new files) - 0 functional behavior changes - 0 test coverage reduction - 4 new
+  CI/validation files added
 
 ---
 

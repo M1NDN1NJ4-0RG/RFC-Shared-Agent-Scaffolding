@@ -4,9 +4,9 @@
 
 **Priority Levels:**
 
-- **P0 (Critical):** Will cause test failures or incorrect behavior in production
-- **P1 (High):** May cause failures in edge cases or specific environments
-- **P2 (Medium):** Unlikely to cause failures, but violates contract consistency
+- - **P0 (Critical):** Will cause test failures or incorrect behavior in production - **P1 (High):** May cause failures
+  in edge cases or specific environments - **P2 (Medium):** Unlikely to cause failures, but violates contract
+  consistency
 
 ---
 
@@ -36,17 +36,16 @@ current = script_path.parent
 
 1. Copy PowerShell wrapper to `/tmp/safe-run.ps1`
 2. Run from within repo: `cd /path/to/repo && pwsh /tmp/safe-run.ps1 echo test`
-3. **Expected:** Should work (script should find repo root from script location)
-4. **Actual:** Will work because working dir IS in repo
+3. 3. **Expected:** Should work (script should find repo root from script location) 4. **Actual:** Will work because
+   working dir IS in repo
 5. Run from outside repo: `cd /tmp && pwsh /tmp/safe-run.ps1 echo test`
-6. **Expected:** Should fail with "binary not found" (repo root not found)
-7. **Actual:** Will fail, **BUT** for different reason than other wrappers
+6. 6. **Expected:** Should fail with "binary not found" (repo root not found) 7. **Actual:** Will fail, **BUT** for
+   different reason than other wrappers
 
 **Impact:**
 
-- PowerShell tests MUST be run from within repo working directory
-- Breaks if wrapper is copied elsewhere (common in testing scenarios)
-- Inconsistent with other three wrappers
+- - PowerShell tests MUST be run from within repo working directory - Breaks if wrapper is copied elsewhere (common in
+  testing scenarios) - Inconsistent with other three wrappers
 
 **Test Case to Add:**
 
@@ -74,9 +73,8 @@ Describe "Repository root detection" {
 
 **Mitigation:**
 
-- Fix PowerShell wrapper to walk up from script location like other wrappers
-- OR: Document that PowerShell wrapper MUST be invoked from within repo
-- OR: Make PowerShell wrapper try both strategies (script location, then working dir)
+- - Fix PowerShell wrapper to walk up from script location like other wrappers - OR: Document that PowerShell wrapper
+  MUST be invoked from within repo - OR: Make PowerShell wrapper try both strategies (script location, then working dir)
 
 ---
 
@@ -114,8 +112,8 @@ if ($env:SAFE_RUN_BIN) {
 
 1. Set `SAFE_RUN_BIN=/does/not/exist`
 2. Run wrapper: `./safe-run.sh echo test`
-3. **Expected:** Wrapper attempts to exec nonexistent binary, gets clear error from exec
-4. **Actual:** (Test to confirm)
+3. 3. **Expected:** Wrapper attempts to exec nonexistent binary, gets clear error from exec 4. **Actual:** (Test to
+   confirm)
 
 **Test Case to Add:**
 
@@ -158,14 +156,12 @@ try {
 
 1. Set `SAFE_RUN_BIN=/nonexistent/binary`
 2. Run wrapper: `./safe-run.ps1 echo test`
-3. **Expected:** Exit code 127 or similar "command not found"
-4. **Actual:** May exit with code 1 (generic error)
+3. 3. **Expected:** Exit code 127 or similar "command not found" 4. **Actual:** May exit with code 1 (generic error)
 
 **Impact:**
 
-- CI may not detect actual failure reason
-- Exit code contract violated
-- Inconsistent with bash/perl/python (which use exec)
+- - CI may not detect actual failure reason - Exit code contract violated - Inconsistent with bash/perl/python (which
+  use exec)
 
 **Test Case to Add:**
 
@@ -184,9 +180,8 @@ Describe "Exit code propagation" {
 
 **Mitigation:**
 
-- Validate binary exists before invoking (conflicts with Vector 2 for discovery, but OK for final exec)
-- OR: Catch specific exceptions and map to proper exit codes
-- OR: Use Start-Process with better error handling
+- - Validate binary exists before invoking (conflicts with Vector 2 for discovery, but OK for final exec) - OR: Catch
+  specific exceptions and map to proper exit codes - OR: Use Start-Process with better error handling
 
 ---
 
@@ -235,8 +230,8 @@ Describe "Exit code propagation" {
 # Expected output: line1(newline)line2
 ```
 
-**Reproduction Plan:**
-Create test suite that runs identical edge-case arguments through all 4 wrappers and compares outputs.
+**Reproduction Plan:** Create test suite that runs identical edge-case arguments through all 4 wrappers and compares
+outputs.
 
 **Test Case to Add:**
 
@@ -259,7 +254,7 @@ test_argument_edge_cases() {
 
 **Mitigation:**
 
-- Ensure all wrappers use proper quoting:
+- - Ensure all wrappers use proper quoting:
   - Bash: `"$@"` ✅
   - Perl: `@args` passed to exec ✅
   - Python: `sys.argv[1:]` as list ✅
@@ -283,8 +278,8 @@ test_argument_edge_cases() {
 
 **Reproduction Scenario:**
 
-1. Run on different platforms and log platform detection results
-2. Verify all wrappers produce same path for same platform
+1. 1. Run on different platforms and log platform detection results 2. Verify all wrappers produce same path for same
+   platform
 
 **Test Case to Add:**
 
@@ -298,11 +293,11 @@ test_platform_detection_consistency() {
 
 **Mitigation:**
 
-- Normalize architecture names consistently:
+- - Normalize architecture names consistently:
   - `amd64` → `x86_64`
   - `AMD64` → `x86_64`
   - `arm64` → `aarch64`
-- Document canonical names in contract
+- - Document canonical names in contract
 
 ---
 
@@ -326,13 +321,13 @@ $os = if ($IsLinux) { "linux" }
 
 **Reproduction Scenario:**
 
-1. Run on Windows with PowerShell 5.1 (default)
+1. 1. Run on Windows with PowerShell 5.1 (default)
 2. `$IsWindows` is not defined
-3. Wrapper may fail or detect as "unknown"
+3. 3. Wrapper may fail or detect as "unknown"
 
 **Mitigation:**
 
-- Add fallback detection for PS 5.1:
+- - Add fallback detection for PS 5.1:
 
 ```powershell
 $os = if ($PSVersionTable.PSVersion.Major -ge 6) {
@@ -360,8 +355,7 @@ $os = if ($PSVersionTable.PSVersion.Major -ge 6) {
 
 **Test Coverage:** Need tests that verify:
 
-- SIGTERM (Ctrl+C simulation) → exit 130 or 143 on Unix
-- Windows termination → preserves Windows exit codes
+- - SIGTERM (Ctrl+C simulation) → exit 130 or 143 on Unix - Windows termination → preserves Windows exit codes
 
 **Test Case to Add:**
 
@@ -415,9 +409,9 @@ Describe "Binary discovery on Windows" {
 
 **Mitigation:**
 
-- PowerShell: Already handles ✅
+- - PowerShell: Already handles ✅
 - Bash on Windows: May need to try both `safe-run` and `safe-run.exe`
-- Perl on Windows: May need to try both
+- - Perl on Windows: May need to try both
 - Python on Windows: `shutil.which` should handle automatically
 
 ---
@@ -435,7 +429,7 @@ Describe "Binary discovery on Windows" {
 - `SAFE_RUN_VIEW` (output mode)
 - `SAFE_LOG_DIR` (artifact directory)
 - `SAFE_SNIPPET_LINES` (snippet size)
-- Any future env vars defined in contract
+- - Any future env vars defined in contract
 
 **Current Implementation:**
 
@@ -500,8 +494,7 @@ if args and args[0] == "--":
 
 **Mitigation:**
 
-- **If Rust expects no --:** Current behavior is correct
-- **If Rust handles --:** Remove the stripping logic
+- - **If Rust expects no --:** Current behavior is correct - **If Rust handles --:** Remove the stripping logic
 - **Document:** Clarify in contract whether `--` is stripped
 
 ---
@@ -516,9 +509,8 @@ if args and args[0] == "--":
 
 **Impact:**
 
-- Cannot run PowerShell tests in isolated /tmp directory
-- Tests may interfere with each other if they modify repo files
-- CI must ensure proper working directory
+- - Cannot run PowerShell tests in isolated /tmp directory - Tests may interfere with each other if they modify repo
+  files - CI must ensure proper working directory
 
 **Current CI Configuration:**
 
@@ -544,8 +536,7 @@ Describe "Test isolation" {
 
 **Mitigation:**
 
-- Fix Vector 1 (PowerShell repo root detection) to use script location
-- Then tests can run from anywhere
+- - Fix Vector 1 (PowerShell repo root detection) to use script location - Then tests can run from anywhere
 
 ---
 
@@ -559,9 +550,8 @@ Describe "Test isolation" {
 
 **Test Cases:**
 
-- Parallel safe-run invocations in same directory
-- Should create separate log files (timestamp + PID makes them unique)
-- No race conditions in directory creation
+- - Parallel safe-run invocations in same directory - Should create separate log files (timestamp + PID makes them
+  unique) - No race conditions in directory creation
 
 **Current Implementation:** Rust binary handles uniqueness via timestamp + PID
 
@@ -630,9 +620,7 @@ test_concurrent_invocations() {
 
 **Fix Priority:**
 
-1. **P0 Immediate:** Vector 1, 3, 11 (PowerShell issues)
-2. **P0 Test & Validate:** Vector 4, 9
-3. **P1 Test & Validate:** Vector 5, 6, 7, 8
-4. **P2 Nice to Have:** Vector 12, 13
+1. 1. **P0 Immediate:** Vector 1, 3, 11 (PowerShell issues) 2. **P0 Test & Validate:** Vector 4, 9 3. **P1 Test &
+   Validate:** Vector 5, 6, 7, 8 4. **P2 Nice to Have:** Vector 12, 13
 
 **Next Phase:** Reproduce P0 vectors in isolation with instrumentation.

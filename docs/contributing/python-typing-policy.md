@@ -1,14 +1,15 @@
 # Python Typing Policy
 
-**Status:** Canonical source of truth for Python type annotation requirements (Issue #278)
-**Last Updated:** 2026-01-07
+**Status:** Canonical source of truth for Python type annotation requirements (Issue #278) **Last Updated:** 2026-01-07
 **Enforcement:** Planned (report-only mode initially, then enforcing)
 
 ## Overview
 
-This document defines the mandatory Python type annotation requirements for the RFC-Shared-Agent-Scaffolding repository. These standards ensure type safety, IDE support, and documentation completeness across all Python code.
+This document defines the mandatory Python type annotation requirements for the RFC-Shared-Agent-Scaffolding repository.
+These standards ensure type safety, IDE support, and documentation completeness across all Python code.
 
-**Key Principle:** All Python code must include type annotations for functions, module-level variables, and class attributes. Type annotations serve both as machine-checkable contracts and as inline documentation.
+**Key Principle:** All Python code must include type annotations for functions, module-level variables, and class
+attributes. Type annotations serve both as machine-checkable contracts and as inline documentation.
 
 ---
 
@@ -18,7 +19,8 @@ This document defines the mandatory Python type annotation requirements for the 
 
 **Requirement:** All module-level variable assignments MUST include type annotations using PEP 526 syntax.
 
-**Rationale:** Module-level variables are part of the public API and must be explicitly typed for clarity and IDE support.
+**Rationale:** Module-level variables are part of the public API and must be explicitly typed for clarity and IDE
+support.
 
 **Syntax:**
 
@@ -45,7 +47,7 @@ CONFIG_PATH = Path("config.yaml")
   API_VERSION: Final[str] = "v1.0.0"
   ```
 
-- **Optional module-level variables:**
+- - **Optional module-level variables:**
 
   ```python
   from typing import Optional
@@ -96,9 +98,8 @@ class Config:
 
 **Recommended practice:** Annotate local variables when:
 
-- Type is not obvious from context
-- Variable is initialized to a generic value (e.g., empty list/dict)
-- Variable type changes or is reused with different types (anti-pattern, but if it exists)
+- - Type is not obvious from context - Variable is initialized to a generic value (e.g., empty list/dict) - Variable
+  type changes or is reused with different types (anti-pattern, but if it exists)
 
 **Examples:**
 
@@ -202,7 +203,8 @@ LOG_LEVEL = "INFO"
 
 ### Prefer Real Types
 
-**Requirement:** Use real, specific types wherever possible. Custom types, classes, and domain-specific types are encouraged.
+**Requirement:** Use real, specific types wherever possible. Custom types, classes, and domain-specific types are
+encouraged.
 
 **Examples:**
 
@@ -243,9 +245,8 @@ def legacy_handler(data: Any) -> Any:  # typing: Any (TODO: tighten)
 
 **When to use `Any`:**
 
-- Working with truly dynamic data (JSON APIs with varying schemas)
-- Interfacing with untyped third-party libraries
-- Temporary solution during migration (must be tracked and resolved)
+- - Working with truly dynamic data (JSON APIs with varying schemas) - Interfacing with untyped third-party libraries -
+  Temporary solution during migration (must be tracked and resolved)
 
 ### Using `object` (Rare)
 
@@ -277,7 +278,7 @@ def process_unknown(data: object) -> None:
 
 **Requirement:** Every function and method MUST have:
 
-1. Type annotations for every parameter (including keyword-only)
+1. 1. Type annotations for every parameter (including keyword-only)
 2. Return type annotation (including explicit `-> None`)
 
 **Rationale:** Function signatures are contracts that enable type checking, IDE support, and documentation.
@@ -572,25 +573,21 @@ class DynamicConfig(TypedDict, total=False):
 
 **Status:** Current phase
 
-- Run Ruff ANN* rules in report-only mode
-- Collect baseline violations (722 errors as of 2026-01-07)
-- No CI failures yet
+- - Run Ruff ANN* rules in report-only mode - Collect baseline violations (722 errors as of 2026-01-07) - No CI failures
+  yet
 
 ### Phase 2: Gradual Rollout
 
 **Planned:**
 
-- Enable Ruff ANN* rules for NEW code only (via CI diff)
-- Allow existing violations to be fixed incrementally
-- Provide autofix suggestions where safe
+- - Enable Ruff ANN* rules for NEW code only (via CI diff) - Allow existing violations to be fixed incrementally -
+  Provide autofix suggestions where safe
 
 ### Phase 3: Full Enforcement
 
 **Target:**
 
-- All Python code MUST pass Ruff ANN* checks
-- CI fails on new violations
-- Baseline violations tracked and resolved
+- - All Python code MUST pass Ruff ANN* checks - CI fails on new violations - Baseline violations tracked and resolved
 
 ---
 
@@ -617,9 +614,7 @@ class DynamicConfig(TypedDict, total=False):
 
 **Recommended:** Use IDEs with Python type checking support:
 
-- VS Code with Pylance
-- PyCharm (built-in)
-- mypy for CLI type checking
+- - VS Code with Pylance - PyCharm (built-in) - mypy for CLI type checking
 
 ### Future: Type Checker Integration
 
@@ -725,7 +720,7 @@ def delete_user(id: int) -> None:
 - [PEP 604 – Allow writing union types as X | Y](https://peps.python.org/pep-0604/)
 - [typing — Support for type hints (Python docs)](https://docs.python.org/3/library/typing.html)
 - [Ruff ANN rules documentation](https://docs.astral.sh/ruff/rules/#flake8-annotations-ann)
-- [docs/contributing/docstring-contracts/python.md](./docstring-contracts/python.md) - Python docstring contract
+- - [docs/contributing/docstring-contracts/python.md](./docstring-contracts/python.md) - Python docstring contract
 
 ---
 

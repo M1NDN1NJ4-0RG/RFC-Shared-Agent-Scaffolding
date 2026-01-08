@@ -8,10 +8,8 @@ Read `docs/contributing/session-compliance-requirements.md` **IMMEDIATELY** at s
 
 This is **MANDATORY** for NEW work sessions. You may NOT:
 
-- Explore files (beyond opening these two compliance docs)
-- Analyze the problem
-- Plan changes
-- Make any code modifications
+- - - Explore files (beyond opening these two compliance docs) - Analyze the problem - Plan changes - Make any code
+  modifications
 
 Until you have read the complete Session Compliance Requirements document.
 
@@ -81,8 +79,8 @@ The canonical session requirements are defined in the compliance document and su
 
 1. Read `docs/contributing/session-compliance-requirements.md` (MANDATORY)
 2. Verify `repo-lint --help` exits 0 (MANDATORY)
-3. Initialize/update issue journals for the issue you are working on (MANDATORY)
-4. Execute requested work (MANDATORY: no “catch-up only” sessions)
+3. 3. 3. Initialize/update issue journals for the issue you are working on (MANDATORY) 4. Execute requested work
+   (MANDATORY: no “catch-up only” sessions)
 
 ## SESSION EXIT REQUIREMENTS (MANDATORY)
 
@@ -91,9 +89,8 @@ The canonical session requirements are defined in the compliance document and su
 **Quick Summary (must match compliance doc):**
 
 1. If this session includes scripting/tooling changes: run pre-commit gate `repo-lint check --ci` and fix until exit 0
-2. Commit ALL meaningful work (and keep journals current)
-3. Initiate Copilot Code Review and address required feedback (per compliance doc)
-4. Ensure the repo/PR is in a clean, resumable state
+2. 2. 2. Commit ALL meaningful work (and keep journals current) 3. Initiate Copilot Code Review and address required
+   feedback (per compliance doc) 4. Ensure the repo/PR is in a clean, resumable state
 
 ---
 
@@ -117,8 +114,7 @@ Include the failing step, exact command, exit code, and error output; mention `@
 
 **Precedence:**
 
-1. Explicit human direction (issues, PR comments, direct requests)
+1. 1. 1. Explicit human direction (issues, PR comments, direct requests)
 2. `docs/contributing/session-compliance-requirements.md` (canonical)
 3. This `.github/copilot-instructions.md` file
-4. Existing repo patterns
-5. General best practices
+4. 4. 4. Existing repo patterns 5. General best practices

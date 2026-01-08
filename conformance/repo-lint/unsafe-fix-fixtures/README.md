@@ -4,7 +4,8 @@ This directory contains test fixtures for testing `repo_lint`'s unsafe fix mode.
 
 ## Purpose
 
-These fixtures are **intentionally non-conformant** with repo standards. They are designed to test unsafe fixers that modify code behavior or semantics.
+These fixtures are **intentionally non-conformant** with repo standards. They are designed to test unsafe fixers that
+modify code behavior or semantics.
 
 ## Do NOT Fix Manually
 
@@ -20,23 +21,23 @@ These files should remain in their non-conformant state. They are test fixtures,
 
 ### Bash
 
-- (Placeholder for future unsafe Bash fixers)
+- - (Placeholder for future unsafe Bash fixers)
 
 ### PowerShell
 
-- (Placeholder for future unsafe PowerShell fixers)
+- - (Placeholder for future unsafe PowerShell fixers)
 
 ### Perl
 
-- (Placeholder for future unsafe Perl fixers)
+- - (Placeholder for future unsafe Perl fixers)
 
 ### YAML
 
-- (Placeholder for future unsafe YAML fixers)
+- - (Placeholder for future unsafe YAML fixers)
 
 ### Rust
 
-- (Placeholder for future unsafe Rust fixers)
+- - (Placeholder for future unsafe Rust fixers)
 
 ## Testing Usage
 

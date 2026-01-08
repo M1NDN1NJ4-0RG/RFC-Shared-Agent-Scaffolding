@@ -2,14 +2,16 @@
 
 ## Executive Summary
 
-The bootstrap script orchestrates installation of development toolchains (Python, Shell, PowerShell, Perl) plus required utilities (actionlint, ripgrep) to establish a reproducible development environment. After Phase 2 hardening, all critical external commands use deterministic exit codes via fail-fast wrappers, eliminating silent failures and partial-install states.
+The bootstrap script orchestrates installation of development toolchains (Python, Shell, PowerShell, Perl) plus required
+utilities (actionlint, ripgrep) to establish a reproducible development environment. After Phase 2 hardening, all
+critical external commands use deterministic exit codes via fail-fast wrappers, eliminating silent failures and
+partial-install states.
 
 **Key characteristics:**
 
 - **Deterministic failure:** All critical paths exit via `die()` with documented exit codes
-- **Idempotent:** Safe to re-run; detects existing installs and skips them
-- **Cross-platform:** macOS (Homebrew) and Linux (apt/snap) support
-- **Strict activation:** Virtual environment activation failures are fatal
+- - **Idempotent:** Safe to re-run; detects existing installs and skips them - **Cross-platform:** macOS (Homebrew) and
+  Linux (apt/snap) support - **Strict activation:** Virtual environment activation failures are fatal
 
 ---
 
@@ -114,34 +116,28 @@ All exit codes are deterministic and documented:
 **`die(message, exit_code)`**
 
 - Prints `[bootstrap][ERROR] $message`
-- Exits with specified code
-- All failure paths terminate here
+- - Exits with specified code - All failure paths terminate here
 
 **`run_or_die(exit_code, message, command...)`**
 
-- Executes command
+- - Executes command
 - On failure: calls `die(message, exit_code)`
-- Ensures external commands never escape with arbitrary codes
+- - Ensures external commands never escape with arbitrary codes
 
 **`try_run(command...)`**
 
-- Executes command
-- Captures exit code but does not terminate
-- Used for: optional detection, fallback attempts
+- - Executes command - Captures exit code but does not terminate - Used for: optional detection, fallback attempts
 
 **`safe_version(command)`**
 
-- Executes version command
-- Returns output or empty string (never fails)
+- - Executes version command - Returns output or empty string (never fails)
 - Protected from `pipefail` killing the script
 
 ### `set -euo pipefail` Interaction
 
 **Benefits:**
 
-- Catches unhandled failures immediately
-- Prevents undefined variable usage
-- Propagates pipeline failures
+- - Catches unhandled failures immediately - Prevents undefined variable usage - Propagates pipeline failures
 
 **Risks (now mitigated):**
 
@@ -225,19 +221,17 @@ fi
 
 **Before Phase 2:**
 
-- Activation mismatch was warn-only
-- Risk: installs into wrong Python environment
+- - Activation mismatch was warn-only - Risk: installs into wrong Python environment
 
 **After Phase 2:**
 
-- Activation mismatch is **fatal** (exit 11)
+- - Activation mismatch is **fatal** (exit 11)
 - Verification: `command -v python3` must equal `$venv_path/bin/python3`
 
 **Rationale:**
 
-- Prevents silent corruption of system Python
-- Ensures reproducible installs
-- Catches PATH configuration errors early
+- - Prevents silent corruption of system Python - Ensures reproducible installs - Catches PATH configuration errors
+  early
 
 ---
 
@@ -246,21 +240,17 @@ fi
 **Two-phase validation:**
 
 1. **`repo-lint doctor`** (operational self-test)
-   - Exit 0: Perfect health
-   - Exit 1: Config/path issues but tools functional (acceptable)
-   - Exit 2+: Critical toolchain failures (fatal)
+   - - Exit 0: Perfect health - Exit 1: Config/path issues but tools functional (acceptable) - Exit 2+: Critical
+     toolchain failures (fatal)
 
 2. **`repo-lint check --ci`** (lint validation)
-   - Exit 0: No violations
-   - Exit 1: Violations found but tools work (acceptable)
-   - Exit 2: Missing tools (fatal)
-   - Exit 3+: Other errors (fatal)
+   - - Exit 0: No violations - Exit 1: Violations found but tools work (acceptable) - Exit 2: Missing tools (fatal) -
+     Exit 3+: Other errors (fatal)
 
 **Why accept exit 1:**
 
-- Tools are functional (bootstrap succeeded)
-- Violations are repo state issues, not toolchain issues
-- Distinguishes operational failures from lint findings
+- - Tools are functional (bootstrap succeeded) - Violations are repo state issues, not toolchain issues - Distinguishes
+  operational failures from lint findings
 
 ---
 
@@ -268,38 +258,32 @@ fi
 
 ### Network Failures
 
-- No retry logic
-- Transient network errors cause immediate failure
-- **Risk:** Flaky CI on package manager refreshes
+- - No retry logic - Transient network errors cause immediate failure - **Risk:** Flaky CI on package manager refreshes
 
 ### Permission Issues
 
 - Assumes user can `sudo` for apt/snap
-- No preflight permission check
-- **Risk:** Partial install if sudo fails mid-run
+- - No preflight permission check - **Risk:** Partial install if sudo fails mid-run
 
 ### Concurrent Runs
 
-- No locking mechanism
-- Multiple simultaneous bootstraps could conflict
-- **Risk:** Race conditions on .venv creation, package manager locks
+- - No locking mechanism - Multiple simultaneous bootstraps could conflict - **Risk:** Race conditions on .venv
+  creation, package manager locks
 
 ### PATH Mutations
 
 - Exports `PATH` in current shell only
-- New shells require re-activation or re-bootstrap
-- **Impact:** Documented but can surprise users
+- - New shells require re-activation or re-bootstrap - **Impact:** Documented but can surprise users
 
 ### Homebrew Availability
 
-- macOS path requires Homebrew present
-- No automatic Homebrew installation
-- **Impact:** Clear error message directs user to install Homebrew
+- - macOS path requires Homebrew present - No automatic Homebrew installation - **Impact:** Clear error message directs
+  user to install Homebrew
 
 ### Shell Assumptions
 
 - Requires Bash (uses `[[`, `${var}` syntax)
-- Not POSIX sh compatible
+- - Not POSIX sh compatible
 - **Impact:** Documented in shebang (`#!/usr/bin/env bash`)
 
 ---
@@ -309,25 +293,23 @@ fi
 ### Command Injection (Mitigated)
 
 - **Before:** Variable expansion in `safe_version("$tool --version")`
-- **After:** Explicit hardcoded commands per tool
-- **Pattern:** Each tool has dedicated case branch with literal command
+- - **After:** Explicit hardcoded commands per tool - **Pattern:** Each tool has dedicated case branch with literal
+  command
 
 ### Temp File Cleanup
 
 - PowerShell .deb file cleaned via `trap`
-- Ensures no leftover artifacts on failure
+- - Ensures no leftover artifacts on failure
 
 ### Version Pinning
 
-- actionlint: v1.7.10 (pinned)
-- Other tools: latest from package manager
-- **Tradeoff:** Reproducibility vs staying current
+- - actionlint: v1.7.10 (pinned) - Other tools: latest from package manager - **Tradeoff:** Reproducibility vs staying
+  current
 
 ### Download Verification
 
-- No checksum validation for direct downloads
-- Relies on package manager signatures (brew/apt)
-- **Risk:** Supply chain attacks on direct downloads
+- - No checksum validation for direct downloads - Relies on package manager signatures (brew/apt) - **Risk:** Supply
+  chain attacks on direct downloads
 
 ---
 
@@ -337,18 +319,14 @@ fi
 
 **Coverage:**
 
-- Exit code 10: Not in repository
-- Exit code 12: No pyproject.toml
-- Exit code 20: actionlint failure paths (verification test)
-- Exit code 21: ripgrep failure paths (verification test)
-- Repository discovery from subdirectory
-- Idempotency (re-run safety)
+- - Exit code 10: Not in repository - Exit code 12: No pyproject.toml - Exit code 20: actionlint failure paths
+  (verification test) - Exit code 21: ripgrep failure paths (verification test) - Repository discovery from subdirectory
+  - Idempotency (re-run safety)
 
 **Testing gaps:**
 
-- No integration tests for actual package manager calls
-- No failure injection for network/permission errors
-- Relies on verification tests (check script content) rather than execution
+- - No integration tests for actual package manager calls - No failure injection for network/permission errors - Relies
+  on verification tests (check script content) rather than execution
 
 ---
 
@@ -356,21 +334,17 @@ fi
 
 **Sequential execution:**
 
-- All installs run serially
-- No parallelization of independent tools
-- **Typical runtime:** 2-5 minutes (varies by network/cache)
+- - All installs run serially - No parallelization of independent tools - **Typical runtime:** 2-5 minutes (varies by
+  network/cache)
 
 **Bottlenecks:**
 
-- Package manager metadata refresh (apt update)
-- Python package downloads (pip install)
-- go install compilation (actionlint)
+- - Package manager metadata refresh (apt update) - Python package downloads (pip install) - go install compilation
+  (actionlint)
 
 **Optimization opportunities:**
 
-- Parallel tool downloads
-- Cached package metadata
-- Pre-compiled binaries vs go install
+- - Parallel tool downloads - Cached package metadata - Pre-compiled binaries vs go install
 
 ---
 
@@ -378,21 +352,17 @@ fi
 
 **High-touch areas:**
 
-- OS-specific install logic (macOS vs Linux divergence)
-- Package manager version differences
-- Dependency hell for Perl modules
+- - OS-specific install logic (macOS vs Linux divergence) - Package manager version differences - Dependency hell for
+  Perl modules
 
 **Complexity drivers:**
 
-- String processing for version extraction
-- PATH manipulation across platforms
-- Error aggregation for Perl installs
+- - String processing for version extraction - PATH manipulation across platforms - Error aggregation for Perl installs
 
 **Technical debt:**
 
-- Bash string manipulation is verbose and error-prone
-- No structured logging (grep-unfriendly for CI analysis)
-- Limited composability (functions tightly coupled to global state)
+- - Bash string manipulation is verbose and error-prone - No structured logging (grep-unfriendly for CI analysis) -
+  Limited composability (functions tightly coupled to global state)
 
 ---
 
@@ -400,20 +370,14 @@ fi
 
 **What works well (preserve):**
 
-- Clear phase separation
-- Deterministic exit codes
-- Idempotent design
+- - Clear phase separation - Deterministic exit codes - Idempotent design
 
 **What needs improvement:**
 
-- Structured logging for machine parsing
-- Parallel execution where safe
-- Better progress indication
-- Retry logic for transient failures
-- Self-contained binary (no bash dependency)
+- - Structured logging for machine parsing - Parallel execution where safe - Better progress indication - Retry logic
+  for transient failures - Self-contained binary (no bash dependency)
 
 **Migration risks:**
 
-- Behavior parity validation (must match existing contract)
-- CI integration (must work headless)
-- User migration path (fallback to bash during transition)
+- - Behavior parity validation (must match existing contract) - CI integration (must work headless) - User migration
+  path (fallback to bash during transition)

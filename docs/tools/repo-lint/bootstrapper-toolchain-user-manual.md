@@ -4,7 +4,8 @@
 
 The `bootstrap-repo-lint-toolchain.sh` script automates the setup of all development tools required for contributing to this repository. It is designed to be run at the start of every Copilot agent session to ensure a consistent, compliant development environment.
 
-**New in v2:** The script now features a default-on progress UI that provides real-time feedback during installation, automatically adapting to interactive (TTY) and CI/non-TTY environments.
+**New in v2:** The script now features a default-on progress UI that provides real-time feedback during installation,
+automatically adapting to interactive (TTY) and CI/non-TTY environments.
 
 ## Quick Start
 
@@ -57,20 +58,17 @@ The progress UI is **enabled by default** in all environments and automatically 
 
 **Interactive Terminal (TTY):**
 
-- In-place updating progress bar
+- - In-place updating progress bar
 - Shows: `[step/total] Step name...`
 - Success: `✓ [step/total] Step name (duration)`
 - Failure: `✗ [step/total] Step name (duration) - error`
-- Cursor hidden during execution, restored on exit
-- Clean visual feedback with checkmarks and timing
+- - Cursor hidden during execution, restored on exit - Clean visual feedback with checkmarks and timing
 
 **CI / Non-TTY:**
 
-- Clean, line-oriented output
-- No ANSI escape codes
-- No carriage returns
+- - Clean, line-oriented output - No ANSI escape codes - No carriage returns
 - Parseable format: `[bootstrap] [step/total] Step name...`
-- Same success/failure format as TTY (without in-place updates)
+- - Same success/failure format as TTY (without in-place updates)
 
 ### Environment Controls
 
@@ -87,8 +85,8 @@ When running with `--verbose`, all command output is displayed alongside the pro
 ./scripts/bootstrap-repo-lint-toolchain.sh --verbose
 ```
 
-- TTY: Progress bar stays in place, command output scrolls above/below
-- CI: All output intermixed with progress indicators
+- - TTY: Progress bar stays in place, command output scrolls above/below - CI: All output intermixed with progress
+  indicators
 
 ## What Gets Installed
 
@@ -98,23 +96,23 @@ When running with `--verbose`, all command output is displayed alongside the pro
 
 - **Python Virtual Environment** (`.venv/`): Isolated Python environment at repository root
 - **repo-lint Package**: Installed in editable mode from `tools/repo_lint/`
-- **Python Development Tools**:
+- - **Python Development Tools**:
   - `black` - Code formatter
   - `ruff` - Fast Python linter
   - `pylint` - Python static analyzer
   - `yamllint` - YAML linter
   - `pytest` - Testing framework
-- **Shell Toolchain**:
+- - **Shell Toolchain**:
   - `shellcheck` - Shell script linter
   - `shfmt` - Shell script formatter
-- **PowerShell Toolchain**:
+- - **PowerShell Toolchain**:
   - `pwsh` - PowerShell Core
   - `PSScriptAnalyzer` - PowerShell script analyzer
-- **Perl Toolchain**:
+- - **Perl Toolchain**:
   - `Perl::Critic` - Perl script linter
   - `PPI` - Perl parsing library
-- **actionlint**: GitHub Actions workflow linter (v1.7.10+)
-- **ripgrep**: Fast recursive search tool (REQUIRED - hard fail if unavailable)
+- - **actionlint**: GitHub Actions workflow linter (v1.7.10+) - **ripgrep**: Fast recursive search tool (REQUIRED - hard
+  fail if unavailable)
 
 ## Command-Line Options
 
@@ -137,18 +135,12 @@ Options:
 
 The progress UI tracks these steps during execution:
 
-1. **Parse arguments** - Command-line option processing
-2. **Find repository root** - Locate git repository
-3. **Create virtual environment** - Python venv setup
-4. **Activate virtual environment** - Environment activation
-5. **Install repo-lint package** - Editable mode installation
-6. **Verify repo-lint installation** - Functional test
-7. **Install ripgrep** - Required search tool
-8. **Install Python toolchain** - black, ruff, pylint, yamllint, pytest
-9. **Install actionlint** - GitHub Actions linter
-10. **Install shell toolchain** - shellcheck, shfmt
-11. **Install PowerShell toolchain** - pwsh, PSScriptAnalyzer
-12. **Install Perl toolchain** - Perl::Critic, PPI
+1. 1. **Parse arguments** - Command-line option processing 2. **Find repository root** - Locate git repository 3.
+   **Create virtual environment** - Python venv setup 4. **Activate virtual environment** - Environment activation 5.
+   **Install repo-lint package** - Editable mode installation 6. **Verify repo-lint installation** - Functional test 7.
+   **Install ripgrep** - Required search tool 8. **Install Python toolchain** - black, ruff, pylint, yamllint, pytest 9.
+   **Install actionlint** - GitHub Actions linter 10. **Install shell toolchain** - shellcheck, shfmt 11. **Install
+   PowerShell toolchain** - pwsh, PSScriptAnalyzer 12. **Install Perl toolchain** - Perl::Critic, PPI
 13. **Run verification gate** - Final validation with `repo-lint check --ci`
 
 Total steps may vary based on configuration (steps 10-12 are conditional on flags, though all are enabled by default).
@@ -165,7 +157,8 @@ The script creates a Python virtual environment at:
 
 ### PATH Management
 
-**CRITICAL:** The bootstrapper activates the virtual environment within the script context, but **your shell session needs manual activation**.
+**CRITICAL:** The bootstrapper activates the virtual environment within the script context, but **your shell session
+needs manual activation**.
 
 After running the bootstrapper, you **MUST** activate the environment:
 
@@ -176,8 +169,7 @@ source .venv/bin/activate
 This ensures:
 
 - `repo-lint` is on PATH
-- All Python tools are accessible
-- The correct Python interpreter is used
+- - All Python tools are accessible - The correct Python interpreter is used
 
 ### Verifying Setup
 
@@ -227,9 +219,8 @@ shfmt --version
 
 The script is **idempotent** - safe to run multiple times:
 
-- Existing virtual environment is reused
-- Already-installed packages are skipped
-- Verification ensures everything is functional
+- - Existing virtual environment is reused - Already-installed packages are skipped - Verification ensures everything is
+  functional
 
 ## Troubleshooting
 
@@ -262,13 +253,13 @@ chmod +x scripts/bootstrap-repo-lint-toolchain.sh
 **Solution:** The script will attempt installation but gracefully degrade:
 
 - `rgrep` → falls back to `grep`
-- Optional toolchains → clear error messages with manual install instructions
+- - Optional toolchains → clear error messages with manual install instructions
 
 ## For Copilot Agents: Pre-Commit Requirements
 
 **BEFORE EVERY COMMIT**, Copilot agents **MUST**:
 
-1. **Run linting on shell scripts:**
+1. 1. **Run linting on shell scripts:**
 
    ```bash
    shellcheck <file>
@@ -276,7 +267,7 @@ chmod +x scripts/bootstrap-repo-lint-toolchain.sh
    python3 scripts/validate_docstrings.py --file <file> --language bash
    ```
 
-2. **Run linting on Python files:**
+2. 2. **Run linting on Python files:**
 
    ```bash
    black --check <file>
@@ -285,15 +276,15 @@ chmod +x scripts/bootstrap-repo-lint-toolchain.sh
    python3 scripts/validate_docstrings.py --file <file> --language python
    ```
 
-3. **Fix ALL violations before committing** - no exceptions.
+3. 3. **Fix ALL violations before committing** - no exceptions.
 
 This includes fixing violations in files created earlier in the PR.
 
 ## Platform Compatibility
 
-- **Linux**: Fully supported (tested on Ubuntu/Debian)
+- - **Linux**: Fully supported (tested on Ubuntu/Debian)
 - **macOS**: Should work (uses `brew` when available)
-- **Windows**: Not supported (WSL recommended)
+- - **Windows**: Not supported (WSL recommended)
 
 ### Requirements
 
@@ -306,22 +297,15 @@ This includes fixing violations in files created earlier in the PR.
 
 ### Script Phases
 
-1. **Phase 1: Core Setup**
-   - Repository root discovery
-   - Virtual environment creation/activation
-   - repo-lint package installation
-   - Verification that repo-lint is functional
+1. 1. **Phase 1: Core Setup** - Repository root discovery - Virtual environment creation/activation - repo-lint package
+   installation - Verification that repo-lint is functional
 
-2. **Phase 2: Toolchain Installation**
-   - rgrep utility (required)
-   - Python toolchain (required)
-   - Shell toolchain (optional)
-   - PowerShell toolchain (optional)
-   - Perl toolchain (optional)
+2. 2. **Phase 2: Toolchain Installation** - rgrep utility (required) - Python toolchain (required) - Shell toolchain
+   (optional) - PowerShell toolchain (optional) - Perl toolchain (optional)
 
-3. **Phase 3: Verification Gate**
+3. 3. **Phase 3: Verification Gate**
    - Run `repo-lint check --ci` to validate all tools
-   - Ensure repo-lint is using the correct PATH
+   - - Ensure repo-lint is using the correct PATH
 
 ### Design Decisions
 
@@ -329,25 +313,22 @@ This includes fixing violations in files created earlier in the PR.
 
 - `repo-lint install` creates a separate `.venv-lint/` environment
 - Direct installation into main `.venv/` ensures all tools are immediately available
-- Simplifies PATH management for users and Copilot agents
+- - Simplifies PATH management for users and Copilot agents
 
 **Why non-interactive Perl installation?**
 
 - `Perl::Critic` installation can prompt for user input
 - Uses `PERL_MM_USE_DEFAULT=1` and `--notest --force` to avoid blocking
-- Enables automated/CI usage
+- - Enables automated/CI usage
 
 ## Implementation Status
 
-- ✅ Phase 1: Core bootstrapper (complete)
-- ✅ Phase 2: Toolchain installation (complete)
-- ✅ Phase 3: Verification gate (complete)
-- ✅ Phase 4: Documentation (this document)
-- ⏳ Phase 5: Testing and validation (in progress)
-- ⏳ Phase 6: CI integration (planned)
+- - ✅ Phase 1: Core bootstrapper (complete) - ✅ Phase 2: Toolchain installation (complete) - ✅ Phase 3: Verification
+  gate (complete) - ✅ Phase 4: Documentation (this document) - ⏳ Phase 5: Testing and validation (in progress) - ⏳ Phase
+  6: CI integration (planned)
 
 ## See Also
 
-- [Copilot Instructions](/.github/copilot-instructions.md) - Repository agent guidelines
-- [Docstring Contracts](/docs/contributing/docstring-contracts/) - Documentation standards
-- [repo-lint Documentation](/tools/repo_lint/README.md) - Tool usage and configuration
+- - [Copilot Instructions](/.github/copilot-instructions.md) - Repository agent guidelines - [Docstring
+  Contracts](/docs/contributing/docstring-contracts/) - Documentation standards - [repo-lint
+  Documentation](/tools/repo_lint/README.md) - Tool usage and configuration

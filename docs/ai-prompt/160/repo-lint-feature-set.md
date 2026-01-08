@@ -10,12 +10,12 @@ We need THREE complementary UX variants:
 
 - NEVER attempt to modify the user’s PATH “automatically” during `pip install` or import time. It’s not reliable and it’s hostile.
 - Any persistent changes must be explicit opt-in and MUST NOT edit `.bashrc`/`.zshrc` automatically.
-- Must be cross-platform (Linux/macOS + Windows PowerShell).
-- Output/behavior must be deterministic and testable.
-- Must follow Phase 2.5 Console Output + Rich-Click Help Content Contracts.
+- - Must be cross-platform (Linux/macOS + Windows PowerShell). - Output/behavior must be deterministic and testable. -
+  Must follow Phase 2.5 Console Output + Rich-Click Help Content Contracts.
 - GENERAL RULE (MANDATORY): Any third-party packages rolled into `repo-lint` (new Python deps, extras, or vendored libs) MUST be added to every CI workflow/action/job that depends on them, or CI will fail.
 - This includes: lint/test umbrella workflows, repo-lint-specific workflows, and any helper workflows that invoke `repo-lint`.
-- Dependency installation steps MUST be updated in lockstep with code changes (same PR), and verified on all supported OS runners.
+- - Dependency installation steps MUST be updated in lockstep with code changes (same PR), and verified on all supported
+  OS runners.
 - Packaging note: if using extras (e.g., `.[dev]`, `.[lint]`), CI MUST install the correct extra(s) explicitly.
 
 ## Mandatory: Internal Integration Contract (No “Mystery Helper Scripts”)
@@ -25,22 +25,21 @@ If `repo-lint` relies on any helper scripts/tools that are not already clearly p
 This requirement applies to:
 
 - Any script/module invoked by `repo-lint` at runtime (subprocess calls, imports, or file execution)
-- Any validation/enforcement logic currently implemented in separate helper scripts
+- - Any validation/enforcement logic currently implemented in separate helper scripts
 
 This requirement does NOT apply to:
 
-- CI workflows (GitHub Actions / pipeline YAMLs)
+- - CI workflows (GitHub Actions / pipeline YAMLs)
 
 ### Integration Requirements (Non-negotiable)
 
 - The helper MUST live under the `repo-lint` package/module namespace (e.g., `tools/repo_lint/...`) and be included in packaging (wheel/sdist).
-- The helper MUST have a stable, testable Python API (even if it can also be executed as a script).
-- Any configuration it uses MUST be wired into the conformance YAML system (and validated by the same strict config validator).
-- Invocation MUST be centralized through a single internal interface (no ad-hoc subprocess strings scattered across runners).
+- - The helper MUST have a stable, testable Python API (even if it can also be executed as a script). - Any
+  configuration it uses MUST be wired into the conformance YAML system (and validated by the same strict config
+  validator). - Invocation MUST be centralized through a single internal interface (no ad-hoc subprocess strings
+  scattered across runners).
 - The helper MUST be documented in `HOW-TO-USE-THIS-TOOL.md` and referenced in the Tool Registry Contract (where applicable).
-- The helper MUST have unit tests covering:
-  - success paths
-  - failure modes (missing deps, invalid config, bad input)
+- - The helper MUST have unit tests covering: - success paths - failure modes (missing deps, invalid config, bad input)
   - output schema stability if it emits structured results
 
 ### Enforcement
@@ -55,37 +54,29 @@ This requirement does NOT apply to:
 
 Any behavior that can reasonably be configured externally MUST be migrated to the conformance YAML configuration system (or a dedicated `repo-lint` YAML config), including but not limited to:
 
-- tool enable/disable lists (per language)
-- tool invocation options/args (where safe)
-- file targeting patterns (include/exclude globs)
-- severity mapping and fail thresholds
-- output styling/theme selections (TTY)
-- reporting formats and report destinations (defaults)
-- exception/ignore policies (YAML exceptions + pragma policies)
+- - tool enable/disable lists (per language) - tool invocation options/args (where safe) - file targeting patterns
+  (include/exclude globs) - severity mapping and fail thresholds - output styling/theme selections (TTY) - reporting
+  formats and report destinations (defaults) - exception/ignore policies (YAML exceptions + pragma policies)
 
 In addition, any behavior currently controlled by:
 
-- hard-coded constants
-- ad-hoc environment variables
-- CLI-only flags with no config equivalent
-- separate helper-script config files
+- - hard-coded constants - ad-hoc environment variables - CLI-only flags with no config equivalent - separate
+  helper-script config files
 
 MUST be migrated to YAML-first configuration **wherever it is safe and does not violate contracts**.
 
 ### Non-negotiable rules
 
-- External configuration MUST be expressed in YAML (YAML-first).
-- Config MUST be strictly validated before use, with:
+- - External configuration MUST be expressed in YAML (YAML-first). - Config MUST be strictly validated before use, with:
   - required document start marker `---`
   - required document end marker `...`
   - required `type` marker and `version`
-  - schema validation + semantic validation (anti-typo, enum checks, path checks)
-- Unknown keys MUST fail validation by default (no silent ignores).
-- Config layering MUST be deterministic:
+  - - schema validation + semantic validation (anti-typo, enum checks, path checks) - Unknown keys MUST fail validation
+    by default (no silent ignores). - Config layering MUST be deterministic:
   - Baseline conformance configs in `conformance/repo-lint/` (committed)
-  - Optional user overrides supplied explicitly via CLI flags (never auto-discovered in CI)
-- CLI flags MUST override config defaults, but MUST NOT allow violating contracts.
-- Contract-critical behavior MUST NOT be disable-able via config (e.g., config validation itself, contract enforcement, unsafe-mode acknowledgements).
+  - - Optional user overrides supplied explicitly via CLI flags (never auto-discovered in CI) - CLI flags MUST override
+    config defaults, but MUST NOT allow violating contracts. - Contract-critical behavior MUST NOT be disable-able via
+    config (e.g., config validation itself, contract enforcement, unsafe-mode acknowledgements).
 
 ### Required CLI support
 
@@ -97,26 +88,27 @@ MUST be migrated to YAML-first configuration **wherever it is safe and does not 
 
 - In `--ci` mode, `repo-lint` MUST NOT auto-load user config from the working directory or home directory.
 - In `--ci` mode, only configs explicitly passed via `--config` may be used.
-- CI output MUST include a line indicating which config(s) were loaded (or "none").
+- - CI output MUST include a line indicating which config(s) were loaded (or "none").
 
 ## Mandatory: Rich-Click CLI Granularity for `check` / `fix` (Per-language + Per-tool + Summary Modes)
 
-We need extremely granular, Rich-Click-documented options for running **specific tools** and controlling **how much output** is emitted.
+We need extremely granular, Rich-Click-documented options for running **specific tools** and controlling **how much
+output** is emitted.
 
 ### Command surface (minimum)
 
 These flags MUST apply to `repo-lint check` and `repo-lint fix` (where applicable):
 
 - `--lang <LANG>`
-  - Filters execution to a single language.
+  - - Filters execution to a single language.
   - Supported values MUST include: `python`, `bash`, `perl`, `powershell`, `rust`, `yaml`, `markdown`, `all`.
-  - If omitted, tool runs the current default behavior (likely all enabled languages).
+  - - If omitted, tool runs the current default behavior (likely all enabled languages).
 
 - `--tool <TOOL>`
-  - Filters execution to a single underlying tool within the selected language.
+  - - Filters execution to a single underlying tool within the selected language.
   - Example: `repo-lint check --lang python --tool black`
   - MUST be repeatable: `--tool black --tool ruff` (or accept comma-separated lists, but repeatable is preferred).
-  - MUST validate that the tool is known for the chosen language.
+  - - MUST validate that the tool is known for the chosen language.
 
 - `--summary` / `--summary-only`
   - `--summary`: show normal output PLUS a compact summary at the end.
@@ -127,14 +119,12 @@ These flags MUST apply to `repo-lint check` and `repo-lint fix` (where applicabl
 
 When `--tool <TOOL>` is requested and the tool is not available:
 
-- The command MUST produce a clear, actionable error:
-  - “❌ Tool not installed: <TOOL>”
-  - Include the expected install mechanism:
+- - The command MUST produce a clear, actionable error: - “❌ Tool not installed: <TOOL>” - Include the expected install
+  mechanism:
     - If it is a Python dependency: recommend `repo-lint install` (and/or `pip install -e .[dev]` if packaging supports extras).
-    - If it is manual/system-level: explicitly say "install manually" and provide the package name(s) we expect (best effort).
-- The command MUST exit with the correct exit code for missing tools (match existing ExitCode contract).
-- If multiple tools are requested and only some are missing:
-  - By default: fail the run (CI-safe)
+- If it is manual/system-level: explicitly say "install manually" and provide the package name(s) we expect (best
+effort). - The command MUST exit with the correct exit code for missing tools (match existing ExitCode contract). - If
+multiple tools are requested and only some are missing: - By default: fail the run (CI-safe)
   - Optional (nice-to-have): a `--skip-missing-tools` flag that continues running available tools but still prints a missing-tools summary and returns non-zero.
 
 ### Fix-mode Safety (Mandatory)
@@ -142,34 +132,33 @@ When `--tool <TOOL>` is requested and the tool is not available:
 Fixing should be safe and predictable.
 
 - Add `--dry-run` to `repo-lint fix`:
-  - Shows what would change without modifying files.
+  - - Shows what would change without modifying files.
 - Add `--diff` (TTY-only):
-  - Shows unified diff previews for changes (where possible).
+  - - Shows unified diff previews for changes (where possible).
 - Add `--changed-only` (optional but strongly recommended):
-  - If a git worktree is present, restrict checks/fixes to changed files by default when requested.
-  - If git is not present, this flag MUST error with a clear message (do not silently broaden scope).
+  - - If a git worktree is present, restrict checks/fixes to changed files by default when requested. - If git is not
+    present, this flag MUST error with a clear message (do not silently broaden scope).
 
 ### Output-detail controls (robust-as-hell; minimum set)
 
 Add these flags to control verbosity and ergonomics (all must be Rich-Click documented and tested):
 
 - `--max-violations <N>`
-  - Hard cap for detailed items printed (prevents terminal spam).
-  - Summary MUST still include total counts.
+  - - Hard cap for detailed items printed (prevents terminal spam). - Summary MUST still include total counts.
 
 - `--show-files` / `--hide-files`
-  - Whether to list per-file breakdown rows in output tables.
+  - - Whether to list per-file breakdown rows in output tables.
 
 - `--show-codes` / `--hide-codes`
   - Whether to include tool rule IDs/codes (e.g. `ruff:F401`, `pylint:C0114`).
 
 - `--fail-fast`
-  - Stop after the first tool failure (useful for local iteration).
-  - In CI, default should remain “run all tools then summarize”, unless explicitly set.
+  - - Stop after the first tool failure (useful for local iteration). - In CI, default should remain “run all tools then
+    summarize”, unless explicitly set.
 
 - `--explain-tool <TOOL>`
-  - Prints what the tool does, what files it targets, how it is invoked, and how to install it.
-  - MUST NOT run linting; informational only.
+  - - Prints what the tool does, what files it targets, how it is invoked, and how to install it. - MUST NOT run
+    linting; informational only.
 
 ### Output Formats + Reports (Mandatory)
 
@@ -183,12 +172,12 @@ Add these flags to `repo-lint check` and `repo-lint fix`:
   - `csv` and `xlsx` outputs MUST be based on the same underlying normalized data model used for `json`/`yaml`.
 
 - `--report <PATH>`
-  - Writes a single consolidated report to disk.
+  - - Writes a single consolidated report to disk.
   - If `--format json`, output MUST be valid JSON with a stable schema. If `--format yaml`, output MUST be valid YAML with a stable schema.
 
 - `--reports-dir <DIR>`
-  - Writes per-tool reports (one file per tool, plus an index summary file).
-  - File naming MUST be deterministic and collision-safe.
+  - - Writes per-tool reports (one file per tool, plus an index summary file). - File naming MUST be deterministic and
+    collision-safe.
   - When `--format csv`, `--reports-dir` MUST emit:
     - `summary.csv` (run-level summary)
     - `violations.csv` (one row per violation)
@@ -202,26 +191,22 @@ Add these flags to `repo-lint check` and `repo-lint fix`:
   - Supported values MUST include: `short`, `by-tool`, `by-file`, `by-code`.
   - MUST work with `--summary` and `--summary-only`.
 
-- Report schema (minimum; applies to JSON/YAML and is the source for CSV/XLSX):
-- run metadata: repo root, timestamp, platform, python version
-- filters: lang(s), tool(s)
-- results: per-tool exit status, counts, top offending files, codes
-- missing tools summary
-- ignored-by-exceptions counts (if exceptions/pragma logic exists)
-- normalized tabular model:
-  - tools table: tool name, language, status, exit code, duration, missing?
-  - violations table: file, line, col, tool, code, message, severity, ignored?, ignore_source, ignore_id
+- - Report schema (minimum; applies to JSON/YAML and is the source for CSV/XLSX): - run metadata: repo root, timestamp,
+  platform, python version - filters: lang(s), tool(s) - results: per-tool exit status, counts, top offending files,
+  codes - missing tools summary - ignored-by-exceptions counts (if exceptions/pragma logic exists) - normalized tabular
+  model: - tools table: tool name, language, status, exit code, duration, missing? - violations table: file, line, col,
+  tool, code, message, severity, ignored?, ignore_source, ignore_id
   - summary table: totals by tool/lang/code/file (as requested by `--summary-format`)
 
 ### Rich-Click help contract for these flags
 
 Help output MUST show:
 
-- Examples:
+- - Examples:
   - `repo-lint check --lang python --tool black --summary-only`
   - `repo-lint check --lang yaml --tool yamllint --max-violations 50`
 - Tool/value enums for `--lang` and `--tool` (where possible).
-- Clear notes about missing-tool behavior and exit codes.
+- - Clear notes about missing-tool behavior and exit codes.
 
 ### Back-compat
 
@@ -232,7 +217,8 @@ If both `--only` and `--lang` are provided, error out with a clear message to av
 
 To keep `--tool` robust and to prevent drift, `repo-lint` MUST maintain a single canonical tool registry.
 
-- The tool registry MUST be derived from the conformance linting/docstring configs (not hard-coded in multiple places).
+- - The tool registry MUST be derived from the conformance linting/docstring configs (not hard-coded in multiple
+  places).
   - Example: `conformance/repo-lint/repo-lint-linting-rules.yaml` declares tools per language.
   - Example: `conformance/repo-lint/repo-lint-docstring-rules.yaml` declares the docstring validator(s) per language.
 - `--tool <TOOL>` MUST validate against this registry.
@@ -246,7 +232,7 @@ Add these flags to `repo-lint check` and `repo-lint fix`:
   - Prints supported `--lang` values (stable output).
 
 - `--list-tools [--lang <LANG>]`
-  - Prints supported tools.
+  - - Prints supported tools.
   - If `--lang` is provided, list only tools for that language.
   - If `--lang` is omitted, list all tools grouped by language.
 
@@ -274,11 +260,9 @@ Add a new command `repo-lint doctor` that performs a comprehensive environment +
 
 It MUST check:
 
-- repo root resolution
-- venv resolution
-- tool registry load from conformance YAML
-- config validity for all conformance files (linting/docstring/naming/ui theme/exceptions if present)
-- tool availability per config (installed vs missing)
+- - repo root resolution - venv resolution - tool registry load from conformance YAML - config validity for all
+  conformance files (linting/docstring/naming/ui theme/exceptions if present) - tool availability per config (installed
+  vs missing)
 - PATH sanity (what `shutil.which("repo-lint")` resolves to)
 
 Flags:
@@ -289,8 +273,7 @@ Flags:
 
 Exit codes:
 
-- 0 if all checks green
-- non-zero if any checks red (use existing policy/tooling exit code conventions)
+- - 0 if all checks green - non-zero if any checks red (use existing policy/tooling exit code conventions)
 
 ---
 
@@ -311,11 +294,11 @@ Use the repo-lint repo-root contract (fallback to CWD if no markers found; suppo
 
 ## Paths derived from venv
 
-- Linux/macOS:
+- - Linux/macOS:
   - bin dir: `<venv>/bin`
   - activation: `<venv>/bin/activate`
   - fish activation: `<venv>/bin/activate.fish` (if present)
-- Windows:
+- - Windows:
   - scripts dir: `<venv>\\Scripts`
   - activation: `<venv>\\Scripts\\Activate.ps1`
   - cmd activation: `<venv>\\Scripts\\activate.bat`
@@ -337,7 +320,7 @@ Add Click subcommand:
 - `--print` (default): print instructions + shell snippet
 - `--install`: write a snippet file to user config dir AND print exact line(s) user must add to their shell rc manually
 - `--shell [bash|zsh|fish|powershell]`: select snippet type
-  - Default: detect current shell where feasible; otherwise default to bash on *nix and powershell on Windows
+  - - Default: detect current shell where feasible; otherwise default to bash on *nix and powershell on Windows
 - `--venv <path>`: explicit venv path
 - `--path-only`: print ONLY the export/set PATH line(s), no prose (automation-friendly)
 - `--no-color`: force plain output (piping)
@@ -345,11 +328,11 @@ Add Click subcommand:
 
 ### Snippet generation
 
-- bash/zsh:
+- - bash/zsh:
   - `export PATH="<venv>/bin:$PATH"`
-- fish:
+- - fish:
   - `set -gx PATH "<venv>/bin" $PATH`
-- powershell:
+- - powershell:
   - `$env:Path = "<venv>\\Scripts;" + $env:Path`
 
 ### Install file location (opt-in, no rc edits)
@@ -361,8 +344,7 @@ On `--install`, write snippet to:
 
 Then print:
 
-- Where file was written
-- EXACT line user must add manually:
+- - Where file was written - EXACT line user must add manually:
   - bash/zsh: `source ~/.config/repo-lint/shell/repo-lint-env.bash`
   - fish: `source ~/.config/repo-lint/shell/repo-lint-env.fish`
   - powershell: `. $env:APPDATA\repo-lint\shell\repo-lint-env.powershell.ps1`
@@ -371,15 +353,12 @@ Then print:
 
 Update `tools/repo_lint/HOW-TO-USE-THIS-TOOL.md` with a section:
 
-- “Making repo-lint available in your shell”
-- Examples for bash/zsh/fish/powershell
-- Clarify why rc edits are manual (by design)
+- - “Making repo-lint available in your shell” - Examples for bash/zsh/fish/powershell - Clarify why rc edits are manual
+  (by design)
 
 ### Tests
 
-- unit tests for:
-  - venv resolution precedence/errors
-  - snippet generation per shell
+- - unit tests for: - venv resolution precedence/errors - snippet generation per shell
   - `--path-only` stable output
   - `--install` writes correct file contents (temp dirs / monkeypatch home/appdata)
 
@@ -397,7 +376,7 @@ Add Click subcommand:
 
 - `--venv <path>`: explicit venv path (same resolver)
 - `--shell [bash|zsh|fish|powershell|cmd]`: subshell to launch
-  - Default: detect current shell if possible; else bash (*nix) / powershell (Windows)
+  - - Default: detect current shell if possible; else bash (*nix) / powershell (Windows)
 - `--command "<cmd>"`: run a single command inside the activated environment and return its exit code (no interactive shell)
 - `--no-rc`: start subshell without loading user rc files when possible (nice-to-have)
 - `--print`: print the exact underlying command being executed (debug)
@@ -407,33 +386,33 @@ Add Click subcommand:
 
 #### Linux/macOS
 
-- Interactive:
+- - Interactive:
   - bash: `bash -i -c "source <venv>/bin/activate; exec bash -i"` (or minimal profile if `--no-rc`)
   - zsh: `zsh -i -c "source <venv>/bin/activate; exec zsh -i"`
   - fish: `fish -i -c "source <venv>/bin/activate.fish; exec fish -i"` (if activate.fish missing, fallback or error)
-- Command mode:
+- - Command mode:
   - bash: `bash -lc "source <venv>/bin/activate && <cmd>"`
   - zsh:  `zsh -lc  "source <venv>/bin/activate && <cmd>"`
 
 #### Windows
 
 - PowerShell activation: `<venv>\\Scripts\\Activate.ps1`
-- Interactive:
+- - Interactive:
   - `powershell -NoExit -Command "& '<venv>\\Scripts\\Activate.ps1';"`
-- Command mode:
+- - Command mode:
   - `powershell -NoProfile -Command "& '<venv>\\Scripts\\Activate.ps1'; <cmd>"`
 
 (Optionally support cmd: `<venv>\\Scripts\\activate.bat`.)
 
 ### UX / Safety
 
-- If activation scripts missing, error with remediation guidance.
-- In interactive mode, print: “Launching subshell with venv activated at <path>”
+- - If activation scripts missing, error with remediation guidance. - In interactive mode, print: “Launching subshell
+  with venv activated at <path>”
 - In `--command` mode, forward stdout/stderr and return child exit code.
 
 ### Tests
 
-- unit tests for command construction (per OS/shell)
+- - unit tests for command construction (per OS/shell)
 - optional integration test (skippable) validating `--command` runs with venv prefix
 
 ---
@@ -444,10 +423,8 @@ Add Click subcommand:
 
 Make it trivial to debug:
 
-- “Which repo root did you pick?”
-- “Which venv did you resolve?”
-- “What PATH entry should exist?”
-- “Which executable is actually being invoked?”
+- - “Which repo root did you pick?” - “Which venv did you resolve?” - “What PATH entry should exist?” - “Which
+  executable is actually being invoked?”
 
 ## CLI
 
@@ -467,16 +444,13 @@ Add Click subcommand:
 
 Render a table with rows:
 
-- Repo root
-- Resolved venv
-- Venv bin/scripts dir
-- Activation script path
+- - Repo root - Resolved venv - Venv bin/scripts dir - Activation script path
 - Resolved `repo-lint` executable path (from:
   - `shutil.which("repo-lint")`
   - plus: the expected venv-local console script path `<venv>/bin/repo-lint` or `<venv>\\Scripts\\repo-lint.exe` if present)
 - Python executable in use (`sys.executable`)
 - Interpreter prefix/base prefix (`sys.prefix`, `sys.base_prefix`)
-- Detected shell (best effort)
+- - Detected shell (best effort)
 
 If `shutil.which("repo-lint")` points somewhere NOT under the resolved venv, show a warning:
 
@@ -499,9 +473,7 @@ Stable keys:
 
 ### Tests
 
-- unit tests for:
-  - correct expected paths per OS
-  - mismatch detection logic
+- - unit tests for: - correct expected paths per OS - mismatch detection logic
   - `--json` stable output keys
 
 ### Docs
@@ -509,7 +481,7 @@ Stable keys:
 Update `HOW-TO-USE-THIS-TOOL.md`:
 
 - Add section “Debugging PATH / venv issues with `repo-lint which`”
-- Include examples:
+- - Include examples:
   - `repo-lint which`
   - `repo-lint which --json`
   - `repo-lint which --shell zsh --path-line`
@@ -527,19 +499,18 @@ Create shared modules:
 
 Wire into Click CLI. Ensure Rich-Click help includes:
 
-- Summary / What this does / Examples / Output modes / Configuration / Exit codes / Troubleshooting.
+- - Summary / What this does / Examples / Output modes / Configuration / Exit codes / Troubleshooting.
 
 ---
 
 - [ ] `repo-lint env` exists and supports `--print`, `--install`, `--shell`, `--path-only`.
 - [ ] `repo-lint activate` exists and supports interactive subshell and `--command`, with CI-safe behavior.
 - [ ] `repo-lint which` exists and prints a Rich table + supports `--json`.
-- [ ] All three share a single venv resolution implementation with documented precedence.
-- [ ] Cross-platform behavior validated (Linux/macOS + Windows PowerShell).
-- [ ] Tests added for resolver + snippets + activator command construction + diagnostics output.
-- [ ] Docs updated with examples for all three commands.
+- - [ ] All three share a single venv resolution implementation with documented precedence. - [ ] Cross-platform
+  behavior validated (Linux/macOS + Windows PowerShell). - [ ] Tests added for resolver + snippets + activator command
+  construction + diagnostics output. - [ ] Docs updated with examples for all three commands.
 - [ ] `repo-lint check` and `repo-lint fix` support `--lang <LANG>` and repeatable `--tool <TOOL>` with Rich-Click help and examples.
-- [ ] Missing requested tools produce a clear actionable error and the correct exit code (CI-safe, deterministic).
+- - [ ] Missing requested tools produce a clear actionable error and the correct exit code (CI-safe, deterministic).
 - [ ] `--summary` and `--summary-only` work for full runs and tool-filtered runs.
 - [ ] Verbosity controls (`--max-violations`, `--show-files/--hide-files`, `--show-codes/--hide-codes`, `--fail-fast`) are implemented, documented, and tested.
 - [ ] `--list-langs` and `--list-tools` exist and do not run linting; output is stable and documented.
@@ -549,11 +520,13 @@ Wire into Click CLI. Ensure Rich-Click help includes:
 - [ ] `repo-lint fix` supports `--dry-run` and `--diff` (TTY-only); behavior is documented and tested.
 - [ ] `--format` supports `json`, `yaml`, `csv`, and `xlsx` using a single normalized data model.
 - [ ] `--reports-dir` emits deterministic multi-file artifacts for `csv` and `xlsx` (with required files/sheets).
-- [ ] Rich-Click help groups options into panels with consistent headings (Filtering/Output/Execution/Info).
+- - [ ] Rich-Click help groups options into panels with consistent headings (Filtering/Output/Execution/Info).
 - [ ] `repo-lint doctor` exists and produces a green/red checklist; supports `--format`, `--report`, and `--ci`.
 - [ ] Any non-`repo-lint` helper scripts required by `repo-lint` are fully integrated into the `repo-lint` package namespace, documented, and covered by unit tests (CI workflows excluded).
-- [ ] Any behavior that can be configured externally (including behavior currently driven by constants/env/CLI-only toggles) is migrated to YAML-first configuration without allowing contract violations.
+- - [ ] Any behavior that can be configured externally (including behavior currently driven by constants/env/CLI-only
+  toggles) is migrated to YAML-first configuration without allowing contract violations.
 - [ ] `--config`, `--dump-config` (TTY-only), and `--validate-config` (no linting) are implemented, documented, and tested.
 - [ ] `--ci` mode is deterministic: no auto-discovered configs; only explicit `--config` is honored.
 - [ ] Any new third-party dependencies introduced for `repo-lint` are reflected in all CI workflows/actions/jobs that rely on them (including correct extras), verified across supported OS runners.
-- [ ] If the dependency set changes, update both: pyproject.toml (or requirements) and CI install steps in the same PR.
+- - [ ] If the dependency set changes, update both: pyproject.toml (or requirements) and CI install steps in the same
+  PR.

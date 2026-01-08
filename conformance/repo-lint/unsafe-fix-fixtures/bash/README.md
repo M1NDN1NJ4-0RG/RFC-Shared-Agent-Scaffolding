@@ -6,17 +6,16 @@ This directory contains **intentionally non-conforming** Bash scripts used for t
 
 ## Important Notes
 
-- **These files violate repository docstring contracts intentionally**
-- **Do NOT manually fix these files** - they are test fixtures
-- **These files are excluded from CI lint/docstring checks**
-- These files are used ONLY for testing unsafe mode transformations
+- - **These files violate repository docstring contracts intentionally** - **Do NOT manually fix these files** - they
+  are test fixtures - **These files are excluded from CI lint/docstring checks** - These files are used ONLY for testing
+  unsafe mode transformations
 
 ## Usage
 
 These fixtures are used by:
 
 - Unit tests for unsafe fix mode (`tools/repo_lint/tests/test_unsafe_fixes.py`)
-- Manual testing of unsafe fixers (ONLY with explicit human authorization per PR)
+- - Manual testing of unsafe fixers (ONLY with explicit human authorization per PR)
 
 ## Current Status
 
@@ -24,8 +23,8 @@ These fixtures are used by:
 
 When Bash unsafe fixers are added, this directory will contain fixtures that demonstrate:
 
-- Non-conforming docstring formats that can be auto-fixed unsafely
-- Edge cases that unsafe fixers must handle correctly
+- - Non-conforming docstring formats that can be auto-fixed unsafely - Edge cases that unsafe fixers must handle
+  correctly
 
 ## Authorization
 

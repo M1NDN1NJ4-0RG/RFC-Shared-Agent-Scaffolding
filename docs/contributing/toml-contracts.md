@@ -6,9 +6,11 @@
 
 ## Overview
 
-This document defines the mandatory TOML formatting and style requirements for the RFC-Shared-Agent-Scaffolding repository. These standards ensure consistency, readability, and maintainability across all TOML configuration files.
+This document defines the mandatory TOML formatting and style requirements for the RFC-Shared-Agent-Scaffolding
+repository. These standards ensure consistency, readability, and maintainability across all TOML configuration files.
 
-**Key Principle:** All TOML files must follow a consistent, deterministic style that is machine-checkable and auto-fixable.
+**Key Principle:** All TOML files must follow a consistent, deterministic style that is machine-checkable and
+auto-fixable.
 
 ---
 
@@ -31,8 +33,8 @@ This document defines the mandatory TOML formatting and style requirements for t
 
 The following files/directories are **explicitly excluded** from TOML linting:
 
-1. **Vendored/third-party lockfiles:** (none currently)
-   - **Future:** If external TOML lockfiles are vendored, add exclusions here
+1. 1. **Vendored/third-party lockfiles:** (none currently) - **Future:** If external TOML lockfiles are vendored, add
+   exclusions here
 
 2. **Temporary/scratch files:** Any `*.toml` files in `/tmp/` or build artifacts
 
@@ -52,11 +54,9 @@ This ruleset follows **TOML Best Practices** from authoritative sources:
 
 **Core Principles:**
 
-- **Prefer machine-fixable rules** to reduce manual effort
-- **No vague rules:** Every rule must be deterministic and checkable
-- **Compatibility first:** Rules must work with TOML v1.0.0
-- **Readability:** TOML files should be easy to read and edit by humans
-- **Consistency:** Use one style throughout the repository
+- - **Prefer machine-fixable rules** to reduce manual effort - **No vague rules:** Every rule must be deterministic and
+  checkable - **Compatibility first:** Rules must work with TOML v1.0.0 - **Readability:** TOML files should be easy to
+  read and edit by humans - **Consistency:** Use one style throughout the repository
 
 ### Core Rules (MANDATORY)
 
@@ -124,7 +124,8 @@ version  =  "0.1.0"
 
 **Rationale:** Makes it easier to find keys and prevents merge conflicts.
 
-**Exception:** Cargo.toml follows Cargo conventions where certain keys (name, version, edition) come first by convention.
+**Exception:** Cargo.toml follows Cargo conventions where certain keys (name, version, edition) come first by
+convention.
 
 ```toml
 # ✅ Correct - alphabetical within reason
@@ -209,9 +210,8 @@ dependencies = [
 
 **Formatting:**
 
-- One item per line
-- Indent items by 2 spaces (or 4 spaces from enclosing table)
-- Trailing comma on last item (prevents diff noise)
+- - One item per line - Indent items by 2 spaces (or 4 spaces from enclosing table) - Trailing comma on last item
+  (prevents diff noise)
 
 ```toml
 # ✅ Correct - multi-line array
@@ -500,7 +500,7 @@ For existing TOML files that don't conform to these rules:
 1. **Auto-fix first:** Run `taplo fmt **/*.toml` to auto-format all files
 2. **Review changes:** Use `git diff` to review all changes before committing
 3. **Manual fixes:** Address any remaining issues `taplo lint` reports
-4. **Commit:** Commit the formatted files
+4. 4. **Commit:** Commit the formatted files
 
 **Important:** Always review auto-formatted changes before committing, especially for critical configuration files like `Cargo.toml` and `pyproject.toml`.
 
@@ -517,4 +517,4 @@ For existing TOML files that don't conform to these rules:
 
 ## Change Log
 
-- **2026-01-08:** Initial version (Phase 3.6.1 - Issue #278)
+- - **2026-01-08:** Initial version (Phase 3.6.1 - Issue #278)

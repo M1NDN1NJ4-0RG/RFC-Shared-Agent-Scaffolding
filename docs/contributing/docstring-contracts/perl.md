@@ -11,23 +11,19 @@ Perl scripts in this repository use **POD (Plain Old Documentation)** to documen
 
 Every Perl script must include these POD sections (using `=head1` headers):
 
-1. **=head1 NAME** - Script name and one-line summary
-2. **=head1 SYNOPSIS** - Usage examples (invocation patterns)
-3. **=head1 DESCRIPTION** - What the script does and does NOT do
-4. **=head1 BINARY DISCOVERY** or **=head1 ENVIRONMENT VARIABLES** - Configuration (for wrappers, use BINARY DISCOVERY; for others, use ENVIRONMENT VARIABLES if applicable)
-5. **=head1 ENVIRONMENT VARIABLES** - Variables used and defaults (if not already covered)
-6. **=head1 EXIT CODES** - At least: 0 = success, non-zero = failure types
-7. **=head1 EXAMPLES** - Minimum 1 concrete usage example
-8. **=head1 NOTES** or **=head1 CAVEATS** - Maintainer notes, constraints (optional but recommended)
+1. 1. **=head1 NAME** - Script name and one-line summary 2. **=head1 SYNOPSIS** - Usage examples (invocation patterns)
+   3. **=head1 DESCRIPTION** - What the script does and does NOT do 4. **=head1 BINARY DISCOVERY** or **=head1
+   ENVIRONMENT VARIABLES** - Configuration (for wrappers, use BINARY DISCOVERY; for others, use ENVIRONMENT VARIABLES if
+   applicable) 5. **=head1 ENVIRONMENT VARIABLES** - Variables used and defaults (if not already covered) 6. **=head1
+   EXIT CODES** - At least: 0 = success, non-zero = failure types 7. **=head1 EXAMPLES** - Minimum 1 concrete usage
+   example 8. **=head1 NOTES** or **=head1 CAVEATS** - Maintainer notes, constraints (optional but recommended)
 
 ### Optional Sections
 
-- **=head1 OPTIONS** - Command-line options (if using Getopt)
-- **=head1 PLATFORM** - Platform compatibility (OS, Perl version requirements) - **Recommended**
-- **=head1 FILES** - Files read or written
-- **=head1 DIAGNOSTICS** - Error messages explained
-- **=head1 SEE ALSO** - References to related docs
-- **=head1 AUTHOR** - Author information (if applicable)
+- - **=head1 OPTIONS** - Command-line options (if using Getopt) - **=head1 PLATFORM** - Platform compatibility (OS, Perl
+  version requirements) - **Recommended** - **=head1 FILES** - Files read or written - **=head1 DIAGNOSTICS** - Error
+  messages explained - **=head1 SEE ALSO** - References to related docs - **=head1 AUTHOR** - Author information (if
+  applicable)
 
 ## Formatting Rules
 
@@ -209,7 +205,7 @@ use v5.10;
 ### Key Rules
 
 1. **Shebang first**: Always start with `#!/usr/bin/env perl`
-2. **POD placement**: POD can be anywhere, but conventionally at the top (after shebang)
+2. 2. **POD placement**: POD can be anywhere, but conventionally at the top (after shebang)
 3. **=cut required**: End POD block with `=cut` before code
 4. **Headers**: Use `=head1` for major sections, `=head2` for subsections
 5. **Lists**: Use `=over 4` / `=item` / `=back` for bulleted/numbered lists
@@ -217,10 +213,10 @@ use v5.10;
 7. **Italic**: Use `I<text>` for italic/variables
 8. **Code**: Use `C<code>` for inline code
 9. **Escapes**: Use `E<lt>` for `<`, `E<gt>` for `>`
-10. **Indentation**: Two spaces for code examples under sections
+10. 10. **Indentation**: Two spaces for code examples under sections
 11. **Links**: Use `L<text|url>` for URLs, `L<Module::Name>` for modules, `L<perldoc>` for Perl docs
 12. **File paths**: Use `F<path/to/file>` for file and directory names
-13. **Section naming**: Use "NOTES" (not "CAVEATS") for consistency across contracts
+13. 13. **Section naming**: Use "NOTES" (not "CAVEATS") for consistency across contracts
 
 ### Intra-Document Links
 
@@ -517,10 +513,9 @@ use v5.10;
 
 This file demonstrates:
 
-- Full POD with all required sections
+- - Full POD with all required sections
 - BINARY DISCOVERY section with `=over`/`=item`/`=back`
-- Multiple ENVIRONMENT VARIABLES subsections
-- EXAMPLES with multiple subsections
+- - Multiple ENVIRONMENT VARIABLES subsections - EXAMPLES with multiple subsections
 - Proper use of `B<bold>`, `I<italic>`, `C<code>`
 
 ### Example 2: Test Module
@@ -530,9 +525,8 @@ This file demonstrates:
 This file demonstrates:
 
 - Module-level POD (for `.pm` files)
-- SYNOPSIS with function usage
-- FUNCTIONS section documenting each exported function
-- NOTES section for module constraints
+- - SYNOPSIS with function usage - FUNCTIONS section documenting each exported function - NOTES section for module
+  constraints
 
 ### Example 3: Utility Script
 
@@ -540,10 +534,8 @@ This file demonstrates:
 
 This file demonstrates:
 
-- DESCRIPTION that states what it does NOT do
-- OPTIONS section for command-line flags
-- EXIT CODES with multiple failure modes
-- FILES section documenting artifacts
+- - DESCRIPTION that states what it does NOT do - OPTIONS section for command-line flags - EXIT CODES with multiple
+  failure modes - FILES section documenting artifacts
 
 ## Validation
 
@@ -551,14 +543,11 @@ The validator checks for:
 
 - Presence of POD block (between `=head1 NAME` and `=cut`)
 - Presence of section headers: `=head1 NAME`, `=head1 SYNOPSIS`, `=head1 DESCRIPTION`, `=head1 ENVIRONMENT VARIABLES`, `=head1 EXIT CODES`, `=head1 EXAMPLES`
-- At least one example under EXAMPLES section
+- - At least one example under EXAMPLES section
 
 The validator does NOT check:
 
-- POD syntax perfection
-- Formatting consistency
-- Link validity
-- Grammar or spelling
+- - POD syntax perfection - Formatting consistency - Link validity - Grammar or spelling
 
 ## Common Mistakes
 
@@ -630,7 +619,8 @@ Failure
   script.pl <command> [args...]
 ```
 
-✅ **Correct:** Escape angle brackets in non-code context (or use as-is in code examples - POD is forgiving for indented code)
+✅ **Correct:** Escape angle brackets in non-code context (or use as-is in code examples - POD is forgiving for indented
+code)
 
 ```perl
 =head1 SYNOPSIS
@@ -663,9 +653,9 @@ podchecker script-name.pl
 
 ## References
 
-- [README.md](./README.md) - Overview of docstring contracts
-- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
+- - [README.md](./README.md) - Overview of docstring contracts - [exit-codes-contract.md](./exit-codes-contract.md) -
+  Canonical exit code meanings
 - [perlpod – Plain Old Documentation](https://perldoc.perl.org/perlpod)
 - [perlpodstyle – POD Style Guide](https://perldoc.perl.org/perlpodstyle)
-- [Wrapper Discovery](../../architecture/wrapper-discovery.md) - Binary discovery rules for wrappers
-- [Conformance Contract](../../usage/conformance-contract.md) - Behavior contract
+- - [Wrapper Discovery](../../architecture/wrapper-discovery.md) - Binary discovery rules for wrappers - [Conformance
+  Contract](../../usage/conformance-contract.md) - Behavior contract

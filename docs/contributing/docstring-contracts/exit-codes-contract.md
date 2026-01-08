@@ -4,12 +4,11 @@
 
 ## Why Exit Codes Matter
 
-Exit codes are a universal language for process success/failure communication. Consistent exit code semantics across all languages ensure:
+Exit codes are a universal language for process success/failure communication. Consistent exit code semantics across all
+languages ensure:
 
-- Predictable behavior in CI/CD pipelines
-- Reliable error detection in automation
-- Clear communication between wrapper scripts and canonical tools
-- Consistent user experience across language implementations
+- - Predictable behavior in CI/CD pipelines - Reliable error detection in automation - Clear communication between
+  wrapper scripts and canonical tools - Consistent user experience across language implementations
 
 ## Canonical Exit Codes
 
@@ -25,9 +24,8 @@ Example: Test suite passed, file processed successfully, binary executed and com
 
 **Rules:**
 
-- Exit 0 only when operation fully succeeded
-- Do not exit 0 if warnings were suppressed
-- Do not exit 0 if partial success occurred (use exit 1 instead)
+- - Exit 0 only when operation fully succeeded - Do not exit 0 if warnings were suppressed - Do not exit 0 if partial
+  success occurred (use exit 1 instead)
 
 ### Exit Code 1: General Failure
 
@@ -43,9 +41,8 @@ Example: Test failures, command returned non-zero, validation contract violation
 
 **Rules:**
 
-- Use exit 1 as the default failure code
-- Prefer more specific codes (2, 127) when applicable
-- Exit 1 for validation failures, assertion failures, unexpected errors
+- - Use exit 1 as the default failure code - Prefer more specific codes (2, 127) when applicable - Exit 1 for validation
+  failures, assertion failures, unexpected errors
 
 ### Exit Code 2: Invalid Usage / Missing Arguments
 
@@ -61,9 +58,8 @@ Example: Missing required --file argument, invalid --format value, conflicting f
 
 **Rules:**
 
-- Exit 2 for argument parsing/validation failures
-- Print usage/help message to stderr before exiting
-- Distinguish from runtime failures (exit 1)
+- - Exit 2 for argument parsing/validation failures - Print usage/help message to stderr before exiting - Distinguish
+  from runtime failures (exit 1)
 
 ### Exit Code 127: Command Not Found
 
@@ -78,10 +74,8 @@ Example: safe-run wrapper cannot find canonical tool, missing system dependency
 
 **Rules:**
 
-- Exit 127 specifically for "not found" scenarios
-- Matches POSIX shell convention for command not found
-- Print actionable error with installation instructions
-- Suggest environment variable overrides (e.g., BINARY_PATH)
+- - Exit 127 specifically for "not found" scenarios - Matches POSIX shell convention for command not found - Print
+  actionable error with installation instructions - Suggest environment variable overrides (e.g., BINARY_PATH)
 
 ### Exit Codes 3-125: Reserved for Future Use
 
@@ -93,9 +87,8 @@ Example: Custom error codes for specific failure modes
 
 **Rules:**
 
-- Document any custom codes in tool's docstring/contract
-- Avoid unless you need fine-grained error distinction
-- Prefer exit 1 for most failures
+- - Document any custom codes in tool's docstring/contract - Avoid unless you need fine-grained error distinction -
+  Prefer exit 1 for most failures
 
 ### Exit Code 126: Permission Denied / Not Executable
 
@@ -107,9 +100,8 @@ Example: Found tool binary but it's not executable
 
 **Rules:**
 
-- Use when binary exists but cannot be executed
-- Distinguish from 127 (not found)
-- Suggest chmod +x or permission fix
+- - Use when binary exists but cannot be executed - Distinguish from 127 (not found) - Suggest chmod +x or permission
+  fix
 
 ### Exit Codes 128+: Signal-Related Exits
 
@@ -122,9 +114,8 @@ When to use: Automatically set by shell when process killed by signal
 
 **Rules:**
 
-- Do not explicitly use 128+ codes in your code
-- These are set automatically by the operating system
-- Preserve child process exit codes in this range when wrapping commands
+- - Do not explicitly use 128+ codes in your code - These are set automatically by the operating system - Preserve child
+  process exit codes in this range when wrapping commands
 
 ## Language-Specific Guidance
 
@@ -260,16 +251,14 @@ Every script **MUST** document its exit codes in its docstring/documentation:
 
 At minimum, document:
 
-- Exit code 0 (success)
-- Exit code 1 (general failure)
+- - Exit code 0 (success) - Exit code 1 (general failure)
 
 ### Recommended Documentation
 
 Additionally document:
 
-- Exit code 2 (if argument parsing can fail)
-- Exit code 127 (if binary discovery can fail)
-- Any custom exit codes (3-125)
+- - Exit code 2 (if argument parsing can fail) - Exit code 127 (if binary discovery can fail) - Any custom exit codes
+  (3-125)
 
 ### Example (Bash)
 
@@ -302,10 +291,9 @@ Exit Codes
 
 Wrapper scripts that invoke canonical tools **MUST**:
 
-1. **Preserve child exit codes**: Exit with the same code as the wrapped command
-2. **Use 127 for "not found"**: When binary discovery fails
-3. **Use 2 for usage errors**: When wrapper argument parsing fails
-4. **Propagate all codes 0-255**: Do not transform or map exit codes from child process
+1. 1. **Preserve child exit codes**: Exit with the same code as the wrapped command 2. **Use 127 for "not found"**: When
+   binary discovery fails 3. **Use 2 for usage errors**: When wrapper argument parsing fails 4. **Propagate all codes
+   0-255**: Do not transform or map exit codes from child process
 
 ### Example Pattern
 

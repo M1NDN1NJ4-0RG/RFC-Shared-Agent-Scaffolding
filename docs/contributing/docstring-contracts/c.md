@@ -6,31 +6,26 @@
 
 ## Purpose
 
-This is a **preliminary contract** for C source files that may be added to this repository in the future. It follows Doxygen conventions while aligning with the semantic requirements of other language contracts.
+This is a **preliminary contract** for C source files that may be added to this repository in the future. It follows
+Doxygen conventions while aligning with the semantic requirements of other language contracts.
 
-**Note:** This contract is not yet enforced. Use it as guidance if adding C files, but expect refinement before official adoption.
+**Note:** This contract is not yet enforced. Use it as guidance if adding C files, but expect refinement before official
+adoption.
 
 ## Required Semantic Sections
 
 Every C source file should include these sections in header comments:
 
-1. **@file** - File description and one-line summary
-2. **@brief** - Brief description of the file/module
-3. **@details** - What it does and does NOT do
-4. **@param** - Document each function parameter (if applicable)
-5. **@return** - Return value documentation
-6. **@note** - Important notes, constraints, sharp edges
-7. **@example** or **@code** - Minimum 1 concrete usage example
+1. 1. **@file** - File description and one-line summary 2. **@brief** - Brief description of the file/module 3.
+   **@details** - What it does and does NOT do 4. **@param** - Document each function parameter (if applicable) 5.
+   **@return** - Return value documentation 6. **@note** - Important notes, constraints, sharp edges 7. **@example** or
+   **@code** - Minimum 1 concrete usage example
 
 ### Optional Sections
 
-- **@platform** - Platform compatibility (OS, compiler requirements) - **Recommended**
-- **@author** - Author information
-- **@version** - Version information
-- **@date** - Last modified date
-- **@see** - References to related files/functions
-- **@warning** - Warnings about usage
-- **@bug** - Known bugs or limitations
+- - **@platform** - Platform compatibility (OS, compiler requirements) - **Recommended** - **@author** - Author
+  information - **@version** - Version information - **@date** - Last modified date - **@see** - References to related
+  files/functions - **@warning** - Warnings about usage - **@bug** - Known bugs or limitations
 
 ## Formatting Rules
 
@@ -120,7 +115,7 @@ int find_binary(const char *binary_name, char *result_path);
 2. **Doxygen markers**: Use `/**` for Doxygen comments (not `/*`)
 3. **@brief first**: Start function docs with `@brief`
 4. **@param direction**: Use `[in]`, `[out]`, `[in,out]` for parameters
-5. **@return**: Always document return values and meanings
+5. 5. **@return**: Always document return values and meanings
 6. **@note for constraints**: Use `@note` for important constraints
 7. **Exit codes in @details**: Document exit codes in file-level `@details`
 
@@ -368,8 +363,8 @@ doxygen
 - [Doxygen Manual](https://www.doxygen.nl/manual/)
 - [Doxygen Special Commands](https://www.doxygen.nl/manual/commands.html)
 - [Linux Kernel Doc Guidelines](https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html)
-- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
-- [README.md](./README.md) - Overview of docstring contracts
+- - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings - [README.md](./README.md) -
+  Overview of docstring contracts
 
 ## Status
 
@@ -377,8 +372,5 @@ doxygen
 
 To adopt this contract:
 
-1. Add C file patterns to validator
-2. Implement CValidator class
-3. Add test coverage
-4. Update README.md with C entry
-5. Mark as official (remove DRAFT status)
+1. 1. Add C file patterns to validator 2. Implement CValidator class 3. Add test coverage 4. Update README.md with C
+   entry 5. Mark as official (remove DRAFT status)

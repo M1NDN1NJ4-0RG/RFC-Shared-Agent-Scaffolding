@@ -1,34 +1,25 @@
 # Issue #278 - Python Annotation Inventory
 
-**Created:** 2026-01-07
-**Purpose:** Comprehensive inventory of Python files and current typing/linting state for Issue #278
+**Created:** 2026-01-07 **Purpose:** Comprehensive inventory of Python files and current typing/linting state for Issue
+#278
 
 ## Executive Summary
 
-- **Total Python files:** 84
-- **Product/library code:** 35 files (tools/repo_lint/*, scripts/docstring_validators/*)
-- **CLI/utility scripts:** 11 files (scripts/*.py, wrappers/python3/scripts/*.py)
-- **Tests:** 30 files (**/test_*.py, **/tests/*.py)
-- **Fixtures:** 8 files (intentional violations, test data)
+- - **Total Python files:** 84 - **Product/library code:** 35 files (tools/repo_lint/*, scripts/docstring_validators/*)
+  - **CLI/utility scripts:** 11 files (scripts/*.py, wrappers/python3/scripts/*.py) - **Tests:** 30 files (**/test_*.py,
+  **/tests/*.py) - **Fixtures:** 8 files (intentional violations, test data)
 
 ## Python Toolchain Versions
 
 ### Current Environment (2026-01-07)
 
-- **Python:** 3.12.12
-- **black:** 25.12.0
-- **ruff:** 0.14.10
-- **pylint:** 4.0.4
-- **astroid:** 4.0.3
+- - **Python:** 3.12.12 - **black:** 25.12.0 - **ruff:** 0.14.10 - **pylint:** 4.0.4 - **astroid:** 4.0.3
 
 ### CI/Pinned Versions (from pyproject.toml)
 
 Per `pyproject.toml` `[project.optional-dependencies]` `lint` section:
 
-- **black:** 24.10.0 (pinned)
-- **ruff:** 0.8.4 (pinned)
-- **pylint:** 3.3.2 (pinned)
-- **yamllint:** 1.35.1 (pinned)
+- - **black:** 24.10.0 (pinned) - **ruff:** 0.8.4 (pinned) - **pylint:** 3.3.2 (pinned) - **yamllint:** 1.35.1 (pinned)
 
 **Note:** Current environment has newer versions than pinned CI versions. This may cause inconsistencies.
 
@@ -204,9 +195,8 @@ ignore-paths = [
 
 **Python linters:**
 
-1. **black** (v24.10.0) - Code formatter (fix-capable)
-2. **ruff** (v0.8.4) - Fast linter replacing flake8/isort (fix-capable)
-3. **pylint** (v3.3.2) - Comprehensive code analyzer (check-only)
+1. 1. **black** (v24.10.0) - Code formatter (fix-capable) 2. **ruff** (v0.8.4) - Fast linter replacing flake8/isort
+   (fix-capable) 3. **pylint** (v3.3.2) - Comprehensive code analyzer (check-only)
 
 **Config location:** `pyproject.toml`
 
@@ -214,9 +204,8 @@ ignore-paths = [
 
 **Python docstring requirements:**
 
-- Public functions must have docstrings
-- Docstrings must include Purpose section
-- Docstrings should document parameters and return values
+- - Public functions must have docstrings - Docstrings must include Purpose section - Docstrings should document
+  parameters and return values
 - Use reST-style field lists (`:param:`, `:returns:`, `:raises:`)
 
 **Validator script:** `scripts/validate_docstrings.py`
@@ -293,19 +282,16 @@ disable = [
 **Canonical docs:**
 
 1. **`docs/contributing/docstring-contracts/python.md`** - Python docstring contract (PEP 257 + PEP 287 reST)
-   - Module-level docstrings required
+   - - Module-level docstrings required
    - reST field format (`:Purpose:`, `:Examples:`, `:Exit Codes:`, etc.)
    - Function docstrings with `:param:`, `:returns:`, `:raises:`
 
 2. **`docs/contributing/naming-and-style.md`** - Naming conventions
-   - Python section defines snake_case for functions/variables
-   - PascalCase for classes
-   - UPPER_SNAKE_CASE for constants
+   - - Python section defines snake_case for functions/variables - PascalCase for classes - UPPER_SNAKE_CASE for
+     constants
 
 3. **`pyproject.toml`** - Tool configurations
-   - Black, Ruff, Pylint settings
-   - Line length: 120
-   - Target: Python 3.8+
+   - - Black, Ruff, Pylint settings - Line length: 120 - Target: Python 3.8+
 
 4. **`conformance/repo-lint/repo-lint-linting-rules.yaml`** - Linting tool definitions
 5. **`conformance/repo-lint/repo-lint-docstring-rules.yaml`** - Docstring validation rules
@@ -314,9 +300,8 @@ disable = [
 
 ### PEP 526 Variable Annotations
 
-**Current state:** NOT enforced
-**Issue #278 requirement:** Enforce module-level and class attribute annotations (MANDATORY baseline)
-**Gap:** Need to add enforcement tooling
+**Current state:** NOT enforced **Issue #278 requirement:** Enforce module-level and class attribute annotations
+(MANDATORY baseline) **Gap:** Need to add enforcement tooling
 
 ### Function Annotations
 
@@ -346,28 +331,27 @@ disable = [
 
 Based on this inventory:
 
-1. **Enable Ruff ANN* rules** (flake8-annotations) for function/parameter annotations
-   - This is the PREFERRED path vs. custom AST checker (less custom code)
+1. 1. **Enable Ruff ANN* rules** (flake8-annotations) for function/parameter annotations - This is the PREFERRED path
+   vs. custom AST checker (less custom code)
    - Ruff supports `ANN001` (missing param annotation), `ANN201` (missing return annotation), etc.
 
 2. **Extend `scripts/docstring_validators/python_validator.py`** to check for `:rtype:`
-   - This validator already parses Python docstrings
+   - - This validator already parses Python docstrings
    - Add check: if function returns non-None, docstring MUST include `:rtype:`
 
-3. **PEP 526 enforcement:** Custom AST checker OR Ruff extension (TBD in Phase 3)
-   - Check module-level assignments
-   - Check class attributes
+3. 3. **PEP 526 enforcement:** Custom AST checker OR Ruff extension (TBD in Phase 3) - Check module-level assignments -
+   Check class attributes
    - Flag ambiguous empty literals (`{}`, `[]`, etc.) without annotations
 
 4. **Phase 3.4 migration:** Move `scripts/docstring_validators/*` into `tools/repo_lint/docstrings/`
-   - Consolidate as first-class repo-lint internal module
+   - - Consolidate as first-class repo-lint internal module
    - Remove subprocess dependency on `scripts/validate_docstrings.py`
 
 ## Next Steps
 
 Per Issue #278 Phase 0:
 
-- [x] Phase 0.1: Snapshot repo + tooling (COMPLETE)
-- [x] Phase 0.2: Inventory all Python files (COMPLETE - this document)
+- - [x] Phase 0.1: Snapshot repo + tooling (COMPLETE) - [x] Phase 0.2: Inventory all Python files (COMPLETE - this
+  document)
 
 **Next:** Phase 1 - Evaluate existing Python contracts and create current-violations baseline.

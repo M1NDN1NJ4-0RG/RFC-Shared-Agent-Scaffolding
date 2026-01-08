@@ -4,11 +4,8 @@
 
 This plan outlines a phased migration from `bootstrap-repo-lint-toolchain.sh` (Bash) to a modular Rust binary that preserves deterministic behavior while adding:
 
-- Parallel execution (where safe)
-- Rich progress UI
-- Structured logging
-- Better error handling
-- Easier tool addition/removal
+- - Parallel execution (where safe) - Rich progress UI - Structured logging - Better error handling - Easier tool
+  addition/removal
 
 **Target:** Self-contained binary with no external Bash dependency, backwards-compatible during transition.
 
@@ -343,16 +340,13 @@ pub fn build_dependency_graph(
 
 **Parallel-safe operations:**
 
-- Detection phase (read-only checks)
-- Independent tool downloads (different artifacts)
-- Version parsing (no side effects)
+- - Detection phase (read-only checks) - Independent tool downloads (different artifacts) - Version parsing (no side
+  effects)
 
 **Sequential-only operations:**
 
-- Virtual environment creation (filesystem race)
-- Package manager lock (apt/brew single-instance)
-- PATH mutations (shell environment ordering)
-- Installations with shared dependencies
+- - Virtual environment creation (filesystem race) - Package manager lock (apt/brew single-instance) - PATH mutations
+  (shell environment ordering) - Installations with shared dependencies
 
 **Implementation:**
 
@@ -450,10 +444,8 @@ where
 
 **Apply to:**
 
-- Package metadata refresh: YES (idempotent)
-- Artifact downloads: YES (idempotent)
-- apt/brew install: NO (lock conflicts, partial state)
-- Version detection: NO (fast, local)
+- - Package metadata refresh: YES (idempotent) - Artifact downloads: YES (idempotent) - apt/brew install: NO (lock
+  conflicts, partial state) - Version detection: NO (fast, local)
 
 ---
 
@@ -464,7 +456,7 @@ where
 **Library stack:**
 
 - `indicatif` for progress bars/spinners
-- Custom multi-line renderer for concurrent tasks
+- - Custom multi-line renderer for concurrent tasks
 
 ```rust
 pub struct ProgressReporter {
@@ -951,27 +943,19 @@ fi
 
 **Phase 1: Parallel development**
 
-- Develop Rust version with feature parity
-- Run both in CI for comparison
-- Fix behavioral differences
+- - Develop Rust version with feature parity - Run both in CI for comparison - Fix behavioral differences
 
 **Phase 2: Opt-in**
 
-- Make Rust version available
-- Document how to use it
-- Gather feedback
+- - Make Rust version available - Document how to use it - Gather feedback
 
 **Phase 3: Default**
 
-- Rust becomes default
-- Bash available as fallback
-- Monitor for issues
+- - Rust becomes default - Bash available as fallback - Monitor for issues
 
 **Phase 4: Deprecation**
 
-- Remove Bash fallback
-- Archive legacy script
-- Update all documentation
+- - Remove Bash fallback - Archive legacy script - Update all documentation
 
 ### 10.3 Behavioral Parity Testing
 
@@ -1047,57 +1031,34 @@ jobs:
 
 ### Explicit Non-Goals
 
-1. **Windows support in v1**
-   - Focus on macOS/Linux first
-   - Windows support is additive later
+1. 1. **Windows support in v1** - Focus on macOS/Linux first - Windows support is additive later
 
-2. **Plugin system**
-   - Static registry only
-   - No dynamic loading
-   - Simplifies distribution
+2. 2. **Plugin system** - Static registry only - No dynamic loading - Simplifies distribution
 
-3. **GUI interface**
-   - CLI only
-   - Rich TUI is acceptable
-   - No graphical desktop app
+3. 3. **GUI interface** - CLI only - Rich TUI is acceptable - No graphical desktop app
 
-4. **Parallel package manager calls**
-   - Too risky (lock conflicts)
-   - Keep package manager operations sequential
+4. 4. **Parallel package manager calls** - Too risky (lock conflicts) - Keep package manager operations sequential
 
 ### Constraints
 
-1. **Zero external runtime dependencies**
-   - Must work on fresh macOS/Linux
-   - No Ruby, Python, or Node required to run bootstrapper itself
+1. 1. **Zero external runtime dependencies** - Must work on fresh macOS/Linux - No Ruby, Python, or Node required to run
+   bootstrapper itself
 
-2. **Backwards compatibility**
-   - Must preserve all exit codes
-   - Must preserve CLI interface during transition
+2. 2. **Backwards compatibility** - Must preserve all exit codes - Must preserve CLI interface during transition
 
-3. **CI headless mode**
-   - Must work without TTY
-   - Must produce parseable logs
+3. 3. **CI headless mode** - Must work without TTY - Must produce parseable logs
 
 ---
 
 ## Success Metrics
 
-1. **Performance:**
-   - 30-50% faster than Bash (via parallelism)
-   - Measured in CI over 20 runs
+1. 1. **Performance:** - 30-50% faster than Bash (via parallelism) - Measured in CI over 20 runs
 
-2. **Reliability:**
-   - Zero flaky failures in CI
-   - All exit codes deterministic
+2. 2. **Reliability:** - Zero flaky failures in CI - All exit codes deterministic
 
-3. **Maintainability:**
-   - Adding new tool takes < 50 LOC
-   - No platform-specific bugs for 6 months
+3. 3. **Maintainability:** - Adding new tool takes < 50 LOC - No platform-specific bugs for 6 months
 
-4. **User Experience:**
-   - Live progress UI rated "clear" by 5+ users
-   - Doctor command resolves 80%+ of issues
+4. 4. **User Experience:** - Live progress UI rated "clear" by 5+ users - Doctor command resolves 80%+ of issues
 
 ---
 
@@ -1107,33 +1068,26 @@ jobs:
 
 **Mitigation:**
 
-- Comprehensive parity tests
-- Run both versions in CI
-- Document all intentional differences
+- - Comprehensive parity tests - Run both versions in CI - Document all intentional differences
 
 ### Risk: Performance Regression
 
 **Mitigation:**
 
-- Benchmark every PR
-- Profile to find bottlenecks
-- Have "fast" CI profile for quick feedback
+- - Benchmark every PR - Profile to find bottlenecks - Have "fast" CI profile for quick feedback
 
 ### Risk: Platform-Specific Bugs
 
 **Mitigation:**
 
-- Test matrix: macOS x Linux x (Homebrew|apt|snap)
-- Virtualized test environments
-- User beta testing program
+- - Test matrix: macOS x Linux x (Homebrew|apt|snap) - Virtualized test environments - User beta testing program
 
 ### Risk: Maintenance Burden During Transition
 
 **Mitigation:**
 
-- Minimize changes to Bash during Rust development
-- Feature freeze Bash once Rust reaches parity
-- Time-boxed transition (6 months max)
+- - Minimize changes to Bash during Rust development - Feature freeze Bash once Rust reaches parity - Time-boxed
+  transition (6 months max)
 
 ---
 
@@ -1141,23 +1095,18 @@ jobs:
 
 **Optimistic (1 developer, full-time):**
 
-- Phase 1-2 (Core): 2 weeks
-- Phase 3-4 (Concurrency): 1 week
-- Phase 5 (UI): 1 week
-- Phase 6-7 (Config/Features): 1 week
-- Phase 8-9 (Platform/Diagnostics): 1 week
-- Phase 10 (Migration): 2 weeks
-- Testing/Polish: 2 weeks
+- - Phase 1-2 (Core): 2 weeks - Phase 3-4 (Concurrency): 1 week - Phase 5 (UI): 1 week - Phase 6-7 (Config/Features): 1
+  week - Phase 8-9 (Platform/Diagnostics): 1 week - Phase 10 (Migration): 2 weeks - Testing/Polish: 2 weeks
 
 **Total: ~10 weeks**
 
 **Realistic (1 developer, part-time):**
 
-- 20-24 weeks
+- - 20-24 weeks
 
 **Conservative (accounting for unknowns):**
 
-- 6 months to production-ready
+- - 6 months to production-ready
 
 ---
 
@@ -1249,8 +1198,6 @@ impl Installer for RipgrepInstaller {
 
 ### Appendix C: Open Questions
 
-1. Should we support user-defined installer plugins (future)?
-2. How to handle version downgrades (disallow? warn?)?
-3. Should cache be per-user or per-repo?
-4. How aggressive should parallel downloads be (respect bandwidth)?
-5. Should we vendor dependencies for fully offline builds?
+1. 1. Should we support user-defined installer plugins (future)? 2. How to handle version downgrades (disallow? warn?)?
+   3. Should cache be per-user or per-repo? 4. How aggressive should parallel downloads be (respect bandwidth)? 5.
+   Should we vendor dependencies for fully offline builds?

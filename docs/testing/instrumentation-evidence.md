@@ -16,7 +16,7 @@
 **Setup:**
 
 - Copied bash wrapper to `/tmp/tmp.GWi3ha9zcq/safe-run-test.sh`
-- Changed working directory to temp directory (outside repo)
+- - Changed working directory to temp directory (outside repo)
 - Set `SAFE_RUN_BIN` to point to Rust binary
 
 **Command:**
@@ -29,16 +29,15 @@ bash ./safe-run-test.sh echo "test from temp"
 
 **Result:** ✅ PASS
 
-- Exit code: 0
+- - Exit code: 0
 - Output: `test from temp`
-- **Evidence:** Bash wrapper correctly uses SAFE_RUN_BIN regardless of working directory
+- - **Evidence:** Bash wrapper correctly uses SAFE_RUN_BIN regardless of working directory
 
 ### Test 1b: Bash wrapper without SAFE_RUN_BIN, from outside repo
 
 **Setup:**
 
-- Bash wrapper in temp directory (outside repo)
-- Changed working directory to temp directory
+- - Bash wrapper in temp directory (outside repo) - Changed working directory to temp directory
 - `SAFE_RUN_BIN` not set
 
 **Command:**
@@ -51,17 +50,16 @@ bash ./safe-run-test.sh echo "test"
 
 **Result:** ✅ PASS
 
-- Exit code: 127 (command not found)
-- Error message: "Rust canonical tool not found"
-- **Evidence:** Bash wrapper correctly fails with exit 127 and actionable error when binary cannot be found
+- - Exit code: 127 (command not found) - Error message: "Rust canonical tool not found" - **Evidence:** Bash wrapper
+  correctly fails with exit 127 and actionable error when binary cannot be found
 
 ### Test 1c: Bash wrapper from within repo
 
 **Setup:**
 
-- Working directory in repo root
+- - Working directory in repo root
 - `SAFE_RUN_BIN` not set
-- Relies on repo root detection
+- - Relies on repo root detection
 
 **Command:**
 
@@ -73,9 +71,9 @@ bash ./wrappers/bash/scripts/safe-run.sh echo "test from repo"
 
 **Result:** ✅ PASS
 
-- Exit code: 0
+- - Exit code: 0
 - Output: `test from repo`
-- **Evidence:** Bash wrapper successfully finds binary via repo root detection (walks up from script location)
+- - **Evidence:** Bash wrapper successfully finds binary via repo root detection (walks up from script location)
 
 ### PowerShell Comparison
 
@@ -83,9 +81,8 @@ bash ./wrappers/bash/scripts/safe-run.sh echo "test from repo"
 
 **Impact:**
 
-- PowerShell wrapper requires being invoked from within repo working directory
-- Bash/Perl/Python3 work from any working directory as long as wrapper script is in repo structure
-- **This is a P0 CRITICAL inconsistency**
+- - PowerShell wrapper requires being invoked from within repo working directory - Bash/Perl/Python3 work from any
+  working directory as long as wrapper script is in repo structure - **This is a P0 CRITICAL inconsistency**
 
 **Conclusion:** PowerShell wrapper needs to be fixed to walk up from script location, not working directory.
 
@@ -200,7 +197,7 @@ wrapper_script bash -c "exit N"
 **Setup:**
 
 - Set `SAFE_LOG_DIR=/tmp/custom_logs`
-- Run failing command to trigger log creation
+- - Run failing command to trigger log creation
 - Verify log appears in custom directory, not default `.agent/FAIL-LOGS/`
 
 **Test Command:**
@@ -242,28 +239,22 @@ wrapper_script bash -c "echo test; exit 1"
 
 ### Vectors Successfully Reproduced
 
-1. ✅ **Vector 1 (Repo root detection):** Bash wrapper works correctly, PowerShell uses different strategy
-2. ✅ **Vector 3 (Exit code propagation):** All Unix wrappers forward exit codes correctly
-3. ✅ **Vector 4 (Argument quoting):** All Unix wrappers handle edge cases correctly
-4. ✅ **Vector 9 (Env var inheritance):** All Unix wrappers inherit environment variables
+1. 1. ✅ **Vector 1 (Repo root detection):** Bash wrapper works correctly, PowerShell uses different strategy 2. ✅
+   **Vector 3 (Exit code propagation):** All Unix wrappers forward exit codes correctly 3. ✅ **Vector 4 (Argument
+   quoting):** All Unix wrappers handle edge cases correctly 4. ✅ **Vector 9 (Env var inheritance):** All Unix wrappers
+   inherit environment variables
 
 ### Critical Findings
 
-1. **Bash, Perl, Python3 wrappers are contract-compliant** for all tested vectors
-2. **PowerShell wrapper has known issues:**
-   - Uses working directory instead of script location for repo root detection
-   - Exit code handling needs verification on Windows
-   - Platform variable availability needs PS 5.1 compatibility
+1. 1. **Bash, Perl, Python3 wrappers are contract-compliant** for all tested vectors 2. **PowerShell wrapper has known
+   issues:** - Uses working directory instead of script location for repo root detection - Exit code handling needs
+   verification on Windows - Platform variable availability needs PS 5.1 compatibility
 3. **All Unix wrappers use `exec` or equivalent**, which automatically provides:
-   - Correct exit code forwarding
-   - Environment variable inheritance
-   - No wrapper process overhead
+   - - Correct exit code forwarding - Environment variable inheritance - No wrapper process overhead
 
 ### Next Steps
 
-1. **Fix PowerShell wrapper issues:**
-   - Change repo root detection to use script location (like other wrappers)
-   - Verify exit code handling on Windows CI
-   - Add PS 5.1 compatibility for platform detection
-2. **Add conformance tests** for these vectors to prevent future drift
-3. **Run full test suite** on Windows CI to validate PowerShell fixes
+1. 1. **Fix PowerShell wrapper issues:** - Change repo root detection to use script location (like other wrappers) -
+   Verify exit code handling on Windows CI - Add PS 5.1 compatibility for platform detection 2. **Add conformance
+   tests** for these vectors to prevent future drift 3. **Run full test suite** on Windows CI to validate PowerShell
+   fixes

@@ -146,11 +146,10 @@ Only canonical files remain at root:
 
 After this PR is merged:
 
-1. Start new PR for M2 - Wrapper Directory Refactor
+1. 1. Start new PR for M2 - Wrapper Directory Refactor
 2. Rename `RFC-Shared-Agent-Scaffolding-Example/` → `wrappers/`
 3. Extract agent-methodology docs (`.docs/`, `CLAUDE.md`)
-4. Update all 166 references to old wrapper directory path
-5. Update CI workflows and test harness
+4. 4. Update all 166 references to old wrapper directory path 5. Update CI workflows and test harness
 
 ---
 
@@ -158,15 +157,14 @@ After this PR is merged:
 
 **Total changes:** 34 files
 
-- 33 files renamed/moved
+- - 33 files renamed/moved
 - 1 file created (`docs/README.md`)
 - 1 directory removed (`documents/`)
-- 3 files modified (updated references)
+- - 3 files modified (updated references)
 
 **All changes committed with:**
 
-- M0: Add reference validation helper script
-- M1 P1-P2: Migrate documents/ to docs/ and move historical files
+- - M0: Add reference validation helper script - M1 P1-P2: Migrate documents/ to docs/ and move historical files
 
 ---
 
@@ -177,8 +175,7 @@ After this PR is merged:
 ✅ All Markdown links updated and validated
 ✅ `docs/` taxonomy created with clear categories
 ✅ Documentation index (`docs/README.md`) created
-✅ All file names standardized to kebab-case
-✅ Git history preserved for all moved files
-✅ No functional/behavioral changes
+✅ All file names standardized to kebab-case ✅ Git history preserved for all moved files ✅ No functional/behavioral
+changes
 
 **M1 Status: COMPLETE** ✅

@@ -8,7 +8,7 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 
 ## NEXT
 
-- All phases complete (0-6)
+- - All phases complete (0-6)
 
 ---
 
@@ -24,62 +24,43 @@ Related: Issue 231, PR copilot/add-actionlint-to-bootstrapper
 **Phase 6.1: Bootstrap Script Analysis**
 Produced comprehensive technical analysis covering:
 
-- Control flow architecture and function call graph
-- All 22 exit codes documented with triggers and patterns
-- Fail-fast mechanisms (run_or_die, try_run, safe_version, set -euo pipefail interactions)
-- Toolchain installation strategies per platform/package manager
-- Virtual environment strict activation validation
-- Verification gate two-phase semantics (doctor + check)
-- Edge cases: network, permissions, concurrency, PATH mutations, shell assumptions
-- Security: command injection mitigations, temp cleanup, version pinning, supply chain
-- Testing strategy and coverage gaps
-- Performance: sequential execution, bottlenecks, optimization opportunities
-- Maintenance burden: high-touch areas, complexity drivers, technical debt
-- Migration readiness: what to preserve, what to improve, migration risks
+- - Control flow architecture and function call graph - All 22 exit codes documented with triggers and patterns -
+  Fail-fast mechanisms (run_or_die, try_run, safe_version, set -euo pipefail interactions) - Toolchain installation
+  strategies per platform/package manager - Virtual environment strict activation validation - Verification gate
+  two-phase semantics (doctor + check) - Edge cases: network, permissions, concurrency, PATH mutations, shell
+  assumptions - Security: command injection mitigations, temp cleanup, version pinning, supply chain - Testing strategy
+  and coverage gaps - Performance: sequential execution, bottlenecks, optimization opportunities - Maintenance burden:
+  high-touch areas, complexity drivers, technical debt - Migration readiness: what to preserve, what to improve,
+  migration risks
 
 **Phase 6.2: Rust Migration Plan**
 Produced detailed 11-phase migration plan (29KB):
 
-- Phase 1: Core infrastructure (CLI framework, exit codes, error hierarchy)
-- Phase 2: Installer registry & trait (async trait, static registry, dependency resolution)
-- Phase 3: Execution plan & dependency graph (topological sort, skip detection)
-- Phase 4: Concurrency strategy (parallel-safe operations, retry w/ backoff, jitter)
-- Phase 5: Rich progress UI (indicatif, multi-task display, TTY vs CI vs JSON modes)
-- Phase 6: Configuration & profiles (TOML config, profile resolution, version policy)
-- Phase 7: Dry-run & checkpointing (preview mode, resume capability, state invalidation)
-- Phase 8: Platform abstractions (package manager trait, OS detection)
-- Phase 9: Self-diagnostics (doctor command, support bundle generation)
-- Phase 10: Migration strategy (Bash wrapper, phased rollout, parity testing)
-- Phase 11: Build & distribution (static binaries, CI integration)
+- - Phase 1: Core infrastructure (CLI framework, exit codes, error hierarchy) - Phase 2: Installer registry & trait
+  (async trait, static registry, dependency resolution) - Phase 3: Execution plan & dependency graph (topological sort,
+  skip detection) - Phase 4: Concurrency strategy (parallel-safe operations, retry w/ backoff, jitter) - Phase 5: Rich
+  progress UI (indicatif, multi-task display, TTY vs CI vs JSON modes) - Phase 6: Configuration & profiles (TOML config,
+  profile resolution, version policy) - Phase 7: Dry-run & checkpointing (preview mode, resume capability, state
+  invalidation) - Phase 8: Platform abstractions (package manager trait, OS detection) - Phase 9: Self-diagnostics
+  (doctor command, support bundle generation) - Phase 10: Migration strategy (Bash wrapper, phased rollout, parity
+  testing) - Phase 11: Build & distribution (static binaries, CI integration)
 
 **Advanced features specified:**
 
-- Parallel execution where safe (detection, independent downloads)
-- Retry + exponential backoff with jitter (network operations only)
-- Constantly-updating multi-task progress UI
-- Deterministic execution plans with dependency graphs
-- Dry-run mode (no system changes)
-- Resume from checkpoints
-- Caching strategy (downloads, metadata)
-- Multiple output modes (human, JSON, CI)
-- Security hardening (supply chain, least privilege)
-- Configuration profiles (minimal/dev/ci/full)
-- Tool version policy (pinning vs minimum versions)
-- Self-diagnostics bundle for debugging
+- - Parallel execution where safe (detection, independent downloads) - Retry + exponential backoff with jitter (network
+  operations only) - Constantly-updating multi-task progress UI - Deterministic execution plans with dependency graphs -
+  Dry-run mode (no system changes) - Resume from checkpoints - Caching strategy (downloads, metadata) - Multiple output
+  modes (human, JSON, CI) - Security hardening (supply chain, least privilege) - Configuration profiles
+  (minimal/dev/ci/full) - Tool version policy (pinning vs minimum versions) - Self-diagnostics bundle for debugging
 
 **Timeline estimates:**
 
-- Optimistic: 10 weeks (full-time)
-- Realistic: 20-24 weeks (part-time)
-- Conservative: 6 months (with unknowns)
+- - Optimistic: 10 weeks (full-time) - Realistic: 20-24 weeks (part-time) - Conservative: 6 months (with unknowns)
 
 **Deliverable quality:**
 
-- Analysis: 10.9KB of technical depth
-- Migration plan: 29.1KB with concrete code examples
-- Non-goals explicitly stated
-- Risks identified with mitigations
-- Success metrics defined
+- - Analysis: 10.9KB of technical depth - Migration plan: 29.1KB with concrete code examples - Non-goals explicitly
+  stated - Risks identified with mitigations - Success metrics defined
 
 **ALL PHASES NOW COMPLETE (0-6)**
 
@@ -96,49 +77,34 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Phase 3: Verification & Hardening**
 
-- Added test coverage for ripgrep exit code 21
-- Test verifies exit code 21 is documented and used correctly
-- All 26 tests pass including new ripgrep test
-- End-to-end verification on Linux: pass
-- actionlint v1.7.10: functional
-- ripgrep 14.1.0: enforced as required
+- - Added test coverage for ripgrep exit code 21 - Test verifies exit code 21 is documented and used correctly - All 26
+  tests pass including new ripgrep test - End-to-end verification on Linux: pass - actionlint v1.7.10: functional -
+  ripgrep 14.1.0: enforced as required
 
 **Phase 4: Documentation Updates**
 
-- Updated "What Gets Installed" section:
-  - Changed ripgrep description from "falls back to grep" to "REQUIRED - no fallback"
-  - Added actionlint version (v1.7.10)
-- Updated "Verifying Setup" section:
+- - Updated "What Gets Installed" section: - Changed ripgrep description from "falls back to grep" to "REQUIRED - no
+  fallback" - Added actionlint version (v1.7.10) - Updated "Verifying Setup" section:
   - Added `rg --version` verification command
-- Documentation now accurately reflects actual behavior
+- - Documentation now accurately reflects actual behavior
 
 **Phase 5: Final Verification**
 
-- Bootstrap: exit 0 ✅
-- repo-lint check --ci: exit 0 ✅
-- All 15 linters pass ✅
-- Behavior stable and CI-ready
+- - Bootstrap: exit 0 ✅ - repo-lint check --ci: exit 0 ✅ - All 15 linters pass ✅ - Behavior stable and CI-ready
 
 **Summary of All Completed Work:**
 
-- Phase 0: Manual rename ✅
-- Phase 1: Fail-fast helpers ✅
-- Phase 2: All 8 hardening items ✅
-- Phase 3: Verification + tests ✅
-- Phase 4: Documentation ✅
-- Phase 5: Final verification ✅
+- - Phase 0: Manual rename ✅ - Phase 1: Fail-fast helpers ✅ - Phase 2: All 8 hardening items ✅ - Phase 3: Verification +
+  tests ✅ - Phase 4: Documentation ✅ - Phase 5: Final verification ✅
 
 **Remaining:**
 
-- Phase 6: Script analysis and Rust migration plan (deferred to future work)
+- - Phase 6: Script analysis and Rust migration plan (deferred to future work)
 
 **Verification:**
 
-- Bootstrap: exit 0
-- repo-lint check: exit 0
-- Tests: 26/26 pass
-- ShellCheck: clean
-- Documentation: accurate and complete
+- - Bootstrap: exit 0 - repo-lint check: exit 0 - Tests: 26/26 pass - ShellCheck: clean - Documentation: accurate and
+  complete
 
 ---
 
@@ -150,41 +116,31 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Fixed verification gate to accept doctor exit code 1 (config issues but tools functional)
-  - Exit code 0: Perfect health (pass)
-  - Exit code 1: Config/path issues but tools functional (acceptable - warning logged)
-  - Exit code 2+: Critical toolchain failures (fatal)
-- Verified ShellCheck SC2155 already resolved (lines 1060-1061: declare/assign separate)
-- Bootstrap and repo-lint check both pass (exit 0)
+- - Fixed verification gate to accept doctor exit code 1 (config issues but tools functional) - Exit code 0: Perfect
+  health (pass) - Exit code 1: Config/path issues but tools functional (acceptable - warning logged) - Exit code 2+:
+  Critical toolchain failures (fatal) - Verified ShellCheck SC2155 already resolved (lines 1060-1061: declare/assign
+  separate) - Bootstrap and repo-lint check both pass (exit 0)
 
 **Phase 3 Verification:**
 
-- End-to-end bootstrap tested on Linux environment ✅
-- actionlint installed and functional: v1.7.10 ✅
-- ripgrep enforced as required: exit 21 on failure ✅
-- shellcheck: clean (no warnings) ✅
-- All 15 linters pass ✅
+- - End-to-end bootstrap tested on Linux environment ✅ - actionlint installed and functional: v1.7.10 ✅ - ripgrep
+  enforced as required: exit 21 on failure ✅ - shellcheck: clean (no warnings) ✅ - All 15 linters pass ✅
 
 **Rationale:**
 
-- repo-lint doctor exit code 1 indicates config/path mismatches (e.g., expected .venv-lint vs actual .venv)
-- These are acceptable for bootstrap verification - tools are installed and functional
-- Critical failures (missing tools, broken installations) use exit code 2+
-- Mirrors the same logic used for repo-lint check --ci (exit 1 = violations but tools work)
+- - repo-lint doctor exit code 1 indicates config/path mismatches (e.g., expected .venv-lint vs actual .venv) - These
+  are acceptable for bootstrap verification - tools are installed and functional - Critical failures (missing tools,
+  broken installations) use exit code 2+ - Mirrors the same logic used for repo-lint check --ci (exit 1 = violations but
+  tools work)
 
 **Verification:**
 
-- Bootstrap: exit 0 (pass)
-- repo-lint check --ci: exit 0 (all 15 runners pass)
-- actionlint -version: v1.7.10
-- rg --version: ripgrep 14.1.0
-- shellcheck scripts/bootstrap-repo-lint-toolchain.sh: exit 0 (clean)
+- - Bootstrap: exit 0 (pass) - repo-lint check --ci: exit 0 (all 15 runners pass) - actionlint -version: v1.7.10 - rg
+  --version: ripgrep 14.1.0 - shellcheck scripts/bootstrap-repo-lint-toolchain.sh: exit 0 (clean)
 
 **Next Steps:**
 
-- Additional Phase 3 verification if needed
-- Update fixtures/tests for new exit codes
-- Begin Phase 4-6 work
+- - Additional Phase 3 verification if needed - Update fixtures/tests for new exit codes - Begin Phase 4-6 work
 
 ---
 
@@ -197,71 +153,45 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Phase 2.3: PowerShell Install Hardening (Commit 15d6f6a)**
 
-- Wrapped 6 PowerShell installation steps with run_or_die for exit 17:
-  - apt-get update (prereqs)
-  - apt-get install prerequisites
-  - wget Microsoft repo package
-  - dpkg install
-  - apt-get update (post-repo)
-  - apt-get install powershell
-- Added trap cleanup for packages-microsoft-prod.deb (lines 1056-1069)
-- Trap ensures no leftover .deb file on failure
-- Error messages show URL and specific failing step
-- Homebrew install also wrapped with run_or_die
+- - Wrapped 6 PowerShell installation steps with run_or_die for exit 17: - apt-get update (prereqs) - apt-get install
+  prerequisites - wget Microsoft repo package - dpkg install - apt-get update (post-repo) - apt-get install powershell -
+  Added trap cleanup for packages-microsoft-prod.deb (lines 1056-1069) - Trap ensures no leftover .deb file on failure -
+  Error messages show URL and specific failing step - Homebrew install also wrapped with run_or_die
 
 **Phase 2.4: Perl cpanm Failure Aggregation (Commit 15d6f6a)**
 
-- Wrapped cpanm calls in if-statements (lines 1235-1257)
-- Prevents set -e from short-circuiting error collection
-- Failures append to failed_tools[] array
-- Script continues attempting all installs
-- Final check prints manual remediation hints
-- Deterministic exit 18 on any failure
+- - Wrapped cpanm calls in if-statements (lines 1235-1257) - Prevents set -e from short-circuiting error collection -
+  Failures append to failed_tools[] array - Script continues attempting all installs - Final check prints manual
+  remediation hints - Deterministic exit 18 on any failure
 
 **Phase 2.6: Ripgrep Required with Exit 21 (Commit 15d6f6a)**
 
-- Changed ripgrep from "optional with fallback" to REQUIRED
-- All install steps wrapped with run_or_die for exit 21
-- apt-get update and install both wrapped
-- Homebrew install wrapped
-- Added exit code 21 to script header documentation
-- Added exit code 21 to bootstrapper manual
-- Clear error messages with platform-specific remediation
-- No more silent grep fallback
+- - Changed ripgrep from "optional with fallback" to REQUIRED - All install steps wrapped with run_or_die for exit 21 -
+  apt-get update and install both wrapped - Homebrew install wrapped - Added exit code 21 to script header documentation
+  - Added exit code 21 to bootstrapper manual - Clear error messages with platform-specific remediation - No more silent
+  grep fallback
 
 **Phase 2.7: Verification Gate Hardening (Commit d689ef1)**
 
-- Added repo-lint doctor as primary toolchain self-test (line 1403)
-- Runs before repo-lint check --ci
-- Doctor exit non-zero = toolchain failure (die with exit 19)
-- Prevents misclassifying operational errors as violations
-- Doctor pass + check pass/violations = success
-- Clear distinction between doctor failures and check results
+- - Added repo-lint doctor as primary toolchain self-test (line 1403) - Runs before repo-lint check --ci - Doctor exit
+  non-zero = toolchain failure (die with exit 19) - Prevents misclassifying operational errors as violations - Doctor
+  pass + check pass/violations = success - Clear distinction between doctor failures and check results
 
 **Summary of All Phase 2 Items:**
 
-- 2.1 ✅ Venv activation fatal (exit 11)
-- 2.2 ✅ Pip upgrade wrapped (exit 13)
-- 2.3 ✅ PowerShell + trap (exit 17)
-- 2.4 ✅ Perl cpanm aggregation (exit 18)
-- 2.5 ✅ Shell version parsing safe
-- 2.6 ✅ Ripgrep required (exit 21)
-- 2.7 ✅ Verification doctor (exit 19)
-- 2.8 ✅ Actionlint wrapped (exit 20)
+- - 2.1 ✅ Venv activation fatal (exit 11) - 2.2 ✅ Pip upgrade wrapped (exit 13) - 2.3 ✅ PowerShell + trap (exit 17) -
+  2.4 ✅ Perl cpanm aggregation (exit 18) - 2.5 ✅ Shell version parsing safe - 2.6 ✅ Ripgrep required (exit 21) - 2.7 ✅
+  Verification doctor (exit 19) - 2.8 ✅ Actionlint wrapped (exit 20)
 
 **Verification:**
 
-- shellcheck passed (one SC2155 warning acceptable)
-- All changes use run_or_die for deterministic exit codes
-- Error messages clear and actionable
-- No silent failures remain in Phase 2 scope
+- - shellcheck passed (one SC2155 warning acceptable) - All changes use run_or_die for deterministic exit codes - Error
+  messages clear and actionable - No silent failures remain in Phase 2 scope
 
 **Next Steps:**
 
-- Phase 3: Consistency pass
-- Phase 4: Documentation updates
-- Phase 5: Verification and tests
-- Phase 6: Analysis and Rust migration plan
+- - Phase 3: Consistency pass - Phase 4: Documentation updates - Phase 5: Verification and tests - Phase 6: Analysis and
+  Rust migration plan
 
 ---
 
@@ -273,34 +203,30 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Phase 2.8-A: Wrapped all actionlint install steps with run_or_die for deterministic exit code 20
+- - Phase 2.8-A: Wrapped all actionlint install steps with run_or_die for deterministic exit code 20
   - Line 1318: Wrapped Homebrew install - `run_or_die 20 "Failed to install actionlint via Homebrew" brew install actionlint`
   - Line 1339: Wrapped apt-get update - `run_or_die 20 "Failed to update apt repositories for Go installation" sudo apt-get update -qq`
   - Line 1340: Wrapped golang-go install - `run_or_die 20 "Failed to install golang-go via apt-get" sudo apt-get install -y golang-go`
   - Line 1360: Wrapped go install - `run_or_die 20 "Failed to install actionlint via go install" go install github.com/rhysd/actionlint/cmd/actionlint@v1.7.10`
-- Phase 2.8-B: Improved PATH error messaging when actionlint not found after install
+- - Phase 2.8-B: Improved PATH error messaging when actionlint not found after install
   - Changed error message to show expected location: `$HOME/go/bin/actionlint`
-  - Shows explicit PATH export command users should run
-  - Clearer verification instructions
-- Consistency improvement: All actionlint version parsing now uses safe_version()
+  - - Shows explicit PATH export command users should run - Clearer verification instructions - Consistency improvement:
+    All actionlint version parsing now uses safe_version()
   - Lines 1310, 1321, 1367: Changed from `actionlint -version 2>&1 | head -n 1` to `safe_version "actionlint -version"`
-  - Eliminates 3 more fragile version parsing pipelines
+  - - Eliminates 3 more fragile version parsing pipelines
 
 **Rationale:**
 
-- All external commands that can fail now exit via die() with exit code 20
-- Prevents random apt-get/go install exit codes from propagating
-- Ensures failures are deterministic and clear
-- Better user guidance when PATH issues occur
+- - All external commands that can fail now exit via die() with exit code 20 - Prevents random apt-get/go install exit
+  codes from propagating - Ensures failures are deterministic and clear - Better user guidance when PATH issues occur
 
 **Verification:**
 
-- shellcheck passed (exit 0)
-- shfmt passed (exit 0)
+- - shellcheck passed (exit 0) - shfmt passed (exit 0)
 
 **Next Steps:**
 
-- Phase 2.3, 2.4, 2.6, 2.7 remaining
+- - Phase 2.3, 2.4, 2.6, 2.7 remaining
 
 ---
 
@@ -312,16 +238,16 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Addressed code review security concern about variable expansion in safe_version() calls
+- - Addressed code review security concern about variable expansion in safe_version() calls
 - Refactored Python tools version parsing from pattern `safe_version "$tool --version"` to explicit case branches
-- Changed from:
+- - Changed from:
 
   ```bash
   black | ruff | pylint | yamllint)
       version=$(safe_version "$tool --version")
   ```
 
-- To:
+- - To:
 
   ```bash
   black)
@@ -338,21 +264,18 @@ Produced detailed 11-phase migration plan (29KB):
       ;;
   ```
 
-- Now fully consistent with safe_version() security documentation: "Only use with trusted tool version commands"
-- Eliminates potential for accidental variable-expansion command injection pattern
+- - Now fully consistent with safe_version() security documentation: "Only use with trusted tool version commands" -
+  Eliminates potential for accidental variable-expansion command injection pattern
 
 **Rationale:**
 
-- Prevents this usage pattern from being copied with untrusted variables
-- Makes code explicitly safe and consistent with security guidelines
-- Each command is now hardcoded and visible in the source
+- - Prevents this usage pattern from being copied with untrusted variables - Makes code explicitly safe and consistent
+  with security guidelines - Each command is now hardcoded and visible in the source
 
 **Verification:**
 
-- shellcheck passed (exit 0)
-- shfmt passed (exit 0)
-- Bootstrap passed (exit 0)
-- repo-lint check --ci passed (exit 0)
+- - shellcheck passed (exit 0) - shfmt passed (exit 0) - Bootstrap passed (exit 0) - repo-lint check --ci passed (exit
+  0)
 
 ---
 
@@ -364,31 +287,29 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Phase 2.5: Replaced all fragile version parsing pipelines with safe_version() helper
+- - Phase 2.5: Replaced all fragile version parsing pipelines with safe_version() helper
   - Python tools (black, ruff, pylint, yamllint, pytest): Changed from `$tool --version 2>&1 | head -n1` to `safe_version "$tool --version"`
   - ripgrep: Changed from `rg --version | head -n1` to `safe_version "rg --version"`
   - shellcheck (3 locations): Changed from `shellcheck --version | grep "^version:" | awk '{print $2}'` to `safe_version "shellcheck --version" "^version:" 2`
   - PowerShell (3 locations): Changed from `pwsh --version 2>&1 | head -n1` to `safe_version "pwsh --version"`
-  - All version parsing now uses the safe_version() helper introduced in Phase 1.3
-  - Version parsing failures can no longer terminate the bootstrap (pipefail-safe)
-  - Empty string returned on parse failure rather than script termination
+  - - All version parsing now uses the safe_version() helper introduced in Phase 1.3 - Version parsing failures can no
+    longer terminate the bootstrap (pipefail-safe) - Empty string returned on parse failure rather than script
+    termination
 
 **Rationale:**
 
-- Prevents fragile logging pipelines from killing the bootstrap run
-- Makes the script more robust - version display is informational, not critical
-- Uses the safe_version() helper function that ensures exit 0 even on parse failures
-- Addresses Phase 2.5 requirement: "Logging cannot terminate bootstrap"
+- - Prevents fragile logging pipelines from killing the bootstrap run - Makes the script more robust - version display
+  is informational, not critical - Uses the safe_version() helper function that ensures exit 0 even on parse failures -
+  Addresses Phase 2.5 requirement: "Logging cannot terminate bootstrap"
 
 **Verification:**
 
-- shellcheck passed (exit 0)
-- shfmt passed (exit 0, no formatting needed)
-- All 9 version parsing call sites updated consistently
+- - shellcheck passed (exit 0) - shfmt passed (exit 0, no formatting needed) - All 9 version parsing call sites updated
+  consistently
 
 **Next Steps:**
 
-- Continue with Phase 2.3, 2.4, 2.6, 2.7, 2.8 as time permits
+- - Continue with Phase 2.3, 2.4, 2.6, 2.7, 2.8 as time permits
 
 ---
 
@@ -401,30 +322,24 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Review Comment 1: Updated exit code 11 description in manual
-  - Changed from "Virtual environment creation failed"
-  - To: "Virtual environment creation or activation failed"
-  - Accurately reflects Phase 2.1 changes where activation mismatch now dies with exit 11
-- Review Comment 2: Added security documentation to safe_version()
-  - Added SECURITY warning in docstring (lines 268-271)
-  - Clarified that $1 must be a trusted tool command, not untrusted input
-  - Added inline comment at $cmd execution warning about direct execution
-  - Function is only called with known tool version commands (shellcheck, actionlint, etc.)
-- Review Comment 3: Documented exit code 13 decision for pip upgrade
-  - Added durable note explaining why pip upgrade uses exit code 13 (lines 658-661)
-  - Rationale: pip upgrade is part of repo-lint installation process
-  - Error message is clear, separate exit code not necessary
-  - Maintains consistency with existing exit code scheme
+- - Review Comment 1: Updated exit code 11 description in manual - Changed from "Virtual environment creation failed" -
+  To: "Virtual environment creation or activation failed" - Accurately reflects Phase 2.1 changes where activation
+  mismatch now dies with exit 11 - Review Comment 2: Added security documentation to safe_version() - Added SECURITY
+  warning in docstring (lines 268-271) - Clarified that $1 must be a trusted tool command, not untrusted input - Added
+  inline comment at $cmd execution warning about direct execution - Function is only called with known tool version
+  commands (shellcheck, actionlint, etc.) - Review Comment 3: Documented exit code 13 decision for pip upgrade - Added
+  durable note explaining why pip upgrade uses exit code 13 (lines 658-661) - Rationale: pip upgrade is part of
+  repo-lint installation process - Error message is clear, separate exit code not necessary - Maintains consistency with
+  existing exit code scheme
 
 **Verification:**
 
-- shellcheck passed (exit 0)
-- shfmt passed (exit 0, no formatting changes needed)
-- All review comments addressed per session compliance requirements
+- - shellcheck passed (exit 0) - shfmt passed (exit 0, no formatting changes needed) - All review comments addressed per
+  session compliance requirements
 
 **Next Steps:**
 
-- Continue with remaining Phase 2 work or move to Phase 3-6
+- - Continue with remaining Phase 2 work or move to Phase 3-6
 
 ---
 
@@ -436,25 +351,22 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Phase 2.1: Made venv activation mismatch fatal instead of warn-only
-  - Changed lines 587-589 from warn() calls to die() with exit code 11
-  - Error message now includes expected vs actual python3 path
-  - Prevents continuing with wrong Python environment
-- Phase 2.2: Wrapped pip upgrade command with run_or_die
+- - Phase 2.1: Made venv activation mismatch fatal instead of warn-only - Changed lines 587-589 from warn() calls to
+  die() with exit code 11 - Error message now includes expected vs actual python3 path - Prevents continuing with wrong
+  Python environment - Phase 2.2: Wrapped pip upgrade command with run_or_die
   - Line 659: Changed naked `python3 -m pip install --upgrade pip setuptools wheel`
   - Now uses: `run_or_die 13 "Failed to upgrade pip/setuptools/wheel" python3 -m pip install --upgrade pip setuptools wheel`
-  - Ensures deterministic exit code 13 on pip upgrade failure
+  - - Ensures deterministic exit code 13 on pip upgrade failure
 
 **Verification:**
 
-- shellcheck passed (exit 0)
-- shfmt auto-formatted successfully
-- repo-lint check --ci passed (exit 0)
-- Both changes enforce fail-fast semantics per hardening plan
+- - shellcheck passed (exit 0) - shfmt auto-formatted successfully - repo-lint check --ci passed (exit 0) - Both changes
+  enforce fail-fast semantics per hardening plan
 
 **Next Steps:**
 
-- Phase 2.3-2.8: Remaining function-by-function fixes (PowerShell, Perl, shell tools, ripgrep, verification gate, actionlint)
+- - Phase 2.3-2.8: Remaining function-by-function fixes (PowerShell, Perl, shell tools, ripgrep, verification gate,
+  actionlint)
 
 ---
 
@@ -470,38 +382,33 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Phase 0.1-0.3: Renamed bootstrapper manual per plan requirements
+- - Phase 0.1-0.3: Renamed bootstrapper manual per plan requirements
   - Kept file in `docs/tools/repo-lint/` per user requirement (no directory move)
   - Renamed from `bootstrapper.md` to `bootstrapper-toolchain-user-manual.md`
-  - Updated 7 files with old path references
-  - Added prominent link in CONTRIBUTING.md "Essential Documentation" section
+  - - Updated 7 files with old path references - Added prominent link in CONTRIBUTING.md "Essential Documentation"
+    section
 - Phase 1.1: Added `run_or_die()` helper (lines 211-237)
-  - Accepts exit code, error message, and command
-  - Runs command and calls die() with deterministic exit code on failure
-  - Includes failing command in error message for debugging
+  - - Accepts exit code, error message, and command - Runs command and calls die() with deterministic exit code on
+    failure - Includes failing command in error message for debugging
 - Phase 1.2: Added `try_run()` helper (lines 239-259)
-  - Executes command without terminating script on failure
-  - Returns actual exit code for caller to handle
-  - Used for truly optional operations
+  - - Executes command without terminating script on failure - Returns actual exit code for caller to handle - Used for
+    truly optional operations
 - Phase 1.3: Added `safe_version()` helper (lines 261-296)
-  - Safely extracts version strings without terminating bootstrap
+  - - Safely extracts version strings without terminating bootstrap
   - Pipefail-safe: uses `|| true` patterns throughout
-  - Returns empty string on failure (never exits non-zero)
-  - Supports optional grep pattern and awk field extraction
+  - - Returns empty string on failure (never exits non-zero) - Supports optional grep pattern and awk field extraction
 
 **Verification:**
 
-- shellcheck passed on modified script
-- shfmt auto-formatted (trailing whitespace removed)
-- All file renames committed via git mv (history preserved)
+- - shellcheck passed on modified script - shfmt auto-formatted (trailing whitespace removed) - All file renames
+  committed via git mv (history preserved)
 - Zero remaining references to old `bootstrapper.md` name (excluding historical journal entries)
 
 **Rationale:**
 
-- Helper functions enable systematic enforcement of deterministic exit codes
-- safe_version() prevents fragile logging pipelines from killing the bootstrap
-- run_or_die() ensures all critical external commands map failures to intended exit codes
-- Renamed manual clearly communicates scope and avoids ambiguous generic name
+- - Helper functions enable systematic enforcement of deterministic exit codes - safe_version() prevents fragile logging
+  pipelines from killing the bootstrap - run_or_die() ensures all critical external commands map failures to intended
+  exit codes - Renamed manual clearly communicates scope and avoids ambiguous generic name
 
 ---
 
@@ -514,28 +421,25 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Completed mandatory session start procedure:
+- - Completed mandatory session start procedure:
   - Read `docs/contributing/session-compliance-requirements.md` in full
   - Ran `./scripts/bootstrap-repo-lint-toolchain.sh --all` successfully (exit code 0, completed in ~3 minutes)
   - Activated virtual environment: `source .venv/bin/activate`
-  - Exported Perl PATH and PERL5LIB variables
+  - - Exported Perl PATH and PERL5LIB variables
   - Verified repo-lint functional: `repo-lint --help` (exit 0)
   - Ran health check: `repo-lint check --ci` (exit 0, all 15 runners passed)
 - Read complete fail-fast hardening plan from `docs/ai-prompt/231/231-fail-fast-hardening-plan.md`
-- Created comprehensive 6-phase execution checklist via report_progress
-- Identified scope: actionlint already added; task is to implement full fail-fast hardening plan
-- Updated journals to reflect current session start
+- - Created comprehensive 6-phase execution checklist via report_progress - Identified scope: actionlint already added;
+  task is to implement full fail-fast hardening plan - Updated journals to reflect current session start
 
 **Verification:**
 
-- Bootstrap completed successfully (exit 0)
-- All required tools installed and functional
-- Repository in clean state (no violations)
-- Execution plan covers all requirements from hardening plan document
+- - Bootstrap completed successfully (exit 0) - All required tools installed and functional - Repository in clean state
+  (no violations) - Execution plan covers all requirements from hardening plan document
 
 **Next Steps:**
 
-- Begin Phase 0: Rename and relocate bootstrapper manual
+- - Begin Phase 0: Rename and relocate bootstrapper manual
 
 ---
 
@@ -548,15 +452,13 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Created required journal files for Issue 231 per session compliance requirements
-- Documented all completed work retroactively
-- All implementation was completed in previous sessions across 7 commits
+- - Created required journal files for Issue 231 per session compliance requirements - Documented all completed work
+  retroactively - All implementation was completed in previous sessions across 7 commits
 
 **Verification:**
 
-- Journal files created in correct location
-- Mandatory first line present in both files
-- All work already verified and tested
+- - Journal files created in correct location - Mandatory first line present in both files - All work already verified
+  and tested
 
 ---
 
@@ -569,15 +471,14 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Corrected Go version requirement from 1.24+ to 1.18+ (Go 1.24 doesn't exist yet)
-- Fixed test_actionlint_exit_code_20_documented to check for 'die "actionlint' pattern instead of 'exit 20'
+- - Corrected Go version requirement from 1.24+ to 1.18+ (Go 1.24 doesn't exist yet) - Fixed
+  test_actionlint_exit_code_20_documented to check for 'die "actionlint' pattern instead of 'exit 20'
 - Root cause: Script uses `die "message" 20` not `exit 20`
 
 **Verification:**
 
-- All 25 tests passing (100% pass rate)
-- Specific test now passes: test_actionlint_exit_code_20_documented
-- repo-lint check --ci exits 0
+- - All 25 tests passing (100% pass rate) - Specific test now passes: test_actionlint_exit_code_20_documented -
+  repo-lint check --ci exits 0
 
 ---
 
@@ -593,22 +494,16 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Created comprehensive test suite for actionlint installation:
-  - test_actionlint_installation_attempted
-  - test_actionlint_in_summary
-  - test_actionlint_idempotency
-  - test_actionlint_phase_ordering
-  - test_actionlint_exit_code_20_documented
-- Added pylint: disable=too-many-lines to handle file size (1049 lines)
-- Removed obsolete Rust bootstrapper documentation
-- Updated all references from docs/repo-cli-bootstrapper.md to docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md
+- - Created comprehensive test suite for actionlint installation: - test_actionlint_installation_attempted -
+  test_actionlint_in_summary - test_actionlint_idempotency - test_actionlint_phase_ordering -
+  test_actionlint_exit_code_20_documented - Added pylint: disable=too-many-lines to handle file size (1049 lines) -
+  Removed obsolete Rust bootstrapper documentation - Updated all references from docs/repo-cli-bootstrapper.md to
+  docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md
 
 **Verification:**
 
-- Python syntax validation passed
-- All tests pass syntax check
-- repo-lint check --ci exits 0
-- No remaining references to old documentation
+- - Python syntax validation passed - All tests pass syntax check - repo-lint check --ci exits 0 - No remaining
+  references to old documentation
 
 ---
 
@@ -620,14 +515,12 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Updated Go version requirement comment from 1.22+ to 1.24+ (later corrected to 1.18+)
-- Improved PATH warning message to clarify that PATH was updated for current session
-- Added manual verification command in warning
+- - Updated Go version requirement comment from 1.22+ to 1.24+ (later corrected to 1.18+) - Improved PATH warning
+  message to clarify that PATH was updated for current session - Added manual verification command in warning
 
 **Verification:**
 
-- repo-lint check --ci exits 0
-- All checks passed
+- - repo-lint check --ci exits 0 - All checks passed
 
 ---
 
@@ -639,15 +532,13 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Pinned actionlint to v1.7.10 for reproducible builds
-- Changed from @latest to @v1.7.10 in go install command
-- Added detailed comment about Go version requirement
-- Documented alternative installation methods (snap, direct binary)
+- - Pinned actionlint to v1.7.10 for reproducible builds - Changed from @latest to @v1.7.10 in go install command -
+  Added detailed comment about Go version requirement - Documented alternative installation methods (snap, direct
+  binary)
 
 **Verification:**
 
-- repo-lint check --ci exits 0
-- All checks passed
+- - repo-lint check --ci exits 0 - All checks passed
 
 ---
 
@@ -659,16 +550,13 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Fixed misleading comment about version pinning (removed "pinned version" text for @latest usage)
-- Fixed phase numbering: 2.5 for PowerShell, 2.6 for Perl (was incorrectly 2.4 for both)
-- Extracted has_sudo() helper function (Rule of Three compliance)
-- Updated 4 call sites to use has_sudo instead of inline sudo check
+- - Fixed misleading comment about version pinning (removed "pinned version" text for @latest usage) - Fixed phase
+  numbering: 2.5 for PowerShell, 2.6 for Perl (was incorrectly 2.4 for both) - Extracted has_sudo() helper function
+  (Rule of Three compliance) - Updated 4 call sites to use has_sudo instead of inline sudo check
 
 **Verification:**
 
-- repo-lint check --ci exits 0
-- All checks passed
-- Rule of Three compliance maintained
+- - repo-lint check --ci exits 0 - All checks passed - Rule of Three compliance maintained
 
 ---
 
@@ -681,27 +569,16 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Changes Made:**
 
-- Added install_actionlint() function:
-  - Idempotent check for existing actionlint
-  - macOS: Homebrew installation
-  - Linux: go install with auto Go installation
-  - PATH management for $HOME/go/bin
-  - Version output in verbose mode
-  - Exit code 20 for failures
-- Integrated as Phase 2.3 (required toolchain)
-- Updated show_usage to list actionlint in default toolchains
-- Added actionlint to success summary
-- Updated documentation:
-  - Added to Required Toolchains section
-  - Added verification command
-  - Documented exit code 20
+- - Added install_actionlint() function: - Idempotent check for existing actionlint - macOS: Homebrew installation -
+  Linux: go install with auto Go installation - PATH management for $HOME/go/bin - Version output in verbose mode - Exit
+  code 20 for failures - Integrated as Phase 2.3 (required toolchain) - Updated show_usage to list actionlint in default
+  toolchains - Added actionlint to success summary - Updated documentation: - Added to Required Toolchains section -
+  Added verification command - Documented exit code 20
 
 **Verification:**
 
-- Tested on Linux environment
-- actionlint v1.7.10 installed successfully
-- Full bootstrap with --all exits 0
-- Verification gate passes
+- - Tested on Linux environment - actionlint v1.7.10 installed successfully - Full bootstrap with --all exits 0 -
+  Verification gate passes
 
 ---
 
@@ -709,22 +586,16 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Files Changed:**
 
-- None (planning commit)
+- - None (planning commit)
 
 **Changes Made:**
 
-- Completed session start compliance:
-  - Ran bootstrapper (exit 0)
-  - Activated environment
-  - Verified repo-lint functional
-  - Health check passed (exit 0)
-- Created initial implementation plan
-- Explored codebase structure
+- - Completed session start compliance: - Ran bootstrapper (exit 0) - Activated environment - Verified repo-lint
+  functional - Health check passed (exit 0) - Created initial implementation plan - Explored codebase structure
 
 **Verification:**
 
-- Session compliance checklist completed
-- Environment ready for implementation
+- - Session compliance checklist completed - Environment ready for implementation
 
 ---
 

@@ -1,21 +1,20 @@
 # Symbol-Level Documentation Contracts
 
-**Version:** 1.0
-**Last Updated:** 2025-12-29
-**Purpose:** Define documentation requirements for functions, classes, methods, and other code symbols across all supported languages.
+**Version:** 1.0 **Last Updated:** 2025-12-29 **Purpose:** Define documentation requirements for functions, classes,
+methods, and other code symbols across all supported languages.
 
 ## Overview
 
-This document extends the file/module-level docstring contracts to cover **symbol-level documentation** - the documentation of individual functions, classes, methods, and language equivalents.
+This document extends the file/module-level docstring contracts to cover **symbol-level documentation** - the
+documentation of individual functions, classes, methods, and language equivalents.
 
 **Scope:** This contract applies to all symbols in:
 
-- Production code (all public/exported symbols)
-- Test code (all test functions/methods)
-- Wrapper scripts (all functions)
-- Utility scripts (all functions)
+- - Production code (all public/exported symbols) - Test code (all test functions/methods) - Wrapper scripts (all
+  functions) - Utility scripts (all functions)
 
-**Goal:** Ensure every function, class, and method is self-documenting with clear purpose, parameters, return values, and examples where appropriate.
+**Goal:** Ensure every function, class, and method is self-documenting with clear purpose, parameters, return values,
+and examples where appropriate.
 
 ---
 
@@ -25,9 +24,7 @@ This document extends the file/module-level docstring contracts to cover **symbo
 
 Document all **public/exported symbols**:
 
-- Public functions/methods (exposed API)
-- Exported wrapper entrypoints
-- Test functions/methods
+- - Public functions/methods (exposed API) - Exported wrapper entrypoints - Test functions/methods
 
 ### Recommended Enforcement (Future)
 
@@ -41,10 +38,9 @@ Document all symbols including private helpers for maximum clarity.
 
 Every function and method must have a docstring with:
 
-1. **Summary line** - One-line description of what it does
-2. **:param** - All parameters with types and descriptions
-3. **:returns** or **:rtype** - Return type and description
-4. **:raises** (if applicable) - Exceptions that may be raised
+1. 1. **Summary line** - One-line description of what it does 2. **:param** - All parameters with types and descriptions
+   3. **:returns** or **:rtype** - Return type and description 4. **:raises** (if applicable) - Exceptions that may be
+   raised
 
 **Format:** reST/Sphinx-style docstrings per PEP 287
 
@@ -130,10 +126,8 @@ class ClassName:
 
 Every bash function must have a comment block immediately above it with:
 
-1. **Description** - What the function does
-2. **Arguments** - Positional parameters and their meaning
-3. **Returns** - Exit code meaning
-4. **Globals** - Global variables read or modified (if any)
+1. 1. **Description** - What the function does 2. **Arguments** - Positional parameters and their meaning 3. **Returns**
+   - Exit code meaning 4. **Globals** - Global variables read or modified (if any)
 
 **Format:** Comment block using `#` prefix
 
@@ -349,16 +343,15 @@ pub struct Config {
 
 The expanded `scripts/validate_docstrings.py` will:
 
-1. **Parse source files** using language-specific parsers (AST for Python, regex/heuristics for others)
-2. **Identify symbols** (functions, classes, methods, subs, etc.)
-3. **Check for docstrings/comments** immediately preceding or within the symbol definition
-4. **Validate minimum required sections** based on symbol type
-5. **Report violations** with file path, symbol name, and missing requirements
+1. 1. **Parse source files** using language-specific parsers (AST for Python, regex/heuristics for others) 2. **Identify
+   symbols** (functions, classes, methods, subs, etc.) 3. **Check for docstrings/comments** immediately preceding or
+   within the symbol definition 4. **Validate minimum required sections** based on symbol type 5. **Report violations**
+   with file path, symbol name, and missing requirements
 
 ### Language-Specific Scanners
 
 - **Python:** Use `ast` module to parse and extract docstrings from functions/classes/methods
-- **Bash:** Use regex to detect function definitions and preceding comment blocks
+- - **Bash:** Use regex to detect function definitions and preceding comment blocks
 - **Perl:** Detect `sub` declarations and check for POD or inline comments
 - **PowerShell:** Detect `function` declarations and check for `<# ... #>` blocks
 - **Rust:** Detect `pub fn`/`pub struct`/`pub enum` and check for `///` comments
@@ -419,19 +412,14 @@ pub fn internal_helper() {
 
 ### Phase 5.5.4 Remediation Order
 
-1. **Rust** - Fix all public items (high visibility, well-defined public API)
-2. **Python wrappers** - Fix all wrapper functions
-3. **PowerShell wrappers** - Fix all wrapper functions
-4. **Perl wrappers** - Fix all subs
-5. **Bash wrappers** - Fix all functions
-6. **Scripts and tools** - Fix utility functions
+1. 1. **Rust** - Fix all public items (high visibility, well-defined public API) 2. **Python wrappers** - Fix all
+   wrapper functions 3. **PowerShell wrappers** - Fix all wrapper functions 4. **Perl wrappers** - Fix all subs 5.
+   **Bash wrappers** - Fix all functions 6. **Scripts and tools** - Fix utility functions
 
 After each language batch:
 
-- Run linters for that language
-- Run wrapper tests (after Rust binary built)
-- Run conformance tests
-- Ensure CI remains green before proceeding
+- - Run linters for that language - Run wrapper tests (after Rust binary built) - Run conformance tests - Ensure CI
+  remains green before proceeding
 
 ---
 
@@ -447,7 +435,6 @@ After each language batch:
 
 ## Document History
 
-- **2025-12-29:** Created as part of Phase 5.5, Item 5.5.1
-  - Defined symbol-level documentation requirements for all supported languages
-  - Established enforcement scope and validation strategy
-  - Created templates and examples for each language
+- - **2025-12-29:** Created as part of Phase 5.5, Item 5.5.1 - Defined symbol-level documentation requirements for all
+  supported languages - Established enforcement scope and validation strategy - Created templates and examples for each
+  language

@@ -6,10 +6,8 @@
 
 ## Executive Summary
 
-- **Total Violations:** 388
-- **Tools with Violations:** 10 of 13
-- **Files Impacted:** ~50+ (across all languages)
-- **Status:** Baseline established prior to remediation
+- - **Total Violations:** 388 - **Tools with Violations:** 10 of 13 - **Files Impacted:** ~50+ (across all languages) -
+  **Status:** Baseline established prior to remediation
 
 ## Tool Versions
 
@@ -62,8 +60,7 @@
 - Unused variables (`F841`)
 - Line too long (`E501`)
 - Missing docstrings (`D` series)
-- Complexity issues
-- Import order issues
+- - Complexity issues - Import order issues
 
 **Impacted Areas:**
 
@@ -74,7 +71,7 @@
 
 **Required Fix:**
 
-- Remove unused imports and variables
+- - Remove unused imports and variables
 - Fix line length violations (120 char limit per `pyproject.toml`)
 - Address other Ruff violations per policy (safe fixes only in `repo-lint fix`)
 
@@ -84,20 +81,15 @@
 
 **Categories:**
 
-- Code quality issues
-- Naming convention violations
-- Docstring issues
-- Complexity warnings
+- - Code quality issues - Naming convention violations - Docstring issues - Complexity warnings
 
 **Impacted Areas:**
 
-- Similar to Ruff, but with stricter quality checks
+- - Similar to Ruff, but with stricter quality checks
 
 **Required Fix:**
 
-- Address Pylint-specific quality issues
-- Ensure docstrings are complete
-- Refactor complex functions if necessary
+- - Address Pylint-specific quality issues - Ensure docstrings are complete - Refactor complex functions if necessary
 
 ### Black (0 violations)
 
@@ -115,22 +107,17 @@ All Python code is correctly formatted with Black (line-length=120).
 
 **Categories:**
 
-- Quoting issues
-- Undefined variables
-- Syntax issues
-- Best practice violations
+- - Quoting issues - Undefined variables - Syntax issues - Best practice violations
 
 **Impacted Areas:**
 
 - `scripts/` - Shell helper scripts
 - `wrappers/bash/` - Bash wrapper scripts
-- Test fixtures
+- - Test fixtures
 
 **Required Fix:**
 
-- Add proper quoting around variables
-- Fix undefined variable references
-- Address best practice violations
+- - Add proper quoting around variables - Fix undefined variable references - Address best practice violations
 
 ### shfmt (1 violation)
 
@@ -138,12 +125,11 @@ All Python code is correctly formatted with Black (line-length=120).
 
 **Categories:**
 
-- Indentation issues (2 spaces, -i 2)
-- Code formatting inconsistencies
+- - Indentation issues (2 spaces, -i 2) - Code formatting inconsistencies
 
 **Impacted Areas:**
 
-- One or more Bash scripts with formatting issues
+- - One or more Bash scripts with formatting issues
 
 **Required Fix:**
 
@@ -171,9 +157,7 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Categories:**
 
-- Missing function documentation
-- Missing parameter documentation
-- Incomplete docstrings
+- - Missing function documentation - Missing parameter documentation - Incomplete docstrings
 
 **Impacted Files:**
 
@@ -186,7 +170,7 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Required Fix:**
 
-- Add complete docstrings to all functions (public AND private)
+- - Add complete docstrings to all functions (public AND private)
 - Follow PowerShell docstring contract (`.SYNOPSIS`, `.DESCRIPTION`, `.PARAMETER`, etc.)
 - Test fixtures: mark with `# noqa: FUNCTION` pragma or document per contract
 
@@ -211,7 +195,7 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Required Fix:**
 
-- Remove subroutine prototypes (use modern Perl signatures if needed)
+- - Remove subroutine prototypes (use modern Perl signatures if needed)
 - Replace `return undef` with `return` (Perl best practice)
 
 ### Docstring Validation (Perl) (20 violations)
@@ -220,8 +204,7 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Categories:**
 
-- Missing POD documentation
-- Incomplete function documentation
+- - Missing POD documentation - Incomplete function documentation
 
 **Impacted Files:**
 
@@ -233,8 +216,7 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Required Fix:**
 
-- Add POD documentation to all subroutines (public AND private)
-- Follow Perl docstring contract
+- - Add POD documentation to all subroutines (public AND private) - Follow Perl docstring contract
 - Test fixtures: mark with `# noqa: FUNCTION` pragma or document per contract
 
 ---
@@ -258,9 +240,9 @@ No PSScriptAnalyzer violations detected (Error severity).
 
 **Required Fix:**
 
-- Refactor long lines to fit within 120 characters
+- - Refactor long lines to fit within 120 characters
 - Use YAML multiline strings where appropriate (`>`, ` | `)
-- May require splitting complex expressions
+- - May require splitting complex expressions
 
 ---
 
@@ -284,23 +266,15 @@ No Clippy lint issues detected.
 
 Per the Phase 6 completion instructions, violations will be remediated in this order:
 
-1. **Python** (Black ✅ / Ruff ❌ / Pylint ❌ / Docstrings ✅)
-   - Fix Ruff violations (246)
-   - Fix Pylint violations (20)
+1. 1. **Python** (Black ✅ / Ruff ❌ / Pylint ❌ / Docstrings ✅) - Fix Ruff violations (246) - Fix Pylint violations (20)
 
-2. **Bash** (ShellCheck ❌ / shfmt ❌ / Docstrings ✅)
-   - Fix ShellCheck violations (12)
-   - Fix shfmt violations (1)
+2. 2. **Bash** (ShellCheck ❌ / shfmt ❌ / Docstrings ✅) - Fix ShellCheck violations (12) - Fix shfmt violations (1)
 
-3. **PowerShell** (PSScriptAnalyzer ✅ / Docstrings ❌)
-   - Fix docstring violations (60)
+3. 3. **PowerShell** (PSScriptAnalyzer ✅ / Docstrings ❌) - Fix docstring violations (60)
 
-4. **Perl** (Perl::Critic ❌ / Docstrings ❌)
-   - Fix Perl::Critic violations (9)
-   - Fix docstring violations (20)
+4. 4. **Perl** (Perl::Critic ❌ / Docstrings ❌) - Fix Perl::Critic violations (9) - Fix docstring violations (20)
 
-5. **YAML** (yamllint ❌)
-   - Fix yamllint violations (20)
+5. 5. **YAML** (yamllint ❌) - Fix yamllint violations (20)
 
 ---
 
@@ -309,11 +283,11 @@ Per the Phase 6 completion instructions, violations will be remediated in this o
 - **Test Fixtures:** Some violations are in intentional test fixtures (e.g., `conformance/repo-lint/vectors/fixtures/`) designed to trigger violations for vector testing. These may be exempt or require `# noqa` pragmas.
 
 - **Auto-Fix Policy:** Per Phase 0 Item 0.9.1, `repo-lint fix` may only apply:
-  - FORMAT.BLACK (all Python files)
-  - FORMAT.SHFMT (all Bash files)
-  - LINT.RUFF.SAFE (safe Ruff fixes only, no unsafe fixes)
+  - - FORMAT.BLACK (all Python files) - FORMAT.SHFMT (all Bash files) - LINT.RUFF.SAFE (safe Ruff fixes only, no unsafe
+    fixes)
 
-- **Docstring Enforcement:** Per Phase 3 Item 3.7.3, ALL symbols (public and private) require documentation. No implicit skipping.
+- - **Docstring Enforcement:** Per Phase 3 Item 3.7.3, ALL symbols (public and private) require documentation. No
+  implicit skipping.
 
 - **Flake8 Migration:** Ruff has replaced Flake8 per Phase 0 Item 0.8.1. The `.flake8` file and Flake8 CI steps will be removed after remediation is complete.
 

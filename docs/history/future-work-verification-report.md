@@ -12,14 +12,11 @@ This report verifies the current implementation status of all items documented i
 
 **Key Findings:**
 
-- **FW-001**: ✅ **IMPLEMENTED** - Signal handling exists but test remains incomplete
-- **FW-002**: ✅ **ACCURATE** - safe-check is scaffolding only
-- **FW-003**: ✅ **ACCURATE** - safe-archive is scaffolding only
-- **FW-004**: ✅ **ACCURATE** - Preflight not implemented
-- **FW-005**: ✅ **ACCURATE** - No programmatic vector mapping
-- **FW-006**: ✅ **ACCURATE** - Enhancement opportunities documented
-- **FW-007**: ✅ **ACCURATE** - Enhancement opportunities documented
-- **FW-008, FW-009, FW-010**: ✅ **ACCURATE** - Status correctly documented
+- - **FW-001**: ✅ **IMPLEMENTED** - Signal handling exists but test remains incomplete - **FW-002**: ✅ **ACCURATE** -
+  safe-check is scaffolding only - **FW-003**: ✅ **ACCURATE** - safe-archive is scaffolding only - **FW-004**: ✅
+  **ACCURATE** - Preflight not implemented - **FW-005**: ✅ **ACCURATE** - No programmatic vector mapping - **FW-006**: ✅
+  **ACCURATE** - Enhancement opportunities documented - **FW-007**: ✅ **ACCURATE** - Enhancement opportunities
+  documented - **FW-008, FW-009, FW-010**: ✅ **ACCURATE** - Status correctly documented
 
 ---
 
@@ -38,7 +35,7 @@ From future-work.md:
 
 **File: `rust/src/safe_run.rs`**
 
-1. **Signal handler registration (lines 184-187):**
+1. 1. **Signal handler registration (lines 184-187):**
 
 ```rust
 flag::register(SIGTERM, Arc::clone(&sigterm_received))
@@ -47,7 +44,7 @@ flag::register(SIGINT, Arc::clone(&sigint_received))
     .map_err(|e| format!("Failed to register SIGINT handler: {}", e))?;
 ```
 
-1. **Signal handling loop (lines 256-300):**
+1. 1. **Signal handling loop (lines 256-300):**
 
 ```rust
 let exit_status = loop {
@@ -99,7 +96,7 @@ let exit_status = loop {
     // ... continues polling for child exit
 ```
 
-1. **ABORTED log creation (line 279):**
+1. 1. **ABORTED log creation (line 279):**
 
 ```rust
 let log_path = save_log(
@@ -112,7 +109,7 @@ let log_path = save_log(
 )?;
 ```
 
-1. **Correct exit codes (lines 295-299):**
+1. 1. **Correct exit codes (lines 295-299):**
 
 ```rust
 let exit_code = if got_sigint {
@@ -150,10 +147,10 @@ fn test_safe_run_003_sigterm_aborted() {
 
 ### Recommendations
 
-1. **Update future-work.md** to reflect that signal handling IS implemented
-2. **Update test status** - The test is incomplete, not the implementation
+1. 1. **Update future-work.md** to reflect that signal handling IS implemented 2. **Update test status** - The test is
+   incomplete, not the implementation
 3. **Consider removing `#[ignore]`** and implementing the actual signal test
-4. **Alternative**: Move FW-001 to a "Completed" section with note about test gap
+4. 4. **Alternative**: Move FW-001 to a "Completed" section with note about test gap
 
 ### Suggested future-work.md Update
 
@@ -433,9 +430,8 @@ From future-work.md:
 No advanced performance optimizations or plugin architecture found:
 
 1. **Binary size optimization**: No `strip = true` or LTO configuration in Cargo.toml
-2. **Plugin architecture**: No hook/plugin system in source code
-3. **Telemetry**: No structured logging beyond basic eprintln! calls
-4. **Performance profiling**: No profiling infrastructure present
+2. 2. **Plugin architecture**: No hook/plugin system in source code 3. **Telemetry**: No structured logging beyond basic
+   eprintln! calls 4. **Performance profiling**: No profiling infrastructure present
 
 ### Recommendations
 
@@ -476,13 +472,14 @@ This is the only inaccuracy found in future-work.md. All other items accurately 
 ### Recommended Actions
 
 1. **Update `docs/future-work.md`** - Revise FW-001 to reflect implemented status
-2. **Consider test implementation** - Either implement the full signal test or document it as lower priority
-3. **Optional: Add preflight-004 test** - Create placeholder test to maintain vector coverage
-4. **No other changes needed** - FW-002 through FW-010 are accurate
+2. 2. **Consider test implementation** - Either implement the full signal test or document it as lower priority 3.
+   **Optional: Add preflight-004 test** - Create placeholder test to maintain vector coverage 4. **No other changes
+   needed** - FW-002 through FW-010 are accurate
 
 ### Overall Assessment
 
-**future-work.md is 90% accurate.** Only one item (FW-001) needs updating. The documentation quality is high and provides clear, actionable guidance for future work.
+**future-work.md is 90% accurate.** Only one item (FW-001) needs updating. The documentation quality is high and
+provides clear, actionable guidance for future work.
 
 ---
 

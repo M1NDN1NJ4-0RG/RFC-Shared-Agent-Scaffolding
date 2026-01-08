@@ -6,32 +6,27 @@
 
 ## Purpose
 
-This is a **preliminary contract** for C++ source files that may be added to this repository in the future. It follows Doxygen conventions while aligning with the semantic requirements of other language contracts.
+This is a **preliminary contract** for C++ source files that may be added to this repository in the future. It follows
+Doxygen conventions while aligning with the semantic requirements of other language contracts.
 
-**Note:** This contract is not yet enforced. Use it as guidance if adding C++ files, but expect refinement before official adoption.
+**Note:** This contract is not yet enforced. Use it as guidance if adding C++ files, but expect refinement before
+official adoption.
 
 ## Required Semantic Sections
 
 Every C++ source file should include these sections in header comments:
 
-1. **@file** - File description and one-line summary
-2. **@brief** - Brief description of the file/module/class
-3. **@details** - What it does and does NOT do
-4. **@param** - Document each function parameter (if applicable)
-5. **@return** or **@returns** - Return value documentation
-6. **@note** - Important notes, constraints, sharp edges
-7. **@example** or **@code** - Minimum 1 concrete usage example
+1. 1. **@file** - File description and one-line summary 2. **@brief** - Brief description of the file/module/class 3.
+   **@details** - What it does and does NOT do 4. **@param** - Document each function parameter (if applicable) 5.
+   **@return** or **@returns** - Return value documentation 6. **@note** - Important notes, constraints, sharp edges 7.
+   **@example** or **@code** - Minimum 1 concrete usage example
 
 ### Optional Sections
 
-- **@platform** - Platform compatibility (OS, compiler, C++ version) - **Recommended**
-- **@author** - Author information
-- **@version** - Version information
-- **@date** - Last modified date
-- **@see** - References to related files/classes
-- **@warning** - Warnings about usage
-- **@throw** or **@throws** - Exception documentation
-- **@tparam** - Template parameter documentation
+- - **@platform** - Platform compatibility (OS, compiler, C++ version) - **Recommended** - **@author** - Author
+  information - **@version** - Version information - **@date** - Last modified date - **@see** - References to related
+  files/classes - **@warning** - Warnings about usage - **@throw** or **@throws** - Exception documentation -
+  **@tparam** - Template parameter documentation
 
 ## Formatting Rules
 
@@ -167,9 +162,8 @@ public:
 2. **Doxygen markers**: Use `/**`, `///`, or `//!` for Doxygen comments
 3. **@brief first**: Start class/function docs with `@brief`
 4. **@param direction**: Use `[in]`, `[out]`, `[in,out]` for parameters
-5. **@return/@returns**: Always document return values
-6. **@throw/@throws**: Document all exceptions that may be thrown
-7. **@tparam**: Document all template parameters
+5. 5. **@return/@returns**: Always document return values 6. **@throw/@throws**: Document all exceptions that may be
+   thrown 7. **@tparam**: Document all template parameters
 8. **Exit codes**: Document in file-level `@details`
 
 ## Templates
@@ -490,8 +484,8 @@ doxygen Doxyfile
 - [Doxygen Manual](https://www.doxygen.nl/manual/)
 - [C++ Core Guidelines](https://isocpp.github.io/CppCoreGuidelines/)
 - [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html)
-- [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings
-- [README.md](./README.md) - Overview of docstring contracts
+- - [exit-codes-contract.md](./exit-codes-contract.md) - Canonical exit code meanings - [README.md](./README.md) -
+  Overview of docstring contracts
 
 ## Status
 
@@ -499,8 +493,5 @@ doxygen Doxyfile
 
 To adopt this contract:
 
-1. Add C++ file patterns to validator
-2. Implement CppValidator class
-3. Add test coverage
-4. Update README.md with C++ entry
-5. Mark as official (remove DRAFT status)
+1. 1. Add C++ file patterns to validator 2. Implement CppValidator class 3. Add test coverage 4. Update README.md with
+   C++ entry 5. Mark as official (remove DRAFT status)

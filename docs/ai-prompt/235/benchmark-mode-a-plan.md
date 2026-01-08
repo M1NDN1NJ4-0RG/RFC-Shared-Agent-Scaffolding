@@ -8,30 +8,30 @@
 
 ## Overview
 
-This document outlines the plan for executing Mode A benchmarks as defined in Issue #248. Mode A benchmarks the complete developer experience of installing tooling from scratch (after warming caches).
+This document outlines the plan for executing Mode A benchmarks as defined in Issue #248. Mode A benchmarks the complete
+developer experience of installing tooling from scratch (after warming caches).
 
-**Current Status:** Mode B (verification-only) benchmarks have been successfully completed. Mode A is deferred due to Rust bootstrapper limitation requiring pre-existing virtual environment.
+**Current Status:** Mode B (verification-only) benchmarks have been successfully completed. Mode A is deferred due to
+Rust bootstrapper limitation requiring pre-existing virtual environment.
 
 ---
 
 ## Benchmark Goals
 
-Mode A measures the **end-to-end installation performance** of both Bash and Rust bootstrappers, simulating a developer setting up their environment for the first time (with warm network/package caches).
+Mode A measures the **end-to-end installation performance** of both Bash and Rust bootstrappers, simulating a developer
+setting up their environment for the first time (with warm network/package caches).
 
 ### What Mode A Tests
 
-1. **Virtual environment creation** (if needed)
-2. **Python package installation** (pip, setuptools, wheel, repo-lint)
-3. **System tool installation** (ripgrep, actionlint, shellcheck, shfmt, etc.)
-4. **Perl toolchain installation** (Perl::Critic, PPI)
-5. **PowerShell toolchain installation** (PSScriptAnalyzer)
-6. **Verification gate execution** (repo-lint check --ci)
+1. 1. **Virtual environment creation** (if needed) 2. **Python package installation** (pip, setuptools, wheel,
+   repo-lint) 3. **System tool installation** (ripgrep, actionlint, shellcheck, shfmt, etc.) 4. **Perl toolchain
+   installation** (Perl::Critic, PPI) 5. **PowerShell toolchain installation** (PSScriptAnalyzer) 6. **Verification gate
+   execution** (repo-lint check --ci)
 
 ### What Mode A Does NOT Test
 
-- Cold network downloads (caches are warmed)
-- Internet speed (we benchmark developer experience, not the network)
-- CI/cloud environments (focused on local developer workflow)
+- - Cold network downloads (caches are warmed) - Internet speed (we benchmark developer experience, not the network) -
+  CI/cloud environments (focused on local developer workflow)
 
 ---
 
@@ -43,26 +43,27 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
 
 **Issue:** When `.venv` doesn't exist, the Rust bootstrapper fails to create it before attempting pip operations.
 
-**Status of Previous Fix:** The exit code 19 issue related to actionlint detection has been resolved (tools can now be verified correctly). However, the fresh installation workflow (Mode A) remains blocked by the venv creation issue.
+**Status of Previous Fix:** The exit code 19 issue related to actionlint detection has been resolved (tools can now be
+verified correctly). However, the fresh installation workflow (Mode A) remains blocked by the venv creation issue.
 
 **Required Fix:** The Rust bootstrapper needs to be updated to:
 
 1. Detect if `.venv` exists
 2. Create `.venv` if it doesn't exist (using `python3 -m venv .venv` or equivalent)
-3. Ensure pip operations run within the venv context even if venv was just created
+3. 3. Ensure pip operations run within the venv context even if venv was just created
 
 **Note:** The verification workflow (Mode B) works correctly because it assumes the environment is already set up.
 
 ### Required Tools
 
-- ✅ hyperfine v1.20.0 (already installed)
+- - ✅ hyperfine v1.20.0 (already installed)
 - ✅ Bash bootstrapper (`scripts/bootstrap-repo-lint-toolchain.sh`)
 - ⚠️ Rust bootstrapper (`rust/target/release/bootstrap-repo-cli`) - needs fix for fresh installs
 
 ### Required Permissions
 
 - Ability to delete and recreate `.venv` directory
-- Ability to install system packages (may require sudo for some operations)
+- - Ability to install system packages (may require sudo for some operations)
 
 ---
 
@@ -70,7 +71,7 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
 
 ### Preparation Steps
 
-1. **Warm caches (CRITICAL)**
+1. 1. **Warm caches (CRITICAL)**
 
    ```bash
    # Run Bash bootstrapper once to populate all caches
@@ -83,7 +84,7 @@ Mode A measures the **end-to-end installation performance** of both Bash and Rus
    # ./rust/target/release/bootstrap-repo-cli install --profile dev
    ```
 
-2. **Verify caches are warm**
+2. 2. **Verify caches are warm**
 
    ```bash
    # Check pip cache
@@ -157,27 +158,21 @@ hyperfine \
 
 ### Minimum Requirements
 
-1. **Both bootstrappers complete successfully** (exit 0)
-2. **At least 5 runs each** without failures
-3. **Warm cache conditions maintained** throughout all runs
-4. **Consistent results** (standard deviation < 10% of mean)
+1. 1. **Both bootstrappers complete successfully** (exit 0) 2. **At least 5 runs each** without failures 3. **Warm cache
+   conditions maintained** throughout all runs 4. **Consistent results** (standard deviation < 10% of mean)
 
 ### Data to Capture
 
 For each bootstrapper, capture:
 
-- **Mean time** (average of 5 runs)
-- **Standard deviation** (measure of consistency)
-- **Min/Max times** (identify outliers)
-- **P50 (Median)** and **P90** times
-- **Individual run times** (for detailed analysis)
-- **User/System time** (CPU vs I/O)
+- - **Mean time** (average of 5 runs) - **Standard deviation** (measure of consistency) - **Min/Max times** (identify
+  outliers) - **P50 (Median)** and **P90** times - **Individual run times** (for detailed analysis) - **User/System
+  time** (CPU vs I/O)
 
 ### Comparison Metrics
 
-- **Absolute speedup:** Rust time vs Bash time
-- **Percentage improvement:** (Bash - Rust) / Bash * 100%
-- **Consistency comparison:** Which has lower variance?
+- - **Absolute speedup:** Rust time vs Bash time - **Percentage improvement:** (Bash - Rust) / Bash * 100% -
+  **Consistency comparison:** Which has lower variance?
 
 ---
 
@@ -189,12 +184,9 @@ For each bootstrapper, capture:
 
 **Components:**
 
-- Venv creation: ~3-5 seconds
-- Python packages: ~30-60 seconds
-- System tools: ~1-3 minutes (varies by package manager)
-- Perl toolchain: ~30-90 seconds
-- PowerShell toolchain: ~10-30 seconds
-- Verification gate: ~43 seconds (from Mode B data)
+- - Venv creation: ~3-5 seconds - Python packages: ~30-60 seconds - System tools: ~1-3 minutes (varies by package
+  manager) - Perl toolchain: ~30-90 seconds - PowerShell toolchain: ~10-30 seconds - Verification gate: ~43 seconds
+  (from Mode B data)
 
 ### Rust Bootstrapper
 
@@ -202,14 +194,11 @@ For each bootstrapper, capture:
 
 **Potential Advantages:**
 
-- Parallel installation of independent tools
-- Better progress tracking
-- Optimized dependency resolution
+- - Parallel installation of independent tools - Better progress tracking - Optimized dependency resolution
 
 **Potential Disadvantages:**
 
-- Requires pre-existing venv (current blocker)
-- May have different caching behavior
+- - Requires pre-existing venv (current blocker) - May have different caching behavior
 
 ---
 
@@ -221,9 +210,8 @@ For each bootstrapper, capture:
 
 **Mitigation:**
 
-1. Run all warmup steps before starting benchmarks
-2. Monitor cache directories during benchmark
-3. If cache invalidation detected, restart benchmark suite
+1. 1. Run all warmup steps before starting benchmarks 2. Monitor cache directories during benchmark 3. If cache
+   invalidation detected, restart benchmark suite
 
 ### Risk: System Load Variation
 
@@ -231,8 +219,7 @@ For each bootstrapper, capture:
 
 **Mitigation:**
 
-1. Close unnecessary applications before benchmarking
-2. Run benchmarks during low-activity periods
+1. 1. Close unnecessary applications before benchmarking 2. Run benchmarks during low-activity periods
 3. Use `nice` or `ionice` to deprioritize other processes if needed
 4. Monitor system load (`top`, `htop`) during benchmarks
 
@@ -242,9 +229,8 @@ For each bootstrapper, capture:
 
 **Mitigation:**
 
-1. Ensure all packages are fully cached before starting
-2. Run benchmarks on stable network connection
-3. If network errors occur, exclude that run and re-run
+1. 1. Ensure all packages are fully cached before starting 2. Run benchmarks on stable network connection 3. If network
+   errors occur, exclude that run and re-run
 
 ### Risk: File System Performance
 
@@ -252,9 +238,8 @@ For each bootstrapper, capture:
 
 **Mitigation:**
 
-1. Document hardware specs in results
-2. Run benchmarks on same hardware for both bootstrappers
-3. Note file system type (ext4, apfs, ntfs, etc.) in results
+1. 1. Document hardware specs in results 2. Run benchmarks on same hardware for both bootstrappers 3. Note file system
+   type (ext4, apfs, ntfs, etc.) in results
 
 ---
 
@@ -266,41 +251,19 @@ Create/update: `docs/ai-prompt/235/235-dev-benchmark-mode-a-results.md`
 
 ### Report Contents
 
-1. **Executive Summary**
-   - Which bootstrapper is faster?
-   - By how much?
-   - Key takeaways
+1. 1. **Executive Summary** - Which bootstrapper is faster? - By how much? - Key takeaways
 
-2. **Test Environment**
-   - OS and version
-   - CPU model and core count
-   - RAM amount
-   - Disk type (SSD/HDD)
-   - File system type
-   - Python version
-   - Go version
-   - Rust version
+2. 2. **Test Environment** - OS and version - CPU model and core count - RAM amount - Disk type (SSD/HDD) - File system
+   type - Python version - Go version - Rust version
 
-3. **Methodology**
-   - Exact commands used
-   - Cache warming procedure
-   - Number of runs
-   - Any issues encountered
+3. 3. **Methodology** - Exact commands used - Cache warming procedure - Number of runs - Any issues encountered
 
-4. **Results Tables**
-   - Summary statistics (mean, stddev, min, max, P50, P90)
-   - Individual run times
-   - Comparison table (Bash vs Rust)
+4. 4. **Results Tables** - Summary statistics (mean, stddev, min, max, P50, P90) - Individual run times - Comparison
+   table (Bash vs Rust)
 
-5. **Analysis**
-   - Performance comparison
-   - Bottleneck identification
-   - Consistency analysis
-   - Recommendations
+5. 5. **Analysis** - Performance comparison - Bottleneck identification - Consistency analysis - Recommendations
 
-6. **Raw Data**
-   - Links to JSON files
-   - Markdown tables from hyperfine
+6. 6. **Raw Data** - Links to JSON files - Markdown tables from hyperfine
 
 ---
 
@@ -308,41 +271,36 @@ Create/update: `docs/ai-prompt/235/235-dev-benchmark-mode-a-results.md`
 
 ### Before Starting
 
-- [ ] Fix Rust bootstrapper to support fresh venv creation
+- - [ ] Fix Rust bootstrapper to support fresh venv creation
 - [ ] Verify fix works: `rm -rf .venv && ./rust/target/release/bootstrap-repo-cli install --profile dev`
-- [ ] Warm all caches by running both bootstrappers once
+- - [ ] Warm all caches by running both bootstrappers once
 - [ ] Install hyperfine if not present: `cargo install hyperfine`
-- [ ] Close unnecessary applications
-- [ ] Ensure stable network connection
+- - [ ] Close unnecessary applications - [ ] Ensure stable network connection
 
 ### Execution
 
-- [ ] Run Bash benchmark (5 runs)
+- - [ ] Run Bash benchmark (5 runs)
 - [ ] Save Bash results to `/tmp/mode-a-bash.{md,json}`
-- [ ] Run Rust benchmark (5 runs)
+- - [ ] Run Rust benchmark (5 runs)
 - [ ] Save Rust results to `/tmp/mode-a-rust.{md,json}`
-- [ ] Verify both result files exist and contain valid data
+- - [ ] Verify both result files exist and contain valid data
 
 ### Analysis
 
-- [ ] Calculate summary statistics for both bootstrappers
-- [ ] Compare mean times and identify speedup
-- [ ] Analyze variance and consistency
-- [ ] Identify any outliers and investigate causes
-- [ ] Create comparison table
+- - [ ] Calculate summary statistics for both bootstrappers - [ ] Compare mean times and identify speedup - [ ] Analyze
+  variance and consistency - [ ] Identify any outliers and investigate causes - [ ] Create comparison table
 
 ### Documentation
 
 - [ ] Create `docs/ai-prompt/235/235-dev-benchmark-mode-a-results.md`
-- [ ] Include all required sections (see Reporting Requirements)
+- - [ ] Include all required sections (see Reporting Requirements)
 - [ ] Update `docs/ai-prompt/248/248-summary.md` with Mode A completion
 - [ ] Update `docs/ai-prompt/248/248-next-steps.md` to reflect completion
 
 ### Validation
 
 - [ ] Run `repo-lint check --ci` to verify documentation
-- [ ] Commit all changes
-- [ ] Update PR description with Mode A results
+- - [ ] Commit all changes - [ ] Update PR description with Mode A results
 
 ---
 
@@ -352,10 +310,8 @@ Create/update: `docs/ai-prompt/235/235-dev-benchmark-mode-a-results.md`
 
 Run Mode A benchmarks on:
 
-- [ ] Linux x86_64 (Ubuntu, Debian, Fedora)
-- [ ] Linux ARM64 (Raspberry Pi, cloud ARM instances)
-- [ ] macOS x86_64 (Intel Macs)
-- [ ] macOS ARM64 (Apple Silicon)
+- - [ ] Linux x86_64 (Ubuntu, Debian, Fedora) - [ ] Linux ARM64 (Raspberry Pi, cloud ARM instances) - [ ] macOS x86_64
+  (Intel Macs) - [ ] macOS ARM64 (Apple Silicon)
 
 ### Multi-Profile Testing
 
@@ -369,15 +325,14 @@ Run Mode A benchmarks for all profiles:
 
 Run Mode A benchmarks with:
 
-- [ ] Cold caches (first install ever)
-- [ ] Warm caches (subsequent installs)
-- [ ] Compare the difference to understand cache impact
+- - [ ] Cold caches (first install ever) - [ ] Warm caches (subsequent installs) - [ ] Compare the difference to
+  understand cache impact
 
 ---
 
 ## References
 
-- Issue #248: Bootstrapper parity + Dev benchmarks
+- - Issue #248: Bootstrapper parity + Dev benchmarks
 - `docs/ai-prompt/235/235-dev-benchmark-results.md`: Mode B results
 - `scripts/benchmarks/benchmark-bootstrappers.sh`: Current benchmark script
 - `scripts/benchmarks/README.md`: Benchmark documentation
@@ -386,8 +341,6 @@ Run Mode A benchmarks with:
 
 ## Notes
 
-- Mode A is the most comprehensive benchmark but also the slowest to run
-- Results will vary significantly based on hardware and network
-- Document everything: hardware, software versions, commands used
-- Keep raw data files for future reference
-- Consider running benchmarks multiple times on different days to account for variability
+- - Mode A is the most comprehensive benchmark but also the slowest to run - Results will vary significantly based on
+  hardware and network - Document everything: hardware, software versions, commands used - Keep raw data files for
+  future reference - Consider running benchmarks multiple times on different days to account for variability

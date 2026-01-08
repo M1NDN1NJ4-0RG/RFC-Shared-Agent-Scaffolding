@@ -70,7 +70,7 @@ Tests are currently **ignored** because the implementation does not exist yet (P
 - `test_preflight_001_success` - Vector preflight-001
 - `test_preflight_002_auth_failure` - Vector preflight-002
 - `test_preflight_003_ruleset_not_found` - Vector preflight-003
-- Note: Vector preflight-004 not yet implemented
+- - Note: Vector preflight-004 not yet implemented
 
 ## Meta-Tests
 
@@ -84,7 +84,7 @@ The `common` module provides:
 
 - **`load_vectors()`** - Loads conformance vectors from `conformance/vectors.json`
 - **`get_safe_run_binary()`** - Locates the safe-run binary (debug or release)
-- Vector type definitions matching the JSON schema
+- - Vector type definitions matching the JSON schema
 
 ## Writing New Tests
 
@@ -95,7 +95,7 @@ When adding a new conformance test:
 3. Use `#[ignore]` if implementation doesn't exist yet
 4. Load the vector using `load_vectors()`
 5. Use `assert_cmd::Command` to execute the binary
-6. Validate all expected outcomes from the vector
+6. 6. Validate all expected outcomes from the vector
 
 Example:
 
@@ -130,18 +130,18 @@ fn test_my_new_vector() {
 
 These tests will run in CI once:
 
-1. Implementation exists (PR3+)
+1. 1. Implementation exists (PR3+)
 2. `#[ignore]` attributes are removed
 3. CI workflow is configured to run `cargo test`
 
 ## Platform Considerations
 
 - Signal handling tests (`test_safe_run_003_sigterm_aborted`) are Unix-only (`#[cfg(unix)]`)
-- Path separators and line endings are normalized per contract
-- Test scripts use bash on Unix, will need PowerShell equivalents for Windows
+- - Path separators and line endings are normalized per contract - Test scripts use bash on Unix, will need PowerShell
+  equivalents for Windows
 
 ## Next Steps
 
-1. **PR2** (current): Test infrastructure in place, tests written and ignored
+1. 1. **PR2** (current): Test infrastructure in place, tests written and ignored
 2. **PR3**: Implement `safe-run` command, remove `#[ignore]` from safe-run tests
 3. **PR4+**: Implement remaining commands, remove remaining `#[ignore]` attributes

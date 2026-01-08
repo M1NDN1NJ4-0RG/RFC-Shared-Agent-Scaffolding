@@ -11,15 +11,16 @@ The script already uses:
 
 - `set -euo pipefail`
 - a `die()` helper with **specific exit codes**
-- staged “Phase” flow
+- - staged “Phase” flow
 
 …but there are multiple places where:
 
 1) failures escape `die()` and exit with the wrong code,
-2) failures are only warned (non-fatal) when they should be fatal, and
-3) fail-fast is **too aggressive** in the wrong place (fragile logging pipelines can kill the run).
+2) failures are only warned (non-fatal) when they should be fatal, and 3) fail-fast is **too aggressive** in the wrong
+place (fragile logging pipelines can kill the run).
 
-The goal is to harden the script so it **always fails with the correct message + exit code** and never “falls through” into a partially-installed zombie environment.
+The goal is to harden the script so it **always fails with the correct message + exit code** and never “falls through”
+into a partially-installed zombie environment.
 
 ---
 
@@ -27,9 +28,9 @@ The goal is to harden the script so it **always fails with the correct message +
 
 ### G0 — Preserve intent and structure
 
-- Do **not** delete large blocks of functionality.
-- Keep the overall “Phase” structure and existing exit codes unless a new deterministic exit code is explicitly required.
-- Improve fail-fast behavior without turning the script into a different tool.
+- - Do **not** delete large blocks of functionality. - Keep the overall “Phase” structure and existing exit codes unless
+  a new deterministic exit code is explicitly required. - Improve fail-fast behavior without turning the script into a
+  different tool.
 
 ### G1 — Every external command must either
 
@@ -43,7 +44,7 @@ If you parse output with `grep`, `awk`, `head`, etc., protect it from `pipefail`
 
 - `... || true`, or
 - an `awk` that exits cleanly even if it finds nothing, or
-- a helper that converts “no match” into empty output (non-fatal).
+- - a helper that converts “no match” into empty output (non-fatal).
 
 ### G3 — Exit codes must be deterministic
 
@@ -63,9 +64,9 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Required changes:**
 
-- Rename:
+- - Rename:
   - `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`
-- To:
+- - To:
   - `bootstrapper-toolchain-user-manual.md`
 
 ### 0.2 Move the manual to an appropriate, stable location
@@ -74,17 +75,16 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Implementation Requirements (locked decision):**
 
-- **Use Option A (Docs-centric):** Move the manual to:
+- - **Use Option A (Docs-centric):** Move the manual to:
   - `docs/repo-lint/bootstrapper-toolchain-user-manual.md`
 
 **Acceptance Criteria:**
 
 - The original `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md` path no longer exists.
-- The manual content is preserved (no accidental truncation).
-- The new manual location is **linked** from high-signal entrypoints where appropriate, including at minimum:
+- - The manual content is preserved (no accidental truncation). - The new manual location is **linked** from high-signal
+  entrypoints where appropriate, including at minimum:
   - `CONTRIBUTING.md`
-  - any repo-lint / tooling overview docs
-  - any docs index/navigation pages that reference bootstrap/toolchain setup
+  - - any repo-lint / tooling overview docs - any docs index/navigation pages that reference bootstrap/toolchain setup
 
 ### 0.3 Update all repo references to the new name/location
 
@@ -92,19 +92,18 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Implementation Requirements:**
 
-- Update all references across the repo that mention:
+- - Update all references across the repo that mention:
   - `docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md`
   - `bootstrapper.md`
-- Ensure markdown links, docs indices, READMEs, scripts, comments, and CI references point to the new path:
+- - Ensure markdown links, docs indices, READMEs, scripts, comments, and CI references point to the new path:
   - `docs/repo-lint/bootstrapper-toolchain-user-manual.md`
-- Additionally, ensure the new manual is discoverable by adding links from other docs where it is useful, including:
+- - Additionally, ensure the new manual is discoverable by adding links from other docs where it is useful, including:
   - `CONTRIBUTING.md`
-  - any repo-lint / tooling overview docs
+  - - any repo-lint / tooling overview docs
 
 **Acceptance Criteria:**
 
-- A repo-wide search finds **zero** remaining references to the old path/name.
-- All updated links resolve correctly.
+- - A repo-wide search finds **zero** remaining references to the old path/name. - All updated links resolve correctly.
 
 ---
 
@@ -116,9 +115,8 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Requirements:**
 
-- Accept an exit code as first arg.
-- Accept a human-friendly message or auto-generate one.
-- Print the failing command in the error message (useful for CI logs).
+- - Accept an exit code as first arg. - Accept a human-friendly message or auto-generate one. - Print the failing
+  command in the error message (useful for CI logs).
 
 **Example behavior (you may implement differently):**
 
@@ -126,7 +124,7 @@ Use `trap` where appropriate (example: `packages-microsoft-prod.deb`) so failure
 
 **Acceptance Criteria:**
 
-- No more “naked” external install commands in toolchain installers.
+- - No more “naked” external install commands in toolchain installers.
 
 ---
 
@@ -136,8 +134,7 @@ Optional steps (only truly optional!) can use a helper that returns non-zero wit
 
 **Use cases:**
 
-- “Attempt install, but fallback is allowed”
-- “Try to extract a version string for display”
+- - “Attempt install, but fallback is allowed” - “Try to extract a version string for display”
 
 ---
 
@@ -152,8 +149,7 @@ Any version parsing should not be able to terminate the script.
 
 **Acceptance Criteria:**
 
-- Version parsing is non-fatal everywhere.
-- The bootstrap continues even if a version string can’t be derived.
+- - Version parsing is non-fatal everywhere. - The bootstrap continues even if a version string can’t be derived.
 
 ---
 
@@ -174,7 +170,7 @@ Any version parsing should not be able to terminate the script.
 
 **Acceptance Criteria:**
 
-- We never proceed past activation if we’re not actually in the venv.
+- - We never proceed past activation if we’re not actually in the venv.
 
 ---
 
@@ -189,12 +185,12 @@ Wrap the pip-upgrade step so failure exits through `die()` with the intended cod
 **Implementation Requirements:**
 
 - Use `run_or_die` or an explicit `if ! ...; then die ...; fi`
-- Choose a consistent code:
+- - Choose a consistent code:
   - Use `13` (repo-lint install failure bucket) unless you have a strong reason to introduce a new code.
 
 **Acceptance Criteria:**
 
-- pip upgrade failure yields a clean error message and deterministic exit code.
+- - pip upgrade failure yields a clean error message and deterministic exit code.
 
 ---
 
@@ -206,12 +202,7 @@ Wrap the pip-upgrade step so failure exits through `die()` with the intended cod
 
 Break the apt-based install into logical steps and wrap each:
 
-- apt update
-- install prereqs
-- download MS repo package
-- dpkg install
-- apt update
-- install powershell
+- - apt update - install prereqs - download MS repo package - dpkg install - apt update - install powershell
 
 #### 2.3-B Add `trap` cleanup for downloaded deb
 
@@ -221,12 +212,11 @@ Use `trap` to delete `packages-microsoft-prod.deb` on exit/failure.
 
 If the download URL breaks, the error message must clearly say:
 
-- which URL was attempted,
-- and which step failed.
+- - which URL was attempted, - and which step failed.
 
 **Acceptance Criteria:**
 
-- Any failure during PowerShell installation exits **17** with a clear message.
+- - Any failure during PowerShell installation exits **17** with a clear message.
 - No leftover `.deb` file after failure.
 
 ---
@@ -236,7 +226,7 @@ If the download URL breaks, the error message must clearly say:
 **Current issue:** `cpanm` calls are not wrapped. With `set -e`, any failure terminates instantly, preventing:
 
 - population of `failed_tools[]`
-- the “Manual installation required” guidance
+- - the “Manual installation required” guidance
 - exit code `18`
 
 #### 2.4-A Prevent `set -e` from short-circuiting cpanm error collection
@@ -249,13 +239,13 @@ Wrap each install so:
 
 At end of function, if any `failed_tools`:
 
-- print manual remediation hints
+- - print manual remediation hints
 - `die "Perl toolchain installation incomplete" 18`
 
 **Acceptance Criteria:**
 
 - A failing `cpanm` does not cause an early unhandled exit.
-- The function exits with **18** and prints actionable remediation.
+- - The function exits with **18** and prints actionable remediation.
 
 ---
 
@@ -282,14 +272,15 @@ Any fallback attempt (e.g., snap) must:
 
 **Acceptance Criteria:**
 
-- Logging cannot terminate bootstrap.
+- - Logging cannot terminate bootstrap.
 - Shell tool failures exit **16** only through `die()`.
 
 ---
 
 ### 2.6 `install_rgrep()` — ripgrep must be REQUIRED (no grep fallback)
 
-**Current issue:** The script currently treats ripgrep as optional in behavior (warn + continue) even though it is described as “required” in places.
+**Current issue:** The script currently treats ripgrep as optional in behavior (warn + continue) even though it is
+described as “required” in places.
 
 #### 2.6-A Enforce ripgrep as a hard requirement
 
@@ -312,15 +303,13 @@ Ripgrep (`rg`) is **mandatory** for this repository/tooling. There must be **no*
 
 **Error Messaging Requirements:**
 
-- On failure, print a clear message that ripgrep is required and include:
-  - the OS path taken (brew/apt/etc.),
-  - the failing command (where safe),
-  - and a manual remediation snippet (install command) per platform.
+- - On failure, print a clear message that ripgrep is required and include: - the OS path taken (brew/apt/etc.), - the
+  failing command (where safe), - and a manual remediation snippet (install command) per platform.
 
 **Acceptance Criteria:**
 
 - If `rg` cannot be installed or discovered, the script fails fast via `die()` with the deterministic ripgrep exit code.
-- Documentation/help text no longer implies ripgrep is optional.
+- - Documentation/help text no longer implies ripgrep is optional.
 
 ---
 
@@ -339,16 +328,15 @@ If repo-lint has a documented exit code contract, link/quote it in comments.
 **Implementation Requirements:**
 
 - If `repo-lint doctor` already exists:
-  - run it as part of the verification gate in a way that clearly distinguishes:
-    - operational/toolchain errors (must fail the bootstrap)
-    - legitimate lint violations (acceptable depending on mode)
+  - - run it as part of the verification gate in a way that clearly distinguishes: - operational/toolchain errors (must
+    fail the bootstrap) - legitimate lint violations (acceptable depending on mode)
 - If `repo-lint doctor` is incomplete:
-  - extend it so it provides a deterministic self-test suitable for the bootstrapper gate.
+  - - extend it so it provides a deterministic self-test suitable for the bootstrapper gate.
 
 **Acceptance Criteria:**
 
 - The verification gate uses `repo-lint doctor` (or an improved version of it) as the primary self-test signal.
-- Operational failures cannot be misclassified as “violations found”.
+- - Operational failures cannot be misclassified as “violations found”.
 
 ---
 
@@ -358,21 +346,21 @@ If repo-lint has a documented exit code contract, link/quote it in comments.
 
 #### 2.8-A Wrap Go install steps so failures exit via `die 20`
 
-- installing Go (apt-get)
+- - installing Go (apt-get)
 - `go install ...`
-- verifying actionlint
+- - verifying actionlint
 
 #### 2.8-B Print explicit remediation when `actionlint` not found
 
 If install succeeds but binary isn’t on PATH, error must explain:
 
 - expected install location (`$HOME/go/bin/actionlint`)
-- how to export PATH
+- - how to export PATH
 
 **Acceptance Criteria:**
 
 - Failures exit **20** through `die()`.
-- Success prints usable guidance.
+- - Success prints usable guidance.
 
 ---
 
@@ -403,9 +391,7 @@ Ensure error messages follow:
 
 Include:
 
-- the tool being installed,
-- the package manager,
-- and the command that failed (where safe).
+- - the tool being installed, - the package manager, - and the command that failed (where safe).
 
 ---
 
@@ -423,8 +409,7 @@ At minimum:
 
 After policy decisions (ripgrep required; strict venv), ensure:
 
-- help text matches behavior
-- comments match behavior
+- - help text matches behavior - comments match behavior
 
 ### 4.2 Add a short “Failure semantics” section in the header comments
 
@@ -432,7 +417,7 @@ Summarize:
 
 - the role of `set -euo pipefail`
 - how `run_or_die` enforces exit codes
-- how optional steps are handled
+- - how optional steps are handled
 
 ---
 
@@ -444,7 +429,8 @@ Summarize:
 
 **Required changes and verification:**
 
-- After **any** additions/removals/behavior changes in the bootstrapper, verify the full suite still passes by running:
+- - After **any** additions/removals/behavior changes in the bootstrapper, verify the full suite still passes by
+  running:
   - `python3 -m pytest scripts/tests/test_bootstrap_repo_lint_toolchain.py`
 - If your changes introduce new branches, failure modes, exit codes, or helper utilities (e.g., `run_or_die`, `try_run`, safer version parsing), you must **extend**:
   - `scripts/tests/test_bootstrap_repo_lint_toolchain.py`
@@ -452,17 +438,14 @@ Summarize:
 
 **Test expectations (minimum):**
 
-- deterministic exit codes for failure paths
-- deterministic error messaging for key failures
-- non-fatal logging/version parsing behavior
-- strict venv activation behavior
-- ripgrep required semantics
-- PowerShell/Perl installers do not escape with random exit codes
+- - deterministic exit codes for failure paths - deterministic error messaging for key failures - non-fatal
+  logging/version parsing behavior - strict venv activation behavior - ripgrep required semantics - PowerShell/Perl
+  installers do not escape with random exit codes
 
 **Acceptance Criteria:**
 
 - `scripts/tests/test_bootstrap_repo_lint_toolchain.py` passes locally and in CI.
-- Any newly introduced behavior has explicit test coverage in that file.
+- - Any newly introduced behavior has explicit test coverage in that file.
 
 ---
 
@@ -472,7 +455,7 @@ Run the following locally (or in CI where appropriate):
 
 - `shellcheck` on the script (if shell toolchain enabled)
 - `shfmt -d` on the script
-- Execute the script in a controlled environment
+- - Execute the script in a controlled environment
 
 ### 5.2 Simulated failure tests (at least 3)
 
@@ -485,7 +468,7 @@ Create a small test approach (does not need to be heavy) that demonstrates deter
 **Acceptance Criteria:**
 
 - Each simulation produces the intended `die()` message and correct exit code.
-- Provide “receipts” using the repo’s established journaling system (do not invent a one-off location).
+- - Provide “receipts” using the repo’s established journaling system (do not invent a one-off location).
 
 ---
 
@@ -495,20 +478,18 @@ This task is complete only when:
 
 - ✅ The bootstrapper manual is renamed to `bootstrapper-toolchain-user-manual.md`, moved to the chosen stable location, and all repo references are updated (no broken links)
 - ✅ All bootstrapper behavior changes are validated by `scripts/tests/test_bootstrap_repo_lint_toolchain.py`; the test suite is extended in that file for any new branches/failure modes/exit codes introduced
-- ✅ All previously identified “naked command” failure paths are wrapped and mapped to correct exit codes
-- ✅ Logging/version parsing cannot terminate the script
-- ✅ Venv activation mismatch behavior is deterministic (fatal by default)
-- ✅ ripgrep is enforced as REQUIRED (no grep fallback) and the failure path is deterministic (exit code + message)
-- ✅ PowerShell/Perl installs cannot escape with random exit codes
-- ✅ Verification gate semantics are either documented or hardened to prevent false-pass
+- - ✅ All previously identified “naked command” failure paths are wrapped and mapped to correct exit codes - ✅
+  Logging/version parsing cannot terminate the script - ✅ Venv activation mismatch behavior is deterministic (fatal by
+  default) - ✅ ripgrep is enforced as REQUIRED (no grep fallback) and the failure path is deterministic (exit code +
+  message) - ✅ PowerShell/Perl installs cannot escape with random exit codes - ✅ Verification gate semantics are either
+  documented or hardened to prevent false-pass
 
 ---
 
 ## Notes for Implementation
 
-- Prefer small, mechanical refactors.
-- Favor readability over cleverness.
-- The script is an enforcement gate: **determinism beats convenience.**
+- - Prefer small, mechanical refactors. - Favor readability over cleverness. - The script is an enforcement gate:
+  **determinism beats convenience.**
 
 ---
 
@@ -520,46 +501,42 @@ This task is complete only when:
 
 **Required output:**
 
-- Write a detailed analysis that covers:
-  - the script’s control flow (major phases/functions and their call order)
-  - all exit codes and what triggers them
+- - Write a detailed analysis that covers: - the script’s control flow (major phases/functions and their call order) -
+  all exit codes and what triggers them
   - the role and risks of `set -euo pipefail` in this specific script
-  - how toolchain installers behave per OS (macOS/Linux, brew/apt/snap/etc.)
-  - current failure modes and how the new wrappers/guards address them
-  - any remaining edge cases or assumptions (network, permissions, PATH, shells)
+  - - how toolchain installers behave per OS (macOS/Linux, brew/apt/snap/etc.) - current failure modes and how the new
+    wrappers/guards address them - any remaining edge cases or assumptions (network, permissions, PATH, shells)
 
 **Acceptance Criteria:**
 
-- The analysis is thorough enough that a new maintainer can reason about behavior and safely extend it.
+- - The analysis is thorough enough that a new maintainer can reason about behavior and safely extend it.
 
 ---
 
 ### 6.2 Produce a detailed plan to re-implement this tool as a modular Rust binary
 
-**Goal:** Provide a concrete, modular, maintainable path to migrate from Bash to Rust so we can add/remove tools cleanly over time.
+**Goal:** Provide a concrete, modular, maintainable path to migrate from Bash to Rust so we can add/remove tools cleanly
+over time.
 
 **Required output (minimum):**
 
-- A phased migration plan (Phase / Item / Sub-item style) that includes:
-  - CLI design (subcommands, flags, help text parity with the current script)
-  - configuration strategy (hard-coded defaults vs config file; and where it lives)
-  - a statically-compiled tool installer registry approach (so adding/removing tools is easy)
-  - OS/package-manager abstraction strategy (brew vs apt vs snap vs manual install guidance)
-  - concurrency strategy (what can be safely parallelized; and what must remain sequential)
-  - progress/UI strategy (a constantly-updating progress display that clearly shows current work)
-  - deterministic error handling and exit-code mapping strategy
-  - logging strategy (structured logs + human-friendly output)
+- - A phased migration plan (Phase / Item / Sub-item style) that includes: - CLI design (subcommands, flags, help text
+  parity with the current script) - configuration strategy (hard-coded defaults vs config file; and where it lives) - a
+  statically-compiled tool installer registry approach (so adding/removing tools is easy) - OS/package-manager
+  abstraction strategy (brew vs apt vs snap vs manual install guidance) - concurrency strategy (what can be safely
+  parallelized; and what must remain sequential) - progress/UI strategy (a constantly-updating progress display that
+  clearly shows current work) - deterministic error handling and exit-code mapping strategy - logging strategy
+  (structured logs + human-friendly output)
   - testing strategy (unit tests + integration tests that replace/augment `scripts/tests/test_bootstrap_repo_lint_toolchain.py`)
-  - backwards compatibility plan (how to keep the Bash entrypoint until Rust is ready)
+  - - backwards compatibility plan (how to keep the Bash entrypoint until Rust is ready)
 
-**Architecture expectations:**
-**Locked recommendation:** Start with a statically-compiled installer registry (no dynamic plugins initially) plus config-driven enable/disable; keep the Bash entrypoint as a thin wrapper until Rust reaches feature parity and tests prove it.
+**Architecture expectations:** **Locked recommendation:** Start with a statically-compiled installer registry (no
+dynamic plugins initially) plus config-driven enable/disable; keep the Bash entrypoint as a thin wrapper until Rust
+reaches feature parity and tests prove it.
 
-- The Rust design must explicitly support:
-  - enabling/disabling tool installers via configuration
-  - adding new tools with minimal boilerplate
-  - clean separation between “detect/install/verify” for each tool
-  - deterministic failure semantics (no accidental fall-through)
+- - The Rust design must explicitly support: - enabling/disabling tool installers via configuration - adding new tools
+  with minimal boilerplate - clean separation between “detect/install/verify” for each tool - deterministic failure
+  semantics (no accidental fall-through)
 
 #### 6.2-A Concurrency / Parallelism (WHERE SAFE)
 
@@ -567,18 +544,17 @@ This task is complete only when:
 
 **Requirements:**
 
-- Identify which operations can be parallelized safely (examples include downloading multiple independent artifacts, fetching package metadata, or pre-check/detect steps).
-- Identify which operations must remain sequential (examples include package-manager locks, PATH mutations, environment activation, and installs that depend on prior steps).
-- The plan must explicitly discuss:
-  - process-level vs thread-level concurrency choices
-  - shared resource risks (filesystem paths, temp dirs, package manager locks, caches)
-  - deterministic logging/output ordering (so CI logs remain readable)
-  - retry + exponential backoff strategy for network/package operations (including jitter, max attempts, and what is safe/unsafe to retry)
-  - fallback behavior when concurrency is disabled or unsupported
+- - Identify which operations can be parallelized safely (examples include downloading multiple independent artifacts,
+  fetching package metadata, or pre-check/detect steps). - Identify which operations must remain sequential (examples
+  include package-manager locks, PATH mutations, environment activation, and installs that depend on prior steps). - The
+  plan must explicitly discuss: - process-level vs thread-level concurrency choices - shared resource risks (filesystem
+  paths, temp dirs, package manager locks, caches) - deterministic logging/output ordering (so CI logs remain readable)
+  - retry + exponential backoff strategy for network/package operations (including jitter, max attempts, and what is
+  safe/unsafe to retry) - fallback behavior when concurrency is disabled or unsupported
 
 **Acceptance Criteria:**
 
-- The Rust plan contains a clear list/table of candidate steps for parallelization, with rationale for each.
+- - The Rust plan contains a clear list/table of candidate steps for parallelization, with rationale for each.
 
 ---
 
@@ -589,23 +565,19 @@ This task is complete only when:
 **Requirements:**
 
 - Implement a high-quality, constantly-updating progress UI comparable to a multi-task `tqdm` experience (think: concurrent tasks + live updates).
-- The progress UI must clearly show:
-  - current phase and sub-step
-  - per-tool status (pending/downloading/installing/verifying/done/failed)
-  - elapsed time and (where feasible) ETA
-  - errors surfaced immediately with context
+- - The progress UI must clearly show: - current phase and sub-step - per-tool status
+  (pending/downloading/installing/verifying/done/failed) - elapsed time and (where feasible) ETA - errors surfaced
+  immediately with context
 
 **Implementation notes (not prescriptive, but likely tools):**
 
 - Consider `indicatif` (progress bars/spinners) + a live-updating terminal UI layer (e.g., a multi-line render approach) for concurrent task status.
-- Ensure the UI degrades gracefully when:
-  - not running in a TTY
-  - output is redirected
-  - CI environments limit terminal control sequences
+- - Ensure the UI degrades gracefully when: - not running in a TTY - output is redirected - CI environments limit
+  terminal control sequences
 
 **Acceptance Criteria:**
 
-- The Rust plan includes a concrete UI approach and how it behaves in TTY vs non-TTY/CI.
+- - The Rust plan includes a concrete UI approach and how it behaves in TTY vs non-TTY/CI.
 
 ---
 
@@ -615,18 +587,14 @@ This task is complete only when:
 
 **Requirements:**
 
-- Before performing installs/changes, compute and present a deterministic execution plan that includes:
-  - what will be installed
-  - what is already installed
-  - what will be skipped and why
-  - dependency relationships between tools/steps (a dependency graph)
-- The plan must be renderable in:
-  - human-readable format (default)
+- - Before performing installs/changes, compute and present a deterministic execution plan that includes: - what will be
+  installed - what is already installed - what will be skipped and why - dependency relationships between tools/steps (a
+  dependency graph) - The plan must be renderable in: - human-readable format (default)
   - machine-readable format (`--json`, see 6.2-G)
 
 **Acceptance Criteria:**
 
-- The Rust plan includes an explicit dependency-graph model and how it is used to drive ordering and safe parallelism.
+- - The Rust plan includes an explicit dependency-graph model and how it is used to drive ordering and safe parallelism.
 
 ---
 
@@ -637,9 +605,8 @@ This task is complete only when:
 **Requirements:**
 
 - Implement `--dry-run` so the tool:
-  - performs detection/preflight checks
-  - prints the full deterministic plan
-  - makes **no** system changes (no installs, no file writes beyond optional logs)
+  - - performs detection/preflight checks - prints the full deterministic plan - makes **no** system changes (no
+    installs, no file writes beyond optional logs)
 - Ensure `--dry-run` is compatible with all profiles and tool selections.
 
 **Acceptance Criteria:**
@@ -654,20 +621,15 @@ This task is complete only when:
 
 **Requirements:**
 
-- Implement a checkpoint/state mechanism so interrupted runs can be resumed.
+- - Implement a checkpoint/state mechanism so interrupted runs can be resumed.
 - Provide a `--resume` mode that:
-  - loads prior state
-  - re-validates critical assumptions
-  - continues from the last safe checkpoint
-- Include safe invalidation rules when state is stale or incompatible.
+  - - loads prior state - re-validates critical assumptions - continues from the last safe checkpoint - Include safe
+    invalidation rules when state is stale or incompatible.
 
 **Acceptance Criteria:**
 
-- The Rust plan specifies:
-  - what is checkpointed
-  - where state lives
-  - how resume works
-  - and how state is invalidated safely.
+- - The Rust plan specifies: - what is checkpointed - where state lives - how resume works - and how state is
+  invalidated safely.
 
 ---
 
@@ -677,15 +639,15 @@ This task is complete only when:
 
 **Requirements:**
 
-- Define what can be cached safely (e.g., downloaded artifacts, package metadata, detection results per run).
-- Provide flags to control caching:
+- - Define what can be cached safely (e.g., downloaded artifacts, package metadata, detection results per run). -
+  Provide flags to control caching:
   - `--no-cache`
   - `--refresh` (or equivalent) to re-fetch metadata/artifacts
-- Ensure cache paths are deterministic and do not conflict across concurrent tasks.
+- - Ensure cache paths are deterministic and do not conflict across concurrent tasks.
 
 **Acceptance Criteria:**
 
-- The Rust plan includes a cache design with safe defaults and clear invalidation rules.
+- - The Rust plan includes a cache design with safe defaults and clear invalidation rules.
 
 ---
 
@@ -695,11 +657,10 @@ This task is complete only when:
 
 **Requirements:**
 
-- Support at minimum:
-  - default human-friendly output
+- - Support at minimum: - default human-friendly output
   - `--json` output mode that emits structured events and final summary
   - `--log-file <path>` to persist logs regardless of UI mode
-- Ensure exit codes remain deterministic and match the defined contract.
+- - Ensure exit codes remain deterministic and match the defined contract.
 
 **Acceptance Criteria:**
 
@@ -713,12 +674,10 @@ This task is complete only when:
 
 **Requirements:**
 
-- Auto-detect non-TTY environments and degrade UI gracefully:
-  - disable fancy progress rendering
-  - avoid ANSI control sequences
-  - emit periodic plain-text status updates
+- - Auto-detect non-TTY environments and degrade UI gracefully: - disable fancy progress rendering - avoid ANSI control
+  sequences - emit periodic plain-text status updates
 - Provide an explicit `--ci` mode to force deterministic, CI-friendly output.
-- Always emit a clear final summary block.
+- - Always emit a clear final summary block.
 
 **Acceptance Criteria:**
 
@@ -732,15 +691,14 @@ This task is complete only when:
 
 **Requirements:**
 
-- Prefer OS package managers (brew/apt/etc.) and signed sources when available.
-- When downloading artifacts directly:
-  - verify checksums/signatures where feasible
-  - avoid insecure patterns (e.g., unverified "curl | sh") unless there is no alternative and it is loudly documented
-- Allow version pinning where appropriate (see 6.2-L).
+- - Prefer OS package managers (brew/apt/etc.) and signed sources when available. - When downloading artifacts directly:
+  - verify checksums/signatures where feasible - avoid insecure patterns (e.g., unverified "curl | sh") unless there is
+  no alternative and it is loudly documented - Allow version pinning where appropriate (see 6.2-L).
 
 **Acceptance Criteria:**
 
-- The Rust plan includes concrete guidance on how downloads are verified and how unsafe installs are handled/documented.
+- - The Rust plan includes concrete guidance on how downloads are verified and how unsafe installs are
+  handled/documented.
 
 ---
 
@@ -750,13 +708,12 @@ This task is complete only when:
 
 **Requirements:**
 
-- Identify which steps require elevated privileges.
-- Provide a preflight that summarizes privilege requirements before executing.
-- Ensure failures due to missing privileges provide actionable remediation.
+- - Identify which steps require elevated privileges. - Provide a preflight that summarizes privilege requirements
+  before executing. - Ensure failures due to missing privileges provide actionable remediation.
 
 **Acceptance Criteria:**
 
-- The Rust plan includes a privilege strategy and how sudo/elevation is handled per platform.
+- - The Rust plan includes a privilege strategy and how sudo/elevation is handled per platform.
 
 ---
 
@@ -766,14 +723,14 @@ This task is complete only when:
 
 **Requirements:**
 
-- Support configuration profiles such as:
+- - Support configuration profiles such as:
   - `minimal`, `dev`, `ci`, `full`
-- Profiles must map to a deterministic set of tool installers.
-- CLI flags should be able to override profile selections.
+- - Profiles must map to a deterministic set of tool installers. - CLI flags should be able to override profile
+  selections.
 
 **Acceptance Criteria:**
 
-- The Rust plan defines initial profiles and how they map to tool selections.
+- - The Rust plan defines initial profiles and how they map to tool selections.
 
 ---
 
@@ -783,14 +740,12 @@ This task is complete only when:
 
 **Requirements:**
 
-- Define a version policy that supports at least:
-  - minimum supported versions
-  - optional exact pinning via configuration
-  - upgrade behavior when a tool is below minimum
+- - Define a version policy that supports at least: - minimum supported versions - optional exact pinning via
+  configuration - upgrade behavior when a tool is below minimum
 
 **Acceptance Criteria:**
 
-- The Rust plan specifies how versions are chosen, where pins live, and how upgrades are decided.
+- - The Rust plan specifies how versions are chosen, where pins live, and how upgrades are decided.
 
 ---
 
@@ -801,14 +756,12 @@ This task is complete only when:
 **Requirements:**
 
 - Provide a `diagnostics` command (or equivalent) that can produce a support bundle containing:
-  - OS/arch/package manager info
-  - detected tools and versions
-  - recent log excerpts
-  - the failure step and error cause chain (when a failure occurred)
+  - - OS/arch/package manager info - detected tools and versions - recent log excerpts - the failure step and error
+    cause chain (when a failure occurred)
 
 **Acceptance Criteria:**
 
-- The Rust plan defines the diagnostics bundle content and how it is generated.
+- - The Rust plan defines the diagnostics bundle content and how it is generated.
 
 ---
 
@@ -818,16 +771,16 @@ This task is complete only when:
 
 **Requirements:**
 
-- Define a clear installer interface per tool, e.g.:
+- - Define a clear installer interface per tool, e.g.:
   - `detect()`
   - `install()`
   - `verify()`
   - `metadata()` (name, description, dependencies, concurrency safety flags)
-- Use a statically-compiled registry to manage installers.
+- - Use a statically-compiled registry to manage installers.
 
 **Acceptance Criteria:**
 
-- The Rust plan includes the core installer trait/interface and how new tools are added with minimal boilerplate.
+- - The Rust plan includes the core installer trait/interface and how new tools are added with minimal boilerplate.
 
 ---
 
@@ -838,41 +791,32 @@ This task is complete only when:
 **Requirements:**
 
 - Provide `bootstrap doctor` (or equivalent) that checks:
-  - permissions/privileges
-  - package manager availability
-  - PATH sanity
-  - network reachability (where required)
-  - disk space/working directory constraints
-- Ensure it prints actionable remediation.
+  - - permissions/privileges - package manager availability - PATH sanity - network reachability (where required) - disk
+    space/working directory constraints - Ensure it prints actionable remediation.
 
 **Acceptance Criteria:**
 
-- The Rust plan includes a self-doctor command and what it validates.
+- - The Rust plan includes a self-doctor command and what it validates.
 
 ---
 
 #### 6.2-P Safe retries + exponential backoff (WHERE SAFE)
 
-**Goal:** Make installs resilient to transient failures (network flakiness, temporary 5xx responses, package mirror hiccups) without masking real problems.
+**Goal:** Make installs resilient to transient failures (network flakiness, temporary 5xx responses, package mirror
+hiccups) without masking real problems.
 
 **Requirements:**
 
-- Define a unified retry policy that can be applied (where safe) to:
-  - artifact downloads
-  - package-manager metadata refreshes
-  - external API calls (if any)
-- The retry policy must explicitly define:
-  - which operations are safe to retry vs unsafe (idempotency rules)
-  - maximum attempts and total time budget
-  - exponential backoff with jitter
-  - how retries are reported in the progress UI and logs
+- - Define a unified retry policy that can be applied (where safe) to: - artifact downloads - package-manager metadata
+  refreshes - external API calls (if any) - The retry policy must explicitly define: - which operations are safe to
+  retry vs unsafe (idempotency rules) - maximum attempts and total time budget - exponential backoff with jitter - how
+  retries are reported in the progress UI and logs
   - how retry behavior differs in `--ci` / non-interactive modes
-- For unsafe-to-retry operations (examples: non-idempotent installs, partial state mutations), the plan must require:
-  - either no retries, or
-  - a detection/cleanup step before retrying, with clear justification
+- - For unsafe-to-retry operations (examples: non-idempotent installs, partial state mutations), the plan must require:
+  - either no retries, or - a detection/cleanup step before retrying, with clear justification
 
 **Acceptance Criteria:**
 
-- The Rust plan includes a concrete retry/backoff design and explicitly lists which steps use it and which do not.
+- - The Rust plan includes a concrete retry/backoff design and explicitly lists which steps use it and which do not.
 
 ---

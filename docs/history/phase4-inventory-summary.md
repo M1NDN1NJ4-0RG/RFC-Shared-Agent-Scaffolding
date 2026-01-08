@@ -6,16 +6,16 @@
 
 ## Overview
 
-This document summarizes the naming convention analysis performed in Phase 4.2. It consolidates findings from automated scans and manual review.
+This document summarizes the naming convention analysis performed in Phase 4.2. It consolidates findings from automated
+scans and manual review.
 
 ## File Naming Violations
 
 ### Total: 21 files require renaming
 
-- **Python:** 10 files (all using kebab-case, need snake_case)
-- **PowerShell:** 11 files (all using kebab-case, need PascalCase)
-- **Bash:** 0 files (already compliant with kebab-case)
-- **Perl:** 0 files (already compliant with kebab-case for .pl, PascalCase for .pm)
+- - **Python:** 10 files (all using kebab-case, need snake_case) - **PowerShell:** 11 files (all using kebab-case, need
+  PascalCase) - **Bash:** 0 files (already compliant with kebab-case) - **Perl:** 0 files (already compliant with
+  kebab-case for .pl, PascalCase for .pm)
 
 ### Python Files to Rename
 
@@ -57,7 +57,7 @@ All Python functions use `snake_case` as required by PEP 8:
 - `find_repo_root()`
 - `detect_platform()`
 - `find_safe_run_binary()`
-- etc.
+- - etc.
 
 **No changes required.**
 
@@ -68,7 +68,7 @@ All PowerShell functions use `PascalCase` or `Verb-Noun` format:
 - `Find-RepoRoot`
 - `Detect-Platform`
 - `Write-Err`
-- etc.
+- - etc.
 
 **Variable naming:** Mixed conventions observed (`$PascalCase` and `$camelCase`). Per Phase 4 decisions, this will remain warn-only with a TODO for future enforcement.
 
@@ -92,7 +92,7 @@ Perl subroutines consistently use `snake_case`:
 - `detect_platform`
 - `have_cmd`
 - `parse_json`
-- etc.
+- - etc.
 
 **Convention:** `snake_case` for subroutines (standard Perl practice)
 
@@ -102,44 +102,38 @@ Perl subroutines consistently use `snake_case`:
 
 ### Low Risk
 
-- **Internal symbols:** Already compliant, no changes needed
-- **Perl files:** Already compliant, no changes needed
-- **Bash files:** Already compliant, no changes needed
+- - **Internal symbols:** Already compliant, no changes needed - **Perl files:** Already compliant, no changes needed -
+  **Bash files:** Already compliant, no changes needed
 
 ### Medium Risk
 
-- **Python file renames:** 10 files, requires updates to imports and references
-- **PowerShell file renames:** 11 files, requires updates to script invocations
+- - **Python file renames:** 10 files, requires updates to imports and references - **PowerShell file renames:** 11
+  files, requires updates to script invocations
 
 ### Reference Update Scope
 
 After renaming, the following will need updates:
 
 1. **CI workflows** (`.github/workflows/`)
-2. **Documentation** (any code examples or file references)
-3. **Import statements** (Python files that import renamed modules)
-4. **Script invocations** (any place PowerShell scripts are called by name)
-5. **Test discovery** (if tests rely on filename patterns)
+2. 2. **Documentation** (any code examples or file references) 3. **Import statements** (Python files that import
+   renamed modules) 4. **Script invocations** (any place PowerShell scripts are called by name) 5. **Test discovery**
+   (if tests rely on filename patterns)
 
 ## Next Steps (Phase 4.3)
 
 1. Rename Python files using `git mv` (preserves history)
-2. Update Python imports and references
-3. Test Python wrapper suite
+2. 2. Update Python imports and references 3. Test Python wrapper suite
 4. Rename PowerShell files using `git mv`
-5. Update PowerShell invocations and references
-6. Test PowerShell wrapper suite
-7. Update all CI workflows
-8. Run full test matrix
+5. 5. Update PowerShell invocations and references 6. Test PowerShell wrapper suite 7. Update all CI workflows 8. Run
+   full test matrix
 
 ## Enforcement Plan (Phase 4.6)
 
 The naming conventions will be enforced via:
 
 1. **Python:** `flake8` with naming plugins (warn mode initially)
-2. **PowerShell:** PSScriptAnalyzer naming rules (warn mode initially)
-3. **Bash:** ShellCheck + custom validation (warn mode initially)
-4. **Perl:** Perl::Critic naming rules (warn mode initially)
+2. 2. **PowerShell:** PSScriptAnalyzer naming rules (warn mode initially) 3. **Bash:** ShellCheck + custom validation
+   (warn mode initially) 4. **Perl:** Perl::Critic naming rules (warn mode initially)
 5. **File naming:** Enhanced version of existing `naming-kebab-case.yml` workflow
 
 Enforcement will be converted from warn-mode to hard-fail in Phase 4.5, one language at a time.

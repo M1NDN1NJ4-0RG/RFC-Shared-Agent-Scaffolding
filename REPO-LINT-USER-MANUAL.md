@@ -4,34 +4,20 @@ This guide covers installation, common commands, shell completion, and troublesh
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Basic Usage](#basic-usage)
-- [Common Commands](#common-commands)
-  - [Tool Discovery and Help](#6-tool-discovery-and-help)
-  - [Environment Diagnostics](#7-environment-diagnostics)
-  - [Environment and PATH Management](#8-environment-and-path-management)
-- [Test Fixtures and Vector Mode](#test-fixtures-and-vector-mode)
-  - [What Are Fixture Files?](#what-are-fixture-files)
-  - [Where Fixture Files Live](#where-fixture-files-live)
-  - [Vector Mode (--include-fixtures)](#vector-mode---include-fixtures)
-  - [Fixture Immutability Guarantees](#fixture-immutability-guarantees)
-  - [Per-Language Fixture Breakdown](#per-language-fixture-breakdown)
-  - [Common Mistakes and Warnings](#common-mistakes-and-warnings)
-- [Shell Completion](#shell-completion)
-  - [Bash, Zsh, Fish](#bash-completion)
-  - [PowerShell (Windows)](#powershell-completion-windows)
-- [Troubleshooting](#troubleshooting)
-  - [Windows-Specific Issues](#windows-specific-issues)
-- [Advanced Usage](#advanced-usage)
-  - [Output Modes: Interactive vs CI](#output-modes-interactive-vs-ci)
-  - [Theme Customization](#theme-customization)
-  - [Custom Configuration](#custom-configuration)
-    - [Viewing Current Configuration](#viewing-current-configuration)
-    - [Validating Configuration Files](#validating-configuration-files)
-    - [Configuration Precedence](#configuration-precedence)
-  - [Pre-Commit Hooks](#integrating-with-pre-commit-hooks)
-  - [CI/CD Integration](#cicd-integration)
-- [Getting Help](#getting-help)
+- - [Installation](#installation) - [Basic Usage](#basic-usage) - [Common Commands](#common-commands) - [Tool Discovery
+  and Help](#6-tool-discovery-and-help) - [Environment Diagnostics](#7-environment-diagnostics) - [Environment and PATH
+  Management](#8-environment-and-path-management) - [Test Fixtures and Vector Mode](#test-fixtures-and-vector-mode) -
+  [What Are Fixture Files?](#what-are-fixture-files) - [Where Fixture Files Live](#where-fixture-files-live) - [Vector
+  Mode (--include-fixtures)](#vector-mode---include-fixtures) - [Fixture Immutability
+  Guarantees](#fixture-immutability-guarantees) - [Per-Language Fixture Breakdown](#per-language-fixture-breakdown) -
+  [Common Mistakes and Warnings](#common-mistakes-and-warnings) - [Shell Completion](#shell-completion) - [Bash, Zsh,
+  Fish](#bash-completion) - [PowerShell (Windows)](#powershell-completion-windows) - [Troubleshooting](#troubleshooting)
+  - [Windows-Specific Issues](#windows-specific-issues) - [Advanced Usage](#advanced-usage) - [Output Modes: Interactive
+  vs CI](#output-modes-interactive-vs-ci) - [Theme Customization](#theme-customization) - [Custom
+  Configuration](#custom-configuration) - [Viewing Current Configuration](#viewing-current-configuration) - [Validating
+  Configuration Files](#validating-configuration-files) - [Configuration Precedence](#configuration-precedence) -
+  [Pre-Commit Hooks](#integrating-with-pre-commit-hooks) - [CI/CD Integration](#cicd-integration) - [Getting
+  Help](#getting-help)
 
 ---
 
@@ -39,9 +25,7 @@ This guide covers installation, common commands, shell completion, and troublesh
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- pip (Python package manager)
-- Git (recommended)
+- - Python 3.8 or higher - pip (Python package manager) - Git (recommended)
 
 ### Option 1: Install from Source (Recommended for Development)
 
@@ -68,8 +52,8 @@ repo-lint install
 
 This will:
 
-- Install Python tools (black, ruff, pylint, yamllint) in a local virtual environment
-- Provide instructions for installing language-specific tools (shellcheck, perltidy, etc.)
+- - Install Python tools (black, ruff, pylint, yamllint) in a local virtual environment - Provide instructions for
+  installing language-specific tools (shellcheck, perltidy, etc.)
 
 ### Option 3: Automated Bootstrapping (Recommended for Contributors)
 
@@ -86,24 +70,19 @@ This script:
 
 - Creates a Python virtual environment (`.venv/`)
 - Installs `repo-lint` in editable mode (`pip install -e .`)
-- Installs all required linting tools (Python, Shell, PowerShell, Perl)
+- - Installs all required linting tools (Python, Shell, PowerShell, Perl)
 - Runs verification gate (`repo-lint check --ci`)
 
 #### Using Rust Bootstrapper (Faster, Parallel)
 
 The repository includes a Rust-based bootstrapper that provides:
 
-- Parallel tool installation for faster setup
-- Profile-based installation (dev/ci/full)
-- Rich progress UI with real-time status updates
-- Deterministic exit codes
+- - Parallel tool installation for faster setup - Profile-based installation (dev/ci/full) - Rich progress UI with
+  real-time status updates - Deterministic exit codes
 
 **Pre-built binaries** are available for:
 
-- Linux x86_64 (musl)
-- Linux ARM64 (musl)
-- macOS x86_64
-- macOS ARM64
+- - Linux x86_64 (musl) - Linux ARM64 (musl) - macOS x86_64 - macOS ARM64
 
 Download from [GitHub Releases](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/releases) or use the session scripts (which automatically use the Rust bootstrapper if available).
 
@@ -148,7 +127,7 @@ For consistent workflow management, use these scripts:
 **Session workflow:**
 
 1. `session-start.sh` runs the bootstrapper and sets up the environment
-2. You make code changes
+2. 2. You make code changes
 3. `session-end.sh` validates that all tools still work correctly
 
 Both scripts **MUST** exit 0 for a successful session.
@@ -200,9 +179,8 @@ repo-lint check --ci
 By default, `repo-lint check` and `repo-lint check --ci` use parallel execution with:
 
 - **AUTO worker calculation**: `min(max((os.cpu_count() or 1) - 1, 1), 8)`
-- This selects a conservative number of workers (1-8) based on available CPUs
-- Leaves 1 CPU core available for OS/overhead
-- Hard capped at 8 workers to prevent resource exhaustion
+- - This selects a conservative number of workers (1-8) based on available CPUs - Leaves 1 CPU core available for
+  OS/overhead - Hard capped at 8 workers to prevent resource exhaustion
 
 #### Controlling Parallelism
 
@@ -270,18 +248,17 @@ repo-lint check --progress
 
 Parallel execution maintains deterministic, stable output:
 
-- Final violation results are buffered and reported in runner registration order
-- Exit codes and violation counts are identical to sequential execution
+- - Final violation results are buffered and reported in runner registration order - Exit codes and violation counts are
+  identical to sequential execution
 - Same violations reported regardless of `--jobs` value
-- Aggregated summary output is deterministic
+- - Aggregated summary output is deterministic
 
 #### Performance Impact
 
 Example on a 4-CPU system:
 
 - **Sequential** (`--jobs 1`): ~45s
-- **Parallel** (AUTO, 3 workers): ~27s (**40% faster**)
-- With tool-level parallelism: ~26s (**43% faster**)
+- - **Parallel** (AUTO, 3 workers): ~27s (**40% faster**) - With tool-level parallelism: ~26s (**43% faster**)
 
 ### Verbose Output
 
@@ -427,12 +404,8 @@ repo-lint doctor --ci
 
 The `doctor` command checks:
 
-- Repository root detection
-- Virtual environment configuration
-- Tool registry loading
-- Config file validity
-- Tool availability (black, ruff, shellcheck, etc.)
-- PATH configuration
+- - Repository root detection - Virtual environment configuration - Tool registry loading - Config file validity - Tool
+  availability (black, ruff, shellcheck, etc.) - PATH configuration
 
 ---
 
@@ -454,21 +427,14 @@ repo-lint which --json
 
 Output includes:
 
-- Repository root directory
-- Resolved virtual environment path
-- Bin/Scripts directory (where executables live)
-- Activation script path
-- repo-lint executable location
-- Python executable location
-- sys.prefix and sys.base_prefix (venv detection)
-- Detected shell (for completion setup)
+- - Repository root directory - Resolved virtual environment path - Bin/Scripts directory (where executables live) -
+  Activation script path - repo-lint executable location - Python executable location - sys.prefix and sys.base_prefix
+  (venv detection) - Detected shell (for completion setup)
 
 **Use cases:**
 
-- Debug PATH or venv configuration issues
-- Verify repo-lint installation location
-- Check which Python is being used
-- Identify current shell for completion setup
+- - Debug PATH or venv configuration issues - Verify repo-lint installation location - Check which Python is being used
+  - Identify current shell for completion setup
 
 #### Generate Shell Integration (`env`)
 
@@ -533,9 +499,9 @@ repo-lint activate --print
 
 **Use cases:**
 
-- Quickly activate venv without manual source command
+- - Quickly activate venv without manual source command
 - Run single command in venv context (use `--command`)
-- Test venv activation in different shells
+- - Test venv activation in different shells
 - CI/CD automation (use `--ci --command`)
 
 **Options:**
@@ -553,8 +519,7 @@ All three commands (`which`, `env`, `activate`) use the same venv resolution pre
 
 1. Explicit `--venv` flag (highest priority)
 2. `.venv/` directory under repository root
-3. Currently active Python virtual environment (sys.prefix)
-4. Error if none found (lowest priority)
+3. 3. Currently active Python virtual environment (sys.prefix) 4. Error if none found (lowest priority)
 
 ---
 
@@ -569,27 +534,24 @@ All three commands (`which`, `env`, `activate`) use the same venv resolution pre
 These files exist to:
 
 - **Test the linters themselves**: Ensure `repo-lint` runners correctly invoke tools like `black`, `ruff`, `shellcheck`, `clippy`, etc.
-- **Validate violation detection**: Confirm that violation messages, file names, and line numbers are accurately reported
-- **Provide conformance testing**: Enable "vector mode" testing where the tool scans intentionally bad code
-- **Document expected behavior**: Serve as living examples of what each linter should catch
+- - **Validate violation detection**: Confirm that violation messages, file names, and line numbers are accurately
+  reported - **Provide conformance testing**: Enable "vector mode" testing where the tool scans intentionally bad code -
+  **Document expected behavior**: Serve as living examples of what each linter should catch
 
 #### Critical Understanding
 
 ⚠️ **FIXTURES ARE NOT PRODUCTION CODE** ⚠️
 
-- Fixtures contain **intentional violations** (unused variables, missing docstrings, bad formatting, etc.)
-- Every violation is **deliberate** and **required** for testing
-- These files should **NEVER** be "fixed" or reviewed as if they were production code
-- Running formatters or linters directly on fixtures would destroy their purpose
+- - Fixtures contain **intentional violations** (unused variables, missing docstrings, bad formatting, etc.) - Every
+  violation is **deliberate** and **required** for testing - These files should **NEVER** be "fixed" or reviewed as if
+  they were production code - Running formatters or linters directly on fixtures would destroy their purpose
 
 #### Why CI Excludes Fixtures by Default
 
 In normal operation (including `--ci` mode), `repo-lint` **automatically excludes** all fixture files from scanning. This prevents:
 
-- False positive violations in CI builds
-- Confusion about code quality ("Why are there 40 violations in the repo?")
-- Accidental "fixes" that would break the test suite
-- Performance overhead from scanning test artifacts
+- - False positive violations in CI builds - Confusion about code quality ("Why are there 40 violations in the repo?") -
+  Accidental "fixes" that would break the test suite - Performance overhead from scanning test artifacts
 
 Fixtures are **only** scanned when explicitly requested via `--include-fixtures` (vector mode).
 
@@ -635,9 +597,9 @@ tools/repo_lint/tests/fixtures/
 
 Fixtures live in `tools/repo_lint/tests/fixtures/` (not in a top-level `examples/` or `samples/` directory) because:
 
-- They are **test artifacts**, not user-facing examples
+- - They are **test artifacts**, not user-facing examples
 - They are tightly coupled to the integration tests in `tools/repo_lint/tests/test_fixture_vector_mode.py`
-- They must be excluded from normal repository scans
+- - They must be excluded from normal repository scans
 - They are part of the `repo-lint` package's internal test infrastructure
 
 This location makes it clear these are **testing tools**, not documentation or samples.
@@ -653,34 +615,30 @@ This location makes it clear these are **testing tools**, not documentation or s
 When you run `repo-lint` with the `--include-fixtures` flag:
 
 - All fixture files under `tools/repo_lint/tests/fixtures/` are **included** in the scan
-- The tool runs all configured linters against these intentionally broken files
-- Violations are detected and reported just like they would be for normal code
-- This validates that the linting infrastructure is working correctly
+- - The tool runs all configured linters against these intentionally broken files - Violations are detected and reported
+  just like they would be for normal code - This validates that the linting infrastructure is working correctly
 
 #### Why Vector Mode Exists
 
 Vector mode enables:
 
 1. **Conformance testing**: Verify that `repo-lint` correctly detects all expected violations
-2. **Regression testing**: Ensure linter integration doesn't break over time
-3. **CI validation**: Automated tests can verify the fixture system works as expected
-4. **Development debugging**: When adding new linters, test against known bad code
+2. 2. **Regression testing**: Ensure linter integration doesn't break over time 3. **CI validation**: Automated tests
+   can verify the fixture system works as expected 4. **Development debugging**: When adding new linters, test against
+   known bad code
 
 #### When to Use `--include-fixtures`
 
 Use vector mode when:
 
 - Running integration tests (`pytest tools/repo_lint/tests/test_fixture_vector_mode.py`)
-- Debugging linter integration issues
-- Validating that a new linter correctly detects violations
-- Testing changes to runner code
+- - Debugging linter integration issues - Validating that a new linter correctly detects violations - Testing changes to
+  runner code
 
 **DO NOT** use vector mode for:
 
-- Normal development workflows
-- Pre-commit hooks
-- CI builds (unless explicitly testing the fixture system)
-- Code quality checks
+- - Normal development workflows - Pre-commit hooks - CI builds (unless explicitly testing the fixture system) - Code
+  quality checks
 
 #### How Vector Mode Changes Behavior
 
@@ -772,16 +730,15 @@ Fixture files are considered **canonical test vectors** and must **never** be mo
 
 #### Why Fixtures Are Canonical
 
-- Each violation in a fixture file is **deliberate** and **documented**
-- Changing a fixture could break integration tests
-- Fixtures serve as the "source of truth" for what violations should be detected
-- Auto-fixing a fixture would destroy its value as a test vector
+- - Each violation in a fixture file is **deliberate** and **documented** - Changing a fixture could break integration
+  tests - Fixtures serve as the "source of truth" for what violations should be detected - Auto-fixing a fixture would
+  destroy its value as a test vector
 
 #### How CI Enforces Immutability
 
 The repository has **multiple safeguards** to prevent fixtures from being modified:
 
-1. **Black Auto-Fix Workflow**: Hardcoded regex exclusion
+1. 1. **Black Auto-Fix Workflow**: Hardcoded regex exclusion
 
    ```yaml
 
@@ -791,7 +748,7 @@ The repository has **multiple safeguards** to prevent fixtures from being modifi
 
    Black's auto-formatter will **never** touch fixture files, even if they violate formatting rules.
 
-2. **Naming Enforcement Workflow**: Explicit file exclusions
+2. 2. **Naming Enforcement Workflow**: Explicit file exclusions
 
    ```python
    if any(part in path for part in ['naming-violations.py', 'naming-violations.pl', ...]):
@@ -800,10 +757,10 @@ The repository has **multiple safeguards** to prevent fixtures from being modifi
 
    The naming enforcer skips dedicated `naming-violations.*` test files (which intentionally use wrong naming conventions).
 
-1. **Default Exclusion in repo-lint**: Built-in protection
+1. 1. **Default Exclusion in repo-lint**: Built-in protection
    - All runners have `include_fixtures=False` by default
    - Fixtures are excluded unless `--include-fixtures` is explicitly provided
-   - This prevents accidental scanning or fixing
+   - - This prevents accidental scanning or fixing
 
 #### What Are `*.RESET.diff` Files
 
@@ -816,10 +773,9 @@ In the Python fixtures directory, you'll find files like:
 
 These are **audit trail artifacts** that document the complete history of changes to fixture files:
 
-- They show the diff from the original fixture state to the current state
-- They serve as a record of intentional modifications (e.g., adding disclaimers, renaming files)
-- They help maintainers understand what changed and why
-- They are regenerated whenever fixtures are intentionally updated
+- - They show the diff from the original fixture state to the current state - They serve as a record of intentional
+  modifications (e.g., adding disclaimers, renaming files) - They help maintainers understand what changed and why -
+  They are regenerated whenever fixtures are intentionally updated
 
 **These diff files are for reference only** - they are not executed or parsed by the tool.
 
@@ -847,10 +803,11 @@ This section details **exactly** what fixture files exist for each language, wha
 
 - **Unused imports**: `import os` when `os` is never used
 - **Bad comparisons**: `list = [1, 2, 3]` (redefining builtin)
-- **Missing docstrings**: Functions/classes without documentation
-- **Formatting**: Lines that are too long, inconsistent indentation, etc.
+- - **Missing docstrings**: Functions/classes without documentation - **Formatting**: Lines that are too long,
+  inconsistent indentation, etc.
 
-**Why These Violations**: These are the most common Python code quality issues that linters should catch. By testing against these specific patterns, we ensure the runners correctly invoke and parse tool output.
+**Why These Violations**: These are the most common Python code quality issues that linters should catch. By testing
+against these specific patterns, we ensure the runners correctly invoke and parse tool output.
 
 #### Bash Fixtures
 
@@ -868,10 +825,11 @@ This section details **exactly** what fixture files exist for each language, wha
 **Key Violations Tested**:
 
 - **Unquoted variables**: `echo $my_var` instead of `echo "$my_var"` (can cause word splitting/globbing issues)
-- **Unused variables**: Variables declared but never referenced
+- - **Unused variables**: Variables declared but never referenced
 - **Improper cd usage**: `cd /tmp` without error handling
 
-**Why These Violations**: Shellcheck catches critical bugs that can cause scripts to fail in production. These test cases ensure the Bash runner correctly identifies these issues.
+**Why These Violations**: Shellcheck catches critical bugs that can cause scripts to fail in production. These test
+cases ensure the Bash runner correctly identifies these issues.
 
 #### Perl Fixtures
 
@@ -887,11 +845,12 @@ This section details **exactly** what fixture files exist for each language, wha
 
 **Key Violations Tested**:
 
-- **Excessive complexity**: Functions with too many branches
+- - **Excessive complexity**: Functions with too many branches
 - **Using @_ directly**: `print $_[0]` instead of unpacking arguments
 - **Punctuation variables**: Using `$_` without clear context
 
-**Why These Violations**: Perlcritic enforces best practices that make Perl code more maintainable and less error-prone. These fixtures test that the Perl runner correctly applies these policies.
+**Why These Violations**: Perlcritic enforces best practices that make Perl code more maintainable and less error-prone.
+These fixtures test that the Perl runner correctly applies these policies.
 
 #### PowerShell Fixtures
 
@@ -909,10 +868,11 @@ This section details **exactly** what fixture files exist for each language, wha
 
 - **Unused variables**: `$UnusedVariable = "never used"`
 - **Aliases**: Using `gci` instead of `Get-ChildItem`
-- **Positional parameters**: Not using named parameters
-- **Missing ShouldProcess**: Remove-* functions without -WhatIf/-Confirm support
+- - **Positional parameters**: Not using named parameters - **Missing ShouldProcess**: Remove-* functions without
+  -WhatIf/-Confirm support
 
-**Why These Violations**: PowerShell has strict conventions for module and cmdlet development. These fixtures ensure the PowerShell runner enforces these standards.
+**Why These Violations**: PowerShell has strict conventions for module and cmdlet development. These fixtures ensure the
+PowerShell runner enforces these standards.
 
 #### YAML Fixtures
 
@@ -929,12 +889,11 @@ This section details **exactly** what fixture files exist for each language, wha
 
 **Key Violations Tested**:
 
-- **Line too long**: Lines exceeding configured maximum
-- **Trailing whitespace**: Spaces at end of lines
-- **Inconsistent indentation**: Wrong indentation levels
-- **Deprecated Actions syntax**: Old workflow commands
+- - **Line too long**: Lines exceeding configured maximum - **Trailing whitespace**: Spaces at end of lines -
+  **Inconsistent indentation**: Wrong indentation levels - **Deprecated Actions syntax**: Old workflow commands
 
-**Why These Violations**: YAML is whitespace-sensitive and easy to break. These fixtures test that the YAML runner catches common formatting and syntax errors.
+**Why These Violations**: YAML is whitespace-sensitive and easy to break. These fixtures test that the YAML runner
+catches common formatting and syntax errors.
 
 #### Rust Fixtures
 
@@ -965,15 +924,17 @@ Each fixture file has a corresponding `.RESET.diff` file that can restore the fi
 
 #### What are RESET.diff files
 
-RESET.diff files are git-format patch files that contain the difference between the "fixed" state (after running auto-formatters) and the "bad" state (with intentional violations). They allow you to restore fixtures to their canonical violating state.
+RESET.diff files are git-format patch files that contain the difference between the "fixed" state (after running
+auto-formatters) and the "bad" state (with intentional violations). They allow you to restore fixtures to their
+canonical violating state.
 
 #### When to use RESET.diff files
 
 Use RESET.diff files when:
 
 - You've accidentally run an auto-fixer (like `black`, `rustfmt`, `shfmt`) on fixture files
-- You want to verify that fixtures still contain their intended violations
-- You need to reset fixtures to a known state for testing
+- - You want to verify that fixtures still contain their intended violations - You need to reset fixtures to a known
+  state for testing
 
 #### How to apply a RESET.diff file
 
@@ -1086,9 +1047,9 @@ $ repo-lint check --ci
 
 If you see fixture violations in CI logs (without `--include-fixtures`), this indicates:
 
-- A bug in the exclusion logic
+- - A bug in the exclusion logic
 - A regression in the `include_fixtures` parameter handling
-- An incorrect workflow configuration
+- - An incorrect workflow configuration
 
 **Report this immediately** - it violates the fixture immutability contract.
 
@@ -1096,10 +1057,10 @@ If you see fixture violations in CI logs (without `--include-fixtures`), this in
 
 If you need to modify a fixture file (e.g., to add a new violation category):
 
-1. Update the fixture file
+1. 1. Update the fixture file
 2. Update integration tests in `tools/repo_lint/tests/test_fixture_vector_mode.py`
 3. Regenerate `*.RESET.diff` files for audit trail
-4. Document the change in the commit message
+4. 4. Document the change in the commit message
 
 **Never** modify fixtures casually - they are part of the test infrastructure.
 
@@ -1342,7 +1303,7 @@ In CI workflows, ensure tools are installed before running repo-lint:
 
 - Remove `--unsafe` flag in CI environments
 - Use `--yes-i-know` with `--unsafe` in local environments
-- Read docs/contributing/ai-constraints.md before using unsafe mode
+- - Read docs/contributing/ai-constraints.md before using unsafe mode
 
 ### Windows-Specific Issues
 
@@ -1468,9 +1429,8 @@ repo-lint dump-config --config /path/to/custom/configs
 
 The `dump-config` command shows:
 
-- All configuration files merged together
-- The source of the configuration (default, environment variable, or custom path)
-- Current values for all tools, rules, and settings
+- - All configuration files merged together - The source of the configuration (default, environment variable, or custom
+  path) - Current values for all tools, rules, and settings
 
 #### Validating Configuration Files
 
@@ -1489,9 +1449,7 @@ The `validate-config` command checks:
 
 - YAML document markers (`---` and `...`)
 - Required fields (`config_type`, `version`, `languages`)
-- Unknown or misspelled keys (strict validation)
-- Semantic version format
-- Config-type-specific schema requirements
+- - Unknown or misspelled keys (strict validation) - Semantic version format - Config-type-specific schema requirements
 
 #### Configuration Precedence
 
@@ -1626,10 +1584,8 @@ repo-lint provides two output modes optimized for different environments:
 
 Used when running in a terminal (TTY). Features:
 
-- **Rich formatting** with colors, tables, and panels
-- **Icons** for status indicators (✓, ✗, ⚠️)
-- **Progress indicators** and spinners for long operations
-- **Styled help** output with syntax highlighting
+- - **Rich formatting** with colors, tables, and panels - **Icons** for status indicators (✓, ✗, ⚠️) - **Progress
+  indicators** and spinners for long operations - **Styled help** output with syntax highlighting
 
 ```bash
 # Interactive mode (automatic when running in terminal)
@@ -1648,10 +1604,8 @@ repo-lint check
 
 Used in CI/CD environments. Features:
 
-- **Plain text** output without colors or formatting
-- **No icons** or progress indicators
-- **Stable, deterministic** output for log parsing
-- **Greppable** format for automated analysis
+- - **Plain text** output without colors or formatting - **No icons** or progress indicators - **Stable, deterministic**
+  output for log parsing - **Greppable** format for automated analysis
 
 ```bash
 # Enable CI mode explicitly
@@ -1668,10 +1622,9 @@ repo-lint check --ci
 
 **When to use CI mode:**
 
-- GitHub Actions, GitLab CI, Jenkins, or other CI/CD
+- - GitHub Actions, GitLab CI, Jenkins, or other CI/CD
 - Redirecting output to files: `repo-lint check > results.txt`
-- Scripting and automation where stable output is needed
-- Windows Command Prompt (if Rich rendering has issues)
+- - Scripting and automation where stable output is needed - Windows Command Prompt (if Rich rendering has issues)
 
 ### Theme Customization
 
@@ -1776,7 +1729,7 @@ REPO_LINT_UI_THEME=/path/to/theme.yaml repo-lint check
 2. `REPO_LINT_UI_THEME` environment variable
 3. User theme: `~/.config/repo-lint/repo-lint-ui-theme.yaml`
 4. Repository theme: `conformance/repo-lint/repo-lint-ui-theme.yaml`
-5. Built-in default theme
+5. 5. Built-in default theme
 
 #### Available Color Names
 
@@ -1827,9 +1780,7 @@ repo-lint install --help
 
 repo-lint uses Rich for formatted help output with:
 
-- Colored text and panels
-- Tables for command lists
-- Syntax highlighting for examples
+- - Colored text and panels - Tables for command lists - Syntax highlighting for examples
 
 ### Documentation
 
@@ -1843,12 +1794,10 @@ repo-lint uses Rich for formatted help output with:
 If you encounter bugs or have feature requests:
 
 1. Check existing issues: <https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues>
-2. Create a new issue with:
-   - Command that failed
-   - Full error message
+2. 2. Create a new issue with: - Command that failed - Full error message
    - Python version (`python --version`)
    - repo-lint version (`repo-lint --version`)
-   - Operating system
+   - - Operating system
 
 ---
 

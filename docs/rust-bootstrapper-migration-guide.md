@@ -8,13 +8,12 @@ This guide helps you migrate from the legacy Bash bootstrapper (`bootstrap-repo-
 
 The Rust bootstrapper provides several advantages over the Bash version:
 
-- **30-50% Faster**: Parallel execution where safe (detection, downloads)
-- **Better Error Messages**: Clear, actionable error messages with exit codes
-- **Rich Progress UI**: Real-time progress bars and status updates
-- **Structured Logging**: JSON output mode for CI integration
+- - **30-50% Faster**: Parallel execution where safe (detection, downloads) - **Better Error Messages**: Clear,
+  actionable error messages with exit codes - **Rich Progress UI**: Real-time progress bars and status updates -
+  **Structured Logging**: JSON output mode for CI integration
 - **Better Diagnostics**: `doctor` command for troubleshooting
-- **Deterministic Behavior**: Fail-fast with clear exit codes
-- **Cross-platform**: Single binary, no external dependencies
+- - **Deterministic Behavior**: Fail-fast with clear exit codes - **Cross-platform**: Single binary, no external
+  dependencies
 
 ## Installation
 
@@ -26,13 +25,13 @@ The Rust bootstrapper provides several advantages over the Bash version:
    - macOS x86_64: `bootstrap-repo-cli-macos-x86_64.tar.gz`
    - macOS ARM64: `bootstrap-repo-cli-macos-arm64.tar.gz`
 
-2. Verify the checksum (optional but recommended):
+2. 2. Verify the checksum (optional but recommended):
 
    ```bash
    sha256sum -c bootstrap-repo-cli-<platform>.tar.gz.sha256
    ```
 
-3. Extract and install:
+3. 3. Extract and install:
 
    ```bash
    tar xzf bootstrap-repo-cli-<platform>.tar.gz
@@ -41,7 +40,7 @@ The Rust bootstrapper provides several advantages over the Bash version:
    chmod +x ~/.bootstrap/bin/bootstrap-repo-cli
    ```
 
-4. Add to PATH (if not already):
+4. 4. Add to PATH (if not already):
 
    ```bash
    echo 'export PATH="$HOME/.bootstrap/bin:$PATH"' >> ~/.bashrc
@@ -60,7 +59,8 @@ sudo cp target/release/bootstrap-repo-cli /usr/local/bin/
 
 ### Option 3: Use the Wrapper Script (Transition Period)
 
-The repository includes a wrapper script that automatically detects and uses the Rust binary if available, falling back to Bash:
+The repository includes a wrapper script that automatically detects and uses the Rust binary if available, falling back
+to Bash:
 
 ```bash
 # This will use Rust if available, otherwise Bash
@@ -109,18 +109,15 @@ Both bootstrappers:
 1. Install `repo-lint` via `pip install -e .` (editable mode from repository root)
 2. Verify `repo-lint --help` succeeds before completing
 3. Run automatic verification gate (`repo-lint check --ci`) after successful installation
-4. Handle verification gate exit codes identically:
-   - Exit 0: Clean repository, all tools working ✓
-   - Exit 1: Violations found but tools working ✓ (acceptable)
-   - Exit 2: Missing tools ✗ (failure)
-   - Exit 3+: Other errors ✗ (failure)
+4. 4. Handle verification gate exit codes identically: - Exit 0: Clean repository, all tools working ✓ - Exit 1:
+   Violations found but tools working ✓ (acceptable) - Exit 2: Missing tools ✗ (failure) - Exit 3+: Other errors ✗
+   (failure)
 
 ### Profile Support
 
 The Rust version uses profiles instead of command-line flags:
 
-- **dev profile**: Equivalent to Bash default (all common tools)
-- **ci profile**: Minimal tools for CI environments
+- - **dev profile**: Equivalent to Bash default (all common tools) - **ci profile**: Minimal tools for CI environments
 - **full profile**: All available tools (equivalent to Bash `--all`)
 
 Both approaches ensure the same tools are installed for equivalent use cases.
@@ -406,27 +403,24 @@ export BOOTSTRAP_FORCE_LEGACY=1
 
 ## Migration Checklist
 
-- [ ] Download and install the Rust binary
+- - [ ] Download and install the Rust binary
 - [ ] Create `.bootstrap.toml` configuration
 - [ ] Test with `--dry-run` mode
 - [ ] Run `bootstrap-repo-cli doctor` to verify environment
-- [ ] Update CI workflows to use Rust binary
-- [ ] Test in CI environment
-- [ ] Update documentation and runbooks
-- [ ] Train team on new commands
-- [ ] Remove Bash-specific flags from scripts
+- - [ ] Update CI workflows to use Rust binary - [ ] Test in CI environment - [ ] Update documentation and runbooks - [
+  ] Train team on new commands - [ ] Remove Bash-specific flags from scripts
 
 ## Getting Help
 
 - Run `bootstrap-repo-cli --help` for command documentation
 - Use `bootstrap-repo-cli doctor` for diagnostics
 - Check the [GitHub issues](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues) for known problems
-- See the [Rust Bootstrapper User Manual](rust-bootstrapper-manual.md) for detailed documentation
+- - See the [Rust Bootstrapper User Manual](rust-bootstrapper-manual.md) for detailed documentation
 
 ## Feedback
 
 We value your feedback! Please report issues or suggestions:
 
-- Open an issue on GitHub
+- - Open an issue on GitHub
 - Use the `doctor` command output to include diagnostic information
-- Mention whether you're using the pre-built binary or building from source
+- - Mention whether you're using the pre-built binary or building from source

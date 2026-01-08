@@ -2,15 +2,9 @@
 
 ## Table of Contents
 
-1. [Introduction](#introduction)
-2. [Installation](#installation)
-3. [Quick Start](#quick-start)
-4. [Commands](#commands)
-5. [Configuration](#configuration)
-6. [Exit Codes](#exit-codes)
-7. [Advanced Usage](#advanced-usage)
-8. [Troubleshooting](#troubleshooting)
-9. [Architecture](#architecture)
+1. 1. [Introduction](#introduction) 2. [Installation](#installation) 3. [Quick Start](#quick-start) 4.
+   [Commands](#commands) 5. [Configuration](#configuration) 6. [Exit Codes](#exit-codes) 7. [Advanced
+   Usage](#advanced-usage) 8. [Troubleshooting](#troubleshooting) 9. [Architecture](#architecture)
 
 ## Introduction
 
@@ -18,14 +12,13 @@ The Rust Bootstrapper (`bootstrap-repo-cli`) is a fast, reliable tool for instal
 
 ### Key Features
 
-- **Parallel Execution**: Safe parallelization for 30-50% faster bootstrapping
-- **Rich Progress UI**: Real-time progress bars and status updates
-- **Deterministic Behavior**: Fail-fast with clear exit codes
-- **Cross-platform**: Works on macOS and Linux (Windows coming soon)
-- **Zero Dependencies**: Single static binary, no external runtime required
+- - **Parallel Execution**: Safe parallelization for 30-50% faster bootstrapping - **Rich Progress UI**: Real-time
+  progress bars and status updates - **Deterministic Behavior**: Fail-fast with clear exit codes - **Cross-platform**:
+  Works on macOS and Linux (Windows coming soon) - **Zero Dependencies**: Single static binary, no external runtime
+  required
 - **Diagnostics**: Built-in `doctor` command for troubleshooting
-- **Flexible Configuration**: TOML-based profiles for different environments
-- **Parity with Bash**: Full feature parity with the Bash bootstrapper
+- - **Flexible Configuration**: TOML-based profiles for different environments - **Parity with Bash**: Full feature
+  parity with the Bash bootstrapper
 
 ### Parity with Bash Bootstrapper
 
@@ -33,20 +26,17 @@ The Rust bootstrapper achieves complete parity with the Bash bootstrapper:
 
 1. **repo-lint Installation**: Installs repo-lint via `pip install -e .` (editable mode)
 2. **Automatic Verification Gate**: Runs `repo-lint check --ci` automatically after successful installation
-3. **Exit Code Handling**: Properly handles verification gate exit codes:
-   - Exit 0: Clean repository, all tools working
-   - Exit 1: Violations found but tools working (acceptable)
-   - Exit 2+: Missing tools or critical errors (failure)
-4. **Profile Support**: Supports dev/ci/full profiles for different environments
+3. 3. **Exit Code Handling**: Properly handles verification gate exit codes: - Exit 0: Clean repository, all tools
+   working - Exit 1: Violations found but tools working (acceptable) - Exit 2+: Missing tools or critical errors
+   (failure) 4. **Profile Support**: Supports dev/ci/full profiles for different environments
 5. **Session Integration**: Works seamlessly with `session-start.sh` and `session-end.sh` scripts
 
 ### Performance
 
 Typical performance improvements over Bash:
 
-- Detection phase: 40-60% faster (parallel execution)
-- Installation phase: 20-40% faster (better concurrency)
-- Overall: 30-50% faster on multi-core systems
+- - Detection phase: 40-60% faster (parallel execution) - Installation phase: 20-40% faster (better concurrency) -
+  Overall: 30-50% faster on multi-core systems
 
 ## Installation
 
@@ -86,8 +76,7 @@ source ~/.bashrc
 
 Requirements:
 
-- Rust 1.70+
-- Cargo
+- - Rust 1.70+ - Cargo
 
 ```bash
 cd rust
@@ -176,10 +165,8 @@ bootstrap-repo-cli install --offline
 
 **Behavior:**
 
-- Always runs: detect → install → verify
-- Fail-fast: stops on first error
-- Idempotent: safe to run multiple times
-- Exit codes: see [Exit Codes](#exit-codes)
+- - Always runs: detect → install → verify - Fail-fast: stops on first error - Idempotent: safe to run multiple times -
+  Exit codes: see [Exit Codes](#exit-codes)
 
 ### `doctor`
 
@@ -211,18 +198,13 @@ bootstrap-repo-cli doctor --json
 
 **Checks:**
 
-- Repository: Valid git repository
-- Package Manager: Homebrew, apt, or snap detected
-- Python: Version and location
-- Network: Connectivity and latency
-- Disk Space: Available space
-- Permissions: Write permissions for installation paths
+- - Repository: Valid git repository - Package Manager: Homebrew, apt, or snap detected - Python: Version and location -
+  Network: Connectivity and latency - Disk Space: Available space - Permissions: Write permissions for installation
+  paths
 
 **Exit Codes:**
 
-- 0: All checks passed
-- 19: One or more checks failed
-- 19: Warnings present in strict mode
+- - 0: All checks passed - 19: One or more checks failed - 19: Warnings present in strict mode
 
 ### `verify`
 
@@ -251,10 +233,8 @@ bootstrap-repo-cli verify --verbose
 
 **Behavior:**
 
-- Does not install or download anything
-- Checks each tool is present and functional
-- Reports version mismatches
-- Exit code 19 if any tool is missing or broken
+- - Does not install or download anything - Checks each tool is present and functional - Reports version mismatches -
+  Exit code 19 if any tool is missing or broken
 
 ## Configuration
 
@@ -331,8 +311,7 @@ install_args = ["--upgrade"]
 
 If `.bootstrap.toml` is missing:
 
-- Interactive mode: uses default dev profile
-- CI mode: **requires config** (exits with error)
+- - Interactive mode: uses default dev profile - CI mode: **requires config** (exits with error)
 
 ## Exit Codes
 
@@ -374,10 +353,8 @@ bootstrap-repo-cli install --jobs 1
 
 **Safety:**
 
-- Detection phase: always parallel-safe
-- Download phase: limited by HTTP concurrency (2 per host)
-- Install phase: respects package manager locks
-- Verify phase: parallel-safe
+- - Detection phase: always parallel-safe - Download phase: limited by HTTP concurrency (2 per host) - Install phase:
+  respects package manager locks - Verify phase: parallel-safe
 
 ### Checkpoint and Resume
 
@@ -442,10 +419,8 @@ bootstrap-repo-cli install --dry-run
 
 **Output:**
 
-- Shows execution plan
-- Lists all steps that would be executed
-- Does not install or download anything
-- Always exits with code 0
+- - Shows execution plan - Lists all steps that would be executed - Does not install or download anything - Always exits
+  with code 0
 
 ### Version Downgrades
 
@@ -596,23 +571,17 @@ bootstrap-repo-cli install --verbose
 
 ### Design Principles
 
-1. **Determinism over convenience**: Exit codes are deterministic
-2. **Fail-fast, always**: No silent failures
-3. **Idempotency governs retries**: Only safe operations are retried
-4. **Concurrency only where safe**: Parallelism respects locks
-5. **Progress UI must be honest**: Clear communication
-6. **No repo pollution**: Caches live outside the repo
+1. 1. **Determinism over convenience**: Exit codes are deterministic 2. **Fail-fast, always**: No silent failures 3.
+   **Idempotency governs retries**: Only safe operations are retried 4. **Concurrency only where safe**: Parallelism
+   respects locks 5. **Progress UI must be honest**: Clear communication 6. **No repo pollution**: Caches live outside
+   the repo
 
 ### Components
 
-- **CLI**: Command-line interface (clap)
-- **Installer Registry**: Tool definitions and dependencies
-- **Execution Planner**: Dependency resolution and phase planning
-- **Package Managers**: Homebrew, apt, snap abstractions
-- **Progress Reporter**: Multi-task progress UI (indicatif)
-- **Lock Manager**: Resource locking for safe concurrency
-- **Retry Policy**: Exponential backoff with classification
-- **Doctor**: Diagnostics and environment checks
+- - **CLI**: Command-line interface (clap) - **Installer Registry**: Tool definitions and dependencies - **Execution
+  Planner**: Dependency resolution and phase planning - **Package Managers**: Homebrew, apt, snap abstractions -
+  **Progress Reporter**: Multi-task progress UI (indicatif) - **Lock Manager**: Resource locking for safe concurrency -
+  **Retry Policy**: Exponential backoff with classification - **Doctor**: Diagnostics and environment checks
 
 ### Installer Architecture
 
@@ -635,51 +604,39 @@ pub trait Installer: Send + Sync {
 
 ### Execution Flow
 
-1. **Parse CLI**: Arguments and flags
+1. 1. **Parse CLI**: Arguments and flags
 2. **Load Config**: `.bootstrap.toml` or defaults
-3. **Build Plan**: Dependency resolution and phase planning
-4. **Execute Phases**:
-   - Phase 1: Detection (parallel)
-   - Phase 2: Installation (respects concurrency)
-   - Phase 3: Verification (parallel)
-5. **Report Results**: Exit with appropriate code
+3. 3. **Build Plan**: Dependency resolution and phase planning 4. **Execute Phases**: - Phase 1: Detection (parallel) -
+   Phase 2: Installation (respects concurrency) - Phase 3: Verification (parallel) 5. **Report Results**: Exit with
+   appropriate code
 
 ### Concurrency Model
 
 - **Global Semaphore**: `--jobs <N>` limits total concurrency
-- **Resource Locks**: Named locks (brew_lock, apt_lock, etc.)
-- **HTTP Limiting**: 2 concurrent requests per host
-- **Retry Classification**: Only transient failures are retried
+- - **Resource Locks**: Named locks (brew_lock, apt_lock, etc.) - **HTTP Limiting**: 2 concurrent requests per host -
+  **Retry Classification**: Only transient failures are retried
 
 ### Supported Tools
 
 **Python:**
 
-- black (formatter)
-- ruff (linter)
-- pylint (linter)
-- yamllint (YAML linter)
-- pytest (test framework)
+- - black (formatter) - ruff (linter) - pylint (linter) - yamllint (YAML linter) - pytest (test framework)
 
 **Shell:**
 
-- shellcheck (linter)
-- shfmt (formatter)
+- - shellcheck (linter) - shfmt (formatter)
 
 **PowerShell:**
 
-- pwsh (interpreter)
-- PSScriptAnalyzer (linter)
+- - pwsh (interpreter) - PSScriptAnalyzer (linter)
 
 **Perl:**
 
-- perlcritic (linter)
-- PPI (parser)
+- - perlcritic (linter) - PPI (parser)
 
 **Other:**
 
-- actionlint (GitHub Actions linter)
-- ripgrep (search tool, REQUIRED)
+- - actionlint (GitHub Actions linter) - ripgrep (search tool, REQUIRED)
 
 ## Contributing
 
@@ -689,8 +646,7 @@ See [CONTRIBUTING.md](../CONTRIBUTING.md) for development guidelines.
 
 1. Implement the `Installer` trait
 2. Register in `InstallerRegistry`
-3. Add tests
-4. Update documentation
+3. 3. Add tests 4. Update documentation
 
 ## License
 

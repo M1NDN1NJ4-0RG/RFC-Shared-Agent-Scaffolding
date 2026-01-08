@@ -6,9 +6,7 @@ The probe starts `safe-run.ps1` successfully and calls `GenerateConsoleCtrlEvent
 
 Make the Windows CI probe actually deliver a console control event to the process tree running `safe-run.ps1` (or conclusively prove it can’t), and capture evidence such as:
 
-- Wrapper exit code
-- Whether an **ABORTED** log is created
-- Logs and process snapshots uploaded as artifacts
+- - Wrapper exit code - Whether an **ABORTED** log is created - Logs and process snapshots uploaded as artifacts
 
 # Required changes
 
@@ -21,7 +19,7 @@ Update `RFC-Shared-Agent-Scaffolding-Example/scripts/powershell/tests/phase3-ctr
 - Launch the target using Win32 `CreateProcess` with `CREATE_NEW_PROCESS_GROUP`.
 - Capture the process group ID (for `CreateProcess`, the group ID is typically the PID of the group leader process).
 - Call `GenerateConsoleCtrlEvent(CTRL_C_EVENT, <groupId>)` (or `CTRL_BREAK_EVENT` if Ctrl-C still doesn’t work).
-- Ensure the probe ignores Ctrl-C itself:
+- - Ensure the probe ignores Ctrl-C itself:
   - Call `SetConsoleCtrlHandler(NULL, TRUE)` before sending
   - Call `SetConsoleCtrlHandler(NULL, FALSE)` after sending
 
@@ -46,5 +44,4 @@ Try option A first. Fall back to option B if needed.
 
 In the probe logic:
 
-- Attempt Ctrl-C first.
-- If that fails, attempt Ctrl-Break.
+- - Attempt Ctrl-C first. - If that fails, attempt Ctrl-Break.

@@ -12,10 +12,9 @@ Successfully converted `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/script
 
 **Key Metrics:**
 
-- **Lines removed:** 212 (implementation logic, event ledger, log generation, signal handling)
-- **Lines added:** 98 (binary discovery, argument pass-through, error handling)
-- **Net reduction:** 114 lines (50% smaller)
-- **Test compatibility:** 15/17 tests pass (88%)
+- - **Lines removed:** 212 (implementation logic, event ledger, log generation, signal handling) - **Lines added:** 98
+  (binary discovery, argument pass-through, error handling) - **Net reduction:** 114 lines (50% smaller) - **Test
+  compatibility:** 15/17 tests pass (88%)
 
 ---
 
@@ -23,21 +22,14 @@ Successfully converted `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/script
 
 ### Before: Independent Implementation (227 lines)
 
-- Full implementation of safe-run contract
-- Event ledger with sequence tracking
-- Log file generation with split streams
-- Signal handling (SIGINT/SIGTERM)
-- Merged view generation
-- Snippet output logic
-- Complex FIFO-based stream capture
+- - Full implementation of safe-run contract - Event ledger with sequence tracking - Log file generation with split
+  streams - Signal handling (SIGINT/SIGTERM) - Merged view generation - Snippet output logic - Complex FIFO-based stream
+  capture
 
 ### After: Thin Invoker (113 lines)
 
-- Binary discovery cascade (5-step algorithm)
-- Argument pass-through (exec to Rust binary)
-- Exit code preservation
-- Error handling with actionable messages
-- No contract logic reimplementation
+- - Binary discovery cascade (5-step algorithm) - Argument pass-through (exec to Rust binary) - Exit code preservation -
+  Error handling with actionable messages - No contract logic reimplementation
 
 ---
 
@@ -112,32 +104,23 @@ exit 127
 
 **preflight-automerge-ruleset (5/5):**
 
-- ✅ ok returns 0
-- ✅ missing contexts returns 1
-- ✅ enforcement inactive returns 1
-- ✅ does not target default branch returns 1
-- ✅ auth error returns 2
+- - ✅ ok returns 0 - ✅ missing contexts returns 1 - ✅ enforcement inactive returns 1 - ✅ does not target default branch
+  returns 1 - ✅ auth error returns 2
 
 **safe-archive (4/4):**
 
-- ✅ default archives only one file
-- ✅ moves all logs (handles spaces in filenames)
-- ✅ no-clobber prevents overwrite
-- ✅ gzip compression works when gzip is available
+- - ✅ default archives only one file - ✅ moves all logs (handles spaces in filenames) - ✅ no-clobber prevents overwrite
+  - ✅ gzip compression works when gzip is available
 
 **safe-run (6/8):**
 
-- ✅ success produces no artifacts
-- ✅ failure captures stderr+stdout, preserves exit code
-- ❌ SAFE_SNIPPET_LINES prints tail snippet to stderr on failure (test over-specifies)
-- ✅ respects SAFE_LOG_DIR override
-- ✅ SIGTERM produces ABORTED log
-- ✅ event ledger with sequence numbers
-- ✅ merged view when SAFE_RUN_VIEW=merged
+- - ✅ success produces no artifacts - ✅ failure captures stderr+stdout, preserves exit code - ❌ SAFE_SNIPPET_LINES
+  prints tail snippet to stderr on failure (test over-specifies) - ✅ respects SAFE_LOG_DIR override - ✅ SIGTERM produces
+  ABORTED log - ✅ event ledger with sequence numbers - ✅ merged view when SAFE_RUN_VIEW=merged
 
 **safe-check (0/1):**
 
-- ❌ exits 0 on healthy environment (test creates isolated environment)
+- - ❌ exits 0 on healthy environment (test creates isolated environment)
 
 ---
 
@@ -147,7 +130,8 @@ exit 127
 
 **Test:** `test_safe_run.sh::test_snippet_lines`
 
-**Issue:** Test checks for "EVENTS" string in snippet output, but conformance spec (safe-run-005) only requires last N lines of output ("L2", "L3").
+**Issue:** Test checks for "EVENTS" string in snippet output, but conformance spec (safe-run-005) only requires last N
+lines of output ("L2", "L3").
 
 **Status:** **Rust implementation is correct per spec**. Test is over-specified.
 
@@ -186,13 +170,14 @@ L3
 
 **Root cause:** `safe-check.sh` calls `safe-run.sh` in isolated environment where repository root doesn't exist.
 
-**Status:** **Wrapper behavior is correct**. Test design assumes self-contained scripts, but wrapper model requires repository context.
+**Status:** **Wrapper behavior is correct**. Test design assumes self-contained scripts, but wrapper model requires
+repository context.
 
 **Options:**
 
 1. Update safe-check.sh test to set `SAFE_RUN_BIN` environment variable
-2. Update safe-check.sh test to copy Rust binary to temp directory
-3. Convert safe-check.sh to thin wrapper (future work)
+2. 2. Update safe-check.sh test to copy Rust binary to temp directory 3. Convert safe-check.sh to thin wrapper (future
+   work)
 
 ---
 
@@ -254,14 +239,11 @@ dev mode
 
 All requirements met:
 
-- [x] Convert Bash wrapper from independent implementation to thin invoker
-- [x] Implement binary discovery logic (5-step cascade per docs/wrapper-discovery.md)
-- [x] Pass through all CLI arguments verbatim
-- [x] Preserve exit codes from Rust binary
-- [x] Provide actionable error messages when binary not found
-- [x] Remove all implementation logic (event ledger, log generation, signal handling)
-- [x] Wrapper output matches Rust output (per conformance spec)
-- [x] Most tests pass (15/17 = 88%)
+- - [x] Convert Bash wrapper from independent implementation to thin invoker - [x] Implement binary discovery logic
+  (5-step cascade per docs/wrapper-discovery.md) - [x] Pass through all CLI arguments verbatim - [x] Preserve exit codes
+  from Rust binary - [x] Provide actionable error messages when binary not found - [x] Remove all implementation logic
+  (event ledger, log generation, signal handling) - [x] Wrapper output matches Rust output (per conformance spec) - [x]
+  Most tests pass (15/17 = 88%)
 
 ---
 
@@ -270,8 +252,7 @@ All requirements met:
 **P5 will include:**
 
 - Convert `RFC-Shared-Agent-Scaffolding-Example/scripts/perl/scripts/safe-run.pl` to thin invoker
-- Follow same binary discovery rules
-- Ensure Perl wrapper conformance tests pass
+- - Follow same binary discovery rules - Ensure Perl wrapper conformance tests pass
 
 ---
 
@@ -280,14 +261,13 @@ All requirements met:
 **Modified:**
 
 - `RFC-Shared-Agent-Scaffolding-Example/scripts/bash/scripts/safe-run.sh`
-  - 227 lines → 113 lines (50% reduction)
-  - 212 lines removed (implementation logic)
-  - 98 lines added (discovery + invocation)
+  - - 227 lines → 113 lines (50% reduction) - 212 lines removed (implementation logic) - 98 lines added (discovery +
+    invocation)
 
 **Statistics:**
 
-- **Net change:** -114 lines
-- **Complexity reduction:** ~80% (removed event ledger, signal handling, stream capture, log generation)
+- - **Net change:** -114 lines - **Complexity reduction:** ~80% (removed event ledger, signal handling, stream capture,
+  log generation)
 
 ---
 

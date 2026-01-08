@@ -4,7 +4,8 @@
 
 ## Purpose
 
-This directory contains historical AI agent guidelines and workflow templates that were originally embedded within the wrapper scripts directory structure. These files have been archived here to separate documentation from code structure.
+This directory contains historical AI agent guidelines and workflow templates that were originally embedded within the
+wrapper scripts directory structure. These files have been archived here to separate documentation from code structure.
 
 ## Contents
 
@@ -35,10 +36,11 @@ Work tracking templates used during wrapper development:
 
 ## Why Archived
 
-These files served their purpose during the wrapper implementation phase (Epic #33) and provided valuable structure for AI-assisted development. They have been archived to:
+These files served their purpose during the wrapper implementation phase (Epic #33) and provided valuable structure for
+AI-assisted development. They have been archived to:
 
-1. **Separate concerns**: Code structure should not contain agent-specific documentation
-2. **Preserve history**: These files document the development methodology used
+1. 1. **Separate concerns**: Code structure should not contain agent-specific documentation 2. **Preserve history**:
+   These files document the development methodology used
 3. **Maintain clarity**: Future contributors can focus on canonical documentation in `docs/`
 
 ## Current Agent Guidelines
@@ -52,8 +54,7 @@ For current repository-wide agent guidelines, see:
 
 These files were created during:
 
-- **Epic #33**: Rust Canonical Tool Implementation
-- **Date Range**: 2024 (estimated based on wrapper development timeline)
-- **Purpose**: Guide AI coding agents through wrapper script creation and validation
+- - **Epic #33**: Rust Canonical Tool Implementation - **Date Range**: 2024 (estimated based on wrapper development
+  timeline) - **Purpose**: Guide AI coding agents through wrapper script creation and validation
 
 The methodology proved effective and some concepts have been integrated into the repository-wide agent instructions.

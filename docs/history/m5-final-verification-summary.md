@@ -6,7 +6,8 @@
 
 ## Executive Summary
 
-M5 completes the repository restructure epic by validating that all migrations (M0-M4) are successful, all references are updated, and no behavioral regressions have been introduced.
+M5 completes the repository restructure epic by validating that all migrations (M0-M4) are successful, all references
+are updated, and no behavioral regressions have been introduced.
 
 ## P1 — Full Repo Integrity Checks
 
@@ -22,15 +23,16 @@ bash scripts/verify-repo-references.sh
 
 - ✅ **`documents/` references:** Only 9 matches remain, ALL in historical documentation (`docs/history/`) or the verification script itself
 - ✅ **`RFC-Shared-Agent-Scaffolding-Example/` references:** Only 51 matches remain, ALL in historical documentation (`docs/history/`) or the verification script itself
-- ✅ **Active code/config:** ZERO obsolete path references found outside of historical docs
-- ✅ **PowerShell test files:** Fixed 2 remaining references that were in comments
+- - ✅ **Active code/config:** ZERO obsolete path references found outside of historical docs - ✅ **PowerShell test
+  files:** Fixed 2 remaining references that were in comments
 
 **Fixed Files:**
 
 - `wrappers/powershell/tests/phase3-ctrlc-probe.ps1` - Updated path reference in docstring
 - `wrappers/powershell/tests/safe-check-tests.ps1` - Updated path reference in comment
 
-**Conclusion:** All active references updated. Historical documentation appropriately preserved with old paths for context.
+**Conclusion:** All active references updated. Historical documentation appropriately preserved with old paths for
+context.
 
 ### Item 1.2 — Behavior Verification ✅
 
@@ -42,9 +44,8 @@ bash scripts/verify-repo-references.sh
 cd rust/ && cargo test --all
 ```
 
-- ✅ **Unit tests:** 7 passed, 0 failed
-- ✅ **Integration tests (conformance):** 31 passed, 0 failed, 4 ignored
-- ✅ **Total:** 38/38 tests passing
+- - ✅ **Unit tests:** 7 passed, 0 failed - ✅ **Integration tests (conformance):** 31 passed, 0 failed, 4 ignored - ✅
+  **Total:** 38/38 tests passing
 
 #### Bash Wrappers
 
@@ -52,11 +53,8 @@ cd rust/ && cargo test --all
 cd wrappers/bash && bash run-tests.sh
 ```
 
-- ✅ **Preflight tests:** 5 passed
-- ✅ **safe-archive tests:** 4 passed
-- ✅ **safe-check tests:** 1 passed
-- ✅ **safe-run tests:** 13 passed
-- ✅ **Total:** 23/23 tests passing
+- - ✅ **Preflight tests:** 5 passed - ✅ **safe-archive tests:** 4 passed - ✅ **safe-check tests:** 1 passed - ✅
+  **safe-run tests:** 13 passed - ✅ **Total:** 23/23 tests passing
 
 #### Python3 Wrappers
 
@@ -64,8 +62,7 @@ cd wrappers/bash && bash run-tests.sh
 cd wrappers/python3 && bash run-tests.sh
 ```
 
-- ✅ **All tests:** 20 passed, 0 failed
-- ✅ Tests include: preflight, safe-archive, safe-check, safe-run
+- - ✅ **All tests:** 20 passed, 0 failed - ✅ Tests include: preflight, safe-archive, safe-check, safe-run
 
 #### Perl Wrappers
 
@@ -73,9 +70,8 @@ cd wrappers/python3 && bash run-tests.sh
 cd wrappers/perl && bash run-tests.sh
 ```
 
-- ✅ **All tests:** 46 passed, 0 failed
-- ✅ Files tested: 5 test files
-- ✅ Tests include: safe-run, safe-run-sigint, safe-archive, safe-check, preflight
+- - ✅ **All tests:** 46 passed, 0 failed - ✅ Files tested: 5 test files - ✅ Tests include: safe-run, safe-run-sigint,
+  safe-archive, safe-check, preflight
 
 #### PowerShell Wrappers
 
@@ -83,15 +79,12 @@ cd wrappers/perl && bash run-tests.sh
 cd wrappers/powershell && pwsh -File run-tests.ps1
 ```
 
-- ✅ **All tests:** 17 passed, 0 failed, 0 skipped
-- ✅ Tests include: preflight, safe-archive, safe-check, safe-run
+- - ✅ **All tests:** 17 passed, 0 failed, 0 skipped - ✅ Tests include: preflight, safe-archive, safe-check, safe-run
 
 **Summary:**
 
-- ✅ **Total tests across all implementations:** 144 tests passing
-- ✅ **Zero test failures**
-- ✅ **Wrapper scripts correctly discover and invoke Rust binaries**
-- ✅ **No behavioral regressions detected**
+- - ✅ **Total tests across all implementations:** 144 tests passing - ✅ **Zero test failures** - ✅ **Wrapper scripts
+  correctly discover and invoke Rust binaries** - ✅ **No behavioral regressions detected**
 
 ### Item 1.3 — CI Validation ✅
 
@@ -113,11 +106,12 @@ All 13 GitHub Actions workflow files validated:
 - ✅ `test-powershell.yml` - Valid YAML
 - ✅ `test-python3.yml` - Valid YAML
 
-**Note:** yamllint reports some style warnings (line length, trailing spaces), but all files are syntactically valid and functional.
+**Note:** yamllint reports some style warnings (line length, trailing spaces), but all files are syntactically valid and
+functional.
 
 **Path-Based Actions:**
 
-- ✅ All workflow paths updated during M2 (verified by successful local test runs)
+- - ✅ All workflow paths updated during M2 (verified by successful local test runs)
 - ✅ `scripts/verify-repo-references.sh` validates obsolete paths
 - ✅ `scripts/validate-docstrings.py` validates documentation contracts
 - ✅ `scripts/validate-structure.sh` validates repository structure
@@ -141,8 +135,8 @@ All 13 GitHub Actions workflow files validated:
 
 **docs/README.md Links:**
 
-- ✅ All section links validated (overview, architecture, usage, testing, contributing, history)
-- ✅ Cross-references to root README and RFC validated
+- - ✅ All section links validated (overview, architecture, usage, testing, contributing, history) - ✅ Cross-references
+  to root README and RFC validated
 
 **User Paths:**
 
@@ -154,9 +148,8 @@ All 13 GitHub Actions workflow files validated:
 
 ## M5 Exit Criteria — Status
 
-- ✅ **CI green:** All local tests passing (CI will validate on push)
-- ✅ **All integrity checks pass:** Zero obsolete references in active code
-- ✅ **Docs navigation verified:** All links valid, entry points clear
+- - ✅ **CI green:** All local tests passing (CI will validate on push) - ✅ **All integrity checks pass:** Zero obsolete
+  references in active code - ✅ **Docs navigation verified:** All links valid, entry points clear
 
 ## Changes Made in M5
 
@@ -176,16 +169,13 @@ All 13 GitHub Actions workflow files validated:
 
 M5 verification confirms:
 
-1. **Repository restructure is complete** (M0-M5)
-2. **No behavioral regressions** introduced
-3. **All references updated** (except appropriate historical documentation)
-4. **Documentation navigation is clear** and functional
-5. **144 tests passing** across all implementations
+1. 1. **Repository restructure is complete** (M0-M5) 2. **No behavioral regressions** introduced 3. **All references
+   updated** (except appropriate historical documentation) 4. **Documentation navigation is clear** and functional 5.
+   **144 tests passing** across all implementations
 
 The repository is ready for final review and merge.
 
 ## Next Steps
 
-1. Merge this PR to complete the restructure epic
-2. Close EPIC issue once merged
-3. Update any external documentation referencing old paths
+1. 1. Merge this PR to complete the restructure epic 2. Close EPIC issue once merged 3. Update any external
+   documentation referencing old paths

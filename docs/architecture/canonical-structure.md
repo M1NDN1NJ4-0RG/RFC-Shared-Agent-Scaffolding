@@ -4,7 +4,8 @@ This document defines the required directory structure for all language bundles 
 
 ## Purpose
 
-To ensure consistency, maintainability, and prevent path drift across language implementations, all language bundles **MUST** follow the identical directory structure defined below.
+To ensure consistency, maintainability, and prevent path drift across language implementations, all language bundles
+**MUST** follow the identical directory structure defined below.
 
 ## Canonical Structure
 
@@ -42,12 +43,12 @@ Each language uses its conventional file extension:
 
 ### Naming Conventions
 
-- **Language-specific conventions** (as of Phase 5.5):
+- - **Language-specific conventions** (as of Phase 5.5):
   - Bash: kebab-case (e.g., `safe-run.sh`, `preflight-automerge-ruleset.sh`)
   - Perl: snake_case (e.g., `safe_run.pl`, `preflight_automerge_ruleset.pl`)
   - Python 3: snake_case (e.g., `safe_run.py`, `preflight_automerge_ruleset.py`)
   - PowerShell: PascalCase (e.g., `SafeRun.ps1`, `PreflightAutomergeRuleset.ps1`)
-- See docs/contributing/naming-and-style.md for current standards
+- - See docs/contributing/naming-and-style.md for current standards
 
 ## What Changed (Migration from Old Structure)
 
@@ -117,7 +118,7 @@ The workflow `.github/workflows/structure-validation.yml` runs on every PR that 
 
 - `wrappers/**`
 - `scripts/validate-structure.sh`
-- The workflow file itself
+- - The workflow file itself
 
 PRs **CANNOT** merge if the structure validation fails.
 
@@ -170,25 +171,20 @@ scripts/<language>/tests/                # RIGHT
 
 ### Why This Matters
 
-1. **Consistency**: All languages follow the same layout, reducing cognitive load
-2. **Predictability**: CI, tooling, and documentation can rely on known paths
-3. **Maintainability**: Path references are simpler and less error-prone
-4. **Future-proofing**: When Rust canonical tool is introduced, wrappers will have identical relative paths
+1. 1. **Consistency**: All languages follow the same layout, reducing cognitive load 2. **Predictability**: CI, tooling,
+   and documentation can rely on known paths 3. **Maintainability**: Path references are simpler and less error-prone 4.
+   **Future-proofing**: When Rust canonical tool is introduced, wrappers will have identical relative paths
 
 ### Why We Flattened
 
 The old nested structure (`scripts/<language>/scripts/<language>/`) was:
 
-- Redundant and confusing
-- Inconsistent across languages (Bash/PowerShell nested, Perl/Python flat)
-- Harder to reference in tests and CI
-- A source of path drift
+- - Redundant and confusing - Inconsistent across languages (Bash/PowerShell nested, Perl/Python flat) - Harder to
+  reference in tests and CI - A source of path drift
 
 The new flat structure ensures:
 
-- All languages are identical
-- Paths are simpler and more maintainable
-- Less room for error
+- - All languages are identical - Paths are simpler and more maintainable - Less room for error
 
 ## References
 

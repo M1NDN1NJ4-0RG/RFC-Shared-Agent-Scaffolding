@@ -142,7 +142,8 @@ echo "Release archive created: ${ARCHIVE}"
 
 ## Archive Contents
 
-The archive contains all files and directories from the source directory. The directory structure is preserved relative to the source directory.
+The archive contains all files and directories from the source directory. The directory structure is preserved relative
+to the source directory.
 
 ### Example
 
@@ -180,21 +181,20 @@ README.md
 
 - **Tar archives**: Uses the `tar` crate with `flate2` (gzip) or `bzip2` compression
 - **Zip archives**: Uses the `zip` crate with deflate compression
-- **No-clobber**: Filesystem-level checking before archive creation
-- **Auto-suffix**: Numeric suffix (.1, .2, etc.) inserted before final extension
+- - **No-clobber**: Filesystem-level checking before archive creation - **Auto-suffix**: Numeric suffix (.1, .2, etc.)
+  inserted before final extension
 
 ### Performance Considerations
 
-- Compression is single-threaded (Rust standard library limitation)
+- - Compression is single-threaded (Rust standard library limitation)
 - For large directories, `.tar.gz` offers the best balance of speed and compression
 - `.tar.bz2` provides better compression but is significantly slower
 - `.zip` is fastest for cross-platform compatibility but has larger archive sizes
 
 ### Platform Notes
 
-- **Unix/Linux**: Full support for all formats
-- **macOS**: Full support for all formats
-- **Windows**: Full support for all formats (no special handling needed)
+- - **Unix/Linux**: Full support for all formats - **macOS**: Full support for all formats - **Windows**: Full support
+  for all formats (no special handling needed)
 
 ## Comparison with safe-run
 
@@ -208,9 +208,7 @@ README.md
 
 ## Contract References
 
-- **safe-archive-001**: Basic archive creation
-- **safe-archive-002**: Multiple compression formats
-- **safe-archive-003**: No-clobber with auto-suffix
-- **safe-archive-004**: No-clobber strict mode
+- - **safe-archive-001**: Basic archive creation - **safe-archive-002**: Multiple compression formats -
+  **safe-archive-003**: No-clobber with auto-suffix - **safe-archive-004**: No-clobber strict mode
 
 See `conformance/vectors.json` for detailed test vectors.
