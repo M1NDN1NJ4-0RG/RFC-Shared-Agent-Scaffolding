@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # pylint: disable=wrong-import-position  # Test file needs special setup
+# pylint: disable=too-many-public-methods  # Test files naturally have many test methods
 """Unit tests for TOML runner (Taplo).
 
 :Purpose:
