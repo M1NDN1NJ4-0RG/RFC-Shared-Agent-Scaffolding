@@ -198,15 +198,6 @@ def run_docstring_validator(fixture_path: Path) -> List[Dict]:
     """
     validator_script = REPO_ROOT / "scripts" / "validate_docstrings.py"
 
-    # DEBUG: Print BEFORE running subprocess
-    print("\n🔍 DEBUG: About to run validator")
-    print(f"    Python: {sys.executable}")
-    print(f"    Script: {validator_script}")
-    print(f"    Script exists: {validator_script.exists()}")
-    print(f"    Fixture: {fixture_path}")
-    print(f"    Fixture exists: {fixture_path.exists()}")
-    print(f"    CWD: {REPO_ROOT}")
-
     # Run validator with minimal checks (just docstring presence, not content)
     result = subprocess.run(
         [sys.executable, str(validator_script), "--file", str(fixture_path), "--no-content-checks"],
@@ -215,19 +206,8 @@ def run_docstring_validator(fixture_path: Path) -> List[Dict]:
         cwd=REPO_ROOT,
     )
 
-    # DEBUG: Print output for CI debugging
-    print("\n📋 DEBUG: Subprocess completed")
-    print(f"    Exit code: {result.returncode}")
-    print(f"    Stdout length: {len(result.stdout)}")
-    print(f"    Stderr length: {len(result.stderr)}")
-    print(f"    Stdout preview: {result.stdout[:300]}")
-    print(f"    Stderr preview: {result.stderr[:300]}")
-
     # Parse output (validator exits non-zero on violations, which is expected)
     violations = parse_docstring_validator_output(result.stdout + result.stderr)
-    print(f"    Violations found: {len(violations)}")
-    for v in violations[:3]:
-        print(f"      - {v.get('symbol')} at line {v.get('line')}")
 
     return violations
 
