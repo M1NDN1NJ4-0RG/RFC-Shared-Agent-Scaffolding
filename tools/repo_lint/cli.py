@@ -306,13 +306,13 @@ def cli(ctx):
 )
 @click.option(
     "--only",
-    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust"], case_sensitive=False),
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "markdown"], case_sensitive=False),
     help="Run checks for only the specified language (deprecated: use --lang)",
 )
 @click.option(
     "--lang",
-    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "all"], case_sensitive=False),
-    help="Filter checks to specified language (python|bash|powershell|perl|yaml|rust|all)",
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "all"], case_sensitive=False),
+    help="Filter checks to specified language (python|bash|powershell|perl|yaml|rust|markdown|all)",
 )
 @click.option(
     "--tool",
@@ -551,13 +551,13 @@ def check(
 )
 @click.option(
     "--only",
-    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust"], case_sensitive=False),
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "markdown"], case_sensitive=False),
     help="Run fixes for only the specified language (deprecated: use --lang)",
 )
 @click.option(
     "--lang",
-    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "all"], case_sensitive=False),
-    help="Filter fixes to specified language (python|bash|powershell|perl|yaml|rust|all)",
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "all"], case_sensitive=False),
+    help="Filter fixes to specified language (python|bash|powershell|perl|yaml|rust|markdown|all)",
 )
 @click.option(
     "--tool",
@@ -960,7 +960,7 @@ def list_langs():
 @cli.command("list-tools")
 @click.option(
     "--lang",
-    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust"], case_sensitive=False),
+    type=click.Choice(["python", "bash", "powershell", "perl", "yaml", "rust", "markdown"], case_sensitive=False),
     help="Filter tools to specific language",
 )
 def list_tools(lang):
