@@ -1,6 +1,30 @@
 # PR #297 Summary
 
-## Current Session (2026-01-08)
+## Current Session (2026-01-08) - Part 2: Review Comment Fix
+
+### Review Comment Addressed
+
+**Comment:** Nested list structure in conformance/README.md was destroyed (Version History section).
+
+**Root Cause:** Bug in `_collect_list_item()` - nested list items with more indent were incorrectly treated as continuation lines of their parent, causing them to be joined into one long line.
+
+**Fix (commit: e76d00e):**
+1. Changed line 248-253 in `fix_md013_line_length_option_b.py`
+2. Now stops collecting when ANY new list item is detected (nested or not)
+3. Original code only stopped for same-or-less indent, allowing nested items to be absorbed
+
+**Changes:**
+- Reverted `conformance/README.md` to state before mangling
+- Fixed `scripts/fix_md013_line_length_option_b.py` (3 lines changed)
+- Added `test_version_history_nested_list_structure` regression test
+- Added pragmas to test files to prevent black/pylint from breaking test strings
+
+**Validation:**
+- All 61 tests pass (including new regression test)
+- Python linting: exit 0
+- Verified: conformance/README.md Version History structure preserved
+
+## Current Session (2026-01-08) - Part 1: Python Linting Fixes
 
 ### Session Start
 - Read mandatory compliance documents
@@ -34,15 +58,17 @@ Successfully applied fix_md013_line_length_option_b.py to CONTRIBUTING.md:
 - Manually verified: no structure mangling, all formatting correct
 
 ### Commit 3: Batch 1 - conformance/README.md (commit: 22f2b96)
+**NOTE: This commit introduced the bug - reverted in current session**
+
 Applied fixer to conformance/README.md:
 - Wrapped long paragraphs
-- All structure preserved
-- Manually verified output
+- **BUG**: Mangled Version History nested list structure
+- Reverted in commit e76d00e
 
 ### Pre-Commit Gate
-- repo-lint check --ci: Exit 1 (pre-existing markdown violations only, Python files all pass)
+- repo-lint check --ci --only python: Exit 0 (SUCCESS)
 
-### Code Review
+### Code Review (Previous Session)
 - Initiated Copilot Code Review on all changes
 - Result: **No review comments** - all changes clean
 
@@ -75,15 +101,15 @@ Coverage includes all list types, code blocks, tables, edge cases, and historica
 - Result: **No review comments** - code is clean
 
 ## Session End Status
-- All Python linting violations fixed
-- All 60 tests passing
-- Safety trial successful
-- Batch 1 processing complete
-- Code review passed with no issues
+- Critical bug in Option B fixed
+- All 61 tests passing
+- All Python linting passes (exit 0)
+- Regression test added to prevent recurrence
 - Repository is clean and resumable
 
 ## Next Steps (Future Session)
 Continue batch processing per 297-next-steps.md:
+- Safety trial on corrected conformance/README.md
 - Process additional batches of markdown files
 - Monitor for any issues
 - Final verification with repo-lint check --ci
