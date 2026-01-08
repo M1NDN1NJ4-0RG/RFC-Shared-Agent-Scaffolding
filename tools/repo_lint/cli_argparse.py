@@ -59,6 +59,7 @@ from tools.repo_lint.logging_utils import configure_logging, set_verbose_mode
 from tools.repo_lint.policy import get_policy_summary, load_policy, validate_policy
 from tools.repo_lint.reporting import print_install_instructions, report_results
 from tools.repo_lint.runners.bash_runner import BashRunner
+from tools.repo_lint.runners.json_runner import JsonRunner
 from tools.repo_lint.runners.markdown_runner import MarkdownRunner
 from tools.repo_lint.runners.naming_runner import NamingRunner
 from tools.repo_lint.runners.perl_runner import PerlRunner
@@ -205,6 +206,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
         ("perl", "Perl", PerlRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("yaml", "YAML", YAMLRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("toml", "TOML", TomlRunner(ci_mode=args.ci, verbose=args.verbose)),
+        ("json", "JSON/JSONC", JsonRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("rust", "Rust", RustRunner(ci_mode=args.ci, verbose=args.verbose)),
         ("markdown", "Markdown", MarkdownRunner(ci_mode=args.ci, verbose=args.verbose)),
     ]
