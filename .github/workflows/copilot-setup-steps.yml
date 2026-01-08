@@ -348,7 +348,8 @@ jobs:
         run: |
           set -euo pipefail
           npm install -g markdownlint-cli2@0.20.0
-          # markdownlint-cli2 --version
+          # Note: markdownlint-cli2 version is verified later in the
+          # "Verify key tools are available" step to keep all tool checks together.
 
       - name: Verify key tools are available
         shell: bash

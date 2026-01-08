@@ -6,17 +6,17 @@
 
 **Last Updated:** 2026-01-08
 
----
+______________________________________________________________________
 
 ## Core Principles
 
 1. **Narrow exception types** when the failure mode is known and specific
-2. **Preserve exception context** via exception chaining (`raise ... from e`)
-3. **Fail fast** in library code - don't swallow exceptions that callers need to see
-4. **Convert cleanly** at CLI boundaries - turn exceptions into user-friendly messages + exit codes
-5. **Document intentional broad catches** with inline comments explaining why
+1. **Preserve exception context** via exception chaining (`raise ... from e`)
+1. **Fail fast** in library code - don't swallow exceptions that callers need to see
+1. **Convert cleanly** at CLI boundaries - turn exceptions into user-friendly messages + exit codes
+1. **Document intentional broad catches** with inline comments explaining why
 
----
+______________________________________________________________________
 
 ## Acceptable vs Unacceptable Broad Exception Usage
 
@@ -25,6 +25,7 @@
 Broad exception handlers (`except Exception as e:`) are **ACCEPTABLE** at CLI boundaries where the goal is to convert any unexpected error into a clean user-facing message and non-zero exit code.
 
 **Requirements:**
+
 - MUST be at top-level CLI entry points (main functions, command handlers)
 - MUST produce a clear error message for the user
 - MUST exit with a non-zero exit code
@@ -34,14 +35,18 @@ Broad exception handlers (`except Exception as e:`) are **ACCEPTABLE** at CLI bo
 **Example (GOOD):**
 
 ```python
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     """CLI entry point."""
     try:
-        # ... command logic ...
-        return 0
+        args = parse_args(argv)
+        result = execute_command(args)
+        return 0 if result.success else 1
     except Exception as e:
+        # CLI boundary exception handler (acceptable pattern)
         print(f"❌ Error: {e}", file=sys.stderr)
-        if args.verbose:
+        # Note: args may not be defined if parse_args() failed
+        # Use getattr with default to avoid NameError
+        if getattr(args if 'args' in locals() else None, 'verbose', False):
             import traceback
             traceback.print_exc()
         return 1
@@ -63,6 +68,7 @@ def process_file(path: Path) -> dict:
 Broad exception handlers are **ACCEPTABLE** in diagnostic tools (like `repo-lint doctor`) where the goal is to report on system state without failing.
 
 **Requirements:**
+
 - MUST return structured error status (success/failure + message)
 - MUST NOT silently swallow exceptions - log or return error details
 - SHOULD use a tuple return pattern: `(success: bool, message: str, detail: str)`
@@ -87,6 +93,7 @@ def check_tool_availability(tool: str) -> tuple[bool, str, str]:
 Broad exception handlers are **ACCEPTABLE** in test cleanup code (finally blocks) where cleanup failures should not mask the actual test result.
 
 **Requirements:**
+
 - MUST be in a `finally` block or test teardown
 - MUST be cleanup-only operations (closing files, killing processes, etc.)
 - MAY silently swallow exceptions (test cleanup should not fail tests)
@@ -150,7 +157,7 @@ def read_config(path: Path) -> dict:
         ) from e
 ```
 
----
+______________________________________________________________________
 
 ## Required Behaviors When Catching Exceptions
 
@@ -239,7 +246,7 @@ except Exception as e:
     raise RuntimeError(f"Processing failed: {e}") from e
 ```
 
----
+______________________________________________________________________
 
 ## Custom Exception Types
 
@@ -250,8 +257,8 @@ When appropriate, create custom exception types to clarify domain-specific error
 Create custom exceptions when:
 
 1. You need to distinguish this error type from built-in exceptions
-2. You want callers to be able to catch this specific error type
-3. The error represents a domain-specific failure mode
+1. You want callers to be able to catch this specific error type
+1. The error represents a domain-specific failure mode
 
 ### Custom Exception Location
 
@@ -284,7 +291,7 @@ class ConfigurationError(RepoLintError):
         super().__init__(f"Invalid configuration in {config_path}: {issue}")
 ```
 
----
+______________________________________________________________________
 
 ## Exit Codes
 
@@ -310,19 +317,19 @@ class ExitCode(IntEnum):
     INTERNAL_ERROR = 99
 ```
 
----
+______________________________________________________________________
 
 ## Migration Strategy
 
 For existing code with overly-broad exception handlers:
 
 1. **Identify the failure modes** by examining the code or running tests
-2. **Narrow to specific exception types** that cover the actual failure modes
-3. **Add exception chaining** (`raise ... from e`) when re-raising
-4. **Add tests** that verify the correct exception type is raised
-5. **Document** any remaining broad catches with inline comments
+1. **Narrow to specific exception types** that cover the actual failure modes
+1. **Add exception chaining** (`raise ... from e`) when re-raising
+1. **Add tests** that verify the correct exception type is raised
+1. **Document** any remaining broad catches with inline comments
 
----
+______________________________________________________________________
 
 ## Examples
 
@@ -397,8 +404,11 @@ def main(argv: list[str] | None = None) -> int:
     :param argv: Command line arguments (or None for sys.argv)
     :returns: Exit code (0 = success, non-zero = error)
     """
+    # Initialize verbose flag before try block to avoid NameError in exception handler
+    verbose = False
     try:
         args = parse_args(argv)
+        verbose = args.verbose  # Capture verbose flag
         result = execute_command(args)
         return 0 if result.success else 1
     except MissingToolError as e:
@@ -413,13 +423,13 @@ def main(argv: list[str] | None = None) -> int:
     except Exception as e:
         # Broad catch at CLI boundary (acceptable pattern)
         print(f"❌ Internal error: {e}", file=sys.stderr)
-        if args.verbose:
+        if verbose:  # Use captured verbose flag to avoid NameError
             import traceback
             traceback.print_exc()
         return ExitCode.INTERNAL_ERROR
 ```
 
----
+______________________________________________________________________
 
 ## References
 
@@ -427,7 +437,7 @@ def main(argv: list[str] | None = None) -> int:
 - Python Built-in Exceptions: <https://docs.python.org/3/library/exceptions.html>
 - Best Practices for Exception Handling: <https://docs.python-guide.org/writing/gotchas/#exceptions>
 
----
+______________________________________________________________________
 
 ## Summary
 
@@ -441,4 +451,4 @@ def main(argv: list[str] | None = None) -> int:
 | Exception chaining | ✅ REQUIRED | Always use `raise ... from e` when re-raising |
 | Actionable error messages | ✅ REQUIRED | Include file/resource/operation context |
 
----
+______________________________________________________________________
