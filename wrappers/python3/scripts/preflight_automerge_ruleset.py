@@ -261,7 +261,10 @@ def gh_api(endpoint: str, api_version: str) -> str | None:
             ]
         )
         return out.decode("utf-8", "replace")
-    except Exception:
+    except (subprocess.CalledProcessError, FileNotFoundError, OSError):
+        # subprocess.CalledProcessError: gh command failed (auth error, API error)
+        # FileNotFoundError: gh command not found
+        # OSError: Subprocess execution error
         return None
 
 
@@ -476,7 +479,9 @@ def main(argv: List[str]) -> int:
     """
     try:
         parsed = parse_args(argv)
-    except Exception as e:
+    except (ValueError, IndexError) as e:
+        # ValueError: Invalid argument values
+        # IndexError: Missing required argument
         eprint(f"ERROR: {e}")
         return 3
     if parsed is None:
@@ -487,7 +492,9 @@ def main(argv: List[str]) -> int:
         want = json.loads(want_raw)
         if not isinstance(want, list) or not all(isinstance(x, str) for x in want):
             raise ValueError()
-    except Exception:
+    except (json.JSONDecodeError, ValueError):
+        # json.JSONDecodeError: Invalid JSON syntax
+        # ValueError: Valid JSON but not a list of strings
         eprint("ERROR: --want must be a JSON array of strings")
         return 3
 
@@ -500,19 +507,23 @@ def main(argv: List[str]) -> int:
             return 2
         try:
             rulesets_obj = json.loads(raw)
-        except Exception:
+        except json.JSONDecodeError:
+            # json.JSONDecodeError: Invalid JSON from gh command
             eprint("WARN: Invalid JSON from gh")
             return 2
     else:
         try:
             status, body = http_get(f"https://api.github.com/repos/{repo}/rulesets", api_version)
-        except Exception:
+        except (OSError, RuntimeError):
+            # OSError: Network/socket errors
+            # RuntimeError: Missing auth token
             eprint("WARN: Failed to fetch rulesets")
             return 2
         obj = {}
         try:
             obj = json.loads(body) if body else {}
-        except Exception:
+        except json.JSONDecodeError:
+            # json.JSONDecodeError: Invalid JSON response
             obj = {}
         if status >= 400:
             if classify_auth(obj):
@@ -542,7 +553,8 @@ def main(argv: List[str]) -> int:
             return 2
         try:
             rs_obj = json.loads(raw)
-        except Exception:
+        except json.JSONDecodeError:
+            # json.JSONDecodeError: Invalid JSON from gh command
             eprint("WARN: Invalid JSON from gh")
             return 2
     else:
@@ -551,13 +563,16 @@ def main(argv: List[str]) -> int:
                 f"https://api.github.com/repos/{repo}/rulesets/{ruleset_id}",
                 api_version,
             )
-        except Exception:
+        except (OSError, RuntimeError):
+            # OSError: Network/socket errors
+            # RuntimeError: Missing auth token
             eprint("WARN: Failed to fetch ruleset")
             return 2
         obj = {}
         try:
             obj = json.loads(body) if body else {}
-        except Exception:
+        except json.JSONDecodeError:
+            # json.JSONDecodeError: Invalid JSON response
             obj = {}
         if status >= 400:
             if classify_auth(obj):

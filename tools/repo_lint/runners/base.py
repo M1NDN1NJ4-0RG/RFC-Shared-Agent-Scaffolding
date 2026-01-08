@@ -300,6 +300,11 @@ class Runner(ABC):
                         result = result[0] if result else LintResult(tool="unknown", passed=True, violations=[])
                     results_map[method_name] = result
                 except Exception as e:
+                    # POLICY: Broad exception catch is acceptable here (orchestration boundary)
+                    # This is a parallel execution orchestrator that runs arbitrary tool methods.
+                    # We catch all exceptions to ensure one failing tool doesn't break others.
+                    # The exception is logged with full traceback and converted to a structured error result.
+                    # See: docs/contributing/python-exception-handling-policy.md
                     # Log full exception for debugging
                     logging.error("Tool method %s failed with exception:\n%s", method_name, traceback.format_exc())
                     # Create error result for failed tool

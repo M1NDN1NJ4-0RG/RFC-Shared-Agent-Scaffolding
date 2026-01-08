@@ -255,7 +255,8 @@ def process_file(file_path: Path, apply: bool, verbose: bool) -> bool:
         if verbose:
             print(f"Skipping {file_path}: Cannot decode as UTF-8")
         return False
-    except Exception as e:
+    except OSError as e:
+        # OSError: File access errors (permission denied, file not found, etc.)
         if verbose:
             print(f"Skipping {file_path}: {e}")
         return False

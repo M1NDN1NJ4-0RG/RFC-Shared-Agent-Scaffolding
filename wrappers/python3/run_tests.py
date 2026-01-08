@@ -160,6 +160,9 @@ def run_tests() -> int:
         )
         return result.returncode
     except Exception as e:
+        # POLICY: Broad exception catch acceptable here (CLI boundary)
+        # This is a CLI script that converts all exceptions into clean user messages + exit codes.
+        # See: docs/contributing/python-exception-handling-policy.md
         print(f"ERROR: Failed to run tests: {e}", file=sys.stderr)
         return 2
 

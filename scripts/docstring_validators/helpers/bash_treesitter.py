@@ -125,7 +125,11 @@ def parse_bash_functions(file_path: Path) -> Dict[str, Any]:
 
         return {"functions": functions, "errors": errors}
 
-    except Exception as e:
+    except (OSError, ValueError, AttributeError, RuntimeError) as e:
+        # OSError: File access errors
+        # ValueError: Invalid tree-sitter language or parser state
+        # AttributeError: Unexpected tree-sitter API changes
+        # RuntimeError: Tree-sitter parsing failures
         return {"functions": [], "errors": [f"Failed to parse Bash script: {str(e)}"]}
 
 
