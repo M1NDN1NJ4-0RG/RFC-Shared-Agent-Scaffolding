@@ -401,5 +401,6 @@ jobs:
 
           if git ls-files '*.md' | rg -q .; then
             command -v markdownlint-cli2
-            markdownlint-cli2 --version
+            # Use --no-globs to prevent config file from triggering linting during version check
+            markdownlint-cli2 --version --no-globs
           fi

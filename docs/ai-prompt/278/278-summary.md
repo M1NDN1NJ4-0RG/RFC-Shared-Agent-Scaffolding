@@ -726,3 +726,43 @@ repo-lint check --ci --only python
 **Commit:** d07e860
 
 ---
+
+### 2026-01-08 - Copilot Setup Workflow Fix: markdownlint-cli2 Version Check
+
+**Issue Identified:**
+
+User reported Copilot setup workflow was failing after markdownlint-cli2 installation. Investigation revealed:
+
+- `markdownlint-cli2 --version` was reading `.markdownlint-cli2.jsonc` config file
+- Config file has `"globs": ["**/*.md"]` which automatically lints all markdown files
+- Version check triggered linting of all 191 markdown files in repo
+- 1,949 baseline Markdown violations caused workflow to exit with code 1
+- Workflow failure prevented Copilot sessions from starting
+
+**Root Cause:**
+
+`markdownlint-cli2` reads its config file even during version checks, and when the config includes globs, it lints those files. Unlike most CLI tools that just print version and exit, markdownlint-cli2 processes the config file first.
+
+**Fix Applied:**
+
+Modified `.github/workflows/copilot-setup-steps.yml` line 405:
+- **Before:** `markdownlint-cli2 --version`
+- **After:** `markdownlint-cli2 --version --no-globs`
+
+The `--no-globs` flag tells markdownlint-cli2 to ignore the glob patterns in the config file, preventing automatic file discovery during version verification.
+
+**Verification:**
+
+- YAML syntax validated with yamllint (exit 0)
+- No new warnings introduced
+- Pre-existing warnings unrelated to change
+
+**Impact:**
+
+- Copilot setup workflow will now pass
+- markdownlint-cli2 installation can be verified without triggering linting
+- Future Copilot sessions will have markdownlint-cli2 available
+
+**Commit:** (pending)
+
+---
