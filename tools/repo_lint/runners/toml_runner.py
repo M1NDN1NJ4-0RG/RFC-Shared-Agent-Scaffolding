@@ -180,40 +180,48 @@ class TomlRunner(Runner):
 
             # Parse error line: "ERROR taplo:format_files: the file is not properly formatted path=..."
             if "ERROR" in line and "not properly formatted" in line and "path=" in line:
-                try:
-                    # Extract file path from 'path="..."' or 'path=...'
-                    path_start = line.find("path=")
-                    if path_start != -1:
-                        path_part = line[path_start + 5 :].strip()  # Skip 'path='
-                        # Remove quotes if present
-                        if path_part.startswith('"'):
-                            path_end = path_part.find('"', 1)
-                            if path_end != -1:
-                                file_path = path_part[1:path_end]
-                            else:
-                                file_path = path_part[1:]
-                        else:
-                            # No quotes, take until whitespace or end
-                            path_end = path_part.find(" ")
-                            if path_end != -1:
-                                file_path = path_part[:path_end]
-                            else:
-                                file_path = path_part
-
-                        # Normalize path (remove leading ./)
-                        if file_path.startswith("./"):
-                            file_path = file_path[2:]
-
-                        violations.append(
-                            Violation(
-                                tool="taplo",
-                                file=file_path,
-                                line=None,  # Taplo doesn't provide line numbers in --check mode
-                                message="File is not properly formatted according to taplo.toml",
-                            )
+                file_path = self._extract_file_path_from_taplo_error(line)
+                if file_path:
+                    violations.append(
+                        Violation(
+                            tool="taplo",
+                            file=file_path,
+                            line=None,  # Taplo doesn't provide line numbers in --check mode
+                            message="File is not properly formatted according to taplo.toml",
                         )
-                except (ValueError, IndexError):
-                    # If parsing fails, skip this line
-                    pass
+                    )
 
         return violations
+
+    def _extract_file_path_from_taplo_error(self, line: str) -> str | None:
+        """Extract file path from Taplo error line.
+
+        :param line: Error line containing path=...
+        :returns:
+            Extracted file path, or None if parsing fails
+        """
+        try:
+            # Extract file path from 'path="..."' or 'path=...'
+            path_start = line.find("path=")
+            if path_start == -1:
+                return None
+
+            path_part = line[path_start + 5 :].strip()  # Skip 'path='
+
+            # Remove quotes if present
+            if path_part.startswith('"'):
+                path_end = path_part.find('"', 1)
+                file_path = path_part[1:path_end] if path_end != -1 else path_part[1:]
+            else:
+                # No quotes, take until whitespace or end
+                path_end = path_part.find(" ")
+                file_path = path_part[:path_end] if path_end != -1 else path_part
+
+            # Normalize path (remove leading ./)
+            if file_path.startswith("./"):
+                file_path = file_path[2:]
+
+            return file_path
+        except (ValueError, IndexError):
+            # If parsing fails, return None
+            return None

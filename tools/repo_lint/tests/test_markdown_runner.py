@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# pylint: disable=wrong-import-position  # Test file needs special setup
 """Unit tests for Markdown runner (markdownlint-cli2).
 
 :Purpose:
