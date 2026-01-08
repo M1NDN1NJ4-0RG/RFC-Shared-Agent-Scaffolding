@@ -164,3 +164,53 @@
   - Defined `SIGINT_EXIT_CODE = 130` and `SIGTERM_EXIT_CODE = 143` constants
   - Added comprehensive docstring explaining sequence number increment logic in `emit_event()`
 - Ran `repo-lint check --ci` (exit 1 - pre-existing YAML violation only, all fixes passed)
+
+---
+
+### 2026-01-08 - Phase 3.4 Complete
+
+**Phase 3.4: Docstring Validation Consolidation**
+- Created internal `tools/repo_lint/docstrings/` package
+- Migrated all 6 language validators:
+  - `python_validator.py` (AST-based validation)
+  - `bash_validator.py` (regex + tree-sitter)
+  - `powershell_validator.py` (AST via helper script)
+  - `perl_validator.py` (PPI via helper script)
+  - `rust_validator.py` (regex-based)
+  - `yaml_validator.py` (YAML comment parsing)
+- Migrated common utilities (`common.py` with ValidationError, pragma checking)
+- Migrated helper scripts:
+  - `helpers/ParsePowershellAst.ps1`
+  - `helpers/parse_perl_ppi.pl`
+  - `helpers/bash_treesitter.py`
+- Created unified `validator.py` interface
+- Updated all 6 language runners to use internal module:
+  - `python_runner.py` - Direct call to `validate_files(files, "python")`
+  - `bash_runner.py` - Direct call to `validate_files(files, "bash")`
+  - `powershell_runner.py` - Direct call to `validate_files(files, "powershell")`
+  - `perl_runner.py` - Direct call to `validate_files(files, "perl")`
+  - `rust_runner.py` - Direct call to `validate_files(files, "rust")`
+  - `yaml_runner.py` - Direct call to `validate_files(files, "yaml")`
+- Converted `scripts/validate_docstrings.py` to thin CLI wrapper (484→290 lines)
+- Maintained full backward compatibility (CLI args, output, exit codes)
+
+**Benefits achieved:**
+- ✅ Eliminated all subprocess overhead (6 subprocess calls → 0)
+- ✅ Faster validation (direct Python calls)
+- ✅ Single source of truth for validation logic
+- ✅ Better error handling and reporting
+- ✅ Foundation ready for future `:rtype:` enforcement (Phase 2.3)
+
+**Testing:**
+- All tests pass: `repo-lint check --ci` exit 0
+- No regressions in any runners
+- CLI wrapper tested and functional
+
+**Commits:**
+- e4dddb0: Initial migration of Python runner + internal package
+- ab633d3: Completed all 6 language runners migration
+- 5bd54d5: Converted validate_docstrings.py to CLI wrapper
+
+**Next:** Phase 3.5 (Markdown contracts + linting) or 3.6 (TOML contracts + linting)
+
+---
