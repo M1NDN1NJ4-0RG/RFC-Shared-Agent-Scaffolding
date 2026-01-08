@@ -280,3 +280,66 @@
 - Phase 3.8: Rich-powered logging
 
 ---
+
+### 2026-01-08 - Phase 3.5.1-3.5.3 Complete: Markdown Contracts + Linting Integration
+
+**Session Work:**
+
+**Phase 3.5.1: Markdown Contract Definition**
+- Installed markdownlint-cli2 (v0.20.0) globally via npm
+- Created comprehensive `docs/contributing/markdown-contracts.md` following Markdown Best Practices:
+  - Documented all rules with rationale from authoritative sources:
+    - Markdown Guide (markdownguide.org)
+    - CommonMark Specification
+    - Google Developer Documentation Style Guide
+    - GitHub Flavored Markdown
+  - Defined 9 rule categories: headings, line length, code blocks, whitespace, lists, links/images, HTML, emphasis, blockquotes
+  - Set line length to 120 chars (extended from default 80 for technical documentation)
+  - Code blocks exempt from line length limits (`code_blocks: false`)
+  - Documented exclusions (repo-lint-failure-reports)
+  - Provided examples and edge case handling
+
+**Phase 3.5.2: Enforcement Configuration**
+- Created `.markdownlint-cli2.jsonc` configuration at repo root
+- Mapped all contract rules to linter configuration with detailed comments
+- Configured 40+ markdownlint rules with appropriate settings
+- Tested configuration: Found 7,480 violations across 189 Markdown files (baseline established)
+
+**Phase 3.5.3: Integration into repo-lint**
+- Created `tools/repo_lint/runners/markdown_runner.py`:
+  - Implemented MarkdownRunner class following existing runner pattern
+  - Markdown file discovery via get_tracked_files()
+  - Subprocess execution of markdownlint-cli2
+  - Output parsing into Violation objects
+  - Support for both check() and fix() modes (auto-fix via --fix flag)
+- Updated CLI integration:
+  - Added MarkdownRunner import to cli_argparse.py
+  - Added ("markdown", "Markdown", MarkdownRunner(...)) to all_runners list
+  - Updated cli.py --lang and --only choices to include "markdown"
+  - Updated list-tools command to support markdown
+- Updated documentation:
+  - tools/repo_lint/runners/__init__.py docstring includes markdown_runner.py
+- Tested successfully:
+  - `repo-lint check --only markdown` works
+  - Found 3,790 violations (filtered baseline)
+
+**New Requirements Addressed:**
+1. ✅ Follow Markdown Best Practices for explicit rulesets
+2. ✅ Use 120 chars for maximum line length (normal cases)
+3. ✅ Code blocks inside Markdown exempt from line length limits
+
+**Status:**
+- Phase 3.5.1-3.5.3: ✅ COMPLETE
+- Phase 3.5.4 (Repo baseline cleanup): DEFERRED (3,790+ violations - too large for one session)
+- Phase 3.5.5 (Comprehensive tests): NOT STARTED
+
+**Commits:**
+- 6a8f637: Phase 3.5.1-3.5.2: Created Markdown contract and markdownlint-cli2 config
+- c040b9a: Phase 3.5.3: Integrated Markdown runner into repo-lint
+
+**Next Actions:**
+- Phase 3.5.4: Fix Markdown violations across repo (or add to per-file-ignores for gradual rollout)
+- Phase 3.5.5: Write comprehensive tests for Markdown runner
+- Then proceed to Phase 3.6 (TOML contracts + linting)
+
+---

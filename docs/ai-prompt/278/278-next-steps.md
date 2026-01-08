@@ -2,42 +2,56 @@
 
 ## NEXT
 
-**Phase 3.4: COMPLETE ✅**
-- [x] Core migration (all 6 language runners use internal module)
-- [x] Copilot code review comments resolved (all 4)
-- [x] Vector test failures fixed
-- [x] All CI tests passing
+**Phase 3.5.4: Repo Baseline Cleanup (Markdown)**
 
-**Current Status:**
-- Phase 3.4 is fully complete with all tests passing
-- Updated 278-overview.md checkboxes (marked Phase 0.2 exclusions as complete)
+The Markdown runner is integrated and working, but there are 3,790 violations to fix. Options:
 
-**Next Phases (in order):**
-1. Phase 3.5: Markdown contracts + linting support (NEXT)
-2. Phase 3.6: TOML contracts + linting support
-3. Phase 3.7: Reduce overly-broad exception handling (NEW)
-4. Phase 3.8: Rich-powered logging (NEW)
+1. **Gradual rollout approach (RECOMMENDED):**
+   - Add per-file-ignores to exclude all current violations
+   - Enforce on new/changed files only
+   - Fix violations incrementally in dedicated cleanup sessions
+
+2. **Auto-fix what's safe:**
+   - Run `repo-lint fix --lang markdown` to auto-fix deterministic violations
+   - Manually fix remaining violations (line length, language tags, etc.)
+
+**Decision needed:** How to handle the 3,790 existing violations?
+
+**After 3.5.4, continue with:**
+
+1. Phase 3.5.5: Comprehensive tests for Markdown runner
+2. Phase 3.6: TOML contracts + linting support (similar to Markdown)
+3. Phase 3.7: Reduce overly-broad exception handling
+4. Phase 3.8: Rich-powered logging
 5. Phase 3.3: Implement PEP 526 checker (deferred until after 3.5-3.8)
 
-**Note:** Phases 3.7 and 3.8 were added to the epic after initial planning.
+---
+
+## Previous Status
+
+**Phase 3.5.1-3.5.3: COMPLETE ✅**
+- [x] Created Markdown contract document
+- [x] Configured markdownlint-cli2
+- [x] Integrated Markdown runner into repo-lint
+- [x] All tests passing
+
+**Current State:**
+- ✅ Markdown linting works: `repo-lint check --lang markdown`
+- ✅ Auto-fix works: `repo-lint fix --lang markdown`
+- ⚠️ 3,790 violations exist across repository (baseline)
+- ✅ New requirements addressed (Markdown Best Practices, 120 char line length)
 
 ## Resume Pointers
 
 **Branch:** copilot/enforce-python-type-annotations
 
 **Key Commands:**
-- `repo-lint check --ci` - All checks pass (exit 0)
-- `python3 -m pytest tools/repo_lint/tests/test_vectors.py -v` - All vector tests pass
+- `repo-lint check --ci` - All checks pass except Markdown violations
+- `repo-lint check --lang markdown` - Shows 3,790 Markdown violations
+- `repo-lint fix --lang markdown` - Auto-fix safe violations
 
 **Recent Commits:**
-- 31c0e65: Addressed all Copilot code review comments
-- 5b59c95: Updated journals with code review completion
-- 6578172: Fixed vector test failures (restored os import)
+- 6a8f637: Phase 3.5.1-3.5.2 (contract + config)
+- c040b9a: Phase 3.5.3 (integration)
 
-**Current State:**
-- ✅ Phase 3.4 complete (docstring validation consolidation)
-- ✅ All code review comments resolved
-- ✅ All tests passing (vector + unit + CI)
-- ✅ Documentation up-to-date
-
-**Ready for:** Phase 3.5 (Markdown contracts + linting)
+**Ready for:** Phase 3.5.4 decision + implementation, or Phase 3.5.5 (tests), or move to Phase 3.6 (TOML)
