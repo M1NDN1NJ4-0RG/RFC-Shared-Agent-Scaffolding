@@ -1,31 +1,31 @@
 [package]
-name = "safe-run"
-version = "0.1.1"
-edition = "2021"
-rust-version = "1.70"
-authors = ["RFC-Shared-Agent-Scaffolding Contributors"]
-description = "Canonical implementation of the safe-run/safe-check/safe-archive contract"
-license = "Unlicense"
-repository = "https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding"
+  name = "safe-run"
+  version = "0.1.1"
+  edition = "2021"
+  rust-version = "1.70"
+  authors = [ "RFC-Shared-Agent-Scaffolding Contributors" ]
+  description = "Canonical implementation of the safe-run/safe-check/safe-archive contract"
+  license = "Unlicense"
+  repository = "https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding"
 
 [dependencies]
-clap = { version = "4.5", features = ["derive", "env"] }
-chrono = { version = "0.4", features = ["serde"] }
-signal-hook = "0.3"
-tar = "0.4"
-flate2 = "1.0"
-bzip2 = "0.4"
-zip = "0.6"
+  clap = { version = "4.5", features = [ "derive", "env" ] }
+  chrono = { version = "0.4", features = [ "serde" ] }
+  signal-hook = "0.3"
+  tar = "0.4"
+  flate2 = "1.0"
+  bzip2 = "0.4"
+  zip = "0.6"
 
 [dev-dependencies]
-assert_cmd = "2.0"
-predicates = "3.0"
-tempfile = "3.10"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
-once_cell = "1.19"
-regex = "1.0"
+  assert_cmd = "2.0"
+  predicates = "3.0"
+  tempfile = "3.10"
+  serde = { version = "1.0", features = [ "derive" ] }
+  serde_json = "1.0"
+  once_cell = "1.19"
+  regex = "1.0"
 
 [[bin]]
-name = "safe-run"
-path = "src/main.rs"
+  name = "safe-run"
+  path = "src/main.rs"
