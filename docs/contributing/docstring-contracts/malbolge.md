@@ -14,7 +14,8 @@ Reading, writing, or attempting to understand Malbolge code may cause:
 - Involuntary laughter at the absurdity
 - Permanent brain reconfiguration
 
-**This contract is deliberately satirical.** Malbolge is designed to be nearly impossible to program in. If you're actually writing Malbolge code, you're either:
+**This contract is deliberately satirical.** Malbolge is designed to be nearly impossible to program in. If you're
+actually writing Malbolge code, you're either:
 
 1. A masochist
 2. Proving a point
@@ -22,9 +23,12 @@ Reading, writing, or attempting to understand Malbolge code may cause:
 
 ## Purpose
 
-This is an **experimental and satirical contract** for Malbolge programs that absolutely should not be added to this repository. It follows the structure of other language contracts while acknowledging the fundamental impossibility of the task.
+This is an **experimental and satirical contract** for Malbolge programs that absolutely should not be added to this
+repository. It follows the structure of other language contracts while acknowledging the fundamental impossibility of
+the task.
 
-**Note:** This contract cannot be enforced. Even if it could be, the validator would probably gain sentience and resign in protest.
+**Note:** This contract cannot be enforced. Even if it could be, the validator would probably gain sentience and resign
+in protest.
 
 ## Required Semantic Sections
 
@@ -289,7 +293,8 @@ For educational purposes, here are real facts about Malbolge:
 
 ## Status
 
-**EXPERIMENTAL - NOT ENFORCEABLE** - This contract exists purely for entertainment and to remind us that things could always be worse.
+**EXPERIMENTAL - NOT ENFORCEABLE** - This contract exists purely for entertainment and to remind us that things could
+always be worse.
 
 **Do not actually add Malbolge code to this repository.**
 
@@ -315,7 +320,8 @@ Why does this contract exist?
 
 **IF YOU'RE ACTUALLY WRITING MALBOLGE CODE:**
 
-We can't stop you, but we can judge you. This contract is here to acknowledge your brave/foolish journey into computational masochism. May your code somehow work, and may your sanity survive the attempt.
+We can't stop you, but we can judge you. This contract is here to acknowledge your brave/foolish journey into
+computational masochism. May your code somehow work, and may your sanity survive the attempt.
 
 Remember: With great power comes great responsibility. With Malbolge comes only suffering.
 

@@ -35,7 +35,8 @@
 
 ## Non‑Negotiable Human Orders
 
-- **Fix ALL linting errors across the repository (even if they pre‑exist and are not introduced by the current change set).**
+- **Fix ALL linting errors across the repository (even if they pre‑exist and are not introduced by the current change
+  set).**
 - **CI output must be ASCII‑safe by default unless UTF‑8 is explicitly confirmed.**
 - **Exclude `.venv/` and any other generated environment directories from naming conformance checks.**
 - **No deferrals, no “changed files only”, and no “out of scope” claims. All issues uncovered must be addressed.**
@@ -50,26 +51,34 @@
 
 2. **Fix Bash Docstring Violations:**
    - Run `repo-cli lint bash` locally to produce the validate_docstrings report.
-   - For each violation, open the referenced shell script and add or correct the docstring at the top of the file (usually a comment block explaining the script purpose, arguments, and usage). Ensure the docstring follows the repository’s docstring guidelines.
+   - For each violation, open the referenced shell script and add or correct the docstring at the top of the file
+     (usually a comment block explaining the script purpose, arguments, and usage). Ensure the docstring follows the
+     repository’s docstring guidelines.
    - Exclude generated environment directories such as `.venv/` from scanning by adjusting the lint configuration if necessary, but do not exclude valid project scripts.
    - After correcting all issues, re‑run `repo-cli lint bash` and ensure there are zero violations.
 
 3. **Resolve Rich‑Click Help Output Failure:**
    - Check the CLI implementation for the `fix` subcommand (likely under `src/cli.py` or similar). Run the command `python -m <package> fix --help` locally to view the current help text.
-   - Compare the output against the expected snapshot used in the Windows test. If the CLI output is outdated, update the code to produce the correct help text. If the snapshot is outdated but the output is correct, update the snapshot used by the test.
+   - Compare the output against the expected snapshot used in the Windows test. If the CLI output is outdated, update
+     the code to produce the correct help text. If the snapshot is outdated but the output is correct, update the
+     snapshot used by the test.
    - Ensure the help text contains only ASCII characters unless UTF‑8 output is deliberately required.
-   - Run the Rich UI validation tests locally (on Windows if possible) or run the relevant test suite to ensure the help output matches expectations.
+   - Run the Rich UI validation tests locally (on Windows if possible) or run the relevant test suite to ensure the help
+     output matches expectations.
 
 4. **General Linting and Cleanup:**
-   - Search the repository for other linting errors (Python, Bash, PowerShell, etc.) and fix them proactively, even if they were not flagged in this run.
+   - Search the repository for other linting errors (Python, Bash, PowerShell, etc.) and fix them proactively, even if
+     they were not flagged in this run.
    - Make sure that no linting tool scans into `.venv/` or other generated directories by updating lint configuration files (e.g., `.repo-lint.yml` or `pyproject.toml`) to exclude those paths.
-   - Ensure all outputs printed during CI are ASCII‑safe unless a command explicitly confirms UTF‑8. Where necessary, sanitize output or set environment variables to enforce ASCII.
+   - Ensure all outputs printed during CI are ASCII‑safe unless a command explicitly confirms UTF‑8. Where necessary,
+     sanitize output or set environment variables to enforce ASCII.
 
 5. **Commit and Verify:**
    - Commit all fixes with descriptive messages.
    - Run `repo-cli check --ci` from the repository root. This should run all linting and formatting checks.
    - Ensure that the command exits with code 0 and that there are no violations.
-   - Push the changes and wait for CI to rerun. All jobs, including Repo Lint: Python, Repo Lint: Bash, and Windows: Rich UI Validation, must pass.
+   - Push the changes and wait for CI to rerun. All jobs, including Repo Lint: Python, Repo Lint: Bash, and Windows:
+     Rich UI Validation, must pass.
 
 ## Verification Checklist
 
@@ -77,4 +86,5 @@
 - [ ] Run `repo-cli lint bash` locally; confirm `validate_docstrings` reports zero violations.
 - [ ] Test the CLI `fix` subcommand help output and ensure it matches the expected snapshot; update code or snapshot as needed.
 - [ ] Run `repo-cli check --ci`; it must exit with code 0, indicating all lint and formatting checks pass.
-- [ ] After pushing fixes, confirm that all CI jobs on GitHub Actions are green (Repo Lint: Python, Repo Lint: Bash, Windows: Rich UI Validation, and all other jobs).
+- [ ] After pushing fixes, confirm that all CI jobs on GitHub Actions are green (Repo Lint: Python, Repo Lint: Bash,
+      Windows: Rich UI Validation, and all other jobs).

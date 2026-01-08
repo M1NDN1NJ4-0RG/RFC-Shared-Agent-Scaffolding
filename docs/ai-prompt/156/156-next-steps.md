@@ -31,7 +31,8 @@ Related: Issue #156
 - **Phase 1.2: repo_lint Forensic Analysis**
   - Analyzed ~7,000 LOC Python implementation across 32 files
   - Mapped architecture: CLI layer, 6 language runners, policy engine, forensics, installation, unsafe fixers
-  - Identified dependencies: 10+ external tools (black, ruff, pylint, shellcheck, shfmt, yamllint, PSScriptAnalyzer, Perl::Critic)
+  - Identified dependencies: 10+ external tools (black, ruff, pylint, shellcheck, shfmt, yamllint, PSScriptAnalyzer,
+    Perl::Critic)
   - Documented strengths (modular, safe-first) and weaknesses (external deps, performance, no true AST)
 - **Phase 1.3: future-work.md Integration**
   - Integrated FW-013 (installable package), FW-014 (tool isolation), FW-015 (CI security), FW-016 (CI logging)
@@ -59,7 +60,8 @@ Related: Issue #156
 **Verification:**
 
 - Migration plan is actionable, comprehensive, and structured per issue requirements
-- All specifications met: Milestone/Phase/Item/Sub-Item checkboxes, severity rankings, file locations, rationale, implementation examples
+- All specifications met: Milestone/Phase/Item/Sub-Item checkboxes, severity rankings, file locations, rationale,
+  implementation examples
 - Addressed ALL issue requirements from Milestone 1 (Phases 1.1-1.3) and Milestone 2 (Phases 2.1-2.2)
 - Total content: 52 pages, 106 actionable items with clear ownership and dependencies
 
@@ -78,7 +80,8 @@ Related: Issue #156
 - Copied the ORIGINAL GitHub issue text verbatim into 156-overview.md per spec
 - Added initial progress tracker to track work against issue milestones
 - Set up next-steps journal for per-commit tracking
-- Installed required tooling: black, pylint, pytest, ruff, yamllint, shellcheck, shfmt, pwsh, PSScriptAnalyzer, Perl::Critic, PPI
+- Installed required tooling: black, pylint, pytest, ruff, yamllint, shellcheck, shfmt, pwsh, PSScriptAnalyzer,
+  Perl::Critic, PPI
 - All tools verified working except cpan-based Perl modules (installed via apt instead)
 
 **Verification:**

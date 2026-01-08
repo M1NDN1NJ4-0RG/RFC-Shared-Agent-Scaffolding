@@ -454,7 +454,8 @@ Produced detailed 11-phase migration plan (29KB):
 
 **Next Steps:**
 
-- Phase 2.3-2.8: Remaining function-by-function fixes (PowerShell, Perl, shell tools, ripgrep, verification gate, actionlint)
+- Phase 2.3-2.8: Remaining function-by-function fixes (PowerShell, Perl, shell tools, ripgrep, verification gate,
+  actionlint)
 
 ---
 
@@ -601,7 +602,8 @@ Produced detailed 11-phase migration plan (29KB):
   - test_actionlint_exit_code_20_documented
 - Added pylint: disable=too-many-lines to handle file size (1049 lines)
 - Removed obsolete Rust bootstrapper documentation
-- Updated all references from docs/repo-cli-bootstrapper.md to docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md
+- Updated all references from docs/repo-cli-bootstrapper.md to
+  docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md
 
 **Verification:**
 

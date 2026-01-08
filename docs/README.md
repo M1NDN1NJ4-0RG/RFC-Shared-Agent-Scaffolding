@@ -34,7 +34,8 @@ wrappers/bash/scripts/safe-run.sh echo "Hello World"
 
 1. **[CONTRIBUTING.md](../CONTRIBUTING.md)** - Quick start guide (GitHub surfaces this)
 2. [Contributing Guide](./contributing/contributing-guide.md) - Detailed workflow, naming conventions, PR process
-3. [Docstring Contracts](./contributing/docstring-contracts/README.md) - Required documentation standards for all languages
+3. [Docstring Contracts](./contributing/docstring-contracts/README.md) - Required documentation standards for all
+   languages
 4. [Testing Documentation](./testing/conformance-tests.md) - How to run and write tests
 
 **Before your first PR:**
@@ -99,8 +100,10 @@ Test plans, evidence, and validation procedures:
 
 Guidelines for contributing to the project:
 
-- **[Root CONTRIBUTING.md](../CONTRIBUTING.md)** - Quick start guide for contributors (GitHub surfaces this automatically)
-- [Contributing Guide](./contributing/contributing-guide.md) - Detailed contributing workflow (naming conventions, required checks, PR process)
+- **[Root CONTRIBUTING.md](../CONTRIBUTING.md)** - Quick start guide for contributors (GitHub surfaces this
+  automatically)
+- [Contributing Guide](./contributing/contributing-guide.md) - Detailed contributing workflow (naming conventions,
+  required checks, PR process)
 - [Allowed Drift](./contributing/allowed-drift.md) - Behavioral difference policy
 - [Docstring Contracts](./contributing/docstring-contracts/README.md) - Documentation standards for all languages
 

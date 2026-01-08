@@ -4,7 +4,8 @@
 
 ## Purpose
 
-This directory contains historical AI agent guidelines and workflow templates that were originally embedded within the wrapper scripts directory structure. These files have been archived here to separate documentation from code structure.
+This directory contains historical AI agent guidelines and workflow templates that were originally embedded within the
+wrapper scripts directory structure. These files have been archived here to separate documentation from code structure.
 
 ## Contents
 
@@ -35,7 +36,8 @@ Work tracking templates used during wrapper development:
 
 ## Why Archived
 
-These files served their purpose during the wrapper implementation phase (Epic #33) and provided valuable structure for AI-assisted development. They have been archived to:
+These files served their purpose during the wrapper implementation phase (Epic #33) and provided valuable structure for
+AI-assisted development. They have been archived to:
 
 1. **Separate concerns**: Code structure should not contain agent-specific documentation
 2. **Preserve history**: These files document the development methodology used

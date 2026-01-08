@@ -1,6 +1,7 @@
 # LOCKED IN HUMAN DECISIONS (ROUND 2)
 
-These decisions are final unless explicitly revised by Ryan. Requirements below are intentionally direct and must be treated as contracts.
+These decisions are final unless explicitly revised by Ryan. Requirements below are intentionally direct and must be
+treated as contracts.
 
 ## Decision 1 — Phase 2.5 Windows Validation (Blocking vs Deferred)
 
@@ -10,11 +11,13 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 - Windows support remains a **Phase 2.5 RELEASE BLOCKER**, per contract.
 - Implement and require **Windows GitHub Actions CI runs** that validate Phase 2.5 behavior.
-- Manual validation on a physical Windows machine is **explicitly deferred** until one is available or a VM is spun up on macOS.
+- Manual validation on a physical Windows machine is **explicitly deferred** until one is available or a VM is spun up
+  on macOS.
 
 **Notes:**
 
-- CI must cover: Rich console output, Rich-Click help output, and shell completion behaviors to the extent testable in CI.
+- CI must cover: Rich console output, Rich-Click help output, and shell completion behaviors to the extent testable in
+  CI.
 
 ## Decision 2 — Phase 2.6–2.9 Prioritization and Sequencing
 
@@ -35,9 +38,11 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 **Requirements:**
 
-- Migrate **all behavior that can reasonably be configured** into YAML-first configuration, without allowing contract violations.
+- Migrate **all behavior that can reasonably be configured** into YAML-first configuration, without allowing contract
+  violations.
 - Maintain **multi-file structure** (separate conformance YAML files by concern).
-- Preserve backward compatibility via a **transition period** with **deprecation warnings** (do not hard-break users immediately).
+- Preserve backward compatibility via a **transition period** with **deprecation warnings** (do not hard-break users
+  immediately).
 - Only allow CLI overrides that do **not** violate contracts.
 
 ## Decision 4 — Exception System Pragma Policy (Phase 2.6)
@@ -46,7 +51,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 - **Warn on pragmas by default**, but this warning must be **configurable/disable-able**.
 - **YAML exceptions have strict precedence** over pragmas when both apply.
-- Provide a migration tool that **prints suggestions** and may optionally write a **draft file**; it must not silently rewrite canonical exception files.
+- Provide a migration tool that **prints suggestions** and may optionally write a **draft file**; it must not silently
+  rewrite canonical exception files.
 
 ## Decision 5 — CLI Granularity vs Complexity (Phase 2.7)
 
@@ -106,7 +112,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 - Standard test coverage: unit tests + targeted integration tests for major workflows.
 - Tests MUST be added and passing **before** code review.
-- Windows CI must be included for phases where Windows behavior is relevant (Phase 2.5 and anything that touches CLI/help/output/shell integration).
+- Windows CI must be included for phases where Windows behavior is relevant (Phase 2.5 and anything that touches
+  CLI/help/output/shell integration).
 
 ---
 
@@ -124,7 +131,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 ## Decision 1: Phase 2.5 Windows Validation - Blocking or Deferred
 
-**Issue:** Phase 2.5 (Rich UI) includes a hard requirement: "Windows validation (PowerShell, PowerShell 7+, Windows Terminal) is a RELEASE BLOCKER."
+**Issue:** Phase 2.5 (Rich UI) includes a hard requirement: "Windows validation (PowerShell, PowerShell 7+, Windows
+Terminal) is a RELEASE BLOCKER."
 
 **Current State:**
 
@@ -155,7 +163,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 - Risk: Undermines cross-platform commitment
 - Benefit: Avoids validation overhead
 
-**Recommendation:** Option A. The spec explicitly states "Windows validation fails, it is a release blocker for Phase 2.5." We should honor this contract.
+**Recommendation:** Option A. The spec explicitly states "Windows validation fails, it is a release blocker for Phase
+2.5." We should honor this contract.
 
 **Human Decision Required:**
 
@@ -167,7 +176,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 ## Decision 2: Phase 2.6-2.9 Prioritization and Sequencing
 
-**Issue:** Four major new phases have been added (2.6, 2.7, 2.8, 2.9). Each is substantial. We need to determine priority and whether to implement all of them.
+**Issue:** Four major new phases have been added (2.6, 2.7, 2.8, 2.9). Each is substantial. We need to determine
+priority and whether to implement all of them.
 
 **Current State:**
 
@@ -190,7 +200,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 2. **What is the priority order?**
    - Suggested priority: 2.9 (contracts) → 2.7 (CLI usability) → 2.8 (onboarding) → 2.6 (exceptions)
-   - Rationale: 2.9 ensures quality for everything else; 2.7 improves daily UX; 2.8 solves onboarding; 2.6 is long-term maintenance improvement
+   - Rationale: 2.9 ensures quality for everything else; 2.7 improves daily UX; 2.8 solves onboarding; 2.6 is long-term
+     maintenance improvement
 
 3. **Should we complete Phase 2.5 blockers first, or proceed to Phase 2.6+ in parallel?**
    - Proceeding in parallel risks building on an incomplete foundation
@@ -229,7 +240,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 ## Decision 3: YAML-First Configuration Scope (Phase 2.9)
 
-**Issue:** Phase 2.9 includes a mandate: "Any behavior that can reasonably be configured externally MUST be migrated to the conformance YAML configuration system."
+**Issue:** Phase 2.9 includes a mandate: "Any behavior that can reasonably be configured externally MUST be migrated to
+the conformance YAML configuration system."
 
 **Current State:**
 
@@ -265,7 +277,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 ## Decision 4: Exception System Pragma Policy (Phase 2.6)
 
-**Issue:** Phase 2.6 proposes a centralized YAML exceptions file, while keeping pragma support for backward compatibility. The spec suggests "prefer YAML exceptions over pragmas" but leaves the pragma warning policy flexible.
+**Issue:** Phase 2.6 proposes a centralized YAML exceptions file, while keeping pragma support for backward
+compatibility. The spec suggests "prefer YAML exceptions over pragmas" but leaves the pragma warning policy flexible.
 
 **Questions:**
 
@@ -380,7 +393,8 @@ These decisions are final unless explicitly revised by Ryan. Requirements below 
 
 ## Decision 8: Environment Commands (`repo-lint env/activate/which`) - Required or Optional
 
-**Issue:** Phase 2.8 proposes three new commands for PATH/venv management. These are primarily onboarding/UX improvements, not core linting functionality.
+**Issue:** Phase 2.8 proposes three new commands for PATH/venv management. These are primarily onboarding/UX
+improvements, not core linting functionality.
 
 **Questions:**
 

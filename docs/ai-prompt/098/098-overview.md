@@ -7,7 +7,8 @@ Related: Issue #098, PRs #159
 
 # EPIC: Repo Cleanup Follow‑Ups — Phased Fix Plan (Post-Restructure)
 
-This issue tracks the remaining callouts, recommendations, and nits identified after the initial repo restructure. The work is intentionally phased to keep risk low and ensure CI remains green throughout.
+This issue tracks the remaining callouts, recommendations, and nits identified after the initial repo restructure. The
+work is intentionally phased to keep risk low and ensure CI remains green throughout.
 
 ## Progress Tracker
 
@@ -47,7 +48,8 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - Rust linters
   - YAML/Markdown/workflow linters (where configured)
 - Before **every commit**, run `scripts/validate_docstrings.py` (or the repo’s docstring validator entrypoint) and ensure **all docstring validations pass**.
-- Before **every commit**, run the **smallest relevant test suites** for the files you changed (unit tests + wrapper tests + conformance where impacted) and ensure they pass.
+- Before **every commit**, run the **smallest relevant test suites** for the files you changed (unit tests + wrapper
+  tests + conformance where impacted) and ensure they pass.
 - Do not commit until all required linters and test runners are installed locally and all checks pass.
   - If a linter/test runner is missing, install it (using the repo’s documented setup steps) before proceeding.
 - Install/build the Rust binary before running wrapper/conformance test suites, since they depend on it.
@@ -300,7 +302,8 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - use linters where available
   - use custom scripts only where necessary
 - [x] **Sub‑Item 4.6.3:** Add a “naming validation” job that fails fast with actionable output
-- [x] **Sub‑Item 4.6.4:** Set enforcement to warn/no-new-violations during Phase 4; defer strict pass/fail conversion to Phase 4.5.
+- [x] **Sub‑Item 4.6.4:** Set enforcement to warn/no-new-violations during Phase 4; defer strict pass/fail conversion to
+      Phase 4.5.
 
 ### Item 4.7 — Full verification (High)
 
@@ -393,14 +396,17 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub-Item 5.2.1:** Python wrapper: add `wrappers/python3/run_tests.py` as the functional equivalent of `wrappers/python3/run-tests.sh`.
 - [x] **Sub-Item 5.2.2:** PowerShell wrapper: add `wrappers/powershell/RunTests.ps1` as the functional equivalent of `wrappers/powershell/run-tests.sh`.
 - [x] **Sub-Item 5.2.3:** Perl wrapper: add `wrappers/perl/run_tests.pl` as the functional equivalent of `wrappers/perl/run-tests.sh` (snake_case Perl runner).
-- [x] **Sub-Item 5.2.4:** Ensure each runner can be executed directly from its wrapper directory and from repo root via documented commands.
+- [x] **Sub-Item 5.2.4:** Ensure each runner can be executed directly from its wrapper directory and from repo root via
+      documented commands.
 
 ### Item 5.3 — Lint, test, and CI integration (High)
 
 - [x] **Sub-Item 5.3.1:** Add/confirm lint rules for each new runner file type in CI (Python, PowerShell, Perl).
 - [x] **Sub-Item 5.3.2:** Update wrapper docs to include language-native runner usage examples.
-- [x] **Sub-Item 5.3.3:** Update CI workflows to run each language-native runner (in addition to existing Bash runner) where appropriate.
-- [x] **Sub-Item 5.3.4:** Verify end-to-end wrapper parity by running all wrapper test suites (bash/perl/powershell/python3) and conformance.
+- [x] **Sub-Item 5.3.3:** Update CI workflows to run each language-native runner (in addition to existing Bash runner)
+      where appropriate.
+- [x] **Sub-Item 5.3.4:** Verify end-to-end wrapper parity by running all wrapper test suites
+      (bash/perl/powershell/python3) and conformance.
 
 - [x] **Sub-Item 5.3.5:** Add a `future-work.md` entry: if CI becomes too slow, move the duplicate Bash-runner execution to scheduled/nightly workflows while keeping language-native runners on PR CI.
 
@@ -428,11 +434,13 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - ✅ Completed during Phase 4 naming standardization
 - [x] **Sub-Item 5.5.0.2:** Rename non-conforming Perl files to `snake_case` using `git mv`.
   - ✅ All Perl files now use snake_case: `run_tests.pl`, `safe_run.pl`, etc.
-- [x] **Sub-Item 5.5.0.3:** Update all references to renamed Perl files across the repo (scripts, CI workflows, and docs).
+- [x] **Sub-Item 5.5.0.3:** Update all references to renamed Perl files across the repo (scripts, CI workflows, and
+      docs).
   - ✅ **COMPLETE**: All forward-facing documentation uses correct snake_case names
   - Verification: README.md, wrappers/README.md, and all current docs correctly reference `safe_run.pl`, `run_tests.pl`, etc.
   - Note: References in `naming-and-style.md` line 333 are historical transition notes (arrow notation) and anti-patterns (❌), not broken references
-- [x] **Sub-Item 5.5.0.4:** Re-run the smallest relevant Perl test/lint set (and wrapper/conformance suites if impacted) to ensure nothing broke.
+- [x] **Sub-Item 5.5.0.4:** Re-run the smallest relevant Perl test/lint set (and wrapper/conformance suites if impacted)
+      to ensure nothing broke.
   - ✅ CI passing with renamed files
 
 > Goal: Expand the existing docstring validation tooling so it enforces documentation standards not only at the file/module level, but also for key **symbols** (classes, functions, methods, and language equivalents) across **Python, Bash, Perl, PowerShell, and Rust**. Then run the expanded validator across the repository and fix all violations until CI is green.
@@ -449,7 +457,8 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - ✅ Completed: Symbol contracts documented in `docs/contributing/naming-and-style.md`
 - [x] **Sub-Item 5.5.1.2:** For each language, define **what counts as a docstring/docblock**, and where it must appear.
   - **Python:** class/function/method docstrings (`"""..."""`) with required sections/keywords per repo contract.
-  - **Bash:** function docblocks as comment blocks immediately above function definitions; define minimum required fields.
+  - **Bash:** function docblocks as comment blocks immediately above function definitions; define minimum required
+    fields.
   - **Perl:** POD (`=head1`, `=head2`, etc.) or comment-based doc blocks (choose one and standardize); define requirements for subs/packages.
   - **PowerShell:** comment-based help (`<# .SYNOPSIS ... #>`) for functions and scripts; define requirements for functions and exported commands.
   - **Rust:** `///` (outer) and `//!` (module) docs; define requirements for structs/enums/traits/functions/public items.
@@ -468,7 +477,8 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 
 **Status:** ✅ **COMPLETE** (Implemented via Issue #110 Phase 3 Item 3.7)
 
-- [x] **Sub-Item 5.5.2.1:** Identify the current validator script location (the existing docstring validation script) and add a clear architecture section to its header comment/docstring explaining:
+- [x] **Sub-Item 5.5.2.1:** Identify the current validator script location (the existing docstring validation script)
+      and add a clear architecture section to its header comment/docstring explaining:
   - how it discovers files
   - how it classifies languages
   - how it detects doc blocks
@@ -490,7 +500,8 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 - [x] **Sub-Item 5.5.2.3:** Add language-specific symbol scanners:
   - **Python:** use `ast` parsing to detect module/class/function/method nodes and their docstrings; enforce required fields. ✅
   - **Bash:** Tree-sitter with pinned Bash grammar (no execution) per Issue #110 Phase 0 Item 0.9.4 ✅
-  - **Perl:** PPI via subprocess with structure-aware fallback strategy (no execution) per Issue #110 Phase 0 Item 0.9.5 ✅
+  - **Perl:** PPI via subprocess with structure-aware fallback strategy (no execution) per Issue #110 Phase 0 Item 0.9.5
+    ✅
   - **PowerShell:** `Parser::ParseFile` AST parsing (no execution) per Issue #110 Phase 0 Item 0.9.3 ✅
   - **Rust:** rustdoc comments (`///`, `//!`) validation ✅
 - [x] **Sub-Item 5.5.2.4:** Ensure the validator produces deterministic, CI-friendly output:
@@ -501,12 +512,10 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - ✅ Completed: Normalized violation schema implemented
 - [x] **Sub-Item 5.5.2.5:** Add a `--check` mode (fail on violations) and an optional `--report` mode (human-readable summary).
   - ✅ Completed: Check mode implemented, integrated into `repo_lint`
-- [x] **Sub-Item 5.5.2.6:** Add test coverage for the validator itself (fixtures per language) so future refactors don't break it.
-  - ✅ Completed: 31 comprehensive tests per Issue #110 Phase 3 Item 3.7.5:
-    - Python: 9 tests
-    - Bash: 7 tests
-    - PowerShell: 7 tests
-    - Perl: 8 tests
+- [x] **Sub-Item 5.5.2.6:** Add test coverage for the validator itself (fixtures per language) so future refactors don't
+      break it.
+  - ✅ Completed: 31 comprehensive tests per Issue #110 Phase 3 Item 3.7.5: - Python: 9 tests - Bash: 7 tests -
+    PowerShell: 7 tests - Perl: 8 tests
   - Test fixtures: `scripts/tests/fixtures/{python,bash,powershell,perl}/edge_cases.*`
   - Test suite: `scripts/tests/test_symbol_discovery.py` (all passing)
 
@@ -514,9 +523,11 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
 
 **Status:** ✅ **COMPLETE** (Implemented via Issue #110 Phase 6)
 
-- [x] **Sub-Item 5.5.3.1:** Add/extend CI workflows so the expanded validator runs in the appropriate jobs (and in the correct order relative to lint).
+- [x] **Sub-Item 5.5.3.1:** Add/extend CI workflows so the expanded validator runs in the appropriate jobs (and in the
+      correct order relative to lint).
   - ✅ Completed: Umbrella workflow `.github/workflows/repo-lint-and-docstring-enforcement.yml`
-- [x] **Sub-Item 5.5.3.2:** Ensure failures link back to the canonical contract docs (print the path to the standard document in the failure output).
+- [x] **Sub-Item 5.5.3.2:** Ensure failures link back to the canonical contract docs (print the path to the standard
+      document in the failure output).
   - ✅ Completed: Failure output references `docs/contributing/naming-and-style.md`
 - [x] **Sub-Item 5.5.3.3:** Confirm the validator respects repo-wide search rules (use `rg` for supporting searches where applicable) and ignores vendored/build directories.
   - ✅ Completed: Validator uses `rg`, ignores vendored/build directories
@@ -538,13 +549,15 @@ This issue tracks the remaining callouts, recommendations, and nits identified a
   - wrapper/conformance tests (after Rust binary is built)
   - full CI before moving on
   - ✅ Completed: CI passing
-- [x] **Sub-Item 5.5.4.4:** Ensure every fix uses the repo's documented docstring templates/contracts and does not invent new formats.
+- [x] **Sub-Item 5.5.4.4:** Ensure every fix uses the repo's documented docstring templates/contracts and does not
+      invent new formats.
   - ✅ Completed: All fixes follow documented contracts
 
 **Phase 5.5 Success Criteria**
 
 - ✅ Docstring/symbol documentation requirements are explicitly documented for all supported languages
-- ✅ The validator enforces module/file docs **and** symbol-level docs (classes/functions/methods/etc.) across Python/Bash/Perl/PowerShell/Rust
+- ✅ The validator enforces module/file docs **and** symbol-level docs (classes/functions/methods/etc.) across
+  Python/Bash/Perl/PowerShell/Rust
 - ✅ The validator runs in CI and fails with actionable output
 - ✅ All repository violations are fixed and CI remains green (lint + tests + conformance)
 

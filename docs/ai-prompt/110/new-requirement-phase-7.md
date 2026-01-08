@@ -25,7 +25,8 @@ Add a section titled exactly:
 
 - `## Dangerous Commands — AI Prohibited Without Human Permission`
 
-This section MUST state that AI agents are **NOT ALLOWED** to run any command that performs unsafe fixes unless a human explicitly instructs it in the current PR/thread.
+This section MUST state that AI agents are **NOT ALLOWED** to run any command that performs unsafe fixes unless a human
+explicitly instructs it in the current PR/thread.
 
 Include language like:
 
@@ -35,7 +36,8 @@ Include language like:
 - If an agent believes unsafe mode is necessary, it MUST stop and comment:
   `**BLOCKED — HUMAN ACTION REQUIRED**` + @mention `@m1ndn1nj4` and propose minimal options.
 
-Also add a list of other “dangerous” categories AI must not run without permission (keep it minimal, but include examples):
+Also add a list of other “dangerous” categories AI must not run without permission (keep it minimal, but include
+examples):
 
 - destructive cleanup/uninstall commands (apt remove / brew uninstall, etc.)
 - repo history rewriting (rebase --onto, filter-repo, force push)
@@ -104,7 +106,8 @@ Requirements:
 
 For now:
 
-- Build the scaffolding + **at least one real unsafe fixer** (not a no-op). It can be minimal, but it must produce an observable change in a controlled test fixture.
+- Build the scaffolding + **at least one real unsafe fixer** (not a no-op). It can be minimal, but it must produce an
+  observable change in a controlled test fixture.
 
 ---
 
@@ -129,7 +132,8 @@ Include this warning verbatim in a prominent location:
 
 ### 5.1 Create purpose-built unsafe fixtures (required)
 
-Add a deterministic test fixture directory under the repo’s existing conformance/vectors layout (use the same conventions already used by the repo).
+Add a deterministic test fixture directory under the repo’s existing conformance/vectors layout (use the same
+conventions already used by the repo).
 
 Create fixtures that are designed to:
 

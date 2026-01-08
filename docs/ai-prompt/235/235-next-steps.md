@@ -106,7 +106,8 @@ Related: Issue #235, PRs #240
   - Read issue #265 overview (workspace restructuring context)
 - Created Comprehensive Parity Test Suite:
   - 11 behavioral parity tests comparing Bash vs Rust bootstrapper
-  - Test coverage: version flag, help flag, doctor, verify, dry-run, CI mode, JSON output, profiles, invalid args, repo root detection, exit codes
+  - Test coverage: version flag, help flag, doctor, verify, dry-run, CI mode, JSON output, profiles, invalid args, repo
+    root detection, exit codes
   - All tests passing (100% success rate)
   - Identified expected behavioral differences (Rust adds --version support)
 - Fixed Dry-Run Mode Issues:
@@ -199,7 +200,8 @@ Related: Issue #235, PRs #240
 
 - ✅ Rust implementation MORE COMPLETE than docs claim:
   - Phases 3-9 marked incomplete in overview.md but have working code and passing tests
-  - All 13 tools have installers (ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt, perlcritic, ppi, pwsh, psscriptanalyzer)
+  - All 13 tools have installers (ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt,
+    perlcritic, ppi, pwsh, psscriptanalyzer)
   - Total test count: 162 tests (158 passing, 4 ignored)
 - ✅ Exit codes match exactly between Bash and Rust (13 codes: 0 + 12 error codes)
 - ⚠️ Missing production validation:
@@ -276,7 +278,8 @@ Related: Issue #235, PRs #240
   - Phase 1 (Detection): 9 parallel steps
   - Phase 2 (Installation): 9 sequential steps with locks
   - Phase 3 (Verification): 9 parallel steps
-  - All tools detected: ripgrep, python-black, python-ruff, python-pylint, yamllint, pytest, actionlint, shellcheck, shfmt
+  - All tools detected: ripgrep, python-black, python-ruff, python-pylint, yamllint, pytest, actionlint, shellcheck,
+    shfmt
   - Dry-run output shows correct plan structure
 
 **Verification:**
@@ -469,7 +472,8 @@ Related: Issue #235, PRs #240
 
 **Architecture Notes:**
 
-- Total 13 installers now registered: ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt, perlcritic, ppi, pwsh, psscriptanalyzer
+- Total 13 installers now registered: ripgrep, black, ruff, pylint, yamllint, pytest, actionlint, shellcheck, shfmt,
+  perlcritic, ppi, pwsh, psscriptanalyzer
 - Integration tests use tempfile for isolated test environments
 - Tests properly use safe_run:: module path for imports
 - Wrapper script is backwards-compatible transition mechanism
@@ -1016,9 +1020,12 @@ Related: Issue #235, PRs #240
 
 **Changes Made:**
 
-- Successfully implemented Phase 1.1 (Project Setup): All dependencies added, CLI structure complete with required subcommands and flags
-- Successfully implemented Phase 1.2 (Exit Code Constants): ExitCode enum with all 22 codes matching bash script contract
-- Successfully implemented Phase 1.3 (Error Type Hierarchy): BootstrapError with proper thiserror integration and exit code mapping
+- Successfully implemented Phase 1.1 (Project Setup): All dependencies added, CLI structure complete with required
+  subcommands and flags
+- Successfully implemented Phase 1.2 (Exit Code Constants): ExitCode enum with all 22 codes matching bash script
+  contract
+- Successfully implemented Phase 1.3 (Error Type Hierarchy): BootstrapError with proper thiserror integration and exit
+  code mapping
 - All hard requirements from spec followed: CI=2 jobs, Interactive=min(4,cpus), proper exit codes, CLI semantics
 - Build succeeded with only 1 harmless dead_code warning (locks field in LockManager)
 

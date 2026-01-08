@@ -213,7 +213,7 @@
 2. Agent plans work (filtering, summary modes, output formats)
 3. Agent implements features
 4. Agent calls `report_progress` immediately after implementation
-5. Agent claims "COMPLETE ✅" 
+5. Agent claims "COMPLETE ✅"
 6. **VERIFICATION STEP MISSING ENTIRELY**
 
 **Root Cause:** Agent's decision tree had NO branch for "verify before commit when continuing work"
@@ -365,7 +365,8 @@ MANDATORY FIRST ACTION: Read `.github/copilot-instructions.md` and follow ALL RE
 
 ```
 
-**Interpretation:** This mandatory first line was added BECAUSE of previous violations. This session violated the same requirement AGAIN.
+**Interpretation:** This mandatory first line was added BECAUSE of previous violations. This session violated the same
+requirement AGAIN.
 
 ### Why Previous Corrections Failed
 
@@ -551,7 +552,8 @@ MANDATORY BEFORE EVERY COMMIT: Run repo-lint check --ci (exit 0 required)
 2. **Option B:** Add tool warning but allow commits (medium enforcement)
 3. **Option C:** Keep tool as-is, rely on agent behavior (no enforcement)
 
-**Recommendation:** Option A - Tool enforcement is the only reliable prevention mechanism. Text reminders have failed repeatedly.
+**Recommendation:** Option A - Tool enforcement is the only reliable prevention mechanism. Text reminders have failed
+repeatedly.
 
 ---
 

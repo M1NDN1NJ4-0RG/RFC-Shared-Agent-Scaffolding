@@ -1,6 +1,7 @@
 # Issue #248 Overview
 
-**Issue Title:** [EPIC] [BLOCKER TO: ISSUE #235] Bootstrapper parity + Dev benchmarks + expanded release matrix (linux arm64)
+**Issue Title:** [EPIC] [BLOCKER TO: ISSUE #235] Bootstrapper parity + Dev benchmarks + expanded release matrix (linux
+arm64)
 
 **Status:** ✅ **COMPLETE** (Phase 2 deferred)
 

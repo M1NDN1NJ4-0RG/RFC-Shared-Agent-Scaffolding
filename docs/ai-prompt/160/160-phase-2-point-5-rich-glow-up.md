@@ -28,7 +28,8 @@
   - `repo-lint install --help`
   - Any subcommands/groups introduced later.
 - Shell completion instructions included in docs (`HOW-TO-USE-THIS-TOOL.md`).
-- A user-configurable **Rich UI theme/config YAML** for per-person formatting preferences (colors/icons/box styles/help styling), with strict schema validation.
+- A user-configurable **Rich UI theme/config YAML** for per-person formatting preferences (colors/icons/box styles/help
+  styling), with strict schema validation.
 
 ### Explicit Non-Goals
 
@@ -79,7 +80,8 @@ In CI mode (or non-TTY output), output must still include:
 
 ### Styling and Theming (Rich UX)
 
-**Intent:** Go BIG. Output should be visually scannable, consistent, and immediately “obvious” when something is failing.
+**Intent:** Go BIG. Output should be visually scannable, consistent, and immediately “obvious” when something is
+failing.
 
 #### Global styling rules (Interactive / TTY)
 
@@ -138,7 +140,8 @@ In CI mode (or non-TTY output), output must still include:
 - Secondary metadata: **dim**
 - Use `box.ROUNDED` for interactive panels/tables, and `box.SIMPLE` for CI/plain.
 - Theme defaults MUST be overridable via a user-configurable YAML theme file (see 2.5.3-G).
-- CI mode MUST remain deterministic and stable; user theme overrides MUST NOT silently change CI output unless explicitly enabled.
+- CI mode MUST remain deterministic and stable; user theme overrides MUST NOT silently change CI output unless
+  explicitly enabled.
 
 ### Minimum UI Layout (Interactive)
 
@@ -160,10 +163,8 @@ Every invocation MUST render the following, in this order:
    - Columns (minimum): Runner, Status, Files, Violations, Duration
 
 4. **Failure Details (only for failures)**
-   - For each failing runner:
-     - A red panel header including counts.
-     - A table of violations with stable columns.
-     - If output is huge, show top N and indicate “+X more”.
+   - For each failing runner: - A red panel header including counts. - A table of violations with stable columns. - If
+     output is huge, show top N and indicate “+X more”.
 
 5. **Final Summary Panel**
    - PASS/FAIL counts
@@ -229,7 +230,8 @@ Help output MUST:
 - Use Rich-Click styling and option grouping
 - Include the Help Content Contract sections
 - Include clickable links to `HOW-TO-USE-THIS-TOOL.md` (TTY mode)
-- Help styling (width, emphasis, minor styling preferences) should be configurable via the UI theme YAML (see 2.5.3-G), without changing the required Help Content Contract sections or option grouping.
+- Help styling (width, emphasis, minor styling preferences) should be configurable via the UI theme YAML (see 2.5.3-G),
+  without changing the required Help Content Contract sections or option grouping.
 
 #### CI mode (`--ci`) alignment
 
@@ -254,7 +256,8 @@ Help output MUST:
   - Notes for CI vs interactive mode
   - Clear exit code semantics summary
 - Clickable links to docs and relevant references (where supported by the terminal)
-- Help styling (width, emphasis, minor styling preferences) should be configurable via the UI theme YAML (see 2.5.3-G), without changing the required Help Content Contract sections or option grouping.
+- Help styling (width, emphasis, minor styling preferences) should be configurable via the UI theme YAML (see 2.5.3-G),
+  without changing the required Help Content Contract sections or option grouping.
 
 ### Help Content Requirements
 
@@ -315,7 +318,8 @@ Each command’s help MUST include examples in a consistent format:
   - Windows Terminal
 - Help output MUST NOT depend on ANSI features that are commonly broken/disabled in Windows shells.
 - Any Rich-Click settings required for Windows compatibility must be documented in `HOW-TO-USE-THIS-TOOL.md`.
-- Help output should prefer clean styling that renders well on Windows; hyperlinks are optional on Windows if terminals do not support them reliably.
+- Help output should prefer clean styling that renders well on Windows; hyperlinks are optional on Windows if terminals
+  do not support them reliably.
 
 ---
 
@@ -393,7 +397,8 @@ Minimum fields:
 
 ### 2.5.3-G UI Theme Config (YAML) — Per-Person Formatting
 
-**Intent:** Allow users to customize Rich styling (colors, icons, box styles, help formatting) without editing code, while keeping CI output deterministic.
+**Intent:** Allow users to customize Rich styling (colors, icons, box styles, help formatting) without editing code,
+while keeping CI output deterministic.
 
 #### Default + override locations
 
@@ -434,7 +439,8 @@ The v1 schema MUST support (at minimum):
   - `width` (int)
   - `show_defaults` (bool)
 
-**Non-negotiable:** The theme YAML MUST NOT be able to override required semantic behavior (exit codes, Help Content Contract sections/order, option group headings). It may only affect presentation.
+**Non-negotiable:** The theme YAML MUST NOT be able to override required semantic behavior (exit codes, Help Content
+Contract sections/order, option group headings). It may only affect presentation.
 
 #### Example `repo-lint-ui-theme.yaml` (v1)
 
@@ -541,10 +547,12 @@ If Windows validation fails, it is a release blocker for Phase 2.5.
 - [ ] `repo-lint --help` and all subcommand help use Rich-Click.
 - [ ] Help output includes examples, config file notes, and CI notes.
 - [ ] Help output follows the **Help Content Contract (MANDATORY)** (sections + option grouping + examples format).
-- [ ] Help output and completion instructions are validated on Windows (Windows PowerShell + PowerShell 7+ + Windows Terminal).
+- [ ] Help output and completion instructions are validated on Windows (Windows PowerShell + PowerShell 7+ + Windows
+      Terminal).
 - [ ] Console output follows the **Command Visual Grammar (MANDATORY)** for `check`, `fix`, and `install`.
 - [ ] Tests added/updated to cover reporter rendering paths.
 - [ ] Documentation updated (`HOW-TO-USE-THIS-TOOL.md`) including shell completion setup.
 - [ ] A default UI theme YAML exists at `conformance/repo-lint/repo-lint-ui-theme.yaml` and is validated before use.
 - [ ] Per-user UI theme overrides are supported (flag/env/user path) and are disabled by default in `--ci` mode.
-- [ ] UI theme YAML can customize presentation only (colors/icons/box/help width) and cannot override semantic contracts.
+- [ ] UI theme YAML can customize presentation only (colors/icons/box/help width) and cannot override semantic
+      contracts.

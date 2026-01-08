@@ -13,12 +13,15 @@ Add `actionlint` to `bootstrap-repo-lint-toolchain.sh` (GitHub Actions workflow 
 
 ## Summary
 
-We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and optional toolchains (shell/powershell/perl). We need to add **actionlint** to the bootstrapper so GitHub Actions workflow YAML is linted consistently in CI and in Copilot agent sessions.
+We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and optional toolchains
+(shell/powershell/perl). We need to add **actionlint** to the bootstrapper so GitHub Actions workflow YAML is linted
+consistently in CI and in Copilot agent sessions.
 
 ## Background / Why
 
 - The repo bootstrapper is intended to be run at the start of every Copilot agent session and then verified via `repo-lint check --ci`.
-- GitHub Actions workflows are part of the repository surface area. Without actionlint in the toolchain, workflow YAML can drift into "looks fine" but fails at runtime.
+- GitHub Actions workflows are part of the repository surface area. Without actionlint in the toolchain, workflow YAML
+  can drift into "looks fine" but fails at runtime.
 
 ## Goals
 
@@ -30,7 +33,8 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
 ## Non-Goals
 
 - Do not redesign CI workflows here.
-- Do not add new repo-lint rules beyond wiring in actionlint availability (unless a minimal hook is already planned/exists).
+- Do not add new repo-lint rules beyond wiring in actionlint availability (unless a minimal hook is already
+  planned/exists).
 
 ---
 
@@ -49,7 +53,9 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
   - [ ] Alternative: include it under `--shell` (but then CI/agents might miss it unless `--shell` is always used)
 - [ ] Update `show_usage` output to mention actionlint if it's required, or add a new flag if you decide to gate it behind an option.
 - [ ] Ensure failure behavior is consistent with existing exit codes:
-  - [ ] If actionlint is required and cannot be installed, fail with a clear message and a stable exit code (either reuse "Shell toolchain installation failed" semantics or introduce a new specific exit code if that's consistent with the doc contract).
+  - [ ] If actionlint is required and cannot be installed, fail with a clear message and a stable exit code (either
+        reuse "Shell toolchain installation failed" semantics or introduce a new specific exit code if that's consistent
+        with the doc contract).
 
 ## Phase 2 — Documentation updates (`bootstrapper-toolchain-user-manual.md`)
 
@@ -122,7 +128,8 @@ We currently bootstrap Python tooling (black/ruff/pylint/yamllint/pytest) and op
   - Phase 2.1-2.2: Made venv activation fatal, wrapped pip upgrade with deterministic exit codes
   - Code review: Addressed all 3 feedback items (exit code docs, security warnings, rationale notes)
   - All changes verified: shellcheck, shfmt, repo-lint check --ci all pass (exit 0)
-- **Remaining work:** Phases 2.3-6 cover extensive refactoring (PowerShell, Perl, shell tools, ripgrep enforcement, verification hardening, tests, documentation, analysis, Rust migration plan)
+- **Remaining work:** Phases 2.3-6 cover extensive refactoring (PowerShell, Perl, shell tools, ripgrep enforcement,
+  verification hardening, tests, documentation, analysis, Rust migration plan)
 
 ### 2026-01-06 00:16 - Journal Creation
 
