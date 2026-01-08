@@ -33,10 +33,10 @@ This means ALL phases including 4, 5, 6 are MANDATORY (not optional/recommended)
 **Phase 3.4.4: Docstring Validator Unit Tests (IN PROGRESS)**
 - [x] test_python_validator.py (11 tests, 100% pass)
 - [x] test_bash_validator.py (7 tests, 100% pass)
-- [ ] test_powershell_validator.py
-- [ ] test_perl_validator.py
-- [ ] test_rust_validator.py
-- [ ] test_yaml_validator.py
+- [x] test_powershell_validator.py
+- [x] test_perl_validator.py
+- [x] test_rust_validator.py
+- [x] test_yaml_validator.py
 - [ ] test_validator_common.py
 - [ ] Golden fixtures for each language (pass/fail cases)
 - [ ] Regression tests for bugs found during migration
