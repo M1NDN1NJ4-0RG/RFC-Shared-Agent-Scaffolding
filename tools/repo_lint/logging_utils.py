@@ -67,6 +67,7 @@ def is_verbose_mode() -> bool:
     """Check if verbose logging is enabled.
 
     :returns: True if verbose mode (DEBUG level) is enabled, False otherwise
+    :rtype: bool
     """
     return _verbose_mode or os.environ.get("REPO_LINT_VERBOSE") == "1"
 
