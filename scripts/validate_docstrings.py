@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """Docstring contract validator for RFC-Shared-Agent-Scaffolding.
 
 DEPRECATED: This script is now a thin CLI wrapper around the internal

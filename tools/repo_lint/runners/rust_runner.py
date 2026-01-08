@@ -31,12 +31,11 @@
 from __future__ import annotations
 
 import json
-import os
 import subprocess
 from pathlib import Path
 from typing import List
 
-from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.common import LintResult, Violation, convert_validation_errors_to_violations
 from tools.repo_lint.docstrings import validate_files
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
 
@@ -323,30 +322,7 @@ class RustRunner(Runner):
         if not errors:
             return LintResult(tool="rust-docstrings", passed=True, violations=[])
 
-        # Convert ValidationError objects to Violation objects
-        violations = []
-        for error in errors:
-            file_basename = os.path.basename(error.file_path)
+        # Convert ValidationError objects to Violation objects using shared helper
+        violations = convert_validation_errors_to_violations(errors, "rust-docstrings")
 
-            if error.missing_sections:
-                sections = ", ".join(error.missing_sections)
-                if error.symbol_name:
-                    message = f"Symbol '{error.symbol_name}': Missing {sections}"
-                else:
-                    message = f"Missing required sections: {sections}"
-            else:
-                message = error.message
-
-            if error.message and error.missing_sections:
-                message += f" ({error.message})"
-
-            violations.append(
-                Violation(
-                    tool="rust-docstrings",
-                    file=file_basename,
-                    line=error.line_number,
-                    message=message,
-                )
-            )
-
-        return LintResult(tool="rust-docstrings", passed=False, violations=violations[:20])
+        return LintResult(tool="rust-docstrings", passed=False, violations=violations)

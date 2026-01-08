@@ -88,9 +88,10 @@ class YAMLValidator:
                     header_lines.append(line)
                     continue
 
+                # Multiple documents - stop extraction
                 break
 
-            # First actual YAML content - stop extraction
+            # First actual YAML content - set flag and stop extraction
             seen_content = True
             break
 

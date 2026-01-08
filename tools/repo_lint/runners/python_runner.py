@@ -28,11 +28,10 @@
 
 from __future__ import annotations
 
-import os
 import subprocess
 from typing import List
 
-from tools.repo_lint.common import LintResult, Violation
+from tools.repo_lint.common import LintResult, Violation, convert_validation_errors_to_violations
 from tools.repo_lint.docstrings import validate_files
 from tools.repo_lint.policy import is_category_allowed
 from tools.repo_lint.runners.base import Runner, command_exists, get_tracked_files
@@ -433,34 +432,7 @@ class PythonRunner(Runner):
         if not errors:
             return LintResult(tool="python-docstrings", passed=True, violations=[])
 
-        # Convert ValidationError objects to Violation objects
-        violations = []
-        for error in errors:
-            # Extract file basename from path
-            file_basename = os.path.basename(error.file_path)
+        # Convert ValidationError objects to Violation objects using shared helper
+        violations = convert_validation_errors_to_violations(errors, "python-docstrings")
 
-            # Format message from missing sections
-            if error.missing_sections:
-                sections = ", ".join(error.missing_sections)
-                if error.symbol_name:
-                    message = f"Symbol '{error.symbol_name}': Missing {sections}"
-                else:
-                    message = f"Missing required sections: {sections}"
-            else:
-                message = error.message
-
-            # Add additional context if present
-            if error.message and error.missing_sections:
-                message += f" ({error.message})"
-
-            violations.append(
-                Violation(
-                    tool="python-docstrings",
-                    file=file_basename,
-                    line=error.line_number,
-                    message=message,
-                )
-            )
-
-        # Limit output to avoid overwhelming CI logs
-        return LintResult(tool="python-docstrings", passed=False, violations=violations[:20])
+        return LintResult(tool="python-docstrings", passed=False, violations=violations)
