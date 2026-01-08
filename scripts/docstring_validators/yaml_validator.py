@@ -87,8 +87,8 @@ class YAMLValidator:
                 if not seen_content:
                     header_lines.append(line)
                     continue
-                else:
-                    break
+
+                break
 
             # First actual YAML content - stop extraction
             seen_content = True

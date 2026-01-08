@@ -127,7 +127,7 @@ impl PackageManagerOps for AptOps {
 
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            
+
             // Provide helpful error message if sudo password is required
             if stderr.contains("a password is required") || stderr.contains("no password") {
                 return Err(BootstrapError::CommandFailed {
@@ -179,7 +179,7 @@ impl PackageManagerOps for AptOps {
 
         if !output.status.success() {
             let stderr = String::from_utf8_lossy(&output.stderr);
-            
+
             // Provide helpful error if sudo password required
             if stderr.contains("a password is required") || stderr.contains("no password") {
                 return Err(BootstrapError::CommandFailed {
@@ -192,7 +192,7 @@ impl PackageManagerOps for AptOps {
                     ),
                 });
             }
-            
+
             return Err(BootstrapError::InstallFailed {
                 tool: package.to_string(),
                 exit_code: output.status.code().unwrap_or(-1),
