@@ -1,11 +1,13 @@
 # Contributing to RFC-Shared-Agent-Scaffolding
 
-Thank you for your interest in contributing! This repository implements the RFC-Shared-Agent-Scaffolding contract (v0.1.0) - a restartable, failure-resilient operating model for AI coding agents.
+Thank you for your interest in contributing! This repository implements the RFC-Shared-Agent-Scaffolding contract
+(v0.1.0) - a restartable, failure-resilient operating model for AI coding agents.
 
 ## Quick Start
 
 1. **Read the documentation** - Start with [docs/README.md](./docs/README.md) for an overview
-2. **Review the RFC** - [rfc-shared-agent-scaffolding-v0.1.0.md](./rfc-shared-agent-scaffolding-v0.1.0.md) defines the contract
+2. **Review the RFC** - [rfc-shared-agent-scaffolding-v0.1.0.md](./rfc-shared-agent-scaffolding-v0.1.0.md) defines the
+   contract
 3. **Check the roadmap** - [EPIC #33](https://github.com/M1NDN1NJ4-0RG/RFC-Shared-Agent-Scaffolding/issues/33) tracks the Rust canonical tool implementation
 4. **Install linting tools** - Run `python3 -m tools.repo_lint install` (or `./scripts/run-linters.sh --install`)
 5. **Before every commit:**
@@ -18,7 +20,8 @@ Thank you for your interest in contributing! This repository implements the RFC-
 
 ### For Contributors
 
-🛠️ **[Bootstrapper Toolchain User Manual](./docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md)** - Session-start compliance and toolchain setup
+🛠️ **[Bootstrapper Toolchain User Manual](./docs/tools/repo-lint/bootstrapper-toolchain-user-manual.md)** -
+Session-start compliance and toolchain setup
 
 - Bootstrapping repo-lint and all development tools
 - Virtual environment setup
