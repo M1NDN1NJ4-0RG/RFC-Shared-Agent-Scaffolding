@@ -209,6 +209,7 @@ class PythonValidator:
 
         # Check for required sections (:param and :returns in reST/Sphinx style)
         # Skip content checks if requested (--no-content-checks flag)
+        # NOTE: This conditional ensures --no-content-checks works correctly
         if not common.SKIP_CONTENT_CHECKS:
             # Accept :param, :type, :returns, :rtype per PEP 287
             has_param = bool(re.search(r":param\s+\w+:", docstring, re.MULTILINE))
