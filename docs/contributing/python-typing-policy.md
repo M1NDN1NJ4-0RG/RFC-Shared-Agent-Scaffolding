@@ -6,9 +6,11 @@
 
 ## Overview
 
-This document defines the mandatory Python type annotation requirements for the RFC-Shared-Agent-Scaffolding repository. These standards ensure type safety, IDE support, and documentation completeness across all Python code.
+This document defines the mandatory Python type annotation requirements for the RFC-Shared-Agent-Scaffolding repository.
+These standards ensure type safety, IDE support, and documentation completeness across all Python code.
 
-**Key Principle:** All Python code must include type annotations for functions, module-level variables, and class attributes. Type annotations serve both as machine-checkable contracts and as inline documentation.
+**Key Principle:** All Python code must include type annotations for functions, module-level variables, and class
+attributes. Type annotations serve both as machine-checkable contracts and as inline documentation.
 
 ---
 
@@ -18,7 +20,8 @@ This document defines the mandatory Python type annotation requirements for the 
 
 **Requirement:** All module-level variable assignments MUST include type annotations using PEP 526 syntax.
 
-**Rationale:** Module-level variables are part of the public API and must be explicitly typed for clarity and IDE support.
+**Rationale:** Module-level variables are part of the public API and must be explicitly typed for clarity and IDE
+support.
 
 **Syntax:**
 
@@ -202,7 +205,8 @@ LOG_LEVEL = "INFO"
 
 ### Prefer Real Types
 
-**Requirement:** Use real, specific types wherever possible. Custom types, classes, and domain-specific types are encouraged.
+**Requirement:** Use real, specific types wherever possible. Custom types, classes, and domain-specific types are
+encouraged.
 
 **Examples:**
 

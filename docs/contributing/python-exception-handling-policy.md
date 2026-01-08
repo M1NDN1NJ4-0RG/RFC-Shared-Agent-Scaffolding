@@ -1,8 +1,10 @@
 # Python Exception Handling Policy
 
-**Document Purpose:** This document defines the repository's policy for exception handling in Python code, establishing when broad exception handlers are acceptable and what patterns to follow when catching exceptions.
+**Document Purpose:** This document defines the repository's policy for exception handling in Python code, establishing
+when broad exception handlers are acceptable and what patterns to follow when catching exceptions.
 
-**Authority:** This is a canonical contract document. All Python code in this repository MUST comply with these rules unless explicitly exempted with documented justification.
+**Authority:** This is a canonical contract document. All Python code in this repository MUST comply with these rules
+unless explicitly exempted with documented justification.
 
 **Last Updated:** 2026-01-08
 
@@ -90,7 +92,8 @@ def check_tool_availability(tool: str) -> tuple[bool, str, str]:
 
 ### ACCEPTABLE: Test Cleanup Code
 
-Broad exception handlers are **ACCEPTABLE** in test cleanup code (finally blocks) where cleanup failures should not mask the actual test result.
+Broad exception handlers are **ACCEPTABLE** in test cleanup code (finally blocks) where cleanup failures should not mask
+the actual test result.
 
 **Requirements:**
 
@@ -116,9 +119,11 @@ def test_subprocess_handling():
 
 ### UNACCEPTABLE: Library Code
 
-Broad exception handlers are **UNACCEPTABLE** in library code unless you are explicitly designing a "fail-safe" API where any error returns a safe fallback.
+Broad exception handlers are **UNACCEPTABLE** in library code unless you are explicitly designing a "fail-safe" API
+where any error returns a safe fallback.
 
-**Why:** Library code callers need to distinguish between failure modes (file not found vs permission denied vs corrupt data) to make appropriate recovery decisions.
+**Why:** Library code callers need to distinguish between failure modes (file not found vs permission denied vs corrupt
+data) to make appropriate recovery decisions.
 
 **What to do instead:** Narrow to specific exception types, or let exceptions propagate.
 
@@ -227,7 +232,8 @@ except FileNotFoundError:
 
 ### 4. Document Intentional Broad Catches
 
-If you MUST use a broad exception handler (e.g., wrapping a third-party library with unpredictable exceptions), add an inline comment explaining:
+If you MUST use a broad exception handler (e.g., wrapping a third-party library with unpredictable exceptions), add an
+inline comment explaining:
 
 - Why the broad catch is necessary
 - What failure modes are expected
