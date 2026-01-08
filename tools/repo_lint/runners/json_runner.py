@@ -176,15 +176,11 @@ class JsonRunner(Runner):
         for line in output.splitlines():
             line = line.strip()
 
-            # Skip empty lines, status messages, and summary lines
-            if (
-                not line
-                or line.startswith("Checking formatting")
-                or line.startswith("[warn]")
-                or line.startswith("[error]")
-                or "Code style issues" in line
-                or "files checked" in line
-            ):
+            # Skip empty lines and status messages
+            skip_prefixes = ("Checking formatting", "[warn]", "[error]")
+            skip_phrases = ("Code style issues", "files checked")
+
+            if not line or line.startswith(skip_prefixes) or any(phrase in line for phrase in skip_phrases):
                 continue
 
             # Lines containing file paths (look for .json or .jsonc extension)
