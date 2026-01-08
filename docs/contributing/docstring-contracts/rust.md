@@ -18,8 +18,7 @@ Every Rust module (file) must include module-level documentation with these sect
 5. **# Contract References** - Links to RFCs, specs, or related docs
 6. **# Examples** - Minimum 1 code example (using ` ```rust` or ` ```bash`)
 
-**Note:** Use "# Exit Codes" consistently instead of "# Exit Behavior" for clarity and alignment with other language
-contracts.
+**Note:** Use "# Exit Codes" consistently instead of "# Exit Behavior" for clarity and alignment with other language contracts.
 
 ### Optional Sections
 

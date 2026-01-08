@@ -10,9 +10,7 @@
 
 ## Executive Summary
 
-Pre-flight baseline validation has been completed successfully. All four language bundles (Bash, Perl, Python3,
-PowerShell) now follow the canonical directory structure, all test suites pass, and automated structure validation is
-enforced via CI.
+Pre-flight baseline validation has been completed successfully. All four language bundles (Bash, Perl, Python3, PowerShell) now follow the canonical directory structure, all test suites pass, and automated structure validation is enforced via CI.
 
 ---
 

@@ -147,8 +147,7 @@ exit 127
 
 **Test:** `test_safe_run.sh::test_snippet_lines`
 
-**Issue:** Test checks for "EVENTS" string in snippet output, but conformance spec (safe-run-005) only requires last N
-lines of output ("L2", "L3").
+**Issue:** Test checks for "EVENTS" string in snippet output, but conformance spec (safe-run-005) only requires last N lines of output ("L2", "L3").
 
 **Status:** **Rust implementation is correct per spec**. Test is over-specified.
 
@@ -187,8 +186,7 @@ L3
 
 **Root cause:** `safe-check.sh` calls `safe-run.sh` in isolated environment where repository root doesn't exist.
 
-**Status:** **Wrapper behavior is correct**. Test design assumes self-contained scripts, but wrapper model requires
-repository context.
+**Status:** **Wrapper behavior is correct**. Test design assumes self-contained scripts, but wrapper model requires repository context.
 
 **Options:**
 

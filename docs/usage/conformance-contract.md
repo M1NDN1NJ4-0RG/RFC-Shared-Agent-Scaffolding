@@ -2,9 +2,7 @@
 
 ## Overview
 
-This document defines the **output format contract** that the Rust canonical tool implements and that all wrappers must
-produce. Conformance tests validate that tool outputs match these specifications exactly (or within explicitly-allowed
-equivalences).
+This document defines the **output format contract** that the Rust canonical tool implements and that all wrappers must produce. Conformance tests validate that tool outputs match these specifications exactly (or within explicitly-allowed equivalences).
 
 ## Contract Version
 

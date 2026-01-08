@@ -6,12 +6,9 @@
 
 ## Overview
 
-This document defines the naming and casing conventions for all code, scripts, and files in the
-RFC-Shared-Agent-Scaffolding repository. These standards ensure consistency across multiple languages while respecting
-language-specific ecosystem conventions.
+This document defines the naming and casing conventions for all code, scripts, and files in the RFC-Shared-Agent-Scaffolding repository. These standards ensure consistency across multiple languages while respecting language-specific ecosystem conventions.
 
-**Key Principle:** Script files follow their respective language naming standards. Non-script files (docs, configs,
-general repo files) use kebab-case by default.
+**Key Principle:** Script files follow their respective language naming standards. Non-script files (docs, configs, general repo files) use kebab-case by default.
 
 ---
 
@@ -119,8 +116,7 @@ Applies to:
 **Pattern (scripts):** `^[a-z0-9]+(_[a-z0-9]+)*\.pl$`
 **Pattern (modules):** `^[A-Z][a-zA-Z0-9]*\.pm$`
 
-**Rationale:** Snake_case provides consistency with Python naming and aligns with the test runner naming established in
-Phase 5. Perl modules continue to use CamelCase per standard Perl conventions.
+**Rationale:** Snake_case provides consistency with Python naming and aligns with the test runner naming established in Phase 5. Perl modules continue to use CamelCase per standard Perl conventions.
 
 Examples (scripts):
 

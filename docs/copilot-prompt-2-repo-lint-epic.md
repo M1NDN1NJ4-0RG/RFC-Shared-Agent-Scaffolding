@@ -2,11 +2,9 @@
 
 ## Goal
 
-Fix the cross-language docstring validation contamination in the umbrella workflow by implementing **Route 2**:
-runner-level scoping via a **language selector** in the docstring validator.
+Fix the cross-language docstring validation contamination in the umbrella workflow by implementing **Route 2**: runner-level scoping via a **language selector** in the docstring validator.
 
-Also: Update the umbrella workflow to **always** preserve logs (success OR failure) by uploading them as artifacts and
-committing them into the repo under the required path format.
+Also: Update the umbrella workflow to **always** preserve logs (success OR failure) by uploading them as artifacts and committing them into the repo under the required path format.
 
 ---
 

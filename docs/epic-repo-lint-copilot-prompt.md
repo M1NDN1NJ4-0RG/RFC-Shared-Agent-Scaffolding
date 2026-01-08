@@ -2,8 +2,7 @@
 
 ## Goal
 
-Verify (and fix if needed) the **functional correctness** of the umbrella workflow: **Repo Lint and Docstring
-Enforcement**.
+Verify (and fix if needed) the **functional correctness** of the umbrella workflow: **Repo Lint and Docstring Enforcement**.
 
 Right now the workflow runs:
 
@@ -12,8 +11,7 @@ Right now the workflow runs:
 - ⏭️ Skips all language jobs
 - ✅ Consolidate Failures
 
-This is **not acceptable** until we prove skipping is correct and the workflow reliably triggers the intended language
-jobs when it should.
+This is **not acceptable** until we prove skipping is correct and the workflow reliably triggers the intended language jobs when it should.
 
 ---
 
@@ -25,8 +23,7 @@ In the umbrella workflow logs:
 
 - Inspect outputs from **Detect Changed Files**
 - Confirm which bucket outputs are `true/false` (python/bash/powershell/perl/yaml/shared_tooling)
-- Identify whether the skip is correct (no relevant files changed) OR a bug in path detection/globs/git diff base ref
-  handling.
+- Identify whether the skip is correct (no relevant files changed) OR a bug in path detection/globs/git diff base ref handling.
 
 If it’s a bug, fix it:
 
@@ -61,8 +58,7 @@ Constraints:
 
 ### 3) Create per-language intentionally-bad fixture files (must be non-auto-fixable)
 
-Create **five** files per language that are guaranteed to violate lint/docstring rules and are NOT auto-fixable by
-Black/Ruff/shfmt/etc.
+Create **five** files per language that are guaranteed to violate lint/docstring rules and are NOT auto-fixable by Black/Ruff/shfmt/etc.
 
 Place them under the existing conformance pattern (preferred) so they’re clearly fixtures, not product code.
 Example directory (adjust if repo already has a better one):

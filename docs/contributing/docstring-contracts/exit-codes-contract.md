@@ -4,8 +4,7 @@
 
 ## Why Exit Codes Matter
 
-Exit codes are a universal language for process success/failure communication. Consistent exit code semantics across all
-languages ensure:
+Exit codes are a universal language for process success/failure communication. Consistent exit code semantics across all languages ensure:
 
 - Predictable behavior in CI/CD pipelines
 - Reliable error detection in automation

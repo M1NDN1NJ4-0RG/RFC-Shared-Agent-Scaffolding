@@ -6,11 +6,9 @@
 
 ## Overview
 
-This document defines the mandatory TOML formatting and style requirements for the RFC-Shared-Agent-Scaffolding
-repository. These standards ensure consistency, readability, and maintainability across all TOML configuration files.
+This document defines the mandatory TOML formatting and style requirements for the RFC-Shared-Agent-Scaffolding repository. These standards ensure consistency, readability, and maintainability across all TOML configuration files.
 
-**Key Principle:** All TOML files must follow a consistent, deterministic style that is machine-checkable and
-auto-fixable.
+**Key Principle:** All TOML files must follow a consistent, deterministic style that is machine-checkable and auto-fixable.
 
 ---
 
@@ -126,8 +124,7 @@ version  =  "0.1.0"
 
 **Rationale:** Makes it easier to find keys and prevents merge conflicts.
 
-**Exception:** Cargo.toml follows Cargo conventions where certain keys (name, version, edition) come first by
-convention.
+**Exception:** Cargo.toml follows Cargo conventions where certain keys (name, version, edition) come first by convention.
 
 ```toml
 # ✅ Correct - alphabetical within reason

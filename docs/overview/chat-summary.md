@@ -17,11 +17,8 @@ This chat produced a complete “Agent Operating System” concept and implement
   - switching between agents (Codex ↔ Claude Code)
 - A **fail‑closed Git workflow** with explicit “modes” (no `.git`, manual PR mode, auto‑merge mode).
 - A **preflight safety suite** that programmatically verifies “Mode B” (auto‑merge allowed) via GitHub rulesets + required status checks, including **hard rules to avoid leaking `$TOKEN`**.
-- A refinement loop that repeatedly incorporated “nips” (iteration suggestions) into successive RFC versions (v2 → v8)
-  and the scaffolding zip.
-- A final demonstration of why this matters: insisting on a semantic/behavioral comparison between a legacy monolith and
-  the refactored build caught a subtle, high‑impact behavioral mismatch (focusable selector logic), validating the whole
-  “prove parity” gate.
+- A refinement loop that repeatedly incorporated “nips” (iteration suggestions) into successive RFC versions (v2 → v8) and the scaffolding zip.
+- A final demonstration of why this matters: insisting on a semantic/behavioral comparison between a legacy monolith and the refactored build caught a subtle, high‑impact behavioral mismatch (focusable selector logic), validating the whole “prove parity” gate.
 
 ---
 
@@ -33,8 +30,7 @@ LLM agents are powerful but structurally fragile in long projects:
 
 - **Context is finite** and can be lost mid‑task.
 - **Rate limits** interrupt active work.
-- **Agent sessions** persist only as long as the underlying process survives (terminal not killed; computer not
-  rebooted; etc.).
+- **Agent sessions** persist only as long as the underlying process survives (terminal not killed; computer not rebooted; etc.).
 - **Human toggles** (GitHub settings, auto‑merge rulesets) drift, get disabled for testing, then forgotten.
 - Large “one‑file instruction bibles” become **too big to reliably ingest**, even with massive context windows.
 
@@ -43,8 +39,7 @@ LLM agents are powerful but structurally fragile in long projects:
 Manual testing answers: “Does it look okay?”
 But refactors require: **“Is it the same program?”**
 
-Small differences (selectors, edge‑case timings, postinstall behavior, SPA mutation order, etc.) can pass “looks fine”
-and still ship regressions.
+Small differences (selectors, edge‑case timings, postinstall behavior, SPA mutation order, etc.) can pass “looks fine” and still ship regressions.
 
 ---
 
@@ -181,8 +176,7 @@ A jq expression initially failed because it attempted to subtract a boolean from
 
 - error: `array (...) and boolean (true) cannot be subtracted`
 
-This prompted restructuring of jq logic so “array difference” is computed on array operands only, and enforcement checks
-are separate booleans.
+This prompted restructuring of jq logic so “array difference” is computed on array operands only, and enforcement checks are separate booleans.
 
 ### 5.4 Hard rule: do not leak `$TOKEN`
 

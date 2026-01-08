@@ -8,8 +8,7 @@
 
 This document defines the contract that all language-native test runners (`run_tests.py`, `RunTests.ps1`, `run_tests.pl`) must follow to maintain strict parity with the existing Bash `run-tests.sh` runners.
 
-**Key Principle:** All test runners must be **functionally equivalent** - same behavior, exit codes, environment setup,
-and output conventions, regardless of implementation language.
+**Key Principle:** All test runners must be **functionally equivalent** - same behavior, exit codes, environment setup, and output conventions, regardless of implementation language.
 
 ---
 

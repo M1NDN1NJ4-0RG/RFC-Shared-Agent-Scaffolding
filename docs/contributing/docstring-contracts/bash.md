@@ -5,8 +5,7 @@
 
 ## Purpose
 
-Bash scripts in this repository use a **top-of-file comment header** to document their purpose, usage, and behavior.
-This contract defines the required sections and formatting rules.
+Bash scripts in this repository use a **top-of-file comment header** to document their purpose, usage, and behavior. This contract defines the required sections and formatting rules.
 
 ## Required Semantic Sections
 
@@ -85,8 +84,7 @@ Every Bash script must include these sections (case-insensitive, but conventiona
 4. **Indentation**: Two spaces for subsections and content
 5. **Examples prefix**: Use `#` for example commands (shell comment style)
 6. **Line length**: Aim for 80 characters per line for readability (soft limit)
-7. **Exit codes**: Always document at least codes 0 and 1 in OUTPUTS section (see
-   [exit-codes-contract.md](./exit-codes-contract.md))
+7. **Exit codes**: Always document at least codes 0 and 1 in OUTPUTS section (see [exit-codes-contract.md](./exit-codes-contract.md))
 
 ## Templates
 

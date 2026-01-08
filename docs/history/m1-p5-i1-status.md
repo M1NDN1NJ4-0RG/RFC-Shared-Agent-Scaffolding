@@ -58,8 +58,7 @@ Both M0-critical tests pass, verifying contract compliance.
 
 **Change:** Move TestHelpers.ps1 sourcing and variable initialization into `BeforeAll` blocks
 
-**Why:** Pester v5 scoping rules require functions/variables to be defined inside BeforeAll to be available in test
-blocks
+**Why:** Pester v5 scoping rules require functions/variables to be defined inside BeforeAll to be available in test blocks
 
 **Before:**
 

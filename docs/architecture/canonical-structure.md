@@ -4,8 +4,7 @@ This document defines the required directory structure for all language bundles 
 
 ## Purpose
 
-To ensure consistency, maintainability, and prevent path drift across language implementations, all language bundles
-**MUST** follow the identical directory structure defined below.
+To ensure consistency, maintainability, and prevent path drift across language implementations, all language bundles **MUST** follow the identical directory structure defined below.
 
 ## Canonical Structure
 

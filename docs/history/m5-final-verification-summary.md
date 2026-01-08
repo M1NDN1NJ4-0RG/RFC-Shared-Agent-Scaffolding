@@ -6,8 +6,7 @@
 
 ## Executive Summary
 
-M5 completes the repository restructure epic by validating that all migrations (M0-M4) are successful, all references
-are updated, and no behavioral regressions have been introduced.
+M5 completes the repository restructure epic by validating that all migrations (M0-M4) are successful, all references are updated, and no behavioral regressions have been introduced.
 
 ## P1 — Full Repo Integrity Checks
 
@@ -31,8 +30,7 @@ bash scripts/verify-repo-references.sh
 - `wrappers/powershell/tests/phase3-ctrlc-probe.ps1` - Updated path reference in docstring
 - `wrappers/powershell/tests/safe-check-tests.ps1` - Updated path reference in comment
 
-**Conclusion:** All active references updated. Historical documentation appropriately preserved with old paths for
-context.
+**Conclusion:** All active references updated. Historical documentation appropriately preserved with old paths for context.
 
 ### Item 1.2 — Behavior Verification ✅
 
@@ -115,8 +113,7 @@ All 13 GitHub Actions workflow files validated:
 - ✅ `test-powershell.yml` - Valid YAML
 - ✅ `test-python3.yml` - Valid YAML
 
-**Note:** yamllint reports some style warnings (line length, trailing spaces), but all files are syntactically valid and
-functional.
+**Note:** yamllint reports some style warnings (line length, trailing spaces), but all files are syntactically valid and functional.
 
 **Path-Based Actions:**
 

@@ -6,11 +6,9 @@
 
 ## Overview
 
-This document defines the mandatory Markdown formatting and style requirements for the RFC-Shared-Agent-Scaffolding
-repository. These standards ensure consistency, readability, and maintainability across all Markdown documentation.
+This document defines the mandatory Markdown formatting and style requirements for the RFC-Shared-Agent-Scaffolding repository. These standards ensure consistency, readability, and maintainability across all Markdown documentation.
 
-**Key Principle:** All Markdown files must follow a consistent, deterministic style that is machine-checkable and
-auto-fixable where possible.
+**Key Principle:** All Markdown files must follow a consistent, deterministic style that is machine-checkable and auto-fixable where possible.
 
 ---
 
@@ -69,8 +67,7 @@ This ruleset follows **Markdown Best Practices** from authoritative sources:
 
 #### 1. Heading Structure
 
-**Best Practice Rationale:** Proper heading hierarchy improves document structure, SEO, accessibility (screen readers),
-and navigation.
+**Best Practice Rationale:** Proper heading hierarchy improves document structure, SEO, accessibility (screen readers), and navigation.
 
 **MD001/heading-increment** - Headings MUST increment by one level at a time (Markdown Guide: Heading Best Practices)
 
@@ -135,8 +132,7 @@ Section
 #  ❌ Wrong  # (multiple spaces)
 ```
 
-**MD022/blanks-around-headings** - Headings MUST be surrounded by blank lines (Markdown Guide: Compatibility Best
-Practice)
+**MD022/blanks-around-headings** - Headings MUST be surrounded by blank lines (Markdown Guide: Compatibility Best Practice)
 
 **Rationale:** Ensures consistent rendering across different Markdown processors.
 
@@ -165,8 +161,7 @@ Text immediately after.
 
 **MD024/no-duplicate-heading** - Avoid duplicate headings (RELAXED: allowed in different sections)
 
-**Best Practice:** Use unique headings when possible for better navigation and linking. When duplicates are necessary
-(e.g., "Overview" in multiple sections), ensure they're in different hierarchical contexts.
+**Best Practice:** Use unique headings when possible for better navigation and linking. When duplicates are necessary (e.g., "Overview" in multiple sections), ensure they're in different hierarchical contexts.
 
 **MD025/single-title/single-h1** - Each document SHOULD have exactly one H1 (`#`) title at the top (Markdown Guide: Document Structure)
 
@@ -185,8 +180,7 @@ Text immediately after.
 ## What is this?
 ```
 
-**MD041/first-line-heading/first-line-h1** - Files SHOULD start with a top-level heading (H1) (Document Structure Best
-Practice)
+**MD041/first-line-heading/first-line-h1** - Files SHOULD start with a top-level heading (H1) (Document Structure Best Practice)
 
 **Rationale:** Provides immediate context and improves document navigation.
 
@@ -226,8 +220,7 @@ Practice)
 
 #### 3. Code Blocks
 
-**Best Practice Rationale:** Proper code block formatting enables syntax highlighting, improves readability, and ensures
-consistent rendering.
+**Best Practice Rationale:** Proper code block formatting enables syntax highlighting, improves readability, and ensures consistent rendering.
 
 **MD040/fenced-code-language** - Code blocks MUST specify a language (Markdown Guide: Code Block Best Practices)
 
@@ -327,8 +320,7 @@ Another paragraph
 
 #### 5. Lists
 
-**Best Practice Rationale:** Consistent list formatting improves readability and ensures proper rendering across
-Markdown processors.
+**Best Practice Rationale:** Consistent list formatting improves readability and ensures proper rendering across Markdown processors.
 
 **MD004/ul-style** - Unordered lists MUST use `-` (dash) consistently (Markdown Guide: List Best Practices)
 
@@ -367,8 +359,7 @@ Markdown processors.
 
 **MD029/ol-prefix** - Ordered lists SHOULD use sequential numbers (Markdown Guide: Ordered List Best Practice)
 
-**Rationale:** Makes source readable and matches rendered output. Some tools auto-number, but explicit numbering is
-clearer.
+**Rationale:** Makes source readable and matches rendered output. Some tools auto-number, but explicit numbering is clearer.
 
 ```markdown
 # ✅ Correct - sequential
@@ -509,8 +500,7 @@ Visit https://example.com for more info.
 
 **MD033/no-inline-html** - Inline HTML is **allowed but minimized** (Markdown Guide: Keep it Simple)
 
-**Best Practice:** Prefer pure Markdown for portability and simplicity. Use HTML only when Markdown cannot express the
-desired formatting.
+**Best Practice:** Prefer pure Markdown for portability and simplicity. Use HTML only when Markdown cannot express the desired formatting.
 
 **Allowed HTML tags (when necessary):**
 

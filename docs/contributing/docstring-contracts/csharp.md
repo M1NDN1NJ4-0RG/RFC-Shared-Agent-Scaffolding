@@ -6,11 +6,9 @@
 
 ## Purpose
 
-This is a **preliminary contract** for C# source files that may be added to this repository in the future. It follows C#
-XML documentation conventions while aligning with the semantic requirements of other language contracts.
+This is a **preliminary contract** for C# source files that may be added to this repository in the future. It follows C# XML documentation conventions while aligning with the semantic requirements of other language contracts.
 
-**Note:** This contract is not yet enforced. Use it as guidance if adding C# files, but expect refinement before
-official adoption.
+**Note:** This contract is not yet enforced. Use it as guidance if adding C# files, but expect refinement before official adoption.
 
 ## Required Semantic Sections
 

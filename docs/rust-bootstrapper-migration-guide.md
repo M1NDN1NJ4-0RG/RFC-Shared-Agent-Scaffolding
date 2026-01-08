@@ -60,8 +60,7 @@ sudo cp target/release/bootstrap-repo-cli /usr/local/bin/
 
 ### Option 3: Use the Wrapper Script (Transition Period)
 
-The repository includes a wrapper script that automatically detects and uses the Rust binary if available, falling back
-to Bash:
+The repository includes a wrapper script that automatically detects and uses the Rust binary if available, falling back to Bash:
 
 ```bash
 # This will use Rust if available, otherwise Bash
