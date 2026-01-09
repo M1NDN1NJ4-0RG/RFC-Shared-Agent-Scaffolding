@@ -22,6 +22,7 @@ Usage:
 
 import ast
 import sys
+import textwrap
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -115,6 +116,15 @@ class DocstringParser:
         :rtype: DocstringIR
         """
         raise NotImplementedError("Subclasses must implement parse()")
+    
+    @staticmethod
+    def _dedent(docstring: str) -> str:
+        """Remove common leading whitespace from docstring.
+        
+        :param docstring: Raw docstring text
+        :rtype: str
+        """
+        return textwrap.dedent(docstring)
 
 
 class GoogleParser(DocstringParser):
@@ -128,6 +138,8 @@ class GoogleParser(DocstringParser):
         """
         ir = DocstringIR(detected_style=DocstringStyle.GOOGLE, confidence=0.8)
         
+        # Dedent first
+        docstring = self._dedent(docstring)
         lines = docstring.split("\n")
         if not lines:
             return ir
@@ -308,6 +320,8 @@ class NumPyParser(DocstringParser):
         """
         ir = DocstringIR(detected_style=DocstringStyle.NUMPY, confidence=0.8)
         
+        # Dedent first
+        docstring = self._dedent(docstring)
         lines = docstring.split("\n")
         if not lines:
             return ir
@@ -375,27 +389,35 @@ class NumPyParser(DocstringParser):
             line = lines[i]
             stripped = line.strip()
             
-            # End of section (empty line or new section)
+            # End of section (empty line followed by another empty or new section)
             if not stripped:
-                i += 1
-                if i < len(lines) and not lines[i].strip():
+                # Peek ahead
+                if i + 1 < len(lines) and not lines[i + 1].strip():
+                    i += 1
                     break
+                i += 1
                 continue
             
-            # Check for new section
-            if i + 1 < len(lines) and all(c == "-" for c in lines[i + 1].strip()):
-                break
+            # Check for new section (header with dashes)
+            if i + 1 < len(lines):
+                next_line = lines[i + 1].strip()
+                if next_line and all(c == "-" for c in next_line):
+                    break
             
             # Parameter line: "name : type" or just "name"
-            if ":" in stripped and not stripped.startswith(" "):
-                parts = stripped.split(":", 1)
-                name = parts[0].strip()
-                type_hint = parts[1].strip() if len(parts) > 1 else None
+            if not line.startswith("    "):
+                if ":" in stripped:
+                    parts = stripped.split(":", 1)
+                    name = parts[0].strip()
+                    type_hint = parts[1].strip() if len(parts) > 1 else None
+                else:
+                    name = stripped
+                    type_hint = None
                 
                 # Description is on following indented lines
                 desc_lines = []
                 i += 1
-                while i < len(lines) and lines[i].startswith("    "):
+                while i < len(lines) and lines[i].strip() and lines[i].startswith("    "):
                     desc_lines.append(lines[i].strip())
                     i += 1
                 
@@ -423,14 +445,18 @@ class NumPyParser(DocstringParser):
             stripped = line.strip()
             
             if not stripped:
-                i += 1
-                if i < len(lines) and not lines[i].strip():
+                # Peek ahead
+                if i + 1 < len(lines) and not lines[i + 1].strip():
+                    i += 1
                     break
+                i += 1
                 continue
             
             # Check for new section
-            if i + 1 < len(lines) and all(c == "-" for c in lines[i + 1].strip()):
-                break
+            if i + 1 < len(lines):
+                next_line = lines[i + 1].strip()
+                if next_line and all(c == "-" for c in next_line):
+                    break
             
             # First non-indented line is type
             if not line.startswith("    ") and not type_hint:
@@ -444,7 +470,8 @@ class NumPyParser(DocstringParser):
                 i += 1
         
         description = " ".join(desc_lines) if desc_lines else None
-        ir.returns = Return(type_hint=type_hint, description=description)
+        if type_hint or description:
+            ir.returns = Return(type_hint=type_hint, description=description)
         
         return i
     
@@ -465,13 +492,16 @@ class NumPyParser(DocstringParser):
             stripped = line.strip()
             
             if not stripped:
-                i += 1
-                if i < len(lines) and not lines[i].strip():
+                if i + 1 < len(lines) and not lines[i + 1].strip():
+                    i += 1
                     break
+                i += 1
                 continue
             
-            if i + 1 < len(lines) and all(c == "-" for c in lines[i + 1].strip()):
-                break
+            if i + 1 < len(lines):
+                next_line = lines[i + 1].strip()
+                if next_line and all(c == "-" for c in next_line):
+                    break
             
             if not line.startswith("    ") and not type_hint:
                 type_hint = stripped
@@ -483,7 +513,8 @@ class NumPyParser(DocstringParser):
                 i += 1
         
         description = " ".join(desc_lines) if desc_lines else None
-        ir.yields = Return(type_hint=type_hint, description=description)
+        if type_hint or description:
+            ir.yields = Return(type_hint=type_hint, description=description)
         
         return i
     
@@ -501,13 +532,17 @@ class NumPyParser(DocstringParser):
             stripped = line.strip()
             
             if not stripped:
-                i += 1
-                if i < len(lines) and not lines[i].strip():
+                if i + 1 < len(lines) and not lines[i + 1].strip():
+                    i += 1
                     break
+                i += 1
                 continue
             
-            if i + 1 < len(lines) and all(c == "-" for c in lines[i + 1].strip()):
-                break
+            # Check for new section
+            if i + 1 < len(lines):
+                next_line = lines[i + 1].strip()
+                if next_line and all(c == "-" for c in next_line):
+                    break
             
             # Exception type on non-indented line
             if not line.startswith("    "):
@@ -516,7 +551,7 @@ class NumPyParser(DocstringParser):
                 i += 1
                 
                 # Description on indented lines
-                while i < len(lines) and lines[i].startswith("    "):
+                while i < len(lines) and lines[i].strip() and lines[i].startswith("    "):
                     desc_lines.append(lines[i].strip())
                     i += 1
                 
@@ -539,6 +574,8 @@ class ReSTParser(DocstringParser):
         """
         ir = DocstringIR(detected_style=DocstringStyle.REST, confidence=0.9)
         
+        # Dedent first
+        docstring = self._dedent(docstring)
         lines = docstring.split("\n")
         if not lines:
             return ir
