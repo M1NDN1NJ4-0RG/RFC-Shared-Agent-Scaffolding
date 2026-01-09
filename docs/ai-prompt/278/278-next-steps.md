@@ -38,9 +38,9 @@ This means ALL phases including 4, 5, 6 are MANDATORY (not optional/recommended)
 - [x] test_powershell_validator.py (5 tests, 100% pass)
 - [x] test_perl_validator.py (4 tests, 100% pass)
 - Total: 39 tests across 6 language validators
-- [ ] test_validator_common.py (optional - deferred)
-- [ ] Golden fixtures for each language (optional - deferred)
-- [ ] Regression tests for bugs found during migration (optional - deferred)
+- [ ] test_validator_common.py
+- [ ] Golden fixtures for each language
+- [ ] Regression tests for bugs found during migration
 
 **Phase 3.5.5: Markdown Runner Comprehensive Tests (COMPLETE ✅)**
 - Already has 15 comprehensive tests (added during code review)
