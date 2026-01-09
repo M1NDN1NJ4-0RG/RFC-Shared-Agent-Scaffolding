@@ -408,10 +408,25 @@ def cli(ctx):
     "--filter-out-lang",
     multiple=True,
     type=click.Choice(
-        ["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "toml", "json", "naming"],
+        [
+            "python",
+            "bash",
+            "powershell",
+            "perl",
+            "yaml",
+            "rust",
+            "markdown",
+            "toml",
+            "json",
+            "naming",
+        ],
         case_sensitive=False,
     ),
-    help="Filter out (exclude) language(s) from report output (still runs checks, just hides from display). Can be specified multiple times.",
+        help=(
+        "Filter out (exclude) language(s) from report output "
+        "(still runs checks, just hides from display). "
+        "Can be specified multiple times."
+    ),
 )
 # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
 def check(
