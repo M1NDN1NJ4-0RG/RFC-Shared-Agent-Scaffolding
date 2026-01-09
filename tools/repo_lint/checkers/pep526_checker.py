@@ -183,13 +183,19 @@ class PEP526Checker(ast.NodeVisitor):
         """
         if not self.current_scope:
             return "module"
-        if "function" in self.current_scope:
-            if self.current_scope[-1] == "function":
-                return "function"
-            # Inside a method (function inside class)
-            return "instance" if "class" in self.current_scope else "function"
-        if "class" in self.current_scope:
+
+        last = self.current_scope[-1]
+
+        if last == "function":
+            # Determine if this is a method on a class (instance scope) or a plain function.
+            if len(self.current_scope) >= 2 and self.current_scope[-2] == "class":
+                return "instance"
+            return "function"
+
+        if last == "class":
             return "class"
+
+        # Fallback: treat any other context as module-level for the purposes of this checker.
         return "module"
 
     def should_check_scope(self, scope: str) -> bool:

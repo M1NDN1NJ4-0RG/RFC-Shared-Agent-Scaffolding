@@ -92,7 +92,7 @@ def report_results(  # pylint: disable=too-many-arguments,too-many-positional-ar
     if filter_langs:
         # Map language names to tool name patterns
         lang_to_tools = {
-            "markdown": ["markdownlint", "markdown"],
+            "markdown": ["markdownlint-cli2", "markdownlint", "markdown"],
             "python": ["black", "ruff", "pylint", "python", "python-docstrings"],
             "bash": ["shellcheck", "shfmt", "bash", "bash-docstrings"],
             "powershell": ["psscriptanalyzer", "powershell", "powershell-docstrings"],
