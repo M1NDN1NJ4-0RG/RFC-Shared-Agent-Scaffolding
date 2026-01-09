@@ -103,20 +103,17 @@ def report_results(  # pylint: disable=too-many-arguments,too-many-positional-ar
             "json": ["prettier", "json"],
             "naming": ["naming"],
         }
-        
+
         # Build set of tool names to filter out
         tools_to_filter = set()
         for lang in filter_langs:
             lang_lower = lang.lower()
             if lang_lower in lang_to_tools:
                 tools_to_filter.update(lang_to_tools[lang_lower])
-        
+
         # Filter results
-        results = [r for r in results if not any(
-            tool_pattern in r.tool.lower() 
-            for tool_pattern in tools_to_filter
-        )]
-    
+        results = [r for r in results if not any(tool_pattern in r.tool.lower() for tool_pattern in tools_to_filter)]
+
     # Handle non-rich output formats
     if output_format == "json":
         return report_results_json(results, verbose, report_path)
