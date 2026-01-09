@@ -132,9 +132,7 @@ class RTypeFixer:
         # Record modification (node, old_docstring, new_docstring)
         self.modifications.append((node, docstring, new_docstring))
 
-    def process_file(
-        self, file_path: Path, dry_run: bool = False
-    ) -> tuple[bool, int]:
+    def process_file(self, file_path: Path, dry_run: bool = False) -> tuple[bool, int]:
         """Process a Python file and add :rtype: fields where needed.
 
         :param file_path: Path to Python file
@@ -178,9 +176,7 @@ class RTypeFixer:
                     old_with_quotes = f"{quote_style}{old_docstring}{quote_style}"
                     new_with_quotes = f"{quote_style}{new_docstring}{quote_style}"
                     if old_with_quotes in modified_content:
-                        modified_content = modified_content.replace(
-                            old_with_quotes, new_with_quotes, 1
-                        )
+                        modified_content = modified_content.replace(old_with_quotes, new_with_quotes, 1)
                         break
 
             try:
@@ -202,18 +198,14 @@ def main() -> int:
     """
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Add :rtype: fields to reST docstrings based on function annotations"
-    )
+    parser = argparse.ArgumentParser(description="Add :rtype: fields to reST docstrings based on function annotations")
     parser.add_argument("files", nargs="+", help="Python files to process")
     parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Show what would be done without modifying files",
     )
-    parser.add_argument(
-        "--diff", action="store_true", help="Show diff of changes (implies --dry-run)"
-    )
+    parser.add_argument("--diff", action="store_true", help="Show diff of changes (implies --dry-run)")
 
     args = parser.parse_args()
 
