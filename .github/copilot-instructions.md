@@ -94,6 +94,9 @@ The canonical session requirements are defined in the compliance document and su
 2. Commit ALL meaningful work (and keep journals current)
 3. Initiate Copilot Code Review and address required feedback (per compliance doc)
 4. Ensure the repo/PR is in a clean, resumable state
+5. **You MUST update oveview document (`*-overview.md` must be updated with the item's completed checked!)
+   - YOU MUST UPDATE THE OVERVIEW DOCUMENT WITH CHECKMARKS FOR THE COMPLETED ITEMS!
+   - THIS IS MANDATORY AND NON-NEGOTIABLE!
 
 ---
 
