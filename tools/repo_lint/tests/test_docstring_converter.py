@@ -21,7 +21,6 @@ from fixers.docstring_converter import (
     DocstringIR,
     Param,
     Return,
-    Raise,
 )
 
 

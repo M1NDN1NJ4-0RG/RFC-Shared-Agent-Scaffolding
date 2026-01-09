@@ -148,7 +148,6 @@ class GoogleParser(DocstringParser):
         current_section = "summary"
         summary_lines = []
         extended_lines = []
-        current_indent = 0
         i = 0
 
         while i < len(lines):
@@ -934,7 +933,7 @@ class DocstringConverter:
 
         # Parse AST
         try:
-            tree = ast.parse(source)
+            ast.parse(source)
         except SyntaxError as e:
             print(f"Syntax error in {filepath}: {e}", file=sys.stderr)
             return 0
