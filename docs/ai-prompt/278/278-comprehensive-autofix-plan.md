@@ -83,7 +83,9 @@ Per human instruction comment #3726894000:
 
 ### Phase 4.5: Bidirectional Docstring Converter (10-15 hours)
 
-**Design**: `docs/ai-prompt/278/278-docstring-style-converter-design.md` (already created)
+**Design Documents**:
+- `docs/ai-prompt/278/278-docstring-style-converter-design.md` (design overview - already created)
+- `docs/ai-prompt/278/278-docstring-style-conversion-strategy.md` (detailed implementation strategy - already created)
 
 **Implementation tasks:**
 - [ ] 4.5.1: Install and evaluate `docstring_parser` library

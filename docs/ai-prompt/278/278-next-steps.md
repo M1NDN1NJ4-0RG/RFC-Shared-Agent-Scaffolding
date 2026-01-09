@@ -213,6 +213,9 @@ Phase 6 is MANDATORY (not optional) per agent instructions.
 **Option B: Build style converter**
 - Full bidirectional docstring converter
 - Timeline: 10-15 hours
+- **Design documents:**
+  - `278-docstring-style-converter-design.md` (overview)
+  - `278-docstring-style-conversion-strategy.md` (detailed implementation strategy)
 
 **Option C: Proceed to Phases 5-6**
 - CI enforcement rollout
