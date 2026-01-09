@@ -582,3 +582,46 @@ logs or artifact readability.
   - In CI, prefer stable summaries over progress bars to avoid log spam.
 
 ---
+
+### 4.3 PEP 526 Variable Annotation Autofix Tool (COMPLETE ✅)
+
+- [x] 4.3.1: Design and implement AST-based type inference
+  - [x] Safe literal inference (int, str, bool, float, bytes)
+  - [x] Path constructor detection
+  - [x] Skip logic for already-annotated, ambiguous cases, private variables
+- [x] 4.3.2: Add CLI interface (--dry-run, --diff modes)
+- [x] 4.3.3: Comprehensive unit tests (23 tests, 100% passing)
+- [x] 4.3.4: Apply to codebase (8 annotations added across 4 files)
+
+**Deliverable:** `tools/repo_lint/fixers/pep526_fixer.py` + `tools/repo_lint/tests/test_pep526_fixer.py`
+
+### 4.4 Docstring `:rtype:` Autofix Tool (TODO)
+
+- [ ] 4.4.1: Design AST-based `:rtype:` inference from function annotations
+- [ ] 4.4.2: Implement docstring parser and enhancer
+- [ ] 4.4.3: Add CLI interface
+- [ ] 4.4.4: Comprehensive unit tests
+- [ ] 4.4.5: Apply to codebase (~370 fixes expected)
+
+**Deliverable:** `tools/repo_lint/fixers/rtype_fixer.py` + tests
+
+### 4.5 Bidirectional Docstring Style Converter (TODO)
+
+- [ ] 4.5.1: Implement Parse → IR → Render architecture
+- [ ] 4.5.2: Add parsers for Google, NumPy, reST styles
+- [ ] 4.5.3: Add renderers for all 6 conversion pairs
+- [ ] 4.5.4: AST enrichment for type/parameter alignment
+- [ ] 4.5.5: Comprehensive unit tests
+- [ ] 4.5.6: CLI tool and integration
+
+**Deliverable:** `tools/repo_lint/docstrings/style_converter.py` + tests
+
+### 4.6 MD013 Smart Reflow Fixer (TODO)
+
+- [ ] 4.6.1: Design state machine for line reflow
+- [ ] 4.6.2: Implement context-aware breaking logic
+- [ ] 4.6.3: Handle special cases (tables, code, links)
+- [ ] 4.6.4: Comprehensive unit tests
+- [ ] 4.6.5: Apply to codebase (~1,800 fixes expected)
+
+**Deliverable:** `tools/repo_lint/fixers/md013_fixer.py` + tests
