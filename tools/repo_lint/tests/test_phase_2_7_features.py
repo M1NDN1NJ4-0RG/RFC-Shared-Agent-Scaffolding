@@ -72,36 +72,36 @@ from tools.repo_lint.runners.python_runner import PythonRunner  # noqa: E402
 class TestPhase27ToolFiltering(unittest.TestCase):
     """Test Phase 2.7.1 - Tool filtering and changed-only mode."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
         self.runner = PythonRunner(repo_root=Path.cwd())
 
-    def test_set_tool_filter(self):
+    def test_set_tool_filter(self) -> None:
         """Test set_tool_filter() method."""
         tools = ["black", "ruff"]
         self.runner.set_tool_filter(tools)
         self.assertEqual(self.runner._tool_filter, tools)
 
-    def test_set_tool_filter_none(self):
+    def test_set_tool_filter_none(self) -> None:
         """Test set_tool_filter() with None runs all tools."""
         self.runner.set_tool_filter(None)
         self.assertIsNone(self.runner._tool_filter)
 
-    def test_should_run_tool_with_filter(self):
+    def test_should_run_tool_with_filter(self) -> None:
         """Test _should_run_tool() with active filter."""
         self.runner.set_tool_filter(["black", "ruff"])
         self.assertTrue(self.runner._should_run_tool("black"))
         self.assertTrue(self.runner._should_run_tool("ruff"))
         self.assertFalse(self.runner._should_run_tool("pylint"))
 
-    def test_should_run_tool_without_filter(self):
+    def test_should_run_tool_without_filter(self) -> None:
         """Test _should_run_tool() without filter runs all tools."""
         self.runner.set_tool_filter(None)
         self.assertTrue(self.runner._should_run_tool("black"))
         self.assertTrue(self.runner._should_run_tool("ruff"))
         self.assertTrue(self.runner._should_run_tool("pylint"))
 
-    def test_set_changed_only(self):
+    def test_set_changed_only(self) -> None:
         """Test set_changed_only() method."""
         self.runner.set_changed_only(True)
         self.assertTrue(self.runner._changed_only)
@@ -109,7 +109,7 @@ class TestPhase27ToolFiltering(unittest.TestCase):
         self.assertFalse(self.runner._changed_only)
 
     @patch("subprocess.run")
-    def test_get_changed_files_success(self, mock_run):
+    def test_get_changed_files_success(self, mock_run) -> None:
         """Test _get_changed_files() returns git-modified files.
 
         :param mock_run: Mock subprocess.run function
@@ -122,7 +122,7 @@ class TestPhase27ToolFiltering(unittest.TestCase):
         self.assertIn("file2.py", files)
 
     @patch("subprocess.run")
-    def test_get_changed_files_no_git(self, mock_run):
+    def test_get_changed_files_no_git(self, mock_run) -> None:
         """Test _get_changed_files() handles no git repo gracefully.
 
         :param mock_run: Mock subprocess.run function
@@ -133,7 +133,7 @@ class TestPhase27ToolFiltering(unittest.TestCase):
             self.runner._get_changed_files()
 
     @patch("subprocess.run")
-    def test_get_changed_files_with_pattern_filter(self, mock_run):
+    def test_get_changed_files_with_pattern_filter(self, mock_run) -> None:
         """Test _get_changed_files() filters by pattern.
 
         :param mock_run: Mock subprocess.run function
@@ -149,7 +149,7 @@ class TestPhase27ToolFiltering(unittest.TestCase):
 class TestPhase27SummaryModes(unittest.TestCase):
     """Test Phase 2.7.2 - Summary modes with 4 formats."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
         self.violation1 = Violation("ruff", "file1.py", 10, "Error 1")
         self.violation2 = Violation("pylint", "file2.py", 20, "Error 2")
@@ -158,7 +158,7 @@ class TestPhase27SummaryModes(unittest.TestCase):
             LintResult("pylint", False, [self.violation2]),
         ]
 
-    def test_summary_mode_enabled(self):
+    def test_summary_mode_enabled(self) -> None:
         """Test --summary flag shows summary after results."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -170,7 +170,7 @@ class TestPhase27SummaryModes(unittest.TestCase):
         self.assertIn("file1.py", output_text)
         self.assertIn("Summary", output_text)
 
-    def test_summary_only_mode(self):
+    def test_summary_only_mode(self) -> None:
         """Test --summary-only flag shows ONLY summary."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -183,7 +183,7 @@ class TestPhase27SummaryModes(unittest.TestCase):
         # Should contain ONLY summary section
         self.assertIn("Summary", output_text)
 
-    def test_summary_format_short(self):
+    def test_summary_format_short(self) -> None:
         """Test summary format 'short' produces single-line summary."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -193,7 +193,7 @@ class TestPhase27SummaryModes(unittest.TestCase):
         # Short format should be concise
         self.assertIn("Summary", output_text)
 
-    def test_summary_format_by_tool(self):
+    def test_summary_format_by_tool(self) -> None:
         """Test summary format 'by-tool' groups by tool."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -204,7 +204,7 @@ class TestPhase27SummaryModes(unittest.TestCase):
         self.assertIn("ruff", output_text.lower())
         self.assertIn("pylint", output_text.lower())
 
-    def test_summary_format_by_file(self):
+    def test_summary_format_by_file(self) -> None:
         """Test summary format 'by-file' groups by file."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -215,7 +215,7 @@ class TestPhase27SummaryModes(unittest.TestCase):
         self.assertIn("file1.py", output_text)
         self.assertIn("file2.py", output_text)
 
-    def test_summary_format_by_code(self):
+    def test_summary_format_by_code(self) -> None:
         """Test summary format 'by-code' groups by error code."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -229,7 +229,7 @@ class TestPhase27SummaryModes(unittest.TestCase):
 class TestPhase27DisplayControls(unittest.TestCase):
     """Test Phase 2.7.3 - Show/hide display controls."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
         self.violation1 = Violation("ruff", "file1.py", 10, "E501: Line too long")
         self.violation2 = Violation("ruff", "file1.py", 20, "E231: Missing whitespace")
@@ -239,7 +239,7 @@ class TestPhase27DisplayControls(unittest.TestCase):
             LintResult("pylint", False, [self.violation3]),
         ]
 
-    def test_show_files_enabled(self):
+    def test_show_files_enabled(self) -> None:
         """Test --show-files displays per-file breakdown."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -250,7 +250,7 @@ class TestPhase27DisplayControls(unittest.TestCase):
         self.assertIn("file1.py", output_text)
         self.assertIn("file2.py", output_text)
 
-    def test_hide_files_disabled(self):
+    def test_hide_files_disabled(self) -> None:
         """Test --hide-files hides file grouping."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -260,7 +260,7 @@ class TestPhase27DisplayControls(unittest.TestCase):
         # Specific output format depends on Reporter implementation
         self.assertEqual(output.getvalue().count("file"), output.getvalue().count("file"))
 
-    def test_show_codes_enabled(self):
+    def test_show_codes_enabled(self) -> None:
         """Test --show-codes displays error codes."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -270,7 +270,7 @@ class TestPhase27DisplayControls(unittest.TestCase):
         # Should show error codes (E501, C0103, etc.)
         self.assertIn("E501", output_text)
 
-    def test_hide_codes_disabled(self):
+    def test_hide_codes_disabled(self) -> None:
         """Test --hide-codes strips error codes."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -281,7 +281,7 @@ class TestPhase27DisplayControls(unittest.TestCase):
         # Codes might still appear in messages, but not as prefixes
         self.assertIsNotNone(output_text)
 
-    def test_max_violations_limit(self):
+    def test_max_violations_limit(self) -> None:
         """Test --max-violations limits displayed violations."""
         # Create many violations
         many_violations = [Violation("ruff", f"file{i}.py", i, f"Error {i}") for i in range(20)]
@@ -300,12 +300,12 @@ class TestPhase27DisplayControls(unittest.TestCase):
 class TestPhase27OutputFormats(unittest.TestCase):
     """Test Phase 2.7.4 - Output format handlers."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
         self.violation = Violation("ruff", "test.py", 10, "Error message")
         self.results = [LintResult("ruff", False, [self.violation])]
 
-    def test_json_format_stdout(self):
+    def test_json_format_stdout(self) -> None:
         """Test JSON format output to stdout."""
         output = io.StringIO()
         with redirect_stdout(output):
@@ -318,7 +318,7 @@ class TestPhase27OutputFormats(unittest.TestCase):
         self.assertIn("results", data)
         self.assertEqual(len(data["results"]), 1)
 
-    def test_json_format_file_output(self):
+    def test_json_format_file_output(self) -> None:
         """Test JSON format output to file."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             temp_path = f.name
@@ -337,7 +337,7 @@ class TestPhase27OutputFormats(unittest.TestCase):
         finally:
             Path(temp_path).unlink(missing_ok=True)
 
-    def test_yaml_format_output(self):
+    def test_yaml_format_output(self) -> None:
         """Test YAML format output."""
         try:
             import yaml
@@ -359,7 +359,7 @@ class TestPhase27OutputFormats(unittest.TestCase):
         # Should contain YAML structure
         self.assertIn("version:", output_text)
 
-    def test_csv_format_output(self):
+    def test_csv_format_output(self) -> None:
         """Test CSV format creates multiple files."""
         with tempfile.TemporaryDirectory() as tmpdir:
             csv_path = Path(tmpdir) / "report.csv"
@@ -377,7 +377,7 @@ class TestPhase27OutputFormats(unittest.TestCase):
             self.assertTrue(summary_file.exists(), "Summary CSV should be created")
             self.assertTrue(violations_file.exists(), "Violations CSV should be created")
 
-    def test_xlsx_format_output(self):
+    def test_xlsx_format_output(self) -> None:
         """Test XLSX format creates Excel workbook."""
         try:
             from openpyxl import load_workbook
@@ -408,7 +408,7 @@ class TestPhase27OutputFormats(unittest.TestCase):
         finally:
             Path(temp_path).unlink(missing_ok=True)
 
-    def test_report_path_auto_format_detection(self):
+    def test_report_path_auto_format_detection(self) -> None:
         """Test report_path auto-detects format from extension."""
         with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as f:
             temp_path = f.name
@@ -433,7 +433,7 @@ class TestPhase27OutputFormats(unittest.TestCase):
 class TestPhase27DiffPreview(unittest.TestCase):
     """Test Phase 2.7.5 - Diff preview support."""
 
-    def test_diff_preview_flag_backend(self):
+    def test_diff_preview_flag_backend(self) -> None:
         """Test --diff flag backend support exists."""
         # This is a minimal test - actual diff preview is in fix command
         # We're verifying the reporting backend plumbing exists
@@ -446,26 +446,26 @@ class TestPhase27DiffPreview(unittest.TestCase):
 class TestPhase27ConfigCommands(unittest.TestCase):
     """Test Phase 2.7 - Config management commands (dump-config, validate-config)."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
         self.repo_root = repo_root
         self.conformance_dir = self.repo_root / "conformance" / "repo-lint"
 
-    def test_dump_config_command_exists(self):
+    def test_dump_config_command_exists(self) -> None:
         """Test that dump-config command exists in CLI."""
         from tools.repo_lint.cli import cli
 
         # Verify dump-config is registered as a command
         self.assertIn("dump-config", cli.commands)
 
-    def test_validate_config_command_exists(self):
+    def test_validate_config_command_exists(self) -> None:
         """Test that validate-config command exists in CLI."""
         from tools.repo_lint.cli import cli
 
         # Verify validate-config is registered as a command
         self.assertIn("validate-config", cli.commands)
 
-    def test_yaml_loader_set_config_directory(self):
+    def test_yaml_loader_set_config_directory(self) -> None:
         """Test set_config_directory() function."""
         from tools.repo_lint.yaml_loader import set_config_directory
 
@@ -478,7 +478,7 @@ class TestPhase27ConfigCommands(unittest.TestCase):
 
         # Verify no exceptions were raised (test passes if we get here)
 
-    def test_yaml_loader_get_all_configs(self):
+    def test_yaml_loader_get_all_configs(self) -> None:
         """Test get_all_configs() returns all config dictionaries."""
         from tools.repo_lint.yaml_loader import get_all_configs
 
@@ -494,7 +494,7 @@ class TestPhase27ConfigCommands(unittest.TestCase):
         for config_name, config in all_configs.items():
             self.assertIsInstance(config, dict, f"{config_name} should be a dict")
 
-    def test_yaml_loader_get_config_source(self):
+    def test_yaml_loader_get_config_source(self) -> None:
         """Test get_config_source() returns source description."""
         from tools.repo_lint.yaml_loader import get_config_source
 
@@ -506,7 +506,7 @@ class TestPhase27ConfigCommands(unittest.TestCase):
         # Should mention "Default" for default config location
         self.assertIn("Default", source)
 
-    def test_validate_config_valid_file(self):
+    def test_validate_config_valid_file(self) -> None:
         """Test validate-config command with valid config file."""
         import subprocess
 
@@ -522,7 +522,7 @@ class TestPhase27ConfigCommands(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn("Configuration valid", result.stdout)
 
-    def test_validate_config_all_config_types(self):
+    def test_validate_config_all_config_types(self) -> None:
         """Test validate-config with all config file types."""
         import subprocess
 
@@ -550,7 +550,7 @@ class TestPhase27ConfigCommands(unittest.TestCase):
                     f"Config validation failed for {config_filename}: {result.stderr}",
                 )
 
-    def test_dump_config_yaml_format(self):
+    def test_dump_config_yaml_format(self) -> None:
         """Test dump-config command with YAML format."""
         import subprocess
 
@@ -571,7 +571,7 @@ class TestPhase27ConfigCommands(unittest.TestCase):
         # Should mention config source
         self.assertIn("Config source:", result.stdout)
 
-    def test_dump_config_json_format(self):
+    def test_dump_config_json_format(self) -> None:
         """Test dump-config command with JSON format."""
         import subprocess
 
@@ -593,7 +593,7 @@ class TestPhase27ConfigCommands(unittest.TestCase):
         except json.JSONDecodeError as e:
             self.fail(f"dump-config --format json produced invalid JSON: {e}")
 
-    def test_dump_config_contains_all_configs(self):
+    def test_dump_config_contains_all_configs(self) -> None:
         """Test dump-config includes all config types."""
         import subprocess
 

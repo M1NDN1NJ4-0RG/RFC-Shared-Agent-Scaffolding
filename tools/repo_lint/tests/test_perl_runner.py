@@ -66,7 +66,7 @@ class TestPerlRunner(unittest.TestCase):
         Validates Perl::Critic and docstring validation integration.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -75,7 +75,7 @@ class TestPerlRunner(unittest.TestCase):
         self.runner = PerlRunner(repo_root=Path("/fake/repo"))
 
     @patch("tools.repo_lint.runners.perl_runner.subprocess.run")
-    def test_get_perl_files_returns_list(self, mock_run):
+    def test_get_perl_files_returns_list(self, mock_run) -> None:
         """Test that _get_perl_files returns file list.
 
         :Purpose:
@@ -92,7 +92,7 @@ class TestPerlRunner(unittest.TestCase):
         self.assertIn("script2.pl", files)
 
     @patch("tools.repo_lint.runners.perl_runner.subprocess.run")
-    def test_get_perl_files_returns_empty(self, mock_run):
+    def test_get_perl_files_returns_empty(self, mock_run) -> None:
         """Test that _get_perl_files returns empty list when no files.
 
         :Purpose:
@@ -107,7 +107,7 @@ class TestPerlRunner(unittest.TestCase):
         self.assertEqual(files, [])
 
     @patch("tools.repo_lint.runners.perl_runner.subprocess.run")
-    def test_perlcritic_uses_verbose_flag(self, mock_run):
+    def test_perlcritic_uses_verbose_flag(self, mock_run) -> None:
         """Test that _run_perlcritic uses --verbose 8 flag.
 
         :Purpose:
@@ -130,7 +130,7 @@ class TestPerlRunner(unittest.TestCase):
         self.assertTrue(result.passed)
 
     @patch("tools.repo_lint.runners.perl_runner.subprocess.run")
-    def test_perlcritic_handles_exit_code_0(self, mock_run):
+    def test_perlcritic_handles_exit_code_0(self, mock_run) -> None:
         """Test that _run_perlcritic handles exit code 0 (success).
 
         :Purpose:
@@ -150,7 +150,7 @@ class TestPerlRunner(unittest.TestCase):
         self.assertEqual(len(result.violations), 0)
 
     @patch("tools.repo_lint.runners.perl_runner.subprocess.run")
-    def test_perlcritic_handles_exit_code_2(self, mock_run):
+    def test_perlcritic_handles_exit_code_2(self, mock_run) -> None:
         """Test that _run_perlcritic handles exit code 2 (violations).
 
         :Purpose:
@@ -172,7 +172,7 @@ Two-argument "open" used at line 10"""
         self.assertEqual(len(result.violations), 2)
 
     @patch("tools.repo_lint.runners.perl_runner.subprocess.run")
-    def test_empty_files_returns_passed(self, mock_run):
+    def test_empty_files_returns_passed(self, mock_run) -> None:
         """Test that empty file list returns passed result.
 
         :Purpose:

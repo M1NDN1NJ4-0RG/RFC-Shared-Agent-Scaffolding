@@ -69,7 +69,7 @@ class TestPythonValidator(unittest.TestCase):
         Validates Python docstring contract enforcement.
     """
 
-    def test_valid_module_docstring(self):
+    def test_valid_module_docstring(self) -> None:
         """Test that a valid module docstring passes validation.
 
         :Purpose:
@@ -98,7 +98,7 @@ class TestPythonValidator(unittest.TestCase):
         errors = PythonValidator.validate(Path("test.py"), content)
         self.assertEqual(len(errors), 0, f"Expected no errors, got: {errors}")
 
-    def test_missing_module_docstring(self):
+    def test_missing_module_docstring(self) -> None:
         """Test that missing module docstring is detected.
 
         :Purpose:
@@ -110,7 +110,7 @@ class TestPythonValidator(unittest.TestCase):
         # The message is about expecting the triple-quote docstring format
         self.assertIn('"""', errors[0].message)
 
-    def test_missing_purpose_section(self):
+    def test_missing_purpose_section(self) -> None:
         """Test that missing :Purpose: section is detected.
 
         :Purpose:
@@ -133,7 +133,7 @@ class TestPythonValidator(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("Purpose", errors[0].missing_sections)
 
-    def test_missing_examples_section(self):
+    def test_missing_examples_section(self) -> None:
         """Test that missing :Examples: section is detected.
 
         :Purpose:
@@ -156,7 +156,7 @@ class TestPythonValidator(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("Examples", errors[0].missing_sections)
 
-    def test_missing_exit_codes_section(self):
+    def test_missing_exit_codes_section(self) -> None:
         """Test that missing :Exit Codes: section is detected.
 
         :Purpose:
@@ -178,7 +178,7 @@ class TestPythonValidator(unittest.TestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("Exit Codes", errors[0].missing_sections)
 
-    def test_function_with_docstring_passes(self):
+    def test_function_with_docstring_passes(self) -> None:
         """Test that functions with docstrings pass validation.
 
         :Purpose:
@@ -211,7 +211,7 @@ def my_function(x):
         errors = PythonValidator.validate(Path("test.py"), content)
         self.assertEqual(len(errors), 0, f"Expected no errors, got: {errors}")
 
-    def test_function_without_docstring_fails(self):
+    def test_function_without_docstring_fails(self) -> None:
         """Test that functions without docstrings are detected.
 
         :Purpose:
@@ -243,7 +243,7 @@ def my_function(x):
         has_function_error = any("function" in str(e).lower() or "my_function" in str(e) for e in errors)
         self.assertTrue(has_function_error, f"Expected function error, got: {errors}")
 
-    def test_class_without_docstring_fails(self):
+    def test_class_without_docstring_fails(self) -> None:
         """Test that classes without docstrings are detected.
 
         :Purpose:
@@ -275,7 +275,7 @@ class MyClass:
         has_class_error = any("class" in str(e).lower() or "MyClass" in str(e) for e in errors)
         self.assertTrue(has_class_error, f"Expected class error, got: {errors}")
 
-    def test_pragma_ignore_function(self):
+    def test_pragma_ignore_function(self) -> None:
         """Test that # noqa: D103 pragma ignores function validation.
 
         :Purpose:
@@ -304,7 +304,7 @@ def my_function(x):  # noqa: D103
         # Should have no errors because function has pragma
         self.assertEqual(len(errors), 0, f"Expected no errors with pragma, got: {errors}")
 
-    def test_exit_codes_content_validation(self):
+    def test_exit_codes_content_validation(self) -> None:
         """Test that exit codes section content is validated.
 
         :Purpose:
@@ -331,7 +331,7 @@ def my_function(x):  # noqa: D103
         # For now, just verify the validator runs
         self.assertIsInstance(errors, list)
 
-    def test_syntax_error_skips_symbol_validation(self):
+    def test_syntax_error_skips_symbol_validation(self) -> None:
         """Test that files with syntax errors skip symbol validation.
 
         :Purpose:

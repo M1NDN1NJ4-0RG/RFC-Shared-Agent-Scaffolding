@@ -43,6 +43,7 @@ def parse_bash_functions(file_path: Path) -> Dict[str, Any]:
 
     :returns: Dictionary with 'functions' list and 'errors' list
               Each function dict contains: name, line, has_doc_comment
+              :rtype: Dict[str, Any]
     """
     if not TREE_SITTER_AVAILABLE:
         # tree-sitter not installed - return empty result
@@ -83,7 +84,7 @@ def parse_bash_functions(file_path: Path) -> Dict[str, Any]:
         # Bash tree-sitter grammar uses "function_definition" nodes
         root_node = tree.root_node
 
-        def find_functions(node):
+        def find_functions(node) -> None:
             """Recursively find all function_definition nodes.
 
             :param node: Tree-sitter node to search
@@ -142,6 +143,7 @@ def _check_for_doc_comment(func_node, content: str) -> bool:
     :param content: File content as string
 
     :returns: True if doc comment found, False otherwise
+    :rtype: bool
     """
     # Get the line before the function starts
     func_start_line = func_node.start_point[0]

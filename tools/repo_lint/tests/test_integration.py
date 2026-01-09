@@ -71,7 +71,7 @@ class TestIntegration(unittest.TestCase):
 
     @patch("tools.repo_lint.cli_argparse._run_all_runners")
     @patch("sys.argv", ["repo-lint", "check", "--ci"])
-    def test_check_missing_tools_ci(self, mock_run_all):
+    def test_check_missing_tools_ci(self, mock_run_all) -> None:
         """Test full CLI invocation: check --ci with missing tools.
 
         :Purpose:
@@ -93,7 +93,7 @@ class TestIntegration(unittest.TestCase):
 
     @patch("tools.repo_lint.cli_argparse.load_policy")
     @patch("sys.argv", ["repo-lint", "fix"])
-    def test_fix_policy_not_found(self, mock_load):
+    def test_fix_policy_not_found(self, mock_load) -> None:
         """Test full CLI invocation: fix with missing policy file.
 
         :Purpose:
@@ -115,7 +115,7 @@ class TestIntegration(unittest.TestCase):
 
     @patch.dict(os.environ, {}, clear=True)  # Clear CI environment
     @patch("sys.argv", ["repo-lint", "fix", "--unsafe", "--yes-i-know", "--only=perl"])
-    def test_fix_unsafe_unsupported_language(self):
+    def test_fix_unsafe_unsupported_language(self) -> None:
         """Test full CLI invocation: fix --unsafe with unsupported language.
 
         :Purpose:
@@ -131,7 +131,7 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual(cm.exception.code, ExitCode.UNSAFE_VIOLATION)
 
     @patch("sys.argv", ["repo-lint", "fix", "--unsafe", "--ci"])
-    def test_fix_unsafe_forbidden_in_ci(self):
+    def test_fix_unsafe_forbidden_in_ci(self) -> None:
         """Test full CLI invocation: fix --unsafe in CI environment.
 
         :Purpose:
@@ -147,7 +147,7 @@ class TestIntegration(unittest.TestCase):
         self.assertEqual(cm.exception.code, ExitCode.UNSAFE_VIOLATION)
 
     @patch("sys.argv", ["repo-lint"])
-    def test_no_command_shows_help(self):
+    def test_no_command_shows_help(self) -> None:
         """Test full CLI invocation: no command shows help.
 
         :Purpose:
@@ -167,7 +167,7 @@ class TestIntegration(unittest.TestCase):
     @patch("tools.repo_lint.cli_argparse.print_powershell_tool_instructions")
     @patch("tools.repo_lint.cli_argparse.print_perl_tool_instructions")
     @patch("sys.argv", ["repo-lint", "install"])
-    def test_install_failure_integration(self, mock_perl, mock_ps, mock_bash, mock_python):
+    def test_install_failure_integration(self, mock_perl, mock_ps, mock_bash, mock_python) -> None:
         """Test full CLI invocation: install with Python tools failure.
 
         :Purpose:

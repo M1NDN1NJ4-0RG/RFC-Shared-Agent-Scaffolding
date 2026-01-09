@@ -70,6 +70,7 @@ def find_repo_root(start_path: Path) -> Path:
 
     :param start_path: Starting directory (wrapper directory)
     :returns: Path to repository root
+    :rtype: Path
     """
     # Wrapper directory structure: repo_root/wrappers/python3/
     # So repo root is 2 levels up
@@ -80,6 +81,7 @@ def setup_environment() -> dict:
     """Set up test environment variables.
 
     :returns: Environment dictionary with SAFE_RUN_BIN set
+    :rtype: dict
     """
     # Get wrapper directory (where this script lives)
     wrapper_dir = Path(__file__).resolve().parent
@@ -102,6 +104,7 @@ def check_prerequisites() -> bool:
     """Check if bash is available.
 
     :returns: True if bash is found, False otherwise
+    :rtype: bool
     """
     try:
         subprocess.run(
@@ -119,6 +122,7 @@ def run_tests() -> int:
     """Execute the test suite via run-tests.sh.
 
     :returns: Exit code (0=pass, 1=fail, 2=error)
+    :rtype: int
     """
     # Get wrapper directory
     wrapper_dir = Path(__file__).resolve().parent
@@ -171,6 +175,7 @@ def main() -> int:
     """Main entry point.
 
     :returns: Exit code
+    :rtype: int
     """
     return run_tests()
 

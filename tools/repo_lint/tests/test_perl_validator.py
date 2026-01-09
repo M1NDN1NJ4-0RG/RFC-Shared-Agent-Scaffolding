@@ -66,7 +66,7 @@ class TestPerlValidator(unittest.TestCase):
         Validates Perl docstring contract enforcement.
     """
 
-    def test_valid_file_pod(self):
+    def test_valid_file_pod(self) -> None:
         """Test that valid POD documentation passes validation.
 
         :Purpose:
@@ -117,7 +117,7 @@ print "Hello\\n";
                 for section in error.missing_sections:
                     self.assertNotIn(section, file_sections, f"File-level section {section} should not be missing")
 
-    def test_missing_name_section(self):
+    def test_missing_name_section(self) -> None:
         """Test that missing NAME section is detected.
 
         :Purpose:
@@ -154,7 +154,7 @@ print "Hello\\n";
         has_name_error = any("=head1 NAME" in e.missing_sections for e in errors)
         self.assertTrue(has_name_error, f"Expected NAME error, got: {errors}")
 
-    def test_missing_description_section(self):
+    def test_missing_description_section(self) -> None:
         """Test that missing DESCRIPTION section is detected.
 
         :Purpose:
@@ -191,7 +191,7 @@ print "Hello\\n";
         has_desc_error = any("=head1 DESCRIPTION" in e.missing_sections for e in errors)
         self.assertTrue(has_desc_error, f"Expected DESCRIPTION error, got: {errors}")
 
-    def test_missing_pod(self):
+    def test_missing_pod(self) -> None:
         """Test that completely missing POD is detected.
 
         :Purpose:

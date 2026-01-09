@@ -85,7 +85,7 @@ class TestFixtureExclusionMatrix:
     )
     def test_python_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
-    ):  # pylint: disable=redefined-outer-name
+    ) -> None:  # pylint: disable=redefined-outer-name
         """Test Python runner excludes fixtures unless --include-fixtures.
 
         :param include_fixtures: Whether to include fixture files
@@ -108,7 +108,7 @@ class TestFixtureExclusionMatrix:
     )
     def test_bash_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
-    ):  # pylint: disable=redefined-outer-name
+    ) -> None:  # pylint: disable=redefined-outer-name
         """Test Bash runner excludes fixtures unless --include-fixtures.
 
         :param include_fixtures: Whether to include fixture files
@@ -131,7 +131,7 @@ class TestFixtureExclusionMatrix:
     )
     def test_powershell_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
-    ):  # pylint: disable=redefined-outer-name
+    ) -> None:  # pylint: disable=redefined-outer-name
         """Test PowerShell runner excludes fixtures unless --include-fixtures.
 
         :param include_fixtures: Whether to include fixture files
@@ -158,7 +158,7 @@ class TestFixtureExclusionMatrix:
     )
     def test_perl_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
-    ):  # pylint: disable=redefined-outer-name
+    ) -> None:  # pylint: disable=redefined-outer-name
         """Test Perl runner excludes fixtures unless --include-fixtures.
 
         :param include_fixtures: Whether to include fixture files
@@ -181,7 +181,7 @@ class TestFixtureExclusionMatrix:
     )
     def test_yaml_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
-    ):  # pylint: disable=redefined-outer-name
+    ) -> None:  # pylint: disable=redefined-outer-name
         """Test YAML runner excludes fixtures unless --include-fixtures.
 
         :param include_fixtures: Whether to include fixture files
@@ -208,7 +208,7 @@ class TestFixtureExclusionMatrix:
     )
     def test_rust_fixture_exclusion(
         self, include_fixtures, expected_has_fixtures
-    ):  # pylint: disable=redefined-outer-name
+    ) -> None:  # pylint: disable=redefined-outer-name
         """Test Rust runner excludes fixtures unless --include-fixtures.
 
         :param include_fixtures: Whether to include fixture files
@@ -226,7 +226,7 @@ class TestFixtureExclusionMatrix:
 class TestRunnerLanguageIsolation:
     """Test that each runner only receives files for its language."""
 
-    def test_python_runner_only_receives_python_files(self):
+    def test_python_runner_only_receives_python_files(self) -> None:
         """Python runner must never receive non-Python files."""
         runner = PythonRunner(str(REPO_ROOT), ci_mode=True)
         runner.set_include_fixtures(False)
@@ -246,7 +246,7 @@ class TestRunnerLanguageIsolation:
         perl_files_in_python = [f for f in python_files if f.endswith((".pl", ".pm"))]
         assert len(perl_files_in_python) == 0, f"Python runner received Perl files: {perl_files_in_python}"
 
-    def test_rust_runner_only_receives_rust_files(self):
+    def test_rust_runner_only_receives_rust_files(self) -> None:
         """Rust runner must never receive non-Rust files."""
         # Get all files the runner would process
         rust_files = get_tracked_files(["**/*.rs"], str(REPO_ROOT), include_fixtures=False)
@@ -259,7 +259,7 @@ class TestRunnerLanguageIsolation:
         bash_files_in_rust = [f for f in rust_files if f.endswith(".sh")]
         assert len(bash_files_in_rust) == 0, f"Rust runner received Bash files: {bash_files_in_rust}"
 
-    def test_bash_runner_only_receives_bash_files(self):
+    def test_bash_runner_only_receives_bash_files(self) -> None:
         """Bash runner must never receive non-Bash files."""
         bash_files = get_tracked_files(["**/*.sh"], str(REPO_ROOT), include_fixtures=False)
 
@@ -275,7 +275,7 @@ class TestRunnerLanguageIsolation:
 class TestFixturePathEdgeCases:
     """Test fixture exclusion edge cases and glob patterns."""
 
-    def test_nested_fixture_directories_excluded(self):
+    def test_nested_fixture_directories_excluded(self) -> None:
         """Nested fixture directories must be excluded in normal mode."""
         files = get_tracked_files(["**/*.py"], str(REPO_ROOT), include_fixtures=False)
 
@@ -285,7 +285,7 @@ class TestFixturePathEdgeCases:
 
         assert len(fixture_files) == 0, f"Nested fixture directories not excluded: {fixture_files}"
 
-    def test_fixture_files_matching_production_patterns_excluded(self):
+    def test_fixture_files_matching_production_patterns_excluded(self) -> None:
         """Fixture files matching production glob patterns must still be excluded.
 
         :Purpose:
@@ -298,7 +298,7 @@ class TestFixturePathEdgeCases:
         fixture_runners = [f for f in files if "/fixtures/" in f]
         assert len(fixture_runners) == 0, f"Fixture files matching production patterns not excluded: {fixture_runners}"
 
-    def test_fixture_violation_files_excluded(self):
+    def test_fixture_violation_files_excluded(self) -> None:
         """Fixture violation files must be excluded in normal mode.
 
         :Purpose:
@@ -324,7 +324,7 @@ class TestRunnerHasFilesConsistency:
     """Test that has_files() uses same file set as execution."""
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
-    def test_python_runner_has_files_matches_execution(self, mock_run):
+    def test_python_runner_has_files_matches_execution(self, mock_run) -> None:
         """Python runner has_files() must match actual execution file set.
 
         :param mock_run: Mock for subprocess.run to avoid actual tool execution
@@ -347,7 +347,7 @@ class TestRunnerHasFilesConsistency:
         assert has_files == (len(files) > 0), "has_files() inconsistent with actual file set"
 
     @patch("tools.repo_lint.runners.rust_runner.subprocess.run")
-    def test_rust_runner_has_files_matches_execution(self, mock_run):
+    def test_rust_runner_has_files_matches_execution(self, mock_run) -> None:
         """Rust runner has_files() must match actual execution file set.
 
         :param mock_run: Mock for subprocess.run to avoid actual tool execution
@@ -373,7 +373,7 @@ class TestRunnerHasFilesConsistency:
 class TestCIModeFixtureBehavior:
     """Test --ci mode fixture behavior across all scenarios."""
 
-    def test_ci_mode_never_includes_fixtures_without_flag(self):
+    def test_ci_mode_never_includes_fixtures_without_flag(self) -> None:
         """CI mode must NEVER include fixtures unless --include-fixtures is set."""
         # Simulate CI mode (include_fixtures=False)
         all_languages = [
@@ -396,7 +396,7 @@ class TestCIModeFixtureBehavior:
                 len(fixture_files) == 0
             ), f"CI mode included {language} fixtures without --include-fixtures: {fixture_files}"
 
-    def test_ci_mode_with_include_fixtures_flag_includes_fixtures(self):
+    def test_ci_mode_with_include_fixtures_flag_includes_fixtures(self) -> None:
         """CI mode WITH --include-fixtures must include fixtures."""
         # Simulate CI mode with --include-fixtures (include_fixtures=True)
         python_files = get_tracked_files(["**/*.py"], str(REPO_ROOT), include_fixtures=True)
@@ -408,7 +408,7 @@ class TestCIModeFixtureBehavior:
 class TestNegativeProofs:
     """Test impossible outcomes to prove system correctness."""
 
-    def test_fixtures_cannot_appear_in_ci_without_explicit_flag(self):
+    def test_fixtures_cannot_appear_in_ci_without_explicit_flag(self) -> None:
         """INVARIANT: Fixtures CANNOT appear in CI mode without --include-fixtures."""
         # This is THE critical invariant - test it exhaustively
         runners_and_patterns = [
@@ -426,7 +426,7 @@ class TestNegativeProofs:
 
             assert len(fixture_files) == 0, f"{runner_class.__name__} included fixtures in CI mode: {fixture_files}"
 
-    def test_cross_language_files_never_mixed(self):
+    def test_cross_language_files_never_mixed(self) -> None:
         """INVARIANT: Language runners never receive other languages' files."""
         # Get Python files
         python_files = get_tracked_files(["**/*.py"], str(REPO_ROOT), include_fixtures=False)
@@ -445,7 +445,7 @@ class TestNegativeProofs:
 class TestRegressionTraps:
     """Test for specific regression scenarios."""
 
-    def test_get_tracked_files_import_exists(self):
+    def test_get_tracked_files_import_exists(self) -> None:
         """Regression: get_tracked_files must be importable from base module."""
         # This failed in commit bea4345 for rust_runner
         from tools.repo_lint.runners.base import (  # pylint: disable=reimported
@@ -455,7 +455,7 @@ class TestRegressionTraps:
         assert gtf is not None, "get_tracked_files import failed"
         assert callable(gtf), "get_tracked_files is not callable"
 
-    def test_no_double_exclusion_bug(self):
+    def test_no_double_exclusion_bug(self) -> None:
         """Regression: Ensure fixture exclusion logic doesn't run twice."""
         # Call get_tracked_files multiple times - results should be consistent
         files1 = get_tracked_files(["**/*.py"], str(REPO_ROOT), include_fixtures=False)
@@ -463,7 +463,7 @@ class TestRegressionTraps:
 
         assert set(files1) == set(files2), "Double exclusion bug: repeated calls return different results"
 
-    def test_fixture_exclusion_works_with_different_cwd(self):
+    def test_fixture_exclusion_works_with_different_cwd(self) -> None:
         """Regression: Fixture exclusion must work regardless of current directory."""
         original_cwd = os.getcwd()
         try:

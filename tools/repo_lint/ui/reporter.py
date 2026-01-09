@@ -55,7 +55,7 @@ class Reporter:
     consistent formatting across TTY and CI modes.
     """
 
-    def __init__(self, ci_mode: bool = False, theme: UITheme | None = None):
+    def __init__(self, ci_mode: bool = False, theme: UITheme | None = None) -> None:
         """Initialize Reporter.
 
         :param ci_mode: If True, use CI-friendly output (no colors, no spinners)
@@ -83,6 +83,7 @@ class Reporter:
 
         :param status: Status string (pass, fail, warn, skip, running)
         :returns: Icon string
+        :rtype: str
         """
         if self.ci_mode and not self.theme.ci.icons_enabled:
             return ""
@@ -102,6 +103,7 @@ class Reporter:
 
         :param color_type: Color type (primary, success, failure, warning, info, metadata)
         :returns: Color string
+        :rtype: str
         """
         if self.ci_mode:
             return ""  # No colors in CI mode
@@ -128,6 +130,7 @@ class Reporter:
 
         :param message: Violation message
         :returns: Error code or first word of message
+        :rtype: str
         """
         if ":" in message:
             return message.split(":")[0].strip()
@@ -147,6 +150,7 @@ class Reporter:
         :param color_type: Color type
         :param bold: If True, make text bold
         :returns: Formatted text (with Rich markup if not CI mode)
+        :rtype: str
         """
         if self.ci_mode:
             return text

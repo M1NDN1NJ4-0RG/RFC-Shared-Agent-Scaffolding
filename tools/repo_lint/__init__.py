@@ -49,4 +49,4 @@ validation across all supported languages (Python, Bash, PowerShell, Perl, YAML)
 
 from __future__ import annotations
 
-__version__ = "0.1.0"
+__version__: str = "0.1.0"

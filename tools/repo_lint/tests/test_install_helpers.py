@@ -81,7 +81,7 @@ class TestRepoRootDetection(unittest.TestCase):
     """
 
     @patch("pathlib.Path.cwd")
-    def test_get_repo_root_finds_git_directory(self, mock_cwd):
+    def test_get_repo_root_finds_git_directory(self, mock_cwd) -> None:
         """Test get_repo_root returns repo root when .git exists.
 
         :Purpose:
@@ -105,7 +105,7 @@ class TestRepoRootDetection(unittest.TestCase):
             self.assertEqual(root, Path(tmpdir))
 
     @patch("pathlib.Path.cwd")
-    def test_get_repo_root_fallback_when_no_git(self, mock_cwd):
+    def test_get_repo_root_fallback_when_no_git(self, mock_cwd) -> None:
         """Test get_repo_root returns cwd when .git not found.
 
         :Purpose:
@@ -124,7 +124,7 @@ class TestRepoRootDetection(unittest.TestCase):
             self.assertEqual(root, Path(tmpdir))
 
     @patch("pathlib.Path.cwd")
-    def test_get_repo_root_from_nested_directory(self, mock_cwd):
+    def test_get_repo_root_from_nested_directory(self, mock_cwd) -> None:
         """Test get_repo_root walks up directory tree correctly.
 
         :Purpose:
@@ -159,7 +159,7 @@ class TestVenvHelpers(unittest.TestCase):
     """
 
     @patch("tools.repo_lint.install.install_helpers.get_repo_root")
-    def test_get_venv_path(self, mock_get_repo_root):
+    def test_get_venv_path(self, mock_get_repo_root) -> None:
         """Test get_venv_path returns correct path.
 
         :Purpose:
@@ -172,7 +172,7 @@ class TestVenvHelpers(unittest.TestCase):
         self.assertEqual(venv_path, Path("/fake/repo/.venv-lint"))
 
     @patch("tools.repo_lint.install.install_helpers.get_repo_root")
-    def test_get_tools_path(self, mock_get_repo_root):
+    def test_get_tools_path(self, mock_get_repo_root) -> None:
         """Test get_tools_path returns correct path.
 
         :Purpose:
@@ -185,7 +185,7 @@ class TestVenvHelpers(unittest.TestCase):
         self.assertEqual(tools_path, Path("/fake/repo/.tools"))
 
     @patch("tools.repo_lint.install.install_helpers.get_venv_path")
-    def test_venv_exists_when_present(self, mock_get_venv_path):
+    def test_venv_exists_when_present(self, mock_get_venv_path) -> None:
         """Test venv_exists returns True when venv exists.
 
         :Purpose:
@@ -208,7 +208,7 @@ class TestVenvHelpers(unittest.TestCase):
             self.assertTrue(result)
 
     @patch("tools.repo_lint.install.install_helpers.get_venv_path")
-    def test_venv_exists_when_missing(self, mock_get_venv_path):
+    def test_venv_exists_when_missing(self, mock_get_venv_path) -> None:
         """Test venv_exists returns False when venv doesn't exist.
 
         :Purpose:
@@ -235,7 +235,7 @@ class TestCreateVenv(unittest.TestCase):
     @patch("tools.repo_lint.install.install_helpers.get_venv_path")
     @patch("tools.repo_lint.install.install_helpers.subprocess.run")
     @patch("sys.platform", "linux")
-    def test_create_venv_success(self, mock_run, mock_get_venv_path, mock_venv_exists):
+    def test_create_venv_success(self, mock_run, mock_get_venv_path, mock_venv_exists) -> None:
         """Test create_venv creates venv and upgrades pip.
 
         :Purpose:
@@ -268,7 +268,7 @@ class TestCreateVenv(unittest.TestCase):
 
     @patch("tools.repo_lint.install.install_helpers.venv_exists")
     @patch("tools.repo_lint.install.install_helpers.get_venv_path")
-    def test_create_venv_already_exists(self, mock_get_venv_path, mock_venv_exists):
+    def test_create_venv_already_exists(self, mock_get_venv_path, mock_venv_exists) -> None:
         """Test create_venv skips if venv already exists.
 
         :Purpose:
@@ -288,7 +288,7 @@ class TestCreateVenv(unittest.TestCase):
     @patch("tools.repo_lint.install.install_helpers.get_venv_path")
     @patch("tools.repo_lint.install.install_helpers.subprocess.run")
     @patch("sys.platform", "win32")
-    def test_create_venv_windows_paths(self, mock_run, mock_get_venv_path, mock_venv_exists):
+    def test_create_venv_windows_paths(self, mock_run, mock_get_venv_path, mock_venv_exists) -> None:
         """Test create_venv uses Windows-specific paths.
 
         :Purpose:
@@ -323,7 +323,7 @@ class TestInstallPythonTools(unittest.TestCase):
     @patch("tools.repo_lint.install.install_helpers.get_venv_path")
     @patch("tools.repo_lint.install.install_helpers.subprocess.run")
     @patch("sys.platform", "linux")
-    def test_install_python_tools_success(self, mock_run, mock_get_venv_path, mock_create_venv):
+    def test_install_python_tools_success(self, mock_run, mock_get_venv_path, mock_create_venv) -> None:
         """Test install_python_tools installs all tools.
 
         :Purpose:
@@ -354,7 +354,7 @@ class TestInstallPythonTools(unittest.TestCase):
     @patch("tools.repo_lint.install.install_helpers.get_venv_path")
     @patch("tools.repo_lint.install.install_helpers.subprocess.run")
     @patch("sys.platform", "win32")
-    def test_install_python_tools_windows_paths(self, mock_run, mock_get_venv_path, mock_create_venv):
+    def test_install_python_tools_windows_paths(self, mock_run, mock_get_venv_path, mock_create_venv) -> None:
         """Test install_python_tools uses Windows-specific paths.
 
         :Purpose:
@@ -378,7 +378,7 @@ class TestInstallPythonTools(unittest.TestCase):
         self.assertIn("pip.exe", pip_path)
 
     @patch("tools.repo_lint.install.install_helpers.create_venv")
-    def test_install_python_tools_venv_creation_fails(self, mock_create_venv):
+    def test_install_python_tools_venv_creation_fails(self, mock_create_venv) -> None:
         """Test install_python_tools handles venv creation failure.
 
         :Purpose:
@@ -398,7 +398,7 @@ class TestInstallPythonTools(unittest.TestCase):
     @patch("tools.repo_lint.install.install_helpers.get_venv_path")
     @patch("tools.repo_lint.install.install_helpers.subprocess.run")
     @patch("sys.platform", "linux")
-    def test_install_python_tools_partial_failure(self, mock_run, mock_get_venv_path, mock_create_venv):
+    def test_install_python_tools_partial_failure(self, mock_run, mock_get_venv_path, mock_create_venv) -> None:
         """Test install_python_tools handles partial installation failures.
 
         :Purpose:
@@ -442,7 +442,7 @@ class TestCleanupRepoLocal(unittest.TestCase):
 
     @patch("tools.repo_lint.install.install_helpers.get_repo_root")
     @patch("tools.repo_lint.install.install_helpers.shutil.rmtree")
-    def test_cleanup_repo_local_success(self, mock_rmtree, mock_get_repo_root):
+    def test_cleanup_repo_local_success(self, mock_rmtree, mock_get_repo_root) -> None:
         """Test cleanup_repo_local removes expected directories.
 
         :Purpose:
@@ -470,7 +470,7 @@ class TestCleanupRepoLocal(unittest.TestCase):
 
     @patch("tools.repo_lint.install.install_helpers.get_repo_root")
     @patch("tools.repo_lint.install.install_helpers.shutil.rmtree")
-    def test_cleanup_repo_local_no_dirs_exist(self, mock_rmtree, mock_get_repo_root):
+    def test_cleanup_repo_local_no_dirs_exist(self, mock_rmtree, mock_get_repo_root) -> None:
         """Test cleanup_repo_local handles missing directories.
 
         :Purpose:
@@ -492,7 +492,7 @@ class TestCleanupRepoLocal(unittest.TestCase):
 
     @patch("tools.repo_lint.install.install_helpers.get_repo_root")
     @patch("tools.repo_lint.install.install_helpers.shutil.rmtree")
-    def test_cleanup_repo_local_partial_failure(self, mock_rmtree, mock_get_repo_root):
+    def test_cleanup_repo_local_partial_failure(self, mock_rmtree, mock_get_repo_root) -> None:
         """Test cleanup_repo_local handles removal failures.
 
         :Purpose:
@@ -503,7 +503,7 @@ class TestCleanupRepoLocal(unittest.TestCase):
         mock_get_repo_root.return_value = Path("/fake/repo")
 
         # Mock one directory removal fails
-        def side_effect(path, **kwargs):
+        def side_effect(path, **kwargs) -> None:
             """Mock side effect that fails for .venv-lint.
 
             :param path: Path to remove

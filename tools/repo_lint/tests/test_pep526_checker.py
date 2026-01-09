@@ -28,7 +28,7 @@ from tools.repo_lint.checkers.pep526_config import get_default_config
 class TestPEP526Checker:
     """Test PEP526Checker functionality."""
 
-    def test_module_level_missing_annotation(self):
+    def test_module_level_missing_annotation(self) -> None:
         """Test detection of missing annotation at module level."""
         code = """
 x = 5
@@ -48,7 +48,7 @@ x = 5
 
         Path(f.name).unlink()
 
-    def test_module_level_with_annotation(self):
+    def test_module_level_with_annotation(self) -> None:
         """Test that annotated module-level variables pass."""
         code = """
 x: int = 5
@@ -66,7 +66,7 @@ y: str = "hello"
 
         Path(f.name).unlink()
 
-    def test_class_attribute_missing_annotation(self):
+    def test_class_attribute_missing_annotation(self) -> None:
         """Test detection of missing annotation in class attributes."""
         code = """
 class MyClass:
@@ -88,7 +88,7 @@ class MyClass:
 
         Path(f.name).unlink()
 
-    def test_class_attribute_with_annotation(self):
+    def test_class_attribute_with_annotation(self) -> None:
         """Test that annotated class attributes pass."""
         code = """
 class MyClass:
@@ -107,7 +107,7 @@ class MyClass:
 
         Path(f.name).unlink()
 
-    def test_empty_literal_requires_annotation(self):
+    def test_empty_literal_requires_annotation(self) -> None:
         """Test that empty literals always require annotation."""
         code = """
 empty_list = []
@@ -128,7 +128,7 @@ empty_set = set()
 
         Path(f.name).unlink()
 
-    def test_none_literal_requires_annotation(self):
+    def test_none_literal_requires_annotation(self) -> None:
         """Test that None initializations always require annotation."""
         code = """
 value = None
@@ -146,7 +146,7 @@ value = None
 
         Path(f.name).unlink()
 
-    def test_function_local_not_enforced_by_default(self):
+    def test_function_local_not_enforced_by_default(self) -> None:
         """Test that function-local variables are not enforced by default."""
         code = """
 def func():
@@ -165,7 +165,7 @@ def func():
 
         Path(f.name).unlink()
 
-    def test_function_local_with_config_enabled(self):
+    def test_function_local_with_config_enabled(self) -> None:
         """Test that function-local variables are enforced when enabled."""
         code = """
 def func():
@@ -187,7 +187,7 @@ def func():
 
         Path(f.name).unlink()
 
-    def test_is_simple_name_detects_simple_vars(self):
+    def test_is_simple_name_detects_simple_vars(self) -> None:
         """Test is_simple_name correctly identifies simple variable names."""
         code = """
 x = 5
@@ -204,7 +204,7 @@ x = 5
 
         Path(f.name).unlink()
 
-    def test_is_simple_name_rejects_unpacking(self):
+    def test_is_simple_name_rejects_unpacking(self) -> None:
         """Test is_simple_name rejects tuple unpacking."""
         code = """
 x, y = 1, 2
@@ -221,7 +221,7 @@ x, y = 1, 2
 
         Path(f.name).unlink()
 
-    def test_is_simple_name_rejects_attribute_assignment(self):
+    def test_is_simple_name_rejects_attribute_assignment(self) -> None:
         """Test is_simple_name rejects attribute assignments."""
         code = """
 class MyClass:
@@ -240,7 +240,7 @@ class MyClass:
 
         Path(f.name).unlink()
 
-    def test_is_simple_name_rejects_subscript_assignment(self):
+    def test_is_simple_name_rejects_subscript_assignment(self) -> None:
         """Test is_simple_name rejects subscript assignments."""
         code = """
 lst = [1, 2, 3]
@@ -261,7 +261,7 @@ lst[0] = 5
 
         Path(f.name).unlink()
 
-    def test_syntax_error_handling(self):
+    def test_syntax_error_handling(self) -> None:
         """Test that syntax errors are handled gracefully."""
         code = """
 def func(
@@ -279,7 +279,7 @@ def func(
 
         Path(f.name).unlink()
 
-    def test_scope_tracking_module(self):
+    def test_scope_tracking_module(self) -> None:
         """Test scope tracking at module level."""
         code = """
 x = 5
@@ -297,7 +297,7 @@ x = 5
 
         Path(f.name).unlink()
 
-    def test_scope_tracking_class(self):
+    def test_scope_tracking_class(self) -> None:
         """Test scope tracking in class body."""
         code = """
 class MyClass:
@@ -316,7 +316,7 @@ class MyClass:
 
         Path(f.name).unlink()
 
-    def test_scope_tracking_function(self):
+    def test_scope_tracking_function(self) -> None:
         """Test scope tracking in function body."""
         code = """
 def func():
@@ -336,7 +336,7 @@ def func():
 
         Path(f.name).unlink()
 
-    def test_config_module_level_disabled(self):
+    def test_config_module_level_disabled(self) -> None:
         """Test that module-level checking can be disabled."""
         code = """
 x = 5
@@ -354,7 +354,7 @@ x = 5
 
         Path(f.name).unlink()
 
-    def test_config_class_attributes_disabled(self):
+    def test_config_class_attributes_disabled(self) -> None:
         """Test that class attribute checking can be disabled."""
         code = """
 class MyClass:
@@ -373,7 +373,7 @@ class MyClass:
 
         Path(f.name).unlink()
 
-    def test_multiple_violations_same_file(self):
+    def test_multiple_violations_same_file(self) -> None:
         """Test detecting multiple violations in the same file."""
         code = """
 x = 5
@@ -400,7 +400,7 @@ def func():
 
         Path(f.name).unlink()
 
-    def test_violation_format(self):
+    def test_violation_format(self) -> None:
         """Test that violation objects have correct format."""
         code = """
 x = 5

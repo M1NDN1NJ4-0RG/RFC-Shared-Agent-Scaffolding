@@ -67,7 +67,7 @@ class TestPowerShellRunner(unittest.TestCase):
         Validates PSScriptAnalyzer and docstring validation integration.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -76,7 +76,7 @@ class TestPowerShellRunner(unittest.TestCase):
         self.runner = PowerShellRunner(repo_root=Path("/fake/repo"))
 
     @patch("tools.repo_lint.runners.powershell_runner.subprocess.run")
-    def test_get_powershell_files_returns_list(self, mock_run):
+    def test_get_powershell_files_returns_list(self, mock_run) -> None:
         """Test that _get_powershell_files returns file list.
 
         :Purpose:
@@ -93,7 +93,7 @@ class TestPowerShellRunner(unittest.TestCase):
         self.assertIn("script2.ps1", files)
 
     @patch("tools.repo_lint.runners.powershell_runner.subprocess.run")
-    def test_get_powershell_files_returns_empty(self, mock_run):
+    def test_get_powershell_files_returns_empty(self, mock_run) -> None:
         """Test that _get_powershell_files returns empty list when no files.
 
         :Purpose:
@@ -108,7 +108,7 @@ class TestPowerShellRunner(unittest.TestCase):
         self.assertEqual(files, [])
 
     @patch("tools.repo_lint.runners.powershell_runner.subprocess.run")
-    def test_psscriptanalyzer_uses_correct_flags(self, mock_run):
+    def test_psscriptanalyzer_uses_correct_flags(self, mock_run) -> None:
         """Test that _run_psscriptanalyzer uses -NoProfile -NonInteractive.
 
         :Purpose:
@@ -131,7 +131,7 @@ class TestPowerShellRunner(unittest.TestCase):
         self.assertTrue(result.passed)
 
     @patch("tools.repo_lint.runners.powershell_runner.subprocess.run")
-    def test_psscriptanalyzer_uses_args_parameter(self, mock_run):
+    def test_psscriptanalyzer_uses_args_parameter(self, mock_run) -> None:
         """Test that _run_psscriptanalyzer uses $args[0] for file path.
 
         :Purpose:
@@ -159,7 +159,7 @@ class TestPowerShellRunner(unittest.TestCase):
         self.assertTrue(result.passed)
 
     @patch("tools.repo_lint.runners.powershell_runner.subprocess.run")
-    def test_check_tools_detects_missing_pwsh(self, mock_run):
+    def test_check_tools_detects_missing_pwsh(self, mock_run) -> None:
         """Test that check_tools detects missing pwsh.
 
         :Purpose:
@@ -172,7 +172,7 @@ class TestPowerShellRunner(unittest.TestCase):
             self.assertIn("pwsh", missing)
 
     @patch("tools.repo_lint.runners.powershell_runner.subprocess.run")
-    def test_check_tools_detects_missing_psscriptanalyzer(self, mock_run):
+    def test_check_tools_detects_missing_psscriptanalyzer(self, mock_run) -> None:
         """Test that check_tools detects missing PSScriptAnalyzer module.
 
         :Purpose:
@@ -187,7 +187,7 @@ class TestPowerShellRunner(unittest.TestCase):
             self.assertIn("PSScriptAnalyzer", missing)
 
     @patch("tools.repo_lint.runners.powershell_runner.subprocess.run")
-    def test_empty_files_returns_passed(self, mock_run):
+    def test_empty_files_returns_passed(self, mock_run) -> None:
         """Test that empty file list returns passed result.
 
         :Purpose:

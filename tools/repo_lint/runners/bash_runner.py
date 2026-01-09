@@ -44,6 +44,7 @@ class BashRunner(Runner):
 
         :returns:
             True if Bash files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed Bash files
         if self._changed_only:
@@ -59,6 +60,7 @@ class BashRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         required = ["shellcheck", "shfmt"]
         return [tool for tool in required if not command_exists(tool)]
@@ -68,6 +70,7 @@ class BashRunner(Runner):
 
         :returns:
             List of linting results from all Bash tools
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["shellcheck", "shfmt"])
 
@@ -92,6 +95,7 @@ class BashRunner(Runner):
 
         :param policy: Auto-fix policy dictionary (deny-by-default)
         :returns: List of results after applying fixes
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["shellcheck", "shfmt"])
 
@@ -127,6 +131,7 @@ class BashRunner(Runner):
 
         :returns:
             List of Bash file paths (empty list if none found)
+        :rtype: List[str]
         """
         all_files = get_tracked_files(["**/*.sh"], self.repo_root, include_fixtures=self._include_fixtures)
         return filter_excluded_paths(all_files)
@@ -136,6 +141,7 @@ class BashRunner(Runner):
 
         :returns:
             LintResult for ShellCheck
+        :rtype: LintResult
         """
         bash_files = self._get_bash_files()
         if not bash_files:
@@ -165,6 +171,7 @@ class BashRunner(Runner):
 
         :returns:
             LintResult for shfmt check
+        :rtype: LintResult
         """
         bash_files = self._get_bash_files()
         if not bash_files:
@@ -202,6 +209,7 @@ class BashRunner(Runner):
 
         :returns:
             LintResult for shfmt fix operation
+        :rtype: LintResult
         """
         bash_files = self._get_bash_files()
         if not bash_files:
@@ -228,6 +236,7 @@ class BashRunner(Runner):
 
         :returns:
             LintResult for docstring validation
+        :rtype: LintResult
         """
         bash_files = self._get_bash_files()
         if not bash_files:

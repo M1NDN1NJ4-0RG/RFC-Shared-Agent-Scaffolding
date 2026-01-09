@@ -52,6 +52,7 @@ def check_repo_root() -> Tuple[bool, str, str]:
     """Check if repository root can be detected.
 
     :returns: (success, message, value) tuple
+    :rtype: Tuple[bool, str, str]
     """
     try:
         root = find_repo_root()
@@ -64,6 +65,7 @@ def check_venv() -> Tuple[bool, str, str]:
     """Check if virtual environment exists.
 
     :returns: (success, message, value) tuple
+    :rtype: Tuple[bool, str, str]
     """
     try:
         venv_path = get_venv_path()
@@ -79,6 +81,7 @@ def check_python_version() -> Tuple[bool, str, str]:
     """Check Python version.
 
     :returns: (success, message, value) tuple
+    :rtype: Tuple[bool, str, str]
     """
     version = sys.version.split()[0]
     version_info = sys.version_info
@@ -93,6 +96,7 @@ def check_config_files() -> Tuple[bool, str, str]:
     """Check if config files exist and are valid.
 
     :returns: (success, message, value) tuple
+    :rtype: Tuple[bool, str, str]
     """
     try:
         root = find_repo_root()
@@ -126,6 +130,7 @@ def check_tool_availability() -> Tuple[bool, str, List[Dict[str, Any]]]:
     """Check availability of linting tools.
 
     :returns: (success, message, tools_data) tuple
+    :rtype: Tuple[bool, str, List[Dict[str, Any]]]
     """
     from tools.repo_lint.yaml_loader import load_linting_rules
 
@@ -171,6 +176,7 @@ def check_path_sanity() -> Tuple[bool, str, str]:
     """Check PATH environment variable sanity.
 
     :returns: (success, message, value) tuple
+    :rtype: Tuple[bool, str, str]
     """
     path_env = os.environ.get("PATH", "")
     path_entries = path_env.split(os.pathsep)
@@ -205,6 +211,7 @@ def cmd_doctor(args) -> int:
 
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=some checks failed, 3=error)
+    :rtype: int
     """
     ci_mode = getattr(args, "ci", False)
     output_format = getattr(args, "format", None)
@@ -263,6 +270,7 @@ def _format_plain(checks: List[Tuple[str, Tuple[bool, str, Any]]], all_passed: b
     :param checks: List of (name, (success, message, value)) tuples
     :param all_passed: Whether all checks passed
     :returns: Formatted plain text output
+    :rtype: str
     """
     lines = ["repo-lint Doctor Diagnostic Report", "=" * 40, ""]
 
@@ -287,6 +295,7 @@ def _format_rich(checks: List[Tuple[str, Tuple[bool, str, Any]]], all_passed: bo
     :param checks: List of (name, (success, message, value)) tuples
     :param all_passed: Whether all checks passed
     :returns: Formatted rich text output
+    :rtype: str
     """
     from rich.console import Console
     from rich.table import Table
@@ -322,6 +331,7 @@ def _format_json(checks: List[Tuple[str, Tuple[bool, str, Any]]], all_passed: bo
     :param checks: List of (name, (success, message, value)) tuples
     :param all_passed: Whether all checks passed
     :returns: Formatted JSON output
+    :rtype: str
     """
     results = []
     for name, (success, message, value) in checks:
@@ -350,6 +360,7 @@ def _format_yaml(checks: List[Tuple[str, Tuple[bool, str, Any]]], all_passed: bo
     :param checks: List of (name, (success, message, value)) tuples
     :param all_passed: Whether all checks passed
     :returns: Formatted YAML output
+    :rtype: str
     """
     import yaml
 

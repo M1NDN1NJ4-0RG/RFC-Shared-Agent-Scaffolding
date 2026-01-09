@@ -62,6 +62,7 @@ class UnsafeFixer(Protocol):
 
         :param file_path: Path to file to check
         :returns: True if this fixer applies to this file
+        :rtype: bool
         """
         ...  # pylint: disable=unnecessary-ellipsis
 
@@ -70,6 +71,7 @@ class UnsafeFixer(Protocol):
 
         :param file_path: Path to file to fix
         :returns: Result of the fix operation, or None if no changes made
+        :rtype: UnsafeFixerResult | None
         """
         ...  # pylint: disable=unnecessary-ellipsis
 
@@ -110,7 +112,7 @@ class UnsafeDocstringRewriter:
         Only use with explicit human permission via --unsafe --yes-i-know.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the unsafe docstring rewriter."""
         self.name = "unsafe_docstring_rewrite"
         self.why_unsafe = (
@@ -123,6 +125,7 @@ class UnsafeDocstringRewriter:
 
         :param file_path: Path to check
         :returns: True if file is a Python file
+        :rtype: bool
         """
         return file_path.suffix == ".py"
 
@@ -131,6 +134,7 @@ class UnsafeDocstringRewriter:
 
         :param file_path: Path to Python file to fix
         :returns: UnsafeFixerResult if changes were made, None otherwise
+        :rtype: UnsafeFixerResult | None
         """
         if not file_path.exists():
             return None
@@ -158,6 +162,7 @@ class UnsafeDocstringRewriter:
 
         :param content: File content to process
         :returns: Content with rewritten docstrings
+        :rtype: str
         """
         # This is a minimal implementation - just handles simple cases
         # Real implementation would need proper AST parsing
@@ -224,6 +229,7 @@ def get_unsafe_fixers() -> List[UnsafeFixer]:
     """Get all registered unsafe fixers.
 
     :returns: List of unsafe fixer instances
+    :rtype: List[UnsafeFixer]
     """
     return UNSAFE_FIXERS
 
@@ -233,6 +239,7 @@ def apply_unsafe_fixes(file_paths: List[Path]) -> List[UnsafeFixerResult]:
 
     :param file_paths: List of file paths to process
     :returns: List of results from fixers that made changes
+    :rtype: List[UnsafeFixerResult]
     """
     results = []
 

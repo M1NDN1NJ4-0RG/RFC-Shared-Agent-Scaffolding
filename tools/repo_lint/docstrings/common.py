@@ -57,7 +57,7 @@ class ValidationError:
         *,
         symbol_name: str | None = None,
         line_number: int | None = None,
-    ):
+    ) -> None:
         """Initialize ValidationError.
 
         :param file_path: Path to the file with validation error
@@ -76,6 +76,7 @@ class ValidationError:
         """Format the validation error as a human-readable string.
 
         :returns: Formatted error message with location and missing sections
+        :rtype: str
         """
         sections = ", ".join(self.missing_sections)
 
@@ -106,6 +107,7 @@ def check_pragma_ignore(content: str, section: str) -> bool:
     :param content: File content to search
     :param section: Section name to check (e.g., "EXITCODES", "EXIT CODES")
     :returns: True if section should be ignored, False otherwise
+    :rtype: bool
     """
     # Normalize section name (remove spaces, uppercase)
     normalized_section = section.upper().replace(" ", "").replace(":", "")
@@ -135,6 +137,7 @@ def validate_exit_codes_content(content: str, language: str) -> str | None:
     :param language: Language name for context
 
     :returns: Error message if validation fails, None if valid
+    :rtype: str | None
     """
     if SKIP_CONTENT_CHECKS:
         return None
@@ -196,6 +199,7 @@ def check_symbol_pragma_exemption(
     :param pragma_pattern: Regex pattern to match pragma comment
 
     :returns: True if pragma exemption found, False otherwise
+    :rtype: bool
     """
     if symbol_line is None or symbol_line < 1 or symbol_line > len(lines):
         return False

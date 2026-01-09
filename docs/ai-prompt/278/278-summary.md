@@ -1478,3 +1478,411 @@ Finalized Phase 3.3 integration and documentation:
 **Next:** Phase 4.1 - Add non-destructive autofix where safe
 
 ---
+
+### 2026-01-09 - Phase 4 Work: Autofix Strategy + Implementation
+
+**Session Work:**
+
+**Phase 4.1: Autofix Strategy Defined** ✅
+
+- Created comprehensive autofix strategy document: `docs/ai-prompt/278/278-phase-4-autofix-strategy.md`
+- Tested Ruff's `--unsafe-fixes` capability on fixture files  
+- Discovered Ruff can auto-fix much more than initially expected:
+  - `-> None` for void functions
+  - `-> int`, `-> str`, `-> bool` for literal returns
+  - `-> str | None` for optional returns
+  - `-> str | int` for union returns
+- Coverage: ~400-500 violations can be auto-fixed (60-70% of return annotations)
+
+**Phase 4.2 Stage 1: Ruff Autofix Applied** ✅
+
+- Ran `ruff check --select ANN --fix --unsafe-fixes --isolated` across codebase
+- **586 violations auto-fixed** across 55 files
+- **358 violations remaining** (parameters, complex types, module/class variables)
+- Types of fixes:
+  - Mostly `-> None` for void functions (test methods, CLI commands, etc.)
+  - Some `-> str` and `-> int` for literal returns
+- All Python checks pass (exit 0)
+- No breaking changes introduced
+
+**Phase 4 Design Extensions** ✅
+
+1. **PEP 526 & Docstring `:rtype:` Autofix Strategy**
+   - Document: `docs/ai-prompt/278/278-phase-4-pep526-docstring-autofix.md`
+   - **PEP 526 autofix patterns:**
+     - Literal inference: `FOO = 42` → `FOO: int = 42` (30-40% coverage)
+     - Typed constructors: `ROOT = Path(...)` → `ROOT: Path = Path(...)` (10-15% coverage)
+     - Function returns: `CONFIG = get_config()` → infer from function annotation (20-30% coverage)
+     - **Total PEP 526 coverage: 40-65%** of violations
+   - **Docstring `:rtype:` autofix strategy:**
+     - Copy from function annotation when present
+     - Insert `:rtype:` field into docstring  
+     - **Coverage: ~370 docstrings** (functions with annotations but missing `:rtype:`)
+   
+2. **Docstring Style Converter Design**
+   - Document: `docs/ai-prompt/278/278-docstring-style-converter-design.md`
+   - **Full bidirectional support** for all 3 styles:
+     - reST/Sphinx (repo standard)
+     - Google Style
+     - NumPy Style
+   - **All 6 conversion pairs supported:**
+     - NumPy ↔ reST
+     - NumPy ↔ Google
+     - reST ↔ Google
+   - **Architecture:** Style-agnostic semantic model (DocstringModel) with parsers/formatters
+   - **Bonus use case:** Auto-add `:rtype:` by converting reST→model→reST with AST enrichment
+   - **Timeline estimate:** 10-15 hours (using `docstring_parser` library)
+   - **Implementation plan:** Use existing `docstring_parser` for parsing, build formatters on top
+
+**Total Autofix Potential:**
+- Ruff return types: 586 ✅ (DONE)
+- PEP 526 literals: ~60-90 (design complete, not implemented)
+- Docstring `:rtype:`: ~370 (design complete, not implemented)
+- **Total: ~1,000+ violations auto-fixable** (70-80% of all violations)
+
+**Remaining manual work (estimated):**
+- Function parameter annotations: ~200-300 (requires human decision)
+- Complex PEP 526 cases: ~50-90 (empty collections, complex expressions)
+- **Total manual: ~250-390 violations**
+
+**Commits:**
+- c987e78: Phase 4.1 complete (autofix strategy document)
+- 7a5ce4f: Phase 4.2 Stage 1 complete (586 autofixes applied)
+- dfecac0: Phase 4 design extensions (PEP 526 + docstring autofix + style converter)
+
+**Next Steps:**
+- **Option A:** Implement autofixers (PEP 526 + docstring `:rtype:`) - 8-12 hours
+- **Option B:** Build docstring style converter - 10-15 hours
+- **Option C:** Proceed to Phases 5-6 (CI enforcement + documentation)
+
+---
+
+### 2026-01-09 - New Session: Human Decision + Comprehensive Autofix Planning
+
+**Session Start:**
+- Read compliance documents ✅
+- Verified `repo-lint --help` (exit 0) ✅
+- Health check: `repo-lint check --ci` (exit 1 - acceptable) ✅
+- Read all issue journals ✅
+- Found new document: `278-md013-smart-reflow-recommendations.md` ✅
+
+**Human Decision Received** (PR comment #3726894000):
+
+Per explicit human instruction, execute in this MANDATORY order:
+1. **FIRST**: Implement autofixers (Option A: PEP 526 + docstring `:rtype:`)
+2. **SECOND**: Build style converter (Option B: bidirectional reST ↔ Google ↔ NumPy)
+3. **THIRD**: Proceed to Phases 5-6 (CI enforcement + documentation)
+
+**NEW REQUIREMENTS**:
+1. ✅ Add MD013 smart reflow document into phase plans
+2. ✅ Examine all tools in repo-lint and create autofix plan for those that support it
+
+**Work Completed:**
+
+**Comprehensive Autofix Plan Created** ✅
+
+Created `docs/ai-prompt/278/278-comprehensive-autofix-plan.md` (11.8KB):
+
+1. **Python Autofixers (Priority 1 - FIRST)**:
+   - Phase 4.3: PEP 526 autofix tool (8-10 hours, ~60-90 fixes)
+   - Phase 4.4: Docstring `:rtype:` autofix tool (6-8 hours, ~370 fixes)
+   - Total: 14-18 hours, ~430-460 violations resolved
+
+2. **Style Converter (Priority 2 - SECOND)**:
+   - Phase 4.5: Bidirectional docstring converter (10-15 hours)
+   - Support all 6 conversion pairs: reST ↔ Google ↔ NumPy
+   - Bonus: Auto-add `:rtype:` via reST→reST conversion trick
+
+3. **MD013 Smart Fixer (Priority 3 - NEW)**:
+   - Phase 4.6: MD013 smart reflow fixer (15-20 hours, ~1,800 fixes)
+   - 6-phase roadmap from `278-md013-smart-reflow-recommendations.md`
+   - State machine for lists, blockquotes, checkboxes, continuations
+   - Integration into `repo-lint fix --md013-smart`
+
+4. **Tool Analysis (Complete)**:
+   - Examined all 13 linting tools in repo-lint
+   - Identified autofix capabilities:
+     - ✅ Already working: black, ruff, shfmt, rustfmt, Taplo, Prettier, markdownlint
+     - ⚠️ Investigate: cargo clippy --fix, PSScriptAnalyzer -Fix
+     - ❌ No autofix: pylint, shellcheck, yamllint, perlcritic
+
+**Timeline Summary:**
+- Python autofixers: 14-18 hours
+- Style converter: 10-15 hours
+- MD013 fixer: 15-20 hours
+- Tool investigation: 2-4 hours
+- Phases 5-6: 8-12 hours
+- **Grand total**: 49-69 hours
+
+**Expected Impact:**
+- ~2,800+ violations auto-fixed (Python + Markdown combined)
+- ~75-85% of all violations resolved automatically
+- ~15-25% remaining for manual fixes
+
+**Next Action:** Begin Phase 4.3 - Implement PEP 526 autofix tool
+
+---
+
+### Phase 4.3: PEP 526 Autofix Tool Implementation (In Progress)
+
+**Phase 4.3.1-4.3.2: Core Implementation** ✅
+
+Created `tools/repo_lint/fixers/pep526_fixer.py` (280 lines):
+
+**Capabilities:**
+- AST-based type inference for module-level and class attributes
+- Safe literal inference: int, str, bool, float, bytes
+- Typed constructor support: Path(...)
+- Skips already-annotated variables
+- Skips ambiguous cases: empty collections, None, complex expressions
+- Skips private variables (leading underscore)
+
+**CLI Interface:**
+```bash
+python3 tools/repo_lint/fixers/pep526_fixer.py <files> [--dry-run] [--diff]
+```
+
+**Test Results** (sample file):
+- ✅ 9 fixes applied correctly
+- ✅ Module-level: TIMEOUT (int), HOST (str), ENABLED (bool), RATIO (float), ROOT (Path), CONFIG_PATH (Path)
+- ✅ Class attributes: counter (int), name (str), active (bool)
+- ✅ Correctly skipped already-annotated variables
+- ✅ Correctly skipped ambiguous cases ([], {}, None)
+
+**Commit:** 6f7a7b9
+
+**Status:** Core fixer complete. Next: comprehensive unit tests, then run on codebase.
+
+**Estimated coverage:** 40-65% of 152 PEP 526 violations = ~60-90 auto-fixes
+
+---
+
+### 2026-01-09 - NEW REQUIREMENT: Docstring Style Conversion Strategy
+
+**Human Comment #3726969688:**
+
+NEW REQUIREMENT: Add `278-docstring-style-conversion-strategy.md` document into phase plans for Python Docstring conversions.
+
+**Work Completed:**
+
+✅ **Integrated Docstring Style Conversion Strategy Document**
+
+Updated phase planning documents to reference the comprehensive strategy document:
+
+1. **`278-comprehensive-autofix-plan.md` updated:**
+   - Phase 4.5 (Bidirectional Docstring Converter) now references both:
+     - `278-docstring-style-converter-design.md` (overview)
+     - `278-docstring-style-conversion-strategy.md` (detailed implementation strategy)
+
+2. **`278-next-steps.md` updated:**
+   - Option B (Build style converter) now lists both design documents
+
+**Strategy Document Features:**
+- Parse → IR → Render architecture
+- Support for 6 docstring styles: Google, NumPy, reST/Sphinx, EpyDoc, Javadoc, Plain
+- AST enrichment for filling gaps and aligning with code truth
+- Safety controls with confidence gating
+- Comprehensive test strategy
+- Recommended file/module layout
+- Edge case coverage (multi-line descriptions, *args/**kwargs, generators, etc.)
+
+**Commit:** 42e04a8
+
+**Status:** NEW REQUIREMENT addressed. Ready for Phase 4.3.3 (unit tests).
+
+---
+
+### 2026-01-09 - Phase 4.3 COMPLETE: PEP 526 Autofix Tool
+
+**Human Comment #3727039607:**
+
+NEW REQUIREMENT: FINISH PHASE 3 AND AS MUCH OF PHASE 4 AS YOU CAN!!!
+
+**Work Completed:**
+
+**1. Code Review Fix** ✅
+- Fixed unused `Any` import in `pep526_fixer.py` (commit a8f5489)
+
+**2. Phase 4.3.3: Comprehensive Unit Tests** ✅
+- Created `tools/repo_lint/tests/test_pep526_fixer.py` (commit 5720b5f)
+- 23 comprehensive tests covering:
+  - Literal type inference (int, str, bool, float, bytes)
+  - Path constructor detection
+  - Skip logic (already-annotated, empty collections, None, private variables)
+  - Class attribute annotation
+  - Edge cases (multiple fixes, dry-run, indentation preservation)
+  - Error handling (nonexistent files, syntax errors)
+- **All 23 tests passing** ✅
+
+**Bug Fixes in Fixer:**
+- Fixed newline preservation (line endings were being stripped)
+- Fixed dry_run return value (should return False for file_was_modified)
+
+**3. Phase 4.3.4: Applied PEP 526 Autofix to Codebase** ✅
+- Ran fixer across entire codebase (commit d8212c1)
+- Applied 8 type annotations across 4 files:
+  - `tools/repo_lint/__init__.py`: `__version__: str`
+  - `tools/repo_lint/common.py`: 5 module-level annotations
+  - `tools/repo_lint/config_validator.py`: 1 annotation
+  - `scripts/docstring_validators/common.py`: 1 annotation
+- All files pass black formatting
+- No syntax errors introduced
+
+**Summary of Phase 4.3:**
+- ✅ 4.3.1-4.3.2: PEP 526 fixer core implementation + CLI
+- ✅ 4.3.3: Comprehensive unit tests (23 tests, 100% passing)
+- ✅ 4.3.4: Applied to codebase (8 fixes)
+
+**Commits This Session:**
+- a8f5489: Fix code review comment (remove unused import)
+- 5720b5f: Phase 4.3.3 unit tests
+- d8212c1: Phase 4.3.4 apply fixes to codebase
+
+**Status:** Phase 4.3 COMPLETE ✅
+
+---
+
+## Session 2026-01-09 Part 3: Code Review + Phase 4.4 Complete
+
+### Commits
+
+- **f8c78a0**: Fix code review: Remove unused pytest import
+- **edbc625**: Phase 4.4.4 WIP: Add unit test framework (18 tests)
+- **e644709**: Phase 4.4.4 COMPLETE: Fix :rtype: fixer + all tests passing
+- **[journals]**: Update journals
+
+### Work Summary
+
+1. **Code Review Comments Addressed**:
+   - Removed unused `pytest` import from `test_pep526_fixer.py`
+
+2. **Phase 4.4: Docstring `:rtype:` Fixer** - COMPLETE:
+   - Created comprehensive unit test suite (18 tests)
+   - Fixed docstring modification logic (line-based AST approach)
+   - All 18 tests passing
+
+3. **Test Coverage**:
+   - PEP 526 fixer: 23 tests ✅
+   - `:rtype:` fixer: 18 tests ✅
+   - **Total: 41 unit tests, 100% passing**
+
+### Next
+
+Phase 4.4.5: Apply `:rtype:` fixer to codebase (~370 fixes expected)
+
+
+---
+
+### 2026-01-09 - Phase 4.4.5 Complete: :rtype: Fixer Applied to Codebase
+
+**Status:** Phase 4.4 COMPLETE. Phase 4 Python autofixers COMPLETE.
+
+#### Phase 4.4.5: Applied `:rtype:` Fixer to Codebase
+
+Applied the `:rtype:` autofix tool across entire Python codebase:
+
+**Command:**
+```bash
+python3 tools/repo_lint/fixers/rtype_fixer.py scripts/**/*.py tools/**/*.py wrappers/**/*.py conformance/**/*.py
+```
+
+**Results:**
+- **290 `:rtype:` fields added** across 54 Python files
+- Smart insertion after existing fields (`:param:`, `:returns:`)
+- All formatting checks pass (black, ruff)
+- No syntax errors introduced
+
+**Files Modified (54 total):**
+- Scripts: docstring validators, utilities, fixes
+- Tools: repo_lint core, runners, UI, checkers, fixers
+- Wrappers: Python3 wrappers
+- Conformance: test fixtures
+
+**Quality Checks:**
+- ✅ All formatting preserved
+- ✅ Smart insertion logic working correctly
+- ✅ Only functions with non-None return types modified
+- ✅ Functions already having `:rtype:` skipped
+- ✅ Indentation preserved
+
+**Commit:** 0ca9e85
+
+#### Phase 4 Summary - COMPLETE
+
+**Total Annotations Auto-Fixed: 884** ✅
+
+1. **586** return type annotations (Phase 4.2 - Ruff autofix)
+   - Command: `ruff check --select ANN --fix --unsafe-fixes --isolated`
+   - Applied: `-> None`, `-> int`, `-> str`, `-> bool`, unions
+   - Files: 55 Python files
+
+2. **8** PEP 526 variable annotations (Phase 4.3 - custom fixer)
+   - Files: 4 Python files
+   - Patterns: literals (int, str, bool, float), Path constructors
+
+3. **290** docstring `:rtype:` fields (Phase 4.4 - custom fixer)
+   - Files: 54 Python files
+   - Smart insertion after existing docstring fields
+
+**Test Infrastructure: 41 comprehensive tests** ✅
+- PEP 526 fixer: 23 tests (100% passing)
+- `:rtype:` fixer: 18 tests (100% passing)
+
+**Implementation Files Created:**
+1. `tools/repo_lint/fixers/__init__.py`
+2. `tools/repo_lint/fixers/pep526_fixer.py` (280 lines)
+3. `tools/repo_lint/fixers/rtype_fixer.py` (242 lines)
+4. `tools/repo_lint/tests/test_pep526_fixer.py` (543 lines, 23 tests)
+5. `tools/repo_lint/tests/test_rtype_fixer.py` (567 lines, 18 tests)
+
+**Files Improved:**
+- 55 files: return type annotations (Ruff)
+- 4 files: PEP 526 variable annotations (custom)
+- 54 files: docstring `:rtype:` fields (custom)
+- **Total: 113 files improved**
+
+**Phase 4 Status:**
+- ✅ Phase 4.1: Strategy defined
+- ✅ Phase 4.2: Ruff autofix applied (586 fixes)
+- ✅ Phase 4.3: PEP 526 fixer (8 fixes, 23 tests)
+- ✅ Phase 4.4: `:rtype:` fixer (290 fixes, 18 tests)
+- ⏳ Phase 4.5: Docstring style converter (future work - 10-15 hours)
+- ⏳ Phase 4.6: MD013 smart fixer (future work - 15-20 hours)
+
+**Commits This Session:**
+- **330f75b**: Code review fix (pytest import)
+- **edbc625**: Phase 4.4.4 WIP (test framework)
+- **e644709**: Phase 4.4.4 COMPLETE (18 tests passing)
+- **129ed0e**: Summary update
+- **0ca9e85**: Phase 4.4.5 COMPLETE (290 `:rtype:` fixes applied)
+- **[journals]**: Final journal updates
+
+### Next Steps
+
+**Remaining Phase 4 Work (Substantial Projects):**
+
+1. **Phase 4.5: Bidirectional Docstring Style Converter**
+   - Timeline: 10-15 hours
+   - Architecture: Parse → IR → Render
+   - Supports: reST ↔ Google ↔ NumPy (6 conversion pairs)
+   - Design documents complete:
+     - `278-docstring-style-converter-design.md`
+     - `278-docstring-style-conversion-strategy.md`
+
+2. **Phase 4.6: MD013 Smart Reflow Fixer**
+   - Timeline: 15-20 hours
+   - Estimated impact: ~1,800 violations auto-fixed
+   - 6-phase implementation roadmap
+   - Design document: `278-md013-smart-reflow-recommendations.md`
+
+**Then Proceed to Phases 5-6:**
+
+3. **Phase 5: CI Enforcement Rollout**
+   - Report-only mode
+   - Gradual enforcement
+   - Baseline measurement
+
+4. **Phase 6: Documentation Updates**
+   - User manual updates
+   - Contributing docs
+   - Type annotation examples

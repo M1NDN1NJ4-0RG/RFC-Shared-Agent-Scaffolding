@@ -45,7 +45,7 @@ from tools.repo_lint.cli_argparse import cmd_fix, create_parser
 class TestUnsafeFixGuardRails(unittest.TestCase):
     """Test guard rails for unsafe fix mode."""
 
-    def test_unsafe_without_yes_i_know_fails(self):
+    def test_unsafe_without_yes_i_know_fails(self) -> None:
         """Test that --unsafe without --yes-i-know fails with exit code 4."""
         parser = create_parser()
         args = parser.parse_args(["fix", "--unsafe"])
@@ -54,7 +54,7 @@ class TestUnsafeFixGuardRails(unittest.TestCase):
 
         self.assertEqual(exit_code, 4, "Should fail with UNSAFE_VIOLATION exit code (4)")
 
-    def test_unsafe_with_yes_i_know_in_ci_fails(self):
+    def test_unsafe_with_yes_i_know_in_ci_fails(self) -> None:
         """Test that unsafe mode fails in CI environment with exit code 4."""
         parser = create_parser()
         args = parser.parse_args(["fix", "--unsafe", "--yes-i-know", "--ci"])
@@ -63,7 +63,7 @@ class TestUnsafeFixGuardRails(unittest.TestCase):
 
         self.assertEqual(exit_code, 4, "Should fail with UNSAFE_VIOLATION exit code (4) in CI mode")
 
-    def test_unsafe_with_ci_env_var_fails(self):
+    def test_unsafe_with_ci_env_var_fails(self) -> None:
         """Test that unsafe mode fails when CI environment variable is set."""
         # Save original CI env var
         original_ci = os.environ.get("CI")
@@ -86,7 +86,7 @@ class TestUnsafeFixGuardRails(unittest.TestCase):
             else:
                 os.environ["CI"] = original_ci
 
-    def test_safe_fix_mode_works_normally(self):
+    def test_safe_fix_mode_works_normally(self) -> None:
         """Test that normal fix mode (without --unsafe) still works."""
         parser = create_parser()
         args = parser.parse_args(["fix"])
@@ -102,17 +102,17 @@ class TestUnsafeFixGuardRails(unittest.TestCase):
 class TestUnsafeFixForensics(unittest.TestCase):
     """Test forensics generation for unsafe fix mode."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up temporary workspace for each test."""
         self.temp_dir = Path(tempfile.mkdtemp())
         self.original_cwd = Path.cwd()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary workspace."""
         os.chdir(self.original_cwd)
         shutil.rmtree(self.temp_dir)
 
-    def test_patch_and_log_generated(self):
+    def test_patch_and_log_generated(self) -> None:
         """Test that patch and log files are generated when unsafe mode runs.
 
         AUTHORIZED: PR #148 only, purpose-built fixture in temporary workspace.
@@ -152,7 +152,7 @@ class TestUnsafeFixForensics(unittest.TestCase):
         self.assertGreater(len(patch_files), 0, "At least one patch file should be generated")
         self.assertGreater(len(log_files), 0, "At least one log file should be generated")
 
-    def test_log_contains_required_fields(self):
+    def test_log_contains_required_fields(self) -> None:
         """Test that log file contains all required fields.
 
         AUTHORIZED: PR #148 only, purpose-built fixture in temporary workspace.
@@ -199,15 +199,15 @@ class TestUnsafeFixForensics(unittest.TestCase):
 class TestUnsafeDocstringRewriter(unittest.TestCase):
     """Test the unsafe docstring rewriter fixer."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up temporary workspace."""
         self.temp_dir = Path(tempfile.mkdtemp())
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary workspace."""
         shutil.rmtree(self.temp_dir)
 
-    def test_converts_google_style_to_sphinx(self):
+    def test_converts_google_style_to_sphinx(self) -> None:
         """Test that Google-style docstrings are converted to Sphinx format.
 
         AUTHORIZED: PR #148 only, purpose-built fixture in temporary workspace.
@@ -250,7 +250,7 @@ def example(name, count):
         self.assertNotIn("Args:", output, "Should remove Args: section")
         self.assertNotIn("Returns:", output, "Should remove Returns: section")
 
-    def test_no_changes_for_conformant_file(self):
+    def test_no_changes_for_conformant_file(self) -> None:
         """Test that conformant files are not modified."""
         from tools.repo_lint.unsafe_fixers import UnsafeDocstringRewriter
 

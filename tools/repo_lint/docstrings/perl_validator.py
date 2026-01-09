@@ -68,6 +68,7 @@ class PerlValidator:
         :param file_path: Path to Perl file to validate
         :param content: File content as string
         :returns: List of validation errors (empty if all validations pass)
+        :rtype: List[ValidationError]
         """
         errors = []
 
@@ -90,6 +91,7 @@ class PerlValidator:
         :param content: File content as string
 
         :returns: ValidationError if file POD is missing required sections, None otherwise
+        :rtype: ValidationError | None
         """
         # Check for POD block
         if "=head1" not in content or "=cut" not in content:
@@ -119,6 +121,7 @@ class PerlValidator:
         :param content: File content as string (for pragma checking)
 
         :returns: List of validation errors for subroutines
+        :rtype: List[ValidationError]
         """
         errors = []
 

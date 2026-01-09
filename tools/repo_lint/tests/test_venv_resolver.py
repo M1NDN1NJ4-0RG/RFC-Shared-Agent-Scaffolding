@@ -39,14 +39,14 @@ from tools.repo_lint.env.venv_resolver import (
 class TestVenvActive(unittest.TestCase):
     """Test virtual environment activation detection."""
 
-    def test_is_venv_active_when_active(self):
+    def test_is_venv_active_when_active(self) -> None:
         """Test is_venv_active returns True when venv is active."""
         # sys.prefix != sys.base_prefix indicates venv is active
         with patch("tools.repo_lint.env.venv_resolver.sys.prefix", "/venv"):
             with patch("tools.repo_lint.env.venv_resolver.sys.base_prefix", "/usr"):
                 self.assertTrue(is_venv_active())
 
-    def test_is_venv_active_when_not_active(self):
+    def test_is_venv_active_when_not_active(self) -> None:
         """Test is_venv_active returns False when venv is not active."""
         # sys.prefix == sys.base_prefix indicates no venv
         with patch("tools.repo_lint.env.venv_resolver.sys.prefix", "/usr"):
@@ -57,7 +57,7 @@ class TestVenvActive(unittest.TestCase):
 class TestGetCurrentVenv(unittest.TestCase):
     """Test current virtual environment detection."""
 
-    def test_get_current_venv_when_active(self):
+    def test_get_current_venv_when_active(self) -> None:
         """Test get_current_venv returns venv path when active."""
         with patch("tools.repo_lint.env.venv_resolver.sys.prefix", "/venv"):
             with patch("tools.repo_lint.env.venv_resolver.sys.base_prefix", "/usr"):
@@ -65,7 +65,7 @@ class TestGetCurrentVenv(unittest.TestCase):
                 self.assertIsNotNone(venv)
                 self.assertEqual(venv, Path("/venv"))
 
-    def test_get_current_venv_when_not_active(self):
+    def test_get_current_venv_when_not_active(self) -> None:
         """Test get_current_venv returns None when not active."""
         with patch("tools.repo_lint.env.venv_resolver.sys.prefix", "/usr"):
             with patch("tools.repo_lint.env.venv_resolver.sys.base_prefix", "/usr"):
@@ -76,14 +76,14 @@ class TestGetCurrentVenv(unittest.TestCase):
 class TestGetVenvBinDir(unittest.TestCase):
     """Test bin/Scripts directory resolution."""
 
-    def test_get_venv_bin_dir_unix(self):
+    def test_get_venv_bin_dir_unix(self) -> None:
         """Test bin directory on Unix-like systems."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "linux"):
             venv_path = Path("/home/user/.venv")
             bin_dir = get_venv_bin_dir(venv_path)
             self.assertEqual(bin_dir, Path("/home/user/.venv/bin"))
 
-    def test_get_venv_bin_dir_windows(self):
+    def test_get_venv_bin_dir_windows(self) -> None:
         """Test Scripts directory on Windows."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "win32"):
             venv_path = Path("C:/Users/user/.venv")
@@ -94,42 +94,42 @@ class TestGetVenvBinDir(unittest.TestCase):
 class TestGetActivationScript(unittest.TestCase):
     """Test activation script path resolution."""
 
-    def test_activation_script_default_unix(self):
+    def test_activation_script_default_unix(self) -> None:
         """Test default activation script on Unix."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "linux"):
             venv_path = Path("/home/user/.venv")
             script = get_activation_script(venv_path)
             self.assertEqual(script, Path("/home/user/.venv/bin/activate"))
 
-    def test_activation_script_default_windows(self):
+    def test_activation_script_default_windows(self) -> None:
         """Test default activation script on Windows."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "win32"):
             venv_path = Path("C:/Users/user/.venv")
             script = get_activation_script(venv_path)
             self.assertEqual(script, Path("C:/Users/user/.venv/Scripts/activate.bat"))
 
-    def test_activation_script_bash(self):
+    def test_activation_script_bash(self) -> None:
         """Test bash activation script."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "linux"):
             venv_path = Path("/home/user/.venv")
             script = get_activation_script(venv_path, shell="bash")
             self.assertEqual(script, Path("/home/user/.venv/bin/activate"))
 
-    def test_activation_script_zsh(self):
+    def test_activation_script_zsh(self) -> None:
         """Test zsh activation script."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "linux"):
             venv_path = Path("/home/user/.venv")
             script = get_activation_script(venv_path, shell="zsh")
             self.assertEqual(script, Path("/home/user/.venv/bin/activate"))
 
-    def test_activation_script_fish(self):
+    def test_activation_script_fish(self) -> None:
         """Test fish activation script."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "linux"):
             venv_path = Path("/home/user/.venv")
             script = get_activation_script(venv_path, shell="fish")
             self.assertEqual(script, Path("/home/user/.venv/bin/activate.fish"))
 
-    def test_activation_script_fish_on_windows_raises(self):
+    def test_activation_script_fish_on_windows_raises(self) -> None:
         """Test fish activation script on Windows raises ValueError."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "win32"):
             venv_path = Path("C:/Users/user/.venv")
@@ -137,21 +137,21 @@ class TestGetActivationScript(unittest.TestCase):
                 get_activation_script(venv_path, shell="fish")
             self.assertIn("Fish shell is not supported on Windows", str(ctx.exception))
 
-    def test_activation_script_powershell(self):
+    def test_activation_script_powershell(self) -> None:
         """Test PowerShell activation script."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "linux"):
             venv_path = Path("/home/user/.venv")
             script = get_activation_script(venv_path, shell="powershell")
             self.assertEqual(script, Path("/home/user/.venv/bin/Activate.ps1"))
 
-    def test_activation_script_cmd(self):
+    def test_activation_script_cmd(self) -> None:
         """Test CMD activation script."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "win32"):
             venv_path = Path("C:/Users/user/.venv")
             script = get_activation_script(venv_path, shell="cmd")
             self.assertEqual(script, Path("C:/Users/user/.venv/Scripts/activate.bat"))
 
-    def test_activation_script_cmd_on_unix_raises(self):
+    def test_activation_script_cmd_on_unix_raises(self) -> None:
         """Test CMD activation script on Unix raises ValueError."""
         with patch("tools.repo_lint.env.venv_resolver.sys.platform", "linux"):
             venv_path = Path("/home/user/.venv")
@@ -159,7 +159,7 @@ class TestGetActivationScript(unittest.TestCase):
                 get_activation_script(venv_path, shell="cmd")
             self.assertIn("CMD is only supported on Windows", str(ctx.exception))
 
-    def test_activation_script_unsupported_shell_raises(self):
+    def test_activation_script_unsupported_shell_raises(self) -> None:
         """Test unsupported shell raises ValueError."""
         venv_path = Path("/home/user/.venv")
         with self.assertRaises(ValueError) as ctx:
@@ -170,7 +170,7 @@ class TestGetActivationScript(unittest.TestCase):
 class TestResolveVenv(unittest.TestCase):
     """Test virtual environment resolution with precedence rules."""
 
-    def test_resolve_venv_explicit_path(self):
+    def test_resolve_venv_explicit_path(self) -> None:
         """Test explicit --venv flag takes highest priority."""
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create a minimal venv structure for testing
@@ -185,13 +185,13 @@ class TestResolveVenv(unittest.TestCase):
             result = resolve_venv(explicit_path=str(venv_path))
             self.assertEqual(result, venv_path.resolve())
 
-    def test_resolve_venv_explicit_path_not_exists(self):
+    def test_resolve_venv_explicit_path_not_exists(self) -> None:
         """Test explicit path that doesn't exist raises error."""
         with self.assertRaises(VenvNotFoundError) as ctx:
             resolve_venv(explicit_path="/nonexistent/venv")
         self.assertIn("does not exist", str(ctx.exception))
 
-    def test_resolve_venv_explicit_path_not_valid_venv(self):
+    def test_resolve_venv_explicit_path_not_valid_venv(self) -> None:
         """Test explicit path that exists but is not a venv raises error."""
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create directory but no Python executable
@@ -201,7 +201,7 @@ class TestResolveVenv(unittest.TestCase):
                 resolve_venv(explicit_path=str(venv_path))
             self.assertIn("not a valid virtual environment", str(ctx.exception))
 
-    def test_resolve_venv_repo_root_dotenv(self):
+    def test_resolve_venv_repo_root_dotenv(self) -> None:
         """Test .venv/ under repo root with valid structure.
 
         This test validates that .venv directory under repo root is detected
@@ -219,14 +219,14 @@ class TestResolveVenv(unittest.TestCase):
             result = resolve_venv(repo_root=repo_root)
             self.assertEqual(result, venv_path)
 
-    def test_resolve_venv_current_venv(self):
+    def test_resolve_venv_current_venv(self) -> None:
         """Test currently active venv takes third priority."""
         with patch("tools.repo_lint.env.venv_resolver.sys.prefix", "/active/venv"):
             with patch("tools.repo_lint.env.venv_resolver.sys.base_prefix", "/usr"):
                 result = resolve_venv()
                 self.assertEqual(result, Path("/active/venv"))
 
-    def test_resolve_venv_no_venv_found_raises(self):
+    def test_resolve_venv_no_venv_found_raises(self) -> None:
         """Test error when no venv can be resolved."""
         with patch("tools.repo_lint.env.venv_resolver.sys.prefix", "/usr"):
             with patch("tools.repo_lint.env.venv_resolver.sys.base_prefix", "/usr"):
@@ -237,7 +237,7 @@ class TestResolveVenv(unittest.TestCase):
                         resolve_venv(repo_root=repo_root)
                     self.assertIn("No virtual environment found", str(ctx.exception))
 
-    def test_resolve_venv_precedence_explicit_over_repo(self):
+    def test_resolve_venv_precedence_explicit_over_repo(self) -> None:
         """Test explicit path takes precedence over repo .venv."""
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create repo .venv
@@ -256,7 +256,7 @@ class TestResolveVenv(unittest.TestCase):
             result = resolve_venv(explicit_path=str(explicit_venv), repo_root=repo_root)
             self.assertEqual(result, explicit_venv.resolve())
 
-    def test_resolve_venv_precedence_repo_over_current(self):
+    def test_resolve_venv_precedence_repo_over_current(self) -> None:
         """Test repo .venv takes precedence over current venv."""
         with tempfile.TemporaryDirectory() as tmpdir:
             repo_root = Path(tmpdir)

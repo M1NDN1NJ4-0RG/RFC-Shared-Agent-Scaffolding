@@ -67,6 +67,7 @@ class YAMLValidator:
 
         :param content: File content as string
         :returns: The complete header block as a string
+        :rtype: str
         """
         lines = content.split("\n")
         header_lines = []
@@ -103,6 +104,7 @@ class YAMLValidator:
         :param file_path: Path to YAML file to validate
         :param content: File content as string
         :returns: List of validation errors (empty if all validations pass)
+        :rtype: List[ValidationError]
         """
         # Extract the complete header block dynamically instead of using a fixed line limit
         header = YAMLValidator._extract_header_block(content)

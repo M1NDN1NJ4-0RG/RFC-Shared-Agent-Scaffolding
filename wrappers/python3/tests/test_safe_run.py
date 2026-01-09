@@ -140,7 +140,7 @@ def list_fail_logs(log_dir: Path):
 class TestSafeRun(unittest.TestCase):
     """Test safe_run.py wrapper script functionality."""
 
-    def test_success_creates_no_artifacts(self):
+    def test_success_creates_no_artifacts(self) -> None:
         """Test that successful runs don't create FAIL-LOGS artifacts."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -152,7 +152,7 @@ class TestSafeRun(unittest.TestCase):
             # On success, safe-run must create no artifacts.
             self.assertFalse(log_dir.exists(), "FAIL-LOGS directory should not be created on success")
 
-    def test_failure_creates_log_and_preserves_exit_code(self):
+    def test_failure_creates_log_and_preserves_exit_code(self) -> None:
         """Test that failures create FAIL-LOGS and preserve exit code."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -176,7 +176,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertIn("=== STDERR ===", content)
             self.assertIn("ERR", content)
 
-    def test_custom_log_dir_env(self):
+    def test_custom_log_dir_env(self) -> None:
         """Test that AGENT_FAIL_LOG_DIR environment variable works."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -190,7 +190,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertTrue(custom.exists())
             self.assertEqual(len(list_fail_logs(custom)), 1)
 
-    def test_snippet_lines_printed_to_stderr(self):
+    def test_snippet_lines_printed_to_stderr(self) -> None:
         """Test that snippet lines are printed to stderr."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -216,7 +216,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertIn("line2", proc.stderr)
             self.assertIn("line4", proc.stderr)
 
-    def test_sigint_creates_aborted_log(self):
+    def test_sigint_creates_aborted_log(self) -> None:
         """Test that SIGINT creates an aborted log file."""
         # Run a long-ish process via safe-run, then SIGINT safe-run itself.
         with tempfile.TemporaryDirectory() as td:
@@ -271,7 +271,7 @@ class TestSafeRun(unittest.TestCase):
             content = logs[0].read_text(encoding="utf-8", errors="replace")
             self.assertIn("START", content)
 
-    def test_event_ledger(self):
+    def test_event_ledger(self) -> None:
         """Test that event ledger is generated with sequence numbers"""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -304,7 +304,7 @@ class TestSafeRun(unittest.TestCase):
             self.assertIn("[STDOUT] out2", content)
             self.assertIn("[STDERR] err1", content)
 
-    def test_merged_view(self):
+    def test_merged_view(self) -> None:
         """Test optional merged view output"""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)

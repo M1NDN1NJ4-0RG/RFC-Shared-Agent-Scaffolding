@@ -55,6 +55,7 @@ class RustValidator:
         :param file_path: Path to Rust file to validate
         :param content: File content as string
         :returns: List of validation errors (empty if all validations pass)
+        :rtype: List[ValidationError]
         """
         # Check for module-level docs (//!)
         if "//!" not in content:

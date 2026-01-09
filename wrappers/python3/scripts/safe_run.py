@@ -125,6 +125,7 @@ def find_repo_root() -> Path | None:
     ...     print(f"Repository root: {root}")
     ... else:
     ...     print("Not in a repository")
+    :rtype: Path | None
     """
     script_path = Path(__file__).resolve()
     current = script_path.parent
@@ -167,6 +168,7 @@ def detect_platform() -> str:
     - Uses platform.system() for OS detection
     - Uses platform.machine() for architecture detection
     - Returns "unknown/unknown" for unsupported platforms (caller handles gracefully)
+    :rtype: str
     """
     # Detect OS
     system = platform.system()
@@ -243,6 +245,7 @@ def find_safe_run_binary() -> str | None:
     - Per spec, SAFE_RUN_BIN is returned without validation
     - File existence and execute permissions are checked for dev/CI paths
     - The function does not raise exceptions; returns None on failure
+       :rtype: str | None
     """
     # 1. Environment override (use without validation per spec)
     safe_run_bin = os.environ.get("SAFE_RUN_BIN")
@@ -338,6 +341,7 @@ def main() -> int:
 
         # If binary not found, prints error and returns 127
         code = main()  # Returns instead of exec'ing
+        :rtype: int
     """
     binary = find_safe_run_binary()
 

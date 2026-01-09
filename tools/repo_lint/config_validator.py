@@ -34,7 +34,7 @@ from typing import Any, Dict, List
 import yaml
 
 # Semantic version pattern (X.Y.Z)
-SEMANTIC_VERSION_PATTERN = r"^\d+\.\d+\.\d+$"
+SEMANTIC_VERSION_PATTERN: str = r"^\d+\.\d+\.\d+$"
 
 # Default allowed top-level keys in config files
 DEFAULT_ALLOWED_KEYS = ["config_type", "version", "languages", "exclusions", "validation", "settings", "description"]
@@ -48,7 +48,7 @@ class ConfigValidationError(Exception):
         with file path, line context, and actionable error messages.
     """
 
-    def __init__(self, file_path: str, message: str, line: int | None = None):
+    def __init__(self, file_path: str, message: str, line: int | None = None) -> None:
         """Initialize config validation error.
 
         :param file_path: Path to the config file that failed validation
@@ -220,6 +220,7 @@ def validate_config_file(file_path: Path, config_type: str, allowed_keys: List[s
     :returns: Parsed and validated config data
     :raises ConfigValidationError: If validation fails (with detailed error message)
     :raises FileNotFoundError: If config file does not exist
+    :rtype: Dict[str, Any]
     """
     if not file_path.exists():
         raise FileNotFoundError(f"Config file not found: {file_path}")
@@ -265,6 +266,7 @@ def load_validated_config(file_path: str, config_type: str) -> Dict[str, Any]:
     :returns: Parsed and validated config data
     :raises ConfigValidationError: If validation fails
     :raises FileNotFoundError: If config file does not exist
+    :rtype: Dict[str, Any]
     """
     path = Path(file_path)
     return validate_config_file(path, config_type)

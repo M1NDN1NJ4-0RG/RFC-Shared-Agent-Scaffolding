@@ -66,7 +66,7 @@ class TestPowerShellValidator(unittest.TestCase):
         Validates PowerShell docstring contract enforcement.
     """
 
-    def test_valid_file_help(self):
+    def test_valid_file_help(self) -> None:
         """Test that valid file-level help contains required sections.
 
         :Purpose:
@@ -104,7 +104,7 @@ $message = "Hello"
                         section, file_level_sections, f"File-level section {section} should not be missing"
                     )
 
-    def test_missing_synopsis(self):
+    def test_missing_synopsis(self) -> None:
         """Test that missing .SYNOPSIS is detected.
 
         :Purpose:
@@ -132,7 +132,7 @@ $message = "Hello"
         has_synopsis_error = any(".SYNOPSIS" in e.missing_sections for e in errors)
         self.assertTrue(has_synopsis_error, f"Expected .SYNOPSIS error, got: {errors}")
 
-    def test_missing_description(self):
+    def test_missing_description(self) -> None:
         """Test that missing .DESCRIPTION is detected.
 
         :Purpose:
@@ -160,7 +160,7 @@ $message = "Hello"
         has_description_error = any(".DESCRIPTION" in e.missing_sections for e in errors)
         self.assertTrue(has_description_error, f"Expected .DESCRIPTION error, got: {errors}")
 
-    def test_missing_example(self):
+    def test_missing_example(self) -> None:
         """Test that missing .EXAMPLE is detected.
 
         :Purpose:
@@ -188,7 +188,7 @@ $message = "Hello"
         has_example_error = any(".EXAMPLE" in e.missing_sections for e in errors)
         self.assertTrue(has_example_error, f"Expected .EXAMPLE error, got: {errors}")
 
-    def test_missing_file_help(self):
+    def test_missing_file_help(self) -> None:
         """Test that completely missing file help is detected.
 
         :Purpose:

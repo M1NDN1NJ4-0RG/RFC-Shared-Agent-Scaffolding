@@ -66,7 +66,7 @@ class TestYAMLValidator(unittest.TestCase):
         Validates YAML docstring contract enforcement.
     """
 
-    def test_valid_workflow_header(self):
+    def test_valid_workflow_header(self) -> None:
         """Test that a valid workflow header passes validation.
 
         :Purpose:
@@ -96,7 +96,7 @@ on: push
         errors = YAMLValidator.validate(Path("test.yml"), content)
         self.assertEqual(len(errors), 0, f"Expected no errors, got: {errors}")
 
-    def test_valid_file_header(self):
+    def test_valid_file_header(self) -> None:
         """Test that a valid config file header passes validation.
 
         :Purpose:
@@ -125,7 +125,7 @@ key: value
         errors = YAMLValidator.validate(Path("config.yml"), content)
         self.assertEqual(len(errors), 0, f"Expected no errors, got: {errors}")
 
-    def test_missing_purpose_section(self):
+    def test_missing_purpose_section(self) -> None:
         """Test that missing Purpose section is detected.
 
         :Purpose:
@@ -152,7 +152,7 @@ name: Test
         self.assertEqual(len(errors), 1)
         self.assertIn("Purpose:", errors[0].missing_sections)
 
-    def test_missing_triggers_section(self):
+    def test_missing_triggers_section(self) -> None:
         """Test that missing Triggers section is detected.
 
         :Purpose:
@@ -179,7 +179,7 @@ name: Test
         self.assertEqual(len(errors), 1)
         self.assertIn("Triggers: or Usage:", errors[0].missing_sections)
 
-    def test_missing_header(self):
+    def test_missing_header(self) -> None:
         """Test that completely missing header is detected.
 
         :Purpose:
@@ -195,7 +195,7 @@ on: push
         has_missing_sections = any(len(e.missing_sections) > 0 for e in errors)
         self.assertTrue(has_missing_sections, f"Expected missing sections, got: {errors}")
 
-    def test_header_extraction_stops_at_content(self):
+    def test_header_extraction_stops_at_content(self) -> None:
         """Test that header extraction stops at first YAML content.
 
         :Purpose:

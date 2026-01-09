@@ -116,7 +116,7 @@ class TestSafeArchive(unittest.TestCase):
     and no-clobber semantics.
     """
 
-    def test_moves_all_no_clobber(self):
+    def test_moves_all_no_clobber(self) -> None:
         """Test that --all moves all files with no-clobber behavior."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -135,7 +135,7 @@ class TestSafeArchive(unittest.TestCase):
             self.assertIn("Destination exists", r.stderr)
             self.assertTrue((fail / "a fail.txt").exists())
 
-    def test_auto_suffix_default(self):
+    def test_auto_suffix_default(self) -> None:
         """Test M0-P1-I3: Default auto-suffix behavior when destination exists"""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -162,7 +162,7 @@ class TestSafeArchive(unittest.TestCase):
             self.assertTrue((arc / "test.log.2").exists())
             self.assertEqual((arc / "test.log.2").read_text(encoding="utf-8"), "NEW")
 
-    def test_auto_suffix_multiple_collisions(self):
+    def test_auto_suffix_multiple_collisions(self) -> None:
         """Test M0-P1-I3: Auto-suffix increments correctly when .2, .3 already exist"""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -195,7 +195,7 @@ class TestSafeArchive(unittest.TestCase):
             self.assertTrue((arc / "test.log.4").exists())
             self.assertEqual((arc / "test.log.4").read_text(encoding="utf-8"), "FOURTH")
 
-    def test_moves_and_gzip(self):
+    def test_moves_and_gzip(self) -> None:
         """Test archival with gzip compression enabled."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)
@@ -217,7 +217,7 @@ class TestSafeArchive(unittest.TestCase):
                 data = f.read()
             self.assertIn("hello", data)
 
-    def test_archive_specific_files(self):
+    def test_archive_specific_files(self) -> None:
         """Test archiving specific files instead of --all."""
         with tempfile.TemporaryDirectory() as td:
             wd = Path(td)

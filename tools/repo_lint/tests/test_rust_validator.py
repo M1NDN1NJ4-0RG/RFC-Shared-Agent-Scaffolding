@@ -66,7 +66,7 @@ class TestRustValidator(unittest.TestCase):
         Validates Rust docstring contract enforcement.
     """
 
-    def test_valid_module_docs(self):
+    def test_valid_module_docs(self) -> None:
         """Test that valid module documentation passes validation.
 
         :Purpose:
@@ -89,7 +89,7 @@ pub fn test_function() {}
         errors = RustValidator.validate(Path("lib.rs"), content)
         self.assertEqual(len(errors), 0, f"Expected no errors, got: {errors}")
 
-    def test_missing_module_docs(self):
+    def test_missing_module_docs(self) -> None:
         """Test that missing module documentation is detected.
 
         :Purpose:
@@ -102,7 +102,7 @@ pub fn test_function() {}
         self.assertEqual(len(errors), 1)
         self.assertIn("module documentation (//!)", errors[0].missing_sections)
 
-    def test_missing_purpose_section(self):
+    def test_missing_purpose_section(self) -> None:
         """Test that missing Purpose section is detected.
 
         :Purpose:
@@ -122,7 +122,7 @@ pub fn test_function() {}
         self.assertEqual(len(errors), 1)
         self.assertIn("# Purpose", errors[0].missing_sections)
 
-    def test_missing_examples_section(self):
+    def test_missing_examples_section(self) -> None:
         """Test that missing Examples section is detected.
 
         :Purpose:
@@ -140,7 +140,7 @@ pub fn test_function() {}
         self.assertEqual(len(errors), 1)
         self.assertIn("# Examples", errors[0].missing_sections)
 
-    def test_main_rs_requires_exit_section(self):
+    def test_main_rs_requires_exit_section(self) -> None:
         """Test that main.rs requires Exit Behavior or Exit Codes.
 
         :Purpose:
@@ -165,7 +165,7 @@ fn main() {}
         self.assertEqual(len(errors), 1)
         self.assertIn("# Exit Behavior or # Exit Codes", errors[0].missing_sections)
 
-    def test_main_rs_with_exit_behavior(self):
+    def test_main_rs_with_exit_behavior(self) -> None:
         """Test that main.rs with Exit Behavior passes.
 
         :Purpose:

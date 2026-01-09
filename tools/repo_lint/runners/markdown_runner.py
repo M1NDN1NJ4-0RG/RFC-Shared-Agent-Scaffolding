@@ -44,6 +44,7 @@ class MarkdownRunner(Runner):
 
         :returns:
             True if Markdown files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed Markdown files
         if self._changed_only:
@@ -59,6 +60,7 @@ class MarkdownRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         required = ["markdownlint-cli2"]
         return [tool for tool in required if not command_exists(tool)]
@@ -68,6 +70,7 @@ class MarkdownRunner(Runner):
 
         :returns:
             List of linting results from markdownlint-cli2
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["markdownlint-cli2"])
 
@@ -88,6 +91,7 @@ class MarkdownRunner(Runner):
         :param policy: Auto-fix policy dictionary (unused for now)
         :returns:
             List of results after applying fixes
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["markdownlint-cli2"])
 
@@ -105,6 +109,7 @@ class MarkdownRunner(Runner):
         :param fix: If True, apply automatic fixes
         :returns:
             LintResult for markdownlint-cli2
+        :rtype: LintResult
         """
         # Get all Markdown files
         # Note: markdownlint-cli2 handles exclusions via .markdownlint-cli2.jsonc
@@ -158,6 +163,7 @@ class MarkdownRunner(Runner):
         :param stderr: Standard error from markdownlint-cli2
         :returns:
             List of Violation objects
+        :rtype: List[Violation]
         """
         violations = []
 

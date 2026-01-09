@@ -46,6 +46,7 @@ class PythonRunner(Runner):
 
         :returns:
             True if Python files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed Python files
         if self._changed_only:
@@ -61,6 +62,7 @@ class PythonRunner(Runner):
 
         :param line: Stripped line from ruff output
         :returns: True if this is a context line to skip
+        :rtype: bool
         """
         # Skip various ruff context/formatting lines
         if line.startswith(("|", "-->", "=", "help:")):
@@ -83,6 +85,7 @@ class PythonRunner(Runner):
 
         :param line: Raw linter output line
         :returns: Dict with 'file' (basename), 'line' (int or None), 'message' (str)
+        :rtype: dict
         """
         # Try to parse path:line:col: format (ruff, pylint)
         if ":" in line:
@@ -133,6 +136,7 @@ class PythonRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         required = ["black", "ruff", "pylint"]
         return [tool for tool in required if not command_exists(tool)]
@@ -142,6 +146,7 @@ class PythonRunner(Runner):
 
         :returns:
             List of linting results from all Python tools
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["black", "ruff", "pylint"])
 
@@ -173,6 +178,7 @@ class PythonRunner(Runner):
 
         :param policy: Auto-fix policy dictionary (deny-by-default)
         :returns: List of results after applying fixes
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["black", "ruff", "pylint"])
 
@@ -222,6 +228,7 @@ class PythonRunner(Runner):
 
         :returns:
             LintResult for Black check
+        :rtype: LintResult
         """
         result = subprocess.run(
             ["black", "--check", "--diff", "."], cwd=self.repo_root, capture_output=True, text=True, check=False
@@ -281,6 +288,7 @@ class PythonRunner(Runner):
 
         :returns:
             LintResult for Black fix operation
+        :rtype: LintResult
         """
         result = subprocess.run(["black", "."], cwd=self.repo_root, capture_output=True, text=True, check=False)
 
@@ -297,6 +305,7 @@ class PythonRunner(Runner):
         :param stdout: Ruff command stdout output
         :param context: Context for unsafe fixes message ('check' or 'fix')
         :returns: Tuple of (violations list, info_message or None)
+        :rtype: tuple[List[Violation], str | None]
         """
         violations = []
         info_message = None
@@ -339,6 +348,7 @@ class PythonRunner(Runner):
 
         :returns:
             LintResult for Ruff check
+        :rtype: LintResult
         """
         result = subprocess.run(
             ["ruff", "check", ".", "--no-fix"], cwd=self.repo_root, capture_output=True, text=True, check=False
@@ -357,6 +367,7 @@ class PythonRunner(Runner):
 
         :returns:
             LintResult for Ruff fix operation
+        :rtype: LintResult
         """
         # Apply safe fixes only (no --unsafe-fixes flag)
         result = subprocess.run(
@@ -374,6 +385,7 @@ class PythonRunner(Runner):
 
         :returns:
             LintResult for Pylint check
+        :rtype: LintResult
         """
         # Get all Python files, excluding test fixtures (respecting changed-only mode)
         if self._changed_only:
@@ -423,6 +435,7 @@ class PythonRunner(Runner):
 
         :returns:
             LintResult for docstring validation
+        :rtype: LintResult
         """
         # Get Python files to validate
         files = get_tracked_files(["**/*.py"], self.repo_root, include_fixtures=self._include_fixtures)
@@ -446,6 +459,7 @@ class PythonRunner(Runner):
 
         :returns:
             LintResult for PEP 526 type annotation checking
+        :rtype: LintResult
         """
         from tools.repo_lint.checkers.pep526_checker import PEP526Checker
         from tools.repo_lint.checkers.pep526_config import get_default_config

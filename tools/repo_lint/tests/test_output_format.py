@@ -74,7 +74,7 @@ class TestOutputFormat(unittest.TestCase):
         Tests use CI mode to ensure deterministic rendering without terminal-specific formatting.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -100,7 +100,7 @@ class TestOutputFormat(unittest.TestCase):
             message="Quote to prevent word splitting",
         )
 
-    def test_violation_format_stable(self):
+    def test_violation_format_stable(self) -> None:
         """Test that Violation string representation is stable.
 
         :Purpose:
@@ -119,7 +119,7 @@ class TestOutputFormat(unittest.TestCase):
         expected2 = "test.py: [pylint] Module docstring missing"
         self.assertEqual(v2_str, expected2, "Violation format without line should be deterministic")
 
-    def test_no_violations_output(self):
+    def test_no_violations_output(self) -> None:
         """Test output format when no violations found.
 
         :Purpose:
@@ -138,7 +138,7 @@ class TestOutputFormat(unittest.TestCase):
         self.assertIn("Summary", output_text)
         self.assertIn("Exit Code: 0 (SUCCESS)", output_text)
 
-    def test_violations_output_format(self):
+    def test_violations_output_format(self) -> None:
         """Test output format when violations found.
 
         :Purpose:
@@ -169,7 +169,7 @@ class TestOutputFormat(unittest.TestCase):
         # Check summary section
         self.assertIn("Total Violations: 2", output_text)
 
-    def test_summary_count_accuracy(self):
+    def test_summary_count_accuracy(self) -> None:
         """Test that summary counts violations accurately.
 
         :Purpose:
@@ -194,7 +194,7 @@ class TestOutputFormat(unittest.TestCase):
         output_text = output.getvalue()
         self.assertIn("Total Violations: 3", output_text)
 
-    def test_verbose_output_includes_passed(self):
+    def test_verbose_output_includes_passed(self) -> None:
         """Test that verbose mode includes passed checks.
 
         :Purpose:
@@ -220,7 +220,7 @@ class TestOutputFormat(unittest.TestCase):
         self.assertIn("black", output_text.lower())
         self.assertIn("ruff", output_text.lower())
 
-    def test_output_contains_no_unstable_fields(self):
+    def test_output_contains_no_unstable_fields(self) -> None:
         """Test that output contains no timestamps or random data.
 
         :Purpose:
@@ -245,7 +245,7 @@ class TestOutputFormat(unittest.TestCase):
         # Note: Rich table rendering should be deterministic in CI mode
         self.assertEqual(output1.getvalue(), output2.getvalue(), "Output should be deterministic")
 
-    def test_multiple_violations_same_file(self):
+    def test_multiple_violations_same_file(self) -> None:
         """Test output format for multiple violations in same file.
 
         :Purpose:

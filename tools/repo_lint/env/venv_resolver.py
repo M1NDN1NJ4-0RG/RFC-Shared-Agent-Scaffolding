@@ -52,7 +52,7 @@ class VenvNotFoundError(Exception):
         remediation: Suggested remediation steps
     """
 
-    def __init__(self, message: str, remediation: str):
+    def __init__(self, message: str, remediation: str) -> None:
         """Initialize VenvNotFoundError.
 
         :param message: Human-readable error message
@@ -71,6 +71,7 @@ def is_venv_active() -> bool:
     :Note:
         This checks if sys.prefix differs from sys.base_prefix, which is
         the standard Python mechanism for detecting venv activation.
+        :rtype: bool
     """
     return sys.prefix != sys.base_prefix
 
@@ -83,6 +84,7 @@ def get_current_venv() -> Path | None:
     :Note:
         This returns sys.prefix if a venv is active. sys.prefix points to
         the root of the virtual environment directory.
+        :rtype: Path | None
     """
     if is_venv_active():
         return Path(sys.prefix)
@@ -98,6 +100,7 @@ def get_venv_bin_dir(venv_path: Path) -> Path:
     :Note:
         On Unix-like systems (Linux, macOS), the bin directory is 'bin/'.
         On Windows, the bin directory is 'Scripts/'.
+        :rtype: Path
     """
     if sys.platform == "win32":
         return venv_path / "Scripts"
@@ -119,6 +122,7 @@ def get_activation_script(venv_path: Path, shell: str | None = None) -> Path:
         - fish: activate.fish (Unix only)
         - powershell: Activate.ps1 (cross-platform)
         - cmd: activate.bat (Windows only)
+        :rtype: Path
     """
     bin_dir = get_venv_bin_dir(venv_path)
 
@@ -185,6 +189,7 @@ def resolve_venv(
         and follows symlinks. While this validates the path exists and contains a
         Python executable, it does not restrict the path to specific directories.
         Users providing --venv flags are responsible for ensuring the path is safe.
+        :rtype: Path
     """
 
     def _validate_venv_structure(venv_path: Path) -> bool:
@@ -192,6 +197,7 @@ def resolve_venv(
 
         :param venv_path: Path to check
         :returns: True if valid venv, False otherwise
+        :rtype: bool
         """
         bin_dir = get_venv_bin_dir(venv_path)
         return (

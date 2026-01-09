@@ -49,6 +49,7 @@ def validate_file(file_path: Path) -> List[ValidationError]:
     :param file_path: Path to file to validate
 
     :returns: List of validation errors (empty if file passes)
+    :rtype: List[ValidationError]
     """
     try:
         content = file_path.read_text(encoding="utf-8")
@@ -84,6 +85,7 @@ def validate_files(files: List[Path | str], language: str = "all") -> List[Valid
     :param language: Language to filter by (python, bash, perl, powershell, yaml, rust, all)
 
     :returns: List of all validation errors across all files
+    :rtype: List[ValidationError]
     """
     errors: List[ValidationError] = []
 
@@ -110,6 +112,7 @@ def _get_language_from_extension(file_path: Path) -> str:
     :param file_path: Path to file
 
     :returns: Language name (python, bash, perl, powershell, yaml, rust) or empty string if unknown
+    :rtype: str
     """
     suffix = file_path.suffix.lower()
 

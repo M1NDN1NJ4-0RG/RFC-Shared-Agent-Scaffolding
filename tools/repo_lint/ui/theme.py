@@ -52,6 +52,7 @@ def _get_default_theme_path() -> Path:
     the module is first imported.
 
     :returns: Path to default theme YAML
+    :rtype: Path
     """
     from tools.repo_lint.repo_utils import find_repo_root
 
@@ -138,7 +139,7 @@ class UITheme:
 class ThemeValidationError(Exception):
     """Raised when theme validation fails."""
 
-    def __init__(self, message: str, file_path: Path | None = None):
+    def __init__(self, message: str, file_path: Path | None = None) -> None:
         """Initialize ThemeValidationError.
 
         :param message: Error message
@@ -223,6 +224,7 @@ def load_theme(theme_path: Path | None = None, ci_mode: bool = False, allow_user
     :param allow_user_override: If False, ignore env and user config paths
     :returns: Loaded and validated UITheme
     :raises ThemeValidationError: If theme validation fails
+    :rtype: UITheme
     """
     selected_theme: Path | None = None
 
@@ -388,6 +390,7 @@ def get_theme(ci_mode: bool = False) -> UITheme:
 
     :param ci_mode: If True, load with CI mode restrictions
     :returns: Active UITheme instance
+    :rtype: UITheme
     """
     return load_theme(ci_mode=ci_mode)
 
@@ -398,6 +401,7 @@ def get_box_style(theme: UITheme, ci_mode: bool) -> box.Box:
     :param theme: Active theme
     :param ci_mode: If True, use CI box style
     :returns: Rich box style
+    :rtype: box.Box
     """
     if ci_mode:
         style_name = theme.ci.box_style

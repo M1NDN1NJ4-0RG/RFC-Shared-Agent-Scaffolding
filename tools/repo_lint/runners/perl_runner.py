@@ -42,6 +42,7 @@ class PerlRunner(Runner):
 
         :returns:
             True if Perl files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed Perl files
         if self._changed_only:
@@ -57,6 +58,7 @@ class PerlRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         required = ["perlcritic"]
         return [tool for tool in required if not command_exists(tool)]
@@ -66,6 +68,7 @@ class PerlRunner(Runner):
 
         :returns:
             List of linting results from all Perl tools
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["perlcritic"])
 
@@ -87,6 +90,7 @@ class PerlRunner(Runner):
 
         :param policy: Auto-fix policy dictionary (unused for Perl)
         :returns: List of results (runs checks only)
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["perlcritic"])
 
@@ -102,6 +106,7 @@ class PerlRunner(Runner):
 
         :returns:
             List of Perl file paths (empty list if none found)
+        :rtype: List[str]
         """
         all_files = get_tracked_files(["**/*.pl"], self.repo_root, include_fixtures=self._include_fixtures)
         return filter_excluded_paths(all_files)
@@ -111,6 +116,7 @@ class PerlRunner(Runner):
 
         :returns:
             LintResult for Perl::Critic
+        :rtype: LintResult
         """
         perl_files = self._get_perl_files()
         if not perl_files:
@@ -141,6 +147,7 @@ class PerlRunner(Runner):
 
         :returns:
             LintResult for docstring validation
+        :rtype: LintResult
         """
         perl_files = self._get_perl_files()
         if not perl_files:

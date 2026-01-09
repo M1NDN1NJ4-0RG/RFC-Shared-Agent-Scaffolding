@@ -84,11 +84,11 @@ def safe_print(text: str, fallback_text: str = None) -> None:
 class ExitCode(IntEnum):
     """Standard exit codes for repo_lint."""
 
-    SUCCESS = 0  # All checks passed
-    VIOLATIONS = 1  # Linting/formatting violations found
-    MISSING_TOOLS = 2  # Required tools not installed (CI mode)
-    INTERNAL_ERROR = 3  # Internal error or exception
-    UNSAFE_VIOLATION = 4  # Unsafe mode policy violation (CI or missing confirmation)
+    SUCCESS: int = 0  # All checks passed
+    VIOLATIONS: int = 1  # Linting/formatting violations found
+    MISSING_TOOLS: int = 2  # Required tools not installed (CI mode)
+    INTERNAL_ERROR: int = 3  # Internal error or exception
+    UNSAFE_VIOLATION: int = 4  # Unsafe mode policy violation (CI or missing confirmation)
 
 
 @dataclass
@@ -136,7 +136,7 @@ class RepoLintError(Exception):
 class MissingToolError(RepoLintError):
     """Raised when required tools are not installed."""
 
-    def __init__(self, tool: str, install_hint: str | None = None):
+    def __init__(self, tool: str, install_hint: str | None = None) -> None:
         """Initialize MissingToolError.
 
         :param tool: Name of the missing tool
@@ -175,6 +175,7 @@ def filter_excluded_paths(files: List[str], exclude_patterns: List[str] | None =
         Uses simple substring matching. A file is excluded if any pattern
         appears anywhere in its path. This is consistent with how git pathspecs
         work for directory exclusions.
+        :rtype: List[str]
     """
     if exclude_patterns is None:
         exclude_patterns = get_default_exclude_patterns()
@@ -190,6 +191,7 @@ def get_default_exclude_patterns() -> List[str]:
     :Note:
         These patterns are used consistently across all language runners to
         exclude test fixtures with intentional violations from linting.
+        :rtype: List[str]
     """
     return [
         "conformance/repo-lint/fixtures/violations/",
@@ -211,6 +213,7 @@ def convert_validation_errors_to_violations(errors: List, tool_name: str) -> Lis
         docstring validation ValidationError format to the repo_lint Violation
         format. It handles symbol information, missing sections, and message
         formatting consistently across all language runners.
+        :rtype: List[Violation]
     """
     import os
 

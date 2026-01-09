@@ -73,6 +73,7 @@ class BashValidator:
         :param content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)
+        :rtype: List[ValidationError]
         """
         errors = []
 
@@ -95,6 +96,7 @@ class BashValidator:
         :param content: File content as string
 
         :returns: ValidationError if header is missing required sections, None otherwise
+        :rtype: ValidationError | None
         """
         # Check for top-of-file comment block (first 100 lines)
         lines = content.split("\n")[:100]
@@ -154,6 +156,7 @@ class BashValidator:
         :param content: File content
 
         :returns: List of validation errors for functions
+        :rtype: List[ValidationError]
         """
         errors = []
 
@@ -209,6 +212,7 @@ class BashValidator:
         :param content: File content
 
         :returns: List of validation errors for functions
+        :rtype: List[ValidationError]
         """
         errors = []
         lines = content.split("\n")

@@ -61,17 +61,17 @@ class TestBootstrapScript(unittest.TestCase):
     - Idempotency verification
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         self.test_dir = tempfile.mkdtemp(prefix="bootstrap_test_")
         self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary test directory."""
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
 
-    def test_exit_code_10_not_in_repo(self):
+    def test_exit_code_10_not_in_repo(self) -> None:
         """Test exit code 10 when not in a repository."""
         non_repo = Path(self.test_dir) / "not_a_repo"
         non_repo.mkdir()
@@ -91,7 +91,7 @@ class TestBootstrapScript(unittest.TestCase):
         self.assertEqual(result.returncode, 10, "Expected exit code 10 when not in a repository")
         self.assertIn("Could not find repository root", result.stderr)
 
-    def test_exit_code_12_no_install_target(self):
+    def test_exit_code_12_no_install_target(self) -> None:
         """Test exit code 12 when no pyproject.toml found."""
         repo = Path(self.test_dir) / "repo_no_pyproject"
         repo.mkdir()
@@ -116,7 +116,7 @@ class TestBootstrapScript(unittest.TestCase):
         )
         self.assertIn("No valid install target found", result.stderr)
 
-    def test_finds_repo_root_from_subdirectory(self):
+    def test_finds_repo_root_from_subdirectory(self) -> None:
         """Test that bootstrap finds repo root when run from subdirectory."""
         repo_root = Path(self.test_dir) / "test_repo"
         repo_root.mkdir()
@@ -152,7 +152,7 @@ version = "0.1.0"
         # Should find the repo root (shown in output)
         self.assertIn(f"Repository root: {repo_root}", result.stdout)
 
-    def test_creates_venv_directory(self):
+    def test_creates_venv_directory(self) -> None:
         """Test that bootstrap creates .venv directory."""
         repo_root = Path(self.test_dir) / "test_repo"
         repo_root.mkdir()
@@ -188,7 +188,7 @@ version = "0.1.0"
             "venv should contain python3",
         )
 
-    def test_idempotency_venv_already_exists(self):
+    def test_idempotency_venv_already_exists(self) -> None:
         """Test that bootstrap is idempotent when venv already exists."""
         repo_root = Path(self.test_dir) / "test_repo"
         repo_root.mkdir()
@@ -231,11 +231,11 @@ class TestRepositoryDiscovery(unittest.TestCase):
     the function in isolation.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Create temporary test directory."""
         self.test_dir = tempfile.mkdtemp(prefix="bootstrap_discovery_test_")
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary test directory."""
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
@@ -291,7 +291,7 @@ find_repo_root
         test_script.chmod(0o755)
         return test_script
 
-    def test_find_repo_root_with_git_directory(self):
+    def test_find_repo_root_with_git_directory(self) -> None:
         """Test finding repo root with .git directory."""
         repo_root = Path(self.test_dir) / "test_repo"
         repo_root.mkdir()
@@ -306,7 +306,7 @@ find_repo_root
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), str(repo_root))
 
-    def test_find_repo_root_with_pyproject_toml(self):
+    def test_find_repo_root_with_pyproject_toml(self) -> None:
         """Test finding repo root with pyproject.toml."""
         repo_root = Path(self.test_dir) / "test_repo"
         repo_root.mkdir()
@@ -321,7 +321,7 @@ find_repo_root
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), str(repo_root))
 
-    def test_find_repo_root_with_readme(self):
+    def test_find_repo_root_with_readme(self) -> None:
         """Test finding repo root with README.md."""
         repo_root = Path(self.test_dir) / "test_repo"
         repo_root.mkdir()
@@ -334,7 +334,7 @@ find_repo_root
         self.assertEqual(result.returncode, 0)
         self.assertEqual(result.stdout.strip(), str(repo_root))
 
-    def test_find_repo_root_exits_10_when_not_in_repo(self):
+    def test_find_repo_root_exits_10_when_not_in_repo(self) -> None:
         """Test that find_repo_root exits with code 10 outside a repo."""
         non_repo = Path(self.test_dir) / "not_a_repo"
         non_repo.mkdir()
@@ -354,17 +354,17 @@ class TestToolDetection(unittest.TestCase):
     for all required toolchains: Python, Shell, PowerShell, and Perl.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         self.test_dir = tempfile.mkdtemp(prefix="bootstrap_tool_test_")
         self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary test directory."""
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
 
-    def _setup_mock_repo(self, repo_root):
+    def _setup_mock_repo(self, repo_root) -> None:
         """Create a minimal mock repository with required files.
 
         :param repo_root: Path to repository root directory.
@@ -399,7 +399,7 @@ repo-lint = "test_project.cli:main"
 """
         )
 
-    def test_python_tools_detection(self):
+    def test_python_tools_detection(self) -> None:
         """Test detection of Python toolchain (black, ruff, pylint, yamllint, pytest)."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -423,7 +423,7 @@ repo-lint = "test_project.cli:main"
         for tool in ["black", "ruff", "pylint", "yamllint", "pytest"]:
             self.assertIn(tool, result.stdout.lower())
 
-    def test_ripgrep_fallback_behavior(self):
+    def test_ripgrep_fallback_behavior(self) -> None:
         """Test ripgrep (rgrep) detection and fallback to grep."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -444,7 +444,7 @@ repo-lint = "test_project.cli:main"
         # Should check for ripgrep
         self.assertIn("ripgrep", result.stdout.lower())
 
-    def test_shell_toolchain_detection(self):
+    def test_shell_toolchain_detection(self) -> None:
         """Test detection of shell toolchain (shellcheck, shfmt) when --shell flag used."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -467,7 +467,7 @@ repo-lint = "test_project.cli:main"
         self.assertIn("shellcheck", result.stdout.lower())
         self.assertIn("shfmt", result.stdout.lower())
 
-    def test_powershell_toolchain_detection(self):
+    def test_powershell_toolchain_detection(self) -> None:
         """Test detection of PowerShell toolchain (pwsh, PSScriptAnalyzer) when --powershell flag used."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -490,7 +490,7 @@ repo-lint = "test_project.cli:main"
         self.assertIn("pwsh", result.stdout.lower())
         self.assertIn("psscriptanalyzer", result.stdout.lower())
 
-    def test_perl_toolchain_detection(self):
+    def test_perl_toolchain_detection(self) -> None:
         """Test detection of Perl toolchain (Perl::Critic, PPI) when --perl flag used."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -521,17 +521,17 @@ class TestRepoLintInstallation(unittest.TestCase):
     available on PATH after bootstrap completes.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         self.test_dir = tempfile.mkdtemp(prefix="bootstrap_install_test_")
         self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary test directory."""
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
 
-    def _setup_mock_repo(self, repo_root):
+    def _setup_mock_repo(self, repo_root) -> None:
         """Create a minimal mock repository with repo-lint package.
 
         :param repo_root: Path to repository root directory.
@@ -571,7 +571,7 @@ def main():
 """
         )
 
-    def test_repo_lint_installation(self):
+    def test_repo_lint_installation(self) -> None:
         """Test that repo-lint package is installed in venv."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -593,7 +593,7 @@ def main():
         self.assertIn("Installing repo-lint", result.stdout)
         self.assertIn("repo-lint package installed successfully", result.stdout)
 
-    def test_repo_lint_help_works(self):
+    def test_repo_lint_help_works(self) -> None:
         """Test that repo-lint --help works after installation."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -623,7 +623,7 @@ def main():
             self.assertEqual(result.returncode, 0)
             self.assertIn("repo-lint", result.stdout)
 
-    def test_repo_lint_on_path_after_activation(self):
+    def test_repo_lint_on_path_after_activation(self) -> None:
         """Test that repo-lint is on PATH in activated venv."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -657,17 +657,17 @@ class TestVerificationGate(unittest.TestCase):
     violations but tools work, exit 2 for missing tools).
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         self.test_dir = tempfile.mkdtemp(prefix="bootstrap_verify_test_")
         self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary test directory."""
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
 
-    def test_verification_gate_exit_code_handling(self):
+    def test_verification_gate_exit_code_handling(self) -> None:
         """Test that verification gate correctly handles exit codes.
 
         Exit code 0 or 1 (violations) should be treated as success.
@@ -736,17 +736,17 @@ class TestNonInteractiveBehavior(unittest.TestCase):
     Ensures the script is CI-friendly and doesn't hang waiting for user input.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         self.test_dir = tempfile.mkdtemp(prefix="bootstrap_noninteractive_test_")
         self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary test directory."""
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
 
-    def test_no_prompts_on_stdin_closed(self):
+    def test_no_prompts_on_stdin_closed(self) -> None:
         """Test that script doesn't hang when stdin is closed (CI simulation)."""
         repo_root = Path(self.test_dir) / "test_repo"
         repo_root.mkdir()
@@ -787,17 +787,17 @@ class TestIdempotency(unittest.TestCase):
     without errors or state corruption.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         self.test_dir = tempfile.mkdtemp(prefix="bootstrap_idempotent_test_")
         self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary test directory."""
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
 
-    def _setup_mock_repo(self, repo_root):
+    def _setup_mock_repo(self, repo_root) -> None:
         """Create a minimal mock repository.
 
         :param repo_root: Path to repository root directory.
@@ -832,7 +832,7 @@ def main():
 """
         )
 
-    def test_running_twice_produces_same_result(self):
+    def test_running_twice_produces_same_result(self) -> None:
         """Test that running bootstrap twice is safe and idempotent."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -872,17 +872,17 @@ class TestActionlintInstallation(unittest.TestCase):
     and is properly integrated into the bootstrap process.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment."""
         self.test_dir = tempfile.mkdtemp(prefix="bootstrap_actionlint_test_")
         self.script_path = Path(__file__).parent.parent / "bootstrap-repo-lint-toolchain.sh"
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary test directory."""
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
 
-    def _setup_mock_repo(self, repo_root):
+    def _setup_mock_repo(self, repo_root) -> None:
         """Create a minimal mock repository.
 
         :param repo_root: Path to repository root directory.
@@ -917,7 +917,7 @@ def main():
 """
         )
 
-    def test_actionlint_installation_attempted(self):
+    def test_actionlint_installation_attempted(self) -> None:
         """Test that actionlint installation is attempted as part of bootstrap."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -940,7 +940,7 @@ def main():
         # Should mention it's a GitHub Actions workflow linter
         self.assertIn("GitHub Actions", result.stdout)
 
-    def test_actionlint_in_summary(self):
+    def test_actionlint_in_summary(self) -> None:
         """Test that actionlint appears in the bootstrap success summary."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -964,7 +964,7 @@ def main():
         if result.returncode == 0:
             self.assertIn("Summary:", result.stdout)
 
-    def test_actionlint_idempotency(self):
+    def test_actionlint_idempotency(self) -> None:
         """Test that actionlint installation is idempotent when already present."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -1000,7 +1000,7 @@ echo "v1.7.10"
         # Should detect existing actionlint
         self.assertIn("actionlint already installed", result.stdout)
 
-    def test_actionlint_phase_ordering(self):
+    def test_actionlint_phase_ordering(self) -> None:
         """Test that actionlint is installed in the correct phase (Phase 2.3)."""
         repo_root = Path(self.test_dir) / "test_repo"
         self._setup_mock_repo(repo_root)
@@ -1030,7 +1030,7 @@ echo "v1.7.10"
                 "actionlint should be installed after Python toolchain",
             )
 
-    def test_actionlint_exit_code_20_documented(self):
+    def test_actionlint_exit_code_20_documented(self) -> None:
         """Test that exit code 20 is used for actionlint installation failure.
 
         This is a documentation test to ensure the exit code contract is clear.
@@ -1047,7 +1047,7 @@ echo "v1.7.10"
         # Verify that die commands with code 20 are related to actionlint
         self.assertIn('die "actionlint', script_content)
 
-    def test_exit_code_21_ripgrep_required(self):
+    def test_exit_code_21_ripgrep_required(self) -> None:
         """Test exit code 21 when ripgrep installation fails.
 
         Verifies that ripgrep is enforced as a required tool and the script

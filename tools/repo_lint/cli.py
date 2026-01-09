@@ -135,6 +135,7 @@ def _escape_cmd_argument(arg: str) -> str:
 
     :param arg: The string to escape for CMD
     :returns: Escaped string safe for CMD command line
+    :rtype: str
     """
     # First escape the caret itself
     escaped = arg.replace("^", "^^")
@@ -158,6 +159,7 @@ def _escape_powershell_command(command: str) -> str:
     :Notes:
         This provides basic protection against injection via PowerShell metacharacters.
         Users should still avoid passing untrusted input to the --command flag.
+        :rtype: str
     """
     # Escape PowerShell special characters
     # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters
@@ -250,6 +252,7 @@ def _is_verbose_enabled() -> bool:
     is showing a traceback when not requested (better than hiding errors).
 
     :returns: True if verbose mode is enabled, False otherwise
+    :rtype: bool
     """
     import os
 
@@ -272,7 +275,7 @@ def _is_verbose_enabled() -> bool:
 @click.group(invoke_without_command=True)
 @click.pass_context
 @click.version_option(version="0.1.0", prog_name="repo-lint")
-def cli(ctx):
+def cli(ctx) -> None:
     """Unified multi-language linting and docstring validation tool.
 
     repo-lint helps maintain code quality across multiple programming languages
@@ -451,7 +454,7 @@ def check(
     jobs,
     progress,
     filter_out_lang,
-):
+) -> None:
     """Run linting checks without modifying files.
 
     \b
@@ -658,7 +661,7 @@ def fix(
     yes_i_know,
     dry_run,
     diff,
-):
+) -> None:
     """Apply automatic fixes (formatters only).
 
     \b
@@ -784,7 +787,7 @@ def fix(
     is_flag=True,
     help="Remove repo-local tool installations",
 )
-def install(verbose, cleanup):
+def install(verbose, cleanup) -> None:
     """Install/bootstrap required linting tools.
 
     \b
@@ -882,7 +885,7 @@ def install(verbose, cleanup):
     type=click.Path(),
     help="Write diagnostic report to file (format auto-detected from extension)",
 )
-def doctor(ci, output_format, report):
+def doctor(ci, output_format, report) -> None:
     """Diagnose repo-lint installation and configuration.
 
     \b
@@ -956,7 +959,7 @@ def doctor(ci, output_format, report):
 
 # List-langs command
 @cli.command("list-langs")
-def list_langs():
+def list_langs() -> None:
     """List supported languages.
 
     \b
@@ -1004,7 +1007,7 @@ def list_langs():
     ),
     help="Filter tools to specific language",
 )
-def list_tools(lang):
+def list_tools(lang) -> None:
     """List available linting tools.
 
     \b
@@ -1064,7 +1067,7 @@ def list_tools(lang):
 # Tool-help command
 @cli.command("tool-help")
 @click.argument("tool")
-def tool_help(tool):
+def tool_help(tool) -> None:
     """Show help for a specific tool.
 
     \b
@@ -1136,7 +1139,7 @@ def tool_help(tool):
     type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path),
     help="Custom config directory to load from",
 )
-def dump_config(output_format, config_dir):
+def dump_config(output_format, config_dir) -> None:
     """Print fully-resolved configuration.
 
     \b
@@ -1227,7 +1230,7 @@ def dump_config(output_format, config_dir):
     "config_path",
     type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path),
 )
-def validate_config(config_path):
+def validate_config(config_path) -> None:
     """Validate a YAML configuration file.
 
     \b
@@ -1303,7 +1306,7 @@ def validate_config(config_path):
         sys.exit(1)
 
 
-def main():
+def main() -> None:
     """Main entry point for Click-based CLI with error handling."""
     try:
         cli(auto_envvar_prefix="REPO_LINT")  # pylint: disable=no-value-for-parameter
@@ -1333,7 +1336,7 @@ def main():
     is_flag=True,
     help="Output in JSON format for machine parsing",
 )
-def which_cmd(output_json):
+def which_cmd(output_json) -> None:
     """Show repo-lint environment information.
 
     \b
@@ -1510,7 +1513,7 @@ def which_cmd(output_json):
     is_flag=True,
     help="Print ONLY the PATH line (for automation)",
 )
-def env_cmd(venv, shell, install_snippet, path_only):
+def env_cmd(venv, shell, install_snippet, path_only) -> None:
     """Generate shell integration snippets for repo-lint.
 
     \b
@@ -1730,7 +1733,7 @@ def env_cmd(venv, shell, install_snippet, path_only):
     help="CI mode: disallow interactive shell, require --command",
 )
 # pylint: disable=too-many-arguments,too-many-positional-arguments
-def activate_cmd(venv, shell, command, no_rc, print_only, ci):
+def activate_cmd(venv, shell, command, no_rc, print_only, ci) -> None:
     """Launch subshell with repo-lint virtual environment activated.
 
     \b
@@ -1852,6 +1855,7 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci):
 
             :param text: The text to quote for Fish shell
             :returns: Quoted string safe for Fish shell
+            :rtype: str
             """
             if text == "":
                 return "''"

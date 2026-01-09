@@ -44,7 +44,7 @@ class NamingRunner(Runner):
         Check-only mode - does not auto-rename files.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize naming runner.
 
         :raises MissingToolError: If naming rules config file not found
@@ -68,6 +68,7 @@ class NamingRunner(Runner):
         """Check if there are files to validate.
 
         :returns: Always True (naming checks run on all repo files)
+        :rtype: bool
         """
         return True
 
@@ -75,6 +76,7 @@ class NamingRunner(Runner):
         """Check if required tools are available.
 
         :returns: Empty list (naming validation requires no external tools)
+        :rtype: List[str]
         """
         return []
 
@@ -86,6 +88,7 @@ class NamingRunner(Runner):
 
         :param verbose: If True, print detailed output
         :returns: List of LintResult objects (violations only, passes not reported)
+        :rtype: List[LintResult]
         """
         results = []
         repo_root = self.repo_root
@@ -132,6 +135,7 @@ class NamingRunner(Runner):
 
         :param verbose: If True, print detailed output
         :returns: List of LintResult objects (same as check)
+        :rtype: List[LintResult]
         """
         if verbose:
             print("⚠️  Naming enforcement is check-only (no auto-rename)")
@@ -144,6 +148,7 @@ class NamingRunner(Runner):
 
         :param repo_root: Repository root directory
         :returns: List of file paths
+        :rtype: List[Path]
         """
         files = []
         for path in repo_root.rglob("*"):
@@ -157,6 +162,7 @@ class NamingRunner(Runner):
         :param files: List of file paths
         :param repo_root: Repository root directory
         :returns: Filtered list of file paths
+        :rtype: List[Path]
         """
         filtered = []
         for file_path in files:
@@ -192,6 +198,7 @@ class NamingRunner(Runner):
         :param repo_root: Repository root directory
         :param verbose: If True, print detailed output
         :returns: LintResult if violation found, None otherwise
+        :rtype: LintResult | None
         """
         filename = file_path.name
         extension = file_path.suffix
@@ -233,6 +240,7 @@ class NamingRunner(Runner):
 
         :param extension: File extension (e.g., '.py', '.sh')
         :returns: Dictionary mapping language to list of pattern definitions
+        :rtype: Dict[str, List[Dict]]
         """
         applicable = {}
 
@@ -266,6 +274,7 @@ class NamingRunner(Runner):
         :param extension: File extension
         :param applicable_rules: Applicable rules that were checked
         :returns: Formatted error message
+        :rtype: str
         """
         messages = [f"Naming violation: '{filename}'"]
 
