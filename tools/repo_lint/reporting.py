@@ -93,26 +93,26 @@ def report_results(  # pylint: disable=too-many-arguments,too-many-positional-ar
         # Map language names to tool name patterns
         lang_to_tools = {
             "markdown": ["markdownlint", "markdown"],
-            "python": ["black", "ruff", "pylint", "python"],
-            "bash": ["shellcheck", "shfmt", "bash"],
-            "powershell": ["psscriptanalyzer", "powershell"],
-            "perl": ["perlcritic", "perl"],
-            "yaml": ["yamllint", "yaml"],
-            "rust": ["cargo", "rustfmt", "clippy", "rust"],
+            "python": ["black", "ruff", "pylint", "python", "python-docstrings"],
+            "bash": ["shellcheck", "shfmt", "bash", "bash-docstrings"],
+            "powershell": ["psscriptanalyzer", "powershell", "powershell-docstrings"],
+            "perl": ["perlcritic", "perl", "perl-docstrings"],
+            "yaml": ["yamllint", "yaml", "actionlint", "yaml-docstrings"],
+            "rust": ["cargo", "rustfmt", "clippy", "rust", "rust-docstrings"],
             "toml": ["taplo", "toml"],
-            "json": ["prettier", "json"],
+            "json": ["prettier", "json", "json-metadata"],
             "naming": ["naming"],
         }
 
-        # Build set of tool names to filter out
+        # Build set of tool names to filter out (normalized to lowercase for exact matching)
         tools_to_filter = set()
         for lang in filter_langs:
             lang_lower = lang.lower()
             if lang_lower in lang_to_tools:
-                tools_to_filter.update(lang_to_tools[lang_lower])
+                tools_to_filter.update(tool_name.lower() for tool_name in lang_to_tools[lang_lower])
 
-        # Filter results
-        results = [r for r in results if not any(tool_pattern in r.tool.lower() for tool_pattern in tools_to_filter)]
+        # Filter results using case-insensitive exact tool name matching
+        results = [r for r in results if r.tool.lower() not in tools_to_filter]
 
     # Handle non-rich output formats
     if output_format == "json":

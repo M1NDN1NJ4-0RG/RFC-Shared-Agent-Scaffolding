@@ -129,7 +129,7 @@ class PEP526Checker(ast.NodeVisitor):
     def requires_annotation(self, target, value, scope):
         """Determine if this assignment requires annotation."""
         # Always require for module-level and class attributes (if enabled)
-        if scope in ('module', 'class') and self.should_check_scope(scope):
+        if scope in ('module', 'class'):
             return True
         
         # Special patterns that ALWAYS require annotation:
@@ -147,8 +147,7 @@ class PEP526Checker(ast.NodeVisitor):
             return True  # []
         if isinstance(node, ast.Dict) and len(node.keys) == 0:
             return True  # {}
-        if isinstance(node, ast.Set) and len(node.elts) == 0:
-            return True  # set()
+
         if isinstance(node, ast.Call):
             if isinstance(node.func, ast.Name):
                 if node.func.id in ('list', 'dict', 'set', 'tuple') and not node.args:
@@ -163,10 +162,6 @@ class PEP526Checker(ast.NodeVisitor):
 ### Scope Tracking Implementation
 
 ```python
-def visit_Module(self, node):
-    self.current_scope.append('module')
-    self.generic_visit(node)
-    self.current_scope.pop()
 
 def visit_ClassDef(self, node):
     self.current_scope.append('class')
@@ -185,16 +180,23 @@ def visit_AsyncFunctionDef(self, node):
     self.current_scope.pop()
 
 def get_current_scope(self):
-    """Return current scope context."""
+    """Return current scope context based on the current scope stack."""
     if not self.current_scope:
         return 'module'
-    if 'function' in self.current_scope:
-        if self.current_scope[-1] == 'function':
-            return 'function'
-        # Inside a method
-        return 'instance' if 'class' in self.current_scope else 'function'
-    if 'class' in self.current_scope:
+
+    last = self.current_scope[-1]
+
+    if last == 'function':
+        # If the immediately enclosing scope is a class, we're in a method body.
+        if len(self.current_scope) >= 2 and self.current_scope[-2] == 'class':
+            return 'instance'
+        # Standalone function or nested function not treated as instance scope.
+        return 'function'
+
+    if last == 'class':
         return 'class'
+
+    # Fallback: treat anything else as module-level scope.
     return 'module'
 ```
 
@@ -411,6 +413,31 @@ Create fixture files:
    StrList = list[str]  # Not a violation (type alias)
    ```
 
+   **Design requirement:**  
+   - `StrList = list[str]` (and similar aliases) are parsed as `ast.Assign`, not `ast.AnnAssign`.  
+   - The checker MUST detect and skip such assignments before reporting missing annotations.
+   - Add a helper, e.g. `is_type_alias(assign: ast.Assign) -> bool`, and call it at the start of `visit_Assign`:
+
+     ```python
+     def visit_Assign(self, node: ast.Assign) -> None:
+         # Skip imports and other non-variable assignments first...
+  
+         if self.is_type_alias(node):
+             # Detected a type alias like `StrList = list[str]`
+             return
+  
+         # Existing logic: enforce annotation requirements
+         ...
+     ```
+
+   - `is_type_alias` should conservatively treat an assignment as a type alias when:
+     - There is exactly one target and it is a simple name (e.g., `StrList`), and
+     - The right-hand side (`node.value`) is a *type expression*, such as:
+       - A subscripted generic: `ast.Subscript`, e.g. `list[str]`, `dict[str, int]`, `typing.List[int]`.
+       - A union or `|` combination: `ast.BinOp` with `ast.BitOr`, e.g. `int | None`, `User | None`.
+       - A simple type name or attribute: `ast.Name` / `ast.Attribute` that is likely a type (e.g., imported from `typing` or `collections.abc`, or a known class name).
+   - Python 3.12+ `type` keyword aliases (e.g., `type StrList = list[str]`) are parsed separately (e.g., `ast.TypeAlias`) and MUST be treated as non-violations as well.
+   - The detection can be heuristic and conservative: if `is_type_alias` is unsure, it SHOULD return `False` so that only clear type-alias patterns are exempted.
 3. **Tuple unpacking:**
    ```python
    x, y = 1, 2  # Not a violation (unpacking)
