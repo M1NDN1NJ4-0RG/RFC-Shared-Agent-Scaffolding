@@ -149,9 +149,7 @@ class PEP526Fixer:
 
         return (fixes_made > 0, fixes_made)
 
-    def _analyze_assignment(
-        self, node: ast.Assign | ast.AnnAssign, lines: list[str], scope: str
-    ) -> None:
+    def _analyze_assignment(self, node: ast.Assign | ast.AnnAssign, lines: list[str], scope: str) -> None:
         """Analyze an assignment node and add modification if needed.
 
         :param node: Assignment node to analyze
@@ -215,9 +213,7 @@ def main() -> int:
     """
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Automatically add PEP 526 type annotations to Python files"
-    )
+    parser = argparse.ArgumentParser(description="Automatically add PEP 526 type annotations to Python files")
     parser.add_argument("files", nargs="+", type=Path, help="Python files to fix")
     parser.add_argument(
         "--dry-run",
