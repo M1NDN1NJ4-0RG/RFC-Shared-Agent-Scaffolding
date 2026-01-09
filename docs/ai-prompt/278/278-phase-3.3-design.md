@@ -528,3 +528,70 @@ This design provides:
 ✅ **Future-proof architecture** (can expand to local vars, auto-fix, etc.)
 
 **Next:** Proceed to Phase 3.3.2 - Implement the checker.
+
+---
+
+## Phase 3.3 Post-Implementation TODOs
+
+After completing Phase 3.3 (all sub-phases 3.3.1-3.3.5), the following updates are required:
+
+### TODO: Update Python Docstring Contract for Exit Codes
+
+**File:** `docs/contributing/docstring-contracts/python.md`
+
+**Required Changes:**
+
+1. **Module-level docstrings**: Update the `:Exit Codes:` requirement to accept `N/A` as a valid value for modules that don't have exit codes (e.g., library modules, packages):
+
+   ```
+   Current requirement (line 21):
+   7. **:Exit Codes:** - At least: 0 = success, non-zero = failure types
+   
+   Updated requirement:
+   7. **:Exit Codes:** - At least: 0 = success, non-zero = failure types, OR "N/A" for library modules
+   ```
+
+2. **Function/method docstrings**: Update the function docstring contract to accept `N/A` for `:Exit Codes:` when the function doesn't return exit codes (most functions don't):
+
+   ```
+   Function docstrings should include:
+   - :param: for each parameter
+   - :returns: OR :rtype: for return value (when not None)
+   - :raises: for exceptions raised
+   - :Exit Codes: N/A (for functions) OR specific codes (for main() functions)
+   ```
+
+**Rationale:**
+
+- Many Python modules are libraries, not executable scripts, and don't have exit codes
+- Most functions return values via `return`, not via `sys.exit()`
+- Only `main()` functions and top-level script code typically use exit codes
+- The current requirement forces meaningless `:Exit Codes:` sections in library code
+
+**Example of updated module docstring:**
+
+```python
+"""Library module for PEP 526 checking.
+
+:Purpose:
+    Provides AST-based type annotation checking functionality.
+
+:Exit Codes:
+    N/A - This is a library module, not an executable script
+```
+
+**Example of updated function docstring:**
+
+```python
+def check_file(filepath: str) -> list:
+    """Check a Python file for missing annotations.
+    
+    :param filepath: Path to file to check
+    :returns: List of violations found
+    :rtype: list[dict]
+    :Exit Codes:
+        N/A
+    """
+```
+
+**Implementation Note:** This TODO should be completed AFTER Phase 3.3.5 is fully merged and the checker is working in production.
