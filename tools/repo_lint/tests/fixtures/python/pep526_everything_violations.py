@@ -46,7 +46,7 @@ x, y = (10, 20)
 
 # Legacy type comments instead of annotations (anti-pattern under PEP 526 enforcement)
 legacy_numbers = []  # type: List[int]
-legacy_map = {}      # type: Dict[str, int]
+legacy_map = {}  # type: Dict[str, int]
 
 # Bare generics (invalid/undesired in strict typing)
 bare_list: List = []
@@ -79,6 +79,7 @@ module_classvar: ClassVar[int] = 7
 # -----------------------------------------------------------------------------
 # Class scope: missing annotations, wrong ClassVar/Final patterns, instance attrs
 # -----------------------------------------------------------------------------
+
 
 class Violations:
     """Class full of PEP 526 pain."""
@@ -135,7 +136,7 @@ class Violations:
         m = n = 5
 
         # Walrus assignment (often unannotated)
-        if (found := "yep"):
+        if found := "yep":
             pass
 
         # for-loop induced variables
@@ -157,6 +158,7 @@ class Violations:
 # Dataclass: missing annotations are not fields; useful as fixture too
 # -----------------------------------------------------------------------------
 
+
 @dataclass
 class BadData:
     # Missing annotation => not a dataclass field (bad under enforcement)
@@ -172,6 +174,7 @@ class BadData:
 # -----------------------------------------------------------------------------
 # Functions: params missing, locals missing, return missing, weird patterns
 # -----------------------------------------------------------------------------
+
 
 def bad_function(param1, param2: int, param3: "str"):
     # param1 missing annotation, return missing annotation
@@ -194,7 +197,7 @@ def bad_function(param1, param2: int, param3: "str"):
     p = q = 9
 
     # Walrus
-    if (ok := True):
+    if ok := True:
         pass
 
     return total
@@ -267,6 +270,7 @@ SAFE_ESCAPE: Any = {"reason": "fixture example"}
 # Class scope: correct ClassVar + instance attributes declared in __init__
 # -----------------------------------------------------------------------------
 
+
 class GoodExamples:
     """Clean typing patterns."""
 
@@ -296,6 +300,7 @@ class GoodExamples:
 # Dataclass: correct fields are annotated
 # -----------------------------------------------------------------------------
 
+
 @dataclass
 class GoodData:
     name: str
@@ -306,6 +311,7 @@ class GoodData:
 # -----------------------------------------------------------------------------
 # Functions: annotated args, return, and locals
 # -----------------------------------------------------------------------------
+
 
 def good_function(user: str, retries: int, maybe: Optional[str] = None) -> str:
     msg: str = f"{user}:{retries}"
