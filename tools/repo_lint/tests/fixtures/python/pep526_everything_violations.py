@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 """PEP 526 "Everything Violations" fixture.
 
-This file intentionally violates variable annotation conventions across:
-- Module scope
+This file intentionally violates *variable annotation* conventions (PEP 526) across:
+- Module scope (globals/constants)
 - Class scope (class vars + instance vars)
 - Function locals
 - Control-flow blocks (for/with/try)
 - Assignment patterns (unpacking, chained, walrus)
-- Legacy type comments (pre-PEP526 style)
-- Misuse of typing helpers (ClassVar/Final/Optional/Union/Any, bare generics)
+- Legacy type comments (pre-PEP 526 style)
 
-It also includes a "Good Examples" section at the end containing
-correct patterns that should NOT be flagged.
+It also includes a "Good Examples" section at the end containing correct patterns
+that should NOT be flagged.
 
 :Purpose:
     Test fixture for PEP 526 type annotation enforcement. Contains intentional
-    violations to verify the checker detects missing annotations correctly.
+    *missing variable annotations* (and legacy type comments) to verify the
+    checker detects them correctly.
 
 :Environment Variables:
     None
@@ -36,16 +36,16 @@ correct patterns that should NOT be flagged.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from typing import Any, ClassVar, Dict, Final, List, Optional, Tuple, Union
+from dataclasses import dataclass, field
+from typing import Dict, List, Optional
 
 
 # =============================================================================
-# BAD EXAMPLES (INTENTIONAL VIOLATIONS)
+# BAD EXAMPLES (INTENTIONAL PEP 526 VIOLATIONS: MISSING VARIABLE ANNOTATIONS)
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Module scope: missing annotations, bad annotations, type comments
+# Module scope: missing annotations + legacy type comments
 # -----------------------------------------------------------------------------
 
 # Missing annotations (classic)
@@ -57,7 +57,7 @@ global_tuple = (1, "two")
 global_bool = True
 global_float = 3.14159
 
-# Chained assignment (often hard to annotate cleanly; still a violation in strict modes)
+# Chained assignment (unannotated targets)
 a = b = c = 0
 
 # Tuple unpacking without annotations
@@ -67,94 +67,38 @@ x, y = (10, 20)
 legacy_numbers = []  # type: List[int]
 legacy_map = {}  # type: Dict[str, int]
 
-# Bare generics (invalid/undesired in strict typing)
-bare_list: List = []
-bare_dict: Dict = {}
-
-# Annotation mismatch
-port: int = "eighty"
-names: list[str] = [1, 2, 3]  # wrong element types
-
-# Optional misuse / mismatch
-maybe_count: Optional[int] = "nope"
-
-# Union mismatch
-id_or_name: Union[int, str] = 3.14
-
-# Any used as an escape hatch (some conventions forbid Any except with explicit TODO tags)
-escape: Any = "whatever"
-escape = 123
-
-# Dangling annotation (declared but not assigned)
-declared_only: int
-
-# Final misuse (rebinding later)
-IMMUTABLE: Final[int] = 123
-
-# ClassVar at module scope (nonsense usage)
-module_classvar: ClassVar[int] = 7
-
 
 # -----------------------------------------------------------------------------
-# Class scope: missing annotations, wrong ClassVar/Final patterns, instance attrs
+# Class scope: missing annotations (class vars + instance vars)
 # -----------------------------------------------------------------------------
 
 
 class Violations:
-    """Class full of PEP 526 pain."""
+    """Class full of PEP 526 pain (missing variable annotations only)."""
 
     # Missing class attribute annotations
     counter = 0
     tags = ["a", "b", "c"]
-
-    # Bad ClassVar usage
-    cv1: ClassVar[int] = "string mismatch"
-    cv2: ClassVar = 123  # bare ClassVar
-
-    # Final that gets rebound
-    CONST: Final[str] = "hello"
-    CONST = "rebinding Final"
-
-    # Annotated class attribute with wrong type
-    enabled: bool = "yes"
-
-    # Annotated without assignment
-    declared_attr: str
 
     def __init__(self) -> None:
         """Initialize Violations with intentional PEP 526 violations.
 
         Demonstrates missing annotations on instance attributes.
         """
-        # Dynamic instance attributes without prior annotation / declaration
+        # Instance attributes created without annotations
         self.host = "localhost"
         self.retries = 3
-        self.timeout = 10
-
-        # Type comment instance attribute (anti-pattern under strict PEP 526 rules)
-        self.rate = 1.0  # type: float
-
-        # Wrong typed instance attribute
-        self.max_size: int = "huge"
-
-        # Declared-only instance attribute (some rules forbid, some require init assignment)
-        self.later: str
+        self.timeout_s = 10
 
     def method(self) -> None:
         """Method with intentional PEP 526 violations.
 
-        Demonstrates missing annotations on local variables.
+        Demonstrates missing annotations on local variables and in control-flow.
         """
         # Locals without annotations
         tmp = 1
         msg = "hello"
         stuff = {"k": "v"}
-
-        # Type comment local (anti-pattern)
-        legacy_local = []  # type: List[str]
-
-        # Wrong typed local
-        count: int = "ten"
 
         # Unpacking without annotations
         a1, a2 = (1, 2)
@@ -162,23 +106,27 @@ class Violations:
         # Chained assignment local
         m = n = 5
 
-        # Walrus assignment (often unannotated)
+        # Walrus assignment (unannotated target)
         if found := "yep":
-            pass
+            _ = found
 
-        # for-loop induced variables
+        # for-loop induced variables (unannotated targets)
         for i in range(3):
             loop_tmp = f"tmp-{i}"
+            _ = loop_tmp
 
-        # with/as variable
+        # with/as variable (unannotated target)
         with open(__file__, "r", encoding="utf-8") as f:
             content = f.read()
+            _ = content
 
-        # try/except variable bindings
+        # try/except variable bindings (unannotated targets)
         try:
             risky = int("not an int")
-        except Exception as e:
+            _ = risky
+        except ValueError as e:
             err = e
+            _ = err
 
 
 # -----------------------------------------------------------------------------
@@ -188,65 +136,45 @@ class Violations:
 
 @dataclass
 class BadData:
-    """Dataclass with intentional PEP 526 violations.
+    """Dataclass with intentional PEP 526 violations (missing annotations)."""
 
-    This class demonstrates missing annotations in dataclass fields.
-    """
-
-    # Missing annotation => not a dataclass field (bad under enforcement)
+    # Missing annotation => not a dataclass field (bad under PEP 526 enforcement)
     x = 1
 
-    # Wrong default type
-    y: int = "wrong"
-
-    # Bare generic
-    z: List = None
+    # These are properly annotated and should not be flagged by a PEP 526 checker
+    y: int = 2
+    z: List[int] = field(default_factory=list)
 
 
 # -----------------------------------------------------------------------------
-# Functions: params missing, locals missing, return missing, weird patterns
+# Functions: keep signature annotations clean; violate via locals only
 # -----------------------------------------------------------------------------
 
 
-def bad_function(param1, param2: int, param3: "str"):
+def bad_function(param1: int, param2: int, param3: str) -> int:
     """Function with intentional PEP 526 violations.
 
-    Demonstrates missing parameter annotations and local variable annotations.
+    Demonstrates missing annotations on local variables (not function signature).
 
-    :param param1: First parameter (intentionally missing annotation)
+    :param param1: First parameter
     :param param2: Second parameter
     :param param3: Third parameter
     :returns: Total value
     :rtype: int
     """
-    # param1 missing annotation, return missing annotation
+    total = param1 + param2  # missing local annotation
+    d = {"a": 1}  # missing local annotation
+    l = [1, 2, 3]  # missing local annotation
 
-    # Locals missing
-    total = param2 + 1
-    d = {"a": 1}
-    l = [1, 2, 3]
-
-    # Type comment
+    # Legacy type comment local (anti-pattern under PEP 526 enforcement)
     t = None  # type: Optional[int]
+    _ = t
 
-    # Wrong annotations
-    total2: int = "not int"
-
-    # Unpacking
-    u, v = (1, 2)
-
-    # Chained assign
-    p = q = 9
-
-    # Walrus
-    if ok := True:
-        pass
-
-    return total
+    return total + len(param3) + len(d) + len(l)
 
 
 def kitchen_sink() -> None:
-    """Function with various PEP 526 violations.
+    """Function with various PEP 526 variable annotation violations.
 
     Demonstrates missing annotations on comprehensions and other patterns.
     """
@@ -255,37 +183,7 @@ def kitchen_sink() -> None:
     comp_dict = {str(i): i for i in range(10)}
     comp_set = {i for i in range(10)}
 
-    # Annotated but mismatched generics
-    typed_dict: dict[str, int] = {"a": "b"}
-
-    # Optional wrong
-    o: Optional[int] = "x"
-
-    # Union wrong
-    u: int | str = 3.14
-
-    # Final local rebind
-    local_final: Final[int] = 1
-    local_final = 2  # type: ignore[misc]
-
-    # Attribute created on ad-hoc object (dynamic attr)
-    obj = type("Obj", (), {})()
-    obj.dynamic = 1
-    obj.dynamic = "two"
-
-    # Legacy type comment local
-    legacy = {}  # type: Dict[str, int]
-    legacy["x"] = 1
-
-
-# Mutating a "Final" module symbol (semantic violation)
-def mutate_final() -> None:
-    """Mutate a Final constant (semantic violation).
-
-    Demonstrates mutation of a Final constant.
-    """
-    global IMMUTABLE
-    IMMUTABLE = 999
+    _ = (comp_list, comp_dict, comp_set)
 
 
 # =============================================================================
@@ -293,7 +191,7 @@ def mutate_final() -> None:
 # =============================================================================
 
 # -----------------------------------------------------------------------------
-# Module scope: correct annotations + modern generics
+# Module scope: correct annotations (modern built-in generics)
 # -----------------------------------------------------------------------------
 
 MODULE_PORT: int = 22
@@ -308,47 +206,28 @@ MODULE_PAIR: tuple[int, str] = (1, "one")
 MODULE_MAYBE: int | None = None
 MODULE_ID: int | str = "abc123"
 
-# Final constant (no rebinding!)
-DEFAULT_TIMEOUT_S: Final[int] = 30
-
-# If your contracts require Any usage to be tagged, this is how it could look:
-# typing: Any (TODO: tighten)
-SAFE_ESCAPE: Any = {"reason": "fixture example"}
-
 
 # -----------------------------------------------------------------------------
-# Class scope: correct ClassVar + instance attributes declared in __init__
+# Class scope: instance attributes declared with annotations in __init__
 # -----------------------------------------------------------------------------
 
 
 class GoodExamples:
-    """Clean typing patterns."""
+    """Clean PEP 526 variable annotation patterns."""
 
-    # Proper ClassVar usage
-    version: ClassVar[str] = "1.0.0"
-    supported: ClassVar[bool] = True
-
-    # Typed class attribute that is NOT ClassVar (it’s a descriptor-like shared default)
-    default_retries: int = 3
+    counter: int = 0
+    tags: list[str] = ["ok"]
 
     def __init__(self, host: str, retries: int = 3) -> None:
-        """Initialize GoodExamples with properly typed attributes.
+        """Initialize GoodExamples with properly annotated attributes.
 
         :param host: Hostname
         :param retries: Number of retries
         """
-        # Explicitly typed instance attributes
         self.host: str = host
         self.retries: int = retries
-        self.timeout_s: int = DEFAULT_TIMEOUT_S
+        self.timeout_s: int = 30
         self.labels: list[str] = []
-
-    def add_label(self, label: str) -> None:
-        """Add a label to the labels list.
-
-        :param label: Label to add
-        """
-        self.labels.append(label)
 
     def compute(self, x: int, y: int) -> int:
         """Compute sum of two integers.
@@ -369,34 +248,16 @@ class GoodExamples:
 
 @dataclass
 class GoodData:
-    """Dataclass with correct type annotations.
-
-    Demonstrates properly annotated dataclass fields.
-    """
+    """Dataclass with correct type annotations."""
 
     name: str
     count: int = 0
-    tags: list[str] = None if False else []  # intentionally weird but still typed
+    tags: list[str] = field(default_factory=list)
 
 
 # -----------------------------------------------------------------------------
-# Functions: annotated args, return, and locals
+# Functions: annotated locals / unpacking / loops / with / try
 # -----------------------------------------------------------------------------
-
-
-def good_function(user: str, retries: int, maybe: Optional[str] = None) -> str:
-    """Create a formatted message string.
-
-    :param user: Username
-    :param retries: Number of retries
-    :param maybe: Optional additional info
-    :returns: Formatted message
-    :rtype: str
-    """
-    msg: str = f"{user}:{retries}"
-    if maybe is not None:
-        msg = f"{msg}:{maybe}"
-    return msg
 
 
 def good_unpacking() -> tuple[int, int]:
@@ -405,8 +266,6 @@ def good_unpacking() -> tuple[int, int]:
     :returns: Tuple of two integers
     :rtype: tuple[int, int]
     """
-    # If your enforcement *requires* explicit annotations for unpack targets,
-    # this shows the canonical pattern.
     a1: int
     a2: int
     a1, a2 = (1, 2)
@@ -423,3 +282,25 @@ def good_loop() -> int:
     for i in range(5):
         total += i
     return total
+
+
+def good_control_flow() -> None:
+    """Demonstrate typed variables in control-flow blocks."""
+    found: str | None = None
+    if found := "yep":
+        _ = found
+
+    for i in range(3):
+        loop_tmp: str = f"tmp-{i}"
+        _ = loop_tmp
+
+    with open(__file__, "r", encoding="utf-8") as f:
+        content: str = f.read()
+        _ = content
+
+    try:
+        risky: int = int("123")
+        _ = risky
+    except ValueError as e:
+        err: ValueError = e
+        _ = err
