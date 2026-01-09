@@ -128,6 +128,12 @@ def create_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Show progress bar during parallel execution (auto-disabled in CI/non-TTY)",
     )
+    check_parser.add_argument(
+        "--filter-out-lang",
+        action="append",
+        choices=["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "toml", "json", "naming"],
+        help="Filter out (exclude) language(s) from report output (still runs checks, just hides from display). Can be specified multiple times.",
+    )
 
     # fix command
     fix_parser = subparsers.add_parser("fix", help="Apply automatic fixes (formatters only)")
@@ -560,6 +566,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
             output_format=getattr(args, "format", "rich"),
             report_path=getattr(args, "report", None),
             reports_dir=getattr(args, "reports_dir", None),
+            filter_langs=getattr(args, "filter_out_lang", None),
         )
 
 
