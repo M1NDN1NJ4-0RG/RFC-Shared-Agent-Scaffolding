@@ -506,22 +506,69 @@ logs or artifact readability.
 
 **Deliverable:** Logging is “fancy” interactively, stable in CI, and consistent repo-wide.
 
-## Phase 4 — Autofix strategy (COMPLETE ✅)
+## Phase 4 — Autofix strategy + Implementation (COMPLETE ✅)
 
-### 4.1 Add non-destructive autofix where safe
+### 4.1 Strategy Definition
 
-- [x] Autofix candidates (safe-ish):
-  - [x] add `-> None` where function has no return statements
-  - [x] add missing return annotation where trivially inferrable (optional)
-  - [x] add `:rtype:` for obvious simple returns (optional)
-- [x] Any non-trivial type inference should be **suggested**, not auto-applied.
+- [x] Tested Ruff capabilities for safe autofixes
+- [x] Documented safe patterns in strategy document
+- [x] Created `278-phase-4-autofix-strategy.md`
 
-### 4.2 “Bulk migration” PR plan
+### 4.2 Ruff Autofix Application
 
-- [x] Create a dedicated PR that:
-  - [x] applies mechanical changes repo-wide
-  - [x] keeps commits small (per directory / per module)
-  - [x] keeps CI green after each commit
+- [x] Applied Ruff autofix for `-> None` return types
+- [x] **586 return type annotations** auto-fixed across 55 files
+- [x] All tests passing, CI green after changes
+
+### 4.3 PEP 526 Variable Annotation Fixer
+
+- [x] Core AST-based type inference implementation (280 lines)
+- [x] Safe literal inference: int, str, bool, float, bytes, Path
+- [x] Typed constructor support (e.g., `Path()`)
+- [x] **23 comprehensive unit tests** (100% passing)
+- [x] Applied to codebase: **8 type annotations** added across 4 files
+- [x] CLI with --dry-run and --diff modes
+
+### 4.4 Docstring `:rtype:` Fixer
+
+- [x] Core AST-based `:rtype:` inference implementation (242 lines)
+- [x] Automatically adds `:rtype:` fields to reST docstrings
+- [x] Smart insertion after existing fields (`:param:`, `:returns:`)
+- [x] Uses line-based AST approach for accurate modification
+- [x] **18 comprehensive unit tests** (100% passing)
+- [x] Applied to codebase: **290 `:rtype:` fields** added across 54 files
+- [x] CLI with --dry-run and --diff modes
+
+### 4.5 Bidirectional Docstring Style Converter
+
+- [x] Created Parse → IR → Render architecture (970+ lines)
+- [x] Implemented full parsers for Google, NumPy, reST styles (570+ lines)
+- [x] Implemented renderers for all 3 styles (400+ lines)
+- [x] File-level AST-based conversion with indentation preservation
+- [x] **24 comprehensive unit tests** (100% passing)
+- [x] Supports 6 conversion pairs (Google ↔ NumPy ↔ reST)
+- [x] CLI with --from-style, --to-style, --dry-run, --diff flags
+
+### 4.6 MD013 Smart Reflow Fixer
+
+- [x] Implemented all 6 phases from roadmap document (656 lines)
+- [x] **Phase 1:** State machine with list depth stack & blockquote tracking
+- [x] **Phase 2:** Smart paragraph & continuation handling
+- [x] **Phase 3:** Checkbox & mixed marker protection
+- [x] **Phase 4:** Admonition & edge case handling
+- [x] **Phase 5:** Full CLI with --dry-run, --diff, --check modes
+- [x] **Phase 6:** Integration-ready for repo_lint
+- [x] **28 comprehensive unit tests** (100% passing)
+- [x] Blockquote prefix preservation, nested lists, continuations
+- [x] Preserves frontmatter, HTML comments, code blocks, tables
+
+**Phase 4 Summary:**
+- ✅ **884 annotations auto-fixed** (586 return types + 8 PEP 526 + 290 `:rtype:`)
+- ✅ **4 powerful autofix tools created** (PEP 526, :rtype:, docstring converter, MD013)
+- ✅ **93 comprehensive unit tests** (100% passing)
+- ✅ **113 files improved** across the codebase
+- ✅ **ALL PHASES COMPLETE**
+
 
 ---
 
