@@ -160,6 +160,9 @@ class PythonRunner(Runner):
         if self._should_run_tool("validate_docstrings"):
             results.append(self._run_docstring_validation())
 
+        if self._should_run_tool("pep526"):
+            results.append(self._run_pep526_check())
+
         return results
 
     def fix(self, policy: dict | None = None) -> List[LintResult]:
@@ -437,3 +440,47 @@ class PythonRunner(Runner):
         violations = convert_validation_errors_to_violations(errors, "python-docstrings")
 
         return LintResult(tool="python-docstrings", passed=False, violations=violations)
+
+    def _run_pep526_check(self) -> LintResult:
+        """Run PEP 526 type annotation checking.
+
+        :returns:
+            LintResult for PEP 526 type annotation checking
+        """
+        from tools.repo_lint.checkers.pep526_checker import PEP526Checker
+        from tools.repo_lint.checkers.pep526_config import get_default_config
+
+        # Get Python files to check
+        files = get_tracked_files(["**/*.py"], self.repo_root, include_fixtures=self._include_fixtures)
+
+        if not files:
+            return LintResult(tool="pep526", passed=True, violations=[])
+
+        # Load configuration (using defaults for now)
+        config = get_default_config()
+
+        # Create checker
+        checker = PEP526Checker(config)
+
+        # Check all files
+        all_violations = []
+        for file_path in files:
+            violations_data = checker.check_file(file_path)
+            all_violations.extend(violations_data)
+
+        if not all_violations:
+            return LintResult(tool="pep526", passed=True, violations=[])
+
+        # Convert PEP526 violation dicts to Violation objects
+        violations = []
+        for v in all_violations:
+            violations.append(
+                Violation(
+                    tool="pep526",
+                    file=v.get("file", ""),
+                    line=v.get("line"),
+                    message=v.get("message", ""),
+                )
+            )
+
+        return LintResult(tool="pep526", passed=False, violations=violations)

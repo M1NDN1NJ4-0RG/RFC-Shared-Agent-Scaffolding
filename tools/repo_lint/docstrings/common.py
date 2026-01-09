@@ -127,7 +127,8 @@ def check_pragma_ignore(content: str, section: str) -> bool:
 def validate_exit_codes_content(content: str, language: str) -> str | None:
     """Validate that exit codes section contains minimum required codes.
 
-    Checks that at least exit codes 0 and 1 are documented.
+    Checks that at least exit codes 0 and 1 are documented, OR accepts "N/A"
+    for library modules/functions that don't return exit codes.
     This is a soft check - we look for patterns like "0" near "success" etc.
 
     :param content: The exit codes section content
@@ -136,6 +137,10 @@ def validate_exit_codes_content(content: str, language: str) -> str | None:
     :returns: Error message if validation fails, None if valid
     """
     if SKIP_CONTENT_CHECKS:
+        return None
+
+    # Accept "N/A" for library modules/functions that don't have exit codes
+    if re.search(r"\bN/A\b", content, re.IGNORECASE):
         return None
 
     # Look for exit code 0 (success) - be very lenient with patterns
@@ -174,7 +179,7 @@ def validate_exit_codes_content(content: str, language: str) -> str | None:
         # Only fail if there's NO exit code documentation at all
         has_any_exit_code = bool(re.search(r"\b(?:0|1|2|127)\b", content))
         if not has_any_exit_code:
-            return "No exit codes found (expected at least 0 and 1)"
+            return "No exit codes found (expected at least 0 and 1, or N/A for libraries)"
 
     return None
 

@@ -404,6 +404,30 @@ def cli(ctx):
     is_flag=True,
     help="Show progress bar during parallel execution (auto-disabled in CI/non-TTY)",
 )
+@click.option(
+    "--filter-out-lang",
+    multiple=True,
+    type=click.Choice(
+        [
+            "python",
+            "bash",
+            "powershell",
+            "perl",
+            "yaml",
+            "rust",
+            "markdown",
+            "toml",
+            "json",
+            "naming",
+        ],
+        case_sensitive=False,
+    ),
+    help=(
+        "Filter out (exclude) language(s) from report output "
+        "(still runs checks, just hides from display). "
+        "Can be specified multiple times."
+    ),
+)
 # pylint: disable=too-many-arguments,too-many-positional-arguments,too-many-locals
 def check(
     verbose,
@@ -426,6 +450,7 @@ def check(
     fail_fast,
     jobs,
     progress,
+    filter_out_lang,
 ):
     """Run linting checks without modifying files.
 
@@ -533,6 +558,7 @@ def check(
         fail_fast=fail_fast,
         jobs=jobs,
         progress=progress,
+        filter_out_lang=list(filter_out_lang) if filter_out_lang else None,
     )
 
     exit_code = cmd_check(args)
