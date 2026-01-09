@@ -1478,3 +1478,81 @@ Finalized Phase 3.3 integration and documentation:
 **Next:** Phase 4.1 - Add non-destructive autofix where safe
 
 ---
+
+### 2026-01-09 - Phase 4 Work: Autofix Strategy + Implementation
+
+**Session Work:**
+
+**Phase 4.1: Autofix Strategy Defined** ✅
+
+- Created comprehensive autofix strategy document: `docs/ai-prompt/278/278-phase-4-autofix-strategy.md`
+- Tested Ruff's `--unsafe-fixes` capability on fixture files  
+- Discovered Ruff can auto-fix much more than initially expected:
+  - `-> None` for void functions
+  - `-> int`, `-> str`, `-> bool` for literal returns
+  - `-> str | None` for optional returns
+  - `-> str | int` for union returns
+- Coverage: ~400-500 violations can be auto-fixed (60-70% of return annotations)
+
+**Phase 4.2 Stage 1: Ruff Autofix Applied** ✅
+
+- Ran `ruff check --select ANN --fix --unsafe-fixes --isolated` across codebase
+- **586 violations auto-fixed** across 55 files
+- **358 violations remaining** (parameters, complex types, module/class variables)
+- Types of fixes:
+  - Mostly `-> None` for void functions (test methods, CLI commands, etc.)
+  - Some `-> str` and `-> int` for literal returns
+- All Python checks pass (exit 0)
+- No breaking changes introduced
+
+**Phase 4 Design Extensions** ✅
+
+1. **PEP 526 & Docstring `:rtype:` Autofix Strategy**
+   - Document: `docs/ai-prompt/278/278-phase-4-pep526-docstring-autofix.md`
+   - **PEP 526 autofix patterns:**
+     - Literal inference: `FOO = 42` → `FOO: int = 42` (30-40% coverage)
+     - Typed constructors: `ROOT = Path(...)` → `ROOT: Path = Path(...)` (10-15% coverage)
+     - Function returns: `CONFIG = get_config()` → infer from function annotation (20-30% coverage)
+     - **Total PEP 526 coverage: 40-65%** of violations
+   - **Docstring `:rtype:` autofix strategy:**
+     - Copy from function annotation when present
+     - Insert `:rtype:` field into docstring  
+     - **Coverage: ~370 docstrings** (functions with annotations but missing `:rtype:`)
+   
+2. **Docstring Style Converter Design**
+   - Document: `docs/ai-prompt/278/278-docstring-style-converter-design.md`
+   - **Full bidirectional support** for all 3 styles:
+     - reST/Sphinx (repo standard)
+     - Google Style
+     - NumPy Style
+   - **All 6 conversion pairs supported:**
+     - NumPy ↔ reST
+     - NumPy ↔ Google
+     - reST ↔ Google
+   - **Architecture:** Style-agnostic semantic model (DocstringModel) with parsers/formatters
+   - **Bonus use case:** Auto-add `:rtype:` by converting reST→model→reST with AST enrichment
+   - **Timeline estimate:** 10-15 hours (using `docstring_parser` library)
+   - **Implementation plan:** Use existing `docstring_parser` for parsing, build formatters on top
+
+**Total Autofix Potential:**
+- Ruff return types: 586 ✅ (DONE)
+- PEP 526 literals: ~60-90 (design complete, not implemented)
+- Docstring `:rtype:`: ~370 (design complete, not implemented)
+- **Total: ~1,000+ violations auto-fixable** (70-80% of all violations)
+
+**Remaining manual work (estimated):**
+- Function parameter annotations: ~200-300 (requires human decision)
+- Complex PEP 526 cases: ~50-90 (empty collections, complex expressions)
+- **Total manual: ~250-390 violations**
+
+**Commits:**
+- c987e78: Phase 4.1 complete (autofix strategy document)
+- 7a5ce4f: Phase 4.2 Stage 1 complete (586 autofixes applied)
+- dfecac0: Phase 4 design extensions (PEP 526 + docstring autofix + style converter)
+
+**Next Steps:**
+- **Option A:** Implement autofixers (PEP 526 + docstring `:rtype:`) - 8-12 hours
+- **Option B:** Build docstring style converter - 10-15 hours
+- **Option C:** Proceed to Phases 5-6 (CI enforcement + documentation)
+
+---

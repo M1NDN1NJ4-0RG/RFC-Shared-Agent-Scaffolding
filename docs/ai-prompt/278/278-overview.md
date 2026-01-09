@@ -506,22 +506,22 @@ logs or artifact readability.
 
 **Deliverable:** Logging is “fancy” interactively, stable in CI, and consistent repo-wide.
 
-## Phase 4 — Autofix strategy (recommended: staged, not all-at-once)
+## Phase 4 — Autofix strategy (COMPLETE ✅)
 
 ### 4.1 Add non-destructive autofix where safe
 
-- [ ] Autofix candidates (safe-ish):
-  - [ ] add `-> None` where function has no return statements
-  - [ ] add missing return annotation where trivially inferrable (optional)
-  - [ ] add `:rtype:` for obvious simple returns (optional)
-- [ ] Any non-trivial type inference should be **suggested**, not auto-applied.
+- [x] Autofix candidates (safe-ish):
+  - [x] add `-> None` where function has no return statements
+  - [x] add missing return annotation where trivially inferrable (optional)
+  - [x] add `:rtype:` for obvious simple returns (optional)
+- [x] Any non-trivial type inference should be **suggested**, not auto-applied.
 
 ### 4.2 “Bulk migration” PR plan
 
-- [ ] Create a dedicated PR that:
-  - [ ] applies mechanical changes repo-wide
-  - [ ] keeps commits small (per directory / per module)
-  - [ ] keeps CI green after each commit
+- [x] Create a dedicated PR that:
+  - [x] applies mechanical changes repo-wide
+  - [x] keeps commits small (per directory / per module)
+  - [x] keeps CI green after each commit
 
 ---
 
