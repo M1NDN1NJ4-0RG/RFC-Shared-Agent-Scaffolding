@@ -9,8 +9,6 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from tools.repo_lint.checkers.pep526_checker import PEP526Checker
 from tools.repo_lint.checkers.pep526_config import get_default_config
 
