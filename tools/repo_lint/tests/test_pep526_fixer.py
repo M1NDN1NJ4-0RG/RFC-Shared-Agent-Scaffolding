@@ -21,8 +21,6 @@ from __future__ import annotations
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from tools.repo_lint.fixers.pep526_fixer import PEP526Fixer
 
 
