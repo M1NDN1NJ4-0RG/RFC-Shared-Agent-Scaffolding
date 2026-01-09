@@ -93,7 +93,7 @@ def rust_runner(mock_repo_root):
 class TestRustRunnerFileDetection:
     """Test suite for Rust file detection."""
 
-    def test_has_files_with_rust_files(self, rust_runner, mock_repo_root):
+    def test_has_files_with_rust_files(self, rust_runner, mock_repo_root) -> None:
         """Test has_files returns True when Rust files exist.
 
         :param rust_runner: RustRunner fixture
@@ -105,7 +105,7 @@ class TestRustRunnerFileDetection:
 
         assert rust_runner.has_files() is True
 
-    def test_has_files_without_rust_files(self, tmp_path):
+    def test_has_files_without_rust_files(self, tmp_path) -> None:
         """Test has_files returns False when no Rust files exist.
 
         :param tmp_path: Pytest temporary directory
@@ -125,7 +125,7 @@ class TestRustRunnerToolChecking:
 
     @patch("tools.repo_lint.runners.base.command_exists")
     @patch("subprocess.run")
-    def test_check_tools_all_present(self, mock_run, mock_command_exists, rust_runner):
+    def test_check_tools_all_present(self, mock_run, mock_command_exists, rust_runner) -> None:
         """Test check_tools when all tools are available.
 
         :param mock_run: Mock subprocess.run
@@ -141,7 +141,7 @@ class TestRustRunnerToolChecking:
 
     @patch("tools.repo_lint.runners.base.command_exists")
     @patch("subprocess.run")
-    def test_check_tools_cargo_missing(self, mock_run, mock_command_exists, rust_runner):
+    def test_check_tools_cargo_missing(self, mock_run, mock_command_exists, rust_runner) -> None:
         """Test check_tools when cargo is missing.
 
         :param mock_run: Mock subprocess.run
@@ -167,7 +167,7 @@ class TestRustRunnerToolChecking:
 
     @patch("tools.repo_lint.runners.base.command_exists")
     @patch("subprocess.run")
-    def test_check_tools_clippy_missing(self, mock_run, mock_command_exists, rust_runner):
+    def test_check_tools_clippy_missing(self, mock_run, mock_command_exists, rust_runner) -> None:
         """Test check_tools when clippy is missing.
 
         :param mock_run: Mock subprocess.run
@@ -186,7 +186,7 @@ class TestRustRunnerFormatting:
     """Test suite for rustfmt functionality."""
 
     @patch("subprocess.run")
-    def test_rustfmt_check_passes(self, mock_run, rust_runner):
+    def test_rustfmt_check_passes(self, mock_run, rust_runner) -> None:
         """Test rustfmt check when code is properly formatted.
 
         :param mock_run: Mock subprocess.run
@@ -202,7 +202,7 @@ class TestRustRunnerFormatting:
         assert len(result.violations) == 0
 
     @patch("subprocess.run")
-    def test_rustfmt_check_fails(self, mock_run, rust_runner):
+    def test_rustfmt_check_fails(self, mock_run, rust_runner) -> None:
         """Test rustfmt check when code needs formatting.
 
         :param mock_run: Mock subprocess.run
@@ -220,7 +220,7 @@ class TestRustRunnerFormatting:
         assert len(result.violations) == 2
 
     @patch("subprocess.run")
-    def test_rustfmt_fix_success(self, mock_run, rust_runner):
+    def test_rustfmt_fix_success(self, mock_run, rust_runner) -> None:
         """Test rustfmt fix mode succeeds.
 
         :param mock_run: Mock subprocess.run
@@ -239,7 +239,7 @@ class TestRustRunnerFormatting:
         assert results[0].tool == "rustfmt"
         assert results[0].passed is True
 
-    def test_rustfmt_no_rust_directory(self, tmp_path):
+    def test_rustfmt_no_rust_directory(self, tmp_path) -> None:
         """Test rustfmt when rust/ directory doesn't exist.
 
         :param tmp_path: Pytest temporary directory
@@ -258,7 +258,7 @@ class TestRustRunnerClippy:
     """Test suite for clippy linting."""
 
     @patch("subprocess.run")
-    def test_clippy_passes(self, mock_run, rust_runner):
+    def test_clippy_passes(self, mock_run, rust_runner) -> None:
         """Test clippy when no warnings are found.
 
         :param mock_run: Mock subprocess.run
@@ -274,7 +274,7 @@ class TestRustRunnerClippy:
         assert len(result.violations) == 0
 
     @patch("subprocess.run")
-    def test_clippy_json_output_parsing(self, mock_run, rust_runner):
+    def test_clippy_json_output_parsing(self, mock_run, rust_runner) -> None:
         """Test clippy JSON output parsing with structured violations.
 
         :param mock_run: Mock subprocess.run
@@ -306,7 +306,7 @@ class TestRustRunnerClippy:
         assert "unused" in violation.message.lower()
 
     @patch("subprocess.run")
-    def test_clippy_fallback_text_parsing(self, mock_run, rust_runner):
+    def test_clippy_fallback_text_parsing(self, mock_run, rust_runner) -> None:
         """Test clippy falls back to text parsing when JSON fails.
 
         :param mock_run: Mock subprocess.run
@@ -328,7 +328,7 @@ class TestRustRunnerDocstrings:
     """Test suite for Rust docstring validation."""
 
     @patch("subprocess.run")
-    def test_docstring_validation_passes(self, mock_run, rust_runner):
+    def test_docstring_validation_passes(self, mock_run, rust_runner) -> None:
         """Test docstring validation when all docstrings are present.
 
         :param mock_run: Mock subprocess.run
@@ -345,7 +345,7 @@ class TestRustRunnerDocstrings:
 
     @patch("subprocess.run")
     @patch("pathlib.Path.exists")
-    def test_docstring_validation_fails(self, mock_exists, mock_run, rust_runner):
+    def test_docstring_validation_fails(self, mock_exists, mock_run, rust_runner) -> None:
         """Test docstring validation when docstrings are missing.
 
         :param mock_exists: Mock Path.exists
@@ -372,7 +372,7 @@ rust/src/lib.rs: Missing module-level documentation
         assert result.violations[0].file == "rust/src/main.rs"
         assert "helper" in result.violations[0].message
 
-    def test_docstring_validation_no_rust_directory(self, tmp_path):
+    def test_docstring_validation_no_rust_directory(self, tmp_path) -> None:
         """Test docstring validation when rust/ directory doesn't exist.
 
         :param tmp_path: Pytest temporary directory
@@ -392,7 +392,7 @@ class TestRustRunnerIntegration:
 
     @patch("tools.repo_lint.runners.base.command_exists")
     @patch("subprocess.run")
-    def test_check_runs_all_tools(self, mock_run, mock_command_exists, rust_runner):
+    def test_check_runs_all_tools(self, mock_run, mock_command_exists, rust_runner) -> None:
         """Test check() runs all linting tools.
 
         :param mock_run: Mock subprocess.run
@@ -413,7 +413,7 @@ class TestRustRunnerIntegration:
 
     @patch("tools.repo_lint.runners.base.command_exists")
     @patch("subprocess.run")
-    def test_fix_runs_formatter_and_checks(self, mock_run, mock_command_exists, rust_runner):
+    def test_fix_runs_formatter_and_checks(self, mock_run, mock_command_exists, rust_runner) -> None:
         """Test fix() runs formatter and re-checks.
 
         :param mock_run: Mock subprocess.run

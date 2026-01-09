@@ -67,7 +67,7 @@ class TestRuffCheckFix(unittest.TestCase):
         Validates split check/fix behavior and --no-fix vs --fix usage.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -76,7 +76,7 @@ class TestRuffCheckFix(unittest.TestCase):
         self.runner = PythonRunner(repo_root=Path("/fake/repo"))
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
-    def test_check_uses_no_fix(self, mock_run):
+    def test_check_uses_no_fix(self, mock_run) -> None:
         """Test that _run_ruff_check uses --no-fix flag.
 
         :Purpose:
@@ -101,7 +101,7 @@ class TestRuffCheckFix(unittest.TestCase):
         self.assertEqual(result.tool, "ruff")
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
-    def test_fix_uses_fix_flag(self, mock_run):
+    def test_fix_uses_fix_flag(self, mock_run) -> None:
         """Test that _run_ruff_fix uses --fix flag.
 
         :Purpose:
@@ -127,7 +127,7 @@ class TestRuffCheckFix(unittest.TestCase):
         self.assertEqual(result.tool, "ruff")
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
-    def test_check_handles_violations(self, mock_run):
+    def test_check_handles_violations(self, mock_run) -> None:
         """Test that _run_ruff_check correctly parses violations.
 
         :Purpose:
@@ -150,7 +150,7 @@ Found 2 errors."""
         self.assertEqual(len(result.violations), 2, "Should parse 2 violations (ignoring 'Found' line)")
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
-    def test_check_handles_unsafe_fixes_warning(self, mock_run):
+    def test_check_handles_unsafe_fixes_warning(self, mock_run) -> None:
         """Test that _run_ruff_check handles unsafe fixes warning.
 
         :Purpose:
@@ -174,7 +174,7 @@ Found 1 error."""
         self.assertIn("Review before applying", result.info_message, "Should use check context message")
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
-    def test_fix_handles_unsafe_fixes_warning(self, mock_run):
+    def test_fix_handles_unsafe_fixes_warning(self, mock_run) -> None:
         """Test that _run_ruff_fix handles unsafe fixes warning.
 
         :Purpose:
@@ -199,7 +199,7 @@ Found 1 error."""
         self.assertIn("not applied automatically", result.info_message, "Should use fix context message")
 
     @patch("tools.repo_lint.runners.python_runner.subprocess.run")
-    def test_fix_command_sequences_black_and_ruff(self, mock_run):
+    def test_fix_command_sequences_black_and_ruff(self, mock_run) -> None:
         """Test that fix() command calls both Black and Ruff.
 
         :Purpose:
@@ -239,7 +239,7 @@ class TestParseRuffOutput(unittest.TestCase):
         Validates output parsing logic for both check and fix contexts.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -247,7 +247,7 @@ class TestParseRuffOutput(unittest.TestCase):
         """
         self.runner = PythonRunner(repo_root=Path("/fake/repo"))
 
-    def test_parse_empty_output(self):
+    def test_parse_empty_output(self) -> None:
         """Test parsing empty output.
 
         :Purpose:
@@ -256,7 +256,7 @@ class TestParseRuffOutput(unittest.TestCase):
         violations, _ = self.runner._parse_ruff_output("", context="check")
         self.assertEqual(len(violations), 0, "Empty output should have no violations")
 
-    def test_parse_check_context_unsafe_message(self):
+    def test_parse_check_context_unsafe_message(self) -> None:
         """Test parsing unsafe fixes message in check context.
 
         :Purpose:
@@ -270,7 +270,7 @@ class TestParseRuffOutput(unittest.TestCase):
         self.assertIn("Review before applying", info_message)
         self.assertNotIn("not applied automatically", info_message)
 
-    def test_parse_fix_context_unsafe_message(self):
+    def test_parse_fix_context_unsafe_message(self) -> None:
         """Test parsing unsafe fixes message in fix context.
 
         :Purpose:
@@ -284,7 +284,7 @@ class TestParseRuffOutput(unittest.TestCase):
         self.assertIn("not applied automatically", info_message)
         self.assertNotIn("Review before applying", info_message)
 
-    def test_parse_filters_found_lines(self):
+    def test_parse_filters_found_lines(self) -> None:
         """Test that 'Found N errors' lines are filtered out.
 
         :Purpose:

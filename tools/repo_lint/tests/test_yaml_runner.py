@@ -64,7 +64,7 @@ class TestYAMLRunner(unittest.TestCase):
         Validates yamllint integration.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -73,7 +73,7 @@ class TestYAMLRunner(unittest.TestCase):
         self.runner = YAMLRunner(repo_root=Path("/fake/repo"))
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
-    def test_has_files_detects_yml(self, mock_run):
+    def test_has_files_detects_yml(self, mock_run) -> None:
         """Test that has_files detects .yml files.
 
         :Purpose:
@@ -86,7 +86,7 @@ class TestYAMLRunner(unittest.TestCase):
         self.assertTrue(self.runner.has_files())
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
-    def test_has_files_detects_yaml(self, mock_run):
+    def test_has_files_detects_yaml(self, mock_run) -> None:
         """Test that has_files detects .yaml files.
 
         :Purpose:
@@ -99,7 +99,7 @@ class TestYAMLRunner(unittest.TestCase):
         self.assertTrue(self.runner.has_files())
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
-    def test_has_files_detects_both_extensions(self, mock_run):
+    def test_has_files_detects_both_extensions(self, mock_run) -> None:
         """Test that has_files detects both .yml and .yaml files.
 
         :Purpose:
@@ -112,7 +112,7 @@ class TestYAMLRunner(unittest.TestCase):
         self.assertTrue(self.runner.has_files())
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
-    def test_yamllint_uses_parsable_format(self, mock_run):
+    def test_yamllint_uses_parsable_format(self, mock_run) -> None:
         """Test that _run_yamllint uses -f parsable flag.
 
         :Purpose:
@@ -135,7 +135,7 @@ class TestYAMLRunner(unittest.TestCase):
         self.assertTrue(result.passed)
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
-    def test_yamllint_handles_violations(self, mock_run):
+    def test_yamllint_handles_violations(self, mock_run) -> None:
         """Test that _run_yamllint correctly parses violations.
 
         :Purpose:
@@ -157,7 +157,7 @@ test.yml:20:5: [warning] line too long (120 > 80 characters)"""
         self.assertEqual(len(result.violations), 2)
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
-    def test_empty_files_returns_passed(self, mock_run):
+    def test_empty_files_returns_passed(self, mock_run) -> None:
         """Test that empty file list returns passed result.
 
         :Purpose:
@@ -170,7 +170,7 @@ test.yml:20:5: [warning] line too long (120 > 80 characters)"""
         self.assertTrue(self.runner._run_yamllint().passed)  # pylint: disable=protected-access
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
-    def test_check_tools_detects_missing_yamllint(self, mock_run):
+    def test_check_tools_detects_missing_yamllint(self, mock_run) -> None:
         """Test that check_tools detects missing yamllint.
 
         :Purpose:
@@ -183,7 +183,7 @@ test.yml:20:5: [warning] line too long (120 > 80 characters)"""
             self.assertIn("yamllint", missing)
 
     @patch("tools.repo_lint.runners.yaml_runner.subprocess.run")
-    def test_fix_runs_same_as_check(self, mock_run):
+    def test_fix_runs_same_as_check(self, mock_run) -> None:
         """Test that fix() runs same checks as check() (no auto-fix).
 
         :Purpose:

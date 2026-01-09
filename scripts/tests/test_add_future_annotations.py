@@ -66,23 +66,23 @@ from add_future_annotations import (  # noqa: E402
 class TestSkipFile(unittest.TestCase):
     """Test file skipping logic."""
 
-    def test_skip_venv(self):
+    def test_skip_venv(self) -> None:
         """Files in .venv should be skipped."""
         self.assertTrue(should_skip_file(Path(".venv/lib/python3.9/site-packages/test.py")))
 
-    def test_skip_git(self):
+    def test_skip_git(self) -> None:
         """Files in .git should be skipped."""
         self.assertTrue(should_skip_file(Path(".git/hooks/test.py")))
 
-    def test_skip_dist(self):
+    def test_skip_dist(self) -> None:
         """Files in dist should be skipped."""
         self.assertTrue(should_skip_file(Path("dist/mypackage/test.py")))
 
-    def test_skip_build(self):
+    def test_skip_build(self) -> None:
         """Files in build should be skipped."""
         self.assertTrue(should_skip_file(Path("build/lib/test.py")))
 
-    def test_dont_skip_normal(self):
+    def test_dont_skip_normal(self) -> None:
         """Normal project files should not be skipped."""
         self.assertFalse(should_skip_file(Path("src/mymodule/test.py")))
         self.assertFalse(should_skip_file(Path("scripts/test.py")))
@@ -91,17 +91,17 @@ class TestSkipFile(unittest.TestCase):
 class TestHasFutureImport(unittest.TestCase):
     """Test detection of existing future imports."""
 
-    def test_no_import(self):
+    def test_no_import(self) -> None:
         """File without future import should return False."""
         content = 'print("hello")\n'
         self.assertFalse(has_future_import(content))
 
-    def test_has_import(self):
+    def test_has_import(self) -> None:
         """File with future import should return True."""
         content = "from __future__ import annotations\nprint('hello')\n"
         self.assertTrue(has_future_import(content))
 
-    def test_has_import_with_other_imports(self):
+    def test_has_import_with_other_imports(self) -> None:
         """File with future import among other imports should return True."""
         content = """from __future__ import annotations
 import sys
@@ -109,7 +109,7 @@ import os
 """
         self.assertTrue(has_future_import(content))
 
-    def test_has_import_after_docstring(self):
+    def test_has_import_after_docstring(self) -> None:
         """File with future import after docstring should return True."""
         content = '''"""Module docstring."""
 from __future__ import annotations
@@ -120,43 +120,43 @@ from __future__ import annotations
 class TestFindInsertionPoint(unittest.TestCase):
     """Test finding the correct insertion point."""
 
-    def test_empty_file(self):
+    def test_empty_file(self) -> None:
         """Empty file should insert at line 1."""
         content = ""
         line, _ = find_insertion_point(content)
         self.assertEqual(line, 1)
 
-    def test_simple_file(self):
+    def test_simple_file(self) -> None:
         """Simple file without headers should insert at line 1."""
         content = "import sys\n"
         line, _ = find_insertion_point(content)
         self.assertEqual(line, 1)
 
-    def test_file_with_shebang(self):
+    def test_file_with_shebang(self) -> None:
         """File with shebang should insert after it."""
         content = "#!/usr/bin/env python3\nimport sys\n"
         line, _ = find_insertion_point(content)
         self.assertEqual(line, 2)
 
-    def test_file_with_encoding(self):
+    def test_file_with_encoding(self) -> None:
         """File with encoding cookie should insert after it."""
         content = "# -*- coding: utf-8 -*-\nimport sys\n"
         line, _ = find_insertion_point(content)
         self.assertEqual(line, 2)
 
-    def test_file_with_shebang_and_encoding(self):
+    def test_file_with_shebang_and_encoding(self) -> None:
         """File with both shebang and encoding should insert after both."""
         content = "#!/usr/bin/env python3\n# -*- coding: utf-8 -*-\nimport sys\n"
         line, _ = find_insertion_point(content)
         self.assertEqual(line, 3)
 
-    def test_file_with_docstring(self):
+    def test_file_with_docstring(self) -> None:
         """File with module docstring should insert after it."""
         content = '"""Module docstring."""\nimport sys\n'
         line, _ = find_insertion_point(content)
         self.assertGreater(line, 1)  # Should be after docstring
 
-    def test_file_with_multiline_docstring(self):
+    def test_file_with_multiline_docstring(self) -> None:
         """File with multiline module docstring should insert after it."""
         content = '''"""Module docstring.
 
@@ -167,7 +167,7 @@ import sys
         line, _ = find_insertion_point(content)
         self.assertGreater(line, 1)  # Should be after docstring
 
-    def test_file_with_shebang_and_docstring(self):
+    def test_file_with_shebang_and_docstring(self) -> None:
         """File with shebang and docstring should insert after docstring."""
         content = '#!/usr/bin/env python3\n"""Module docstring."""\nimport sys\n'
         line, _ = find_insertion_point(content)
@@ -177,20 +177,20 @@ import sys
 class TestAddFutureImport(unittest.TestCase):
     """Test the import addition logic."""
 
-    def test_add_to_empty_file(self):
+    def test_add_to_empty_file(self) -> None:
         """Adding to empty file should work."""
         content = ""
         result = add_future_import(content)
         self.assertIn("from __future__ import annotations", result)
 
-    def test_add_to_simple_file(self):
+    def test_add_to_simple_file(self) -> None:
         """Adding to simple file should preserve existing code."""
         content = "import sys\n"
         result = add_future_import(content)
         self.assertIn("from __future__ import annotations", result)
         self.assertIn("import sys", result)
 
-    def test_preserve_shebang(self):
+    def test_preserve_shebang(self) -> None:
         """Shebang should remain first."""
         content = "#!/usr/bin/env python3\nimport sys\n"
         result = add_future_import(content)
@@ -198,14 +198,14 @@ class TestAddFutureImport(unittest.TestCase):
         self.assertEqual(lines[0], "#!/usr/bin/env python3")
         self.assertIn("from __future__ import annotations", result)
 
-    def test_preserve_encoding(self):
+    def test_preserve_encoding(self) -> None:
         """Encoding cookie should be preserved."""
         content = "# -*- coding: utf-8 -*-\nimport sys\n"
         result = add_future_import(content)
         self.assertIn("# -*- coding: utf-8 -*-", result)
         self.assertIn("from __future__ import annotations", result)
 
-    def test_preserve_docstring(self):
+    def test_preserve_docstring(self) -> None:
         """Module docstring should be preserved and come before import."""
         content = '"""Module docstring."""\nimport sys\n'
         result = add_future_import(content)
@@ -216,13 +216,13 @@ class TestAddFutureImport(unittest.TestCase):
         import_pos = result.index("from __future__ import annotations")
         self.assertLess(doc_pos, import_pos)
 
-    def test_idempotent(self):
+    def test_idempotent(self) -> None:
         """Adding import to file that already has it should not change content."""
         content = "from __future__ import annotations\nimport sys\n"
         result = add_future_import(content)
         self.assertEqual(content, result)
 
-    def test_multiline_docstring(self):
+    def test_multiline_docstring(self) -> None:
         """Multiline docstring should be preserved correctly."""
         content = '''"""Module docstring.
 
@@ -239,7 +239,7 @@ import sys
 class TestProcessFile(unittest.TestCase):
     """Test file processing with actual file I/O."""
 
-    def test_check_mode_returns_true_for_file_needing_change(self):
+    def test_check_mode_returns_true_for_file_needing_change(self) -> None:
         """Check mode should return True for files needing modification."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write("import sys\n")
@@ -257,7 +257,7 @@ class TestProcessFile(unittest.TestCase):
         finally:
             temp_path.unlink()
 
-    def test_check_mode_returns_false_for_file_with_import(self):
+    def test_check_mode_returns_false_for_file_with_import(self) -> None:
         """Check mode should return False for files already having import."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write("from __future__ import annotations\nimport sys\n")
@@ -269,7 +269,7 @@ class TestProcessFile(unittest.TestCase):
         finally:
             temp_path.unlink()
 
-    def test_apply_mode_modifies_file(self):
+    def test_apply_mode_modifies_file(self) -> None:
         """Apply mode should actually modify the file."""
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write("import sys\n")
@@ -286,7 +286,7 @@ class TestProcessFile(unittest.TestCase):
         finally:
             temp_path.unlink()
 
-    def test_apply_mode_preserves_structure(self):
+    def test_apply_mode_preserves_structure(self) -> None:
         """Apply mode should preserve file structure."""
         original = '''#!/usr/bin/env python3
 """Module docstring."""
@@ -318,7 +318,7 @@ import sys
 class TestComplexScenarios(unittest.TestCase):
     """Test complex real-world scenarios."""
 
-    def test_file_with_all_headers(self):
+    def test_file_with_all_headers(self) -> None:
         """File with shebang, encoding, and docstring."""
         content = '''#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -337,14 +337,14 @@ import sys
         self.assertIn('"""Module docstring.', result)
         self.assertIn("from __future__ import annotations", result)
 
-    def test_file_with_single_quote_docstring(self):
+    def test_file_with_single_quote_docstring(self) -> None:
         """File with single-quoted docstring."""
         content = "'''Module docstring.'''\nimport sys\n"
         result = add_future_import(content)
         self.assertIn("from __future__ import annotations", result)
         self.assertIn("'''Module docstring.'''", result)
 
-    def test_file_with_no_imports(self):
+    def test_file_with_no_imports(self) -> None:
         """File with just code, no imports."""
         content = '''"""Module docstring."""
 

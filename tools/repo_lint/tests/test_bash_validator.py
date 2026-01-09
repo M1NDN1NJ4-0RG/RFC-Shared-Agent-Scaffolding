@@ -66,7 +66,7 @@ class TestBashValidator(unittest.TestCase):
         Validates Bash docstring contract enforcement.
     """
 
-    def test_valid_header(self):
+    def test_valid_header(self) -> None:
         """Test that a valid script header passes validation.
 
         :Purpose:
@@ -95,7 +95,7 @@ echo "Hello"
         errors = BashValidator.validate(Path("test.sh"), content)
         self.assertEqual(len(errors), 0, f"Expected no errors, got: {errors}")
 
-    def test_missing_description_section(self):
+    def test_missing_description_section(self) -> None:
         """Test that missing DESCRIPTION section is detected.
 
         :Purpose:
@@ -121,7 +121,7 @@ echo "Hello"
         self.assertEqual(len(errors), 1)
         self.assertIn("DESCRIPTION:", errors[0].missing_sections)
 
-    def test_missing_usage_section(self):
+    def test_missing_usage_section(self) -> None:
         """Test that missing USAGE section is detected.
 
         :Purpose:
@@ -147,7 +147,7 @@ echo "Hello"
         self.assertEqual(len(errors), 1)
         self.assertIn("USAGE:", errors[0].missing_sections)
 
-    def test_missing_examples_section(self):
+    def test_missing_examples_section(self) -> None:
         """Test that missing EXAMPLES section is detected.
 
         :Purpose:
@@ -173,7 +173,7 @@ echo "Hello"
         self.assertEqual(len(errors), 1)
         self.assertIn("EXAMPLES:", errors[0].missing_sections)
 
-    def test_missing_header(self):
+    def test_missing_header(self) -> None:
         """Test that completely missing header is detected.
 
         :Purpose:
@@ -188,7 +188,7 @@ echo "Hello"
         has_missing_sections = any(len(e.missing_sections) > 0 for e in errors)
         self.assertTrue(has_missing_sections, f"Expected missing sections, got: {errors}")
 
-    def test_function_with_documentation(self):
+    def test_function_with_documentation(self) -> None:
         """Test that documented functions pass validation.
 
         :Purpose:
@@ -226,7 +226,7 @@ my_function() {
         # Should have no errors for documented function
         self.assertEqual(len(errors), 0, f"Expected no errors, got: {errors}")
 
-    def test_pragma_ignore_section(self):
+    def test_pragma_ignore_section(self) -> None:
         """Test that pragma ignore works for sections.
 
         :Purpose:

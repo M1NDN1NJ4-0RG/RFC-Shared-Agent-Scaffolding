@@ -75,7 +75,7 @@ class TestTomlRunner(unittest.TestCase):
 
     # pylint: disable=protected-access
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -86,7 +86,7 @@ class TestTomlRunner(unittest.TestCase):
         self.runner = TomlRunner(repo_root=repo_root_path)
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
-    def test_has_files_detects_toml(self, mock_run):
+    def test_has_files_detects_toml(self, mock_run) -> None:
         """Test that has_files detects .toml files.
 
         :Purpose:
@@ -99,7 +99,7 @@ class TestTomlRunner(unittest.TestCase):
         self.assertTrue(self.runner.has_files())
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
-    def test_has_files_returns_false_when_no_files(self, mock_run):
+    def test_has_files_returns_false_when_no_files(self, mock_run) -> None:
         """Test that has_files returns False when no TOML files exist.
 
         :Purpose:
@@ -112,7 +112,7 @@ class TestTomlRunner(unittest.TestCase):
         self.assertFalse(self.runner.has_files())
 
     @patch("tools.repo_lint.runners.toml_runner.command_exists")
-    def test_check_tools_detects_missing_tool(self, mock_command_exists):
+    def test_check_tools_detects_missing_tool(self, mock_command_exists) -> None:
         """Test that check_tools detects missing Taplo.
 
         :Purpose:
@@ -127,7 +127,7 @@ class TestTomlRunner(unittest.TestCase):
         self.assertEqual(missing_tools, ["taplo"])
 
     @patch("tools.repo_lint.runners.toml_runner.command_exists")
-    def test_check_tools_returns_empty_when_installed(self, mock_command_exists):
+    def test_check_tools_returns_empty_when_installed(self, mock_command_exists) -> None:
         """Test that check_tools returns empty list when tool is installed.
 
         :Purpose:
@@ -142,7 +142,7 @@ class TestTomlRunner(unittest.TestCase):
         self.assertEqual(missing_tools, [])
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
-    def test_run_taplo_with_config_file(self, mock_run):
+    def test_run_taplo_with_config_file(self, mock_run) -> None:
         """Test that _run_taplo uses config file when present.
 
         :Purpose:
@@ -165,7 +165,7 @@ class TestTomlRunner(unittest.TestCase):
         self.assertIn("--config", taplo_args)
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
-    def test_run_taplo_fix_mode(self, mock_run):
+    def test_run_taplo_fix_mode(self, mock_run) -> None:
         """Test that _run_taplo uses `taplo fmt` (without --check) in fix mode.
 
         :Purpose:
@@ -187,7 +187,7 @@ class TestTomlRunner(unittest.TestCase):
         self.assertNotIn("--check", taplo_args)
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
-    def test_run_taplo_check_mode_uses_check_flag(self, mock_run):
+    def test_run_taplo_check_mode_uses_check_flag(self, mock_run) -> None:
         """Test that _run_taplo uses `taplo fmt --check` in check mode.
 
         :Purpose:
@@ -208,7 +208,7 @@ class TestTomlRunner(unittest.TestCase):
         self.assertIn("fmt", taplo_args)
         self.assertIn("--check", taplo_args)
 
-    def test_parse_taplo_output_single_violation(self):
+    def test_parse_taplo_output_single_violation(self) -> None:
         """Test parsing a single violation from Taplo output.
 
         :Purpose:
@@ -222,7 +222,7 @@ class TestTomlRunner(unittest.TestCase):
         self.assertEqual(violations[0].file, "pyproject.toml")
         self.assertIn("not properly formatted", violations[0].message)
 
-    def test_parse_taplo_output_multiple_violations(self):
+    def test_parse_taplo_output_multiple_violations(self) -> None:
         """Test parsing multiple violations from Taplo output.
 
         :Purpose:
@@ -242,7 +242,7 @@ ERROR taplo:format_files: the file is not properly formatted path="config/settin
         self.assertEqual(violations[1].file, "taplo.toml")
         self.assertEqual(violations[2].file, "config/settings.toml")
 
-    def test_parse_taplo_output_skips_info_lines(self):
+    def test_parse_taplo_output_skips_info_lines(self) -> None:
         """Test that INFO/WARN lines are skipped during parsing.
 
         :Purpose:
@@ -260,7 +260,7 @@ ERROR operation failed
         self.assertEqual(len(violations), 1)
         self.assertEqual(violations[0].file, "pyproject.toml")
 
-    def test_parse_taplo_output_handles_stderr(self):
+    def test_parse_taplo_output_handles_stderr(self) -> None:
         """Test that stderr output is parsed for violations.
 
         :Purpose:
@@ -273,7 +273,7 @@ ERROR operation failed
 
         self.assertEqual(len(violations), 1)
 
-    def test_parse_taplo_output_empty_output(self):
+    def test_parse_taplo_output_empty_output(self) -> None:
         """Test parsing empty output (no violations).
 
         :Purpose:
@@ -283,7 +283,7 @@ ERROR operation failed
 
         self.assertEqual(len(violations), 0)
 
-    def test_extract_file_path_quoted_path(self):
+    def test_extract_file_path_quoted_path(self) -> None:
         """Test extracting file path with quotes.
 
         :Purpose:
@@ -295,7 +295,7 @@ ERROR operation failed
 
         self.assertEqual(result, "pyproject.toml")
 
-    def test_extract_file_path_unquoted_path(self):
+    def test_extract_file_path_unquoted_path(self) -> None:
         """Test extracting file path without quotes.
 
         :Purpose:
@@ -307,7 +307,7 @@ ERROR operation failed
 
         self.assertEqual(result, "pyproject.toml")
 
-    def test_extract_file_path_with_leading_dot_slash(self):
+    def test_extract_file_path_with_leading_dot_slash(self) -> None:
         """Test extracting file path with ./ prefix.
 
         :Purpose:
@@ -319,7 +319,7 @@ ERROR operation failed
 
         self.assertEqual(result, "pyproject.toml")
 
-    def test_extract_file_path_missing_path_attribute(self):
+    def test_extract_file_path_missing_path_attribute(self) -> None:
         """Test extracting file path when path= is missing.
 
         :Purpose:
@@ -331,7 +331,7 @@ ERROR operation failed
 
         self.assertIsNone(result)
 
-    def test_extract_file_path_malformed_input(self):
+    def test_extract_file_path_malformed_input(self) -> None:
         """Test extracting file path from malformed input.
 
         :Purpose:
@@ -343,7 +343,7 @@ ERROR operation failed
 
         self.assertEqual(result, "")  # Empty string is returned, not None
 
-    def test_extract_file_path_quoted_path_no_closing_quote(self):
+    def test_extract_file_path_quoted_path_no_closing_quote(self) -> None:
         """Test extracting file path with opening quote but no closing quote.
 
         :Purpose:
@@ -355,7 +355,7 @@ ERROR operation failed
 
         self.assertEqual(result, "pyproject.toml")
 
-    def test_extract_file_path_nested_directory(self):
+    def test_extract_file_path_nested_directory(self) -> None:
         """Test extracting file path with nested directory structure.
 
         :Purpose:
@@ -368,7 +368,7 @@ ERROR operation failed
         self.assertEqual(result, "config/settings.toml")
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
-    def test_run_taplo_empty_file_list(self, mock_run):
+    def test_run_taplo_empty_file_list(self, mock_run) -> None:
         """Test that empty file list returns success.
 
         :Purpose:
@@ -385,7 +385,7 @@ ERROR operation failed
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
     @patch("tools.repo_lint.runners.toml_runner.command_exists")
-    def test_check_returns_violations(self, mock_command_exists, mock_run):
+    def test_check_returns_violations(self, mock_command_exists, mock_run) -> None:
         """Test that check() returns violations when linting fails.
 
         :Purpose:
@@ -412,7 +412,7 @@ ERROR operation failed
 
     @patch("tools.repo_lint.runners.toml_runner.subprocess.run")
     @patch("tools.repo_lint.runners.toml_runner.command_exists")
-    def test_fix_applies_fixes(self, mock_command_exists, mock_run):
+    def test_fix_applies_fixes(self, mock_command_exists, mock_run) -> None:
         """Test that fix() calls _run_taplo with fix=True.
 
         :Purpose:

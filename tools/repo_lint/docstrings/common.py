@@ -57,7 +57,7 @@ class ValidationError:
         *,
         symbol_name: str | None = None,
         line_number: int | None = None,
-    ):
+    ) -> None:
         """Initialize ValidationError.
 
         :param file_path: Path to the file with validation error

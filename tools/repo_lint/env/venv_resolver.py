@@ -52,7 +52,7 @@ class VenvNotFoundError(Exception):
         remediation: Suggested remediation steps
     """
 
-    def __init__(self, message: str, remediation: str):
+    def __init__(self, message: str, remediation: str) -> None:
         """Initialize VenvNotFoundError.
 
         :param message: Human-readable error message

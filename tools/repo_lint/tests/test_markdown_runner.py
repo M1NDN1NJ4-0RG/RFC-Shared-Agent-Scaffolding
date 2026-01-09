@@ -71,7 +71,7 @@ class TestMarkdownRunner(unittest.TestCase):
 
     # pylint: disable=protected-access
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -82,7 +82,7 @@ class TestMarkdownRunner(unittest.TestCase):
         self.runner = MarkdownRunner(repo_root=repo_root_path)
 
     @patch("tools.repo_lint.runners.markdown_runner.subprocess.run")
-    def test_has_files_detects_md(self, mock_run):
+    def test_has_files_detects_md(self, mock_run) -> None:
         """Test that has_files detects .md files.
 
         :Purpose:
@@ -95,7 +95,7 @@ class TestMarkdownRunner(unittest.TestCase):
         self.assertTrue(self.runner.has_files())
 
     @patch("tools.repo_lint.runners.markdown_runner.subprocess.run")
-    def test_has_files_returns_false_when_no_files(self, mock_run):
+    def test_has_files_returns_false_when_no_files(self, mock_run) -> None:
         """Test that has_files returns False when no Markdown files exist.
 
         :Purpose:
@@ -108,7 +108,7 @@ class TestMarkdownRunner(unittest.TestCase):
         self.assertFalse(self.runner.has_files())
 
     @patch("tools.repo_lint.runners.markdown_runner.command_exists")
-    def test_check_tools_detects_missing_tool(self, mock_command_exists):
+    def test_check_tools_detects_missing_tool(self, mock_command_exists) -> None:
         """Test that check_tools detects missing markdownlint-cli2.
 
         :Purpose:
@@ -123,7 +123,7 @@ class TestMarkdownRunner(unittest.TestCase):
         self.assertEqual(missing_tools, ["markdownlint-cli2"])
 
     @patch("tools.repo_lint.runners.markdown_runner.command_exists")
-    def test_check_tools_returns_empty_when_installed(self, mock_command_exists):
+    def test_check_tools_returns_empty_when_installed(self, mock_command_exists) -> None:
         """Test that check_tools returns empty list when tool is installed.
 
         :Purpose:
@@ -138,7 +138,7 @@ class TestMarkdownRunner(unittest.TestCase):
         self.assertEqual(missing_tools, [])
 
     @patch("tools.repo_lint.runners.markdown_runner.subprocess.run")
-    def test_run_markdownlint_with_config_file(self, mock_run):
+    def test_run_markdownlint_with_config_file(self, mock_run) -> None:
         """Test that _run_markdownlint uses config file when present.
 
         :Purpose:
@@ -161,7 +161,7 @@ class TestMarkdownRunner(unittest.TestCase):
         self.assertIn("--config", markdownlint_args)
 
     @patch("tools.repo_lint.runners.markdown_runner.subprocess.run")
-    def test_run_markdownlint_fix_mode(self, mock_run):
+    def test_run_markdownlint_fix_mode(self, mock_run) -> None:
         """Test that _run_markdownlint passes --fix flag in fix mode.
 
         :Purpose:
@@ -181,7 +181,7 @@ class TestMarkdownRunner(unittest.TestCase):
         self.assertIn("--fix", markdownlint_args)
 
     @patch("tools.repo_lint.runners.markdown_runner.subprocess.run")
-    def test_run_markdownlint_check_mode_no_fix_flag(self, mock_run):
+    def test_run_markdownlint_check_mode_no_fix_flag(self, mock_run) -> None:
         """Test that _run_markdownlint does not pass --fix in check mode.
 
         :Purpose:
@@ -200,7 +200,7 @@ class TestMarkdownRunner(unittest.TestCase):
         markdownlint_args = mock_run.call_args_list[1][0][0]
         self.assertNotIn("--fix", markdownlint_args)
 
-    def test_parse_markdownlint_output_single_violation(self):
+    def test_parse_markdownlint_output_single_violation(self) -> None:
         """Test parsing a single violation from markdownlint-cli2 output.
 
         :Purpose:
@@ -215,7 +215,7 @@ class TestMarkdownRunner(unittest.TestCase):
         self.assertEqual(violations[0].line, 7)
         self.assertIn("MD013", violations[0].message)
 
-    def test_parse_markdownlint_output_multiple_violations(self):
+    def test_parse_markdownlint_output_multiple_violations(self) -> None:
         """Test parsing multiple violations from markdownlint-cli2 output.
 
         :Purpose:
@@ -232,7 +232,7 @@ CONTRIBUTING.md:15:5 warning MD040/fenced-code-language Fenced code blocks shoul
         self.assertEqual(violations[1].file, "docs/guide.md")
         self.assertEqual(violations[2].file, "CONTRIBUTING.md")
 
-    def test_parse_markdownlint_output_skips_summary_lines(self):
+    def test_parse_markdownlint_output_skips_summary_lines(self) -> None:
         """Test that summary lines are skipped during parsing.
 
         :Purpose:
@@ -250,7 +250,7 @@ README.md:7:81 error MD013/line-length Line length"""
         self.assertEqual(len(violations), 1)
         self.assertEqual(violations[0].file, "README.md")
 
-    def test_parse_markdownlint_output_handles_stderr(self):
+    def test_parse_markdownlint_output_handles_stderr(self) -> None:
         """Test that stderr output is also parsed for violations.
 
         :Purpose:
@@ -263,7 +263,7 @@ README.md:7:81 error MD013/line-length Line length"""
 
         self.assertEqual(len(violations), 2)
 
-    def test_parse_markdownlint_output_empty_output(self):
+    def test_parse_markdownlint_output_empty_output(self) -> None:
         """Test parsing empty output (no violations).
 
         :Purpose:
@@ -274,7 +274,7 @@ README.md:7:81 error MD013/line-length Line length"""
         self.assertEqual(len(violations), 0)
 
     @patch("tools.repo_lint.runners.markdown_runner.subprocess.run")
-    def test_run_markdownlint_empty_file_list(self, mock_run):
+    def test_run_markdownlint_empty_file_list(self, mock_run) -> None:
         """Test that empty file list returns success.
 
         :Purpose:
@@ -291,7 +291,7 @@ README.md:7:81 error MD013/line-length Line length"""
 
     @patch("tools.repo_lint.runners.markdown_runner.subprocess.run")
     @patch("tools.repo_lint.runners.markdown_runner.command_exists")
-    def test_check_returns_violations(self, mock_command_exists, mock_run):
+    def test_check_returns_violations(self, mock_command_exists, mock_run) -> None:
         """Test that check() returns violations when linting fails.
 
         :Purpose:
@@ -318,7 +318,7 @@ README.md:7:81 error MD013/line-length Line length"""
 
     @patch("tools.repo_lint.runners.markdown_runner.subprocess.run")
     @patch("tools.repo_lint.runners.markdown_runner.command_exists")
-    def test_fix_applies_fixes(self, mock_command_exists, mock_run):
+    def test_fix_applies_fixes(self, mock_command_exists, mock_run) -> None:
         """Test that fix() calls _run_markdownlint with fix=True.
 
         :Purpose:

@@ -178,7 +178,7 @@ class Runner(ABC):
         language runners must implement.
     """
 
-    def __init__(self, repo_root: Path | None = None, ci_mode: bool = False, verbose: bool = False):
+    def __init__(self, repo_root: Path | None = None, ci_mode: bool = False, verbose: bool = False) -> None:
         """Initialize runner.
 
         :param repo_root: Path to repository root (auto-detected if None)

@@ -52,12 +52,12 @@ import fix_md013_line_length_option_b as fixer  # pylint: disable=wrong-import-p
 class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
     """Test suite for fix_md013_line_length_option_b.py."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Create temporary directory for test files."""
         self.temp_dir = tempfile.TemporaryDirectory()
         self.temp_path = Path(self.temp_dir.name)
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up temporary directory."""
         self.temp_dir.cleanup()
 
@@ -72,7 +72,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         fixer._rewrite_file(test_file)  # pylint: disable=protected-access
         return test_file.read_text(encoding="utf-8")
 
-    def test_plain_paragraph_wrapping(self):
+    def test_plain_paragraph_wrapping(self) -> None:
         """Plain paragraphs exceeding MAX_LEN should be wrapped."""
         content = (
             "This is a very long line that definitely exceeds the maximum line "
@@ -86,13 +86,13 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         for line in lines:
             self.assertLessEqual(len(line), 120)
 
-    def test_plain_paragraph_already_compliant(self):
+    def test_plain_paragraph_already_compliant(self) -> None:
         """Paragraphs already within limit should not be changed."""
         content = "Short line.\nAnother short line.\n"
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_bullet_list_wrapping(self):
+    def test_bullet_list_wrapping(self) -> None:
         """Long bullet list items should be wrapped while preserving marker."""
         content = (
             "- This is a very long bullet list item that exceeds the maximum "
@@ -111,7 +111,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         for line in lines:
             self.assertLessEqual(len(line), 120)
 
-    def test_numbered_list_wrapping(self):
+    def test_numbered_list_wrapping(self) -> None:
         """Long numbered list items should be wrapped while preserving marker."""
         content = (
             "1. This is a very long numbered list item that exceeds the maximum "
@@ -127,7 +127,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         if len(lines) > 1:
             self.assertTrue(lines[1].startswith("   "))
 
-    def test_task_list_wrapping(self):
+    def test_task_list_wrapping(self) -> None:
         """Long task list items should be wrapped while preserving checkbox."""
         content = (
             "- [ ] This is a very long unchecked task item that exceeds the "
@@ -143,7 +143,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         if len(lines) > 1:
             self.assertTrue(lines[1].startswith("      "))
 
-    def test_task_list_checked_wrapping(self):
+    def test_task_list_checked_wrapping(self) -> None:
         """Checked task items should preserve [x] checkbox."""
         content = (
             "- [x] This is a very long checked task item that exceeds the "
@@ -154,7 +154,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # Should have [x] checkbox
         self.assertTrue(lines[0].startswith("- [x] "))
 
-    def test_task_list_uppercase_x_wrapping(self):
+    def test_task_list_uppercase_x_wrapping(self) -> None:
         """Task items with uppercase X should preserve [X] checkbox."""
         content = (
             "- [X] This is a very long checked task item with uppercase X that " "exceeds the maximum line length\n"
@@ -164,19 +164,19 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # Should have [X] checkbox
         self.assertTrue(lines[0].startswith("- [X] "))
 
-    def test_short_list_item_unchanged(self):
+    def test_short_list_item_unchanged(self) -> None:
         """Short list items should not be wrapped."""
         content = "- Short item\n"
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_empty_list_item(self):
+    def test_empty_list_item(self) -> None:
         """Empty list items should be preserved."""
         content = "- \n"
         result = self._write_and_process(content)
         self.assertEqual(result.strip(), "-")
 
-    def test_list_with_inline_code_preserved(self):
+    def test_list_with_inline_code_preserved(self) -> None:
         """List items with inline code should not be wrapped (safety)."""
         content = (
             "- This is a list item with `inline_code` that is very long and " "exceeds the maximum line length limit\n"
@@ -185,7 +185,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # Should be preserved unchanged due to inline code
         self.assertEqual(result, content)
 
-    def test_list_with_url_preserved(self):
+    def test_list_with_url_preserved(self) -> None:
         """List items with URLs should not be wrapped (safety)."""
         content = (
             "- Check out https://example.com/very/long/url for more information "
@@ -195,7 +195,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # Should be preserved unchanged due to URL
         self.assertEqual(result, content)
 
-    def test_list_continuation_with_code_preserved(self):
+    def test_list_continuation_with_code_preserved(self) -> None:
         """List with continuation containing code should be preserved."""
         content = (
             "- First line\n"
@@ -206,7 +206,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertIn("First line", result)
         self.assertIn("`code`", result)
 
-    def test_nested_lists_wrapping(self):
+    def test_nested_lists_wrapping(self) -> None:
         """Nested lists should wrap correctly with proper indentation."""
         content = (
             "- Top level item\n"
@@ -220,7 +220,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # Should have nested marker somewhere
         self.assertIn("- Nested item", result)
 
-    def test_fenced_code_block_backticks_preserved(self):
+    def test_fenced_code_block_backticks_preserved(self) -> None:
         """Fenced code blocks with backticks should be preserved byte-identical."""
         content = (
             "```python\n"
@@ -232,7 +232,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_fenced_code_block_tildes_preserved(self):
+    def test_fenced_code_block_tildes_preserved(self) -> None:
         """Fenced code blocks with tildes should be preserved byte-identical."""
         content = (
             "~~~bash\n"
@@ -243,7 +243,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_indented_code_block_preserved(self):
+    def test_indented_code_block_preserved(self) -> None:
         """Indented code blocks (4 spaces/tab) should be preserved."""
         content = (
             "    def indented_function_with_very_long_name_exceeding_limit():\n"
@@ -252,7 +252,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_table_preserved(self):
+    def test_table_preserved(self) -> None:
         """Tables (header + separator + rows) should be preserved byte-identical."""
         content = (
             "| Column 1 with very long header text | Column 2 | Column 3 |\n"
@@ -262,7 +262,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_blockquote_preserved(self):
+    def test_blockquote_preserved(self) -> None:
         """Blockquotes should be preserved unchanged."""
         content = (
             "> This is a very long blockquote line that exceeds the maximum "
@@ -271,7 +271,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_headings_preserved(self):
+    def test_headings_preserved(self) -> None:
         """All heading levels should be preserved unchanged."""
         content = (
             "# This is a very long heading level 1 that exceeds the maximum "
@@ -281,7 +281,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_link_reference_definitions_preserved(self):
+    def test_link_reference_definitions_preserved(self) -> None:
         """Link reference definitions should be preserved unchanged."""
         content = (
             "[id]: https://example.com/very/long/url/that/exceeds/the/"
@@ -290,7 +290,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_html_blocks_preserved(self):
+    def test_html_blocks_preserved(self) -> None:
         """HTML blocks should be preserved unchanged."""
         content = (
             "<div class='container' style='width: 100%; "
@@ -299,31 +299,31 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = self._write_and_process(content)
         self.assertEqual(result, content)
 
-    def test_final_newline_preserved(self):
+    def test_final_newline_preserved(self) -> None:
         """Files ending with newline should preserve it."""
         content = "Short paragraph.\n"
         result = self._write_and_process(content)
         self.assertTrue(result.endswith("\n"))
 
-    def test_no_final_newline_preserved(self):
+    def test_no_final_newline_preserved(self) -> None:
         """Files without final newline should preserve that."""
         content = "Short paragraph."
         result = self._write_and_process(content)
         self.assertFalse(result.endswith("\n"))
 
-    def test_empty_file(self):
+    def test_empty_file(self) -> None:
         """Empty files should remain empty."""
         content = ""
         result = self._write_and_process(content)
         self.assertEqual(result, "")
 
-    def test_single_blank_line(self):
+    def test_single_blank_line(self) -> None:
         """Single blank line files should be preserved."""
         content = "\n"
         result = self._write_and_process(content)
         self.assertEqual(result, "\n")
 
-    def test_deterministic_output(self):
+    def test_deterministic_output(self) -> None:
         """Running script twice should produce identical output."""
         content = (
             "- This is a very long list item that exceeds the maximum line "
@@ -342,7 +342,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
 
         self.assertEqual(first_result, second_result)
 
-    def test_no_list_marker_duplication(self):
+    def test_no_list_marker_duplication(self) -> None:
         """Ensure list markers are not duplicated (historical bug check)."""
         content = (
             "1. First item with very long text that should not cause marker "
@@ -354,7 +354,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # Should have exactly one "1. " at the start
         self.assertEqual(result.count("1. "), 1)
 
-    def test_no_checkbox_breakage(self):
+    def test_no_checkbox_breakage(self) -> None:
         """Ensure checkbox syntax is not broken (historical bug check)."""
         content = (
             "- [x] Task with very long description exceeding line limit that "
@@ -369,14 +369,14 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # Should have exactly one checkbox
         self.assertEqual(result.count("- [x]"), 1)
 
-    def test_no_list_collapse(self):
+    def test_no_list_collapse(self) -> None:
         """Ensure multiple list items don't collapse into one (historical bug check)."""
         content = "- First item\n" "- Second item\n" "- Third item\n"
         result = self._write_and_process(content)
         # Should have three separate list items
         self.assertEqual(result.count("- "), 3)
 
-    def test_mixed_list_markers(self):
+    def test_mixed_list_markers(self) -> None:
         """Lists with different markers should all be handled correctly."""
         content = (
             "- Bullet item with very long text that exceeds maximum line length\n"
@@ -389,7 +389,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         self.assertIn("* ", result)
         self.assertIn("+ ", result)
 
-    def test_blank_lines_between_list_items(self):
+    def test_blank_lines_between_list_items(self) -> None:
         """Blank lines between list items should be preserved."""
         content = "- First item\n" "\n" "- Second item\n"
         result = self._write_and_process(content)
@@ -397,7 +397,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         # Should have blank line
         self.assertIn("\n", lines)
 
-    def test_parse_list_prefix(self):
+    def test_parse_list_prefix(self) -> None:
         """Test _parse_list_prefix function directly."""
         # Bullet list
         result = fixer._parse_list_prefix("- Item text")  # pylint: disable=protected-access
@@ -418,14 +418,14 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         result = fixer._parse_list_prefix("Regular text")  # pylint: disable=protected-access
         self.assertIsNone(result)
 
-    def test_list_with_multiple_paragraphs_stops_at_blank(self):
+    def test_list_with_multiple_paragraphs_stops_at_blank(self) -> None:
         """List items should stop at blank lines (no multi-paragraph support)."""
         content = "- First paragraph of item\n" "\n" "  Second paragraph should not be part of item\n"
         result = self._write_and_process(content)
         # Should preserve structure
         self.assertIn("\n\n", result)
 
-    def test_version_history_nested_list_structure(self):
+    def test_version_history_nested_list_structure(self) -> None:
         """Nested list structure like Version History should be preserved exactly.
 
         This is a regression test for the bug where nested list items were
@@ -459,7 +459,7 @@ class TestOptionB(unittest.TestCase):  # pylint: disable=too-many-public-methods
         for line in nested_lines:
             self.assertTrue(line.startswith("  - "), f"Nested item should start with '  - ', got: {line}")
 
-    def test_parent_with_nested_items_followed_by_siblings(self):
+    def test_parent_with_nested_items_followed_by_siblings(self) -> None:
         """Parent list item with nested items followed by sibling items.
 
         This is the EXACT pattern from docstring-contracts/README.md Version History

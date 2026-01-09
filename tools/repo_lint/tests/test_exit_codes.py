@@ -77,7 +77,7 @@ class TestExitCodes(unittest.TestCase):
         Validates correct exit codes for all scenarios.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -89,7 +89,7 @@ class TestExitCodes(unittest.TestCase):
         self.args_install = argparse.Namespace(verbose=False, cleanup=False)
 
     @patch("tools.repo_lint.cli_argparse._run_all_runners")
-    def test_success_when_no_violations(self, mock_run_all):
+    def test_success_when_no_violations(self, mock_run_all) -> None:
         """Test that cmd_check returns SUCCESS when no violations.
 
         :Purpose:
@@ -107,7 +107,7 @@ class TestExitCodes(unittest.TestCase):
         self.assertEqual(result, ExitCode.SUCCESS)
 
     @patch("tools.repo_lint.cli_argparse._run_all_runners")
-    def test_violations_when_issues_found(self, mock_run_all):
+    def test_violations_when_issues_found(self, mock_run_all) -> None:
         """Test that cmd_check returns VIOLATIONS when issues found.
 
         :Purpose:
@@ -125,7 +125,7 @@ class TestExitCodes(unittest.TestCase):
         self.assertEqual(result, ExitCode.VIOLATIONS)
 
     @patch("tools.repo_lint.cli_argparse._run_all_runners")
-    def test_missing_tools_in_ci_mode(self, mock_run_all):
+    def test_missing_tools_in_ci_mode(self, mock_run_all) -> None:
         """Test that cmd_check returns MISSING_TOOLS in CI mode.
 
         :Purpose:
@@ -145,7 +145,7 @@ class TestExitCodes(unittest.TestCase):
     @patch("tools.repo_lint.cli_argparse._run_all_runners")
     @patch("tools.repo_lint.cli_argparse.load_policy")
     @patch("tools.repo_lint.cli_argparse.validate_policy")
-    def test_fix_success_when_all_fixed(self, mock_validate, mock_load, mock_run_all):
+    def test_fix_success_when_all_fixed(self, mock_validate, mock_load, mock_run_all) -> None:
         """Test that cmd_fix returns SUCCESS when all fixes applied.
 
         :Purpose:
@@ -171,7 +171,7 @@ class TestExitCodes(unittest.TestCase):
     @patch("tools.repo_lint.cli_argparse._run_all_runners")
     @patch("tools.repo_lint.cli_argparse.load_policy")
     @patch("tools.repo_lint.cli_argparse.validate_policy")
-    def test_fix_violations_when_issues_remain(self, mock_validate, mock_load, mock_run_all):
+    def test_fix_violations_when_issues_remain(self, mock_validate, mock_load, mock_run_all) -> None:
         """Test that cmd_fix returns VIOLATIONS when issues remain.
 
         :Purpose:
@@ -196,7 +196,7 @@ class TestExitCodes(unittest.TestCase):
 
     @patch("tools.repo_lint.cli_argparse.load_policy")
     @patch("tools.repo_lint.cli_argparse.validate_policy")
-    def test_fix_internal_error_on_policy_failure(self, mock_validate, mock_load):
+    def test_fix_internal_error_on_policy_failure(self, mock_validate, mock_load) -> None:
         """Test that cmd_fix returns INTERNAL_ERROR on policy failure.
 
         :Purpose:
@@ -216,7 +216,7 @@ class TestExitCodes(unittest.TestCase):
         self.assertEqual(result, ExitCode.INTERNAL_ERROR)
 
     @patch("tools.repo_lint.cli_argparse.load_policy")
-    def test_fix_internal_error_on_policy_not_found(self, mock_load):
+    def test_fix_internal_error_on_policy_not_found(self, mock_load) -> None:
         """Test that cmd_fix returns INTERNAL_ERROR when policy not found.
 
         :Purpose:
@@ -243,7 +243,7 @@ class TestExitCodes(unittest.TestCase):
         mock_ps_inst,
         mock_bash_inst,
         mock_python_inst,
-    ):
+    ) -> None:
         """Test that cmd_install returns SUCCESS on successful install.
 
         :Purpose:
@@ -273,7 +273,7 @@ class TestExitCodes(unittest.TestCase):
         mock_ps_inst,
         mock_bash_inst,
         mock_python_inst,
-    ):
+    ) -> None:
         """Test that cmd_install returns INTERNAL_ERROR on install failure.
 
         :Purpose:
@@ -294,7 +294,7 @@ class TestExitCodes(unittest.TestCase):
         self.assertEqual(result, ExitCode.INTERNAL_ERROR)
 
     @patch("tools.repo_lint.cli_argparse.cleanup_repo_local")
-    def test_cleanup_success(self, mock_cleanup):
+    def test_cleanup_success(self, mock_cleanup) -> None:
         """Test that cmd_install --cleanup returns SUCCESS on success.
 
         :Purpose:
@@ -313,7 +313,7 @@ class TestExitCodes(unittest.TestCase):
         self.assertEqual(result, ExitCode.SUCCESS)
 
     @patch("tools.repo_lint.cli_argparse.cleanup_repo_local")
-    def test_cleanup_internal_error_on_failure(self, mock_cleanup):
+    def test_cleanup_internal_error_on_failure(self, mock_cleanup) -> None:
         """Test that cmd_install --cleanup returns INTERNAL_ERROR on failure.
 
         :Purpose:
@@ -333,7 +333,7 @@ class TestExitCodes(unittest.TestCase):
 
     @patch("tools.repo_lint.cli_argparse.load_policy")
     @patch("tools.repo_lint.cli_argparse.validate_policy")
-    def test_fix_unsafe_violation_in_ci(self, mock_validate, mock_load):
+    def test_fix_unsafe_violation_in_ci(self, mock_validate, mock_load) -> None:
         """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe used in CI.
 
         :Purpose:
@@ -359,7 +359,7 @@ class TestExitCodes(unittest.TestCase):
 
     @patch("tools.repo_lint.cli_argparse.load_policy")
     @patch("tools.repo_lint.cli_argparse.validate_policy")
-    def test_fix_unsafe_violation_without_confirmation(self, mock_validate, mock_load):
+    def test_fix_unsafe_violation_without_confirmation(self, mock_validate, mock_load) -> None:
         """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe without --yes-i-know.
 
         :Purpose:
@@ -386,7 +386,7 @@ class TestExitCodes(unittest.TestCase):
     @patch("tools.repo_lint.cli_argparse.load_policy")
     @patch("tools.repo_lint.cli_argparse.validate_policy")
     @patch.dict(os.environ, {}, clear=True)  # Clear environment to ensure CI is not set
-    def test_fix_unsafe_violation_non_python_language(self, mock_validate, mock_load):
+    def test_fix_unsafe_violation_non_python_language(self, mock_validate, mock_load) -> None:
         """Test that cmd_fix returns UNSAFE_VIOLATION when --unsafe with non-Python language.
 
         :Purpose:

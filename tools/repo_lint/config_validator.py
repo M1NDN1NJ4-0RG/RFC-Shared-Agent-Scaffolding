@@ -48,7 +48,7 @@ class ConfigValidationError(Exception):
         with file path, line context, and actionable error messages.
     """
 
-    def __init__(self, file_path: str, message: str, line: int | None = None):
+    def __init__(self, file_path: str, message: str, line: int | None = None) -> None:
         """Initialize config validation error.
 
         :param file_path: Path to the config file that failed validation

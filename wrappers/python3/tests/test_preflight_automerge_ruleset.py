@@ -100,7 +100,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
     argument parsing, and required context checking.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test by loading the module."""
         self.mod = load_module()
 
@@ -141,7 +141,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
             ],
         }
 
-    def test_classify_auth_detects_auth_errors(self):
+    def test_classify_auth_detects_auth_errors(self) -> None:
         """Test that classify_auth correctly identifies authentication errors."""
         # classify_auth returns True if the response indicates an auth error
         self.assertTrue(self.mod.classify_auth({"message": "Bad credentials"}))
@@ -150,7 +150,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         self.assertFalse(self.mod.classify_auth({"message": "Some other error"}))
         self.assertFalse(self.mod.classify_auth("not a dict"))
 
-    def test_parse_args_rejects_malformed_want(self):
+    def test_parse_args_rejects_malformed_want(self) -> None:
         """Test that malformed --want argument returns exit code 3."""
         # parse_args raises ValueError (caught by main, returns 3)
         # We can't test this directly since parse_args raises, not exits
@@ -158,7 +158,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
         rc = self.mod.main(["--repo", "o/r", "--ruleset-name", "x", "--want", "not-json"])
         self.assertEqual(rc, 3)
 
-    def test_success_path_via_http(self):
+    def test_success_path_via_http(self) -> None:
         """Test successful ruleset verification via HTTP API.
 
         Verifies that the script correctly validates required contexts when
@@ -194,7 +194,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
             )
             self.assertEqual(rc, 0)
 
-    def test_missing_required_context_fails(self):
+    def test_missing_required_context_fails(self) -> None:
         """Test that missing required status contexts causes failure.
 
         Verifies that the script exits with non-zero when the ruleset
@@ -231,7 +231,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
             )
             self.assertNotEqual(rc, 0)
 
-    def test_ruleset_not_found_returns_3(self):
+    def test_ruleset_not_found_returns_3(self) -> None:
         """Test that non-existent ruleset returns exit code 3.
 
         Verifies that the script returns exit code 3 when the specified
@@ -264,7 +264,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
             )
             self.assertEqual(rc, 3)
 
-    def test_auth_failure_returns_2(self):
+    def test_auth_failure_returns_2(self) -> None:
         """Test that authentication failure returns exit code 2.
 
         Verifies that the script returns exit code 2 when GitHub API
@@ -288,7 +288,7 @@ class TestPreflightAutomergeRuleset(unittest.TestCase):
             rc = self.mod.main(["--repo", "owner/repo", "--ruleset-name", "x", "--want", "[]"])
             self.assertEqual(rc, 2)
 
-    def test_bearer_token_format_m0_p2_i1(self):
+    def test_bearer_token_format_m0_p2_i1(self) -> None:
         """Validate M0-P2-I1: Authorization header uses Bearer token format"""
         import inspect
 

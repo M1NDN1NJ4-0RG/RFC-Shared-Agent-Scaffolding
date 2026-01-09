@@ -183,7 +183,7 @@ def install_python_tools(verbose: bool = False) -> Tuple[bool, List[str]]:
     return len(errors) == 0, errors
 
 
-def print_bash_tool_instructions():
+def print_bash_tool_instructions() -> None:
     """Print manual installation instructions for Bash tools.
 
     :returns:
@@ -205,7 +205,7 @@ def print_bash_tool_instructions():
     print("")
 
 
-def print_powershell_tool_instructions():
+def print_powershell_tool_instructions() -> None:
     """Print manual installation instructions for PowerShell tools.
 
     :returns:
@@ -223,7 +223,7 @@ def print_powershell_tool_instructions():
     print("")
 
 
-def print_perl_tool_instructions():
+def print_perl_tool_instructions() -> None:
     """Print manual installation instructions for Perl tools.
 
     :returns:

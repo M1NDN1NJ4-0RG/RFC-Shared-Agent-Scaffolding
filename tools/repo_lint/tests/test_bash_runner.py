@@ -66,7 +66,7 @@ class TestBashRunner(unittest.TestCase):
         Validates ShellCheck, shfmt, and docstring validation integration.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -75,7 +75,7 @@ class TestBashRunner(unittest.TestCase):
         self.runner = BashRunner(repo_root=Path("/fake/repo"))
 
     @patch("tools.repo_lint.runners.bash_runner.subprocess.run")
-    def test_get_bash_files_returns_list(self, mock_run):
+    def test_get_bash_files_returns_list(self, mock_run) -> None:
         """Test that _get_bash_files returns file list.
 
         :Purpose:
@@ -92,7 +92,7 @@ class TestBashRunner(unittest.TestCase):
         self.assertIn("script2.sh", files)
 
     @patch("tools.repo_lint.runners.bash_runner.subprocess.run")
-    def test_get_bash_files_returns_empty(self, mock_run):
+    def test_get_bash_files_returns_empty(self, mock_run) -> None:
         """Test that _get_bash_files returns empty list when no files.
 
         :Purpose:
@@ -107,7 +107,7 @@ class TestBashRunner(unittest.TestCase):
         self.assertEqual(files, [])
 
     @patch("tools.repo_lint.runners.bash_runner.subprocess.run")
-    def test_shellcheck_uses_correct_args(self, mock_run):
+    def test_shellcheck_uses_correct_args(self, mock_run) -> None:
         """Test that _run_shellcheck uses correct arguments.
 
         :Purpose:
@@ -130,7 +130,7 @@ class TestBashRunner(unittest.TestCase):
         self.assertTrue(result.passed)
 
     @patch("tools.repo_lint.runners.bash_runner.subprocess.run")
-    def test_shfmt_check_non_mutating(self, mock_run):
+    def test_shfmt_check_non_mutating(self, mock_run) -> None:
         """Test that _run_shfmt_check uses -d -l flags (non-mutating).
 
         :Purpose:
@@ -154,7 +154,7 @@ class TestBashRunner(unittest.TestCase):
         self.assertTrue(result.passed)
 
     @patch("tools.repo_lint.runners.bash_runner.subprocess.run")
-    def test_shfmt_fix_uses_write_flag(self, mock_run):
+    def test_shfmt_fix_uses_write_flag(self, mock_run) -> None:
         """Test that _run_shfmt_fix uses -w flag (mutating).
 
         :Purpose:
@@ -178,7 +178,7 @@ class TestBashRunner(unittest.TestCase):
         self.assertTrue(result.passed)
 
     @patch("tools.repo_lint.runners.bash_runner.subprocess.run")
-    def test_empty_files_returns_passed(self, mock_run):
+    def test_empty_files_returns_passed(self, mock_run) -> None:
         """Test that empty file list returns passed result.
 
         :Purpose:

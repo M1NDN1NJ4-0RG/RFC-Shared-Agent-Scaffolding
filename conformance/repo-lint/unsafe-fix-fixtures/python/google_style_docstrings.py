@@ -35,7 +35,7 @@ class DataProcessor:
     transformation utilities.
     """
 
-    def transform(self, data, format_type):
+    def transform(self, data, format_type) -> str:
         """Transform data to a specific format.
 
         Args:

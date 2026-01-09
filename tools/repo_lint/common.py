@@ -136,7 +136,7 @@ class RepoLintError(Exception):
 class MissingToolError(RepoLintError):
     """Raised when required tools are not installed."""
 
-    def __init__(self, tool: str, install_hint: str | None = None):
+    def __init__(self, tool: str, install_hint: str | None = None) -> None:
         """Initialize MissingToolError.
 
         :param tool: Name of the missing tool

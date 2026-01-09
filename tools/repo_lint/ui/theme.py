@@ -138,7 +138,7 @@ class UITheme:
 class ThemeValidationError(Exception):
     """Raised when theme validation fails."""
 
-    def __init__(self, message: str, file_path: Path | None = None):
+    def __init__(self, message: str, file_path: Path | None = None) -> None:
         """Initialize ThemeValidationError.
 
         :param message: Error message

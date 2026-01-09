@@ -83,7 +83,7 @@ def parse_bash_functions(file_path: Path) -> Dict[str, Any]:
         # Bash tree-sitter grammar uses "function_definition" nodes
         root_node = tree.root_node
 
-        def find_functions(node):
+        def find_functions(node) -> None:
             """Recursively find all function_definition nodes.
 
             :param node: Tree-sitter node to search

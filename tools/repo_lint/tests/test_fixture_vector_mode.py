@@ -97,7 +97,7 @@ def run_repo_lint(cwd: Path, *args) -> subprocess.CompletedProcess:
     )
 
 
-def init_git_repo(cwd: Path):
+def init_git_repo(cwd: Path) -> None:
     """Initialize a git repository with basic config.
 
     :param cwd: Directory to initialize repo in
@@ -126,7 +126,7 @@ def init_git_repo(cwd: Path):
     )
 
 
-def test_normal_mode_excludes_fixtures(temp_fixtures_dir):  # pylint: disable=redefined-outer-name
+def test_normal_mode_excludes_fixtures(temp_fixtures_dir) -> None:  # pylint: disable=redefined-outer-name
     """Test that normal mode (without --include-fixtures) excludes fixture files.
 
     :Purpose:
@@ -148,7 +148,7 @@ def test_normal_mode_excludes_fixtures(temp_fixtures_dir):  # pylint: disable=re
     assert "pylint_violations.py" not in result.stdout, "Fixture files should not be scanned"
 
 
-def test_vector_mode_includes_fixtures(temp_fixtures_dir):  # pylint: disable=redefined-outer-name
+def test_vector_mode_includes_fixtures(temp_fixtures_dir) -> None:  # pylint: disable=redefined-outer-name
     """Test that vector mode (with --include-fixtures) includes fixture files.
 
     :Purpose:
@@ -180,7 +180,7 @@ def test_vector_mode_includes_fixtures(temp_fixtures_dir):  # pylint: disable=re
     assert has_violations, f"Vector mode should detect violations in fixtures.\nOutput:\n{output}"
 
 
-def test_vector_mode_populates_file_and_line_fields(temp_fixtures_dir):  # pylint: disable=redefined-outer-name
+def test_vector_mode_populates_file_and_line_fields(temp_fixtures_dir) -> None:  # pylint: disable=redefined-outer-name
     """Test that violations have correctly populated File and Line fields.
 
     :Purpose:
@@ -204,7 +204,7 @@ def test_vector_mode_populates_file_and_line_fields(temp_fixtures_dir):  # pylin
     assert result.stdout, "Should produce output with violation details"
 
 
-def test_fix_mode_does_not_modify_original_fixtures():
+def test_fix_mode_does_not_modify_original_fixtures() -> None:
     """Test that fix mode never modifies fixture files in tests/fixtures/.
 
     :Purpose:
@@ -233,7 +233,7 @@ def test_fix_mode_does_not_modify_original_fixtures():
             assert current_checksum == original_checksum, f"Fixture file {fixture_file} was modified by fix mode!"
 
 
-def test_all_languages_support_vector_mode(temp_fixtures_dir):  # pylint: disable=redefined-outer-name
+def test_all_languages_support_vector_mode(temp_fixtures_dir) -> None:  # pylint: disable=redefined-outer-name
     """Test that --include-fixtures works for all supported languages.
 
     :Purpose:
@@ -271,7 +271,7 @@ def test_all_languages_support_vector_mode(temp_fixtures_dir):  # pylint: disabl
 )
 def test_language_specific_fixtures_scanned(
     temp_fixtures_dir, language, expected_fixture
-):  # pylint: disable=redefined-outer-name
+) -> None:  # pylint: disable=redefined-outer-name
     """Test that language-specific fixtures are scanned in vector mode.
 
     :Purpose:

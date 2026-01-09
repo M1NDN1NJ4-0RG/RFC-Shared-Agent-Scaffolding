@@ -64,7 +64,7 @@ class TestFindRepoRoot(unittest.TestCase):
     """
 
     @patch("pathlib.Path.cwd")
-    def test_finds_git_directory(self, mock_cwd):
+    def test_finds_git_directory(self, mock_cwd) -> None:
         """Test find_repo_root returns repo root when .git exists.
 
         :Purpose:
@@ -86,7 +86,7 @@ class TestFindRepoRoot(unittest.TestCase):
             self.assertEqual(root, Path(tmpdir))
 
     @patch("pathlib.Path.cwd")
-    def test_fallback_when_no_git(self, mock_cwd):
+    def test_fallback_when_no_git(self, mock_cwd) -> None:
         """Test find_repo_root returns cwd when .git not found.
 
         :Purpose:
@@ -105,7 +105,7 @@ class TestFindRepoRoot(unittest.TestCase):
             self.assertEqual(root, Path(tmpdir))
 
     @patch("pathlib.Path.cwd")
-    def test_walks_up_directory_tree(self, mock_cwd):
+    def test_walks_up_directory_tree(self, mock_cwd) -> None:
         """Test find_repo_root walks up directory tree correctly.
 
         :Purpose:
@@ -132,7 +132,7 @@ class TestFindRepoRoot(unittest.TestCase):
             self.assertEqual(root, Path(tmpdir))
 
     @patch("pathlib.Path.cwd")
-    def test_consistency_with_get_repo_root(self, mock_cwd):
+    def test_consistency_with_get_repo_root(self, mock_cwd) -> None:
         """Test find_repo_root has same behavior as get_repo_root.
 
         :Purpose:

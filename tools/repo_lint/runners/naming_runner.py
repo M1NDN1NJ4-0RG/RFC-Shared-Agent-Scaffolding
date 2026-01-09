@@ -44,7 +44,7 @@ class NamingRunner(Runner):
         Check-only mode - does not auto-rename files.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize naming runner.
 
         :raises MissingToolError: If naming rules config file not found

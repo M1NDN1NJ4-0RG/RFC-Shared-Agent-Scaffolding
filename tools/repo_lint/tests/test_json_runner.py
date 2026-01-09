@@ -68,7 +68,7 @@ class TestJsonRunner(unittest.TestCase):
         Validates JSON/JSONC runner integration with Prettier.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -76,7 +76,7 @@ class TestJsonRunner(unittest.TestCase):
         """
         self.runner = JsonRunner()
 
-    def test_has_files_detects_json(self):
+    def test_has_files_detects_json(self) -> None:
         """Test that has_files() detects .json files.
 
         :Purpose:
@@ -85,7 +85,7 @@ class TestJsonRunner(unittest.TestCase):
         # Repository has .prettierrc.json and other JSON files
         self.assertTrue(self.runner.has_files())
 
-    def test_has_files_detects_jsonc(self):
+    def test_has_files_detects_jsonc(self) -> None:
         """Test that has_files() detects .jsonc files.
 
         :Purpose:
@@ -94,7 +94,7 @@ class TestJsonRunner(unittest.TestCase):
         # Repository has .markdownlint-cli2.jsonc
         self.assertTrue(self.runner.has_files())
 
-    def test_check_tools_requires_prettier(self):
+    def test_check_tools_requires_prettier(self) -> None:
         """Test that check_tools() requires Prettier.
 
         :Purpose:
@@ -107,7 +107,7 @@ class TestJsonRunner(unittest.TestCase):
 
         self.assertEqual(missing, ["prettier"])
 
-    def test_check_tools_prettier_available(self):
+    def test_check_tools_prettier_available(self) -> None:
         """Test check_tools() when Prettier is available.
 
         :Purpose:
@@ -120,7 +120,7 @@ class TestJsonRunner(unittest.TestCase):
 
         self.assertEqual(missing, [])
 
-    def test_run_prettier_check_mode(self):
+    def test_run_prettier_check_mode(self) -> None:
         """Test _run_prettier in check mode.
 
         :Purpose:
@@ -143,7 +143,7 @@ class TestJsonRunner(unittest.TestCase):
         self.assertIn("--check", call_args)
         self.assertTrue(result.passed)
 
-    def test_run_prettier_fix_mode(self):
+    def test_run_prettier_fix_mode(self) -> None:
         """Test _run_prettier in fix mode.
 
         :Purpose:
@@ -167,7 +167,7 @@ class TestJsonRunner(unittest.TestCase):
         self.assertNotIn("--check", call_args)
         self.assertTrue(result.passed)
 
-    def test_run_prettier_with_violations(self):
+    def test_run_prettier_with_violations(self) -> None:
         """Test _run_prettier when files need formatting.
 
         :Purpose:
@@ -194,7 +194,7 @@ class TestJsonRunner(unittest.TestCase):
         self.assertEqual(result.violations[0].file, "test.json")
         self.assertEqual(result.violations[0].tool, "prettier")
 
-    def test_parse_prettier_output_single_file(self):
+    def test_parse_prettier_output_single_file(self) -> None:
         """Test parsing Prettier output for single file.
 
         :Purpose:
@@ -209,7 +209,7 @@ class TestJsonRunner(unittest.TestCase):
         self.assertEqual(violations[0].file, "test.json")
         self.assertIn("not properly formatted", violations[0].message)
 
-    def test_parse_prettier_output_multiple_files(self):
+    def test_parse_prettier_output_multiple_files(self) -> None:
         """Test parsing Prettier output for multiple files.
 
         :Purpose:
@@ -230,7 +230,7 @@ config.json
         self.assertIn("test2.jsonc", files)
         self.assertIn("config.json", files)
 
-    def test_parse_prettier_output_no_violations(self):
+    def test_parse_prettier_output_no_violations(self) -> None:
         """Test parsing Prettier output when all files pass.
 
         :Purpose:
@@ -243,7 +243,7 @@ config.json
 
         self.assertEqual(len(violations), 0)
 
-    def test_parse_prettier_output_ignores_status_lines(self):
+    def test_parse_prettier_output_ignores_status_lines(self) -> None:
         """Test that status lines are ignored in parsing.
 
         :Purpose:
@@ -263,7 +263,7 @@ Code style issues found in 1 file."""
         self.assertEqual(len(violations), 1)
         self.assertEqual(violations[0].file, "test.json")
 
-    def test_run_prettier_uses_config_file(self):
+    def test_run_prettier_uses_config_file(self) -> None:
         """Test that _run_prettier uses .prettierrc.json config.
 
         :Purpose:
@@ -288,7 +288,7 @@ Code style issues found in 1 file."""
         config_idx = call_args.index("--config")
         self.assertTrue(call_args[config_idx + 1].endswith(".prettierrc.json"))
 
-    def test_check_method_calls_run_prettier(self):
+    def test_check_method_calls_run_prettier(self) -> None:
         """Test that check() method calls _run_prettier.
 
         :Purpose:
@@ -311,7 +311,7 @@ Code style issues found in 1 file."""
         mock_metadata.assert_called_once_with()
         self.assertEqual(len(results), 2)  # prettier + metadata
 
-    def test_fix_method_calls_run_prettier_with_fix(self):
+    def test_fix_method_calls_run_prettier_with_fix(self) -> None:
         """Test that fix() method calls _run_prettier with fix=True.
 
         :Purpose:
@@ -331,7 +331,7 @@ Code style issues found in 1 file."""
         mock_run.assert_called_once_with(fix=True)
         self.assertEqual(len(results), 1)  # fix() only runs prettier, not metadata
 
-    def test_validate_json_metadata_with_schema(self):
+    def test_validate_json_metadata_with_schema(self) -> None:
         """Test metadata validation passes when $schema field present.
 
         :Purpose:
@@ -354,7 +354,7 @@ Code style issues found in 1 file."""
         self.assertTrue(result.passed)
         self.assertEqual(len(result.violations), 0)
 
-    def test_validate_json_metadata_with_description(self):
+    def test_validate_json_metadata_with_description(self) -> None:
         """Test metadata validation passes when description field present.
 
         :Purpose:
@@ -373,7 +373,7 @@ Code style issues found in 1 file."""
         self.assertTrue(result.passed)
         self.assertEqual(len(result.violations), 0)
 
-    def test_validate_json_metadata_with_title(self):
+    def test_validate_json_metadata_with_title(self) -> None:
         """Test metadata validation passes when title field present.
 
         :Purpose:
@@ -392,7 +392,7 @@ Code style issues found in 1 file."""
         self.assertTrue(result.passed)
         self.assertEqual(len(result.violations), 0)
 
-    def test_validate_json_metadata_missing_fields(self):
+    def test_validate_json_metadata_missing_fields(self) -> None:
         """Test metadata validation fails when no metadata fields present.
 
         :Purpose:
@@ -414,7 +414,7 @@ Code style issues found in 1 file."""
         self.assertEqual(result.violations[0].file, "test.json")
         self.assertIn("Missing required metadata", result.violations[0].message)
 
-    def test_validate_json_metadata_invalid_json(self):
+    def test_validate_json_metadata_invalid_json(self) -> None:
         """Test metadata validation handles invalid JSON gracefully.
 
         :Purpose:
@@ -435,7 +435,7 @@ Code style issues found in 1 file."""
         self.assertEqual(len(result.violations), 1)
         self.assertIn("Invalid JSON syntax", result.violations[0].message)
 
-    def test_validate_json_metadata_not_object(self):
+    def test_validate_json_metadata_not_object(self) -> None:
         """Test metadata validation rejects non-object JSON.
 
         :Purpose:
@@ -456,7 +456,7 @@ Code style issues found in 1 file."""
         self.assertEqual(len(result.violations), 1)
         self.assertIn("must be an object at root level", result.violations[0].message)
 
-    def test_check_includes_metadata_validation(self):
+    def test_check_includes_metadata_validation(self) -> None:
         """Test that check() runs both Prettier and metadata validation.
 
         :Purpose:

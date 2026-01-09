@@ -55,7 +55,7 @@ class Reporter:
     consistent formatting across TTY and CI modes.
     """
 
-    def __init__(self, ci_mode: bool = False, theme: UITheme | None = None):
+    def __init__(self, ci_mode: bool = False, theme: UITheme | None = None) -> None:
         """Initialize Reporter.
 
         :param ci_mode: If True, use CI-friendly output (no colors, no spinners)

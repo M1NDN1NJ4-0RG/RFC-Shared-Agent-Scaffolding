@@ -86,7 +86,7 @@ class TestBashValidator(unittest.TestCase):
     and function-level comment block validation.
     """
 
-    def test_valid_bash_script(self):
+    def test_valid_bash_script(self) -> None:
         """Test that a valid Bash script passes validation."""
         content = """#!/usr/bin/env bash
 #
@@ -115,7 +115,7 @@ echo "test"
         result = BashValidator.validate(Path("test.sh"), content)
         self.assertEqual(result, [], "Valid Bash script should pass validation")
 
-    def test_missing_shebang(self):
+    def test_missing_shebang(self) -> None:
         """Test that missing shebang is caught."""
         content = """# test.sh - Test script
 # DESCRIPTION: Test
@@ -128,7 +128,7 @@ echo "test"
         self.assertEqual(len(result), 1, "Missing shebang should fail validation")
         self.assertIn("shebang", result[0].missing_sections)
 
-    def test_missing_required_section(self):
+    def test_missing_required_section(self) -> None:
         """Test that missing required section is caught."""
         content = """#!/usr/bin/env bash
 #
@@ -153,7 +153,7 @@ class TestPythonValidator(unittest.TestCase):
     and symbol-level validation using AST parsing.
     """
 
-    def test_valid_python_script(self):
+    def test_valid_python_script(self) -> None:
         """Test that a valid Python script passes validation."""
         content = '''#!/usr/bin/env python3
 """Test script.
@@ -181,7 +181,7 @@ print("test")
         result = PythonValidator.validate(Path("test.py"), content)
         self.assertEqual(result, [], "Valid Python script should pass validation")
 
-    def test_missing_docstring(self):
+    def test_missing_docstring(self) -> None:
         """Test that missing docstring is caught."""
         content = """#!/usr/bin/env python3
 print("test")
@@ -197,7 +197,7 @@ class TestYAMLValidator(unittest.TestCase):
     header documentation validation.
     """
 
-    def test_valid_yaml_workflow(self):
+    def test_valid_yaml_workflow(self) -> None:
         """Test that a valid YAML workflow passes validation."""
         content = """# Workflow: Test Workflow
 #
@@ -229,7 +229,7 @@ class TestExitCodeContentValidation(unittest.TestCase):
     validators to ensure scripts document minimum required exit codes.
     """
 
-    def test_bash_with_valid_exit_codes(self):
+    def test_bash_with_valid_exit_codes(self) -> None:
         """Test that Bash script with valid exit codes passes."""
         content = """#!/usr/bin/env bash
 #

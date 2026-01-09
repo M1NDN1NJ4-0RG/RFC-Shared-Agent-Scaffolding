@@ -286,7 +286,7 @@ def compare_violations(actual: List[Dict], expected: List[Dict], vector_id: str)
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-def test_python_docstring_vectors():
+def test_python_docstring_vectors() -> None:
     """Test Python docstring validation vectors.
 
     :Purpose:
@@ -315,7 +315,7 @@ def test_python_docstring_vectors():
         pytest.skip("Temporarily disabled pending Phase 3.4 final debugging")
 
 
-def test_bash_docstring_vectors():
+def test_bash_docstring_vectors() -> None:
     """Test Bash docstring validation vectors.
 
     :Purpose:
@@ -328,7 +328,7 @@ def test_bash_docstring_vectors():
     pytest.skip("Bash vector runner not yet implemented - requires bash-specific parser")
 
 
-def test_powershell_docstring_vectors():
+def test_powershell_docstring_vectors() -> None:
     """Test PowerShell docstring validation vectors.
 
     :Purpose:
@@ -341,7 +341,7 @@ def test_powershell_docstring_vectors():
     pytest.skip("PowerShell vector runner not yet implemented - requires pwsh AST parser")
 
 
-def test_perl_docstring_vectors():
+def test_perl_docstring_vectors() -> None:
     """Test Perl docstring validation vectors.
 
     :Purpose:
@@ -354,7 +354,7 @@ def test_perl_docstring_vectors():
     pytest.skip("Perl vector runner not yet implemented - requires PPI parser")
 
 
-def test_vector_fixtures_exist():
+def test_vector_fixtures_exist() -> None:
     """Verify all vector fixtures reference valid files.
 
     :Purpose:
@@ -373,7 +373,7 @@ def test_vector_fixtures_exist():
         assert fixture_path.exists(), f"Fixture not found for {vector['id']}: {fixture_path}"
 
 
-def test_vector_schema_validation():
+def test_vector_schema_validation() -> None:
     """Validate all vectors follow the required schema.
 
     :Purpose:

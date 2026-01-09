@@ -71,7 +71,7 @@ class TestRunnerDispatch(unittest.TestCase):
         Validates --only flag filtering and has_files() gating.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures.
 
         :Purpose:
@@ -98,7 +98,7 @@ class TestRunnerDispatch(unittest.TestCase):
         mock_powershell,
         mock_bash,
         mock_python,
-    ):
+    ) -> None:
         """Test that --only flag filters to correct runner.
 
         :Purpose:
@@ -153,7 +153,7 @@ class TestRunnerDispatch(unittest.TestCase):
         mock_powershell,
         mock_bash,
         mock_python,
-    ):
+    ) -> None:
         """Test that all runners execute when no --only flag.
 
         :Purpose:
@@ -206,7 +206,7 @@ class TestRunnerDispatch(unittest.TestCase):
         mock_powershell,
         mock_bash,
         mock_python,
-    ):
+    ) -> None:
         """Test that runners skip when has_files() returns False.
 
         :Purpose:
@@ -247,7 +247,7 @@ class TestRunnerDispatch(unittest.TestCase):
         # Verify success exit code
         self.assertEqual(result, ExitCode.SUCCESS)
 
-    def test_unknown_language_returns_error(self):
+    def test_unknown_language_returns_error(self) -> None:
         """Test that unknown language for --only returns INTERNAL_ERROR.
 
         :Purpose:
@@ -273,7 +273,7 @@ class TestRunnerDispatch(unittest.TestCase):
         mock_powershell,
         mock_bash,
         mock_python,
-    ):
+    ) -> None:
         """Test that --only with no files for language returns INTERNAL_ERROR.
 
         :Purpose:

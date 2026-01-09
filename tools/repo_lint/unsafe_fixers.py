@@ -110,7 +110,7 @@ class UnsafeDocstringRewriter:
         Only use with explicit human permission via --unsafe --yes-i-know.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize the unsafe docstring rewriter."""
         self.name = "unsafe_docstring_rewrite"
         self.why_unsafe = (

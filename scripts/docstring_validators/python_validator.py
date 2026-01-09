@@ -233,7 +233,7 @@ class PythonValidator:
         if not has_returns:
             has_return_value = False
 
-            def has_return_in_node(node_to_check):
+            def has_return_in_node(node_to_check) -> bool:
                 """Recursively check if node has return with value, excluding nested functions.
 
                 :param node_to_check: AST node to check
