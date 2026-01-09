@@ -90,7 +90,7 @@ class PEP526Checker(ast.NodeVisitor):
         self.current_scope = []
 
         try:
-            with open(filepath, "r", encoding="utf-8") as f:
+            with open(filepath, encoding="utf-8") as f:
                 source = f.read()
             tree = ast.parse(source, filename=str(filepath))
             self.visit(tree)
@@ -100,7 +100,7 @@ class PEP526Checker(ast.NodeVisitor):
 
         return self.violations
 
-    def visit_Module(self, node: ast.Module) -> None:
+    def visit_Module(self, node: ast.Module) -> None:  # noqa: N802
         """Visit module node and track module scope.
 
         :param node: Module AST node
@@ -109,7 +109,7 @@ class PEP526Checker(ast.NodeVisitor):
         self.generic_visit(node)
         self.current_scope.pop()
 
-    def visit_ClassDef(self, node: ast.ClassDef) -> None:
+    def visit_ClassDef(self, node: ast.ClassDef) -> None:  # noqa: N802
         """Visit class definition and track class scope.
 
         :param node: ClassDef AST node
@@ -118,7 +118,7 @@ class PEP526Checker(ast.NodeVisitor):
         self.generic_visit(node)
         self.current_scope.pop()
 
-    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> None:  # noqa: N802
         """Visit function definition and track function scope.
 
         :param node: FunctionDef AST node
@@ -127,7 +127,7 @@ class PEP526Checker(ast.NodeVisitor):
         self.generic_visit(node)
         self.current_scope.pop()
 
-    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+    def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:  # noqa: N802
         """Visit async function definition and track function scope.
 
         :param node: AsyncFunctionDef AST node
@@ -136,7 +136,7 @@ class PEP526Checker(ast.NodeVisitor):
         self.generic_visit(node)
         self.current_scope.pop()
 
-    def visit_Assign(self, node: ast.Assign) -> None:
+    def visit_Assign(self, node: ast.Assign) -> None:  # noqa: N802
         """Visit assignment node and check for missing annotations.
 
         :param node: Assign AST node
@@ -173,7 +173,7 @@ class PEP526Checker(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:
+    def visit_AnnAssign(self, node: ast.AnnAssign) -> None:  # noqa: N802
         """Visit annotated assignment node (these are correct).
 
         :param node: AnnAssign AST node

@@ -1,7 +1,19 @@
 """Unit tests for PEP 526 type annotation checker.
 
-Tests the AST-based PEP 526 checker for detecting missing variable annotations
-at module-level, class attributes, and optionally function-local scope.
+:Purpose:
+    Tests the AST-based PEP 526 checker for detecting missing variable annotations
+    at module-level, class attributes, and optionally function-local scope.
+
+:Examples:
+    Run with pytest::
+
+        pytest tools/repo_lint/tests/test_pep526_checker.py
+
+:Environment Variables:
+    None
+
+:Exit Codes:
+    N/A
 """
 
 from __future__ import annotations
