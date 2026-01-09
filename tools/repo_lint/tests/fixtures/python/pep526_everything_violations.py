@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
-"""
-PEP 526 "Everything Violations" fixture.
+"""PEP 526 "Everything Violations" fixture.
 
 This file intentionally violates variable annotation conventions across:
 - Module scope
@@ -13,6 +12,26 @@ This file intentionally violates variable annotation conventions across:
 
 It also includes a "Good Examples" section at the end containing
 correct patterns that should NOT be flagged.
+
+:Purpose:
+    Test fixture for PEP 526 type annotation enforcement. Contains intentional
+    violations to verify the checker detects missing annotations correctly.
+
+:Environment Variables:
+    None
+
+:Examples:
+    Used by test suite::
+
+        from tools.repo_lint.checkers.pep526_checker import PEP526Checker
+        checker = PEP526Checker(config)
+        violations = checker.check_file('pep526_everything_violations.py')
+
+:Exit Codes:
+    0
+        Success (N/A for fixture)
+    1
+        Failure (N/A for fixture)
 """
 
 from __future__ import annotations
@@ -103,6 +122,10 @@ class Violations:
     declared_attr: str
 
     def __init__(self) -> None:
+        """Initialize Violations with intentional PEP 526 violations.
+
+        Demonstrates missing annotations on instance attributes.
+        """
         # Dynamic instance attributes without prior annotation / declaration
         self.host = "localhost"
         self.retries = 3
@@ -118,6 +141,10 @@ class Violations:
         self.later: str
 
     def method(self) -> None:
+        """Method with intentional PEP 526 violations.
+
+        Demonstrates missing annotations on local variables.
+        """
         # Locals without annotations
         tmp = 1
         msg = "hello"
@@ -161,6 +188,11 @@ class Violations:
 
 @dataclass
 class BadData:
+    """Dataclass with intentional PEP 526 violations.
+
+    This class demonstrates missing annotations in dataclass fields.
+    """
+
     # Missing annotation => not a dataclass field (bad under enforcement)
     x = 1
 
@@ -177,6 +209,16 @@ class BadData:
 
 
 def bad_function(param1, param2: int, param3: "str"):
+    """Function with intentional PEP 526 violations.
+
+    Demonstrates missing parameter annotations and local variable annotations.
+
+    :param param1: First parameter (intentionally missing annotation)
+    :param param2: Second parameter
+    :param param3: Third parameter
+    :returns: Total value
+    :rtype: int
+    """
     # param1 missing annotation, return missing annotation
 
     # Locals missing
@@ -204,6 +246,10 @@ def bad_function(param1, param2: int, param3: "str"):
 
 
 def kitchen_sink() -> None:
+    """Function with various PEP 526 violations.
+
+    Demonstrates missing annotations on comprehensions and other patterns.
+    """
     # Comprehensions assigned without annotations
     comp_list = [i * i for i in range(10)]
     comp_dict = {str(i): i for i in range(10)}
@@ -234,6 +280,10 @@ def kitchen_sink() -> None:
 
 # Mutating a "Final" module symbol (semantic violation)
 def mutate_final() -> None:
+    """Mutate a Final constant (semantic violation).
+
+    Demonstrates mutation of a Final constant.
+    """
     global IMMUTABLE
     IMMUTABLE = 999
 
@@ -282,6 +332,11 @@ class GoodExamples:
     default_retries: int = 3
 
     def __init__(self, host: str, retries: int = 3) -> None:
+        """Initialize GoodExamples with properly typed attributes.
+
+        :param host: Hostname
+        :param retries: Number of retries
+        """
         # Explicitly typed instance attributes
         self.host: str = host
         self.retries: int = retries
@@ -289,9 +344,20 @@ class GoodExamples:
         self.labels: list[str] = []
 
     def add_label(self, label: str) -> None:
+        """Add a label to the labels list.
+
+        :param label: Label to add
+        """
         self.labels.append(label)
 
     def compute(self, x: int, y: int) -> int:
+        """Compute sum of two integers.
+
+        :param x: First integer
+        :param y: Second integer
+        :returns: Sum of x and y
+        :rtype: int
+        """
         result: int = x + y  # local annotation
         return result
 
@@ -303,6 +369,11 @@ class GoodExamples:
 
 @dataclass
 class GoodData:
+    """Dataclass with correct type annotations.
+
+    Demonstrates properly annotated dataclass fields.
+    """
+
     name: str
     count: int = 0
     tags: list[str] = None if False else []  # intentionally weird but still typed
@@ -314,6 +385,14 @@ class GoodData:
 
 
 def good_function(user: str, retries: int, maybe: Optional[str] = None) -> str:
+    """Create a formatted message string.
+
+    :param user: Username
+    :param retries: Number of retries
+    :param maybe: Optional additional info
+    :returns: Formatted message
+    :rtype: str
+    """
     msg: str = f"{user}:{retries}"
     if maybe is not None:
         msg = f"{msg}:{maybe}"
@@ -321,6 +400,11 @@ def good_function(user: str, retries: int, maybe: Optional[str] = None) -> str:
 
 
 def good_unpacking() -> tuple[int, int]:
+    """Demonstrate proper unpacking with annotations.
+
+    :returns: Tuple of two integers
+    :rtype: tuple[int, int]
+    """
     # If your enforcement *requires* explicit annotations for unpack targets,
     # this shows the canonical pattern.
     a1: int
@@ -330,6 +414,11 @@ def good_unpacking() -> tuple[int, int]:
 
 
 def good_loop() -> int:
+    """Sum numbers in a loop with proper annotations.
+
+    :returns: Sum of numbers
+    :rtype: int
+    """
     total: int = 0
     for i in range(5):
         total += i

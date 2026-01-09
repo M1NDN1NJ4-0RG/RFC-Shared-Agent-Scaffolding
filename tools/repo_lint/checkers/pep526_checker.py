@@ -144,6 +144,11 @@ class PEP526Checker(ast.NodeVisitor):
             self.generic_visit(node)
             return
 
+        # Skip type aliases to avoid false positives
+        if self.is_type_alias(node):
+            self.generic_visit(node)
+            return
+
         # Check each target in the assignment
         for target in node.targets:
             if self.is_simple_name(target):
@@ -224,16 +229,17 @@ class PEP526Checker(ast.NodeVisitor):
         :returns: True if annotation is required
         :rtype: bool
         """
-        # Check if scope is enabled and requires annotation
-        if scope in ("module", "class", "function", "instance") and self.should_check_scope(scope):
+        # Check if scope is enabled
+        scope_enabled = scope in ("module", "class", "function", "instance") and self.should_check_scope(scope)
+
+        if not scope_enabled:
+            # If scope is disabled, don't require annotation even for special patterns
+            return False
+
+        # If scope is enabled, check if annotation is required
+        # Always require for enabled scopes OR special patterns
+        if scope_enabled:
             return True
-
-        # Special patterns that ALWAYS require annotation (regardless of scope)
-        if self.is_empty_literal(value):
-            return True  # {}, [], set(), etc.
-
-        if self.is_none_literal(value):
-            return True  # x = None
 
         return False
 
@@ -299,6 +305,50 @@ class PEP526Checker(ast.NodeVisitor):
             return False  # obj[key] = 1 or lst[0] = 1
 
         return False  # Any other node type
+
+    def is_type_alias(self, node: ast.Assign) -> bool:
+        """Check if assignment is a type alias.
+
+        Type aliases like `StrList = list[str]` should not be flagged as missing annotations.
+        This is a conservative check that identifies common type alias patterns.
+
+        :param node: Assign AST node
+        :returns: True if node appears to be a type alias
+        :rtype: bool
+        """
+        # Must have exactly one target and it must be a simple name
+        if len(node.targets) != 1:
+            return False
+
+        target = node.targets[0]
+        if not isinstance(target, ast.Name):
+            return False
+
+        value = node.value
+
+        # Check for subscripted generics: list[str], dict[str, int], etc.
+        if isinstance(value, ast.Subscript):
+            return True
+
+        # Check for union types: int | str, User | None, etc.
+        if isinstance(value, ast.BinOp) and isinstance(value.op, ast.BitOr):
+            return True
+
+        # Check for simple type names/attributes that are likely types
+        # (e.g., Type, CustomClass, typing.List, etc.)
+        if isinstance(value, (ast.Name, ast.Attribute)):
+            # Conservative: only treat as type alias if it looks like a type
+            # (starts with uppercase or is from typing module)
+            if isinstance(value, ast.Name):
+                # Check if name starts with uppercase (common type convention)
+                if value.id and value.id[0].isupper():
+                    return True
+            elif isinstance(value, ast.Attribute):
+                # Check if it's from typing module (e.g., typing.List)
+                if isinstance(value.value, ast.Name) and value.value.id == "typing":
+                    return True
+
+        return False
 
     def get_violations(self) -> List[Dict[str, Any]]:
         """Get list of violations found during checking.
