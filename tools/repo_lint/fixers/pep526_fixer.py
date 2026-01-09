@@ -108,7 +108,7 @@ class PEP526Fixer:
         """
         try:
             content = file_path.read_text(encoding="utf-8")
-        except Exception as e:
+        except (UnicodeDecodeError, OSError, IOError) as e:
             print(f"Error reading {file_path}: {e}", file=sys.stderr)
             return (False, 0)
 
@@ -143,7 +143,7 @@ class PEP526Fixer:
             try:
                 file_path.write_text("".join(lines), encoding="utf-8")
                 return (True, fixes_made)
-            except Exception as e:
+            except (UnicodeEncodeError, OSError, IOError) as e:
                 print(f"Error writing {file_path}: {e}", file=sys.stderr)
                 return (False, 0)
 
@@ -191,6 +191,7 @@ class PEP526Fixer:
             indent_str = old_line[:indent]
 
             # Get the value part (everything after '=')
+            # TODO: Use AST reconstruction instead of string manipulation for robustness
             # This is fragile, but works for simple cases
             old_line_stripped = old_line.strip()
             if " = " not in old_line_stripped:
