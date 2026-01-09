@@ -84,11 +84,11 @@ def safe_print(text: str, fallback_text: str = None) -> None:
 class ExitCode(IntEnum):
     """Standard exit codes for repo_lint."""
 
-    SUCCESS = 0  # All checks passed
-    VIOLATIONS = 1  # Linting/formatting violations found
-    MISSING_TOOLS = 2  # Required tools not installed (CI mode)
-    INTERNAL_ERROR = 3  # Internal error or exception
-    UNSAFE_VIOLATION = 4  # Unsafe mode policy violation (CI or missing confirmation)
+    SUCCESS: int = 0  # All checks passed
+    VIOLATIONS: int = 1  # Linting/formatting violations found
+    MISSING_TOOLS: int = 2  # Required tools not installed (CI mode)
+    INTERNAL_ERROR: int = 3  # Internal error or exception
+    UNSAFE_VIOLATION: int = 4  # Unsafe mode policy violation (CI or missing confirmation)
 
 
 @dataclass

@@ -30,7 +30,7 @@ import re
 from typing import List
 
 # Module-level flag for content checks (set by command-line arg in main script)
-SKIP_CONTENT_CHECKS = False
+SKIP_CONTENT_CHECKS: bool = False
 
 
 class ValidationError:

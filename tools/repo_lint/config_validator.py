@@ -34,7 +34,7 @@ from typing import Any, Dict, List
 import yaml
 
 # Semantic version pattern (X.Y.Z)
-SEMANTIC_VERSION_PATTERN = r"^\d+\.\d+\.\d+$"
+SEMANTIC_VERSION_PATTERN: str = r"^\d+\.\d+\.\d+$"
 
 # Default allowed top-level keys in config files
 DEFAULT_ALLOWED_KEYS = ["config_type", "version", "languages", "exclusions", "validation", "settings", "description"]
