@@ -88,6 +88,7 @@ def find_repo_root() -> Path:
     :Note:
         This is a compatibility wrapper around the shared repo_utils.find_repo_root().
         New code should import directly from tools.repo_lint.repo_utils.
+        :rtype: Path
     """
     # pylint: disable=import-outside-toplevel,redefined-outer-name
     from tools.repo_lint.repo_utils import find_repo_root as find_repo_root_impl
@@ -100,6 +101,7 @@ def command_exists(command: str) -> bool:
 
     :param command: Command name to check
     :returns: True if command exists, False otherwise
+    :rtype: bool
     """
     return shutil.which(command) is not None
 
@@ -112,6 +114,7 @@ def get_excluded_paths() -> List[str]:
     :Note:
         This function loads exclusions from conformance/repo-lint/repo-lint-file-patterns.yaml
         and replaces the hardcoded EXCLUDED_PATHS constant.
+        :rtype: List[str]
     """
     # pylint: disable=import-outside-toplevel
     from tools.repo_lint.yaml_loader import get_linting_exclusion_paths
@@ -128,6 +131,7 @@ def get_git_pathspec_excludes(include_fixtures: bool = False) -> List[str]:
     :Note:
         Updated in Phase 2.9 to use YAML configuration instead of hardcoded EXCLUDED_PATHS.
         In vector mode (include_fixtures=True), test fixtures are included in scans.
+        :rtype: List[str]
     """
     excludes = []
     for path in get_excluded_paths():
@@ -151,6 +155,7 @@ def get_tracked_files(patterns: List[str], repo_root: Path | None = None, includ
     :Note:
         When include_fixtures=True (vector mode), test fixture files under tests/fixtures/
         are included in the results. This is used for vector-based conformance testing.
+        :rtype: List[str]
     """
     if repo_root is None:
         repo_root = find_repo_root()
@@ -198,6 +203,7 @@ class Runner(ABC):
 
         :Returns:
             True if language has files to lint, False otherwise
+        :rtype: bool
         """
         pass  # pylint: disable=unnecessary-pass  # Abstract method
 
@@ -207,6 +213,7 @@ class Runner(ABC):
 
         :Returns:
             List of missing tool names (empty if all tools present)
+        :rtype: List[str]
         """
         pass  # pylint: disable=unnecessary-pass  # Abstract method
 
@@ -219,6 +226,7 @@ class Runner(ABC):
 
         :Raises:
             MissingToolError: If required tools are not installed (CI mode only)
+        :rtype: List[LintResult]
         """
         pass  # pylint: disable=unnecessary-pass  # Abstract method
 
@@ -229,6 +237,7 @@ class Runner(ABC):
         :param policy: Auto-fix policy dictionary (deny-by-default)
         :returns: List of linting results after fixes applied
         :raises MissingToolError: If required tools are not installed (CI mode only)
+        :rtype: List[LintResult]
         """
         pass  # pylint: disable=unnecessary-pass  # Abstract method
 
@@ -246,6 +255,7 @@ class Runner(ABC):
                explicit control, runners should override this method and declare which
                methods to parallelize. The current pattern matches methods starting with
                '_run_' that aren't fix/format/helper/util methods.
+        :rtype: List[LintResult]
         """
         # TODO: CRITICAL - Replace introspection with explicit declaration pattern  # pylint: disable=fixme
         # FUTURE: Add @parallelizable decorator or _parallelizable_methods class attribute
@@ -369,6 +379,7 @@ class Runner(ABC):
         :Purpose:
             Helper method for runners to check tool filter. If no filter is set,
             all tools run. If filter is set, only tools in the filter run.
+        :rtype: bool
         """
         if self._tool_filter is None:
             return True
@@ -384,6 +395,7 @@ class Runner(ABC):
         :Purpose:
             Retrieves files with uncommitted changes from git. Used when --changed-only
             is specified to limit linting scope.
+        :rtype: List[str]
         """
         # Get files changed in working tree (unstaged + staged)
         result = subprocess.run(

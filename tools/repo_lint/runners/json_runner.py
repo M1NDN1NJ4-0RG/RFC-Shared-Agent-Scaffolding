@@ -47,6 +47,7 @@ class JsonRunner(Runner):
 
         :returns:
             True if JSON/JSONC files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed JSON/JSONC files
         if self._changed_only:
@@ -66,6 +67,7 @@ class JsonRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         required = ["prettier"]
         return [tool for tool in required if not command_exists(tool)]
@@ -75,6 +77,7 @@ class JsonRunner(Runner):
 
         :returns:
             List of linting results from Prettier and metadata validator
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["prettier"])
 
@@ -97,6 +100,7 @@ class JsonRunner(Runner):
         :param policy: Auto-fix policy dictionary (unused for now)
         :returns:
             List of results after applying fixes
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["prettier"])
 
@@ -114,6 +118,7 @@ class JsonRunner(Runner):
         :param fix: If True, apply automatic formatting
         :returns:
             LintResult for Prettier
+        :rtype: LintResult
         """
         # Get all JSON/JSONC files
         json_files = get_tracked_files(
@@ -173,6 +178,7 @@ class JsonRunner(Runner):
         :param stderr: Standard error from Prettier
         :returns:
             List of Violation objects
+        :rtype: List[Violation]
         """
         violations = []
 
@@ -210,6 +216,7 @@ class JsonRunner(Runner):
 
         :returns:
             LintResult for JSON metadata validation
+        :rtype: LintResult
         """
         # Get only .json files (not .jsonc)
         json_files = get_tracked_files(

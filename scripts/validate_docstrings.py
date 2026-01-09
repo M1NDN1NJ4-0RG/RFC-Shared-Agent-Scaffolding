@@ -121,6 +121,7 @@ def get_tracked_files(include_fixtures: bool = False) -> List[Path]:
 
     :param include_fixtures: Whether to include test fixture files (vector mode)
     :returns: List of Path objects for files that match in-scope patterns and are not excluded
+    :rtype: List[Path]
     """
     import subprocess
 
@@ -191,6 +192,7 @@ def filter_files_by_language(files: List[Path], language: str) -> List[Path]:
     :param files: List of file paths to filter
     :param language: Language to filter by (python, bash, perl, powershell, yaml, rust, all)
     :returns: Filtered list of file paths
+    :rtype: List[Path]
     """
     if language == "all":
         return files
@@ -213,6 +215,7 @@ def main() -> int:
     """Main entry point.
 
     :returns: Exit code (0 for success, 1 for failure)
+    :rtype: int
     """
     # Parse command-line arguments
     parser = argparse.ArgumentParser(

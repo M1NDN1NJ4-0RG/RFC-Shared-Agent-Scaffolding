@@ -59,6 +59,7 @@ def get_policy_path() -> Path:
 
     :returns:
         Path to conformance/repo-lint/autofix-policy.json
+        :rtype: Path
     """
     # Detect repo root (this file is in tools/repo_lint/policy.py)
     repo_root = Path(__file__).parent.parent.parent
@@ -71,6 +72,7 @@ def load_policy() -> Dict:
     :returns: Policy dictionary
     :raises FileNotFoundError: If policy file doesn't exist
     :raises json.JSONDecodeError: If policy file is invalid JSON
+    :rtype: Dict
     """
     policy_path = get_policy_path()
     with open(policy_path, encoding="utf-8") as f:
@@ -87,6 +89,7 @@ def is_category_allowed(policy: Dict, category: str) -> bool:
     :Notes:
         Policy is deny-by-default. A category must be explicitly listed
         in "allowed_categories" to be permitted.
+        :rtype: bool
     """
     allowed = policy.get("allowed_categories", [])
     return any(cat.get("category") == category for cat in allowed)
@@ -97,6 +100,7 @@ def get_allowed_categories(policy: Dict) -> List[str]:
 
     :param policy: Loaded policy dictionary
     :returns: List of allowed category names
+    :rtype: List[str]
     """
     allowed = policy.get("allowed_categories", [])
     return [cat.get("category") for cat in allowed if cat.get("category")]
@@ -108,6 +112,7 @@ def get_category_info(policy: Dict, category: str) -> Dict | None:
     :param policy: Loaded policy dictionary
     :param category: Category name
     :returns: Category info dictionary or None if not found
+    :rtype: Dict | None
     """
     allowed = policy.get("allowed_categories", [])
     for cat in allowed:
@@ -127,6 +132,7 @@ def get_policy_summary(policy: Dict) -> str:
         ✓ FORMAT.BLACK - Black Python code formatter
         ✓ FORMAT.SHFMT - shfmt shell script formatter
         ✓ LINT.RUFF.SAFE - Ruff safe auto-fixes only
+        :rtype: str
     """
     lines = []
     lines.append(f"Auto-fix policy ({policy.get('policy', 'unknown')}):")
@@ -154,6 +160,7 @@ def validate_policy(policy: Dict) -> List[str]:
         - Required top-level fields (version, policy, allowed_categories)
         - Valid policy mode (deny_by_default)
         - Category objects have required fields (category, tool, safe)
+        :rtype: List[str]
     """
     errors = []
 

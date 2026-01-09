@@ -106,6 +106,7 @@ def _get_conformance_dir() -> Path:
         - Checks custom config directory first (set via set_config_directory)
         - Falls back to REPO_LINT_CONFIG_DIR environment variable
         - Falls back to repo_root/conformance/repo-lint
+        :rtype: Path
     """
     # Check custom config directory (set via --config or set_config_directory)
     if _CUSTOM_CONFIG_DIR is not None:
@@ -150,6 +151,7 @@ def load_yaml_config(config_filename: str, allowed_keys: List[str] = None) -> Di
     :Note:
         This function is not cached to support custom allowed_keys.
         Use the specific load_*_rules() functions for caching.
+        :rtype: Dict[str, Any]
     """
     conformance_dir = _get_conformance_dir()
     config_path = conformance_dir / config_filename
@@ -179,6 +181,7 @@ def load_linting_rules() -> Dict[str, Any]:
 
             rules = load_linting_rules()
             black_version = rules['languages']['python']['tools']['black']['version']
+        :rtype: Dict[str, Any]
     """
     return load_yaml_config("repo-lint-linting-rules.yaml")
 
@@ -194,6 +197,7 @@ def load_naming_rules() -> Dict[str, Any]:
 
             rules = load_naming_rules()
             patterns = rules['languages']['python']['file_patterns']
+        :rtype: Dict[str, Any]
     """
     return load_yaml_config("repo-lint-naming-rules.yaml")
 
@@ -209,6 +213,7 @@ def load_docstring_rules() -> Dict[str, Any]:
 
             rules = load_docstring_rules()
             validation = rules['languages']['python']['validation']
+        :rtype: Dict[str, Any]
     """
     return load_yaml_config("repo-lint-docstring-rules.yaml")
 
@@ -227,6 +232,7 @@ def load_file_patterns() -> Dict[str, Any]:
             exclusions = []
             for category in patterns['exclusions'].values():
                 exclusions.extend(category['patterns'])
+        :rtype: Dict[str, Any]
     """
     # File patterns config has custom allowed keys
     allowed_keys = [
@@ -257,6 +263,7 @@ def get_tool_versions() -> Dict[str, str]:
     :Note:
         This function replaces the old PYTHON_TOOLS, BASH_TOOLS, etc.
         constants from version_pins.py (Phase 2.9 migration).
+        :rtype: Dict[str, str]
     """
     rules = load_linting_rules()
     versions = {}
@@ -282,6 +289,7 @@ def get_in_scope_patterns() -> List[str]:
     :Note:
         This function replaces IN_SCOPE_PATTERNS from validate_docstrings.py
         (Phase 2.9 migration).
+        :rtype: List[str]
     """
     patterns_config = load_file_patterns()
     return patterns_config.get("in_scope", {}).get("patterns", [])
@@ -296,6 +304,7 @@ def get_exclusion_patterns() -> List[str]:
         This function replaces EXCLUDE_PATTERNS from validate_docstrings.py
         (Phase 2.9 migration). It aggregates all patterns from all exclusion
         categories in the YAML config.
+        :rtype: List[str]
     """
     patterns_config = load_file_patterns()
     exclusions_config = patterns_config.get("exclusions", {})
@@ -319,6 +328,7 @@ def get_linting_exclusion_paths() -> List[str]:
     :Note:
         This function replaces EXCLUDED_PATHS from base.py (Phase 2.9 migration).
         It delegates to get_exclusion_patterns() to avoid duplication.
+        :rtype: List[str]
     """
     return get_exclusion_patterns()
 
@@ -343,6 +353,7 @@ def get_all_configs() -> Dict[str, Dict[str, Any]]:
         - Returns resolved configs from current config directory
         - Config directory can be customized via set_config_directory()
         - All configs pass validation before being returned
+        :rtype: Dict[str, Dict[str, Any]]
     """
     return {
         "linting_rules": load_linting_rules(),
@@ -366,6 +377,7 @@ def get_config_source() -> str:
 
             source = get_config_source()
             print(f"Loading configs from: {source}")
+        :rtype: str
     """
     if _CUSTOM_CONFIG_DIR is not None:
         return f"Custom: {_CUSTOM_CONFIG_DIR}"
@@ -383,6 +395,7 @@ def _get_legacy_python_tools() -> Dict[str, str]:
     :returns: Dictionary of Python tool versions
 
     :raises DeprecationWarning: This function is deprecated
+    :rtype: Dict[str, str]
     """
     warnings.warn(
         "Direct import of PYTHON_TOOLS is deprecated. Use tools.repo_lint.yaml_loader.get_tool_versions() instead.",
@@ -404,6 +417,7 @@ def __getattr__(name: str) -> Any:
     :returns: Attribute value from legacy functions
 
     :raises AttributeError: If attribute doesn't exist
+    :rtype: Any
     """
     if name == "PYTHON_TOOLS":
         return _get_legacy_python_tools()

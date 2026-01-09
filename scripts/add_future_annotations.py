@@ -92,6 +92,7 @@ def should_skip_file(file_path: Path) -> bool:
 
     :param file_path: Path to check
     :return: True if file should be skipped
+    :rtype: bool
     """
     # Skip if any parent directory is in SKIP_DIRS
     for part in file_path.parts:
@@ -105,6 +106,7 @@ def has_future_import(content: str) -> bool:
 
     :param content: File content to check
     :return: True if import exists anywhere in file
+    :rtype: bool
     """
     # Quick check: look for the import anywhere in the file
     # This covers all valid forms including multi-line imports
@@ -123,6 +125,7 @@ def find_insertion_point(content: str) -> Tuple[int, int]:
 
     :param content: File content as string
     :return: Tuple of (line_number, column) for insertion (1-indexed line)
+    :rtype: Tuple[int, int]
     """
     if not content.strip():
         # Empty file - insert at line 1
@@ -185,6 +188,7 @@ def add_future_import(content: str) -> str:
 
     :param content: Original file content
     :return: Modified content with import added
+    :rtype: str
     """
     if has_future_import(content):
         return content
@@ -246,6 +250,7 @@ def process_file(file_path: Path, apply: bool, verbose: bool) -> bool:
     :param apply: If True, write changes; if False, only check
     :param verbose: If True, print status messages
     :return: True if file was/would be modified
+    :rtype: bool
     """
     try:
         with open(file_path, encoding="utf-8") as f:
@@ -292,6 +297,7 @@ def find_python_files(root: Path) -> List[Path]:
 
     :param root: Repository root path
     :return: List of Python file paths
+    :rtype: List[Path]
     """
     python_files = []
     for py_file in root.rglob("*.py"):
@@ -304,6 +310,7 @@ def main() -> int:
     """Main entry point.
 
     :return: Exit code
+    :rtype: int
     """
     parser = argparse.ArgumentParser(description="Add 'from __future__ import annotations' to Python files")
     parser.add_argument(

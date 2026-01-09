@@ -72,6 +72,7 @@ def _starts_fence(line: str) -> Optional[Tuple[str, int]]:
 
     :param line: The line to check
     :returns: Tuple of (fence_char, fence_len) if fence detected, None otherwise
+    :rtype: Optional[Tuple[str, int]]
     """
     m = FENCE_RE.match(line)
     if not m:
@@ -87,6 +88,7 @@ def _ends_fence(line: str, fence_char: str, fence_len: int) -> bool:
     :param fence_char: The fence character from opening fence (` or ~)
     :param fence_len: The length of the opening fence
     :returns: True if this line closes the fence, False otherwise
+    :rtype: bool
     """
     m = FENCE_RE.match(line)
     if not m:
@@ -101,6 +103,7 @@ def _is_table_block(lines: List[str], i: int) -> bool:
     :param lines: All lines in the file
     :param i: Current line index
     :returns: True if current and next line form a table header+separator
+    :rtype: bool
     """
     if i + 1 >= len(lines):
         return False
@@ -112,6 +115,7 @@ def _is_indented_code(line: str) -> bool:
 
     :param line: The line to check
     :returns: True if line starts with 4 spaces or a tab
+    :rtype: bool
     """
     return line.startswith("    ") or line.startswith("\t")
 
@@ -121,6 +125,7 @@ def _is_list_item(line: str) -> bool:
 
     :param line: The line to check
     :returns: True if line starts a list item
+    :rtype: bool
     """
     return bool(LIST_ITEM_RE.match(line) or TASK_LIST_RE.match(line))
 
@@ -130,6 +135,7 @@ def _should_skip_line(line: str) -> bool:
 
     :param line: The line to check
     :returns: True if line should be skipped (heading, blockquote, etc.)
+    :rtype: bool
     """
     if not line.strip():
         return True
@@ -155,6 +161,7 @@ def _wrap_paragraph(text: str) -> List[str]:
 
     :param text: The paragraph text to wrap
     :returns: List of wrapped lines
+    :rtype: List[str]
     """
     wrapped = textwrap.fill(
         text,
@@ -173,6 +180,7 @@ def _collect_paragraph(lines: List[str], start: int) -> Tuple[int, List[str]]:
     :param lines: All lines in the file
     :param start: Starting line index
     :returns: Tuple of (next_index, paragraph_lines)
+    :rtype: Tuple[int, List[str]]
     """
     buf: List[str] = []
     i = start
@@ -199,6 +207,7 @@ def _copy_list_block(lines: List[str], i: int) -> Tuple[int, List[str]]:
     :param lines: All lines in the file
     :param i: Current line index (must be a list item)
     :returns: Tuple of (next_index, copied_lines)
+    :rtype: Tuple[int, List[str]]
     """
     out: List[str] = []
     first = lines[i]
@@ -236,6 +245,7 @@ def _rewrite_file(path: Path) -> bool:
 
     :param path: Path to the Markdown file
     :returns: True if file was modified, False otherwise
+    :rtype: bool
     """
     original = path.read_text(encoding="utf-8")
     lines = original.splitlines()
@@ -329,6 +339,7 @@ def _iter_md_files(path: Path) -> Iterable[Path]:
 
     :param path: File or directory path
     :returns: Generator yielding Path objects for each .md file
+    :rtype: Iterable[Path]
     """
     if path.is_file():
         if path.suffix.lower() == ".md":
@@ -341,6 +352,7 @@ def main() -> int:
     """Main entry point for the script.
 
     :returns: Exit code (0 for success, 2 for errors)
+    :rtype: int
     """
     if len(sys.argv) != 2:
         print("Usage: fix_md013_line_length_option_a.py <file-or-directory>", file=sys.stderr)

@@ -44,6 +44,7 @@ class TomlRunner(Runner):
 
         :returns:
             True if TOML files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed TOML files
         if self._changed_only:
@@ -59,6 +60,7 @@ class TomlRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         required = ["taplo"]
         return [tool for tool in required if not command_exists(tool)]
@@ -68,6 +70,7 @@ class TomlRunner(Runner):
 
         :returns:
             List of linting results from Taplo
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["taplo"])
 
@@ -87,6 +90,7 @@ class TomlRunner(Runner):
         :param policy: Auto-fix policy dictionary (unused for now)
         :returns:
             List of results after applying fixes
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["taplo"])
 
@@ -104,6 +108,7 @@ class TomlRunner(Runner):
         :param fix: If True, apply automatic formatting
         :returns:
             LintResult for Taplo
+        :rtype: LintResult
         """
         # Get all TOML files
         # Note: Taplo handles config exclusions via taplo.toml
@@ -159,6 +164,7 @@ class TomlRunner(Runner):
         :param toml_files: List of TOML files that were checked
         :returns:
             List of Violation objects
+        :rtype: List[Violation]
         """
         violations = []
 
@@ -199,6 +205,7 @@ class TomlRunner(Runner):
         :param line: Error line containing path=...
         :returns:
             Extracted file path, or None if parsing fails
+        :rtype: str | None
         """
         try:
             # Extract file path from 'path="..."' or 'path=...'

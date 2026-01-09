@@ -35,6 +35,7 @@ def find_repo_root() -> Path:
     allowing repo_lint to work in non-Git directories.
 
     :returns: Path to repository root (or cwd if .git not found)
+    :rtype: Path
     """
     current = Path.cwd().resolve()
     start_dir = current

@@ -220,6 +220,7 @@ def validate_config_file(file_path: Path, config_type: str, allowed_keys: List[s
     :returns: Parsed and validated config data
     :raises ConfigValidationError: If validation fails (with detailed error message)
     :raises FileNotFoundError: If config file does not exist
+    :rtype: Dict[str, Any]
     """
     if not file_path.exists():
         raise FileNotFoundError(f"Config file not found: {file_path}")
@@ -265,6 +266,7 @@ def load_validated_config(file_path: str, config_type: str) -> Dict[str, Any]:
     :returns: Parsed and validated config data
     :raises ConfigValidationError: If validation fails
     :raises FileNotFoundError: If config file does not exist
+    :rtype: Dict[str, Any]
     """
     path = Path(file_path)
     return validate_config_file(path, config_type)

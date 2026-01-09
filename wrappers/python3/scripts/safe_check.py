@@ -129,6 +129,7 @@ def count_files(d: str) -> int:
 
     Used to verify that safe-run creates exactly one artifact per failure
     and no artifacts on success.
+    :rtype: int
     """
     return len([p for p in glob.glob(os.path.join(d, "*")) if os.path.isfile(p)])
 
@@ -166,6 +167,7 @@ def main(argv: List[str]) -> int:
     # INFO: safe_archive no-clobber OK
     # INFO: SAFE-CHECK: contract verification PASSED
     0
+    :rtype: int
     """
     if argv:
         usage()

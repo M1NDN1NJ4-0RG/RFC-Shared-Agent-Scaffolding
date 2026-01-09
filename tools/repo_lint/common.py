@@ -175,6 +175,7 @@ def filter_excluded_paths(files: List[str], exclude_patterns: List[str] | None =
         Uses simple substring matching. A file is excluded if any pattern
         appears anywhere in its path. This is consistent with how git pathspecs
         work for directory exclusions.
+        :rtype: List[str]
     """
     if exclude_patterns is None:
         exclude_patterns = get_default_exclude_patterns()
@@ -190,6 +191,7 @@ def get_default_exclude_patterns() -> List[str]:
     :Note:
         These patterns are used consistently across all language runners to
         exclude test fixtures with intentional violations from linting.
+        :rtype: List[str]
     """
     return [
         "conformance/repo-lint/fixtures/violations/",
@@ -211,6 +213,7 @@ def convert_validation_errors_to_violations(errors: List, tool_name: str) -> Lis
         docstring validation ValidationError format to the repo_lint Violation
         format. It handles symbol information, missing sections, and message
         formatting consistently across all language runners.
+        :rtype: List[Violation]
     """
     import os
 

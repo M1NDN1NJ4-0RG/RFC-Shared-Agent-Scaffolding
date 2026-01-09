@@ -42,6 +42,7 @@ class PowerShellRunner(Runner):
 
         :returns:
             True if PowerShell files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed PowerShell files
         if self._changed_only:
@@ -57,6 +58,7 @@ class PowerShellRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         missing = []
 
@@ -86,6 +88,7 @@ class PowerShellRunner(Runner):
 
         :returns:
             List of linting results from all PowerShell tools
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["pwsh"])
 
@@ -109,6 +112,7 @@ class PowerShellRunner(Runner):
         :param policy: Auto-fix policy dictionary (unused)
         :returns:
             List of results (runs checks only)
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["pwsh"])
 
@@ -124,6 +128,7 @@ class PowerShellRunner(Runner):
 
         :returns:
             List of PowerShell file paths (empty list if none found)
+        :rtype: List[str]
         """
         all_files = get_tracked_files(["**/*.ps1"], self.repo_root, include_fixtures=self._include_fixtures)
         return filter_excluded_paths(all_files)
@@ -133,6 +138,7 @@ class PowerShellRunner(Runner):
 
         :returns:
             LintResult for PSScriptAnalyzer
+        :rtype: LintResult
         """
         ps_files = self._get_powershell_files()
         if not ps_files:
@@ -175,6 +181,7 @@ class PowerShellRunner(Runner):
 
         :returns:
             LintResult for docstring validation
+        :rtype: LintResult
         """
         ps_files = self._get_powershell_files()
         if not ps_files:

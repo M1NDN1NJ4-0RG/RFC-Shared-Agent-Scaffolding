@@ -41,6 +41,7 @@ def is_tty() -> bool:
     """Check if stdout is a TTY.
 
     :returns: True if stdout is a TTY, False otherwise
+    :rtype: bool
     """
     return sys.stdout.isatty()
 
@@ -63,6 +64,7 @@ def get_console(ci_mode: bool = False, force_terminal: bool | None = None) -> Co
     :param ci_mode: If True, disable colors and interactive features
     :param force_terminal: Override TTY detection (default: auto-detect)
     :returns: Configured Console instance
+    :rtype: Console
     """
     # Determine effective force_terminal value before caching
     if force_terminal is None:

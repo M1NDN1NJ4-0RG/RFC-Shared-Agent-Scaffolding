@@ -67,6 +67,7 @@ class PowerShellValidator:
         :param content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)
+        :rtype: List[ValidationError]
         """
         errors = []
 
@@ -89,6 +90,7 @@ class PowerShellValidator:
         :param content: File content as string
 
         :returns: ValidationError if file help is missing required sections, None otherwise
+        :rtype: ValidationError | None
         """
         # Check for comment-based help block
         if "<#" not in content or "#>" not in content:
@@ -129,6 +131,7 @@ class PowerShellValidator:
         :param content: File content as string (for pragma checking)
 
         :returns: List of validation errors for functions
+        :rtype: List[ValidationError]
         """
         errors = []
 

@@ -42,6 +42,7 @@ class YAMLRunner(Runner):
 
         :returns:
             True if YAML files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed YAML files
         if self._changed_only:
@@ -57,6 +58,7 @@ class YAMLRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         required = ["yamllint"]
         # actionlint is optional - only report as missing if it would be used
@@ -67,6 +69,7 @@ class YAMLRunner(Runner):
 
         :returns:
             List of linting results from all YAML tools
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["yamllint"])
 
@@ -95,6 +98,7 @@ class YAMLRunner(Runner):
         :param policy: Auto-fix policy dictionary (unused)
         :returns:
             List of results (runs checks only)
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["yamllint"])
 
@@ -116,6 +120,7 @@ class YAMLRunner(Runner):
 
         :returns:
             LintResult for yamllint
+        :rtype: LintResult
         """
         # Get all YAML files, excluding test fixtures
         yaml_files = get_tracked_files(
@@ -154,6 +159,7 @@ class YAMLRunner(Runner):
 
         :returns:
             LintResult for actionlint
+        :rtype: LintResult
         """
         # Get GitHub Actions workflow files only
         workflow_files = get_tracked_files(
@@ -193,6 +199,7 @@ class YAMLRunner(Runner):
 
         :returns:
             LintResult for yaml-docstrings
+        :rtype: LintResult
         """
         # Get YAML files to validate
         yaml_files = get_tracked_files(

@@ -59,6 +59,7 @@ def get_repo_root() -> Path:
     :Note:
         This delegates to the shared repo_utils.find_repo_root() for consistency
         across the codebase.
+        :rtype: Path
     """
     from tools.repo_lint.repo_utils import find_repo_root
 
@@ -70,6 +71,7 @@ def get_venv_path() -> Path:
 
     :returns:
         Path to .venv-lint directory
+        :rtype: Path
     """
     return get_repo_root() / ".venv-lint"
 
@@ -79,6 +81,7 @@ def get_tools_path() -> Path:
 
     :returns:
         Path to .tools directory
+        :rtype: Path
     """
     return get_repo_root() / ".tools"
 
@@ -88,6 +91,7 @@ def venv_exists() -> bool:
 
     :returns:
         True if .venv-lint exists and appears valid
+        :rtype: bool
     """
     venv_path = get_venv_path()
     if not venv_path.exists():
@@ -107,6 +111,7 @@ def create_venv(verbose: bool = False) -> Tuple[bool, str | None]:
 
     :param verbose: If True, print detailed output
     :returns: Tuple of (success, error_message)
+    :rtype: Tuple[bool, str | None]
     """
     venv_path = get_venv_path()
 
@@ -150,6 +155,7 @@ def install_python_tools(verbose: bool = False) -> Tuple[bool, List[str]]:
 
     :param verbose: If True, print detailed output
     :returns: Tuple of (success, list of error messages)
+    :rtype: Tuple[bool, List[str]]
     """
     errors = []
 
@@ -250,6 +256,7 @@ def cleanup_repo_local(verbose: bool = False) -> Tuple[bool, List[str]]:
     :Notes:
         Only removes directories created by repo-lint install.
         Never removes system packages.
+        :rtype: Tuple[bool, List[str]]
     """
     messages = []
     success = True

@@ -90,6 +90,7 @@ def create_parser() -> argparse.ArgumentParser:
     """Create argument parser for repo_lint CLI.
 
     :returns: Configured ArgumentParser instance
+    :rtype: argparse.ArgumentParser
     """
     parser = argparse.ArgumentParser(
         prog="repo-lint",
@@ -197,6 +198,7 @@ def _run_all_runners(args: argparse.Namespace, mode: str, action_callback) -> in
     :param mode: Mode description for output ("Linting" or "Formatting")
     :param action_callback: Callable that takes a runner and returns results
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
+    :rtype: int
     """
     import os
     from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -590,6 +592,7 @@ def cmd_check(args: argparse.Namespace) -> int:
 
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=violations, 2=missing tools, 3=error)
+    :rtype: int
     """
     import os
 
@@ -707,6 +710,7 @@ def cmd_fix(args: argparse.Namespace) -> int:
 
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 1=violations remain, 2=missing tools, 3=error, 4=unsafe violation)
+    :rtype: int
     """
     import os
 
@@ -859,6 +863,7 @@ def cmd_install(args: argparse.Namespace) -> int:
 
     :param args: Parsed command-line arguments
     :returns: Exit code (0=success, 3=error)
+    :rtype: int
     """
     # Handle cleanup mode
     if args.cleanup:

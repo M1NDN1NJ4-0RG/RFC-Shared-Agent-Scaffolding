@@ -44,6 +44,7 @@ class DataProcessor:
 
         Returns:
             Transformed data in the requested format
+        :rtype: str
         """
         if format_type == "json":
             return f"JSON: {data}"

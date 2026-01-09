@@ -135,6 +135,7 @@ def _escape_cmd_argument(arg: str) -> str:
 
     :param arg: The string to escape for CMD
     :returns: Escaped string safe for CMD command line
+    :rtype: str
     """
     # First escape the caret itself
     escaped = arg.replace("^", "^^")
@@ -158,6 +159,7 @@ def _escape_powershell_command(command: str) -> str:
     :Notes:
         This provides basic protection against injection via PowerShell metacharacters.
         Users should still avoid passing untrusted input to the --command flag.
+        :rtype: str
     """
     # Escape PowerShell special characters
     # See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters
@@ -250,6 +252,7 @@ def _is_verbose_enabled() -> bool:
     is showing a traceback when not requested (better than hiding errors).
 
     :returns: True if verbose mode is enabled, False otherwise
+    :rtype: bool
     """
     import os
 
@@ -1852,6 +1855,7 @@ def activate_cmd(venv, shell, command, no_rc, print_only, ci) -> None:
 
             :param text: The text to quote for Fish shell
             :returns: Quoted string safe for Fish shell
+            :rtype: str
             """
             if text == "":
                 return "''"

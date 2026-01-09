@@ -53,6 +53,7 @@ class RustRunner(Runner):
 
         :returns:
             True if Rust files exist, False otherwise
+        :rtype: bool
         """
         # If changed-only mode, check for changed Rust files
         if self._changed_only:
@@ -68,6 +69,7 @@ class RustRunner(Runner):
 
         :returns:
             List of missing tool names
+        :rtype: List[str]
         """
         required = ["cargo", "rustfmt", "clippy-driver"]
         missing = []
@@ -94,6 +96,7 @@ class RustRunner(Runner):
 
         :returns:
             List of linting results from all Rust tools
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["cargo"])
 
@@ -117,6 +120,7 @@ class RustRunner(Runner):
         :param policy: Auto-fix policy dictionary (unused for Rust)
         :returns:
             List of linting results after fixes applied
+        :rtype: List[LintResult]
         """
         self._ensure_tools(["cargo"])
 
@@ -160,6 +164,7 @@ class RustRunner(Runner):
 
         :returns:
             LintResult for rustfmt
+        :rtype: LintResult
         """
         rust_dir = self.repo_root / "rust"
         if not rust_dir.exists():
@@ -188,6 +193,7 @@ class RustRunner(Runner):
 
         :returns:
             LintResult for clippy with detailed file, line, and message information
+        :rtype: LintResult
         """
         rust_dir = self.repo_root / "rust"
         if not rust_dir.exists():
@@ -235,6 +241,7 @@ class RustRunner(Runner):
         :param line: JSON line from clippy output
         :param rust_dir: Path to rust directory for path relativization
         :returns: Violation object if line contains a warning/error, None otherwise
+        :rtype: Violation | None
         """
         try:
             msg = json.loads(line)
@@ -302,6 +309,7 @@ class RustRunner(Runner):
 
         :returns:
             LintResult for docstring validation
+        :rtype: LintResult
         """
         # Check if rust directory exists
         rust_dir = self.repo_root / "rust"

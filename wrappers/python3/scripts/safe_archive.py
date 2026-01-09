@@ -134,6 +134,7 @@ def usage() -> int:
 
     Displays comprehensive help including options, environment variables,
     and examples. Caller is expected to exit with the returned code.
+    :rtype: int
     """
     eprint("Usage: scripts/python3/safe_archive.py [--no-clobber] [--all | <file> ...]")
     eprint("")
@@ -162,6 +163,7 @@ def have_cmd(cmd: str) -> bool:
     - Searches all directories in PATH environment variable
     - Requires execute permission (os.X_OK) in addition to existence
     - Does not verify command functionality, only availability
+    :rtype: bool
     """
     for p in os.environ.get("PATH", "").split(os.pathsep):
         exe = os.path.join(p, cmd)
@@ -319,6 +321,7 @@ def main(argv: List[str]) -> int:
 
     >>> main(["file1.txt", "file2.txt"])  # Archive specific files
     0
+        :rtype: int
     """
     if not argv or argv[0] in ("-h", "--help"):
         return usage() if not argv else usage()

@@ -158,6 +158,7 @@ def usage() -> int:
 
     Displays command-line syntax. Caller is expected to exit with
     the returned code.
+    :rtype: int
     """
     eprint("Usage:")
     eprint(
@@ -176,6 +177,7 @@ def have_cmd(cmd: str) -> bool:
     Used to detect if 'gh' CLI is available for GitHub API calls.
     The 'gh' CLI handles authentication automatically and is preferred
     over direct HTTP requests when available.
+    :rtype: bool
     """
     for p in os.environ.get("PATH", "").split(os.pathsep):
         exe = os.path.join(p, cmd)
@@ -210,6 +212,7 @@ def classify_auth(obj: object) -> bool:
     False
     >>> classify_auth("not a dict")
     False
+    :rtype: bool
     """
     if not isinstance(obj, dict):
         return False
@@ -247,6 +250,7 @@ def gh_api(endpoint: str, api_version: str) -> str | None:
     >>> response = gh_api("repos/owner/repo/rulesets", "2022-11-28")
     >>> if response:
     ...     data = json.loads(response)
+    :rtype: str | None
     """
     try:
         out = subprocess.check_output(
@@ -310,6 +314,7 @@ def http_get(url: str, api_version: str) -> Tuple[int, str]:
     ...     data = json.loads(body)
     >>> elif status == 401:
     ...     print("Authentication failed")
+        :rtype: Tuple[int, str]
     """
     token = os.environ.get("TOKEN") or os.environ.get("GITHUB_TOKEN") or ""
     if not token:
@@ -376,6 +381,7 @@ def parse_args(
 
     >>> parse_args(["-h"])
     None
+        :rtype: Tuple[str, str | None, str | None, str, str] | None
     """
     repo = None
     ruleset_id = None
@@ -476,6 +482,7 @@ def main(argv: List[str]) -> int:
     # INFO: want: ["missing"]
     # INFO: got : ["lint", "test"]
     1
+        :rtype: int
     """
     try:
         parsed = parse_args(argv)

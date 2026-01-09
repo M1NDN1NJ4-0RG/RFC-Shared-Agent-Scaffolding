@@ -53,6 +53,7 @@ def get_unsafe_logs_dir() -> Path:
     """Get the directory for unsafe fix logs.
 
     :returns: Path to logs/unsafe-fixes/ directory
+    :rtype: Path
     """
     repo_root = Path(__file__).parent.parent.parent
     logs_dir = repo_root / "logs" / "unsafe-fixes"
@@ -65,6 +66,7 @@ def generate_patch(results: List[UnsafeFixerResult]) -> str:
 
     :param results: List of unsafe fixer results
     :returns: Unified diff patch as string
+    :rtype: str
     """
     if not results:
         return "# No changes made by unsafe fixers\n"
@@ -104,6 +106,7 @@ def generate_log(results: List[UnsafeFixerResult], start_time: datetime, end_tim
     :param start_time: When unsafe fix mode started
     :param end_time: When unsafe fix mode completed
     :returns: Detailed log as string
+    :rtype: str
     """
     log_lines = []
     log_lines.append("# Unsafe Fix Execution Log")
@@ -165,6 +168,7 @@ def save_forensics(results: List[UnsafeFixerResult], start_time: datetime, end_t
     :param start_time: When unsafe fix mode started
     :param end_time: When unsafe fix mode completed
     :returns: Tuple of (patch_path, log_path)
+    :rtype: Tuple[Path, Path]
     """
     logs_dir = get_unsafe_logs_dir()
 

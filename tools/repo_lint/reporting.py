@@ -50,6 +50,7 @@ def format_violation(violation: Violation) -> str:
 
     :param violation: Violation to format
     :returns: Formatted violation string
+    :rtype: str
     """
     if violation.line:
         return f"{violation.file}:{violation.line}: [{violation.tool}] {violation.message}"
@@ -87,6 +88,7 @@ def report_results(  # pylint: disable=too-many-arguments,too-many-positional-ar
     :param reports_dir: Directory to write per-tool reports
     :param filter_langs: List of languages to filter out (exclude) from display (still runs checks, just hides output)
     :returns: Exit code (0 for success, 1 for violations, 3 for errors)
+    :rtype: int
     """
     # Filter results if filter_langs is specified
     if filter_langs:
@@ -208,6 +210,7 @@ def report_results_json(results: List[LintResult], verbose: bool = False, report
         - JSON output is deterministic and contains no unstable fields
         - Verbose mode adds additional fields for debugging
         - Schema is stable across repo_lint versions
+        :rtype: int
     """
     all_passed = True
     has_errors = False
@@ -301,6 +304,7 @@ def report_results_yaml(results: List[LintResult], verbose: bool = False, report
     :param verbose: Whether to include verbose fields
     :param report_path: Optional path to write YAML report to file
     :returns: Exit code (0 for success, 1 for violations, 3 for errors)
+    :rtype: int
     """
     # Build the same structure as JSON
     all_passed = True
@@ -391,6 +395,7 @@ def report_results_csv(results: List[LintResult], report_path: str) -> int:
     :param results: List of linting results from all runners
     :param report_path: Path to write CSV report (without extension)
     :returns: Exit code (0 for success, 1 for violations, 3 for errors)
+    :rtype: int
     """
     import csv
     from pathlib import Path
@@ -458,6 +463,7 @@ def report_results_xlsx(results: List[LintResult], report_path: str) -> int:
     :param results: List of linting results from all runners
     :param report_path: Path to write XLSX report
     :returns: Exit code (0 for success, 1 for violations, 3 for errors)
+    :rtype: int
     """
     try:
         from openpyxl import Workbook

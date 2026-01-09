@@ -56,6 +56,7 @@ class PythonValidator:
         :param content: File content as string
 
         :returns: List of validation errors (empty if all validations pass)
+        :rtype: List[ValidationError]
         """
         errors = []
 
@@ -78,6 +79,7 @@ class PythonValidator:
         :param content: File content as string
 
         :returns: ValidationError if module docstring is missing required sections, None otherwise
+        :rtype: ValidationError | None
         """
         # Check for module docstring (triple quotes)
         if '"""' not in content:
@@ -150,6 +152,7 @@ class PythonValidator:
         :param content: File content
 
         :returns: List of validation errors for symbols
+        :rtype: List[ValidationError]
         """
         errors = []
 
@@ -183,6 +186,7 @@ class PythonValidator:
         :param content: File content (for pragma checking)
 
         :returns: ValidationError if function lacks proper documentation, None otherwise
+        :rtype: ValidationError | None
         """
         # Check for pragma ignore on this specific function
         # Look for # noqa: D102 or # noqa: D103 on the function definition line
@@ -238,6 +242,7 @@ class PythonValidator:
 
                 :param node_to_check: AST node to check
                 :returns: True if node contains a return statement with a value, False otherwise
+                :rtype: bool
                 """
                 for child in ast.iter_child_nodes(node_to_check):
                     # Skip nested function/class definitions entirely
@@ -275,6 +280,7 @@ class PythonValidator:
         :param node: AST ClassDef node
         :param content: File content (for pragma checking)
         :returns: ValidationError if class lacks proper documentation, None otherwise
+        :rtype: ValidationError | None
         """
         # Check for pragma ignore
         lines = content.split("\n")
