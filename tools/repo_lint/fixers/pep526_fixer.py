@@ -146,7 +146,8 @@ class PEP526Fixer:
                 print(f"Error writing {file_path}: {e}", file=sys.stderr)
                 return (False, 0)
 
-        return (fixes_made > 0, fixes_made)
+        # In dry_run mode or no fixes: file not modified
+        return (False, fixes_made)
 
     def _analyze_assignment(self, node: ast.Assign | ast.AnnAssign, lines: list[str], scope: str) -> None:
         """Analyze an assignment node and add modification if needed.
@@ -198,7 +199,9 @@ class PEP526Fixer:
             value_part = parts[1]
 
             # Build new line: VAR: Type = value
-            new_line = f"{indent_str}{var_name}: {type_annotation} = {value_part}"
+            # Preserve the original line ending (newline character)
+            line_ending = old_line[len(old_line.rstrip()):]
+            new_line = f"{indent_str}{var_name}: {type_annotation} = {value_part}{line_ending}"
 
             # Record modification
             self.modifications.append((line_num, old_line, new_line))
