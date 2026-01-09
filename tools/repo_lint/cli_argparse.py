@@ -131,8 +131,23 @@ def create_parser() -> argparse.ArgumentParser:
     check_parser.add_argument(
         "--filter-out-lang",
         action="append",
-        choices=["python", "bash", "powershell", "perl", "yaml", "rust", "markdown", "toml", "json", "naming"],
-        help="Filter out (exclude) language(s) from report output (still runs checks, just hides from display). Can be specified multiple times.",
+        choices=[
+            "python",
+            "bash",
+            "powershell",
+            "perl",
+            "yaml",
+            "rust",
+            "markdown",
+            "toml",
+            "json",
+            "naming",
+        ],
+        help=(
+            "Filter out (exclude) language(s) from report output "
+            "(still runs checks, just hides from display). "
+            "Can be specified multiple times."
+        ),
     )
 
     # fix command
