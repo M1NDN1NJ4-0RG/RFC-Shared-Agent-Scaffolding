@@ -177,6 +177,10 @@ Exit codes for `repo-lint check --ci`:
    - Journals updated to resume instantly next session.
    - If tooling is broken unexpectedly: attempt repair with `./scripts/session-end.sh` (repair-only exception). If still broken, escalate.
 
+8. **You MUST update oveview document (`*-overview.md` must be updated with the item's completed checked!)
+   - YOU MUST UPDATE THE OVERVIEW DOCUMENT WITH CHECKMARKS FOR THE COMPLETED ITEMS!
+   - THIS IS MANDATORY AND NON-NEGOTIABLE!
+
 If any required step fails, escalate using:
 
 ```text
