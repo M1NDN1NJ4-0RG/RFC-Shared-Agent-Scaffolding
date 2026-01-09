@@ -1656,3 +1656,38 @@ python3 tools/repo_lint/fixers/pep526_fixer.py <files> [--dry-run] [--diff]
 **Estimated coverage:** 40-65% of 152 PEP 526 violations = ~60-90 auto-fixes
 
 ---
+
+### 2026-01-09 - NEW REQUIREMENT: Docstring Style Conversion Strategy
+
+**Human Comment #3726969688:**
+
+NEW REQUIREMENT: Add `278-docstring-style-conversion-strategy.md` document into phase plans for Python Docstring conversions.
+
+**Work Completed:**
+
+✅ **Integrated Docstring Style Conversion Strategy Document**
+
+Updated phase planning documents to reference the comprehensive strategy document:
+
+1. **`278-comprehensive-autofix-plan.md` updated:**
+   - Phase 4.5 (Bidirectional Docstring Converter) now references both:
+     - `278-docstring-style-converter-design.md` (overview)
+     - `278-docstring-style-conversion-strategy.md` (detailed implementation strategy)
+
+2. **`278-next-steps.md` updated:**
+   - Option B (Build style converter) now lists both design documents
+
+**Strategy Document Features:**
+- Parse → IR → Render architecture
+- Support for 6 docstring styles: Google, NumPy, reST/Sphinx, EpyDoc, Javadoc, Plain
+- AST enrichment for filling gaps and aligning with code truth
+- Safety controls with confidence gating
+- Comprehensive test strategy
+- Recommended file/module layout
+- Edge case coverage (multi-line descriptions, *args/**kwargs, generators, etc.)
+
+**Commit:** 42e04a8
+
+**Status:** NEW REQUIREMENT addressed. Ready for Phase 4.3.3 (unit tests).
+
+---
