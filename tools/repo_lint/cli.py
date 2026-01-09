@@ -422,7 +422,7 @@ def cli(ctx):
         ],
         case_sensitive=False,
     ),
-        help=(
+    help=(
         "Filter out (exclude) language(s) from report output "
         "(still runs checks, just hides from display). "
         "Can be specified multiple times."
