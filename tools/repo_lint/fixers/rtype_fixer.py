@@ -36,7 +36,7 @@ class RTypeFixer:
 
     def __init__(self) -> None:
         """Initialize the fixer."""
-        self.modifications: list[tuple[ast.FunctionDef, str, str]] = []
+        self.modifications: list[tuple[str, int, int]] = []
 
     def _is_none_annotation(self, annotation: ast.expr) -> bool:
         """Check if annotation is None or -> None.
@@ -100,10 +100,11 @@ class RTypeFixer:
 
         return "\n".join(lines)
 
-    def _analyze_function(self, node: ast.FunctionDef) -> None:
+    def _analyze_function(self, node: ast.FunctionDef, lines: list[str]) -> None:
         """Analyze a function definition and record needed modifications.
 
         :param node: Function definition AST node
+        :param lines: Source code lines
         :rtype: None
         """
         # Skip if no return annotation or returns None
@@ -126,11 +127,21 @@ class RTypeFixer:
             # If unparsing fails, skip this function
             return
 
-        # Create new docstring with :rtype: field
-        new_docstring = self._insert_rtype_field(docstring, return_type)
-
-        # Record modification (node, old_docstring, new_docstring)
-        self.modifications.append((node, docstring, new_docstring))
+        # Find the docstring in the source code using line numbers
+        # The docstring is the first statement in the function body
+        if not node.body or not isinstance(node.body[0], ast.Expr):
+            return
+        
+        docstring_node = node.body[0].value
+        if not isinstance(docstring_node, ast.Constant) or not isinstance(docstring_node.value, str):
+            return
+            
+        # Get line range of docstring (AST uses 1-based indexing)
+        start_line = docstring_node.lineno - 1  # Convert to 0-based
+        end_line = docstring_node.end_lineno - 1 if docstring_node.end_lineno else start_line
+        
+        # Record modification (return_type, line_range)
+        self.modifications.append((return_type, start_line, end_line))
 
     def process_file(self, file_path: Path, dry_run: bool = False) -> tuple[bool, int]:
         """Process a Python file and add :rtype: fields where needed.
@@ -155,32 +166,49 @@ class RTypeFixer:
             return (False, 0)
 
         self.modifications = []
+        lines = content.splitlines(keepends=True)
 
         # Analyze all function definitions
         for node in ast.walk(tree):
             if isinstance(node, ast.FunctionDef):
-                self._analyze_function(node)
+                self._analyze_function(node, lines)
 
         # Apply modifications (if not dry run)
         fixes_made = len(self.modifications)
         if fixes_made > 0 and not dry_run:
-            # Modify the source code
-            # Note: This is a simple string replacement approach
-            # For production, consider using ast.unparse() or libcst for better preservation
-            modified_content = content
-            for node, old_docstring, new_docstring in self.modifications:
-                # Find and replace the docstring in the source
-                # This is fragile but works for simple cases
-                # Look for the docstring as it appears in source (with quotes)
-                for quote_style in ['"""', "'''"]:
-                    old_with_quotes = f"{quote_style}{old_docstring}{quote_style}"
-                    new_with_quotes = f"{quote_style}{new_docstring}{quote_style}"
-                    if old_with_quotes in modified_content:
-                        modified_content = modified_content.replace(old_with_quotes, new_with_quotes, 1)
-                        break
+            # Apply all modifications to the lines
+            # Sort by line number in reverse order to avoid index shifts
+            for return_type, start_line, end_line in sorted(self.modifications, key=lambda x: x[1], reverse=True):
+                # Find the closing """ of the docstring
+                closing_line = end_line
+                
+                # Find where to insert the :rtype: line (before the closing """)
+                # Look for the last field line or narrative text
+                insert_idx = closing_line
+                indent = "    "  # Default indentation
+                
+                # Scan backwards from closing line to find last field or narrative
+                for i in range(start_line, closing_line + 1):
+                    line = lines[i]
+                    stripped = line.strip()
+                    
+                    # Capture indentation from docstring content
+                    if stripped.startswith(":"):
+                        # Extract indentation from existing field
+                        indent = line[: len(line) - len(line.lstrip())]
+                        insert_idx = i + 1
+                    elif stripped and not stripped.startswith('"""') and not stripped.startswith("'''"):
+                        # Narrative text - insert after it
+                        if indent == "    ":  # Still default, capture from narrative
+                            indent = line[: len(line) - len(line.lstrip())]
+                        insert_idx = i + 1
+                
+                # Insert the :rtype: line
+                rtype_line = f"{indent}:rtype: {return_type}\n"
+                lines.insert(insert_idx, rtype_line)
 
             try:
-                file_path.write_text(modified_content, encoding="utf-8")
+                file_path.write_text("".join(lines), encoding="utf-8")
                 return (True, fixes_made)
             except (UnicodeEncodeError, OSError, IOError) as e:
                 print(f"Error writing {file_path}: {e}", file=sys.stderr)

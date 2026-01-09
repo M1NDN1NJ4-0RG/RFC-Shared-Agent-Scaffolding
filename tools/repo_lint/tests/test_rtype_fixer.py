@@ -528,15 +528,16 @@ def get_name() -> str:
             f.flush()
             
             fixer = RTypeFixer()
-            result = fixer.process_file(Path(f.name), dry_run=True)
+            modified, num_fixes = fixer.process_file(Path(f.name), dry_run=True)
             
             content = Path(f.name).read_text()
             Path(f.name).unlink()
             
         # File should be unchanged in dry-run mode
         assert content.strip() == code.strip()
-        # But should return True (fix was needed)
-        assert result is True
+        # But should report fixes were needed
+        assert modified is False  # File not modified
+        assert num_fixes == 1  # But 1 fix was needed
 
 
 class TestRTypeFixerErrorHandling:
@@ -545,8 +546,9 @@ class TestRTypeFixerErrorHandling:
     def test_nonexistent_file(self) -> None:
         """Should return False for nonexistent files."""
         fixer = RTypeFixer()
-        result = fixer.process_file("/nonexistent/file.py")
-        assert result is False
+        modified, num_fixes = fixer.process_file(Path("/nonexistent/file.py"))
+        assert modified is False
+        assert num_fixes == 0
 
     def test_syntax_error(self) -> None:
         """Should handle syntax errors gracefully."""
@@ -560,8 +562,9 @@ def broken( -> str:
             f.flush()
             
             fixer = RTypeFixer()
-            result = fixer.process_file(Path(f.name))
+            modified, num_fixes = fixer.process_file(Path(f.name))
             Path(f.name).unlink()
             
-        # Should return False for syntax errors
-        assert result is False
+        # Should return (False, 0) for syntax errors
+        assert modified is False
+        assert num_fixes == 0
