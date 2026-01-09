@@ -157,6 +157,34 @@ class PEP526Checker(ast.NodeVisitor):
     def is_none_literal(self, node):
         """Check if value is None."""
         return isinstance(node, ast.Constant) and node.value is None
+    
+    def is_simple_name(self, target):
+        """Check if target is a simple variable name.
+        
+        This helper distinguishes simple variable assignments from:
+        - Tuple unpacking: x, y = 1, 2
+        - Attribute assignments: self.x = 1
+        - Subscript assignments: obj[key] = 1
+        
+        :param target: AST node representing assignment target
+        :returns: True if target is a simple name (ast.Name), False otherwise
+        """
+        if isinstance(target, ast.Name):
+            return True  # Simple variable: x = 1
+        
+        # Reject unpacking patterns
+        if isinstance(target, (ast.Tuple, ast.List)):
+            return False  # x, y = 1, 2 or [x, y] = [1, 2]
+        
+        # Reject attribute assignments
+        if isinstance(target, ast.Attribute):
+            return False  # self.x = 1 or obj.attr = 1
+        
+        # Reject subscript assignments
+        if isinstance(target, ast.Subscript):
+            return False  # obj[key] = 1 or lst[0] = 1
+        
+        return False  # Any other node type
 ```
 
 ### Scope Tracking Implementation

@@ -109,28 +109,34 @@ This means ALL phases including 4, 5, 6 are MANDATORY (not optional/recommended)
 **Priority 5: Documentation**
 7. Phase 6: Documentation updates
 
-## NEXT (2026-01-08 Session)
+## NEXT (2026-01-09 Session)
 
-**Phase 3.9 JSON/JSONC Support: COMPLETE ✅**
+**Phase 3.3.1 + Language Filtering: COMPLETE ✅**
 
-All sub-phases of Phase 3.9 are now complete:
-- ✅ 3.9.1-3.9.4: Contract, integration, Prettier setup
-- ✅ 3.9.5: Repo baseline cleanup (0 violations)
-- ✅ 3.9.6: Comprehensive tests (21 tests, 100% pass)
+Completed in previous session (commit 9c4a43e):
+- ✅ Phase 3.3.1 Design document created (`278-phase-3.3-design.md`)
+- ✅ Language filtering feature (`--filter-out-lang`) implemented and tested
+- ✅ All changes committed and pushed
 
-**Status:** Ready for code review and merge.
+**Status:** Ready for Phase 3.3.2 implementation.
 
 **Next Execution Order (MANDATORY - Human Approved):**
 
 The following phases MUST be executed in this exact order:
 
-### 1. Phase 3.3 - Custom PEP 526 Checker (NEXT - HIGH PRIORITY)
-- Design and implement AST-based checker for module-level/class attribute annotations
-- This is the LAST remaining Phase 3 item (3.3)
-- All other Phase 3 sub-phases are complete
+### 1. Phase 3.3.2 - Implement AST-based checker (NEXT - HIGH PRIORITY)
+- Create `tools/repo_lint/checkers/` package
+- Implement `pep526_checker.py` with AST visitor
+- Implement `pep526_config.py` for configuration loading
+- Add scope tracking (module, class, function, instance)
+- Implement violation detection for unannotated variables
+- Handle edge cases (imports, type aliases, unpacking, etc.)
+- Test on sample files
+
+### 2. Phase 3.3 - Remaining sub-phases (AFTER 3.3.2)
 - **Sub-phases:**
-  - [ ] 3.3.1: Design AST-based checker for module-level/class attribute annotations
-  - [ ] 3.3.2: Implement checker in repo_lint
+  - [x] 3.3.1: Design AST-based checker (COMPLETE)
+  - [ ] 3.3.2: Implement checker in repo_lint (IN PROGRESS)
   - [ ] 3.3.3: Add configuration support (per-file-ignores, gradual rollout)
   - [ ] 3.3.4: Comprehensive unit tests
   - [ ] 3.3.5: Integration with `repo-lint check --ci`

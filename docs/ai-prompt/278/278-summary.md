@@ -1257,3 +1257,28 @@ repo-lint check --ci --only python
   - Option D: Phase 6 (Documentation updates)
 
 ---
+
+### 2026-01-09 - Design Document Update: Add is_simple_name Method
+
+**Session Work:**
+
+**Design Document Completion**
+
+Added missing `is_simple_name` helper method to Phase 3.3.1 design document:
+- Method distinguishes simple variable assignments from complex patterns
+- Rejects tuple/list unpacking (e.g., `x, y = 1, 2`)
+- Rejects attribute assignments (e.g., `self.x = 1`)
+- Rejects subscript assignments (e.g., `obj[key] = 1`)
+- Only accepts `ast.Name` nodes (simple variable names)
+
+**Journal Updates:**
+- Updated `278-next-steps.md` to mark Phase 3.3.1 as complete
+- Updated next action to Phase 3.3.2 implementation
+
+**Status:**
+- Design document now complete with all helper methods defined
+- Ready to begin Phase 3.3.2 implementation
+
+**Next:** Implement AST-based PEP 526 checker per completed design
+
+---
