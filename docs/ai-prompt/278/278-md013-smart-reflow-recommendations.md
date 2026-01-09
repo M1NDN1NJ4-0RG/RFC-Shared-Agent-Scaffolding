@@ -1,7 +1,8 @@
 # MD013 Smart Reflow Fixer Recommendations & Tracker
 
 **File**: `docs/ai-prompt/278/278-md013-smart-reflow-recommendations.md` (suggested location)  
-**Purpose**: Track evolution of `scripts/fix_md013_line_length_option_b.py` into a battle-hardened, torture-garden-proof Markdown line-length enforcer.  
+**Purpose**: Track evolution of `scripts/fix_md013_line_length_option_b.py` into a battle-hardened, torture-garden-proof Markdown line-length enforcer.
+> ***NOTE***: See `scripts/tests/test_fix_md013_line_length_option_b.py` for the current test file for that's for the above file.
 **Status**: [ ] Draft → [ ] Implemented Basics → [ ] Passes Torture Garden → [ ] Integrated into repo_lint → [ ] Repo-wide Cleanup Complete
 
 ## Current State (as of 2026-01-08)
