@@ -1341,3 +1341,48 @@ Created the core PEP 526 checker infrastructure:
 - Phase 3.3.5: Integration with `repo-lint check --ci`
 
 ---
+
+### 2026-01-09 - Phase 3.3.3 Integration Complete
+
+**Session Work:**
+
+**Phase 3.3.3: Integration with PythonRunner (COMPLETE ✅)**
+
+Integrated the PEP 526 checker into the repo-lint Python runner:
+
+1. **Added `_run_pep526_check()` method to PythonRunner:**
+   - Loads default configuration
+   - Creates PEP526Checker instance
+   - Checks all Python files in repository
+   - Converts violation dicts to Violation objects
+   - Returns LintResult compatible with other tools
+
+2. **Integrated into `check()` method:**
+   - Added PEP 526 check to the check pipeline
+   - Respects tool filtering (`--tool` flag)
+   - Runs after docstring validation
+
+3. **Testing:**
+   - ✅ Checker successfully integrated
+   - ✅ Finding violations (152 missing annotations across repo)
+   - ✅ Compatible with existing lint output format
+   - ✅ Black/ruff checks pass for new code
+
+**Results:**
+```bash
+repo-lint check --ci --only python
+# PEP526 checker now runs and reports 152 violations
+# All module-level and class attribute annotations missing are detected
+```
+
+**Files Modified:**
+- `tools/repo_lint/runners/python_runner.py` - Added PEP 526 integration
+
+**Status:**
+- Phase 3.3.3: ✅ COMPLETE
+- PEP 526 checker fully integrated into CI pipeline
+- Ready for Phase 3.3.4: Comprehensive unit tests
+
+**Next:** Write comprehensive unit tests for PEP 526 checker
+
+---
