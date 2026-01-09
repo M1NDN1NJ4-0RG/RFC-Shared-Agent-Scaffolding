@@ -1622,3 +1622,37 @@ Created `docs/ai-prompt/278/278-comprehensive-autofix-plan.md` (11.8KB):
 **Next Action:** Begin Phase 4.3 - Implement PEP 526 autofix tool
 
 ---
+
+### Phase 4.3: PEP 526 Autofix Tool Implementation (In Progress)
+
+**Phase 4.3.1-4.3.2: Core Implementation** ✅
+
+Created `tools/repo_lint/fixers/pep526_fixer.py` (280 lines):
+
+**Capabilities:**
+- AST-based type inference for module-level and class attributes
+- Safe literal inference: int, str, bool, float, bytes
+- Typed constructor support: Path(...)
+- Skips already-annotated variables
+- Skips ambiguous cases: empty collections, None, complex expressions
+- Skips private variables (leading underscore)
+
+**CLI Interface:**
+```bash
+python3 tools/repo_lint/fixers/pep526_fixer.py <files> [--dry-run] [--diff]
+```
+
+**Test Results** (sample file):
+- ✅ 9 fixes applied correctly
+- ✅ Module-level: TIMEOUT (int), HOST (str), ENABLED (bool), RATIO (float), ROOT (Path), CONFIG_PATH (Path)
+- ✅ Class attributes: counter (int), name (str), active (bool)
+- ✅ Correctly skipped already-annotated variables
+- ✅ Correctly skipped ambiguous cases ([], {}, None)
+
+**Commit:** 6f7a7b9
+
+**Status:** Core fixer complete. Next: comprehensive unit tests, then run on codebase.
+
+**Estimated coverage:** 40-65% of 152 PEP 526 violations = ~60-90 auto-fixes
+
+---
