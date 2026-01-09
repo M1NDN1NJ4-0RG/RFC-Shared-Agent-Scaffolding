@@ -16,6 +16,12 @@
         config = {'module_level': True, 'class_attributes': True}
         checker = PEP526Checker(config)
         violations = checker.check_file(filepath)
+
+:Environment Variables:
+    None
+
+:Exit Codes:
+    N/A
 """
 
 from tools.repo_lint.checkers.pep526_checker import PEP526Checker

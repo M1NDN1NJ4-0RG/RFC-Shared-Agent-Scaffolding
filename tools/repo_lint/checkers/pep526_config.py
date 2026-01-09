@@ -27,6 +27,12 @@
     Load from pyproject.toml::
 
         config = load_config_from_toml('pyproject.toml')
+
+:Environment Variables:
+    None
+
+:Exit Codes:
+    N/A
 """
 
 from __future__ import annotations
@@ -112,11 +118,7 @@ def load_config_from_toml(toml_path: str | Path) -> Dict[str, Any]:
     if validation_errors:
         joined_errors = "; ".join(validation_errors)
         raise ValueError(f"Invalid PEP 526 configuration in {toml_path}: {joined_errors}")
-    # Validate merged configuration to ensure only valid keys and values are present
-    validation_errors = validate_config(config)
-    if validation_errors:
-        joined_errors = "; ".join(validation_errors)
-        raise ValueError(f"Invalid PEP 526 configuration in {toml_path}: {joined_errors}")
+
     return config
 
 

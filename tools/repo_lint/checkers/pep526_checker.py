@@ -229,20 +229,20 @@ class PEP526Checker(ast.NodeVisitor):
         :returns: True if annotation is required
         :rtype: bool
         """
-        # Check if scope is enabled
-        scope_enabled = scope in ("module", "class", "function", "instance") and self.should_check_scope(scope)
-
-        if not scope_enabled:
-            # If scope is disabled, don't require annotation even for special patterns
-            return False
-
-        # If scope is enabled, check if annotation is required
-        # Always require for enabled scopes OR special patterns
-        if scope_enabled:
+        # Special patterns (empty literals, None) always require annotations,
+        # regardless of scope configuration. This matches the documented policy:
+        # - Empty literals: MANDATORY
+        # - None initializations: MANDATORY
+        if self.is_empty_literal(value) or self.is_none_literal(value):
             return True
 
-        return False
+        # For all other cases, respect the configured scopes.
+        scope_enabled = scope in ("module", "class", "function", "instance") and self.should_check_scope(scope)
+        if not scope_enabled:
+            return False
 
+        # If the scope is enabled, require annotations for assignments in that scope.
+        return True
     def is_empty_literal(self, node: ast.AST) -> bool:
         """Check if value is an empty literal.
 
