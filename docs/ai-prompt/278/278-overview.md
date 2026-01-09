@@ -595,15 +595,18 @@ logs or artifact readability.
 
 **Deliverable:** `tools/repo_lint/fixers/pep526_fixer.py` + `tools/repo_lint/tests/test_pep526_fixer.py`
 
-### 4.4 Docstring `:rtype:` Autofix Tool (TODO)
+### 4.4 Docstring `:rtype:` Autofix Tool (COMPLETE ✅)
 
-- [ ] 4.4.1: Design AST-based `:rtype:` inference from function annotations
-- [ ] 4.4.2: Implement docstring parser and enhancer
-- [ ] 4.4.3: Add CLI interface
-- [ ] 4.4.4: Comprehensive unit tests
-- [ ] 4.4.5: Apply to codebase (~370 fixes expected)
+- [x] 4.4.1: Design AST-based `:rtype:` inference from function annotations
+- [x] 4.4.2: Implement docstring parser and enhancer
+  - [x] Line-based AST approach for accurate modification
+  - [x] Smart insertion after existing fields
+  - [x] Preserves indentation and formatting
+- [x] 4.4.3: Add CLI interface (--dry-run, --diff modes)
+- [x] 4.4.4: Comprehensive unit tests (18 tests, 100% passing)
+- [x] 4.4.5: Apply to codebase (290 `:rtype:` fields added across 54 files)
 
-**Deliverable:** `tools/repo_lint/fixers/rtype_fixer.py` + tests
+**Deliverable:** `tools/repo_lint/fixers/rtype_fixer.py` + `tools/repo_lint/tests/test_rtype_fixer.py`
 
 ### 4.5 Bidirectional Docstring Style Converter (TODO)
 
