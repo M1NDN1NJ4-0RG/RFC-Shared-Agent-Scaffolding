@@ -17,6 +17,9 @@
     - None initializations: MANDATORY (always require Optional[T])
     - Function-local variables: OPTIONAL (configurable, disabled by default)
 
+:Environment Variables:
+    None
+
 :Exit Codes:
     N/A - Returns list of violations
 
