@@ -131,15 +131,15 @@ class RTypeFixer:
         # The docstring is the first statement in the function body
         if not node.body or not isinstance(node.body[0], ast.Expr):
             return
-        
+
         docstring_node = node.body[0].value
         if not isinstance(docstring_node, ast.Constant) or not isinstance(docstring_node.value, str):
             return
-            
+
         # Get line range of docstring (AST uses 1-based indexing)
         start_line = docstring_node.lineno - 1  # Convert to 0-based
         end_line = docstring_node.end_lineno - 1 if docstring_node.end_lineno else start_line
-        
+
         # Record modification (return_type, line_range)
         self.modifications.append((return_type, start_line, end_line))
 
@@ -181,17 +181,17 @@ class RTypeFixer:
             for return_type, start_line, end_line in sorted(self.modifications, key=lambda x: x[1], reverse=True):
                 # Find the closing """ of the docstring
                 closing_line = end_line
-                
+
                 # Find where to insert the :rtype: line (before the closing """)
                 # Look for the last field line or narrative text
                 insert_idx = closing_line
                 indent = "    "  # Default indentation
-                
+
                 # Scan backwards from closing line to find last field or narrative
                 for i in range(start_line, closing_line + 1):
                     line = lines[i]
                     stripped = line.strip()
-                    
+
                     # Capture indentation from docstring content
                     if stripped.startswith(":"):
                         # Extract indentation from existing field
@@ -202,7 +202,7 @@ class RTypeFixer:
                         if indent == "    ":  # Still default, capture from narrative
                             indent = line[: len(line) - len(line.lstrip())]
                         insert_idx = i + 1
-                
+
                 # Insert the :rtype: line
                 rtype_line = f"{indent}:rtype: {return_type}\n"
                 lines.insert(insert_idx, rtype_line)

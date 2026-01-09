@@ -47,16 +47,16 @@ def get_name() -> str:
     """
     return "Alice"
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
     def test_simple_int_return(self) -> None:
@@ -78,16 +78,16 @@ def get_count() -> int:
     """
     return 42
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
     def test_bool_return(self) -> None:
@@ -109,16 +109,16 @@ def is_valid() -> bool:
     """
     return True
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
 
@@ -148,16 +148,16 @@ def get_value() -> Optional[str]:
     """
     return None
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
     def test_list_type(self) -> None:
@@ -183,16 +183,16 @@ def get_items() -> List[str]:
     """
     return []
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
     def test_dict_type(self) -> None:
@@ -218,16 +218,16 @@ def get_config() -> Dict[str, int]:
     """
     return {}
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
 
@@ -244,16 +244,16 @@ def process() -> None:
     """
     pass
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         # Should be unchanged
         assert result.strip() == code.strip()
 
@@ -268,35 +268,35 @@ def get_name() -> str:
     """
     return "Alice"
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         # Should be unchanged
         assert result.strip() == code.strip()
 
     def test_skip_no_docstring(self) -> None:
         """Should skip functions without docstrings."""
-        code = '''
+        code = """
 def get_name() -> str:
     return "Alice"
-'''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+"""
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         # Should be unchanged
         assert result.strip() == code.strip()
 
@@ -310,16 +310,16 @@ def get_name():
     """
     return "Alice"
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         # Should be unchanged
         assert result.strip() == code.strip()
 
@@ -350,16 +350,16 @@ def add(a: int, b: int) -> int:
     """
     return a + b
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
     def test_insert_after_returns(self) -> None:
@@ -381,16 +381,16 @@ def get_name() -> str:
     """
     return "Alice"
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
     def test_preserves_indentation(self) -> None:
@@ -414,16 +414,16 @@ class MyClass:
         """
         return "Alice"
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
 
@@ -455,16 +455,16 @@ class Calculator:
         """
         return a + b
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
     def test_multiple_functions(self) -> None:
@@ -501,16 +501,16 @@ def get_age() -> int:
     """
     return 30
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             fixer.process_file(Path(f.name))
-            
+
             result = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         assert result.strip() == expected.strip()
 
     def test_dry_run_mode(self) -> None:
@@ -523,16 +523,16 @@ def get_name() -> str:
     """
     return "Alice"
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             modified, num_fixes = fixer.process_file(Path(f.name), dry_run=True)
-            
+
             content = Path(f.name).read_text()
             Path(f.name).unlink()
-            
+
         # File should be unchanged in dry-run mode
         assert content.strip() == code.strip()
         # But should report fixes were needed
@@ -557,14 +557,14 @@ def broken( -> str:
     """Broken function."""
     pass
 '''
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.py', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
             f.flush()
-            
+
             fixer = RTypeFixer()
             modified, num_fixes = fixer.process_file(Path(f.name))
             Path(f.name).unlink()
-            
+
         # Should return (False, 0) for syntax errors
         assert modified is False
         assert num_fixes == 0
