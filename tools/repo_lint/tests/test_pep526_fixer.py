@@ -145,8 +145,8 @@ class TestPEP526FixerPathConstructor:
 
     def test_path_constructor_inference(self) -> None:
         """Test inference of Path type from Path() constructor."""
-        code = 'from pathlib import Path\nROOT = Path(__file__).parent\n'
-        expected = 'from pathlib import Path\nROOT: Path = Path(__file__).parent\n'
+        code = "from pathlib import Path\nROOT = Path(__file__).parent\n"
+        expected = "from pathlib import Path\nROOT: Path = Path(__file__).parent\n"
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
@@ -399,8 +399,8 @@ class TestPEP526FixerEdgeCases:
 
     def test_multiple_fixes_in_one_file(self) -> None:
         """Test multiple annotations added in single file."""
-        code = "TIMEOUT = 30\nHOST = \"localhost\"\nENABLED = True\n"
-        expected = "TIMEOUT: int = 30\nHOST: str = \"localhost\"\nENABLED: bool = True\n"
+        code = 'TIMEOUT = 30\nHOST = "localhost"\nENABLED = True\n'
+        expected = 'TIMEOUT: int = 30\nHOST: str = "localhost"\nENABLED: bool = True\n'
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)
@@ -487,8 +487,8 @@ class TestPEP526FixerEdgeCases:
 
     def test_preserve_indentation(self) -> None:
         """Test that indentation is preserved in class attributes."""
-        code = "class TestClass:\n    counter = 0\n    name = \"test\"\n"
-        expected = "class TestClass:\n    counter: int = 0\n    name: str = \"test\"\n"
+        code = 'class TestClass:\n    counter = 0\n    name = "test"\n'
+        expected = 'class TestClass:\n    counter: int = 0\n    name: str = "test"\n'
 
         with tempfile.NamedTemporaryFile(mode="w", suffix=".py", delete=False) as f:
             f.write(code)

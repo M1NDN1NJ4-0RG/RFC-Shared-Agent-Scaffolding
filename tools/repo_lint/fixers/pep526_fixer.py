@@ -200,7 +200,7 @@ class PEP526Fixer:
 
             # Build new line: VAR: Type = value
             # Preserve the original line ending (newline character)
-            line_ending = old_line[len(old_line.rstrip()):]
+            line_ending = old_line[len(old_line.rstrip()) :]
             new_line = f"{indent_str}{var_name}: {type_annotation} = {value_part}{line_ending}"
 
             # Record modification
