@@ -132,17 +132,169 @@ class GoogleParser(DocstringParser):
         if not lines:
             return ir
         
-        # Simple implementation: extract summary (first non-empty line)
-        for line in lines:
-            stripped = line.strip()
-            if stripped:
-                ir.summary = stripped
-                break
+        # Parse sections
+        current_section = "summary"
+        summary_lines = []
+        extended_lines = []
+        current_indent = 0
+        i = 0
         
-        # TODO: Parse Args, Returns, Raises sections
-        # This is a minimal skeleton - full implementation required
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            # Detect section headers
+            if stripped.endswith(":") and stripped[:-1] in [
+                "Args", "Arguments", "Parameters",
+                "Returns", "Return",
+                "Yields", "Yield",
+                "Raises", "Raise",
+                "Example", "Examples",
+                "Note", "Notes",
+                "Warning", "Warnings",
+                "See Also",
+            ]:
+                section_name = stripped[:-1].lower()
+                current_section = section_name
+                i += 1
+                
+                if section_name in ["args", "arguments", "parameters"]:
+                    # Parse arguments
+                    i = self._parse_args_section(lines, i, ir)
+                elif section_name in ["returns", "return"]:
+                    # Parse returns
+                    i = self._parse_returns_section(lines, i, ir)
+                elif section_name in ["raises", "raise"]:
+                    # Parse raises
+                    i = self._parse_raises_section(lines, i, ir)
+                else:
+                    # Generic section - skip for now
+                    while i < len(lines) and (not lines[i].strip() or lines[i].startswith("    ")):
+                        i += 1
+                continue
+            
+            # Summary/extended description
+            if current_section == "summary":
+                if stripped:
+                    summary_lines.append(stripped)
+                elif summary_lines:
+                    # Empty line after summary - rest is extended
+                    current_section = "extended"
+                i += 1
+            elif current_section == "extended":
+                if stripped:
+                    extended_lines.append(stripped)
+                i += 1
+            else:
+                i += 1
+        
+        ir.summary = " ".join(summary_lines)
+        if extended_lines:
+            ir.extended = "\n".join(extended_lines)
         
         return ir
+    
+    def _parse_args_section(self, lines: list[str], start: int, ir: DocstringIR) -> int:
+        """Parse Args section.
+        
+        :param lines: Docstring lines
+        :param start: Start line index
+        :param ir: IR to populate
+        :rtype: int
+        """
+        i = start
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            # End of section
+            if not stripped or (stripped.endswith(":") and not line.startswith("    ")):
+                break
+            
+            # Parse argument line
+            if line.startswith("    ") and ":" in stripped:
+                # Format: "arg_name (type): description"
+                # Or: "arg_name: description"
+                parts = stripped.split(":", 1)
+                name_type = parts[0].strip()
+                desc = parts[1].strip() if len(parts) > 1 else ""
+                
+                # Extract name and type
+                if "(" in name_type and ")" in name_type:
+                    name = name_type[:name_type.index("(")].strip()
+                    type_hint = name_type[name_type.index("(") + 1:name_type.rindex(")")].strip()
+                else:
+                    name = name_type
+                    type_hint = None
+                
+                ir.params.append(Param(name=name, type_hint=type_hint, description=desc))
+            
+            i += 1
+        
+        return i
+    
+    def _parse_returns_section(self, lines: list[str], start: int, ir: DocstringIR) -> int:
+        """Parse Returns section.
+        
+        :param lines: Docstring lines
+        :param start: Start line index
+        :param ir: IR to populate
+        :rtype: int
+        """
+        i = start
+        return_lines = []
+        
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            # End of section
+            if not stripped or (stripped.endswith(":") and not line.startswith("    ")):
+                break
+            
+            if line.startswith("    "):
+                return_lines.append(stripped)
+            
+            i += 1
+        
+        if return_lines:
+            # Format: "type: description" or just "description"
+            return_text = " ".join(return_lines)
+            if ":" in return_text:
+                parts = return_text.split(":", 1)
+                ir.returns = Return(type_hint=parts[0].strip(), description=parts[1].strip())
+            else:
+                ir.returns = Return(description=return_text)
+        
+        return i
+    
+    def _parse_raises_section(self, lines: list[str], start: int, ir: DocstringIR) -> int:
+        """Parse Raises section.
+        
+        :param lines: Docstring lines
+        :param start: Start line index
+        :param ir: IR to populate
+        :rtype: int
+        """
+        i = start
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            # End of section
+            if not stripped or (stripped.endswith(":") and not line.startswith("    ")):
+                break
+            
+            # Parse exception line
+            if line.startswith("    ") and ":" in stripped:
+                parts = stripped.split(":", 1)
+                exc_type = parts[0].strip()
+                desc = parts[1].strip() if len(parts) > 1 else ""
+                ir.raises.append(Raise(exc_type=exc_type, description=desc))
+            
+            i += 1
+        
+        return i
 
 
 class NumPyParser(DocstringParser):
@@ -160,16 +312,220 @@ class NumPyParser(DocstringParser):
         if not lines:
             return ir
         
-        # Extract summary
-        for line in lines:
-            stripped = line.strip()
-            if stripped:
-                ir.summary = stripped
-                break
+        # Parse sections
+        current_section = "summary"
+        summary_lines = []
+        extended_lines = []
+        i = 0
         
-        # TODO: Parse Parameters, Returns, Raises sections
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            # Detect section headers (followed by dashes)
+            if i + 1 < len(lines) and lines[i + 1].strip() and all(c == "-" for c in lines[i + 1].strip()):
+                section_name = stripped.lower()
+                current_section = section_name
+                i += 2  # Skip header and dashes
+                
+                if section_name in ["parameters", "params"]:
+                    i = self._parse_params_section(lines, i, ir)
+                elif section_name in ["returns", "return"]:
+                    i = self._parse_returns_section(lines, i, ir)
+                elif section_name in ["yields", "yield"]:
+                    i = self._parse_yields_section(lines, i, ir)
+                elif section_name in ["raises", "raise"]:
+                    i = self._parse_raises_section(lines, i, ir)
+                else:
+                    # Skip unknown section
+                    while i < len(lines) and lines[i].strip():
+                        i += 1
+                continue
+            
+            # Summary/extended
+            if current_section == "summary":
+                if stripped:
+                    summary_lines.append(stripped)
+                elif summary_lines:
+                    current_section = "extended"
+                i += 1
+            elif current_section == "extended":
+                if stripped:
+                    extended_lines.append(stripped)
+                i += 1
+            else:
+                i += 1
+        
+        ir.summary = " ".join(summary_lines)
+        if extended_lines:
+            ir.extended = "\n".join(extended_lines)
         
         return ir
+    
+    def _parse_params_section(self, lines: list[str], start: int, ir: DocstringIR) -> int:
+        """Parse Parameters section.
+        
+        :param lines: Docstring lines
+        :param start: Start line index
+        :param ir: IR to populate
+        :rtype: int
+        """
+        i = start
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            # End of section (empty line or new section)
+            if not stripped:
+                i += 1
+                if i < len(lines) and not lines[i].strip():
+                    break
+                continue
+            
+            # Check for new section
+            if i + 1 < len(lines) and all(c == "-" for c in lines[i + 1].strip()):
+                break
+            
+            # Parameter line: "name : type" or just "name"
+            if ":" in stripped and not stripped.startswith(" "):
+                parts = stripped.split(":", 1)
+                name = parts[0].strip()
+                type_hint = parts[1].strip() if len(parts) > 1 else None
+                
+                # Description is on following indented lines
+                desc_lines = []
+                i += 1
+                while i < len(lines) and lines[i].startswith("    "):
+                    desc_lines.append(lines[i].strip())
+                    i += 1
+                
+                description = " ".join(desc_lines) if desc_lines else None
+                ir.params.append(Param(name=name, type_hint=type_hint, description=description))
+            else:
+                i += 1
+        
+        return i
+    
+    def _parse_returns_section(self, lines: list[str], start: int, ir: DocstringIR) -> int:
+        """Parse Returns section.
+        
+        :param lines: Docstring lines
+        :param start: Start line index
+        :param ir: IR to populate
+        :rtype: int
+        """
+        i = start
+        type_hint = None
+        desc_lines = []
+        
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            if not stripped:
+                i += 1
+                if i < len(lines) and not lines[i].strip():
+                    break
+                continue
+            
+            # Check for new section
+            if i + 1 < len(lines) and all(c == "-" for c in lines[i + 1].strip()):
+                break
+            
+            # First non-indented line is type
+            if not line.startswith("    ") and not type_hint:
+                type_hint = stripped
+                i += 1
+            # Indented lines are description
+            elif line.startswith("    "):
+                desc_lines.append(stripped)
+                i += 1
+            else:
+                i += 1
+        
+        description = " ".join(desc_lines) if desc_lines else None
+        ir.returns = Return(type_hint=type_hint, description=description)
+        
+        return i
+    
+    def _parse_yields_section(self, lines: list[str], start: int, ir: DocstringIR) -> int:
+        """Parse Yields section.
+        
+        :param lines: Docstring lines
+        :param start: Start line index
+        :param ir: IR to populate
+        :rtype: int
+        """
+        i = start
+        type_hint = None
+        desc_lines = []
+        
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            if not stripped:
+                i += 1
+                if i < len(lines) and not lines[i].strip():
+                    break
+                continue
+            
+            if i + 1 < len(lines) and all(c == "-" for c in lines[i + 1].strip()):
+                break
+            
+            if not line.startswith("    ") and not type_hint:
+                type_hint = stripped
+                i += 1
+            elif line.startswith("    "):
+                desc_lines.append(stripped)
+                i += 1
+            else:
+                i += 1
+        
+        description = " ".join(desc_lines) if desc_lines else None
+        ir.yields = Return(type_hint=type_hint, description=description)
+        
+        return i
+    
+    def _parse_raises_section(self, lines: list[str], start: int, ir: DocstringIR) -> int:
+        """Parse Raises section.
+        
+        :param lines: Docstring lines
+        :param start: Start line index
+        :param ir: IR to populate
+        :rtype: int
+        """
+        i = start
+        while i < len(lines):
+            line = lines[i]
+            stripped = line.strip()
+            
+            if not stripped:
+                i += 1
+                if i < len(lines) and not lines[i].strip():
+                    break
+                continue
+            
+            if i + 1 < len(lines) and all(c == "-" for c in lines[i + 1].strip()):
+                break
+            
+            # Exception type on non-indented line
+            if not line.startswith("    "):
+                exc_type = stripped
+                desc_lines = []
+                i += 1
+                
+                # Description on indented lines
+                while i < len(lines) and lines[i].startswith("    "):
+                    desc_lines.append(lines[i].strip())
+                    i += 1
+                
+                description = " ".join(desc_lines) if desc_lines else None
+                ir.raises.append(Raise(exc_type=exc_type, description=description))
+            else:
+                i += 1
+        
+        return i
 
 
 class ReSTParser(DocstringParser):
@@ -187,29 +543,117 @@ class ReSTParser(DocstringParser):
         if not lines:
             return ir
         
-        # Extract summary
+        # Extract summary and fields
         summary_lines = []
+        extended_lines = []
         in_summary = True
+        in_extended = False
         
-        for line in lines:
+        i = 0
+        while i < len(lines):
+            line = lines[i]
             stripped = line.strip()
             
-            # Stop at first field marker
+            # Field markers
             if stripped.startswith(":"):
                 in_summary = False
+                in_extended = False
+                
                 # Parse field
-                # TODO: Full field parsing
+                if stripped.startswith(":param"):
+                    self._parse_param_field(stripped, ir)
+                elif stripped.startswith(":type"):
+                    # :type param_name: type_hint
+                    self._parse_type_field(stripped, ir)
+                elif stripped.startswith(":returns:") or stripped.startswith(":return:"):
+                    desc = stripped.split(":", 2)[2].strip() if stripped.count(":") >= 2 else ""
+                    ir.returns = Return(description=desc if desc else None)
+                elif stripped.startswith(":rtype:"):
+                    type_hint = stripped.split(":", 2)[2].strip() if stripped.count(":") >= 2 else ""
+                    if ir.returns:
+                        ir.returns.type_hint = type_hint
+                    else:
+                        ir.returns = Return(type_hint=type_hint)
+                elif stripped.startswith(":raises") or stripped.startswith(":raise"):
+                    # :raises ExceptionType: description
+                    parts = stripped.split(":", 2)
+                    if len(parts) >= 3:
+                        exc_type = parts[1].replace("raises", "").replace("raise", "").strip()
+                        desc = parts[2].strip()
+                        ir.raises.append(Raise(exc_type=exc_type, description=desc if desc else None))
+                
+                i += 1
                 continue
             
-            if in_summary and stripped:
-                summary_lines.append(stripped)
-            elif in_summary and not stripped and summary_lines:
-                # End of summary
-                in_summary = False
+            # Summary/extended description
+            if in_summary:
+                if stripped:
+                    summary_lines.append(stripped)
+                elif summary_lines:
+                    # Empty line after summary
+                    in_summary = False
+                    in_extended = True
+                i += 1
+            elif in_extended:
+                if stripped:
+                    extended_lines.append(stripped)
+                i += 1
+            else:
+                i += 1
         
         ir.summary = " ".join(summary_lines)
+        if extended_lines:
+            ir.extended = "\n".join(extended_lines)
         
         return ir
+    
+    def _parse_param_field(self, field: str, ir: DocstringIR) -> None:
+        """Parse :param: field.
+        
+        :param field: Field line
+        :param ir: IR to populate
+        :rtype: None
+        """
+        # Format: ":param type name: description" or ":param name: description"
+        parts = field.split(":", 2)
+        if len(parts) < 3:
+            return
+        
+        param_part = parts[1].replace("param", "").strip()
+        description = parts[2].strip() if parts[2] else None
+        
+        # Check if type is included
+        words = param_part.split()
+        if len(words) >= 2:
+            # Assume first word is type, rest is name
+            type_hint = words[0]
+            name = " ".join(words[1:])
+        else:
+            type_hint = None
+            name = param_part
+        
+        ir.params.append(Param(name=name, type_hint=type_hint, description=description))
+    
+    def _parse_type_field(self, field: str, ir: DocstringIR) -> None:
+        """Parse :type: field.
+        
+        :param field: Field line
+        :param ir: IR to populate
+        :rtype: None
+        """
+        # Format: ":type param_name: type_hint"
+        parts = field.split(":", 2)
+        if len(parts) < 3:
+            return
+        
+        param_name = parts[1].replace("type", "").strip()
+        type_hint = parts[2].strip() if parts[2] else None
+        
+        # Find matching parameter and add type
+        for param in ir.params:
+            if param.name == param_name:
+                param.type_hint = type_hint
+                break
 
 
 class DocstringRenderer:
