@@ -32,7 +32,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 try:
     import tomllib  # Python 3.11+
@@ -129,8 +129,6 @@ def should_ignore_file(filepath: str, rule: str, config: Dict[str, Any]) -> bool
             "scripts/legacy.py:PEP526-module"  # Ignore module-level only
         ]
     """
-    from pathlib import Path
-
     ignores = config.get("per_file_ignores", [])
     filepath_obj = Path(filepath)
 

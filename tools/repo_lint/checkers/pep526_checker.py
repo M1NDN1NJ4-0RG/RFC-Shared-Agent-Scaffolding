@@ -218,11 +218,11 @@ class PEP526Checker(ast.NodeVisitor):
         :returns: True if annotation is required
         :rtype: bool
         """
-        # Always require for module-level and class attributes (if enabled)
-        if scope in ("module", "class") and self.should_check_scope(scope):
+        # Check if scope is enabled and requires annotation
+        if scope in ("module", "class", "function", "instance") and self.should_check_scope(scope):
             return True
 
-        # Special patterns that ALWAYS require annotation
+        # Special patterns that ALWAYS require annotation (regardless of scope)
         if self.is_empty_literal(value):
             return True  # {}, [], set(), etc.
 
