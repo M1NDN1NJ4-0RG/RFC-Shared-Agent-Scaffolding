@@ -243,6 +243,7 @@ class PEP526Checker(ast.NodeVisitor):
 
         # If the scope is enabled, require annotations for assignments in that scope.
         return True
+
     def is_empty_literal(self, node: ast.AST) -> bool:
         """Check if value is an empty literal.
 
